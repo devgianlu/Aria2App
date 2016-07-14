@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <string name="ga_trackingId">UA-78508159-3</string>
+    <string name="ga_sampleFrequency">100.0</string>
+    <integer name="ga_sessionTimeout">1800</integer>
+    <bool name="ga_autoActivityTracking">true</bool>
+    <bool name="ga_anonymizeIp">false</bool>
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <screenName name="com.gianlu.aria2app.SelectProfileActivity">Screen~SelectProfile</screenName>
+    <screenName name="com.gianlu.aria2app.MainActivity">Screen~Main</screenName>
+    <screenName name="com.gianlu.aria2app.LogsActivity">Screen~logs</screenName>
+    <screenName name="com.gianlu.aria2app.MoreAboutDownloadActivity">Screen~MoreAboutDownload
+    </screenName>
+    <screenName name="com.gianlu.aria2app.TerminalActivity">Screen~Terminal</screenName>
+    <screenName name="com.gianlu.aria2app.SelectProfile.AddProfile">Screen~AddProfile</screenName>
+    <screenName name="com.gianlu.aria2app.MainSettingsActivity">Screen~Settings</screenName>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/a2menu_addDownload"
+        android:icon="@drawable/ic_add_white_48dp"
+        android:title="@string/menu_addDownload"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/a2menu_terminal"
+        android:icon="@drawable/ic_terminal_white_48dp"
+        android:title="@string/menu_terminal"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/a2menu_globalOptions"
+        android:title="@string/menu_globalOptions"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/a2menu_filtering"
+        android:title="@string/filters"
+        app:showAsAction="never">
+        <menu><!-- SubMenu placeholder --></menu>
+    </item>
+
+    <item
+        android:id="@+id/a2menu_refreshPage"
+        android:title="@string/menu_refreshPage"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/a2menu_preferences"
+        android:title="@string/menu_preferences"
+        app:showAsAction="never" />
+</menu>

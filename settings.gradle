@@ -1,0 +1,2 @@
+include ':app', ':jtitan'
+include ':google_licensing'

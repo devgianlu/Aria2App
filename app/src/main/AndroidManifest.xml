@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.gianlu.aria2app">
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:theme">
+
+        <!-- Select profile activity -->
+        <activity android:name=".SelectProfileActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Add profile activity -->
+        <activity
+            android:name=".SelectProfile.AddProfile"
+            android:parentActivityName=".SelectProfileActivity" />
+
+        <!-- Main activity -->
+        <activity android:name=".MainActivity" />
+
+        <!-- Add download activity -->
+        <activity
+            android:name=".Main.AddDownloadActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- More about download activity -->
+        <activity
+            android:name=".MoreAboutDownloadActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Settings activity -->
+        <activity
+            android:name=".MainSettingsActivity"
+            android:label="@string/title_activity_main_settings" />
+
+        <!-- Logs activity -->
+        <activity
+            android:name=".LogsActivity"
+            android:parentActivityName=".MainSettingsActivity" />
+
+        <!-- aria2 terminal activity -->
+        <activity
+            android:name=".TerminalActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Notification service -->
+        <service
+            android:name=".Services.NotificationWebSocketService"
+            android:exported="false" />
+
+        <!-- Download service -->
+        <service
+            android:name=".MoreAboutDownload.DownloadFile"
+            android:exported="false" />
+
+        <!-- Google Analytics -->
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
+        <!--
+        TODO: Widget receiver
+        <receiver
+            android:name=".Widget.WidgetProvider"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+        -->
+    </application>
+
+</manifest>

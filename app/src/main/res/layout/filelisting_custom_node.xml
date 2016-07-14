@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/fileListing_customNode_toggle"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_keyboard_arrow_right_black_48dp" />
+
+    <ImageView
+        android:id="@+id/fileListing_customNode_fileType"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/fileListing_customNode_toggle"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/fileListing_customNode_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="2dp"
+        android:layout_toEndOf="@+id/fileListing_customNode_fileType"
+        android:lines="1"
+        android:overScrollMode="never" />
+
+    <ProgressBar
+        android:id="@+id/fileListing_customNode_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/fileListing_customNode_text"
+        android:layout_below="@+id/fileListing_customNode_text"
+        android:layout_toStartOf="@+id/fileListing_customNode_percentage" />
+
+    <TextView
+        android:id="@+id/fileListing_customNode_percentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fileListing_customNode_text"
+        android:layout_marginStart="8dp"
+        android:layout_toStartOf="@+id/fileListing_customNode_selected" />
+
+    <ImageView
+        android:id="@+id/fileListing_customNode_selected"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignEnd="@+id/fileListing_customNode_text"
+        android:layout_below="@+id/fileListing_customNode_text"
+        android:layout_marginStart="6dp"
+        android:src="@drawable/ic_file_download_black_48dp" />
+</RelativeLayout>

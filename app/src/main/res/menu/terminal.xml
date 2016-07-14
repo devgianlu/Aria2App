@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/terminalMenu_clearList"
+        android:title="@string/clear_history"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/terminalMenu_advanced"
+        android:title="@string/adv_mode"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/terminalMenu_basic"
+        android:title="@string/basic_mode"
+        android:visible="false"
+        app:showAsAction="never" />
+</menu>

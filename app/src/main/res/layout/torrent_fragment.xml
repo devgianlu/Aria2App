@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <Button
+        android:id="@+id/torrentFragment_pick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Pick from file" />
+
+    <TextView
+        android:id="@+id/torrentFragment_pickHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/torrentFragment_pick"
+        android:layout_marginTop="2dp"
+        android:text="If you want to add a magnet link go to URI section"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/torrentFragment_urisLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/torrentFragment_pickHelp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        android:text="@string/uris" />
+
+    <ListView
+        android:id="@+id/torrentFragment_uris"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/torrentFragment_urisLabel" />
+
+    <TextView
+        android:id="@+id/torrentFragment_urisHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/torrentFragment_uris"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_toStartOf="@+id/torrentFragment_newUri"
+        android:text="@string/addURIs_torrentHelp"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/torrentFragment_positionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/torrentFragment_position"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="5dp"
+        android:text="@string/position" />
+
+    <EditText
+        android:id="@+id/torrentFragment_position"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/torrentFragment_urisHelp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/torrentFragment_positionLabel"
+        android:hint="@string/zero"
+        android:inputType="number"
+        android:text="@string/zero"
+        tools:ignore="TextFields" />
+
+    <ImageButton
+        android:id="@+id/torrentFragment_newUri"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/torrentFragment_uris"
+        android:layout_marginTop="2dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_add_black_48dp" />
+
+    <TextView
+        android:id="@+id/torrentFragment_optionsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/torrentFragment_position"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/options" />
+
+    <ExpandableListView
+        android:id="@+id/torrentFragment_options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/torrentFragment_optionsLabel" />
+</RelativeLayout>

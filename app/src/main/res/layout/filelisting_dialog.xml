@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp">
+
+    <!-- Total length -->
+    <TextView
+        android:id="@+id/fileListing_customDialog_fileLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Completed length -->
+    <TextView
+        android:id="@+id/fileListing_customDialog_completedLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/fileListing_customDialog_fileLength"
+        android:layout_marginBottom="6dp" />
+
+    <!-- File index -->
+    <TextView
+        android:id="@+id/fileListing_customDialog_fileIndex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/fileListing_customDialog_completedLength"
+        android:layout_marginBottom="6dp" />
+
+    <!-- File index -->
+    <TextView
+        android:id="@+id/fileListing_customDialog_filePercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/fileListing_customDialog_fileIndex"
+        android:layout_marginBottom="10dp" />
+
+    <CheckBox
+        android:id="@+id/fileListing_customDialog_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/fileListing_customDialog_filePercentage"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/fileListing_customDialog_fileUris"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/fileListing_customDialog_selected"
+        android:layout_marginBottom="6dp" />
+</RelativeLayout>

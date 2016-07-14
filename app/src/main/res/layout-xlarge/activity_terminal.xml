@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.gianlu.aria2app.TerminalActivity">
+
+    <ListView
+        android:id="@+id/terminal_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/terminal_container"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="20dp"
+        android:stackFromBottom="true" />
+
+    <RelativeLayout
+        android:id="@+id/terminal_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/terminal_send">
+
+        <TextView
+            android:id="@+id/terminal_idLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/terminal_id"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="5dp"
+            android:text="@string/id" />
+
+        <EditText
+            android:id="@+id/terminal_id"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/terminal_idLabel"
+            android:hint="@string/id_hint"
+            android:inputType="textVisiblePassword" />
+
+        <TextView
+            android:id="@+id/terminal_jsonrpcLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/terminal_id"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="28dp"
+            android:layout_toEndOf="@+id/terminal_id"
+            android:text="@string/jsonrpc" />
+
+        <EditText
+            android:id="@+id/terminal_jsonrpc"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/terminal_id"
+            android:layout_alignEnd="@+id/terminal_method"
+            android:layout_toEndOf="@+id/terminal_jsonrpcLabel"
+            android:hint="@string/jsonrpc_version"
+            android:inputType="numberDecimal"
+            android:text="@string/jsonrpc_version" />
+
+        <TextView
+            android:id="@+id/terminal_methodLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/terminal_method"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="5dp"
+            android:text="@string/method" />
+
+        <AutoCompleteTextView
+            android:id="@+id/terminal_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/terminal_id"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/terminal_methodLabel"
+            android:inputType="textVisiblePassword" />
+
+        <TextView
+            android:id="@+id/terminal_paramsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/terminal_params"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="5dp"
+            android:text="@string/params" />
+
+        <EditText
+            android:id="@+id/terminal_params"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/terminal_method"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/terminal_paramsLabel"
+            android:hint="@string/params_hint"
+            android:inputType="textVisiblePassword" />
+
+        <TextView
+            android:id="@+id/terminal_json"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/terminal_params"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:textAlignment="center" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/terminal_advancedContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/terminal_send"
+        android:layout_below="@+id/terminal_history"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/terminal_advJSONLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/terminal_advJSON"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="5dp"
+            android:text="@string/json" />
+
+        <EditText
+            android:id="@+id/terminal_advJSON"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/terminal_advJSONLabel"
+            android:gravity="top|start"
+            android:hint="@string/json_hint"
+            android:inputType="textMultiLine|textVisiblePassword"
+            android:lines="8"
+            android:maxLines="100"
+            android:minLines="6"
+            android:scrollbars="vertical" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/terminal_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:text="@string/send" />
+</RelativeLayout>

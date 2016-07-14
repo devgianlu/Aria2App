@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:padding="5dp"
+    android:paddingStart="20dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/profileCustomChild_serverStatus"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp">
+
+        <ImageView
+            android:id="@+id/profileCustomChild_type"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="6dp" />
+
+        <TextView
+            android:id="@+id/profileCustomChild_profileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/profileCustomChild_type"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/profileCustomChild_serverIP"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/profileCustomChild_profileName"
+            android:layout_below="@+id/profileCustomChild_profileName"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/profileCustomChild_serverStatus"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="5dp"
+        android:layout_toStartOf="@+id/profileCustomChild_select" />
+
+    <TextView
+        android:id="@+id/profileCustomChild_latency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/profileCustomChild_serverProgressBar"
+        android:layout_alignStart="@+id/profileCustomChild_serverProgressBar"
+        android:layout_below="@+id/profileCustomChild_serverProgressBar"
+        android:layout_marginTop="3dp"
+        android:textAlignment="center"
+        android:textSize="10sp" />
+
+    <ProgressBar
+        android:id="@+id/profileCustomChild_serverProgressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="5dp"
+        android:layout_toStartOf="@+id/profileCustomChild_select"
+        android:indeterminate="true" />
+
+    <ImageButton
+        android:id="@+id/profileCustomChild_select"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_arrow_forward_black_48dp" />
+</RelativeLayout>

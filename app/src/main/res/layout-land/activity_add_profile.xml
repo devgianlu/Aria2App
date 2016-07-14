@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.gianlu.aria2app.SelectProfile.AddProfile">
+
+    <TextView
+        android:id="@+id/addProfile_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="5dp"
+        android:autoLink="web"
+        android:text="@string/profile_help"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/addProfile_nameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/addProfile_name"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="10dp"
+        android:text="@string/profile" />
+
+    <EditText
+        android:id="@+id/addProfile_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/addProfile_help"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/addProfile_nameLabel"
+        android:hint="@string/profile_hint" />
+
+    <RadioGroup
+        android:id="@+id/addProfile_modeGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addProfile_name"
+        android:layout_marginBottom="5dp">
+
+        <RadioButton
+            android:id="@+id/addProfile_singleMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/mode_single" />
+
+        <RadioButton
+            android:id="@+id/addProfile_multiMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mode_multi" />
+    </RadioGroup>
+
+    <include
+        layout="@layout/new_single_profile_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addProfile_modeGroup" />
+
+    <!-- Multi mode -->
+    <RelativeLayout
+        android:id="@+id/addProfile_multiModeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addProfile_modeGroup"
+        android:visibility="invisible">
+
+        <Spinner
+            android:id="@+id/addProfile_multiModeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="12dp"
+            android:layout_toStartOf="@+id/addProfile_multiModeAdd" />
+
+        <Button
+            android:id="@+id/addProfile_multiModeAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/addNew" />
+
+        <ListView
+            android:id="@+id/addProfile_multiModeListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addProfile_multiModeAdd"
+            android:layout_marginBottom="5dp"
+            android:choiceMode="singleChoice" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addProfile_singleModeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/addProfile_serverAddrLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/addProfile_serverAddr"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="10dp"
+            android:text="@string/address" />
+
+        <EditText
+            android:id="@+id/addProfile_serverAddr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/addProfile_serverAddrLabel"
+            android:hint="@string/address_hint"
+            android:inputType="textUri" />
+
+        <TextView
+            android:id="@+id/addProfile_serverPortLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/addProfile_serverPort"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="10dp"
+            android:text="@string/port" />
+
+        <EditText
+            android:id="@+id/addProfile_serverPort"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addProfile_serverAddr"
+            android:layout_toEndOf="@+id/addProfile_serverPortLabel"
+            android:hint="@string/port_hint"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/addProfile_endpointLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/addProfile_serverPortLabel"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/addProfile_serverPort"
+            android:text="@string/endpoint" />
+
+        <EditText
+            android:id="@+id/addProfile_serverEndpoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/addProfile_serverPort"
+            android:layout_toEndOf="@+id/addProfile_endpointLabel"
+            android:hint="@string/endpoint_default"
+            android:inputType="textVisiblePassword"
+            android:text="@string/endpoint_default" />
+
+        <TextView
+            android:id="@+id/addProfile_completeURL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addProfile_serverPort"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/completeURL_default"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/addProfile_serverAuth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/addProfile_completeURL"
+            android:layout_marginEnd="10dp"
+            android:text="@string/authentication"
+            android:textColor="@android:color/tertiary_text_dark" />
+
+        <TextView
+            android:id="@+id/addProfile_tokenLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/addProfile_serverAuth"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/addProfile_serverAuth"
+            android:text="@string/token"
+            android:visibility="invisible" />
+
+        <EditText
+            android:id="@+id/addProfile_serverToken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/addProfile_tokenLabel"
+            android:layout_toEndOf="@+id/addProfile_tokenLabel"
+            android:hint="@string/token_hint"
+            android:inputType="textVisiblePassword"
+            android:visibility="invisible" />
+
+        <CheckBox
+            android:id="@+id/addProfile_serverSSL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/addProfile_serverAuth"
+            android:layout_marginTop="5dp"
+            android:text="@string/encryption"
+            android:textColor="@android:color/tertiary_text_dark" />
+
+        <CheckBox
+            android:id="@+id/addProfile_directDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/addProfile_serverSSL"
+            android:layout_marginBottom="5dp"
+            android:checked="true"
+            android:text="@string/enableDirectDownload"
+            android:textColor="@android:color/tertiary_text_dark" />
+
+        <RelativeLayout
+            android:id="@+id/addProfile_directDownloadContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addProfile_directDownload">
+
+            <TextView
+                android:id="@+id/addProfile_directDownload_help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:autoLink="web"
+                android:text="@string/directDownload_help"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/addProfile_directDownload_addrLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/addProfile_directDownload_addr"
+                android:layout_marginEnd="10dp"
+                android:text="@string/address" />
+
+            <EditText
+                android:id="@+id/addProfile_directDownload_addr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/addProfile_directDownload_help"
+                android:layout_toEndOf="@+id/addProfile_directDownload_addrLabel"
+                android:hint="@string/directDownload_addrHint"
+                android:inputType="textUri" />
+
+            <TextView
+                android:id="@+id/addProfile_directDownload_addrHelp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/addProfile_directDownload_addr"
+                android:layout_below="@+id/addProfile_directDownload_addr"
+                android:text="@string/directDownload_addrHelp" />
+
+            <Switch
+                android:id="@+id/addProfile_directDownload_auth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/addProfile_directDownload_addrHelp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/authentication"
+                android:textColor="@android:color/tertiary_text_dark" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/addProfile_directDownload_auth"
+                android:layout_alignTop="@+id/addProfile_directDownload_auth"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/addProfile_directDownload_auth"
+                android:autoLink="web"
+                android:text="@string/directDownload_authHelp"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/addProfile_directDownload_userLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/addProfile_directDownload_user"
+                android:layout_marginEnd="5dp"
+                android:text="@string/username"
+                android:visibility="invisible" />
+
+            <EditText
+                android:id="@+id/addProfile_directDownload_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/addProfile_directDownload_auth"
+                android:layout_toEndOf="@+id/addProfile_directDownload_userLabel"
+                android:hint="@string/directDownload_usernameHint"
+                android:inputType="text"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/addProfile_directDownload_passwdLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/addProfile_directDownload_passwd"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="5dp"
+                android:text="@string/password"
+                android:visibility="invisible" />
+
+            <EditText
+                android:id="@+id/addProfile_directDownload_passwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/addProfile_directDownload_user"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/addProfile_directDownload_passwdLabel"
+                android:hint="@string/directDownload_passwordHint"
+                android:inputType="textPassword"
+                android:visibility="invisible" />
+        </RelativeLayout>
+    </RelativeLayout>
+</ScrollView>

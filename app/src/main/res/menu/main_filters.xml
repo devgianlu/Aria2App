@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/a2menu_active"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/downloadStatus_active" />
+    <item
+        android:id="@+id/a2menu_paused"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/downloadStatus_paused" />
+    <item
+        android:id="@+id/a2menu_waiting"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/downloadStatus_waiting" />
+    <item
+        android:id="@+id/a2menu_error"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/downloadStatus_error" />
+    <item
+        android:id="@+id/a2menu_complete"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/downloadStatus_complete" />
+    <item
+        android:id="@+id/a2menu_removed"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/downloadStatus_removed" />
+</menu>

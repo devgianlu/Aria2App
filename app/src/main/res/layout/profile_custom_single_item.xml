@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:padding="6dp">
+
+    <ImageButton
+        android:id="@+id/profileCustomItem_expand"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_keyboard_arrow_down_black_48dp" />
+
+    <TextView
+        android:id="@+id/profileCustomItem_profileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@+id/profileCustomItem_expand"
+        android:layout_toStartOf="@+id/profileCustomItem_serverStatus"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/profileCustomItem_serverIP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileCustomItem_profileName"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/profileCustomItem_expand"
+        android:layout_toStartOf="@+id/profileCustomItem_serverStatus"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/profileCustomItem_serverStatus"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="5dp"
+        android:layout_toStartOf="@+id/profileCustomItem_edit" />
+
+    <TextView
+        android:id="@+id/profileCustomItem_latency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/profileCustomItem_serverStatus"
+        android:layout_alignStart="@+id/profileCustomItem_serverStatus"
+        android:layout_below="@+id/profileCustomItem_serverStatus"
+        android:layout_marginTop="3dp"
+        android:textAlignment="center"
+        android:textSize="10sp" />
+
+    <ProgressBar
+        android:id="@+id/profileCustomItem_serverProgressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="5dp"
+        android:layout_toStartOf="@+id/profileCustomItem_edit"
+        android:indeterminate="true" />
+
+    <ImageButton
+        android:id="@+id/profileCustomItem_edit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/profileCustomItem_select"
+        android:adjustViewBounds="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_edit_black_48dp" />
+
+    <ImageButton
+        android:id="@+id/profileCustomItem_select"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_arrow_forward_black_48dp" />
+
+</RelativeLayout>
