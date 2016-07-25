@@ -9,9 +9,10 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="85037883-59e4-41d1-9224-e97940841673" name="Default" comment="Many things (1.3.4) + part of the parser">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dictionaries/Gianlu.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/Parser.java" afterPath="" />
+    <list default="true" id="85037883-59e4-41d1-9224-e97940841673" name="Default" comment="Fixed slow OptionsDialog run!!!!!!">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/Parser.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/SourceOption.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_common_9_2_1.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" />
@@ -19,18 +20,13 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownloadActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownloadActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/OptionAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/OptionAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/google_licensing/google_licensing.iml" afterPath="$PROJECT_DIR$/google_licensing/google_licensing.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jtitan/jtitan.iml" afterPath="$PROJECT_DIR$/jtitan/jtitan.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownload/DownloadFile.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownload/DownloadFile.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/xml/main_pref.xml" afterPath="$PROJECT_DIR$/app/src/main/res/xml/main_pref.xml" />
     </list>
     <ignored path="Aria2App.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -50,7 +46,30 @@
     <favorites_list name="Aria2App" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="MainSettingsActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.18115942">
+              <caret line="69" column="11" selection-start-line="69" selection-start-column="11" selection-end-line="69" selection-end-column="11" />
+              <folding>
+                <element signature="e#1032#1057#0" expanded="true" />
+                <element signature="e#2146#2162#0" expanded="true" />
+                <element signature="e#3088#3124#0" expanded="true" />
+                <element signature="e#3498#3530#0" expanded="true" />
+                <element signature="e#3902#3933#0" expanded="true" />
+                <element signature="e#4693#4723#0" expanded="true" />
+                <element signature="e#4982#5183#0" expanded="true" />
+                <element signature="e#5182#5183#0" expanded="true" />
+                <element signature="e#5368#5610#0" expanded="true" />
+                <element signature="e#5517#5552#0" expanded="true" />
+                <element signature="e#5609#5610#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -3391,14 +3410,11 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Google/CheckerCallback.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Google/Analytics.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values-it/strings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/jtitan/src/main/java/com/gianlu/jtitan/Aria2Helper/JTA2.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/DownloadAction.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/AddDownloadActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/SelectProfileActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/SelectProfile/AddProfileActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/Parser.java" />
         <option value="$PROJECT_DIR$/jtitan/src/main/java/com/gianlu/jtitan/Aria2Helper/GlobalStats.java" />
         <option value="$PROJECT_DIR$/jtitan/src/main/java/com/gianlu/jtitan/Aria2Helper/Download.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
@@ -3406,6 +3422,14 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/OptionAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownloadActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownload/DownloadFile.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/SourceOption.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/Parser.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/xml/main_pref.xml" />
+        <option value="$PROJECT_DIR$/app/build/intermediates/res/merged/debug/values/values.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java" />
       </list>
     </option>
   </component>
@@ -3440,7 +3464,26 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Aria2App" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Aria2App" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Aria2App" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="PackagesPane" />
       <pane id="Scratches" />
       <pane id="AndroidView">
@@ -3464,6 +3507,10 @@
               <option name="myItemId" value="res" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xml" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -3479,8 +3526,22 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
+              <option name="myItemId" value="values" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Aria2App" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -3520,6 +3581,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Options" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Aria2App" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="aria2app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MoreAboutDownload" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -3846,7 +3929,13 @@
       <option name="project" value="LOCAL" />
       <updated>1469435131246</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed slow OptionsDialog run!!!!!!">
+      <created>1469453179886</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1469453179886</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TodoView">
@@ -3860,7 +3949,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32729805" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32729805" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -3868,7 +3957,8 @@
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259053" sideWeight="0.50385606" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36768803" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36768803" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32969153" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3259053" sideWeight="0.49614397" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32729805" sideWeight="0.4974293" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32729805" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -3889,7 +3979,6 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -3908,7 +3997,8 @@
     <MESSAGE value="Changing package name :((" />
     <MESSAGE value="Initial commit (1.3.3)" />
     <MESSAGE value="Many things (1.3.4) + part of the parser" />
-    <option name="LAST_COMMIT_MESSAGE" value="Many things (1.3.4) + part of the parser" />
+    <MESSAGE value="Fixed slow OptionsDialog run!!!!!!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed slow OptionsDialog run!!!!!!" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -3964,13 +4054,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="251" column="20" selection-start-line="251" selection-start-column="20" selection-end-line="251" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/libraries/firebase_common_9_2_1.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="10" selection-start-line="0" selection-start-column="9" selection-end-line="0" selection-end-column="10" />
         </state>
       </provider>
     </entry>
@@ -4065,13 +4148,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/libraries/firebase_common_9_2_1.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.079254076">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jtitan/src/main/java/com/gianlu/jtitan/Aria2Helper/JTA2.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5855073">
@@ -4107,32 +4183,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/OptionHeader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.04927536">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/OptionChild.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.09855072">
           <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8173913">
-          <caret line="237" column="66" selection-start-line="237" selection-start-column="66" selection-end-line="237" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.026687598">
-          <caret line="868" column="9" selection-start-line="868" selection-start-column="9" selection-end-line="868" selection-end-column="9" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -4189,6 +4243,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.34492755">
           <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4196,6 +4251,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.12801205">
           <caret line="5" column="52" selection-start-line="5" selection-start-column="52" selection-end-line="5" selection-end-column="52" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -4247,6 +4303,147 @@
             <element signature="e#14231#14246#0" expanded="true" />
             <element signature="e#16147#16597#0" expanded="true" />
             <element signature="e#16596#16597#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/OptionHeader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.07472528">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownload/DownloadFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.46811596">
+          <caret line="88" column="13" selection-start-line="84" selection-start-column="11" selection-end-line="88" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/SourceOption.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.615942">
+          <caret line="25" column="15" selection-start-line="25" selection-start-column="15" selection-end-line="25" selection-end-column="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#toJSON#0;class#SourceOption#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5463768">
+          <caret line="253" column="67" selection-start-line="253" selection-start-column="67" selection-end-line="253" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Options/Parser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.9608696">
+          <caret line="251" column="32" selection-start-line="251" selection-start-column="32" selection-end-line="251" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#getAllOptionsRaw#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionFormal#0;class#Parser#0" expanded="false" />
+            <element signature="method#getAllOptionsList#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionDefinitionsRaw#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionDefinition#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionDefaultType#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionDefaultInt#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionDefaultBoolean#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOptionDefaultString#0;class#Parser#0" expanded="false" />
+            <element signature="method#getOption#0;class#Parser#0" expanded="false" />
+            <element signature="method#getAllOptions#0;class#Parser#0" expanded="false" />
+            <element signature="method#refreshSource#0;class#Parser#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/main_pref.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4475">
+          <caret line="110" column="19" selection-start-line="110" selection-start-column="19" selection-end-line="110" selection-end-column="19" />
+          <folding>
+            <element signature="e#155#172#0" expanded="true" />
+            <element signature="e#316#341#0" expanded="true" />
+            <element signature="e#372#396#0" expanded="true" />
+            <element signature="e#423#451#0" expanded="true" />
+            <element signature="e#690#717#0" expanded="true" />
+            <element signature="e#744#764#0" expanded="true" />
+            <element signature="e#1033#1060#0" expanded="true" />
+            <element signature="e#1087#1107#0" expanded="true" />
+            <element signature="e#1252#1276#0" expanded="true" />
+            <element signature="e#1307#1330#0" expanded="true" />
+            <element signature="e#1357#1378#0" expanded="true" />
+            <element signature="e#1529#1558#0" expanded="true" />
+            <element signature="e#1589#1617#0" expanded="true" />
+            <element signature="e#1644#1670#0" expanded="true" />
+            <element signature="e#1739#1762#0" expanded="true" />
+            <element signature="e#2062#2088#0" expanded="true" />
+            <element signature="e#2119#2144#0" expanded="true" />
+            <element signature="e#2171#2200#0" expanded="true" />
+            <element signature="e#2571#2604#0" expanded="true" />
+            <element signature="e#2631#2657#0" expanded="true" />
+            <element signature="e#2858#2876#0" expanded="true" />
+            <element signature="e#2907#2924#0" expanded="true" />
+            <element signature="e#2951#2972#0" expanded="true" />
+            <element signature="e#3178#3201#0" expanded="true" />
+            <element signature="e#3232#3254#0" expanded="true" />
+            <element signature="e#3281#3307#0" expanded="true" />
+            <element signature="e#3376#3392#0" expanded="true" />
+            <element signature="e#3473#3494#0" expanded="true" />
+            <element signature="e#3521#3535#0" expanded="true" />
+            <element signature="e#3604#3624#0" expanded="true" />
+            <element signature="e#4326#4345#0" expanded="true" />
+            <element signature="e#4492#4513#0" expanded="true" />
+            <element signature="e#4544#4564#0" expanded="true" />
+            <element signature="e#4591#4609#0" expanded="true" />
+            <element signature="e#4699#4722#0" expanded="true" />
+            <element signature="e#4751#4782#0" expanded="true" />
+            <element signature="e#4869#4890#0" expanded="true" />
+            <element signature="e#4974#4989#0" expanded="true" />
+            <element signature="e#5016#5035#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33830845">
+          <caret line="68" column="48" selection-start-line="68" selection-start-column="48" selection-end-line="68" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build/intermediates/res/merged/debug/values/values.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.37562189">
+          <caret line="1481" column="0" selection-start-line="1481" selection-start-column="0" selection-end-line="1481" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18115942">
+          <caret line="69" column="11" selection-start-line="69" selection-start-column="11" selection-end-line="69" selection-end-column="11" />
+          <folding>
+            <element signature="e#1032#1057#0" expanded="true" />
+            <element signature="e#2146#2162#0" expanded="true" />
+            <element signature="e#3088#3124#0" expanded="true" />
+            <element signature="e#3498#3530#0" expanded="true" />
+            <element signature="e#3902#3933#0" expanded="true" />
+            <element signature="e#4693#4723#0" expanded="true" />
+            <element signature="e#4982#5183#0" expanded="true" />
+            <element signature="e#5182#5183#0" expanded="true" />
+            <element signature="e#5368#5610#0" expanded="true" />
+            <element signature="e#5517#5552#0" expanded="true" />
+            <element signature="e#5609#5610#0" expanded="true" />
           </folding>
         </state>
       </provider>

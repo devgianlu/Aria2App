@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
+
+import com.gianlu.aria2app.Options.Parser;
 
 public class MainSettingsActivity extends PreferenceActivity {
 
@@ -87,6 +90,59 @@ public class MainSettingsActivity extends PreferenceActivity {
         findPreference("apacheLicense").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.apache.org/licenses/LICENSE-2.0")));
+                return true;
+            }
+        });
+
+        findPreference("updateOptions").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                final ProgressDialog pd = Utils.fastProgressDialog(MainSettingsActivity.this, R.string.gathering_information, true, false);
+
+                new Parser().refreshSource(MainSettingsActivity.this, new Parser.ISourceProcessor() {
+                    @Override
+                    public void onStarted() {
+                        MainSettingsActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pd.show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onDownloadEnded(String source) {
+                        MainSettingsActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pd.setMessage(getString(R.string.processing_data));
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onConnectionError(int code, String message) {
+                        pd.dismiss();
+                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+                        pd.dismiss();
+                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onFailed() {
+                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
+                    }
+
+                    @Override
+                    public void onEnd() {
+                        pd.dismiss();
+                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
+                    }
+                });
                 return true;
             }
         });

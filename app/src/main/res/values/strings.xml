@@ -66,10 +66,13 @@
     <string name="unknown_download">Unknown download!</string>
     <string name="unknown_profile">Unknown profile</string>
     <string name="profile">Profile name:</string>
+    <string name="updateOptions">Update options\' source file</string>
+    <string name="updateOptions_summary">That file contains information about options.</string>
     <string name="unknown">Unknown</string>
     <string name="loading_downloads">Loading downloads. Please wait…</string>
     <string name="downloading_file">Downloading file…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
+    <string name="processing_data">Processing some data. Please wait…</string>
     <string name="imei_box">The application need to access your phone state to retrieve information to check the license. A message box will display now.</string>
     <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! Only token method authentication is supported. See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
     <string name="profile_hint">My profile</string>

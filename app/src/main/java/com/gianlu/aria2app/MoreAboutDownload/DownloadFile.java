@@ -85,7 +85,7 @@ public class DownloadFile extends IntentService {
             try {
                 connection.setRequestProperty("User-Agent", "Aria2App " + context.getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
             } catch (PackageManager.NameNotFoundException ex) {
-                connection.setRequestProperty("User-Agent", "Aria2App > 1.3");
+                connection.setRequestProperty("User-Agent", "Aria2App");
             }
             connection.setRequestProperty("Connection", "keep-alive");
 

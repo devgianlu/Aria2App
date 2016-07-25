@@ -203,6 +203,7 @@ public class Utils {
         }
     }
 
+    // TODO: Accept Exception as message and save stackTrace to hided log
     public enum TOAST_MESSAGES {
         /* WebSocket */
         WS_OPENED("WebSocket connected!", 101, false),
@@ -253,7 +254,9 @@ public class Utils {
         CANNOT_START_DOWNLOAD("Cannot start download!", 416, true),
         NO_WRITE_PERMISSION("You denied write permission!", 417, true),
         CANT_VERIFY_LICENSE("Can't verify Google license!", 418, true),
-        ANOTHER_DOWNLOAD_RUNNING("Another file is current downloading! Please wait...", 419, false);
+        ANOTHER_DOWNLOAD_RUNNING("Another file is current downloading! Please wait...", 419, false),
+        CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", 420, true),
+        SOURCE_REFRESHED("Source file for options refreshed!", 421, false);
 
         private final String text;
         private final int code;
