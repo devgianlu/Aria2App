@@ -8,106 +8,113 @@ import com.gianlu.jtitan.Aria2Helper.File;
 import com.gianlu.jtitan.Aria2Helper.IDownload;
 import com.gianlu.jtitan.Aria2Helper.IGID;
 import com.gianlu.jtitan.Aria2Helper.IOption;
+import com.gianlu.jtitan.Aria2Helper.ISuccess;
 import com.gianlu.jtitan.Aria2Helper.JTA2;
 
 import java.util.Collections;
 import java.util.Map;
 
 public class DownloadAction {
-    private String downloadGID;
-    private IAction handler;
-    private JTA2 jta2;
-    private Activity context;
-    private boolean forceAction;
-
-    public DownloadAction(String gid, IAction handler, Activity context) {
-        downloadGID = gid;
-        this.handler = handler;
-        this.context = context;
-
-        jta2 = Utils.readyJTA2(context);
-        forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_forceAction", true);
-    }
-
-    public void pause() {
-        jta2.pause(downloadGID, new IGID() {
+    public static void pause(final Activity context, final String gid, final IPause handler) {
+        Utils.readyJTA2(context).pause(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.done(gid);
+                handler.onPaused();
             }
 
             @Override
             public void onException(Exception ex) {
-                if (forceAction) {
-                    forcePause();
+                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_forceAction", true)) {
+                    forcePause(context, gid, handler);
                 } else {
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_PAUSE, ex.getMessage());
-                    handler.failed(ex);
+                    handler.onException(ex);
                 }
             }
         });
     }
 
-    // TODO: Move up/down in queue
-
-    public void forcePause() {
-        jta2.forcePause(downloadGID, new IGID() {
+    public static void forcePause(final Activity context, String gid, final IPause handler) {
+        Utils.readyJTA2(context).forcePause(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.done(gid);
+                handler.onPaused();
             }
 
             @Override
             public void onException(Exception ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_FORCEPAUSE, ex.getMessage());
-                handler.failed(ex);
+                handler.onException(ex);
             }
         });
     }
 
-    public void unpause() {
-        jta2.unpause(downloadGID, new IGID() {
+    public static void moveUp(final Activity context, String gid, final IMove handler) {
+        Utils.readyJTA2(context).changePosition(gid, -1, JTA2.POSITION_HOW.POS_CUR, new ISuccess() {
             @Override
-            public void onGID(String gid) {
-                handler.done(gid);
+            public void onSuccess() {
+                handler.onMoved();
             }
 
             @Override
             public void onException(Exception ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_UNPAUSE, ex.getMessage());
-                handler.failed(ex);
+                handler.onException(ex);
             }
         });
     }
 
-    public void remove(Download.STATUS status) {
+    public static void moveDown(final Activity context, String gid, final IMove handler) {
+        Utils.readyJTA2(context).changePosition(gid, 1, JTA2.POSITION_HOW.POS_CUR, new ISuccess() {
+            @Override
+            public void onSuccess() {
+                handler.onMoved();
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public static void unpause(final Activity context, String gid, final IUnpause handler) {
+        Utils.readyJTA2(context).unpause(gid, new IGID() {
+            @Override
+            public void onGID(String gid) {
+                handler.onUnpaused();
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public static void remove(final Activity context, final String gid, Download.STATUS status, final IRemove handler) {
         if (status == Download.STATUS.COMPLETE || status == Download.STATUS.ERROR || status == Download.STATUS.REMOVED) {
-            jta2.removeDownloadResult(downloadGID, new IGID() {
+            Utils.readyJTA2(context).removeDownloadResult(gid, new IGID() {
                 @Override
                 public void onGID(String gid) {
-                    handler.done(gid);
+                    handler.onRemovedResult();
                 }
 
                 @Override
                 public void onException(Exception ex) {
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_REMOVERESULT, ex.getMessage());
-                    handler.failed(ex);
+                    handler.onException(false, ex);
                 }
             });
         } else {
-            jta2.remove(downloadGID, new IGID() {
+            Utils.readyJTA2(context).remove(gid, new IGID() {
                 @Override
                 public void onGID(String gid) {
-                    handler.done(gid);
+                    handler.onRemoved();
                 }
 
                 @Override
                 public void onException(Exception ex) {
-                    if (forceAction) {
-                        forceRemove();
+                    if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_forceAction", true)) {
+                        forceRemove(context, gid, handler);
                     } else {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_REMOVE, ex.getMessage());
-                        handler.failed(ex);
+                        handler.onException(true, ex);
                     }
                 }
             });
@@ -115,83 +122,110 @@ public class DownloadAction {
 
     }
 
-    public void forceRemove() {
-        jta2.forceRemove(downloadGID, new IGID() {
+    public static void forceRemove(final Activity context, String gid, final IRemove handler) {
+        Utils.readyJTA2(context).forceRemove(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.done(gid);
+                handler.onRemoved();
             }
 
             @Override
             public void onException(Exception ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_FORCEREMOVE, ex.getMessage());
-                handler.failed(ex);
+                handler.onException(true, ex);
             }
         });
     }
 
-    public void restart() {
-        jta2.tellStatus(downloadGID, new IDownload() {
+    public static void restart(final Activity context, final String gid, final IRestart handler) {
+        Utils.readyJTA2(context).tellStatus(gid, new IDownload() {
             @Override
             public void onDownload(final Download download) {
-                jta2.getOption(downloadGID, new IOption() {
+                Utils.readyJTA2(context).getOption(gid, new IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
                         String url = download.files.get(0).uris.get(File.URI_STATUS.USED);
 
-                        jta2.addUri(Collections.singletonList(url), null, options, new IGID() {
+                        Utils.readyJTA2(context).addUri(Collections.singletonList(url), null, options, new IGID() {
                             @Override
-                            public void onGID(String gid) {
-                                jta2.removeDownloadResult(downloadGID, new IGID() {
+                            public void onGID(final String newGid) {
+                                Utils.readyJTA2(context).removeDownloadResult(gid, new IGID() {
                                     @Override
                                     public void onGID(String gid) {
-                                        handler.done(gid);
+                                        handler.onRestarted(newGid);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_REMOVERESULT, ex.getMessage());
-                                        handler.failed(ex);
+                                        handler.onRemoveResultException(ex);
                                     }
                                 });
                             }
 
                             @Override
                             public void onException(Exception ex) {
-                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_ADDDOWNLOAD, ex.getMessage());
-                                handler.failed(ex);
+                                handler.onException(ex);
                             }
                         });
                     }
 
                     @Override
                     public void onException(Exception ex) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
-                        handler.failed(ex);
+                        handler.onGatheringInformationException(ex);
                     }
                 });
             }
 
             @Override
-            public void onException(final Exception exception) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
-                handler.failed(exception);
+            public void onException(final Exception ex) {
+                handler.onGatheringInformationException(ex);
             }
         });
     }
 
     public enum ACTION {
         PAUSE,
+        MOVE_UP,
+        MOVE_DOWN,
         REMOVE,
         RESTART,
         RESUME,
         SHOW_MORE
     }
 
-    public interface IAction {
-        void done(String response);
+    public interface IPause {
+        void onPaused();
 
-        void failed(Exception exception);
+        void onException(Exception ex);
+    }
+
+    public interface IMove {
+        void onMoved();
+
+        void onException(Exception ex);
+    }
+
+    public interface IUnpause {
+        void onUnpaused();
+
+        void onException(Exception ex);
+    }
+
+    public interface IRemove {
+        void onRemoved();
+
+        void onRemovedResult();
+
+        void onException(boolean b, Exception ex);
+    }
+
+    public interface IRestart {
+        void onRestarted(String gid);
+
+        void onException(Exception ex);
+
+        void onRemoveResultException(Exception ex);
+
+        void onGatheringInformationException(Exception ex);
     }
 }
 

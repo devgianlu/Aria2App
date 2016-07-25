@@ -22,6 +22,7 @@ import com.gianlu.aria2app.R;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Due to slow run must became an Activity (or optimization)
 public class OptionAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<OptionHeader> headers;

@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
                     list.put(DownloadAction.ACTION.PAUSE, getString(R.string.pause));
                     list.put(DownloadAction.ACTION.RESUME, getString(R.string.resume));
                     list.put(DownloadAction.ACTION.REMOVE, getString(R.string.remove));
+                    list.put(DownloadAction.ACTION.MOVE_DOWN, getString(R.string.move_down));
+                    list.put(DownloadAction.ACTION.MOVE_UP, getString(R.string.move_up));
                     list.put(DownloadAction.ACTION.RESTART, getString(R.string.restart));
                     list.put(DownloadAction.ACTION.SHOW_MORE, getString(R.string.show_more));
 
@@ -129,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
                         case ACTIVE:
                             list.remove(DownloadAction.ACTION.RESUME);
                             list.remove(DownloadAction.ACTION.RESTART);
+                            list.remove(DownloadAction.ACTION.MOVE_UP);
+                            list.remove(DownloadAction.ACTION.MOVE_DOWN);
                             break;
                         case WAITING:
                             list.remove(DownloadAction.ACTION.PAUSE);
@@ -138,17 +142,23 @@ public class MainActivity extends AppCompatActivity {
                         case PAUSED:
                             list.remove(DownloadAction.ACTION.PAUSE);
                             list.remove(DownloadAction.ACTION.RESTART);
+                            list.remove(DownloadAction.ACTION.MOVE_UP);
+                            list.remove(DownloadAction.ACTION.MOVE_DOWN);
                             break;
                         case COMPLETE:
                             list.remove(DownloadAction.ACTION.PAUSE);
                             list.remove(DownloadAction.ACTION.RESUME);
                             list.remove(DownloadAction.ACTION.RESTART);
+                            list.remove(DownloadAction.ACTION.MOVE_UP);
+                            list.remove(DownloadAction.ACTION.MOVE_DOWN);
                             break;
                         case ERROR:
                             list.remove(DownloadAction.ACTION.PAUSE);
                             list.remove(DownloadAction.ACTION.RESUME);
                             list.remove(DownloadAction.ACTION.RESTART);
                             list.remove(DownloadAction.ACTION.SHOW_MORE);
+                            list.remove(DownloadAction.ACTION.MOVE_UP);
+                            list.remove(DownloadAction.ACTION.MOVE_DOWN);
                             break;
                         case REMOVED:
                             if (item.download.isBitTorrent)
@@ -156,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
                             list.remove(DownloadAction.ACTION.PAUSE);
                             list.remove(DownloadAction.ACTION.RESUME);
                             list.remove(DownloadAction.ACTION.SHOW_MORE);
+                            list.remove(DownloadAction.ACTION.MOVE_UP);
+                            list.remove(DownloadAction.ACTION.MOVE_DOWN);
                             break;
                     }
 
@@ -163,38 +175,94 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             DownloadAction.ACTION action = new ArrayList<>(list.keySet()).get(i);
-                            DownloadAction.IAction handler = new DownloadAction.IAction() {
+                            DownloadAction.IMove iMove = new DownloadAction.IMove() {
                                 @Override
-                                public void done(String response) {
-                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_ACTIONSUBMITTED, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            loadDownloads = new LoadDownloads(MainActivity.this, downloadsListView, IloadDownloads);
-                                            new Thread(loadDownloads).start();
-                                        }
-                                    });
+                                public void onMoved() {
+
                                 }
 
                                 @Override
-                                public void failed(final Exception exception) {
-                                    // Toast already displayed
-                                    exception.printStackTrace();
+                                public void onException(Exception ex) {
+                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_POSITION, ex.getMessage());
                                 }
                             };
 
-                            DownloadAction downloadAction = new DownloadAction(item.download.GID, handler, MainActivity.this);
                             switch (action) {
                                 case PAUSE:
-                                    downloadAction.pause();
+                                    DownloadAction.pause(MainActivity.this, item.getDownloadGID(), new DownloadAction.IPause() {
+                                        @Override
+                                        public void onPaused() {
+
+                                        }
+
+                                        @Override
+                                        public void onException(Exception ex) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_PAUSE, ex.getMessage());
+                                        }
+                                    });
                                     break;
                                 case REMOVE:
-                                    downloadAction.remove(item.download.status);
+                                    DownloadAction.remove(MainActivity.this, item.getDownloadGID(), item.download.status, new DownloadAction.IRemove() {
+                                        @Override
+                                        public void onRemoved() {
+
+                                        }
+
+                                        @Override
+                                        public void onRemovedResult() {
+
+                                        }
+
+                                        @Override
+                                        public void onException(boolean b, Exception ex) {
+                                            if (b)
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE, ex.getMessage());
+                                            else
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex.getMessage());
+                                        }
+                                    });
                                     break;
                                 case RESTART:
-                                    downloadAction.restart();
+                                    DownloadAction.restart(MainActivity.this, item.getDownloadGID(), new DownloadAction.IRestart() {
+                                        @Override
+                                        public void onRestarted(String gid) {
+
+                                        }
+
+                                        @Override
+                                        public void onException(Exception ex) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onRemoveResultException(Exception ex) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onGatheringInformationException(Exception ex) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                                        }
+                                    });
                                     break;
                                 case RESUME:
-                                    downloadAction.unpause();
+                                    DownloadAction.unpause(MainActivity.this, item.getDownloadGID(), new DownloadAction.IUnpause() {
+                                        @Override
+                                        public void onUnpaused() {
+
+                                        }
+
+                                        @Override
+                                        public void onException(Exception ex) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_UNPAUSE, ex.getMessage());
+                                        }
+                                    });
+                                    break;
+                                case MOVE_DOWN:
+                                    DownloadAction.moveDown(MainActivity.this, item.getDownloadGID(), iMove);
+                                    break;
+                                case MOVE_UP:
+                                    DownloadAction.moveUp(MainActivity.this, item.getDownloadGID(), iMove);
                                     break;
                                 case SHOW_MORE:
                                     Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
@@ -236,7 +304,11 @@ public class MainActivity extends AppCompatActivity {
                             Charting.newChart(MainActivity.this, mainChart);
                             updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
                             new Thread(updater).start();
-                            if (progressDialog.isShowing()) progressDialog.dismiss();
+                            try {
+                                if (progressDialog.isShowing()) progressDialog.dismiss();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
 
                             if (getIntent().getStringExtra("gid") == null) return;
 
@@ -507,7 +579,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess() {
                                         progressDialog.dismiss();
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONSCHANGED);
+                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
 
                                         if (updater != null) {
                                             updater.stop(new IThread() {
@@ -528,7 +600,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onException(Exception exception) {
                                         progressDialog.dismiss();
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGEOPTIONS, exception.getMessage());
+                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception.getMessage());
                                     }
                                 });
                             }

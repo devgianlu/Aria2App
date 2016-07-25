@@ -31,7 +31,7 @@
 
         <!-- Add profile activity -->
         <activity
-            android:name=".SelectProfile.AddProfile"
+            android:name=".SelectProfile.AddProfileActivity"
             android:parentActivityName=".SelectProfileActivity" />
 
         <!-- Main activity -->

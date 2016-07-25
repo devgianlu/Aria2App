@@ -18,7 +18,7 @@ import android.widget.ExpandableListView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.CheckerCallback;
-import com.gianlu.aria2app.SelectProfile.AddProfile;
+import com.gianlu.aria2app.SelectProfile.AddProfileActivity;
 import com.gianlu.aria2app.SelectProfile.MultiModeProfileItem;
 import com.gianlu.aria2app.SelectProfile.ProfileItem;
 import com.gianlu.aria2app.SelectProfile.ProfilesCustomAdapter;
@@ -87,7 +87,7 @@ public class SelectProfileActivity extends AppCompatActivity {
                     profiles.add(MultiModeProfileItem.fromFile(this, profile));
                 }
             } catch (FileNotFoundException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FILE_NOTFOUND, ex.getMessage());
+                Utils.UIToast(this, Utils.TOAST_MESSAGES.FILE_NOT_FOUND, ex.getMessage());
             } catch (JSONException | IOException ex) {
                 Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
                 ex.printStackTrace();
@@ -149,7 +149,7 @@ public class SelectProfileActivity extends AppCompatActivity {
                 new ProfilesCustomAdapter.OnItemEdit() {
                     @Override
                     public void onEdit(ProfileItem item) {
-                        startActivity(new Intent(SelectProfileActivity.this, AddProfile.class)
+                        startActivity(new Intent(SelectProfileActivity.this, AddProfileActivity.class)
                                 .putExtra("edit", true)
                                 .putExtra("isSingleMode", item.isSingleMode())
                                 .putExtra("name", item.getProfileName()));
@@ -183,7 +183,7 @@ public class SelectProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.selectProfileMenu_add:
-                startActivity(new Intent(this, AddProfile.class).putExtra("edit", false));
+                startActivity(new Intent(this, AddProfileActivity.class).putExtra("edit", false));
                 break;
             case R.id.selectProfileMenu_refresh:
                 new Thread(new LoadProfileStatus(this, listView)).start();

@@ -1,5 +1,7 @@
 package com.gianlu.jtitan.Aria2Helper;
 
+import android.support.annotation.Nullable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,13 +22,22 @@ public class GlobalStats {
         this.numStoppedTotal = numStoppedTotal;
     }
 
+    @Nullable
+    private static Integer parseInt(String val) {
+        try {
+            return Integer.parseInt(val);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     public static GlobalStats fromString(JSONObject string) throws JSONException {
         JSONObject jResult = string.getJSONObject("result");
-        return new GlobalStats(Integer.parseInt(jResult.optString("downloadSpeed")),
-                Integer.parseInt(jResult.optString("uploadSpeed")),
-                Integer.parseInt(jResult.optString("numActive")),
-                Integer.parseInt(jResult.optString("numWaiting")),
-                Integer.parseInt(jResult.optString("numStopped")),
-                Integer.parseInt(jResult.optString("numStoppedTotal")));
+        return new GlobalStats(parseInt(jResult.optString("downloadSpeed")),
+                parseInt(jResult.optString("uploadSpeed")),
+                parseInt(jResult.optString("numActive")),
+                parseInt(jResult.optString("numWaiting")),
+                parseInt(jResult.optString("numStopped")),
+                parseInt(jResult.optString("numStoppedTotal")));
     }
 }

@@ -642,6 +642,33 @@ public class JTA2 {
         });
     }
 
+    public void changePosition(String gid, int pos, POSITION_HOW how, final ISuccess handler) {
+        final JSONObject request = new A2Request();
+        try {
+            request.put("method", "aria2.changePosition");
+            JSONArray params = new A2Params();
+            params.put(gid)
+                    .put(pos)
+                    .put(how.name());
+            request.put("params", params);
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        outResponseAsync(request.toString(), new JTHandler() {
+            @Override
+            public void onReceive(JTResponse response) {
+                handler.onSuccess();
+            }
+
+            @Override
+            public void onException(Exception exception) {
+                handler.onException(exception);
+            }
+        });
+    }
+
     //aria2.changeGlobalOption
     public void changeGlobalOption(Map<String, String> options, final ISuccess handler) {
         final JSONObject request = new A2Request();
@@ -697,6 +724,13 @@ public class JTA2 {
                 handler.onException(exception);
             }
         });
+    }
+
+    //aria2.changePosition
+    public enum POSITION_HOW {
+        POS_CUR,
+        POS_END,
+        POS_SET
     }
 
     private class A2Request extends JSONObject {

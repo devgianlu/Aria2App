@@ -1,5 +1,8 @@
 package com.gianlu.jtitan.Aria2Helper;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,6 +92,33 @@ public class Download {
         this.errorMessage = errorMessage;
     }
 
+    @Nullable
+    private static Integer parseInt(String val) {
+        try {
+            return Integer.parseInt(val);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private static Long parseLong(String val) {
+        try {
+            return Long.parseLong(val);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @NonNull
+    private static Boolean parseBoolean(String val) {
+        try {
+            return Boolean.parseBoolean(val);
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
     public static Download fromString(JSONObject jResult) throws JSONException {
         if (!jResult.isNull("bittorrent")) {
             // BitTorrent
@@ -104,19 +134,12 @@ public class Download {
                     uris.put(File.uriStatusFromString(jUri.optString("status")), jUri.optString("uri"));
                 }
 
-                String index = jFile.optString("index");
-                String completedLength = jFile.optString("completedLength");
-                String length = jFile.optString("length");
-                String selected = jFile.optString("selected");
-
-                File file = new File((index == null ? null : Integer.parseInt(index)),
+                files.add(new File(parseInt(jFile.optString("index")),
                         jFile.optString("path"),
-                        (completedLength == null ? null : Long.parseLong(completedLength)),
-                        (length == null ? null : Long.parseLong(length)),
-                        (selected != null && Boolean.parseBoolean(selected)),
-                        uris);
-
-                files.add(file);
+                        parseLong(jFile.optString("completedLength")),
+                        parseLong(jFile.optString("length")),
+                        parseBoolean(jFile.optString("selected")),
+                        uris));
             }
 
             List<String> announceList = new ArrayList<>();
@@ -125,53 +148,37 @@ public class Download {
                 announceList.add(jAnnounceList.getJSONArray(c).optString(0));
             }
 
-            String creationDate = jResult.getJSONObject("bittorrent").optString("creationDate");
-            String completedLength = jResult.optString("completedLength");
-            String totalLength = jResult.optString("totalLength");
-            String uploadLength = jResult.optString("uploadLength");
-            String pieceLength = jResult.optString("pieceLength");
-            String connections = jResult.optString("connections");
-            String errorCode = jResult.optString("errorCode");
-            String numPieces = jResult.optString("numPieces");
-            String downloadSpeed = jResult.optString("downloadSpeed");
-            String uploadSpeed = jResult.optString("uploadSpeed");
-            String seeder = jResult.optString("seeder");
-            String numSeeders = jResult.optString("numSeeders");
-
             JSONObject info = jResult.getJSONObject("bittorrent").optJSONObject("info");
-            String name;
-            if (info == null) {
-                name = null;
-            } else {
-                name = info.optString("name");
-            }
+            String name = null;
+            if (info != null) name = info.optString("name");
 
             BitTorrent bitTorrent = new BitTorrent(announceList,
-                    BitTorrent.modeFromString(jResult.getJSONObject("bittorrent").optString("mode")),
+                    BitTorrent.modeFromString(
+                            jResult.getJSONObject("bittorrent").optString("mode")),
                     jResult.getJSONObject("bittorrent").optString("comment"),
-                    (creationDate == null || creationDate.isEmpty() ? null : Integer.parseInt(creationDate)),
-                    (name == null ? null : name));
+                    parseInt(jResult.getJSONObject("bittorrent").optString("creationDate")),
+                    name);
 
             return new Download(true,
                     jResult.optString("bitfield"),
-                    (completedLength == null || completedLength.isEmpty() ? null : Long.parseLong(completedLength)),
-                    (totalLength == null || totalLength.isEmpty() ? null : Long.parseLong(totalLength)),
-                    (uploadLength == null || uploadLength.isEmpty() ? null : Long.parseLong(uploadLength)),
+                    parseLong(jResult.optString("completedLength")),
+                    parseLong(jResult.optString("totalLength")),
+                    parseLong(jResult.optString("uploadLength")),
                     jResult.optString("dir"),
-                    (connections == null || connections.isEmpty() ? null : Integer.parseInt(connections)),
+                    parseInt(jResult.optString("connections")),
                     jResult.optString("gid"),
-                    (numPieces == null || numPieces.isEmpty() ? null : Integer.parseInt(numPieces)),
-                    (pieceLength == null ? null : Long.parseLong(pieceLength)),
+                    parseInt(jResult.optString("numPieces")),
+                    parseLong(jResult.optString("pieceLength")),
                     Download.statusFromString(jResult.optString("status")),
-                    (downloadSpeed == null || downloadSpeed.isEmpty() ? null : Integer.parseInt(downloadSpeed)),
-                    (uploadSpeed == null || uploadSpeed.isEmpty() ? null : Integer.parseInt(uploadSpeed)),
+                    parseInt(jResult.optString("downloadSpeed")),
+                    parseInt(jResult.optString("uploadSpeed")),
                     files,
-                    (errorCode == null || errorCode.isEmpty() ? null : Integer.parseInt(errorCode)),
+                    parseInt(jResult.optString("errorCode")),
                     jResult.optString("errorMessage"),
                     jResult.optString("followedBy"),
                     bitTorrent,
-                    (seeder != null && Boolean.parseBoolean(seeder)),
-                    (numSeeders == null || numSeeders.isEmpty() ? null : Integer.parseInt(numSeeders)),
+                    parseBoolean(jResult.optString("seeder")),
+                    parseInt(jResult.optString("numSeeders")),
                     jResult.optString("infoHash"));
         } else {
             // HTTP
@@ -187,41 +194,29 @@ public class Download {
                     uris.put(File.uriStatusFromString(jUri.optString("status")), jUri.optString("uri"));
                 }
 
-                File file = new File(Integer.parseInt(jFile.optString("index")),
+                files.add(new File(parseInt(jFile.optString("index")),
                         jFile.optString("path"),
-                        Long.parseLong(jFile.optString("completedLength")),
-                        Long.parseLong(jFile.optString("length")),
-                        Boolean.parseBoolean(jFile.optString("selected")),
-                        uris);
-
-                files.add(file);
+                        parseLong(jFile.optString("completedLength")),
+                        parseLong(jFile.optString("length")),
+                        parseBoolean(jFile.optString("selected")),
+                        uris));
             }
-
-            String completedLength = jResult.optString("completedLength");
-            String totalLength = jResult.optString("totalLength");
-            String uploadLength = jResult.optString("uploadLength");
-            String pieceLength = jResult.optString("pieceLength");
-            String connections = jResult.optString("connections");
-            String errorCode = jResult.optString("errorCode");
-            String numPieces = jResult.optString("numPieces");
-            String downloadSpeed = jResult.optString("downloadSpeed");
-            String uploadSpeed = jResult.optString("uploadSpeed");
 
             return new Download(false,
                     jResult.optString("bitfield"),
-                    (completedLength == null ? null : Long.parseLong(completedLength)),
-                    (totalLength == null ? null : Long.parseLong(totalLength)),
-                    (uploadLength == null ? null : Long.parseLong(uploadLength)),
+                    parseLong(jResult.optString("completedLength")),
+                    parseLong(jResult.optString("totalLength")),
+                    parseLong(jResult.optString("uploadLength")),
                     jResult.optString("dir"),
-                    (connections == null ? null : Integer.parseInt(connections)),
+                    parseInt(jResult.optString("connections")),
                     jResult.optString("gid"),
-                    (numPieces == null ? null : Integer.parseInt(numPieces)),
-                    (pieceLength == null ? null : Long.parseLong(pieceLength)),
+                    parseInt(jResult.optString("numPieces")),
+                    parseLong(jResult.optString("pieceLength")),
                     Download.statusFromString(jResult.optString("status")),
-                    (downloadSpeed == null ? null : Integer.parseInt(downloadSpeed)),
-                    (uploadSpeed == null ? null : Integer.parseInt(uploadSpeed)),
+                    parseInt(jResult.optString("downloadSpeed")),
+                    parseInt(jResult.optString("uploadSpeed")),
                     files,
-                    (errorCode == null || errorCode.isEmpty() ? null : Integer.parseInt(errorCode)),
+                    parseInt(jResult.optString("errorCode")),
                     jResult.optString("errorMessage"),
                     jResult.optString("followedBy"));
         }

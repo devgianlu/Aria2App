@@ -128,7 +128,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                             @Override
                             public void onException(Exception ex) {
                                 progressDialog.dismiss();
-                                Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADDDOWNLOAD, ex.getMessage());
+                                Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
                             }
                         });
                         break;
@@ -141,7 +141,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                             in = getContentResolver().openInputStream(torrentFragment.getData());
                         } catch (FileNotFoundException ex) {
                             progressDialog.dismiss();
-                            Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADDDOWNLOAD, ex.getMessage());
+                            Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
                             break;
                         }
                         if (in == null) break;
@@ -161,7 +161,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                             base64 = Base64.encodeToString(buffer.toByteArray(), Base64.NO_WRAP);
                         } catch (IOException ex) {
                             progressDialog.dismiss();
-                            Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADDDOWNLOAD, ex.getMessage());
+                            Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
                             break;
                         }
 
@@ -186,7 +186,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                                 @Override
                                 public void onException(Exception ex) {
                                     progressDialog.dismiss();
-                                    Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADDDOWNLOAD, ex.getMessage());
+                                    Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
                                 }
                             });
                         } else {
@@ -210,7 +210,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                                 @Override
                                 public void onException(Exception ex) {
                                     progressDialog.dismiss();
-                                    Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADDDOWNLOAD, ex.getMessage());
+                                    Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
                                 }
                             });
                         }

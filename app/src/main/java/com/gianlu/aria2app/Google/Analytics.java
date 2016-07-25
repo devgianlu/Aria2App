@@ -12,6 +12,7 @@ public class Analytics {
     public static final String CATEGORY_USER_INPUT = "User input";
     public static final String ACTION_REFRESH = "Refresh";
     public static final String ACTION_NEW_PROFILE = "New profile";
+    public static final String ACTION_DELETE_PROFILE = "Profile deleted";
     public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "Global options changed";
     public static final String ACTION_CHANGED_DOWNLOAD_OPTIONS = "Download options changed";
     public static final String ACTION_DOWNLOAD_FILE = "File download started";

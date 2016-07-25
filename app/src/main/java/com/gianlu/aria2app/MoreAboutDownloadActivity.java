@@ -263,7 +263,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess() {
                                         progressDialog.dismiss();
-                                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONSCHANGED);
+                                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
 
                                         MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
                                             @Override
@@ -289,7 +289,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                     @Override
                                     public void onException(Exception exception) {
                                         progressDialog.dismiss();
-                                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGEOPTIONS, exception.getMessage());
+                                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception.getMessage());
                                     }
                                 });
                             }

@@ -78,6 +78,8 @@
     <string name="address">Address:</string>
     <string name="address_hint" translatable="false">127.0.0.1</string>
     <string name="port">Port:</string>
+    <string name="move_up">Move up in queue</string>
+    <string name="move_down">Move down in queue</string>
     <string name="port_hint" translatable="false">6800</string>
     <string name="endpoint" translatable="false">RPC endpoint:</string>
     <string name="endpoint_default" translatable="false">/jsonrpc</string>
@@ -864,6 +866,7 @@
         <item />
     </string-array>
 
+    <!-- TODO: Create parser -->
     <string-array name="activeDownloadOptions">
         <item>bt-max-peers</item>
         <item>bt-request-peer-speed-limit</item>
