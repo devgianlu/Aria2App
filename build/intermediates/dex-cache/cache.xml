@@ -1,12 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" >
+<items version="2" />
 
-    <item
-        jar="C:\Users\Gianlu\Documents\AndroidStudio\Aria2App\app\build\intermediates\exploded-aar\Aria2App\jtitan\unspecified\jars\classes.jar"
-        jumboMode="false"
-        revision="24.0.0"
-        sha1="869e75141ef7e9d3ecc1ca9c5364b4bc74071992">
-        <dex dex="C:\Users\Gianlu\Documents\AndroidStudio\Aria2App\app\build\intermediates\pre-dexed\release\Aria2App-jtitan-unspecified_6a02165aba0a40245d014bae4682df5e61c171fe.jar" />
-    </item>
-
-</items>

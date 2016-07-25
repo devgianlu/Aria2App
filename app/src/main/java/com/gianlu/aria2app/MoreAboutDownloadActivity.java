@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
 
@@ -229,7 +230,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(MoreAboutDownloadActivity.this);
 
-                @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.options_dialog, null);
+                @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.options_dialog, null);
                 ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.moreAboutDownload_dialog_expandableListView);
                 listView.setAdapter(new OptionAdapter(MoreAboutDownloadActivity.this, headers, children));
 
@@ -323,9 +324,18 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                 MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AlertDialog dialog = builder.create();
+                        final AlertDialog dialog = builder.create();
                         dialog.show();
                         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                        ViewTreeObserver vto = view.getViewTreeObserver();
+                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
+                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                        });
                     }
                 });
             }
