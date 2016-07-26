@@ -9,37 +9,14 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="85037883-59e4-41d1-9224-e97940841673" name="Default" comment="Brand new Options system">
+    <list default="true" id="85037883-59e4-41d1-9224-e97940841673" name="Default" comment="SecretLog (to test)">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_jtitan_compileReleaseJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/DownloadsListing/LoadDownloads.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/DownloadsListing/LoadDownloads.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/LogsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/LogsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/AddDownloadActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/AddDownloadActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/TorrentFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/TorrentFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/URIFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/URIFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/UpdateUI.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Main/UpdateUI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MainSettingsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownload/UpdateUI.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownload/UpdateUI.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownloadActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/MoreAboutDownloadActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/SelectProfile/AddProfileActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/SelectProfile/AddProfileActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/SelectProfileActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/SelectProfileActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Services/InAppAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Services/InAppAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Services/InAppWebSocket.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Services/InAppWebSocket.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/TerminalActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/TerminalActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" afterPath="$PROJECT_DIR$/build/intermediates/dex-cache/cache.xml" />
     </list>
@@ -65,8 +42,8 @@
       <file leaf-file-name="Utils.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.457971">
-              <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.4826087">
+              <caret line="136" column="0" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
               <folding>
                 <element signature="method#SpeedFormatter#0;class#Utils#0" expanded="false" />
                 <element signature="method#DimensionFormatter#0;class#Utils#0" expanded="false" />
@@ -3898,7 +3875,13 @@
       <option name="project" value="LOCAL" />
       <updated>1469540129488</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="SecretLog (to test)">
+      <created>1469541047005</created>
+      <option name="number" value="00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1469541047005</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView">
@@ -3963,7 +3946,8 @@
     <MESSAGE value="Fixed slow OptionsDialog run!!!!!!" />
     <MESSAGE value="Successfully downloading and parsing source to JSON" />
     <MESSAGE value="Brand new Options system" />
-    <option name="LAST_COMMIT_MESSAGE" value="Brand new Options system" />
+    <MESSAGE value="SecretLog (to test)" />
+    <option name="LAST_COMMIT_MESSAGE" value="SecretLog (to test)" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -4398,8 +4382,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/gianlu/aria2app/Utils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.457971">
-          <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.4826087">
+          <caret line="136" column="0" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
           <folding>
             <element signature="method#SpeedFormatter#0;class#Utils#0" expanded="false" />
             <element signature="method#DimensionFormatter#0;class#Utils#0" expanded="false" />

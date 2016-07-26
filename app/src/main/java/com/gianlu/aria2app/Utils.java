@@ -174,7 +174,6 @@ public class Utils {
 
         LogMe(context, message + " Details: " + message_extras, message.isError());
     }
-
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Exception exception) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -183,6 +182,7 @@ public class Utils {
             }
         });
 
+        LogMe(context, message + " Details: " + exception.getMessage(), message.isError());
         SecretLog(context, exception);
     }
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras, Runnable extra) {
@@ -195,7 +195,6 @@ public class Utils {
         context.runOnUiThread(extra);
         LogMe(context, message + " Details: " + message_extras, message.isError());
     }
-
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Exception exception, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -204,6 +203,8 @@ public class Utils {
             }
         });
         context.runOnUiThread(extra);
+
+        LogMe(context, message + " Details: " + exception.getMessage(), message.isError());
         SecretLog(context, exception);
     }
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, Runnable extra) {
