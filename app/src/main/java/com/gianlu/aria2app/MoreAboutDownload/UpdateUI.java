@@ -155,7 +155,7 @@ public class UpdateUI implements Runnable {
             try {
                 download = jta2.tellStatus(downloadGID);
             } catch (IOException ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                 _shouldStop = true;
                 break;
             }
@@ -411,14 +411,14 @@ public class UpdateUI implements Runnable {
 
                             @Override
                             public void onException(Exception exception) {
-                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_INCEXCFILE, "Index: " + file.index + " " + exception.getMessage());
+                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_INCEXCFILE, exception);
                             }
                         });
                     }
 
                     @Override
                     public void onException(Exception exception) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                     }
                 });
             }
@@ -453,7 +453,7 @@ public class UpdateUI implements Runnable {
                         URI addr = new URI(directDownloadAddr);
                         uri = new URI(addr.getScheme(), null, addr.getHost(), addr.getPort(), file.getRelativePath(dir), null, null);
                     } catch (URISyntaxException ex) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_START_DOWNLOAD, ex.getMessage());
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_START_DOWNLOAD, ex);
                         return;
                     }
 
@@ -517,7 +517,7 @@ public class UpdateUI implements Runnable {
                         @Override
                         public void onException(Exception ex) {
                             pdh.dismiss();
-                            Utils.UIToast(context, Utils.TOAST_MESSAGES.FILE_DOWNLOAD_FAILED, ex.getMessage());
+                            Utils.UIToast(context, Utils.TOAST_MESSAGES.FILE_DOWNLOAD_FAILED, ex);
                         }
 
                         @Override
@@ -637,14 +637,14 @@ public class UpdateUI implements Runnable {
 
                             @Override
                             public void onException(Exception exception) {
-                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_INCEXCFILES, "Folder: " + directory.name + " " + exception.getMessage());
+                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_INCEXCFILES, exception);
                             }
                         });
                     }
 
                     @Override
                     public void onException(Exception exception) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                     }
                 });
             }

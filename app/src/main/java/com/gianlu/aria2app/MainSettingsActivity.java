@@ -129,7 +129,7 @@ public class MainSettingsActivity extends PreferenceActivity {
                     @Override
                     public void onError(Exception ex) {
                         pd.dismiss();
-                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex.getMessage());
+                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
                     }
 
                     @Override

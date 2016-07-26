@@ -91,7 +91,7 @@ public class URIFragment extends Fragment {
                     localOptions = new LocalParser(getContext(), false);
                 } catch (IOException | JSONException ex) {
                     pd.dismiss();
-                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     return;
                 }
 
@@ -139,7 +139,7 @@ public class URIFragment extends Fragment {
                         }
                     } catch (JSONException ex) {
                         pd.dismiss();
-                        Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                        Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     }
                 }
 
@@ -149,7 +149,7 @@ public class URIFragment extends Fragment {
             @Override
             public void onException(Exception exception) {
                 pd.dismiss();
-                Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
         });
 
@@ -160,7 +160,7 @@ public class URIFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        // TODO: I don't know...... view.findViewById(R.id.uriFragment_newUri).performClick();
+        view.findViewById(R.id.uriFragment_newUri).performClick();
     }
 
     public List<String> getUris() {

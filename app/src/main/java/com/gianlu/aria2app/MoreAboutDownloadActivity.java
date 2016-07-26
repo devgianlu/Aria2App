@@ -187,7 +187,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                     localOptions = new LocalParser(MoreAboutDownloadActivity.this, false);
                 } catch (IOException | JSONException ex) {
                     pd.dismiss();
-                    Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                    Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     return;
                 }
 
@@ -238,7 +238,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                         }
                     } catch (JSONException ex) {
                         pd.dismiss();
-                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     }
                 }
 
@@ -302,7 +302,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                     @Override
                                     public void onException(Exception exception) {
                                         pd.dismiss();
-                                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception.getMessage());
+                                        Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
                                     }
                                 });
                             }
@@ -355,7 +355,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             @Override
             public void onException(Exception exception) {
                 pd.dismiss();
-                Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
         });
     }

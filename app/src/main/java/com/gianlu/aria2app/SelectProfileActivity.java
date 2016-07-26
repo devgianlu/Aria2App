@@ -87,9 +87,9 @@ public class SelectProfileActivity extends AppCompatActivity {
                     profiles.add(MultiModeProfileItem.fromFile(this, profile));
                 }
             } catch (FileNotFoundException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FILE_NOT_FOUND, ex.getMessage());
+                Utils.UIToast(this, Utils.TOAST_MESSAGES.FILE_NOT_FOUND, ex);
             } catch (JSONException | IOException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
                 ex.printStackTrace();
             }
         }
@@ -250,7 +250,7 @@ public class SelectProfileActivity extends AppCompatActivity {
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause.getMessage());
+            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause);
             item.setStatus(SingleModeProfileItem.STATUS.ERROR);
             context.runOnUiThread(new Runnable() {
                 @Override

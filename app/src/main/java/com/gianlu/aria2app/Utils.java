@@ -23,9 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-/**
- * Utils class :D
- */
 public class Utils {
     public static String SpeedFormatter(float v) {
         if (v <= 0) {
@@ -36,7 +33,6 @@ public class Utils {
             return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
         }
     }
-
     public static String DimensionFormatter(float v) {
         if (v <= 0) {
             return "0 B";
@@ -46,7 +42,6 @@ public class Utils {
             return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
         }
     }
-
     public static String TimeFormatter(long sec) {
         int day = (int) TimeUnit.SECONDS.toDays(sec);
         long hours = TimeUnit.SECONDS.toHours(sec) -
@@ -87,7 +82,6 @@ public class Utils {
             return null;
         }
     }
-
     @Nullable
     public static Boolean parseBoolean(String val) {
         try {
@@ -106,7 +100,6 @@ public class Utils {
             return new WebSocketFactory().createSocket(url.replace("http://", "ws://"), 5000);
         }
     }
-
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean("a2_serverSSL", false)) {
@@ -126,7 +119,6 @@ public class Utils {
         pd.setCancelable(cancelable);
         return pd;
     }
-
     public static ProgressDialog fastProgressDialog(Context context, int message, boolean indeterminate, boolean cancelable) {
         return fastProgressDialog(context, "", context.getString(message), indeterminate, cancelable);
     }
@@ -142,10 +134,10 @@ public class Utils {
         return jta2;
     }
 
+
     public static void UIToast(final Activity context, final String text) {
         UIToast(context, text, Toast.LENGTH_SHORT);
     }
-
     public static void UIToast(final Activity context, final String text, final int duration) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -154,7 +146,6 @@ public class Utils {
             }
         });
     }
-
     public static void UIToast(final Activity context, final String text, final int duration, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -164,50 +155,81 @@ public class Utils {
         });
         context.runOnUiThread(extra);
     }
-
     public static void UIToast(final Activity context, final TOAST_MESSAGES message) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, "#" + message.toCode() + ": " + message.toString() + (message.isError() ? " See logs for more..." : ""), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, message.toString() + (message.isError() ? " See logs for more..." : ""), Toast.LENGTH_SHORT).show();
             }
         });
         LogMe(context, message.toString(), message.isError());
     }
-
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, "#" + message.toCode() + ": " + message.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
         LogMe(context, message + " Details: " + message_extras, message.isError());
     }
 
+    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Exception exception) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        SecretLog(context, exception);
+    }
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, "#" + message.toCode() + ": " + message.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
             }
         });
         context.runOnUiThread(extra);
         LogMe(context, message + " Details: " + message_extras, message.isError());
     }
 
+    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Exception exception, Runnable extra) {
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        context.runOnUiThread(extra);
+        SecretLog(context, exception);
+    }
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, message.toString() + " #" + message.toCode(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
             }
         });
         context.runOnUiThread(extra);
         LogMe(context, message.toString(), message.isError());
     }
 
+    public static void SecretLog(Activity context, Exception exx) {
+        try {
+            FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".secret", Context.MODE_APPEND);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
+            osw.write(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()) + " >> " + exx + "\n\n");
+            osw.flush();
+            osw.close();
+        } catch (IOException ex) {
+            UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
+            ex.printStackTrace();
+        }
+    }
     public static void LogMe(Activity context, String message, boolean isError) {
         try {
             FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".log", Context.MODE_APPEND);
@@ -222,68 +244,63 @@ public class Utils {
         }
     }
 
-    // TODO: Accept Exception as message and save stackTrace to hided log
     public enum TOAST_MESSAGES {
         /* WebSocket */
-        WS_OPENED("WebSocket connected!", 101, false),
-        WS_CLOSED("WebSocket has been closed!", 102, true),
-        WS_SERVICE_STOPPED("Notification service has been stopped!", 103, true),
-        WS_EXCEPTION("WebSocket exception!", 104, true),
+        WS_OPENED("WebSocket connected!", false),
+        WS_CLOSED("WebSocket has been closed!", true),
+        WS_SERVICE_STOPPED("Notification service has been stopped!", true),
+        WS_EXCEPTION("WebSocket exception!", true),
         /* Gathering information */
-        FAILED_GATHERING_INFORMATION("Failed on gathering information!", 201, true),
-        FILE_DOWNLOAD_COMPLETED("Download complete!", 202, false),
-        FILE_DOWNLOAD_FAILED("Download failed!", 203, true),
-        FILE_DOWNLOAD_USER_STOPPED("User stopped the download!", 204, false),
+        FAILED_GATHERING_INFORMATION("Failed on gathering information!", true),
+        FILE_DOWNLOAD_COMPLETED("Download complete!", false),
+        FILE_DOWNLOAD_FAILED("Download failed!", true),
+        FILE_DOWNLOAD_USER_STOPPED("User stopped the download!", false),
         /* Actions on downloads */
-        BRU("Failed to force pause download!", 301, true),
-        BRUU("Failed to force remove download!", 302, true),
-        FAILED_PAUSE("Failed to pause download!", 303, true),
-        FAILED_REMOVE("Failed to remove download!", 304, true),
-        FAILED_UNPAUSE("Failed to resume download!", 305, true),
-        FAILED_REMOVE_RESULT("Failed to remove download's result!", 306, true),
-        FAILED_ADD_DOWNLOAD("Failed to add new download!", 307, true),
-        FAILED_CHANGE_OPTIONS("Failed to change options for download!", 308, true),
-        FILE_INCLUDED("File included!", 309, false),
-        FILE_EXCLUDED("File excluded!", 310, false),
-        FAILED_INCEXCFILE("Failed including/excluding file!", 311, true),
-        DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", 312, false),
-        DOWNLOAD_URI_ADDED("New URI download added!", 314, false),
-        DOWNLOAD_TORRENT_ADDED("New BitTorrent download added!", 315, false),
-        DOWNLOAD_METALINK_ADDED("New Metalink download added!", 316, false),
-        FILES_INCLUDED("Files included!", 317, false),
-        FILES_EXCLUDED("Files excluded!", 317, false),
-        FAILED_INCEXCFILES("Failed including/excluding files!", 318, true),
-        FAILED_CHANGE_POSITION("Failed changing download's queue position!", 319, true),
+        FAILED_PAUSE("Failed to pause download!", true),
+        FAILED_REMOVE("Failed to remove download!", true),
+        FAILED_UNPAUSE("Failed to resume download!", true),
+        FAILED_REMOVE_RESULT("Failed to remove download's result!", true),
+        FAILED_ADD_DOWNLOAD("Failed to add new download!", true),
+        FAILED_CHANGE_OPTIONS("Failed to change options for download!", true),
+        FILE_INCLUDED("File included!", false),
+        FILE_EXCLUDED("File excluded!", false),
+        FAILED_INCEXCFILE("Failed including/excluding file!", true),
+        DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
+        DOWNLOAD_URI_ADDED("New URI download added!", false),
+        DOWNLOAD_TORRENT_ADDED("New BitTorrent download added!", false),
+        DOWNLOAD_METALINK_ADDED("New Metalink download added!", false),
+        FILES_INCLUDED("Files included!", false),
+        FILES_EXCLUDED("Files excluded!", false),
+        FAILED_INCEXCFILES("Failed including/excluding files!", true),
+        FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
         /* Application */
-        INVALID_PROFILE_NAME("Invalid profile name!", 401, false),
-        INVALID_SERVER_IP("Invalid server address!", 402, false),
-        INVALID_SERVER_PORT("Invalid server port, must be > 0 and < 65536!", 403, false),
-        INVALID_SERVER_ENDPOINT("Invalid server RPC endpoint!", 404, false),
-        INVALID_SERVER_TOKEN("Invalid server token!", 405, false),
-        FILE_NOT_FOUND("File not found!", 406, true),
-        FATAL_EXCEPTION("Fatal exception!", 407, true),
-        FAILED_LICENSE_VERIFICATION("Failed license verification due to app error!", 408, true),
-        APPLICATION_NOT_LICENSED("The application is not licensed! Please download it from Google Play!", 409, true),
-        FAILED_LOADING_AUTOCOMPLETION("Unable to load method's suggestions!", 410, true),
-        NO_EMAIL_CLIENT("There are no email clients installed.", 411, true),
-        INVALID_SSID("Invalid SSID!", 412, false),
-        MUST_PICK_DEFAULT("You must select one profile as default!", 413, false),
-        INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", 414, false),
-        INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", 415, false),
-        CANNOT_START_DOWNLOAD("Cannot start download!", 416, true),
-        NO_WRITE_PERMISSION("You denied write permission!", 417, true),
-        CANT_VERIFY_LICENSE("Can't verify Google license!", 418, true),
-        ANOTHER_DOWNLOAD_RUNNING("Another file is current downloading! Please wait...", 419, false),
-        CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", 420, true),
-        SOURCE_REFRESHED("Source file for options refreshed!", 421, false);
+        INVALID_PROFILE_NAME("Invalid profile name!", false),
+        INVALID_SERVER_IP("Invalid server address!", false),
+        INVALID_SERVER_PORT("Invalid server port, must be > 0 and < 65536!", false),
+        INVALID_SERVER_ENDPOINT("Invalid server RPC endpoint!", false),
+        INVALID_SERVER_TOKEN("Invalid server token!", false),
+        FILE_NOT_FOUND("File not found!", true),
+        FATAL_EXCEPTION("Fatal exception!", true),
+        FAILED_LICENSE_VERIFICATION("Failed license verification due to app error!", true),
+        APPLICATION_NOT_LICENSED("The application is not licensed! Please download it from Google Play!", true),
+        FAILED_LOADING_AUTOCOMPLETION("Unable to load method's suggestions!", true),
+        NO_EMAIL_CLIENT("There are no email clients installed.", true),
+        INVALID_SSID("Invalid SSID!", false),
+        MUST_PICK_DEFAULT("You must select one profile as default!", false),
+        INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
+        INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
+        CANNOT_START_DOWNLOAD("Cannot start download!", true),
+        NO_WRITE_PERMISSION("You denied write permission!", true),
+        CANT_VERIFY_LICENSE("Can't verify Google license!", true),
+        ANOTHER_DOWNLOAD_RUNNING("Another file is current downloading! Please wait...", false),
+        CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
+        SOURCE_REFRESHED("Source file for options refreshed!", false);
 
         private final String text;
-        private final int code;
         private final boolean isError;
 
-        TOAST_MESSAGES(final String text, final int code, final boolean isError) {
+        TOAST_MESSAGES(final String text, final boolean isError) {
             this.text = text;
-            this.code = code;
             this.isError = isError;
         }
 
@@ -291,11 +308,6 @@ public class Utils {
         public String toString() {
             return text;
         }
-
-        public int toCode() {
-            return code;
-        }
-
         public boolean isError() {
             return isError;
         }

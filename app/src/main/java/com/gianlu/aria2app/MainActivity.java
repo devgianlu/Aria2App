@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onException(Exception ex) {
-                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_POSITION, ex.getMessage());
+                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_POSITION, ex);
                                 }
                             };
 
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onException(Exception ex) {
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_PAUSE, ex.getMessage());
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_PAUSE, ex);
                                         }
                                     });
                                     break;
@@ -227,9 +227,9 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onException(boolean b, Exception ex) {
                                             if (b)
-                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE, ex.getMessage());
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE, ex);
                                             else
-                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex.getMessage());
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex);
                                         }
                                     });
                                     break;
@@ -242,17 +242,17 @@ public class MainActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onException(Exception ex) {
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex.getMessage());
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
                                         }
 
                                         @Override
                                         public void onRemoveResultException(Exception ex) {
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex.getMessage());
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex);
                                         }
 
                                         @Override
                                         public void onGatheringInformationException(Exception ex) {
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                                         }
                                     });
                                     break;
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onException(Exception ex) {
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_UNPAUSE, ex.getMessage());
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_UNPAUSE, ex);
                                         }
                                     });
                                     break;
@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
                     localOptions = new LocalParser(MainActivity.this, false);
                 } catch (IOException | JSONException ex) {
                     pd.dismiss();
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     return;
                 }
 
@@ -556,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (JSONException ex) {
                         pd.dismiss();
-                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     }
                 }
 
@@ -616,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onException(Exception exception) {
                                         pd.dismiss();
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception.getMessage());
+                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
                                     }
                                 });
                             }
@@ -664,7 +664,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onException(Exception exception) {
                 pd.dismiss();
-                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
         });
     }

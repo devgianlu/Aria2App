@@ -54,12 +54,12 @@ public class InAppAdapter extends WebSocketAdapter {
 
     @Override
     public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, exception.getMessage());
+        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, exception);
     }
 
     @Override
     public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_CLOSED, cause.getMessage());
+        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_CLOSED, cause);
     }
 
     @Override

@@ -211,7 +211,7 @@ public class TerminalActivity extends AppCompatActivity {
 
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-            Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.WS_CLOSED, "WebSocket error: " + cause.getMessage());
+            Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.WS_CLOSED, cause);
         }
 
         @Override

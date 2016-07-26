@@ -15,7 +15,7 @@ public class InAppWebSocket {
         try {
             socket = Utils.readyWebSocket(context);
         } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex.getMessage());
+            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
         }
     }
 

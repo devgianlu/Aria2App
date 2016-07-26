@@ -82,7 +82,7 @@ public class UpdateUI implements Runnable {
             try {
                 globalStats = jta2.getGlobalStat();
             } catch (IOException ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                 _shouldStop = true;
                 break;
             }
@@ -109,7 +109,7 @@ public class UpdateUI implements Runnable {
                 } catch (IOException ex) {
                     errorCount += 1;
                     if (errorCount > 6) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                         _shouldStop = true;
                         break;
                     }

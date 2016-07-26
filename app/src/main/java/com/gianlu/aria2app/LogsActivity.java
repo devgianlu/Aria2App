@@ -79,7 +79,7 @@ public class LogsActivity extends AppCompatActivity {
                         logLines.add(new LogLineItem(line.startsWith("--ERROR--"), line.replace(line.startsWith("--ERROR--") ? "--ERROR--" : "--INFO--", "")));
                     }
                 } catch (IOException ex) {
-                    Utils.UIToast(LogsActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+                    Utils.UIToast(LogsActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
                     onBackPressed();
                 }
 

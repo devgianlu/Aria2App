@@ -223,7 +223,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 Utils.UIToast(this, Utils.TOAST_MESSAGES.FILE_NOT_FOUND);
                 onBackPressed();
             } catch (IOException | JSONException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
                 ex.printStackTrace();
                 onBackPressed();
             }
@@ -621,7 +621,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 profile.put("directDownload", directDownload);
             }
         } catch (JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
             return;
         }
@@ -636,7 +636,7 @@ public class AddProfileActivity extends AppCompatActivity {
             osw.flush();
             osw.close();
         } catch (IOException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
         }
 
@@ -694,7 +694,7 @@ public class AddProfileActivity extends AppCompatActivity {
             profile.put("name", profileName.getText().toString().trim())
                     .put("conditions", conditions);
         } catch (JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
             return;
         }
@@ -709,7 +709,7 @@ public class AddProfileActivity extends AppCompatActivity {
             osw.flush();
             osw.close();
         } catch (IOException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex.getMessage());
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
         }
 

@@ -118,7 +118,7 @@ public class TorrentFragment extends Fragment {
                     localOptions = new LocalParser(getContext(), false);
                 } catch (IOException | JSONException ex) {
                     pd.dismiss();
-                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     return;
                 }
 
@@ -166,7 +166,7 @@ public class TorrentFragment extends Fragment {
                         }
                     } catch (JSONException ex) {
                         pd.dismiss();
-                        Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                        Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     }
                 }
 
@@ -176,7 +176,7 @@ public class TorrentFragment extends Fragment {
             @Override
             public void onException(Exception exception) {
                 pd.dismiss();
-                Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
         });
 

@@ -75,7 +75,7 @@ public class LoadDownloads implements Runnable {
 
                             @Override
                             public void onException(final Exception exception) {
-                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                                 handler.onEnd();
                             }
                         });
@@ -83,7 +83,7 @@ public class LoadDownloads implements Runnable {
 
                     @Override
                     public void onException(final Exception exception) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                         handler.onEnd();
                     }
                 });
@@ -91,7 +91,7 @@ public class LoadDownloads implements Runnable {
 
             @Override
             public void onException(final Exception exception) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
+                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                 handler.onEnd();
             }
         });
