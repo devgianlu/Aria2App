@@ -6,27 +6,30 @@ import org.json.JSONObject;
 public class SourceOption {
     private String name;
     private String nameFormal;
-    private DEFAULT_TYPE defaultType;
-    private Object defaultVal;
+    private String definition;
+    private String defaultVal;
 
-    public SourceOption(String name, String nameFormal, DEFAULT_TYPE defaultType, Object defaultVal) {
+    public SourceOption(String name, String nameFormal, String definition, String defaultVal) {
         this.name = name;
         this.nameFormal = nameFormal;
-        this.defaultType = defaultType;
         this.defaultVal = defaultVal;
+        this.definition = definition;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public JSONObject toJSON() throws JSONException {
-        return new JSONObject().put("name", name)
-                .put("nameFormal", nameFormal)
-                .put("defaultType", defaultType.name())
+        return new JSONObject().put("nameCMD", nameFormal)
+                .put("definition", definition)
                 .put("defaultVal", defaultVal);
     }
 
-    public enum DEFAULT_TYPE {
+    public enum OPTION_TYPE {
         INTEGER,
-        STRING,
         BOOLEAN,
-        NONE
+        STRING,
+        MULTIPLE
     }
 }

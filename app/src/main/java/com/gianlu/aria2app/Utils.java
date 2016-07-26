@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.gianlu.jtitan.Aria2Helper.JTA2;
@@ -75,6 +76,24 @@ public class Utils {
                     }
                 }
             }
+        }
+    }
+
+    @Nullable
+    public static Integer parseInt(String val) {
+        try {
+            return Integer.parseInt(val);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Boolean parseBoolean(String val) {
+        try {
+            return Boolean.parseBoolean(val);
+        } catch (Exception ex) {
+            return false;
         }
     }
 

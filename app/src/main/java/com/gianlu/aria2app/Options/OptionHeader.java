@@ -1,25 +1,37 @@
 package com.gianlu.aria2app.Options;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 public class OptionHeader {
     private String optionName;
-    private String optionFull;
-    private Object optionValue;
+    private String optionCMD;
+    private String optionValue;
+    private boolean needRestart;
 
-    public OptionHeader(String optionName, String optionFull, Object optionValue) {
+    public OptionHeader(String optionName, String optionCMD, String optionValue, boolean needRestart) {
         this.optionName = optionName;
-        this.optionFull = optionFull;
+        this.optionCMD = optionCMD;
         this.optionValue = optionValue;
+        this.needRestart = needRestart;
     }
 
+    @NonNull
     public String getOptionName() {
         return optionName;
     }
 
-    public Object getOptionValue() {
+    @NonNull
+    public String getOptionCommandLine() {
+        return optionCMD;
+    }
+
+    @Nullable
+    public String getOptionStringValue() {
         return optionValue;
     }
 
-    public String getOptionFull() {
-        return optionFull;
+    public boolean needRestart() {
+        return needRestart;
     }
 }

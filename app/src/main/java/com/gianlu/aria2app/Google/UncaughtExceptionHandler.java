@@ -46,6 +46,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
                         } catch (android.content.ActivityNotFoundException ex) {
                             Utils.UIToast(context, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
                         }
+
+                        System.exit(1);
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

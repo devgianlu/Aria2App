@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 
-import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class Parser {
     }
 
     @Nullable
-    private static String getOptionFormal(String option, String source) {
+    private static String getOptionName(String option, String source) {
         String raw = getAllOptionsRaw(source);
         if (raw == null) return null;
 
@@ -78,69 +78,15 @@ public class Parser {
         if (matcher.find()) {
             Matcher mmatcher = Pattern.compile("(?<=" + matcher.group().replace(" ", "\\s").replace(".", "\\.").replace("[", "\\[").replace("]", "\\]").replace("|", "\\|") + "\\n\\n)(.*?)(?=\\n\\.\\.\\soption::)", Pattern.MULTILINE | Pattern.DOTALL).matcher(source);
             if (mmatcher.find()) {
-                return mmatcher.group();
-            } else {
-                System.out.println("Nothing");
+                return mmatcher.group().replace("  ", "").replace("\\n  ", " ");
             }
         }
 
         return null;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static SourceOption.DEFAULT_TYPE getOptionDefaultType(String optionDefinition) {
-        Matcher matcher = Pattern.compile("Default:.*``(.*)``", Pattern.DOTALL).matcher(optionDefinition);
-
-        if (matcher.find()) {
-            String val = matcher.group(1);
-
-            try {
-                Integer.parseInt(val);
-                return SourceOption.DEFAULT_TYPE.INTEGER;
-            } catch (Exception ignored) {
-            }
-
-            if (val.equals("true") || val.equals("false"))
-                return SourceOption.DEFAULT_TYPE.BOOLEAN;
-            else
-                return SourceOption.DEFAULT_TYPE.STRING;
-        }
-
-        return SourceOption.DEFAULT_TYPE.NONE;
-    }
-
     @Nullable
-    private static Integer getOptionDefaultInt(String optionDefinition) {
-        Matcher matcher = Pattern.compile("Default:.*``(.*)``", Pattern.DOTALL).matcher(optionDefinition);
-
-        if (matcher.find()) {
-            try {
-                return Integer.parseInt(matcher.group(1));
-            } catch (Exception ex) {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    private static Boolean getOptionDefaultBoolean(String optionDefinition) {
-        Matcher matcher = Pattern.compile("Default:.*``(.*)``", Pattern.DOTALL).matcher(optionDefinition);
-
-        if (matcher.find()) {
-            try {
-                return Boolean.parseBoolean(matcher.group(1));
-            } catch (Exception ex) {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    private static String getOptionDefaultString(String optionDefinition) {
+    private static String getOptionDefault(String optionDefinition) {
         Matcher matcher = Pattern.compile("Default:.*``(.*)``", Pattern.DOTALL).matcher(optionDefinition);
 
         if (matcher.find()) {
@@ -152,22 +98,7 @@ public class Parser {
 
     static SourceOption getOption(String option, String source) {
         String definition = getOptionDefinition(option, source);
-        SourceOption.DEFAULT_TYPE type = getOptionDefaultType(definition);
-
-        Object defaultVal = null;
-        switch (type) {
-            case INTEGER:
-                defaultVal = getOptionDefaultInt(definition);
-                break;
-            case STRING:
-                defaultVal = getOptionDefaultString(definition);
-                break;
-            case BOOLEAN:
-                defaultVal = getOptionDefaultBoolean(definition);
-                break;
-        }
-
-        return new SourceOption(option, getOptionFormal(option, source), type, defaultVal);
+        return new SourceOption(getOptionName(option, source), option, definition, getOptionDefault(definition));
     }
 
     @Nullable
@@ -190,15 +121,10 @@ public class Parser {
 
     public interface ISourceProcessor {
         void onStarted();
-
         void onDownloadEnded(String source);
-
         void onConnectionError(int code, String message);
-
         void onError(Exception ex);
-
         void onFailed();
-
         void onEnd();
     }
 
@@ -254,10 +180,10 @@ public class Parser {
             }
 
             try {
-                JSONArray jOptions = new JSONArray();
+                JSONObject jOptions = new JSONObject();
 
                 for (SourceOption option : options) {
-                    jOptions.put(option.toJSON());
+                    jOptions.put(option.getName(), option.toJSON());
                 }
 
                 OutputStream out = context.openFileOutput("source.aria2c", Context.MODE_PRIVATE);

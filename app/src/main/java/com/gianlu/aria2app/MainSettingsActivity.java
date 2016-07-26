@@ -48,13 +48,13 @@ public class MainSettingsActivity extends PreferenceActivity {
 
         findPreference("logs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent().setClassName(MainSettingsActivity.this, "com.gianlu.aria2app.LogsActivity"));
+                startActivity(new Intent(MainSettingsActivity.this, LogsActivity.class));
                 return true;
             }
         });
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }

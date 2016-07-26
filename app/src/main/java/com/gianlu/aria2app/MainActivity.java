@@ -13,6 +13,7 @@ import android.util.ArrayMap;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -30,9 +31,15 @@ import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddDownloadActivity;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.UpdateUI;
+import com.gianlu.aria2app.Options.BooleanOptionChild;
+import com.gianlu.aria2app.Options.IntegerOptionChild;
+import com.gianlu.aria2app.Options.LocalParser;
+import com.gianlu.aria2app.Options.MultipleOptionChild;
 import com.gianlu.aria2app.Options.OptionAdapter;
 import com.gianlu.aria2app.Options.OptionChild;
 import com.gianlu.aria2app.Options.OptionHeader;
+import com.gianlu.aria2app.Options.SourceOption;
+import com.gianlu.aria2app.Options.StringOptionChild;
 import com.gianlu.aria2app.Services.InAppAdapter;
 import com.gianlu.aria2app.Services.InAppWebSocket;
 import com.gianlu.aria2app.Services.NotificationWebSocketService;
@@ -43,6 +50,9 @@ import com.gianlu.jtitan.Aria2Helper.JTA2;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.analytics.HitBuilders;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -487,66 +497,75 @@ public class MainActivity extends AppCompatActivity {
         final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
         final JTA2 jta2 = Utils.readyJTA2(this);
-        final ProgressDialog progressDialog = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        progressDialog.show();
+        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+        pd.show();
 
         jta2.getGlobalOption(new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
-                String[] availableOptions;
-                availableOptions = getResources().getStringArray(R.array.globalOptions);
-
-                for (String option : availableOptions) {
-                    String optionn = option;
-                    if (option.equals("continue")) optionn += "e";
-
-                    String[] optionIdentifier = getResources().getStringArray(getResources().getIdentifier(optionn.replace("-", "_"), "array", "com.gianlu.aria2app"));
-                    String optionName = optionIdentifier[0];
-                    String optionDesc = optionIdentifier[1];
-                    OptionChild.OPTION_TYPE optionType;
-                    Object optionDefaultVal;
-
-                    String responseOption = options.get(option);
-                    if (responseOption == null) responseOption = "";
-                    OptionHeader thisHeader = new OptionHeader(optionName, "--" + option, responseOption);
-                    headers.add(thisHeader);
-                    OptionChild thisChild;
-
-                    switch (optionIdentifier[2]) {
-                        case "string":
-                            optionType = OptionChild.OPTION_TYPE.STRING;
-                            optionDefaultVal = String.valueOf(optionIdentifier[3]);
-
-                            thisChild = new OptionChild(option, responseOption, optionDefaultVal, optionType, optionDesc);
-                            break;
-                        case "integer":
-                            optionType = OptionChild.OPTION_TYPE.INTEGER;
-                            optionDefaultVal = Integer.parseInt(optionIdentifier[3]);
-
-                            thisChild = new OptionChild(option, responseOption, optionDefaultVal, optionType, optionDesc);
-                            break;
-                        case "boolean":
-                            optionType = OptionChild.OPTION_TYPE.BOOLEAN;
-                            optionDefaultVal = Boolean.parseBoolean(optionIdentifier[3]);
-
-                            thisChild = new OptionChild(option, responseOption, optionDefaultVal, optionType, optionDesc);
-                            break;
-                        default:
-                            // optionType = OptionChild.OPTION_TYPE.MULTIPLE;
-                            String[] possibleValues = optionIdentifier[2].split(",");
-                            optionDefaultVal = optionIdentifier[3];
-                            thisChild = new OptionChild(option, responseOption, optionDefaultVal, optionDesc, Arrays.asList(possibleValues));
-                            break;
-                    }
-
-                    children.put(thisHeader, thisChild);
+                LocalParser localOptions;
+                try {
+                    localOptions = new LocalParser(MainActivity.this, false);
+                } catch (IOException | JSONException ex) {
+                    pd.dismiss();
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                    return;
                 }
 
-                progressDialog.dismiss();
+                for (String resOption : getResources().getStringArray(R.array.globalOptions)) {
+                    try {
+                        OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
+                        headers.add(header);
+
+                        if (getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app") == 0) {
+                            children.put(header, new StringOptionChild(
+                                    localOptions.getDefinition(resOption),
+                                    String.valueOf(localOptions.getDefaultValue(resOption)),
+                                    String.valueOf(options.get(resOption))));
+                            continue;
+                        }
+
+                        switch (SourceOption.OPTION_TYPE.valueOf(getResources().getStringArray(getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[0])) {
+                            case INTEGER:
+                                children.put(header, new IntegerOptionChild(
+                                        localOptions.getDefinition(resOption),
+                                        Utils.parseInt(localOptions.getDefaultValue(resOption)),
+                                        Utils.parseInt(options.get(resOption))));
+                                break;
+                            case BOOLEAN:
+                                children.put(header, new BooleanOptionChild(
+                                        localOptions.getDefinition(resOption),
+                                        Utils.parseBoolean(localOptions.getDefaultValue(resOption)),
+                                        Utils.parseBoolean(options.get(resOption))));
+                                break;
+                            case STRING:
+                                children.put(header, new StringOptionChild(
+                                        localOptions.getDefinition(resOption),
+                                        String.valueOf(localOptions.getDefaultValue(resOption)),
+                                        String.valueOf(options.get(resOption))));
+                                break;
+                            case MULTIPLE:
+                                children.put(header, new MultipleOptionChild(
+                                        localOptions.getDefinition(resOption),
+                                        String.valueOf(localOptions.getDefaultValue(resOption)),
+                                        String.valueOf(options.get(resOption)),
+                                        Arrays.asList(
+                                                getResources().getStringArray(
+                                                        getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[1].split(","))));
+                                break;
+                        }
+                    } catch (JSONException ex) {
+                        pd.dismiss();
+                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex.getMessage());
+                    }
+                }
+
+                pd.dismiss();
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
                 @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.options_dialog, null);
+                ((ViewGroup) view).removeView(view.findViewById(R.id.optionsDialog_info));
                 ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.moreAboutDownload_dialog_expandableListView);
                 listView.setAdapter(new OptionAdapter(MainActivity.this, headers, children));
 
@@ -558,17 +577,13 @@ public class MainActivity extends AppCompatActivity {
                                 Map<String, String> map = new HashMap<>();
 
                                 for (Map.Entry<OptionHeader, OptionChild> item : children.entrySet()) {
-                                    if (item.getValue().getCurrentValue() == null) continue;
-                                    if (item.getValue().getCurrentValue().equals("")) {
-                                        map.put(item.getValue().getOption(), String.valueOf(item.getValue().getDefaultVal()));
-                                    } else {
-                                        map.put(item.getValue().getOption(), String.valueOf(item.getValue().getCurrentValue()));
-                                    }
+                                    if (!item.getValue().isChanged()) continue;
+                                    map.put(item.getKey().getOptionName(), item.getValue().getStringValue());
                                 }
 
                                 if (map.entrySet().size() == 0) return;
 
-                                progressDialog.show();
+                                pd.show();
 
                                 if (Analytics.isTrackingAllowed(MainActivity.this))
                                     Analytics.getDefaultTracker(MainActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
@@ -579,7 +594,7 @@ public class MainActivity extends AppCompatActivity {
                                 jta2.changeGlobalOption(map, new ISuccess() {
                                     @Override
                                     public void onSuccess() {
-                                        progressDialog.dismiss();
+                                        pd.dismiss();
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
 
                                         if (updater != null) {
@@ -600,7 +615,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onException(Exception exception) {
-                                        progressDialog.dismiss();
+                                        pd.dismiss();
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception.getMessage());
                                     }
                                 });
@@ -648,7 +663,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception exception) {
-                progressDialog.dismiss();
+                pd.dismiss();
                 Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception.getMessage());
             }
         });

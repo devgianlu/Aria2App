@@ -4,8 +4,19 @@
     android:layout_height="wrap_content"
     android:padding="5dp">
 
+    <TextView
+        android:id="@+id/optionsDialog_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="3dp"
+        android:text="@string/optionsDisclaimer"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_dark" />
+
     <ExpandableListView
         android:id="@+id/moreAboutDownload_dialog_expandableListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/optionsDialog_info" />
 </RelativeLayout>

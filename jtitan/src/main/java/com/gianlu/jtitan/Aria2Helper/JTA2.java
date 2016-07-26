@@ -632,7 +632,12 @@ public class JTA2 {
         outResponseAsync(request.toString(), new JTHandler() {
             @Override
             public void onReceive(JTResponse response) {
-                handler.onSuccess();
+                try {
+                    if (response.toJSON().getString("result").equals("OK"))
+                        handler.onSuccess();
+                } catch (JSONException ex) {
+                    handler.onException(ex);
+                }
             }
 
             @Override
@@ -738,8 +743,7 @@ public class JTA2 {
             try {
                 this.put("jsonrpc", "2.0");
                 this.put("id", String.valueOf(new Random().nextInt(200)));
-            } catch (JSONException ex) {
-                ex.printStackTrace();
+            } catch (JSONException ignored) {
             }
         }
     }

@@ -2,7 +2,9 @@ package com.gianlu.aria2app.Options;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -86,19 +88,18 @@ public class OptionAdapter extends BaseExpandableListAdapter {
         ToggleButton toggleButton = (ToggleButton) convertView.findViewById(R.id.moreAboutDownload_option_toggleButton);
         EditText editText = (EditText) convertView.findViewById(R.id.moreAboutDownload_option_editText);
         Spinner spinner = (Spinner) convertView.findViewById(R.id.moreAboutDownload_option_spinner);
-        TextView desc = (TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc);
 
-        switch (item.getOptionType()) {
+        switch (item.getType()) {
             case BOOLEAN:
                 spinner.setVisibility(View.INVISIBLE);
                 editText.setVisibility(View.INVISIBLE);
                 toggleButton.setVisibility(View.VISIBLE);
 
-                toggleButton.setChecked(Boolean.valueOf(String.valueOf(item.getValue())));
+                toggleButton.setChecked(((BooleanOptionChild) item).getCurrentValue());
                 toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        item.setCurrentValue(b);
+                        ((BooleanOptionChild) item).setCurrentValue(b);
                     }
                 });
                 break;
@@ -107,9 +108,12 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 toggleButton.setVisibility(View.INVISIBLE);
                 editText.setVisibility(View.VISIBLE);
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                editText.setHint("Default: " + item.getDefaultVal());
+                if (((IntegerOptionChild) item).getDefaultValue() != null)
+                    editText.setHint(context.getString(R.string._default) + ": " + ((IntegerOptionChild) item).getDefaultValue());
+                else
+                    editText.setHint(R.string.noDefault);
 
-                editText.setText(String.valueOf(item.getValue()));
+                editText.setText(item.getStringValue());
                 editText.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -123,7 +127,11 @@ public class OptionAdapter extends BaseExpandableListAdapter {
 
                     @Override
                     public void afterTextChanged(Editable editable) {
-                        item.setCurrentValue(editable.toString());
+                        try {
+                            ((IntegerOptionChild) item).setCurrentValue(Integer.parseInt(editable.toString()));
+                        } catch (Exception ex) {
+                            ((IntegerOptionChild) item).setCurrentValue(null);
+                        }
                     }
                 });
                 break;
@@ -132,10 +140,12 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 toggleButton.setVisibility(View.INVISIBLE);
                 editText.setVisibility(View.VISIBLE);
                 editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                if (!item.getDefaultVal().equals(""))
-                    editText.setHint("Default: " + item.getDefaultVal());
+                if (!((StringOptionChild) item).getDefaultValue().isEmpty())
+                    editText.setHint(context.getString(R.string._default) + ": " + ((StringOptionChild) item).getDefaultValue());
+                else
+                    editText.setHint(R.string.noDefault);
 
-                editText.setText(String.valueOf(item.getValue()));
+                editText.setText(item.getStringValue());
                 editText.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -149,7 +159,7 @@ public class OptionAdapter extends BaseExpandableListAdapter {
 
                     @Override
                     public void afterTextChanged(Editable editable) {
-                        item.setCurrentValue(editable.toString());
+                        ((StringOptionChild) item).setCurrentValue(editable.toString());
                     }
                 });
                 break;
@@ -158,23 +168,23 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 editText.setVisibility(View.INVISIBLE);
                 spinner.setVisibility(View.VISIBLE);
 
-                spinner.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, item.getPossibleValues()));
-                spinner.setSelection(item.getPossibleValues().indexOf(String.valueOf(item.getDefaultVal())));
+                spinner.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, ((MultipleOptionChild) item).getPossibleValues()));
+                spinner.setSelection(((MultipleOptionChild) item).getPossibleValues().indexOf(((MultipleOptionChild) item).getCurrentValue()));
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        item.setCurrentValue(adapterView.getAdapter().getItem(i).toString());
+                        ((MultipleOptionChild) item).setCurrentValue(adapterView.getAdapter().getItem(i).toString());
                     }
 
                     @Override
                     public void onNothingSelected(AdapterView<?> adapterView) {
-                        item.setCurrentValue(item.getDefaultVal());
+                        ((MultipleOptionChild) item).setCurrentValue(((MultipleOptionChild) item).getDefaultValue());
                     }
                 });
                 break;
         }
 
-        desc.setText(item.getDesc());
+        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc)).setText(Html.fromHtml(item.getDescription().replaceAll("``(\\S*)``", "<b>$1</b>").replaceAll(":option:`(\\S*)`", "<font color='#ff5722'>$1</font>")));
 
         return convertView;
     }
@@ -186,8 +196,10 @@ public class OptionAdapter extends BaseExpandableListAdapter {
         OptionHeader item = getGroup(groupPosition);
 
         ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionText)).setText(String.format("%s: ", item.getOptionName()));
-        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionTextVal)).setText(String.valueOf(item.getOptionValue()));
-        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionFull)).setText(item.getOptionFull());
+        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionTextVal)).setText(item.getOptionStringValue());
+        TextView optionCMD = (TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionFull);
+        optionCMD.setText(item.getOptionCommandLine());
+        if (item.needRestart()) optionCMD.setTextColor(Color.RED);
 
         return convertView;
     }
