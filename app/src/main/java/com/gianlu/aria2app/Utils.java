@@ -18,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -134,7 +135,6 @@ public class Utils {
         return jta2;
     }
 
-
     public static void UIToast(final Activity context, final String text) {
         UIToast(context, text, Toast.LENGTH_SHORT);
     }
@@ -223,7 +223,7 @@ public class Utils {
             FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".secret", Context.MODE_APPEND);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
-            osw.write(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()) + " >> " + exx + "\n\n");
+            osw.write(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()) + " >> " + exx.toString() + "\n" + Arrays.toString(exx.getStackTrace()) + "\n\n");
             osw.flush();
             osw.close();
         } catch (IOException ex) {

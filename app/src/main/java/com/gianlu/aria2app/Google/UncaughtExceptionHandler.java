@@ -23,7 +23,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 
     @Override
     public void uncaughtException(final Thread thread, final Throwable throwable) {
-        Analytics.getDefaultTracker(application).send(new HitBuilders.ExceptionBuilder().setDescription(String.format(Locale.getDefault(), "Thread %d: %s @@ %s", thread.getId(), thread.getName(), Arrays.toString(throwable.getStackTrace()))).setFatal(true).build());
+        Analytics.getDefaultTracker(application).send(new HitBuilders.ExceptionBuilder().setDescription(String.format(Locale.getDefault(), "Thread %d: %s @@ %s", thread.getId(), thread.getName(), throwable.toString() + "\n" + Arrays.toString(throwable.getStackTrace()))).setFatal(true).build());
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.fatalException)
