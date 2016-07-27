@@ -15,6 +15,8 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.gianlu.aria2app.NetIO.JTA2.IOption;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.BooleanOptionChild;
 import com.gianlu.aria2app.Options.IntegerOptionChild;
 import com.gianlu.aria2app.Options.LocalParser;
@@ -26,12 +28,11 @@ import com.gianlu.aria2app.Options.SourceOption;
 import com.gianlu.aria2app.Options.StringOptionChild;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.jtitan.Aria2Helper.IOption;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,84 +77,89 @@ public class URIFragment extends Fragment {
             }
         });
 
-        final List<OptionHeader> headers = new ArrayList<>();
-        final Map<OptionHeader, OptionChild> children = new HashMap<>();
+        try {
+            final List<OptionHeader> headers = new ArrayList<>();
+            final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
-        final JTA2 jta2 = Utils.readyJTA2(getContext());
-        final ProgressDialog pd = Utils.fastProgressDialog(getContext(), R.string.gathering_information, true, false);
-        pd.show();
+            JTA2 jta2 = Utils.readyJTA2(getActivity());
 
-        jta2.getGlobalOption(new IOption() {
-            @Override
-            public void onOptions(Map<String, String> options) {
-                LocalParser localOptions;
-                try {
-                    localOptions = new LocalParser(getContext(), false);
-                } catch (IOException | JSONException ex) {
-                    pd.dismiss();
-                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                    return;
-                }
+            final ProgressDialog pd = Utils.fastProgressDialog(getContext(), R.string.gathering_information, true, false);
+            pd.show();
 
-                for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
+            jta2.getGlobalOption(new IOption() {
+                @Override
+                public void onOptions(Map<String, String> options) {
+                    LocalParser localOptions;
                     try {
-                        OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
-                        headers.add(header);
+                        localOptions = new LocalParser(getContext(), false);
+                    } catch (IOException | JSONException ex) {
+                        pd.dismiss();
+                        Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                        return;
+                    }
 
-                        if (getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app") == 0) {
-                            children.put(header, new StringOptionChild(
-                                    localOptions.getDefinition(resOption),
-                                    String.valueOf(localOptions.getDefaultValue(resOption)),
-                                    String.valueOf(options.get(resOption))));
-                            continue;
-                        }
+                    for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
+                        try {
+                            OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
+                            headers.add(header);
 
-                        switch (SourceOption.OPTION_TYPE.valueOf(getResources().getStringArray(getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[0])) {
-                            case INTEGER:
-                                children.put(header, new IntegerOptionChild(
-                                        localOptions.getDefinition(resOption),
-                                        Utils.parseInt(localOptions.getDefaultValue(resOption)),
-                                        Utils.parseInt(options.get(resOption))));
-                                break;
-                            case BOOLEAN:
-                                children.put(header, new BooleanOptionChild(
-                                        localOptions.getDefinition(resOption),
-                                        Utils.parseBoolean(localOptions.getDefaultValue(resOption)),
-                                        Utils.parseBoolean(options.get(resOption))));
-                                break;
-                            case STRING:
+                            if (getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app") == 0) {
                                 children.put(header, new StringOptionChild(
                                         localOptions.getDefinition(resOption),
                                         String.valueOf(localOptions.getDefaultValue(resOption)),
                                         String.valueOf(options.get(resOption))));
-                                break;
-                            case MULTIPLE:
-                                children.put(header, new MultipleOptionChild(
-                                        localOptions.getDefinition(resOption),
-                                        String.valueOf(localOptions.getDefaultValue(resOption)),
-                                        String.valueOf(options.get(resOption)),
-                                        Arrays.asList(
-                                                getResources().getStringArray(
-                                                        getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[1].split(","))));
-                                break;
+                                continue;
+                            }
+
+                            switch (SourceOption.OPTION_TYPE.valueOf(getResources().getStringArray(getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[0])) {
+                                case INTEGER:
+                                    children.put(header, new IntegerOptionChild(
+                                            localOptions.getDefinition(resOption),
+                                            Utils.parseInt(localOptions.getDefaultValue(resOption)),
+                                            Utils.parseInt(options.get(resOption))));
+                                    break;
+                                case BOOLEAN:
+                                    children.put(header, new BooleanOptionChild(
+                                            localOptions.getDefinition(resOption),
+                                            Utils.parseBoolean(localOptions.getDefaultValue(resOption)),
+                                            Utils.parseBoolean(options.get(resOption))));
+                                    break;
+                                case STRING:
+                                    children.put(header, new StringOptionChild(
+                                            localOptions.getDefinition(resOption),
+                                            String.valueOf(localOptions.getDefaultValue(resOption)),
+                                            String.valueOf(options.get(resOption))));
+                                    break;
+                                case MULTIPLE:
+                                    children.put(header, new MultipleOptionChild(
+                                            localOptions.getDefinition(resOption),
+                                            String.valueOf(localOptions.getDefaultValue(resOption)),
+                                            String.valueOf(options.get(resOption)),
+                                            Arrays.asList(
+                                                    getResources().getStringArray(
+                                                            getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[1].split(","))));
+                                    break;
+                            }
+                        } catch (JSONException ex) {
+                            pd.dismiss();
+                            Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                         }
-                    } catch (JSONException ex) {
-                        pd.dismiss();
-                        Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
                     }
+
+                    pd.dismiss();
                 }
 
-                pd.dismiss();
-            }
+                @Override
+                public void onException(Exception exception) {
+                    pd.dismiss();
+                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                }
+            });
 
-            @Override
-            public void onException(Exception exception) {
-                pd.dismiss();
-                Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-            }
-        });
-
-        optionsListView.setAdapter(new OptionAdapter(getContext(), headers, children));
+            optionsListView.setAdapter(new OptionAdapter(getContext(), headers, children));
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+        }
 
         return view;
     }

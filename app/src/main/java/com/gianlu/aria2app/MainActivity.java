@@ -31,6 +31,11 @@ import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddDownloadActivity;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.UpdateUI;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.IOption;
+import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.BooleanOptionChild;
 import com.gianlu.aria2app.Options.IntegerOptionChild;
 import com.gianlu.aria2app.Options.LocalParser;
@@ -40,19 +45,15 @@ import com.gianlu.aria2app.Options.OptionChild;
 import com.gianlu.aria2app.Options.OptionHeader;
 import com.gianlu.aria2app.Options.SourceOption;
 import com.gianlu.aria2app.Options.StringOptionChild;
-import com.gianlu.aria2app.Services.InAppAdapter;
-import com.gianlu.aria2app.Services.InAppWebSocket;
+import com.gianlu.aria2app.SelectProfile.SingleModeProfileItem;
 import com.gianlu.aria2app.Services.NotificationWebSocketService;
-import com.gianlu.jtitan.Aria2Helper.Download;
-import com.gianlu.jtitan.Aria2Helper.IOption;
-import com.gianlu.jtitan.Aria2Helper.ISuccess;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,19 +88,22 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (getIntent().getStringExtra("profileName") != null) {
             setTitle(getResources().getString(R.string.app_name) + " - " + getIntent().getStringExtra("profileName"));
+
+            SingleModeProfileItem profile = getIntent().getParcelableExtra("profile");
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("a2_profileName", getIntent().getStringExtra("profileName"))
-                    .putString("a2_serverIP", getIntent().getStringExtra("serverIP"))
-                    .putBoolean("a2_serverAuth", getIntent().getBooleanExtra("serverAuth", false))
-                    .putString("a2_serverToken", getIntent().getStringExtra("serverToken"))
-                    .putString("a2_directDownload", getIntent().getStringExtra("directDownload"))
-                    .putBoolean("a2_serverSSL", getIntent().getBooleanExtra("serverSSL", false))
-                    .putBoolean("a2_directDownload", getIntent().getBooleanExtra("serverDirectDownload", false));
-            if (getIntent().getBooleanExtra("serverDirectDownload", false)) {
-                editor.putString("dd_addr", getIntent().getStringExtra("ddAddr"))
-                        .putBoolean("dd_auth", getIntent().getBooleanExtra("ddAuth", false))
-                        .putString("dd_user", getIntent().getStringExtra("ddUser"))
-                        .putString("dd_passwd", getIntent().getStringExtra("ddPasswd"));
+            editor.putString("a2_profileName", profile.getProfileName())
+                    .putString("a2_serverIP", profile.getFullServerAddr())
+                    .putString("a2_authMethod", profile.getAuthMethod().name())
+                    .putString("a2_serverToken", profile.getServerToken())
+                    .putString("a2_serverUsername", profile.getServerUsername())
+                    .putString("a2_serverPassword", profile.getServerPassword())
+                    .putBoolean("a2_serverSSL", profile.isServerSSL())
+                    .putBoolean("a2_directDownload", profile.isDirectDownloadEnabled());
+            if (profile.isDirectDownloadEnabled()) {
+                editor.putString("dd_addr", profile.getDirectDownload().getAddress())
+                        .putBoolean("dd_auth", profile.getDirectDownload().isAuth())
+                        .putString("dd_user", profile.getDirectDownload().getUsername())
+                        .putString("dd_passwd", profile.getDirectDownload().getPassword());
             }
             editor.apply();
         } else {
@@ -107,6 +111,13 @@ public class MainActivity extends AppCompatActivity {
         }
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
+
+        try {
+            // Start WebSocketing and enabling event manager
+            WebSocketing.enableEventManager(this);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
         downloadsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -185,6 +196,14 @@ public class MainActivity extends AppCompatActivity {
                     builder.setAdapter(new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, new ArrayList<>(list.values())), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            DownloadAction downloadAction;
+                            try {
+                                downloadAction = new DownloadAction(MainActivity.this);
+                            } catch (IOException | NoSuchAlgorithmException ex) {
+                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+                                return;
+                            }
+
                             DownloadAction.ACTION action = new ArrayList<>(list.keySet()).get(i);
                             DownloadAction.IMove iMove = new DownloadAction.IMove() {
                                 @Override
@@ -200,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
                             switch (action) {
                                 case PAUSE:
-                                    DownloadAction.pause(MainActivity.this, item.getDownloadGID(), new DownloadAction.IPause() {
+                                    downloadAction.pause(MainActivity.this, item.getDownloadGID(), new DownloadAction.IPause() {
                                         @Override
                                         public void onPaused() {
 
@@ -213,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                     break;
                                 case REMOVE:
-                                    DownloadAction.remove(MainActivity.this, item.getDownloadGID(), item.download.status, new DownloadAction.IRemove() {
+                                    downloadAction.remove(MainActivity.this, item.getDownloadGID(), item.download.status, new DownloadAction.IRemove() {
                                         @Override
                                         public void onRemoved() {
 
@@ -234,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                     break;
                                 case RESTART:
-                                    DownloadAction.restart(MainActivity.this, item.getDownloadGID(), new DownloadAction.IRestart() {
+                                    downloadAction.restart(MainActivity.this, item.getDownloadGID(), new DownloadAction.IRestart() {
                                         @Override
                                         public void onRestarted(String gid) {
 
@@ -257,10 +276,10 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                     break;
                                 case RESUME:
-                                    DownloadAction.unpause(MainActivity.this, item.getDownloadGID(), new DownloadAction.IUnpause() {
+                                    downloadAction.unpause(item.getDownloadGID(), new DownloadAction.IUnpause() {
                                         @Override
                                         public void onUnpaused() {
-
+                                            // TODO: Ehm
                                         }
 
                                         @Override
@@ -270,10 +289,10 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                     break;
                                 case MOVE_DOWN:
-                                    DownloadAction.moveDown(MainActivity.this, item.getDownloadGID(), iMove);
+                                    downloadAction.moveDown(item.getDownloadGID(), iMove);
                                     break;
                                 case MOVE_UP:
-                                    DownloadAction.moveUp(MainActivity.this, item.getDownloadGID(), iMove);
+                                    downloadAction.moveUp(item.getDownloadGID(), iMove);
                                     break;
                                 case SHOW_MORE:
                                     Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
@@ -293,17 +312,23 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        final ProgressDialog progressDialog = Utils.fastProgressDialog(this, R.string.loading_downloads, true, false);
 
+        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.loading_downloads, true, false);
         IloadDownloads = new ILoadDownloads() {
             @Override
             public void onStart() {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (!MainActivity.this.isFinishing()) progressDialog.show();
+                        if (!MainActivity.this.isFinishing()) pd.show();
                     }
                 });
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                pd.dismiss();
             }
 
             @Override
@@ -316,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
                             updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
                             new Thread(updater).start();
                             try {
-                                if (progressDialog.isShowing()) progressDialog.dismiss();
+                                if (pd.isShowing()) pd.dismiss();
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -337,7 +362,11 @@ public class MainActivity extends AppCompatActivity {
                     Charting.newChart(MainActivity.this, mainChart);
                     updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
                     new Thread(updater).start();
-                    progressDialog.dismiss();
+                    try {
+                        if (pd.isShowing()) pd.dismiss();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
 
                     if (getIntent().getStringExtra("gid") == null) return;
 
@@ -370,8 +399,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 1000, autoReloadDownloadsListRate);
         }
-
-        new InAppWebSocket(this).connect(new InAppAdapter(this, updater, loadDownloads, downloadsListView, IloadDownloads));
 
         if (enableNotifications) {
             Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("a2_profileName", ""));
@@ -410,22 +437,28 @@ public class MainActivity extends AppCompatActivity {
         finishActivity(0);
     }
 
+    public void reloadPage() {
+        if (updater != null) {
+            updater.stop(new IThread() {
+                @Override
+                public void stopped() {
+                    Charting.newChart(MainActivity.this, mainChart);
+                    loadDownloads = new LoadDownloads(MainActivity.this, downloadsListView, IloadDownloads);
+                    new Thread(loadDownloads).start();
+                }
+            });
+        } else {
+            Charting.newChart(MainActivity.this, mainChart);
+            loadDownloads = new LoadDownloads(this, downloadsListView, IloadDownloads);
+            new Thread(loadDownloads).start();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.a2menu_refreshPage:
-                if (updater != null) {
-                    updater.stop(new IThread() {
-                        @Override
-                        public void stopped() {
-                            loadDownloads = new LoadDownloads(MainActivity.this, downloadsListView, IloadDownloads);
-                            new Thread(loadDownloads).start();
-                        }
-                    });
-                } else {
-                    loadDownloads = new LoadDownloads(this, downloadsListView, IloadDownloads);
-                    new Thread(loadDownloads).start();
-                }
+                reloadPage();
                 break;
             case R.id.a2menu_addDownload:
                 startActivity(new Intent(this, AddDownloadActivity.class));
@@ -496,7 +529,13 @@ public class MainActivity extends AppCompatActivity {
         final List<OptionHeader> headers = new ArrayList<>();
         final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
-        final JTA2 jta2 = Utils.readyJTA2(this);
+        final JTA2 jta2;
+        try {
+            jta2 = Utils.readyJTA2(this);
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            return;
+        }
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
         pd.show();
 
@@ -597,20 +636,7 @@ public class MainActivity extends AppCompatActivity {
                                         pd.dismiss();
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
 
-                                        if (updater != null) {
-                                            updater.stop(new IThread() {
-                                                @Override
-                                                public void stopped() {
-                                                    Charting.newChart(MainActivity.this, mainChart);
-                                                    updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
-                                                    new Thread(updater).start();
-                                                }
-                                            });
-                                        } else {
-                                            Charting.newChart(MainActivity.this, mainChart);
-                                            updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
-                                            new Thread(updater).start();
-                                        }
+                                        reloadPage();
                                     }
 
                                     @Override
@@ -624,20 +650,7 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                if (updater != null) {
-                                    updater.stop(new IThread() {
-                                        @Override
-                                        public void stopped() {
-                                            Charting.newChart(MainActivity.this, mainChart);
-                                            updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
-                                            new Thread(updater).start();
-                                        }
-                                    });
-                                } else {
-                                    Charting.newChart(MainActivity.this, mainChart);
-                                    updater = new UpdateUI(MainActivity.this, mainChart, downloadsListView);
-                                    new Thread(updater).start();
-                                }
+                                reloadPage();
                             }
                         });
 

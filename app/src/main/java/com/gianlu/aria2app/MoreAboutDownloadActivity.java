@@ -25,6 +25,10 @@ import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.UpdateUI;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.IOption;
+import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.BooleanOptionChild;
 import com.gianlu.aria2app.Options.IntegerOptionChild;
 import com.gianlu.aria2app.Options.LocalParser;
@@ -34,16 +38,13 @@ import com.gianlu.aria2app.Options.OptionChild;
 import com.gianlu.aria2app.Options.OptionHeader;
 import com.gianlu.aria2app.Options.SourceOption;
 import com.gianlu.aria2app.Options.StringOptionChild;
-import com.gianlu.jtitan.Aria2Helper.Download;
-import com.gianlu.jtitan.Aria2Helper.IOption;
-import com.gianlu.jtitan.Aria2Helper.ISuccess;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -131,6 +132,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 break;
+            // TODO: Show peers
         }
 
         return super.onOptionsItemSelected(item);
@@ -175,7 +177,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final List<OptionHeader> headers = new ArrayList<>();
         final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
-        final JTA2 jta2 = Utils.readyJTA2(this);
+        final JTA2 jta2;
+        try {
+            jta2 = Utils.readyJTA2(this);
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            return;
+        }
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
         pd.show();
 

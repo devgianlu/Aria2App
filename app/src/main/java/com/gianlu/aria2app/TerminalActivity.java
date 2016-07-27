@@ -26,8 +26,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
-import com.gianlu.jtitan.Aria2Helper.IMethod;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
+import com.gianlu.aria2app.NetIO.JTA2.IMethod;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.google.android.gms.analytics.HitBuilders;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -102,29 +102,34 @@ public class TerminalActivity extends AppCompatActivity {
             }
         });
 
-        JTA2 jta2 = Utils.readyJTA2(this);
-        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        pd.show();
-        jta2.listMethods(new IMethod() {
-            @Override
-            public void onMethods(final List<String> methods) {
-                pd.dismiss();
+        try {
+            JTA2 jta2 = Utils.readyJTA2(this);
 
-                TerminalActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        method.setThreshold(1);
-                        method.setAdapter(new ArrayAdapter<>(TerminalActivity.this, android.R.layout.simple_dropdown_item_1line, methods));
-                    }
-                });
-            }
+            final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+            pd.show();
+            jta2.listMethods(new IMethod() {
+                @Override
+                public void onMethods(final List<String> methods) {
+                    pd.dismiss();
 
-            @Override
-            public void onException(Exception ex) {
-                pd.dismiss();
-                Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.FAILED_LOADING_AUTOCOMPLETION);
-            }
-        });
+                    TerminalActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            method.setThreshold(1);
+                            method.setAdapter(new ArrayAdapter<>(TerminalActivity.this, android.R.layout.simple_dropdown_item_1line, methods));
+                        }
+                    });
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    pd.dismiss();
+                    Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.FAILED_LOADING_AUTOCOMPLETION);
+                }
+            });
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+        }
 
         method.addTextChangedListener(listener);
         jsonrpc.addTextChangedListener(listener);

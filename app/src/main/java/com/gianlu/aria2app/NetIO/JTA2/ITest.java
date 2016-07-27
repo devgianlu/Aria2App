@@ -1,4 +1,4 @@
-package com.gianlu.jtitan.Aria2Helper;
+package com.gianlu.aria2app.NetIO.JTA2;
 
 public interface ITest {
     void onSuccess();

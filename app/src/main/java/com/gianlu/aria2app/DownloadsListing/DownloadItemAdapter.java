@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.jtitan.Aria2Helper.Download;
 
 import java.util.ArrayList;
 import java.util.List;

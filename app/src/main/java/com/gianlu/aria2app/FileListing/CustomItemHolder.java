@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.R;
-import com.gianlu.jtitan.Aria2Helper.File;
 import com.unnamed.b.atv.model.TreeNode;
 
 public class CustomItemHolder extends TreeNode.BaseNodeViewHolder<CustomTreeItem> {

@@ -26,14 +26,15 @@ import com.gianlu.aria2app.FileListing.FilesTree;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.NetIO.JTA2.BitTorrent;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.IDownload;
+import com.gianlu.aria2app.NetIO.JTA2.IOption;
+import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.jtitan.Aria2Helper.BitTorrent;
-import com.gianlu.jtitan.Aria2Helper.Download;
-import com.gianlu.jtitan.Aria2Helper.File;
-import com.gianlu.jtitan.Aria2Helper.IOption;
-import com.gianlu.jtitan.Aria2Helper.ISuccess;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -45,6 +46,7 @@ import com.unnamed.b.atv.view.AndroidTreeView;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +58,6 @@ public class UpdateUI implements Runnable {
     private String directDownloadAddr;
     private Activity context;
     private TreeNode root;
-    private Download download;
     private boolean enableAnimations;
     private JTA2 jta2;
     private AndroidTreeView treeView;
@@ -132,7 +133,12 @@ public class UpdateUI implements Runnable {
         directDownloadAddr = sharedPreferences.getString("dd_addr", "http://127.0.0.1/");
 
         //jta2
-        jta2 = Utils.readyJTA2(context);
+        try {
+            jta2 = Utils.readyJTA2(context);
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            stop();
+        }
         res = context.getResources();
     }
 
@@ -151,156 +157,155 @@ public class UpdateUI implements Runnable {
     public void run() {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
 
-        while (!_shouldStop) {
-            try {
-                download = jta2.tellStatus(downloadGID);
-            } catch (IOException ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                _shouldStop = true;
-                break;
-            }
-
-            if (download == null) continue;
-
-            // General views
-            final String timeRemaining;
-            final String noDataTextChart;
-
-            switch (download.status) {
-                case ACTIVE:
-                    if (download.downloadSpeed == 0) {
-                        timeRemaining = Utils.TimeFormatter(0L);
-                    } else {
-                        timeRemaining = Utils.TimeFormatter((download.length - download.completedLength) / download.downloadSpeed);
-                    }
-                    noDataTextChart = context.getString(R.string.downloadStatus_waiting);
-                    break;
-                case WAITING:
-                    timeRemaining = context.getString(R.string.downloadStatus_waiting);
-                    noDataTextChart = timeRemaining;
-                    break;
-                case ERROR:
-                    timeRemaining = context.getString(R.string.downloadStatus_error);
-                    noDataTextChart = timeRemaining;
-                    break;
-                case PAUSED:
-                    timeRemaining = context.getString(R.string.downloadStatus_paused);
-                    noDataTextChart = timeRemaining;
-                    break;
-                case COMPLETE:
-                    timeRemaining = context.getString(R.string.downloadStatus_complete);
-                    noDataTextChart = timeRemaining;
-                    break;
-                case REMOVED:
-                    timeRemaining = context.getString(R.string.downloadStatus_removed);
-                    noDataTextChart = timeRemaining;
-                    break;
-                default:
-                    timeRemaining = context.getString(R.string.downloadStatus_unknown);
-                    noDataTextChart = timeRemaining;
-                    break;
-            }
-
-            context.runOnUiThread(new Runnable() {
+        while ((!_shouldStop) && jta2 != null) {
+            jta2.tellStatus(downloadGID, new IDownload() {
                 @Override
-                public void run() {
-                    downloadSpeed.setText(Utils.SpeedFormatter(download.downloadSpeed));
-                    uploadSpeed.setText(Utils.SpeedFormatter(download.uploadSpeed));
-                    time.setText(timeRemaining);
-                    percentage.setText(download.getPercentage());
-                    completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(download.completedLength)));
-                    totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(download.length)));
-                    uploadedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.uploaded_length), Utils.DimensionFormatter(download.uploadedLength)));
-                    piecesNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces), download.numPieces));
-                    piecesLength.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces_length), Utils.DimensionFormatter(download.pieceLength)));
-                    connections.setText(String.format(Locale.getDefault(), res.getString(R.string.connections), download.connections));
-                    gidd.setText(String.format(Locale.getDefault(), res.getString(R.string.gid), download.GID));
+                public void onDownload(final Download download) {
+                    final String timeRemaining;
+                    final String noDataTextChart;
 
-
-                    if (download.isBitTorrent) {
-                        seedersNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.numSeeder), download.numSeeders));
-                        infoHash.setText(String.format(Locale.getDefault(), res.getString(R.string.info_hash), download.infoHash));
-                        seeder.setText(String.format(Locale.getDefault(), res.getString(R.string.seeder), String.valueOf(download.seeder)));
-                        bitTorrentCreationDate.setText(String.format(Locale.getDefault(), res.getString(R.string.creation_date), download.bitTorrent.creationDate));
-                        bitTorrentComment.setText(String.format(Locale.getDefault(), res.getString(R.string.comment), download.bitTorrent.creationDate));
-                        bitTorrentMode.setText(String.format(Locale.getDefault(), res.getString(R.string.mode), download.bitTorrent.mode.equals(BitTorrent.MODE.SINGLE) ? "single" : "multi"));
-                        bitTorrentAnnounceList.setText(loadBTAnnounceList(download.bitTorrent));
-                    } else {
-                        bitTorrentContainer.removeAllViews();
+                    switch (download.status) {
+                        case ACTIVE:
+                            if (download.downloadSpeed == 0) {
+                                timeRemaining = Utils.TimeFormatter(0L);
+                            } else {
+                                timeRemaining = Utils.TimeFormatter((download.length - download.completedLength) / download.downloadSpeed);
+                            }
+                            noDataTextChart = context.getString(R.string.downloadStatus_waiting);
+                            break;
+                        case WAITING:
+                            timeRemaining = context.getString(R.string.downloadStatus_waiting);
+                            noDataTextChart = timeRemaining;
+                            break;
+                        case ERROR:
+                            timeRemaining = context.getString(R.string.downloadStatus_error);
+                            noDataTextChart = timeRemaining;
+                            break;
+                        case PAUSED:
+                            timeRemaining = context.getString(R.string.downloadStatus_paused);
+                            noDataTextChart = timeRemaining;
+                            break;
+                        case COMPLETE:
+                            timeRemaining = context.getString(R.string.downloadStatus_complete);
+                            noDataTextChart = timeRemaining;
+                            break;
+                        case REMOVED:
+                            timeRemaining = context.getString(R.string.downloadStatus_removed);
+                            noDataTextChart = timeRemaining;
+                            break;
+                        default:
+                            timeRemaining = context.getString(R.string.downloadStatus_unknown);
+                            noDataTextChart = timeRemaining;
+                            break;
                     }
-                }
-            });
 
-
-            // Chart
-            chart.setNoDataText(noDataTextChart);
-            if (download.status.equals(Download.STATUS.ACTIVE)) {
-                final LineData data = chart.getData();
-                ILineDataSet downloadSet = data.getDataSetByIndex(0);
-                ILineDataSet uploadSet = data.getDataSetByIndex(1);
-
-                if (downloadSet == null) {
-                    downloadSet = Charting.InitDownloadSet(context);
-                    data.addDataSet(downloadSet);
-                }
-
-                if (uploadSet == null) {
-                    uploadSet = Charting.InitUploadSet(context);
-                    data.addDataSet(uploadSet);
-                }
-
-
-                data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                data.addEntry(new Entry(download.downloadSpeed, downloadSet.getEntryCount()), 0);
-                data.addEntry(new Entry(download.uploadSpeed, uploadSet.getEntryCount()), 1);
-
-                chart.notifyDataSetChanged();
-                chart.setVisibleXRangeMaximum(90);
-                chart.moveViewToX(data.getXValCount() - 91);
-            } else {
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        chart.clear();
-                    }
-                });
-            }
-
-            if (updateTreeViewCount == 1) {
-                FilesTree tree = new FilesTree(new FileNode("", "", null));
-
-                for (File file : download.files) {
-                    tree.addElement(file);
-                }
-
-                root = tree.toTreeNode();
-
-                String state = null;
-                if (treeView != null) state = treeView.getSaveState();
-                treeView = loadTreeNode();
-                if (state != null) treeView.restoreState(state);
-
-                final View treeRealView = treeView.getView();
-                if (treeRealView != null) {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            treeNodeContainer.removeAllViews();
-                            treeNodeContainer.addView(treeRealView);
+                            downloadSpeed.setText(Utils.SpeedFormatter(download.downloadSpeed));
+                            uploadSpeed.setText(Utils.SpeedFormatter(download.uploadSpeed));
+                            time.setText(timeRemaining);
+                            percentage.setText(download.getPercentage());
+                            completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(download.completedLength)));
+                            totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(download.length)));
+                            uploadedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.uploaded_length), Utils.DimensionFormatter(download.uploadedLength)));
+                            piecesNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces), download.numPieces));
+                            piecesLength.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces_length), Utils.DimensionFormatter(download.pieceLength)));
+                            connections.setText(String.format(Locale.getDefault(), res.getString(R.string.connections), download.connections));
+                            gidd.setText(String.format(Locale.getDefault(), res.getString(R.string.gid), download.GID));
+
+
+                            if (download.isBitTorrent) {
+                                seedersNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.numSeeder), download.numSeeders));
+                                infoHash.setText(String.format(Locale.getDefault(), res.getString(R.string.info_hash), download.infoHash));
+                                seeder.setText(String.format(Locale.getDefault(), res.getString(R.string.seeder), String.valueOf(download.seeder)));
+                                bitTorrentCreationDate.setText(String.format(Locale.getDefault(), res.getString(R.string.creation_date), download.bitTorrent.creationDate));
+                                bitTorrentComment.setText(String.format(Locale.getDefault(), res.getString(R.string.comment), download.bitTorrent.creationDate));
+                                bitTorrentMode.setText(String.format(Locale.getDefault(), res.getString(R.string.mode), download.bitTorrent.mode.equals(BitTorrent.MODE.SINGLE) ? "single" : "multi"));
+                                bitTorrentAnnounceList.setText(loadBTAnnounceList(download.bitTorrent));
+                            } else {
+                                bitTorrentContainer.removeAllViews();
+                            }
                         }
                     });
+
+
+                    // Chart
+                    chart.setNoDataText(noDataTextChart);
+                    if (download.status.equals(Download.STATUS.ACTIVE)) {
+                        final LineData data = chart.getData();
+                        ILineDataSet downloadSet = data.getDataSetByIndex(0);
+                        ILineDataSet uploadSet = data.getDataSetByIndex(1);
+
+                        if (downloadSet == null) {
+                            downloadSet = Charting.InitDownloadSet(context);
+                            data.addDataSet(downloadSet);
+                        }
+
+                        if (uploadSet == null) {
+                            uploadSet = Charting.InitUploadSet(context);
+                            data.addDataSet(uploadSet);
+                        }
+
+
+                        data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                        data.addEntry(new Entry(download.downloadSpeed, downloadSet.getEntryCount()), 0);
+                        data.addEntry(new Entry(download.uploadSpeed, uploadSet.getEntryCount()), 1);
+
+                        chart.notifyDataSetChanged();
+                        chart.setVisibleXRangeMaximum(90);
+                        chart.moveViewToX(data.getXValCount() - 91);
+                    } else {
+                        context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                chart.clear();
+                            }
+                        });
+                    }
+
+                    if (updateTreeViewCount == 1) {
+                        FilesTree tree = new FilesTree(new FileNode("", "", null));
+
+                        for (File file : download.files) {
+                            tree.addElement(file);
+                        }
+
+                        root = tree.toTreeNode();
+
+                        String state = null;
+                        if (treeView != null) state = treeView.getSaveState();
+                        treeView = loadTreeNode(download);
+                        if (state != null) treeView.restoreState(state);
+
+                        final View treeRealView = treeView.getView();
+                        if (treeRealView != null) {
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    treeNodeContainer.removeAllViews();
+                                    treeNodeContainer.addView(treeRealView);
+                                }
+                            });
+                        }
+
+                        updateTreeViewCount = 6;
+                    } else {
+                        updateTreeViewCount -= 1;
+                    }
+
+                    if (firstRun && handler != null) {
+                        handler.onFirstUpdate(download);
+                        firstRun = false;
+                    }
                 }
 
-                updateTreeViewCount = 6;
-            } else {
-                updateTreeViewCount -= 1;
-            }
-
-            if (firstRun && handler != null) {
-                handler.onFirstUpdate(download);
-                firstRun = false;
-            }
-
+                @Override
+                public void onException(Exception exception) {
+                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    _shouldStop = true;
+                }
+            });
 
             try {
                 Thread.sleep(updateRate);
@@ -313,7 +318,7 @@ public class UpdateUI implements Runnable {
         _stopped = true;
     }
 
-    private AndroidTreeView loadTreeNode() {
+    private AndroidTreeView loadTreeNode(final Download download) {
         AndroidTreeView tView = new AndroidTreeView(context, root);
         tView.setDefaultViewHolder(CustomItemHolder.class);
         tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
@@ -323,7 +328,7 @@ public class UpdateUI implements Runnable {
             public void onClick(TreeNode node, Object value) {
                 CustomTreeItem item = (CustomTreeItem) value;
                 if (item.type.equals(CustomTreeItem.TYPE.FILE))
-                    createFileDialog((File) item.file, download.status, download.completedLength.equals(download.length), download.dir, download.isBitTorrent, download.files.size(), download.files);
+                    createFileDialog((File) item.file, download);
             }
         });
         tView.setDefaultNodeLongClickListener(new TreeNode.TreeNodeLongClickListener() {
@@ -331,14 +336,14 @@ public class UpdateUI implements Runnable {
             public boolean onLongClick(TreeNode node, Object value) {
                 CustomTreeItem item = (CustomTreeItem) value;
                 if (item.type.equals(CustomTreeItem.TYPE.FOLDER))
-                    createDirectoryDialog((Directory) item.file, download.status, download.isBitTorrent, download.files.size(), download.files);
+                    createDirectoryDialog((Directory) item.file, download);
                 return true;
             }
         });
         return tView;
     }
 
-    private void createFileDialog(final File file, Download.STATUS status, final boolean downloadEnded, final String dir, boolean isTorrent, Integer fileNumber, final List<File> files) {
+    private void createFileDialog(final File file, final Download download) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         @SuppressLint("InflateParams") View main = context.getLayoutInflater().inflate(R.layout.filelisting_dialog, null);
@@ -354,13 +359,13 @@ public class UpdateUI implements Runnable {
         fileProgress.setText(file.getPercentage());
         fileIndex.setText(String.format(Locale.getDefault(), res.getString(R.string.index), file.index));
 
-        if (status.equals(Download.STATUS.ACTIVE)) {
+        if (download.status.equals(Download.STATUS.ACTIVE)) {
             fileSelected.setText(R.string.selectFileNotPaused);
             fileSelected.setEnabled(false);
-        } else if (!isTorrent) {
+        } else if (!download.isBitTorrent) {
             fileSelected.setText(R.string.selectFileNotTorrent);
             fileSelected.setEnabled(false);
-        } else if (fileNumber == 1) {
+        } else if (download.files.size() == 1) {
             fileSelected.setText(R.string.selectFileSingleFile);
             fileSelected.setEnabled(false);
         } else {
@@ -381,7 +386,7 @@ public class UpdateUI implements Runnable {
                                 indexes.add(Integer.parseInt(indexString));
                             }
                         } else {
-                            for (File filee : files) {
+                            for (File filee : download.files) {
                                 indexes.add(filee.index);
                             }
                         }
@@ -451,7 +456,7 @@ public class UpdateUI implements Runnable {
                     URI uri;
                     try {
                         URI addr = new URI(directDownloadAddr);
-                        uri = new URI(addr.getScheme(), null, addr.getHost(), addr.getPort(), file.getRelativePath(dir), null, null);
+                        uri = new URI(addr.getScheme(), null, addr.getHost(), addr.getPort(), file.getRelativePath(download.dir), null, null);
                     } catch (URISyntaxException ex) {
                         Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_START_DOWNLOAD, ex);
                         return;
@@ -532,7 +537,7 @@ public class UpdateUI implements Runnable {
                             .putExtra("gid", download.GID)
                             .putExtra("url", uri.toASCIIString())
                             .putExtra("fileName", file.getName());
-                    if (downloadEnded) {
+                    if (download.completedLength.equals(download.length)) {
                         context.startService(downloadIntent);
                     } else {
                         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
@@ -562,7 +567,7 @@ public class UpdateUI implements Runnable {
         });
     }
 
-    private void createDirectoryDialog(final Directory directory, Download.STATUS status, boolean isTorrent, Integer fileNumber, final List<File> files) {
+    private void createDirectoryDialog(final Directory directory, final Download download) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = context.getLayoutInflater();
         @SuppressLint("InflateParams") View main = inflater.inflate(R.layout.filelisting_dialog, null);
@@ -578,13 +583,13 @@ public class UpdateUI implements Runnable {
         completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(directory.getCompletedLength())));
         directoryProgress.setText(directory.getPercentage());
 
-        if (status.equals(Download.STATUS.ACTIVE)) {
+        if (download.status.equals(Download.STATUS.ACTIVE)) {
             filesSelected.setText(R.string.selectDirectoryNotPaused);
             filesSelected.setEnabled(false);
-        } else if (!isTorrent) {
+        } else if (!download.isBitTorrent) {
             filesSelected.setText(R.string.selectDirectoryNotTorrent);
             filesSelected.setEnabled(false);
-        } else if (fileNumber == 1) {
+        } else if (download.files.size() == 1) {
             filesSelected.setText(R.string.selectDirectorySingleFile);
             filesSelected.setEnabled(false);
         } else {
@@ -607,7 +612,7 @@ public class UpdateUI implements Runnable {
                                 indexes.add(Integer.parseInt(indexString));
                             }
                         } else {
-                            for (File filee : files) {
+                            for (File filee : download.files) {
                                 indexes.add(filee.index);
                             }
                         }

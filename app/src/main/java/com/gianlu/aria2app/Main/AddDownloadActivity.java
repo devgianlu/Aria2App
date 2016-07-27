@@ -25,16 +25,17 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.NetIO.JTA2.IGID;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.jtitan.Aria2Helper.IGID;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 
 
 public class AddDownloadActivity extends AppCompatActivity {
@@ -100,13 +101,20 @@ public class AddDownloadActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
             case R.id.addDownloadMenu_done:
-                JTA2 jta2 = Utils.readyJTA2(this);
-                final ProgressDialog progressDialog = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-                progressDialog.show();
+                JTA2 jta2;
+                try {
+                    jta2 = Utils.readyJTA2(this);
+                } catch (IOException | NoSuchAlgorithmException ex) {
+                    Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+                    return true;
+                }
+
+                final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+                pd.show();
 
                 switch (spinner.getSelectedItemPosition()) {
                     case 0:
-                        if (uriFragment.getUris().size() == 0) return false;
+                        if (uriFragment.getUris().size() == 0) break;
 
                         if (Analytics.isTrackingAllowed(this))
                             Analytics.getDefaultTracker(this.getApplication()).send(new HitBuilders.EventBuilder()
@@ -116,7 +124,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                         jta2.addUri(uriFragment.getUris(), uriFragment.getPosition(), uriFragment.getOptions(), new IGID() {
                             @Override
                             public void onGID(String GID) {
-                                progressDialog.dismiss();
+                                pd.dismiss();
                                 AddDownloadActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -127,20 +135,20 @@ public class AddDownloadActivity extends AppCompatActivity {
 
                             @Override
                             public void onException(Exception ex) {
-                                progressDialog.dismiss();
+                                pd.dismiss();
                                 Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
                             }
                         });
                         break;
                     case 1:
                     case 2:
-                        if (torrentFragment.getData() == null) return false;
+                        if (torrentFragment.getData() == null) break;
 
                         InputStream in;
                         try {
                             in = getContentResolver().openInputStream(torrentFragment.getData());
                         } catch (FileNotFoundException ex) {
-                            progressDialog.dismiss();
+                            pd.dismiss();
                             Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
                             break;
                         }
@@ -160,7 +168,7 @@ public class AddDownloadActivity extends AppCompatActivity {
 
                             base64 = Base64.encodeToString(buffer.toByteArray(), Base64.NO_WRAP);
                         } catch (IOException ex) {
-                            progressDialog.dismiss();
+                            pd.dismiss();
                             Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
                             break;
                         }
@@ -174,7 +182,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                             jta2.addTorrent(base64, torrentFragment.getUris(), torrentFragment.getOptions(), torrentFragment.getPosition(), new IGID() {
                                 @Override
                                 public void onGID(String GID) {
-                                    progressDialog.dismiss();
+                                    pd.dismiss();
                                     AddDownloadActivity.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -185,7 +193,7 @@ public class AddDownloadActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onException(Exception ex) {
-                                    progressDialog.dismiss();
+                                    pd.dismiss();
                                     Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
                                 }
                             });
@@ -198,7 +206,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                             jta2.addMetalink(base64, torrentFragment.getUris(), torrentFragment.getOptions(), torrentFragment.getPosition(), new IGID() {
                                 @Override
                                 public void onGID(String GID) {
-                                    progressDialog.dismiss();
+                                    pd.dismiss();
                                     AddDownloadActivity.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -209,7 +217,7 @@ public class AddDownloadActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onException(Exception ex) {
-                                    progressDialog.dismiss();
+                                    pd.dismiss();
                                     Utils.UIToast(AddDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
                                 }
                             });
@@ -217,7 +225,7 @@ public class AddDownloadActivity extends AppCompatActivity {
                         break;
                 }
 
-                progressDialog.dismiss();
+                pd.dismiss();
                 break;
         }
         return super.onOptionsItemSelected(item);

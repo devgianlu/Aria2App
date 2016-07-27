@@ -69,48 +69,117 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/addProfile_serverPort"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="6dp"
             android:layout_marginTop="5dp"
             android:text="@string/completeURL_default"
             android:textAlignment="center"
             android:textStyle="bold" />
 
-        <Switch
-            android:id="@+id/addProfile_serverAuth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/addProfile_completeURL"
-            android:layout_marginEnd="10dp"
-            android:text="@string/authentication"
-            android:textColor="@android:color/tertiary_text_dark" />
-
         <TextView
-            android:id="@+id/addProfile_tokenLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addProfile_serverAuth"
-            android:layout_marginEnd="10dp"
-            android:layout_toEndOf="@+id/addProfile_serverAuth"
-            android:text="@string/token"
-            android:visibility="invisible" />
-
-        <EditText
-            android:id="@+id/addProfile_serverToken"
+            android:id="@+id/addProfile_authMethodLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addProfile_tokenLabel"
-            android:layout_toEndOf="@+id/addProfile_tokenLabel"
-            android:hint="@string/token_hint"
-            android:inputType="textVisiblePassword"
-            android:visibility="invisible" />
+            android:layout_below="@+id/addProfile_completeURL"
+            android:layout_marginBottom="2dp"
+            android:text="@string/authenticationMethod" />
+
+        <RelativeLayout
+            android:id="@+id/addProfile_authMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addProfile_authMethodLabel"
+            android:paddingStart="25dp">
+
+            <RadioButton
+                android:id="@+id/addProfile_authMethodNone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:checked="true"
+                android:text="@string/none"
+                android:textColor="@android:color/tertiary_text_dark" />
+
+            <RadioButton
+                android:id="@+id/addProfile_authMethodToken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/addProfile_authMethodNone"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/token"
+                android:textColor="@android:color/tertiary_text_dark" />
+
+            <EditText
+                android:id="@+id/addProfile_authMethodTokenToken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/addProfile_authMethodToken"
+                android:layout_toEndOf="@id/addProfile_authMethodToken"
+                android:enabled="false"
+                android:hint="@string/token_hint"
+                android:inputType="textVisiblePassword" />
+
+            <RadioButton
+                android:id="@+id/addProfile_authMethodHTTP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/addProfile_authMethodToken"
+                android:text="@string/user_passwd"
+                android:textColor="@android:color/tertiary_text_dark" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/addProfile_authMethodHTTP">
+
+                <TextView
+                    android:id="@+id/addProfile_authMethodHTTPUserLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/addProfile_authMethodHTTPUser"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="40dp"
+                    android:enabled="false"
+                    android:text="@string/username" />
+
+                <EditText
+                    android:id="@+id/addProfile_authMethodHTTPUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/addProfile_authMethodHTTPUserLabel"
+                    android:enabled="false"
+                    android:hint="@string/username_hint"
+                    android:inputType="textVisiblePassword" />
+
+                <TextView
+                    android:id="@+id/addProfile_authMethodHTTPPasswdLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/addProfile_authMethodHTTPPasswd"
+                    android:layout_alignStart="@+id/addProfile_authMethodHTTPUserLabel"
+                    android:layout_marginEnd="5dp"
+                    android:enabled="false"
+                    android:text="@string/password" />
+
+                <EditText
+                    android:id="@+id/addProfile_authMethodHTTPPasswd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/addProfile_authMethodHTTPUser"
+                    android:layout_toEndOf="@+id/addProfile_authMethodHTTPPasswdLabel"
+                    android:enabled="false"
+                    android:hint="@string/password_hint"
+                    android:inputType="textPassword" />
+            </RelativeLayout>
+        </RelativeLayout>
 
         <CheckBox
             android:id="@+id/addProfile_serverSSL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/addProfile_serverAuth"
+            android:layout_below="@+id/addProfile_authMethod"
             android:layout_marginTop="5dp"
             android:text="@string/encryption"
             android:textColor="@android:color/tertiary_text_dark" />
@@ -178,7 +247,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/addProfile_directDownload_auth"
                 android:layout_alignTop="@+id/addProfile_directDownload_auth"
                 android:layout_marginEnd="5dp"

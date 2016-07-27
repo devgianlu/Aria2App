@@ -3,9 +3,13 @@ package com.gianlu.aria2app.SelectProfile;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.ArrayMap;
+
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +22,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 
-public class MultiModeProfileItem extends ProfileItem {
+public class MultiModeProfileItem extends ProfileItem implements Parcelable {
+    public static final Creator<MultiModeProfileItem> CREATOR = new Creator<MultiModeProfileItem>() {
+        @Override
+        public MultiModeProfileItem createFromParcel(Parcel in) {
+            return new MultiModeProfileItem(in);
+        }
+
+        @Override
+        public MultiModeProfileItem[] newArray(int size) {
+            return new MultiModeProfileItem[size];
+        }
+    };
     private Map<ConnectivityCondition, SingleModeProfileItem> profiles = new ArrayMap<>();
 
     private MultiModeProfileItem() {
@@ -26,10 +41,14 @@ public class MultiModeProfileItem extends ProfileItem {
         this.status = ProfileItem.STATUS.UNKNOWN;
     }
 
+    protected MultiModeProfileItem(Parcel in) {
+        super(in);
+    }
+
     public static MultiModeProfileItem fromJSON(String json) throws JSONException, IOException {
         JSONObject jProfile = new JSONObject(json);
         MultiModeProfileItem item = new MultiModeProfileItem();
-        item.profileName = jProfile.getString("name");
+        item.globalProfileName = jProfile.getString("name");
 
         JSONArray conditions = jProfile.getJSONArray("conditions");
 
@@ -37,6 +56,7 @@ public class MultiModeProfileItem extends ProfileItem {
             JSONObject condition = conditions.getJSONObject(i);
 
             SingleModeProfileItem profile = SingleModeProfileItem.fromJSON(condition.getJSONObject("profile").toString());
+            profile.setGlobalProfileName(item.globalProfileName);
             switch (ConnectivityCondition.getTypeFromString(condition.getString("type"))) {
                 case WIFI:
                     item.addProfile(ConnectivityCondition.newWiFiCondition(condition.getString("ssid")), profile);
@@ -73,6 +93,16 @@ public class MultiModeProfileItem extends ProfileItem {
         return fromJSON(builder.toString());
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
     public void addProfile(ConnectivityCondition condition, SingleModeProfileItem profile) {
         profiles.put(condition, profile);
     }
@@ -82,7 +112,7 @@ public class MultiModeProfileItem extends ProfileItem {
         for (ConnectivityCondition cond : profiles.keySet()) {
             if (profiles.get(cond).isDefault()) return profiles.get(cond);
         }
-        return new SingleModeProfileItem("Default", "127.0.0.1", 6800, "/jsonrpc", false, false, "", false, null);
+        return new SingleModeProfileItem("Default", "127.0.0.1", 6800, "/jsonrpc", JTA2.AUTH_METHOD.NONE, false, false, null);
     }
 
     @Nullable
@@ -120,6 +150,10 @@ public class MultiModeProfileItem extends ProfileItem {
             if (cond.getType() == ConnectivityCondition.TYPE.BLUETOOTH) return profiles.get(cond);
         }
         return null;
+    }
+
+    public String getGlobalProfileName() {
+        return globalProfileName;
     }
 
     public Map<ConnectivityCondition, SingleModeProfileItem> getProfiles() {

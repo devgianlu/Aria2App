@@ -1,4 +1,4 @@
-package com.gianlu.jtitan.Aria2Helper;
+package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.support.annotation.Nullable;
 
@@ -31,8 +31,7 @@ public class GlobalStats {
         }
     }
 
-    public static GlobalStats fromString(JSONObject string) throws JSONException {
-        JSONObject jResult = string.getJSONObject("result");
+    public static GlobalStats fromString(JSONObject jResult) throws JSONException {
         return new GlobalStats(parseInt(jResult.optString("downloadSpeed")),
                 parseInt(jResult.optString("uploadSpeed")),
                 parseInt(jResult.optString("numActive")),

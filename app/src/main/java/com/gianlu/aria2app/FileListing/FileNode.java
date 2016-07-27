@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.FileListing;
 
-import com.gianlu.jtitan.Aria2Helper.File;
+import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.unnamed.b.atv.model.TreeNode;
 
 import java.util.ArrayList;

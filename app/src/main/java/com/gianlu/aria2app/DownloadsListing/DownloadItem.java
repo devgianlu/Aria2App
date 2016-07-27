@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.DownloadsListing;
 
-import com.gianlu.jtitan.Aria2Helper.Download;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
 
 import java.util.Locale;
 

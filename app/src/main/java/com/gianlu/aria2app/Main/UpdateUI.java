@@ -8,16 +8,19 @@ import android.widget.ListView;
 import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.DownloadsListing.DownloadItem;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
+import com.gianlu.aria2app.NetIO.JTA2.IDownload;
+import com.gianlu.aria2app.NetIO.JTA2.IStats;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.jtitan.Aria2Helper.Download;
-import com.gianlu.jtitan.Aria2Helper.GlobalStats;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -28,7 +31,6 @@ public class UpdateUI implements Runnable {
     private JTA2 jta2;
     private Activity context;
     private Integer updateRate;
-    private int errorCount = 0;
     private boolean _stopped;
 
     public UpdateUI(Activity context, final LineChart chart, ListView downloadsListView) {
@@ -41,7 +43,13 @@ public class UpdateUI implements Runnable {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         updateRate = Integer.parseInt(sharedPreferences.getString("a2_updateRate", "2")) * 1000;
 
-        jta2 = Utils.readyJTA2(context);
+
+        try {
+            jta2 = Utils.readyJTA2(context);
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            stop();
+        }
     }
 
     public void stop() {
@@ -63,7 +71,7 @@ public class UpdateUI implements Runnable {
         ILineDataSet downloadTmp = data.getDataSetByIndex(0);
         ILineDataSet uploadTmp = data.getDataSetByIndex(1);
 
-        while (!_shouldStop) {
+        while ((!_shouldStop) && jta2 != null) {
             // ---- Update chart ---- //
             if (downloadTmp == null) {
                 downloadTmp = Charting.InitDownloadSet(context);
@@ -78,43 +86,42 @@ public class UpdateUI implements Runnable {
             final ILineDataSet downloadSet = downloadTmp;
             final ILineDataSet uploadSet = uploadTmp;
 
-            GlobalStats globalStats;
-            try {
-                globalStats = jta2.getGlobalStat();
-            } catch (IOException ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                _shouldStop = true;
-                break;
-            }
+            jta2.getGlobalStat(new IStats() {
+                @Override
+                public void onStats(GlobalStats stats) {
+                    data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                    data.addEntry(new Entry(stats.downloadSpeed.floatValue(), downloadSet.getEntryCount()), 0);
+                    data.addEntry(new Entry(stats.uploadSpeed.floatValue(), uploadSet.getEntryCount()), 1);
 
-            data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(globalStats.downloadSpeed.floatValue(), downloadSet.getEntryCount()), 0);
-            data.addEntry(new Entry(globalStats.uploadSpeed.floatValue(), uploadSet.getEntryCount()), 1);
+                    chart.notifyDataSetChanged();
+                    chart.setVisibleXRangeMaximum(90);
+                    chart.moveViewToX(data.getXValCount() - 91);
+                }
 
-            chart.notifyDataSetChanged();
-            chart.setVisibleXRangeMaximum(90);
-            chart.moveViewToX(data.getXValCount() - 91);
+                @Override
+                public void onException(Exception exception) {
+                    _shouldStop = true;
+                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                }
+            });
 
             // ---- Update ListView ---- //
             for (int c = 0; c < downloadsListView.getCount(); c++) {
                 final DownloadItem downloadItem = (DownloadItem) downloadsListView.getItemAtPosition(c);
                 final String downloadGID = downloadItem.getDownloadGID();
 
-                Download status;
-                try {
-                    status = jta2.tellStatus(downloadGID);
-                    errorCount = 0;
-
-                    downloadItem.download = status;
-                } catch (IOException ex) {
-                    errorCount += 1;
-                    if (errorCount > 6) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                        _shouldStop = true;
-                        break;
+                jta2.tellStatus(downloadGID, new IDownload() {
+                    @Override
+                    public void onDownload(Download download) {
+                        downloadItem.download = download;
                     }
-                }
 
+                    @Override
+                    public void onException(Exception exception) {
+                        _shouldStop = true;
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    }
+                });
 
                 context.runOnUiThread(new Runnable() {
                     @Override
@@ -123,7 +130,6 @@ public class UpdateUI implements Runnable {
                     }
                 });
             }
-
 
             try {
                 Thread.sleep(updateRate);

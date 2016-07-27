@@ -5,12 +5,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.widget.Toast;
 
-import com.gianlu.jtitan.Aria2Helper.JTA2;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +27,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -92,6 +100,18 @@ public class Utils {
         }
     }
 
+    public static WebSocket readyWebSocket(boolean isSSL, String url, @NonNull String username, @NonNull String password) throws IOException, NoSuchAlgorithmException {
+        if (isSSL) {
+            WebSocketFactory factory = new WebSocketFactory();
+            factory.setSSLContext(SSLContext.getDefault());
+
+            return factory.createSocket(url.replace("http://", "wss://"), 5000)
+                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        } else {
+            return new WebSocketFactory().createSocket(url.replace("http://", "ws://"), 5000)
+                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        }
+    }
     public static WebSocket readyWebSocket(boolean isSSL, String url) throws NoSuchAlgorithmException, IOException {
         if (isSSL) {
             WebSocketFactory factory = new WebSocketFactory();
@@ -106,9 +126,19 @@ public class Utils {
         if (preferences.getBoolean("a2_serverSSL", false)) {
             WebSocketFactory factory = new WebSocketFactory();
             factory.setSSLContext(SSLContext.getDefault());
-            return factory.createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "wss://"), 5000);
+            WebSocket socket = factory.createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "wss://"), 5000);
+
+            if (preferences.getString("a2_authMethod", "NONE").equals("HTTP"))
+                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((preferences.getString("a2_serverUsername", "username") + ":" + preferences.getString("a2_serverPassword", "password")).getBytes(), Base64.NO_WRAP));
+
+            return socket;
         } else {
-            return new WebSocketFactory().createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "ws://"), 5000);
+            WebSocket socket = new WebSocketFactory().createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "ws://"), 5000);
+
+            if (preferences.getString("a2_authMethod", "NONE").equals("HTTP"))
+                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((preferences.getString("a2_serverUsername", "username") + ":" + preferences.getString("a2_serverPassword", "password")).getBytes(), Base64.NO_WRAP));
+
+            return socket;
         }
     }
 
@@ -124,16 +154,22 @@ public class Utils {
         return fastProgressDialog(context, "", context.getString(message), indeterminate, cancelable);
     }
 
-    public static JTA2 readyJTA2(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    public static JSONArray readyParams(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        JTA2.setAuthenticationMethod(sharedPreferences.getInt("a2_useToken", false));
+        JSONArray array = new JSONArray();
+        if (preferences.getString("a2_authMethod", "NONE").equals("TOKEN"))
+            array.put("token:" + preferences.getString("a2_serverToken", "token"));
 
-        JTA2 jta2 = new JTA2(sharedPreferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc"));
-        if (sharedPreferences.getBoolean("a2_useToken", false))
-            jta2.setToken(sharedPreferences.getString("a2_serverToken", ""));
+        return array;
+    }
 
-        return jta2;
+    public static JSONObject readyRequest() throws JSONException {
+        return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(200)));
+    }
+
+    public static JTA2 readyJTA2(Activity context) throws IOException, NoSuchAlgorithmException {
+        return new JTA2(WebSocketing.newInstance(context));
     }
 
     public static void UIToast(final Activity context, final String text) {
@@ -250,7 +286,6 @@ public class Utils {
         /* WebSocket */
         WS_OPENED("WebSocket connected!", false),
         WS_CLOSED("WebSocket has been closed!", true),
-        WS_SERVICE_STOPPED("Notification service has been stopped!", true),
         WS_EXCEPTION("WebSocket exception!", true),
         /* Gathering information */
         FAILED_GATHERING_INFORMATION("Failed on gathering information!", true),
@@ -268,9 +303,6 @@ public class Utils {
         FILE_EXCLUDED("File excluded!", false),
         FAILED_INCEXCFILE("Failed including/excluding file!", true),
         DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
-        DOWNLOAD_URI_ADDED("New URI download added!", false),
-        DOWNLOAD_TORRENT_ADDED("New BitTorrent download added!", false),
-        DOWNLOAD_METALINK_ADDED("New Metalink download added!", false),
         FILES_INCLUDED("Files included!", false),
         FILES_EXCLUDED("Files excluded!", false),
         FAILED_INCEXCFILES("Failed including/excluding files!", true),
@@ -281,6 +313,8 @@ public class Utils {
         INVALID_SERVER_PORT("Invalid server port, must be > 0 and < 65536!", false),
         INVALID_SERVER_ENDPOINT("Invalid server RPC endpoint!", false),
         INVALID_SERVER_TOKEN("Invalid server token!", false),
+        INVALID_SERVER_USER_OR_PASSWD("Invalid username or password!", false),
+        INVALID_CONDITIONS_NUMBER("Mutli profile should contains more than one condition", false),
         FILE_NOT_FOUND("File not found!", true),
         FATAL_EXCEPTION("Fatal exception!", true),
         FAILED_LICENSE_VERIFICATION("Failed license verification due to app error!", true),

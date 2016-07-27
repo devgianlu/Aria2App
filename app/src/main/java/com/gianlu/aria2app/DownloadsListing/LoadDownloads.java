@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.preference.PreferenceManager;
 import android.widget.ListView;
 
+import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.IDownloadList;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.jtitan.Aria2Helper.Download;
-import com.gianlu.jtitan.Aria2Helper.IDownloadList;
-import com.gianlu.jtitan.Aria2Helper.JTA2;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +28,17 @@ public class LoadDownloads implements Runnable {
 
         hideMetadata = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_hideMetadata", false);
 
-        jta2 = Utils.readyJTA2(context);
+        try {
+            jta2 = Utils.readyJTA2(context);
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            handler.onException(ex);
+        }
     }
 
     @Override
     public void run() {
         handler.onStart();
+        if (jta2 == null) return;
         final List<DownloadItem> downloadsList = new ArrayList<>();
 
         //Active

@@ -85,7 +85,7 @@ public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
         Pair<ConnectivityCondition, SingleModeProfileItem> item = getChild(i, i1);
-        return createChildView(((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.profile_custom_child, null), getGroup(i).getProfileName(), item.first, item.second);
+        return createChildView(((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.profile_custom_child, null), getGroup(i).getGlobalProfileName(), item.first, item.second);
     }
 
     @Override
@@ -103,14 +103,15 @@ public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
         ImageButton edit = (ImageButton) view.findViewById(R.id.profileCustomItem_edit);
         final ImageButton expand = (ImageButton) view.findViewById(R.id.profileCustomItem_expand);
 
-        profileName.setText(item.getProfileName());
+        profileName.setText(item.getGlobalProfileName());
         latency.setText(String.format(Locale.getDefault(), "%s ms", item.getLatency() == -1 ? "-" : String.valueOf(item.getLatency())));
         serverIP.setText(item.isSingleMode() ? ((SingleModeProfileItem) item).getFullServerAddr() : ((MultiModeProfileItem) item).getCurrentProfile(context).getFullServerAddr());
+        // TODO: Got default IP displayed here :/ (Multi)
 
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onItemSelected.onSelected(item.getProfileName(), item);
+                onItemSelected.onSelected(item.getGlobalProfileName(), item);
             }
         });
         edit.setOnClickListener(new View.OnClickListener() {

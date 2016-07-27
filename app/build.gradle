@@ -27,7 +27,6 @@ android {
 }
 
 dependencies {
-    compile project(':jtitan')
     compile project(':google_licensing')
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'

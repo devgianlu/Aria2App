@@ -18,6 +18,7 @@ import android.widget.ExpandableListView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.CheckerCallback;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.SelectProfile.AddProfileActivity;
 import com.gianlu.aria2app.SelectProfile.MultiModeProfileItem;
 import com.gianlu.aria2app.SelectProfile.ProfileItem;
@@ -94,6 +95,8 @@ public class SelectProfileActivity extends AppCompatActivity {
             }
         }
 
+        // TODO: Click on error image will display toast with info
+
         listView.setAdapter(new ProfilesCustomAdapter(this, listView, profiles, new ProfilesCustomAdapter.OnItemSelected() {
             @Override
             public void onSelected(final String profileName, final ProfileItem item) {
@@ -106,18 +109,8 @@ public class SelectProfileActivity extends AppCompatActivity {
                                     SingleModeProfileItem profile = item.isSingleMode() ? ((SingleModeProfileItem) item) : ((MultiModeProfileItem) item).getCurrentProfile(SelectProfileActivity.this);
                                     Intent intent = new Intent(SelectProfileActivity.this, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                            .putExtra("profileName", profileName)
-                                            .putExtra("serverIP", profile.getFullServerAddr())
-                                            .putExtra("serverAuth", profile.isServerAuth())
-                                            .putExtra("serverToken", profile.getServerToken())
-                                            .putExtra("serverSSL", profile.isServerSSL())
-                                            .putExtra("serverDirectDownload", profile.isDirectDownloadEnabled());
-                                    if (profile.isDirectDownloadEnabled()) {
-                                        intent.putExtra("ddAddr", profile.getDirectDownload().getAddress())
-                                                .putExtra("ddAuth", profile.getDirectDownload().isAuth())
-                                                .putExtra("ddUser", profile.getDirectDownload().getUsername())
-                                                .putExtra("ddPasswd", profile.getDirectDownload().getPassword());
-                                    }
+                                            .putExtra("profileName", profile.getGlobalProfileName())
+                                            .putExtra("profile", profile);
                                     startActivity(intent);
                                 }
                             })
@@ -130,18 +123,8 @@ public class SelectProfileActivity extends AppCompatActivity {
                     SingleModeProfileItem profile = item.isSingleMode() ? ((SingleModeProfileItem) item) : ((MultiModeProfileItem) item).getCurrentProfile(SelectProfileActivity.this);
                     Intent intent = new Intent(SelectProfileActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            .putExtra("profileName", profileName)
-                            .putExtra("serverIP", profile.getFullServerAddr())
-                            .putExtra("serverAuth", profile.isServerAuth())
-                            .putExtra("serverToken", profile.getServerToken())
-                            .putExtra("serverSSL", profile.isServerSSL())
-                            .putExtra("serverDirectDownload", profile.isDirectDownloadEnabled());
-                    if (profile.isDirectDownloadEnabled()) {
-                        intent.putExtra("ddAddr", profile.getDirectDownload().getAddress())
-                                .putExtra("ddAuth", profile.getDirectDownload().isAuth())
-                                .putExtra("ddUser", profile.getDirectDownload().getUsername())
-                                .putExtra("ddPasswd", profile.getDirectDownload().getPassword());
-                    }
+                            .putExtra("profileName", profile.getGlobalProfileName())
+                            .putExtra("profile", profile);
                     startActivity(intent);
                 }
             }
@@ -152,7 +135,7 @@ public class SelectProfileActivity extends AppCompatActivity {
                         startActivity(new Intent(SelectProfileActivity.this, AddProfileActivity.class)
                                 .putExtra("edit", true)
                                 .putExtra("isSingleMode", item.isSingleMode())
-                                .putExtra("name", item.getProfileName()));
+                                .putExtra("name", item.getGlobalProfileName()));
                     }
                 }));
 
@@ -314,15 +297,20 @@ public class SelectProfileActivity extends AppCompatActivity {
 
         private void check(ProfileItem item) {
             try {
-                if (item.isSingleMode()) {
-                    WebSocket webSocket = Utils.readyWebSocket(((SingleModeProfileItem) item).isServerSSL(), ((SingleModeProfileItem) item).getFullServerAddr());
-                    webSocket.addListener(new StatusWebSocketHandler(context, item))
-                            .connectAsynchronously();
-                } else {
-                    WebSocket webSocket = Utils.readyWebSocket(((MultiModeProfileItem) item).getCurrentProfile(context).isServerSSL(), ((MultiModeProfileItem) item).getCurrentProfile(context).getFullServerAddr());
-                    webSocket.addListener(new StatusWebSocketHandler(context, item))
-                            .connectAsynchronously();
-                }
+                SingleModeProfileItem curr;
+                if (item.isSingleMode())
+                    curr = (SingleModeProfileItem) item;
+                else
+                    curr = ((MultiModeProfileItem) item).getCurrentProfile(context);
+
+                WebSocket webSocket;
+                if (curr.getAuthMethod().equals(JTA2.AUTH_METHOD.HTTP))
+                    webSocket = Utils.readyWebSocket(curr.isServerSSL(), curr.getFullServerAddr(), curr.getServerUsername(), curr.getServerPassword());
+                else
+                    webSocket = Utils.readyWebSocket(curr.isServerSSL(), curr.getFullServerAddr());
+
+                webSocket.addListener(new StatusWebSocketHandler(context, item))
+                        .connectAsynchronously();
             } catch (IOException | NoSuchAlgorithmException ex) {
                 item.setStatus(SingleModeProfileItem.STATUS.ERROR);
 

@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.SelectProfile;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,12 +13,34 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ProfileItem {
-    protected String profileName;
+public class ProfileItem implements Parcelable {
+    public static final Creator<ProfileItem> CREATOR = new Creator<ProfileItem>() {
+        @Override
+        public ProfileItem createFromParcel(Parcel in) {
+            return new ProfileItem(in);
+        }
+
+        @Override
+        public ProfileItem[] newArray(int size) {
+            return new ProfileItem[size];
+        }
+    };
+    protected String globalProfileName;
     protected boolean singleMode;
     protected STATUS status;
     protected boolean isDefault;
     private long latency = -1;
+
+    protected ProfileItem(Parcel in) {
+        globalProfileName = in.readString();
+        singleMode = in.readByte() != 0;
+        status = STATUS.valueOf(in.readString());
+        isDefault = in.readByte() != 0;
+        latency = in.readLong();
+    }
+
+    public ProfileItem() {
+    }
 
     public static boolean isSingleMode(Context context, File file) throws JSONException, IOException {
         FileInputStream in = context.openFileInput(file.getName());
@@ -43,8 +67,8 @@ public class ProfileItem {
         this.status = status;
     }
 
-    public String getProfileName() {
-        return profileName;
+    public String getGlobalProfileName() {
+        return globalProfileName;
     }
 
     public boolean isSingleMode() {
@@ -65,6 +89,20 @@ public class ProfileItem {
 
     public void setLatency(long latency) {
         this.latency = latency;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(globalProfileName);
+        parcel.writeByte((byte) (singleMode ? 1 : 0));
+        parcel.writeString(status.name());
+        parcel.writeByte((byte) (isDefault ? 1 : 0));
+        parcel.writeLong(latency);
     }
 
     public enum STATUS {

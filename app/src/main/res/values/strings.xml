@@ -74,7 +74,7 @@
     <string name="gathering_information">Gathering information. Please wait…</string>
     <string name="processing_data">Processing some data. Please wait…</string>
     <string name="imei_box">The application need to access your phone state to retrieve information to check the license. A message box will display now.</string>
-    <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! Only token method authentication is supported. See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
+    <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
     <string name="profile_hint">My profile</string>
     <string name="mode_single">Single mode (use same address for every connection)</string>
     <string name="mode_multi">Multi mode (use different addresses for different connectivity situations)</string>
@@ -87,9 +87,12 @@
     <string name="endpoint" translatable="false">RPC endpoint:</string>
     <string name="endpoint_default" translatable="false">/jsonrpc</string>
     <string name="completeURL_default" translatable="false">http://127.0.0.1:6800/jsonrpc</string>
-    <string name="authentication">Authentication:</string>
+    <string name="authenticationMethod">Authentication method:</string>
     <string name="token" translatable="false">Token:</string>
-    <string name="token_hint" translatable="false">mytoken</string>
+    <string name="token_hint" translatable="false">token</string>
+    <string name="username_hint">username</string>
+    <string name="password_hint">password</string>
+    <string name="authentication">Authentication</string>
     <string name="send">Send</string>
     <string name="filters">Filters</string>
     <string name="method" translatable="false">Method:</string>
@@ -137,11 +140,13 @@
     <string name="downloads">Downloads</string>
     <string name="downloadFile">Download file</string>
     <string name="x" translatable="false">X</string>
+    <string name="user_passwd">Username and password:</string>
+    <string name="none">None</string>
     <string name="externalStorage_box">The application need to write the external storage to download files! A message box will display now.</string>
     <string name="background" translatable="false">Background</string>
     <string name="bitTorrent" translatable="false">BitTorrent</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_authHelp">Authentication example: <a>https://gist.github.com/fxsjy/5465353</a></string>
+    <string name="directDownload_authHelp"><a>https://gist.github.com/fxsjy/5465353</a></string>
     <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a></string>
     <string name="directDownload_addrHint" translatable="false">http://127.0.0.1:6801/</string>
     <string name="directDownload_addrHelp">The address should be pointing to a directory listing of the aria2 download directory.</string>

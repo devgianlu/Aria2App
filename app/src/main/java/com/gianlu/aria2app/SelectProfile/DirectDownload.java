@@ -1,9 +1,23 @@
 package com.gianlu.aria2app.SelectProfile;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DirectDownload {
+public class DirectDownload implements Parcelable {
+    public static final Creator<DirectDownload> CREATOR = new Creator<DirectDownload>() {
+        @Override
+        public DirectDownload createFromParcel(Parcel in) {
+            return new DirectDownload(in);
+        }
+
+        @Override
+        public DirectDownload[] newArray(int size) {
+            return new DirectDownload[size];
+        }
+    };
     private String address;
     private boolean auth;
     private String username;
@@ -17,6 +31,13 @@ public class DirectDownload {
         this.auth = auth;
         this.username = username;
         this.password = password;
+    }
+
+    protected DirectDownload(Parcel in) {
+        address = in.readString();
+        auth = in.readByte() != 0;
+        username = in.readString();
+        password = in.readString();
     }
 
     public static DirectDownload fromJSON(String json) throws JSONException {
@@ -45,5 +66,27 @@ public class DirectDownload {
 
     public String getPassword() {
         return password;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject jDirectDownload = new JSONObject();
+        jDirectDownload.put("addr", address)
+                .put("auth", auth)
+                .put("username", username)
+                .put("password", password);
+        return jDirectDownload;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(address);
+        parcel.writeByte((byte) (auth ? 1 : 0));
+        parcel.writeString(username);
+        parcel.writeString(password);
     }
 }
