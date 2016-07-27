@@ -94,6 +94,10 @@
     <string name="password_hint">password</string>
     <string name="authentication">Authentication</string>
     <string name="send">Send</string>
+    <string name="retry">Retry</string>
+    <string name="exit">Exit</string>
+    <string name="noCommunication">No communication</string>
+    <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me from the preferences.</string>
     <string name="filters">Filters</string>
     <string name="method" translatable="false">Method:</string>
     <string name="jsonrpc" translatable="false">JSONRPC:</string>

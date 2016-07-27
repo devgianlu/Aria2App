@@ -163,9 +163,8 @@ public class Utils {
 
         return array;
     }
-
     public static JSONObject readyRequest() throws JSONException {
-        return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(200)));
+        return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(2000)));
     }
 
     public static JTA2 readyJTA2(Activity context) throws IOException, NoSuchAlgorithmException {
@@ -211,7 +210,8 @@ public class Utils {
 
         LogMe(context, message + " Details: " + message_extras, message.isError());
     }
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Exception exception) {
+
+    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Throwable exception) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -232,7 +232,8 @@ public class Utils {
         context.runOnUiThread(extra);
         LogMe(context, message + " Details: " + message_extras, message.isError());
     }
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Exception exception, Runnable extra) {
+
+    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Throwable exception, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -255,7 +256,7 @@ public class Utils {
         LogMe(context, message.toString(), message.isError());
     }
 
-    public static void SecretLog(Activity context, Exception exx) {
+    public static void SecretLog(Activity context, Throwable exx) {
         try {
             FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".secret", Context.MODE_APPEND);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
@@ -293,6 +294,12 @@ public class Utils {
         FILE_DOWNLOAD_FAILED("Download failed!", true),
         FILE_DOWNLOAD_USER_STOPPED("User stopped the download!", false),
         /* Actions on downloads */
+        PAUSED("Download paused.", false),
+        REMOVED("Download removed.", false),
+        REMOVED_RESULT("Download result removed.", false),
+        MOVED("Download moved.", false),
+        RESUMED("Download resumed.", false),
+        RESTARTED("Download restarted.", false),
         FAILED_PAUSE("Failed to pause download!", true),
         FAILED_REMOVE("Failed to remove download!", true),
         FAILED_UNPAUSE("Failed to resume download!", true),
@@ -308,6 +315,7 @@ public class Utils {
         FAILED_INCEXCFILES("Failed including/excluding files!", true),
         FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
         /* Application */
+        UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
         INVALID_PROFILE_NAME("Invalid profile name!", false),
         INVALID_SERVER_IP("Invalid server address!", false),
         INVALID_SERVER_PORT("Invalid server port, must be > 0 and < 65536!", false),

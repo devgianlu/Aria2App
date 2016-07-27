@@ -40,6 +40,7 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
                                 "\nOS API Level: " + android.os.Build.VERSION.SDK_INT +
                                 "\nDevice: " + android.os.Build.DEVICE +
                                 "\nModel (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")" +
+                                "\n\nException" + throwable.toString() +
                                 "\nStacktrace: " + Arrays.toString(throwable.getStackTrace()));
                         try {
                             context.startActivity(Intent.createChooser(intent, "Send mail to the developer..."));

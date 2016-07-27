@@ -95,8 +95,6 @@ public class SelectProfileActivity extends AppCompatActivity {
             }
         }
 
-        // TODO: Click on error image will display toast with info
-
         listView.setAdapter(new ProfilesCustomAdapter(this, listView, profiles, new ProfilesCustomAdapter.OnItemSelected() {
             @Override
             public void onSelected(final String profileName, final ProfileItem item) {
@@ -198,6 +196,8 @@ public class SelectProfileActivity extends AppCompatActivity {
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             item.setStatus(SingleModeProfileItem.STATUS.ONLINE);
+            item.setStatusMessage("Online");
+
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -223,6 +223,7 @@ public class SelectProfileActivity extends AppCompatActivity {
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
             item.setStatus(SingleModeProfileItem.STATUS.OFFLINE);
+            item.setStatusMessage(cause.getMessage());
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -235,6 +236,7 @@ public class SelectProfileActivity extends AppCompatActivity {
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
             Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause);
             item.setStatus(SingleModeProfileItem.STATUS.ERROR);
+            item.setStatusMessage(cause.getMessage());
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -251,6 +253,8 @@ public class SelectProfileActivity extends AppCompatActivity {
                 item.setStatus(ProfileItem.STATUS.OFFLINE);
             else
                 item.setStatus(ProfileItem.STATUS.ERROR);
+
+            item.setStatusMessage(exception.getMessage());
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -261,10 +265,13 @@ public class SelectProfileActivity extends AppCompatActivity {
 
         @Override
         public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-            if (closedByServer)
-                item.setStatus(SingleModeProfileItem.STATUS.OFFLINE);
-            else
+            if (closedByServer) {
                 item.setStatus(SingleModeProfileItem.STATUS.ERROR);
+                item.setStatusMessage(serverCloseFrame.getCloseReason());
+            } else {
+                item.setStatusMessage(clientCloseFrame.getCloseReason());
+                item.setStatus(SingleModeProfileItem.STATUS.OFFLINE);
+            }
 
             context.runOnUiThread(new Runnable() {
                 @Override
@@ -313,6 +320,7 @@ public class SelectProfileActivity extends AppCompatActivity {
                         .connectAsynchronously();
             } catch (IOException | NoSuchAlgorithmException ex) {
                 item.setStatus(SingleModeProfileItem.STATUS.ERROR);
+                item.setStatusMessage(ex.getMessage());
 
                 context.runOnUiThread(new Runnable() {
                     @Override

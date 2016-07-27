@@ -207,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
                             DownloadAction.ACTION action = new ArrayList<>(list.keySet()).get(i);
                             DownloadAction.IMove iMove = new DownloadAction.IMove() {
                                 @Override
-                                public void onMoved() {
-
+                                public void onMoved(String gid) {
+                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.MOVED, gid);
                                 }
 
                                 @Override
@@ -221,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
                                 case PAUSE:
                                     downloadAction.pause(MainActivity.this, item.getDownloadGID(), new DownloadAction.IPause() {
                                         @Override
-                                        public void onPaused() {
-
+                                        public void onPaused(String gid) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.PAUSED, gid);
                                         }
 
                                         @Override
@@ -234,13 +234,13 @@ public class MainActivity extends AppCompatActivity {
                                 case REMOVE:
                                     downloadAction.remove(MainActivity.this, item.getDownloadGID(), item.download.status, new DownloadAction.IRemove() {
                                         @Override
-                                        public void onRemoved() {
-
+                                        public void onRemoved(String gid) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.REMOVED, gid);
                                         }
 
                                         @Override
-                                        public void onRemovedResult() {
-
+                                        public void onRemovedResult(String gid) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.REMOVED_RESULT, gid);
                                         }
 
                                         @Override
@@ -253,10 +253,10 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                     break;
                                 case RESTART:
-                                    downloadAction.restart(MainActivity.this, item.getDownloadGID(), new DownloadAction.IRestart() {
+                                    downloadAction.restart(item.getDownloadGID(), new DownloadAction.IRestart() {
                                         @Override
                                         public void onRestarted(String gid) {
-
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESTARTED);
                                         }
 
                                         @Override
@@ -278,8 +278,8 @@ public class MainActivity extends AppCompatActivity {
                                 case RESUME:
                                     downloadAction.unpause(item.getDownloadGID(), new DownloadAction.IUnpause() {
                                         @Override
-                                        public void onUnpaused() {
-                                            // TODO: Ehm
+                                        public void onUnpaused(String gid) {
+                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESUMED, gid);
                                         }
 
                                         @Override
@@ -327,8 +327,36 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception ex) {
-                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                pd.dismiss();
+                try {
+                    if (pd.isShowing()) pd.dismiss();
+                } catch (Exception exx) {
+                    exx.printStackTrace();
+                }
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.noCommunication)
+                        .setCancelable(false)
+                        .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))
+                        .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                recreate();
+                            }
+                        })
+                        .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                System.exit(0);
+                            }
+                        });
+
+                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
+                    @Override
+                    public void run() {
+                        builder.create().show();
+                    }
+                });
+
             }
 
             @Override

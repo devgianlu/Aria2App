@@ -28,6 +28,7 @@ public class ProfileItem implements Parcelable {
     protected String globalProfileName;
     protected boolean singleMode;
     protected STATUS status;
+    protected String statusMessage;
     protected boolean isDefault;
     private long latency = -1;
 
@@ -35,6 +36,7 @@ public class ProfileItem implements Parcelable {
         globalProfileName = in.readString();
         singleMode = in.readByte() != 0;
         status = STATUS.valueOf(in.readString());
+        statusMessage = in.readString();
         isDefault = in.readByte() != 0;
         latency = in.readLong();
     }
@@ -91,6 +93,14 @@ public class ProfileItem implements Parcelable {
         this.latency = latency;
     }
 
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -101,6 +111,7 @@ public class ProfileItem implements Parcelable {
         parcel.writeString(globalProfileName);
         parcel.writeByte((byte) (singleMode ? 1 : 0));
         parcel.writeString(status.name());
+        parcel.writeString(statusMessage);
         parcel.writeByte((byte) (isDefault ? 1 : 0));
         parcel.writeLong(latency);
     }

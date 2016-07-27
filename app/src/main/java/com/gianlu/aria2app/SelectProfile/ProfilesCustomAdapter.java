@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.SelectProfile;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -14,19 +15,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
-    private Context context;
+    private Activity context;
     private List<ProfileItem> profiles;
     private OnItemSelected onItemSelected;
     private OnItemEdit onItemEdit;
     private ExpandableListView listView;
 
-    public ProfilesCustomAdapter(Context context, ExpandableListView listView, List<ProfileItem> profiles, OnItemSelected onItemSelected, OnItemEdit onItemEdit) {
+    public ProfilesCustomAdapter(Activity context, ExpandableListView listView, List<ProfileItem> profiles, OnItemSelected onItemSelected, OnItemEdit onItemEdit) {
         this.context = context;
         this.profiles = profiles;
         this.onItemSelected = onItemSelected;
@@ -106,7 +108,6 @@ public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
         profileName.setText(item.getGlobalProfileName());
         latency.setText(String.format(Locale.getDefault(), "%s ms", item.getLatency() == -1 ? "-" : String.valueOf(item.getLatency())));
         serverIP.setText(item.isSingleMode() ? ((SingleModeProfileItem) item).getFullServerAddr() : ((MultiModeProfileItem) item).getCurrentProfile(context).getFullServerAddr());
-        // TODO: Got default IP displayed here :/ (Multi)
 
         select.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +119,12 @@ public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 onItemEdit.onEdit(item);
+            }
+        });
+        serverStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.UIToast(context, item.getStatusMessage());
             }
         });
 
@@ -184,6 +191,12 @@ public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 onItemSelected.onSelected(pprofileName, profile);
+            }
+        });
+        serverStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.UIToast(context, profile.getStatusMessage());
             }
         });
 

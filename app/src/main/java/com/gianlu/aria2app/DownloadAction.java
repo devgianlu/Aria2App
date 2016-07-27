@@ -1,6 +1,7 @@
 package com.gianlu.aria2app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -23,11 +24,11 @@ public class DownloadAction {
         jta2 = Utils.readyJTA2(context);
     }
 
-    public void pause(final Activity context, final String gid, final IPause handler) {
+    public void pause(final Context context, final String gid, final IPause handler) {
         jta2.pause(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onPaused();
+                handler.onPaused(gid);
             }
 
             @Override
@@ -40,12 +41,11 @@ public class DownloadAction {
             }
         });
     }
-
     public void forcePause(String gid, final IPause handler) {
         jta2.forcePause(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onPaused();
+                handler.onPaused(gid);
             }
 
             @Override
@@ -55,11 +55,11 @@ public class DownloadAction {
         });
     }
 
-    public void moveUp(String gid, final IMove handler) {
+    public void moveUp(final String gid, final IMove handler) {
         jta2.changePosition(gid, -1, JTA2.POSITION_HOW.POS_CUR, new ISuccess() {
             @Override
             public void onSuccess() {
-                handler.onMoved();
+                handler.onMoved(gid);
             }
 
             @Override
@@ -69,11 +69,11 @@ public class DownloadAction {
         });
     }
 
-    public void moveDown(String gid, final IMove handler) {
+    public void moveDown(final String gid, final IMove handler) {
         jta2.changePosition(gid, 1, JTA2.POSITION_HOW.POS_CUR, new ISuccess() {
             @Override
             public void onSuccess() {
-                handler.onMoved();
+                handler.onMoved(gid);
             }
 
             @Override
@@ -87,7 +87,7 @@ public class DownloadAction {
         jta2.unpause(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onUnpaused();
+                handler.onUnpaused(gid);
             }
 
             @Override
@@ -97,12 +97,12 @@ public class DownloadAction {
         });
     }
 
-    public void remove(final Activity context, final String gid, Download.STATUS status, final IRemove handler) {
+    public void remove(final Context context, final String gid, Download.STATUS status, final IRemove handler) {
         if (status == Download.STATUS.COMPLETE || status == Download.STATUS.ERROR || status == Download.STATUS.REMOVED) {
             jta2.removeDownloadResult(gid, new IGID() {
                 @Override
                 public void onGID(String gid) {
-                    handler.onRemovedResult();
+                    handler.onRemovedResult(gid);
                 }
 
                 @Override
@@ -114,7 +114,7 @@ public class DownloadAction {
             jta2.remove(gid, new IGID() {
                 @Override
                 public void onGID(String gid) {
-                    handler.onRemoved();
+                    handler.onRemoved(gid);
                 }
 
                 @Override
@@ -129,12 +129,11 @@ public class DownloadAction {
         }
 
     }
-
     public void forceRemove(String gid, final IRemove handler) {
         jta2.forceRemove(gid, new IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onRemoved();
+                handler.onRemoved(gid);
             }
 
             @Override
@@ -144,7 +143,7 @@ public class DownloadAction {
         });
     }
 
-    public void restart(final Activity context, final String gid, final IRestart handler) {
+    public void restart(final String gid, final IRestart handler) {
         jta2.tellStatus(gid, new IDownload() {
             @Override
             public void onDownload(final Download download) {
@@ -201,27 +200,26 @@ public class DownloadAction {
     }
 
     public interface IPause {
-        void onPaused();
-
+        void onPaused(String gid);
         void onException(Exception ex);
     }
 
     public interface IMove {
-        void onMoved();
+        void onMoved(String gid);
 
         void onException(Exception ex);
     }
 
     public interface IUnpause {
-        void onUnpaused();
+        void onUnpaused(String gid);
 
         void onException(Exception ex);
     }
 
     public interface IRemove {
-        void onRemoved();
+        void onRemoved(String gid);
 
-        void onRemovedResult();
+        void onRemovedResult(String gid);
 
         void onException(boolean b, Exception ex);
     }

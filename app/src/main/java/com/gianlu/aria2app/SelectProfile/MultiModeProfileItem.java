@@ -9,8 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.ArrayMap;
 
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,7 +110,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         for (ConnectivityCondition cond : profiles.keySet()) {
             if (profiles.get(cond).isDefault()) return profiles.get(cond);
         }
-        return new SingleModeProfileItem("Default", "127.0.0.1", 6800, "/jsonrpc", JTA2.AUTH_METHOD.NONE, false, false, null);
+        return profiles.values().toArray(new SingleModeProfileItem[profiles.size()])[0];
     }
 
     @Nullable
@@ -162,7 +160,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
 
     public SingleModeProfileItem getCurrentProfile(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        SingleModeProfileItem item;
+        SingleModeProfileItem item = null;
         if (manager.getActiveNetworkInfo() == null) return getDefaultProfile();
         switch (manager.getActiveNetworkInfo().getType()) {
             case ConnectivityManager.TYPE_WIMAX:
@@ -179,14 +177,9 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
             case ConnectivityManager.TYPE_BLUETOOTH:
                 item = getBluetoothProfile();
                 break;
-            default:
-                item = null;
-                break;
         }
 
-        if (item == null) {
-            item = getDefaultProfile();
-        }
+        if (item == null) return getDefaultProfile();
 
         return item;
     }

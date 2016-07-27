@@ -244,6 +244,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
                 .put("serverToken", serverToken)
                 .put("serverUsername", serverUsername)
                 .put("serverPassword", serverPassword)
+                .put("default", isDefault)
                 .put("serverSSL", serverSSL);
 
         if (directDownloadEnabled) {

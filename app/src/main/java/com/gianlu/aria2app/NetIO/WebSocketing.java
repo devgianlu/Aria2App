@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO;
 
 import android.app.Activity;
 import android.util.ArrayMap;
+import android.util.Pair;
 
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.Utils;
@@ -9,12 +10,14 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFrame;
+import com.neovisionaries.ws.client.WebSocketState;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +25,8 @@ public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
     private WebSocket socket;
     private Activity context;
-
     private Map<Integer, IReceived> requests = new ArrayMap<>();
+    private List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
 
     private WebSocketing(Activity context) throws IOException, NoSuchAlgorithmException {
         this.context = context;
@@ -50,11 +53,26 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public void send(JSONObject request, IReceived handler) {
+        if (socket.getState() == WebSocketState.CONNECTING) {
+            connectionQueue.add(new Pair<>(request, handler));
+            handler.onException(new Exception("WebSocket is connecting! Requests queued."));
+            return;
+        } else if (socket.getState() != WebSocketState.OPEN) {
+            handler.onException(new Exception("WebSocket not open! State: " + socket.getState().name()));
+            return;
+        }
+
         try {
             requests.put(request.getInt("id"), handler);
             socket.sendText(request.toString());
         } catch (JSONException ex) {
             handler.onException(ex);
+        }
+    }
+
+    private void processQueue() {
+        for (Pair<JSONObject, IReceived> pair : connectionQueue) {
+            send(pair.first, pair.second);
         }
     }
 
@@ -78,20 +96,18 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     @Override
-    public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, exception);
-    }
-
-    @Override
-    public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
-        if (cause instanceof JSONException) {
-            // TODO: Bla bla bla
-        }
+    public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
+        if (newState.equals(WebSocketState.OPEN) && connectionQueue.size() > 0) processQueue();
     }
 
     @Override
     public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_CLOSED, cause);
+        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause);
+    }
+
+    @Override
+    public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+        Utils.UIToast(context, Utils.TOAST_MESSAGES.UNKNOWN_EXCEPTION, cause);
     }
 
     @Override
@@ -105,9 +121,7 @@ public class WebSocketing extends WebSocketAdapter {
 
     public interface IReceived {
         void onResponse(JSONObject response) throws JSONException;
-
         void onException(Exception ex);
-
         void onException(int code, String reason);
     }
 }
