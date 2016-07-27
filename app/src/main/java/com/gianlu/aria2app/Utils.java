@@ -127,9 +127,10 @@ public class Utils {
     public static JTA2 readyJTA2(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
+        JTA2.setAuthenticationMethod(sharedPreferences.getInt("a2_useToken", false));
+
         JTA2 jta2 = new JTA2(sharedPreferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc"));
-        jta2.setAuthentication(sharedPreferences.getBoolean("a2_serverAuth", false));
-        if (sharedPreferences.getBoolean("a2_serverAuth", false))
+        if (sharedPreferences.getBoolean("a2_useToken", false))
             jta2.setToken(sharedPreferences.getString("a2_serverToken", ""));
 
         return jta2;

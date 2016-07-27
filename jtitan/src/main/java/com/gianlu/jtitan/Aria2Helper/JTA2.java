@@ -20,8 +20,10 @@ import java.util.Map;
 import java.util.Random;
 
 public class JTA2 {
-    static boolean authNeeded = false;
+    static boolean useToken = false;
     static String authToken = null;
+    private static String username = null;
+    private static String password = null;
     private String url;
 
     public JTA2(String url) {
@@ -29,21 +31,42 @@ public class JTA2 {
     }
 
     // Authentication
-    public void setAuthentication(boolean set) {
-        authNeeded = set;
+    public static void setAuthenticationMethod(boolean useToken) {
+        JTA2.useToken = useToken;
+    }
+
+    public static void setNoAuth() {
+        useToken = false;
+        authToken = null;
+        username = null;
+        password = null;
     }
 
     public void setToken(String token) {
-        if (!authNeeded) authNeeded = true;
+        if (!useToken) useToken = true;
         authToken = token;
+    }
+
+    public void setCredentials(String username, String password) {
+        if (useToken) useToken = false;
+        JTA2.username = username;
+        JTA2.password = password;
     }
 
     private void outResponseAsync(String request, JTHandler handler) {
         new Thread(new JTARequester(url, request, handler)).start();
     }
-
     private JTResponse outResponse(String request) throws IOException {
-        return new JTRequester(url).send(request);
+        if (useToken) {
+            // Token auth
+            return new JTRequester(url).send(request);
+        } else if (username == null || password == null) {
+            // No auth
+            return new JTRequester(url).send(request);
+        } else {
+            // HTTP auth
+            return new JTRequester(url, username, password).send(request);
+        }
     }
 
     // Caster

@@ -20,6 +20,12 @@ public class JTRequester {
         this.password = password;
     }
 
+    public JTRequester(String url) {
+        globalUrl = url;
+        this.username = null;
+        this.password = null;
+    }
+
     public JTResponse send(String req) throws IOException {
         //Create connection
         HttpURLConnection conn = (HttpURLConnection) new URL(globalUrl).openConnection();
