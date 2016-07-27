@@ -1,5 +1,7 @@
 package com.gianlu.jtitan.JTRequester;
 
+import android.util.Base64;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,25 +11,27 @@ import java.net.URL;
 
 public class JTRequester {
     private String globalUrl;
+    private String username;
+    private String password;
 
-    public JTRequester(String url) {
+    public JTRequester(String url, String username, String password) {
         globalUrl = url;
+        this.username = username;
+        this.password = password;
     }
 
     public JTResponse send(String req) throws IOException {
-        URL reqURL;
-        HttpURLConnection conn;
-        int respCode;
-        BufferedReader responseReader;
-        String response;
-
-        reqURL = new URL(globalUrl);
-
         //Create connection
-        conn = (HttpURLConnection) reqURL.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) new URL(globalUrl).openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("User-Agent", "Aria2App");
         conn.setConnectTimeout(5000);
+
+        // TODO: Check that
+        if (username != null && password != null)
+            conn.setRequestProperty("Authorization",
+                    "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+
 
         //Send data
         conn.setDoOutput(true);
@@ -35,7 +39,7 @@ public class JTRequester {
         os.write(req.getBytes());
         os.flush();
         os.close();
-        respCode = conn.getResponseCode();
+        int respCode = conn.getResponseCode();
 
 
         if (respCode != 200) {
@@ -43,7 +47,7 @@ public class JTRequester {
         }
 
         //Read response
-        responseReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader responseReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder responseBuilder = new StringBuilder();
         String inputLine;
 
@@ -52,9 +56,7 @@ public class JTRequester {
         }
         responseReader.close();
 
-        response = responseBuilder.toString();
-
         conn.disconnect();
-        return new JTResponse(respCode, response);
+        return new JTResponse(respCode, responseBuilder.toString());
     }
 }
