@@ -167,9 +167,9 @@ public class AddProfileActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    sDirectDownloadContainer.setVisibility(View.VISIBLE);
+                    sDirectDownloadContainer.setEnabled(true);
                 } else {
-                    sDirectDownloadContainer.setVisibility(View.INVISIBLE);
+                    sDirectDownloadContainer.setEnabled(false);
                 }
             }
         });
@@ -508,9 +508,9 @@ public class AddProfileActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    mDirectDownloadContainer.setVisibility(View.VISIBLE);
+                    mDirectDownloadContainer.setEnabled(true);
                 } else {
-                    mDirectDownloadContainer.setVisibility(View.INVISIBLE);
+                    mDirectDownloadContainer.setEnabled(false);
                 }
             }
         });
