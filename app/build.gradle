@@ -27,14 +27,15 @@ android {
 }
 
 dependencies {
-    compile project(':google_licensing')
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
-    compile 'com.github.bmelnychuk:AndroidTreeView:5a015a1281'
-    compile 'com.neovisionaries:nv-websocket-client:1.28'
-    compile 'com.google.android.gms:play-services-analytics:9.2.1'
-    compile 'com.android.support:design:23.4.0'
+    compile project(':google_licensing') // Google licensing
+    compile 'com.android.support:appcompat-v7:23.4.0' // AppCompact
+    compile 'com.android.support:support-v4:23.4.0' // Support library
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.4' // Charting
+    compile 'com.github.bmelnychuk:AndroidTreeView:5a015a1281' // AndroidTreeView
+    compile 'com.neovisionaries:nv-websocket-client:1.28' // WebSocket
+    compile 'com.google.android.gms:play-services-analytics:9.2.1' // Google Analytics
+    compile 'com.android.support:design:23.4.0' // Support Design library
+    compile 'com.getbase:floatingactionbutton:1.10.1'
 }
 
 
