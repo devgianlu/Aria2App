@@ -1,23 +1,38 @@
 package com.gianlu.aria2app.Options;
 
-public abstract class OptionChild {
+public class OptionChild {
     private String description;
-    private SourceOption.OPTION_TYPE type;
+    private String defValue;
+    private String currValue;
 
-    public OptionChild(SourceOption.OPTION_TYPE type, String description) {
+    public OptionChild(String description, String defValue, String currValue) {
         this.description = description;
-        this.type = type;
+        this.defValue = defValue;
+        this.currValue = currValue;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public SourceOption.OPTION_TYPE getType() {
-        return type;
+    public boolean isChanged() {
+        return currValue != null && !currValue.isEmpty() && (!currValue.equals(defValue));
     }
 
-    public abstract boolean isChanged();
+    public String getCurrentValue() {
+        return currValue;
+    }
 
-    public abstract String getStringValue();
+    public void setCurrentValue(String currValue) {
+        this.currValue = currValue;
+    }
+
+    public String getValue() {
+        if (isChanged()) return currValue;
+        return defValue;
+    }
+
+    public String getDefaultValue() {
+        return defValue;
+    }
 }

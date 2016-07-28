@@ -25,11 +25,4 @@ public class SourceOption {
                 .put("definition", definition)
                 .put("defaultVal", defaultVal);
     }
-
-    public enum OPTION_TYPE {
-        INTEGER,
-        BOOLEAN,
-        STRING,
-        MULTIPLE
-    }
 }

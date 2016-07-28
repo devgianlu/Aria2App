@@ -497,30 +497,4 @@
         <item>use-head</item>
         <item>user-agent</item>
     </string-array>
-
-    <!-- TODO: THAT'S THE SECOND ONE - Uff -->
-    <string-array name="__bt_max_peers">
-        <item>INTEGER</item>
-        <item>55</item>
-    </string-array>
-    <string-array name="__bt_request_peer_speed_limit">
-        <item>INTEGER</item>
-        <item>51200</item>
-    </string-array>
-    <string-array name="__bt_remove_unselected_file">
-        <item>BOOLEAN</item>
-        <item>false</item>
-    </string-array>
-    <string-array name="__force_save">
-        <item>BOOLEAN</item>
-        <item>false</item>
-    </string-array>
-    <string-array name="__max_download_limit">
-        <item>INTEGER</item>
-        <item>0</item>
-    </string-array>
-    <string-array name="__max_upload_limit">
-        <item>INTEGER</item>
-        <item>0</item>
-    </string-array>
 </resources>

@@ -27,15 +27,10 @@ import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.IGID;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Options.BooleanOptionChild;
-import com.gianlu.aria2app.Options.IntegerOptionChild;
 import com.gianlu.aria2app.Options.LocalParser;
-import com.gianlu.aria2app.Options.MultipleOptionChild;
 import com.gianlu.aria2app.Options.OptionAdapter;
 import com.gianlu.aria2app.Options.OptionChild;
 import com.gianlu.aria2app.Options.OptionHeader;
-import com.gianlu.aria2app.Options.SourceOption;
-import com.gianlu.aria2app.Options.StringOptionChild;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.google.android.gms.analytics.HitBuilders;
@@ -48,7 +43,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,43 +128,10 @@ public class AddTorrentActivity extends AppCompatActivity {
                             OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
                             headers.add(header);
 
-                            if (getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app") == 0) {
-                                children.put(header, new StringOptionChild(
-                                        localOptions.getDefinition(resOption),
-                                        String.valueOf(localOptions.getDefaultValue(resOption)),
-                                        String.valueOf(options.get(resOption))));
-                                continue;
-                            }
-
-                            switch (SourceOption.OPTION_TYPE.valueOf(getResources().getStringArray(getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[0])) {
-                                case INTEGER:
-                                    children.put(header, new IntegerOptionChild(
-                                            localOptions.getDefinition(resOption),
-                                            Utils.parseInt(localOptions.getDefaultValue(resOption)),
-                                            Utils.parseInt(options.get(resOption))));
-                                    break;
-                                case BOOLEAN:
-                                    children.put(header, new BooleanOptionChild(
-                                            localOptions.getDefinition(resOption),
-                                            Utils.parseBoolean(localOptions.getDefaultValue(resOption)),
-                                            Utils.parseBoolean(options.get(resOption))));
-                                    break;
-                                case STRING:
-                                    children.put(header, new StringOptionChild(
-                                            localOptions.getDefinition(resOption),
-                                            String.valueOf(localOptions.getDefaultValue(resOption)),
-                                            String.valueOf(options.get(resOption))));
-                                    break;
-                                case MULTIPLE:
-                                    children.put(header, new MultipleOptionChild(
-                                            localOptions.getDefinition(resOption),
-                                            String.valueOf(localOptions.getDefaultValue(resOption)),
-                                            String.valueOf(options.get(resOption)),
-                                            Arrays.asList(
-                                                    getResources().getStringArray(
-                                                            getResources().getIdentifier("__" + resOption.replace("-", "_"), "array", "com.gianlu.aria2app"))[1].split(","))));
-                                    break;
-                            }
+                            children.put(header, new OptionChild(
+                                    localOptions.getDefinition(resOption),
+                                    String.valueOf(localOptions.getDefaultValue(resOption)),
+                                    String.valueOf(options.get(resOption))));
                         } catch (JSONException ex) {
                             pd.dismiss();
                             Utils.UIToast(AddTorrentActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
@@ -212,7 +173,7 @@ public class AddTorrentActivity extends AppCompatActivity {
 
         for (Map.Entry<OptionHeader, OptionChild> item : ((OptionAdapter) optionsListView.getExpandableListAdapter()).getChildren().entrySet()) {
             if (!item.getValue().isChanged()) continue;
-            map.put(item.getKey().getOptionName(), item.getValue().getStringValue());
+            map.put(item.getKey().getOptionName(), item.getValue().getValue());
         }
 
         return map;
