@@ -27,7 +27,7 @@ public class OptionHeader {
     }
 
     @Nullable
-    public String getOptionStringValue() {
+    public String getOptionValue() {
         return optionValue;
     }
 

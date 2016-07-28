@@ -83,7 +83,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -133,7 +133,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -183,7 +183,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -215,7 +215,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -245,7 +245,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -264,6 +264,7 @@ public class JTA2 {
             request.put("method", "aria2.tellActive");
             request.put("params", Utils.readyParams(webSocketing.getContext()));
         } catch (JSONException ex) {
+            handler.onException(false, ex);
             return;
         }
 
@@ -281,13 +282,13 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
+            public void onException(boolean q, Exception ex) {
+                handler.onException(q, ex);
             }
 
             @Override
             public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
+                handler.onException(false, new Aria2Exception(reason, code));
             }
         });
     }
@@ -303,7 +304,7 @@ public class JTA2 {
             params.put(100);
             request.put("params", params);
         } catch (JSONException ex) {
-            handler.onException(ex);
+            handler.onException(false, ex);
             return;
         }
 
@@ -321,13 +322,13 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
+            public void onException(boolean q, Exception ex) {
+                handler.onException(q, ex);
             }
 
             @Override
             public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
+                handler.onException(false, new Aria2Exception(reason, code));
             }
         });
     }
@@ -343,7 +344,7 @@ public class JTA2 {
             params.put(100);
             request.put("params", params);
         } catch (JSONException ex) {
-            handler.onException(ex);
+            handler.onException(false, ex);
             return;
         }
 
@@ -361,13 +362,13 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
+            public void onException(boolean q, Exception ex) {
+                handler.onException(q, ex);
             }
 
             @Override
             public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
+                handler.onException(false, new Aria2Exception(reason, code));
             }
         });
     }
@@ -393,7 +394,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -425,7 +426,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -457,7 +458,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -489,7 +490,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -521,7 +522,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -553,7 +554,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -585,7 +586,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -615,7 +616,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -652,7 +653,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -686,7 +687,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -722,7 +723,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 
@@ -751,7 +752,7 @@ public class JTA2 {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
 

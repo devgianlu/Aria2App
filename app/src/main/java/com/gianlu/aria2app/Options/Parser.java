@@ -3,6 +3,8 @@ package com.gianlu.aria2app.Options;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.Spanned;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,17 +21,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Parser {
-    @Nullable
-    private static String getAllOptionsRaw(String source) {
-        Matcher matcher = Pattern.compile("(?<=\\.\\.\\s_input-file:)(.*?)(?=Server\\sPerformance\\sProfile)", Pattern.MULTILINE | Pattern.DOTALL).matcher(source);
-
-        if (matcher.find()) return matcher.group();
-        return null;
+    public static Spanned formatDefinition(String colorAccent, String definition) {
+        // TODO: Do it better
+        return Html.fromHtml(definition
+                .replaceAll("``(\\S*)``", "<b>$1</b>")
+                .replaceAll("\\s*\\.\\.\\scode-block::\\s(.*)", " <b>Code</b> ($1):\n")
+                .replaceAll("\\s*\\.\\.\\snote::\\s", " <b>Note:</b>\n")
+                .replaceAll(":option:`(\\S*)`", "<font color='#" + colorAccent + "'>$1</font>"));
     }
 
     @Nullable
-    private static String getOptionName(String option, String source) {
-        String raw = getAllOptionsRaw(source);
+    private static String getOptionName(String option, String raw) {
         if (raw == null) return null;
 
         Matcher matcher = Pattern.compile("\\s\\s\\*\\s:option:`(.*) <" + option + ">`", Pattern.MULTILINE).matcher(raw);
@@ -42,11 +44,10 @@ public class Parser {
     }
 
     @Nullable
-    private static List<String> getAllOptionsList(String source) {
-        String raw = getAllOptionsRaw(source);
+    private static List<String> getAllOptionsList(String raw) {
         if (raw == null) return null;
 
-        Matcher matcher = Pattern.compile("^\\s\\s\\*\\s:option:`(.*)`$", Pattern.MULTILINE).matcher(raw);
+        Matcher matcher = Pattern.compile("^\\s\\s\\*\\s:option:`(.*)`.*$", Pattern.MULTILINE).matcher(raw);
 
         List<String> options = new ArrayList<>();
         while (matcher.find()) {

@@ -245,7 +245,12 @@ public class AddTorrentActivity extends AppCompatActivity {
                         @Override
                         public void onGID(String GID) {
                             pd.dismiss();
-                            onBackPressed();
+                            AddTorrentActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AddTorrentActivity.this.onBackPressed();
+                                }
+                            });
                         }
 
                         @Override
@@ -264,7 +269,12 @@ public class AddTorrentActivity extends AppCompatActivity {
                         @Override
                         public void onGID(String GID) {
                             pd.dismiss();
-                            onBackPressed();
+                            AddTorrentActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AddTorrentActivity.this.onBackPressed();
+                                }
+                            });
                         }
 
                         @Override

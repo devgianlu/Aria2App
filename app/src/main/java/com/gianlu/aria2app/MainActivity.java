@@ -81,11 +81,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (updater != null) updater.stop();
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (getIntent().getStringExtra("profileName") != null) {
-            setTitle(getResources().getString(R.string.app_name) + " - " + getIntent().getStringExtra("profileName"));
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (getIntent().getParcelableExtra("profile") != null) {
             SingleModeProfileItem profile = getIntent().getParcelableExtra("profile");
+            setTitle(getResources().getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("a2_profileName", profile.getProfileName())
                     .putString("a2_serverIP", profile.getFullServerAddr())
@@ -347,11 +348,17 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(boolean queueing, Exception ex) {
                 try {
                     if (pd.isShowing()) pd.dismiss();
                 } catch (Exception exx) {
                     exx.printStackTrace();
+                }
+
+                if (queueing) {
+                    loadDownloads = new LoadDownloads(MainActivity.this, downloadsListView, IloadDownloads);
+                    new Thread(loadDownloads).start();
+                    return;
                 }
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)

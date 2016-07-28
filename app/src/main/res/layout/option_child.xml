@@ -17,7 +17,6 @@
         android:layout_marginStart="6dp"
         android:layout_marginTop="12dp" />
 
-    <!-- EditText -->
     <EditText
         android:id="@+id/moreAboutDownload_option_editText"
         android:layout_width="wrap_content"
@@ -28,33 +27,12 @@
         android:inputType="text"
         tools:ignore="LabelFor" />
 
-    <!-- Spinner -->
-    <Spinner
-        android:id="@+id/moreAboutDownload_option_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/moreAboutDownload_option_valueText" />
-
-    <!-- ToggleButton -->
-    <ToggleButton
-        android:id="@+id/moreAboutDownload_option_toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/moreAboutDownload_option_valueText"
-        android:textOff="False"
-        android:textOn="True" />
-
-
     <TextView
         android:id="@+id/moreAboutDownload_option_optionDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/moreAboutDownload_option_toggleButton"
+        android:layout_below="@+id/moreAboutDownload_option_editText"
         android:layout_marginTop="10dp"
         android:maxLines="10"
         android:textAlignment="center" />

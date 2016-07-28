@@ -65,6 +65,7 @@
         android:layout_below="@id/addURI_uris"
         android:layout_marginTop="2dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/add"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_add_black_48dp" />
 

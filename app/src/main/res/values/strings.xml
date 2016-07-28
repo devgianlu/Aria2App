@@ -96,6 +96,8 @@
     <string name="send">Send</string>
     <string name="retry">Retry</string>
     <string name="exit">Exit</string>
+    <string name="pickFromFile">Pick from file</string>
+    <string name="magnetURI_help">If you want to add a magnet link go to URI section.</string>
     <string name="noCommunication">No communication</string>
     <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me from the preferences.</string>
     <string name="filters">Filters</string>
@@ -472,7 +474,7 @@
         <item>no-file-allocation-limit</item>
         <item>no-netrc</item>
         <item>no-proxy</item>
-        <item>optimize-concurrent-download</item>
+        <item>optimize-concurrent-downloads</item>
         <item>parameterized-uri</item>
         <item>pause-metadata</item>
         <item>piece-length</item>

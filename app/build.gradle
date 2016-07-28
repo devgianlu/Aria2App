@@ -7,8 +7,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.3.4"
+        versionCode 10
+        versionName "1.3.6"
     }
 
     buildTypes {
@@ -36,7 +36,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:9.2.1' // Google Analytics
     compile 'com.android.support:design:23.4.0' // Support Design library
     compile 'com.getbase:floatingactionbutton:1.10.1' // FAB
-    compile 'com.github.lzyzsd:circleprogress:1.1.0@aar' // Circular ProgressBar
 }
 
 

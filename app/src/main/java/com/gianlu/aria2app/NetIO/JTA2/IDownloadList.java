@@ -5,5 +5,5 @@ import java.util.List;
 public interface IDownloadList {
     void onDownloads(List<Download> downloads);
 
-    void onException(Exception exception);
+    void onException(boolean queuing, Exception exception);
 }

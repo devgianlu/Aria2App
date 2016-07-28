@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Editable;
-import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -97,10 +96,10 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         if (!item.getDefaultValue().isEmpty())
             editText.setHint(context.getString(R.string._default) + ": " + item.getDefaultValue());
-                else
-                    editText.setHint(R.string.noDefault);
+        else
+            editText.setHint(R.string.noDefault);
 
-        editText.setText(item.getCurrentValue());
+        editText.setText(item.getValue());
                 editText.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -119,9 +118,8 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 });
 
 
-        // TODO: Parse ::code-block (--header)
-        System.out.println(colorAccent);
-        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc)).setText(Html.fromHtml(item.getDescription().replaceAll("``(\\S*)``", "<b>$1</b>").replaceAll(":option:`(\\S*)`", "<font color='#" + colorAccent + "'>$1</font>")));
+        // TODO: Search through options
+        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc)).setText(Parser.formatDefinition(colorAccent, item.getDescription()));
 
         return convertView;
     }
@@ -133,7 +131,7 @@ public class OptionAdapter extends BaseExpandableListAdapter {
         OptionHeader item = getGroup(groupPosition);
 
         ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionText)).setText(String.format("%s: ", item.getOptionName()));
-        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionTextVal)).setText(item.getOptionStringValue());
+        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionTextVal)).setText(item.getOptionValue());
         TextView optionCMD = (TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionFull);
         optionCMD.setText(item.getOptionCommandLine());
         if (item.needRestart()) optionCMD.setTextColor(Color.RED);

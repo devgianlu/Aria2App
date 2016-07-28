@@ -189,7 +189,12 @@ public class AddURIActivity extends AppCompatActivity {
                     @Override
                     public void onGID(String GID) {
                         pd.dismiss();
-                        onBackPressed();
+                        AddURIActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AddURIActivity.this.onBackPressed();
+                            }
+                        });
                     }
 
                     @Override

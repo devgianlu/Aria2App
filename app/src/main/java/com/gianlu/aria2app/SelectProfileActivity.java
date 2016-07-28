@@ -3,8 +3,10 @@ package com.gianlu.aria2app;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +21,7 @@ import android.widget.ExpandableListView;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.CheckerCallback;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.Options.Parser;
 import com.gianlu.aria2app.SelectProfile.AddProfileActivity;
 import com.gianlu.aria2app.SelectProfile.MultiModeProfileItem;
 import com.gianlu.aria2app.SelectProfile.ProfileItem;
@@ -52,6 +55,41 @@ public class SelectProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_profile);
         setTitle(R.string.title_activity_select_profile);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        long intervalLastSourceRefresh = System.currentTimeMillis() - sharedPreferences.getLong("lastSourceRefresh", System.currentTimeMillis());
+        if ((intervalLastSourceRefresh > 604800000) || (intervalLastSourceRefresh < 100)) {
+            new Parser().refreshSource(this, new Parser.ISourceProcessor() {
+                @Override
+                public void onStarted() {
+                }
+
+                @Override
+                public void onDownloadEnded(String source) {
+                }
+
+                @Override
+                public void onConnectionError(int code, String message) {
+                    Utils.UIToast(SelectProfileActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Utils.UIToast(SelectProfileActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
+                }
+
+                @Override
+                public void onFailed() {
+                    Utils.UIToast(SelectProfileActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
+                }
+
+                @Override
+                public void onEnd() {
+                    Utils.UIToast(SelectProfileActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
+                }
+            });
+            sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
+        }
+
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             CheckerCallback.check(this, getPackageName(), ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId());
         } else {
@@ -70,7 +108,6 @@ public class SelectProfileActivity extends AppCompatActivity {
         }
 
         listView = (ExpandableListView) findViewById(R.id.selectProfile_listView);
-
 
         List<ProfileItem> profiles = new ArrayList<>();
         File files[] = getFilesDir().listFiles(new FilenameFilter() {
@@ -107,7 +144,6 @@ public class SelectProfileActivity extends AppCompatActivity {
                                     SingleModeProfileItem profile = item.isSingleMode() ? ((SingleModeProfileItem) item) : ((MultiModeProfileItem) item).getCurrentProfile(SelectProfileActivity.this);
                                     Intent intent = new Intent(SelectProfileActivity.this, MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                            .putExtra("profileName", profile.getGlobalProfileName())
                                             .putExtra("profile", profile);
                                     startActivity(intent);
                                 }
@@ -121,7 +157,6 @@ public class SelectProfileActivity extends AppCompatActivity {
                     SingleModeProfileItem profile = item.isSingleMode() ? ((SingleModeProfileItem) item) : ((MultiModeProfileItem) item).getCurrentProfile(SelectProfileActivity.this);
                     Intent intent = new Intent(SelectProfileActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            .putExtra("profileName", profile.getGlobalProfileName())
                             .putExtra("profile", profile);
                     startActivity(intent);
                 }

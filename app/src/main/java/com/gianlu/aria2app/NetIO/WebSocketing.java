@@ -55,10 +55,10 @@ public class WebSocketing extends WebSocketAdapter {
     public void send(JSONObject request, IReceived handler) {
         if (socket.getState() == WebSocketState.CONNECTING) {
             connectionQueue.add(new Pair<>(request, handler));
-            handler.onException(new Exception("WebSocket is connecting! Requests queued."));
+            handler.onException(true, new Exception("WebSocket is connecting! Requests queued."));
             return;
         } else if (socket.getState() != WebSocketState.OPEN) {
-            handler.onException(new Exception("WebSocket not open! State: " + socket.getState().name()));
+            handler.onException(false, new Exception("WebSocket not open! State: " + socket.getState().name()));
             return;
         }
 
@@ -66,7 +66,7 @@ public class WebSocketing extends WebSocketAdapter {
             requests.put(request.getInt("id"), handler);
             socket.sendText(request.toString());
         } catch (JSONException ex) {
-            handler.onException(ex);
+            handler.onException(false, ex);
         }
     }
 
@@ -79,6 +79,9 @@ public class WebSocketing extends WebSocketAdapter {
     @Override
     public void onTextMessage(WebSocket websocket, String text) throws Exception {
         JSONObject response = new JSONObject(text);
+
+        String method = response.optString("method");
+        if (method != null && method.startsWith("aria2.on")) return;
 
         IReceived handler = requests.remove(response.getInt("id"));
         if (handler == null) return;
@@ -121,7 +124,8 @@ public class WebSocketing extends WebSocketAdapter {
 
     public interface IReceived {
         void onResponse(JSONObject response) throws JSONException;
-        void onException(Exception ex);
+
+        void onException(boolean queuing, Exception ex);
         void onException(int code, String reason);
     }
 }

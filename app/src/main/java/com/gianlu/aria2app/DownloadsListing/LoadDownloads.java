@@ -31,7 +31,7 @@ public class LoadDownloads implements Runnable {
         try {
             jta2 = Utils.readyJTA2(context);
         } catch (IOException | NoSuchAlgorithmException ex) {
-            handler.onException(ex);
+            handler.onException(false, ex);
             jta2 = null;
         }
     }
@@ -83,25 +83,22 @@ public class LoadDownloads implements Runnable {
                             }
 
                             @Override
-                            public void onException(final Exception exception) {
-                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-                                handler.onException(exception);
+                            public void onException(boolean q, final Exception exception) {
+                                handler.onException(q, exception);
                             }
                         });
                     }
 
                     @Override
-                    public void onException(final Exception exception) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-                        handler.onException(exception);
+                    public void onException(boolean q, final Exception exception) {
+                        handler.onException(q, exception);
                     }
                 });
             }
 
             @Override
-            public void onException(final Exception exception) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-                handler.onException(exception);
+            public void onException(boolean q, final Exception exception) {
+                handler.onException(q, exception);
             }
         });
     }

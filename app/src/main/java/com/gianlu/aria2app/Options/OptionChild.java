@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.Options;
 
+import java.util.Objects;
+
 public class OptionChild {
     private String description;
     private String defValue;
@@ -16,11 +18,7 @@ public class OptionChild {
     }
 
     public boolean isChanged() {
-        return currValue != null && !currValue.isEmpty() && (!currValue.equals(defValue));
-    }
-
-    public String getCurrentValue() {
-        return currValue;
+        return currValue != null && (!Objects.equals(currValue, "null")) && !currValue.isEmpty() && (!Objects.equals(currValue, defValue));
     }
 
     public void setCurrentValue(String currValue) {

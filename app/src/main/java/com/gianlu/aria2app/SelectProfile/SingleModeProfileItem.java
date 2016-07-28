@@ -96,6 +96,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
 
     protected SingleModeProfileItem(Parcel in) {
         super(in);
+        profileName = in.readString();
         serverAddr = in.readString();
         serverPort = in.readInt();
         serverEndpoint = in.readString();
@@ -165,6 +166,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
+        dest.writeString(profileName);
         dest.writeString(serverAddr);
         dest.writeInt(serverPort);
         dest.writeString(serverEndpoint);
