@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -98,6 +100,12 @@ public class Utils {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    public static String colorToHex(Context context, @ColorRes int colorRes) {
+        String hex = Integer.toHexString(ContextCompat.getColor(context, colorRes));
+        if (hex.length() == 8) return hex.substring(2);
+        return hex;
     }
 
     public static WebSocket readyWebSocket(boolean isSSL, String url, @NonNull String username, @NonNull String password) throws IOException, NoSuchAlgorithmException {

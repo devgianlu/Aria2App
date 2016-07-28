@@ -33,33 +33,44 @@
         android:layout_centerHorizontal="true" />
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/multiple_actions"
+        android:id="@+id/mainFAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        fab:fab_addButtonColorNormal="@android:color/white"
-        fab:fab_addButtonColorPressed="@color/white_pressed"
-        fab:fab_addButtonPlusIconColor="@color/half_black"
+        fab:fab_addButtonColorNormal="@color/colorAccent"
+        fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
+        fab:fab_addButtonPlusIconColor="@android:color/white"
         fab:fab_labelStyle="@style/menu_labels_style">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/action_a"
+            android:id="@+id/mainFAB_addMetalink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white"
-            fab:fab_colorPressed="@color/white_pressed"
-            fab:fab_title="Action A" />
+            fab:fab_colorNormal="@color/colorMetalink"
+            fab:fab_colorPressed="@color/colorMetalink_pressed"
+            fab:fab_icon="@drawable/ic_metalink"
+            fab:fab_size="mini"
+            fab:fab_title="Add Metalink" />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/action_b"
+            android:id="@+id/mainFAB_addTorrent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fab:fab_colorNormal="@color/white"
-            fab:fab_colorPressed="@color/white_pressed"
-            fab:fab_title="Action with a very long name that won\'t fit on the screen" />
+            fab:fab_colorNormal="@color/colorTorrent"
+            fab:fab_colorPressed="@color/colorTorrent_pressed"
+            fab:fab_icon="@drawable/ic_bit_torrent"
+            fab:fab_size="mini"
+            fab:fab_title="Add Torrent" />
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mainFAB_addURI"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/colorURI"
+            fab:fab_colorPressed="@color/colorURI_pressed"
+            fab:fab_icon="@drawable/ic_file_download_white_48dp"
+            fab:fab_size="mini"
+            fab:fab_title="Add URI" />
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </RelativeLayout>

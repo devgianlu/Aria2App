@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 
 import java.util.List;
 import java.util.Map;
@@ -28,11 +29,21 @@ public class OptionAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<OptionHeader> headers;
     private Map<OptionHeader, OptionChild> children;
+    private String colorAccent;
+
+    public OptionAdapter(Context context, String hexColorAccent, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children) {
+        this.context = context;
+        this.colorAccent = hexColorAccent;
+        if (this.colorAccent.length() == 8) this.colorAccent = this.colorAccent.substring(2);
+        this.headers = headers;
+        this.children = children;
+    }
 
     public OptionAdapter(Context context, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children) {
         this.context = context;
-        this.headers = headers;
         this.children = children;
+        this.headers = headers;
+        this.colorAccent = Utils.colorToHex(context, R.color.colorAccent);
     }
 
     @Override
@@ -184,7 +195,9 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 break;
         }
 
-        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc)).setText(Html.fromHtml(item.getDescription().replaceAll("``(\\S*)``", "<b>$1</b>").replaceAll(":option:`(\\S*)`", "<font color='#ff5722'>$1</font>")));
+        // TODO: Parse ::code-block (--header)
+        System.out.println(colorAccent);
+        ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc)).setText(Html.fromHtml(item.getDescription().replaceAll("``(\\S*)``", "<b>$1</b>").replaceAll(":option:`(\\S*)`", "<font color='#" + colorAccent + "'>$1</font>")));
 
         return convertView;
     }

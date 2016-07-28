@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.DownloadsListing.DownloadItem;
 import com.gianlu.aria2app.DownloadsListing.DownloadItemAdapter;
@@ -28,7 +29,8 @@ import com.gianlu.aria2app.DownloadsListing.ILoadDownloads;
 import com.gianlu.aria2app.DownloadsListing.LoadDownloads;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
-import com.gianlu.aria2app.Main.AddDownloadActivity;
+import com.gianlu.aria2app.Main.AddTorrentActivity;
+import com.gianlu.aria2app.Main.AddURIActivity;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -112,12 +114,37 @@ public class MainActivity extends AppCompatActivity {
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
 
+        // Start WebSocketing and enabling event manager
         try {
-            // Start WebSocketing and enabling event manager
             WebSocketing.enableEventManager(this);
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+        FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFAB_addURI);
+        assert fabAddURI != null;
+        fabAddURI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddURIActivity.class));
+            }
+        });
+        FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFAB_addTorrent);
+        assert fabAddTorrent != null;
+        fabAddTorrent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
+            }
+        });
+        FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFAB_addMetalink);
+        assert fabAddMetalink != null;
+        fabAddMetalink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", false));
+            }
+        });
 
         downloadsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -487,9 +514,6 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.a2menu_refreshPage:
                 reloadPage();
-                break;
-            case R.id.a2menu_addDownload:
-                startActivity(new Intent(this, AddDownloadActivity.class));
                 break;
             case R.id.a2menu_globalOptions:
                 showOptionsDialog();

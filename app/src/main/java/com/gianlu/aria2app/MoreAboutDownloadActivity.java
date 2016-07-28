@@ -132,7 +132,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 break;
-            // TODO: Show peers
+            // TODO: THIS ONE - Show peers
         }
 
         return super.onOptionsItemSelected(item);

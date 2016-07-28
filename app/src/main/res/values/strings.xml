@@ -498,7 +498,7 @@
         <item>user-agent</item>
     </string-array>
 
-    <!-- TODO: Uff -->
+    <!-- TODO: THAT'S THE SECOND ONE - Uff -->
     <string-array name="__bt_max_peers">
         <item>INTEGER</item>
         <item>55</item>

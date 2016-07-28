@@ -25,6 +25,7 @@
         <activity android:name=".SelectProfileActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,11 +38,14 @@
         <!-- Main activity -->
         <activity android:name=".MainActivity" />
 
-        <!-- Add download activity -->
+        <!-- Add download activities -->
         <activity
-            android:name=".Main.AddDownloadActivity"
+            android:name=".Main.AddTorrentActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AddTorrentTheme" />
+        <activity
+            android:name=".Main.AddURIActivity"
+            android:parentActivityName=".MainActivity" />
 
         <!-- More about download activity -->
         <activity
@@ -82,10 +86,12 @@
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
+
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
             android:exported="false" />
+
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:exported="true"
@@ -94,6 +100,7 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
         <!--

@@ -35,7 +35,8 @@ dependencies {
     compile 'com.neovisionaries:nv-websocket-client:1.28' // WebSocket
     compile 'com.google.android.gms:play-services-analytics:9.2.1' // Google Analytics
     compile 'com.android.support:design:23.4.0' // Support Design library
-    compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.getbase:floatingactionbutton:1.10.1' // FAB
+    compile 'com.github.lzyzsd:circleprogress:1.1.0@aar' // Circular ProgressBar
 }
 
 

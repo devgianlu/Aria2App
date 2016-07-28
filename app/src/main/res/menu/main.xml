@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/a2menu_addDownload"
-        android:icon="@drawable/ic_add_white_48dp"
-        android:title="@string/menu_addDownload"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/a2menu_terminal"
         android:icon="@drawable/ic_terminal_white_48dp"
         android:title="@string/menu_terminal"
