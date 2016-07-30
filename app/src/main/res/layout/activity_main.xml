@@ -1,50 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.gianlu.aria2app.MainActivity">
+    android:fitsSystemWindows="true">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/mainChart"
-        android:layout_width="match_parent"
-        android:layout_height="170dp" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/mainChart"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        android:text="@string/downloads"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <ListView
-        android:id="@+id/mainDownloadsListView"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/main_swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/mainFAB"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/main_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
         fab:fab_addButtonColorNormal="@color/colorAccent"
         fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
         fab:fab_addButtonPlusIconColor="@android:color/white"
         fab:fab_labelStyle="@style/menu_labels_style">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/mainFAB_addMetalink"
+            android:id="@+id/mainFab_addMetalink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorMetalink"
@@ -54,7 +45,7 @@
             fab:fab_title="Add Metalink" />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/mainFAB_addTorrent"
+            android:id="@+id/mainFab_addTorrent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorTorrent"
@@ -64,7 +55,7 @@
             fab:fab_title="Add Torrent" />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/mainFAB_addURI"
+            android:id="@+id/mainFab_addURI"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_colorNormal="@color/colorURI"
@@ -73,4 +64,4 @@
             fab:fab_size="mini"
             fab:fab_title="Add URI" />
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -2,7 +2,6 @@ package com.gianlu.aria2app.DownloadsListing;
 
 import android.app.Activity;
 import android.preference.PreferenceManager;
-import android.widget.ListView;
 
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IDownloadList;
@@ -15,15 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoadDownloads implements Runnable {
-    private ListView listView;
-    private Activity context;
-    private ILoadDownloads handler;
+    private ILoading handler;
     private JTA2 jta2;
     private boolean hideMetadata;
 
-    public LoadDownloads(Activity context, ListView listView, ILoadDownloads handler) {
-        this.listView = listView;
-        this.context = context;
+    public LoadDownloads(Activity context, ILoading handler) {
         this.handler = handler;
 
         hideMetadata = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_hideMetadata", false);
@@ -40,8 +35,8 @@ public class LoadDownloads implements Runnable {
     public void run() {
         if (jta2 == null) return;
 
-        handler.onStart();
-        final List<DownloadItem> downloadsList = new ArrayList<>();
+        handler.onStarted();
+        final List<Download> downloadsList = new ArrayList<>();
 
         //Active
         jta2.tellActive(new IDownloadList() {
@@ -50,7 +45,7 @@ public class LoadDownloads implements Runnable {
                 for (Download download : downloads) {
                     if (hideMetadata && download.getName().startsWith("[METADATA]") && !download.followedBy.isEmpty())
                         continue;
-                    downloadsList.add(new DownloadItem(download));
+                    downloadsList.add(download);
                 }
 
                 //Waiting
@@ -60,7 +55,7 @@ public class LoadDownloads implements Runnable {
                         for (Download download : downloads) {
                             if (hideMetadata && download.getName().startsWith("[METADATA]") && !download.followedBy.isEmpty())
                                 continue;
-                            downloadsList.add(new DownloadItem(download));
+                            downloadsList.add(download);
                         }
 
                         //Stopped
@@ -70,16 +65,10 @@ public class LoadDownloads implements Runnable {
                                 for (Download download : downloads) {
                                     if (hideMetadata && download.getName().startsWith("[METADATA]") && !download.followedBy.isEmpty())
                                         continue;
-                                    downloadsList.add(new DownloadItem(download));
+                                    downloadsList.add(download);
                                 }
-                                final DownloadItemAdapter adapter = new DownloadItemAdapter(context, downloadsList);
-                                context.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listView.setAdapter(adapter);
-                                        handler.onEnd();
-                                    }
-                                });
+
+                                handler.onLoaded(downloadsList);
                             }
 
                             @Override
@@ -101,5 +90,13 @@ public class LoadDownloads implements Runnable {
                 handler.onException(q, exception);
             }
         });
+    }
+
+    public interface ILoading {
+        void onStarted();
+
+        void onLoaded(List<Download> downloads);
+
+        void onException(boolean queuing, Exception ex);
     }
 }

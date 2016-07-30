@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/downloadCardViewMenu_resume"
+        android:title="@string/resume" />
+    <item
+        android:id="@+id/downloadCardViewMenu_pause"
+        android:title="@string/pause" />
+    <item
+        android:id="@+id/downloadCardViewMenu_moveUp"
+        android:title="@string/move_up" />
+    <item
+        android:id="@+id/downloadCardViewMenu_moveDown"
+        android:title="@string/move_down" />
+    <item
+        android:id="@+id/downloadCardViewMenu_remove"
+        android:title="@string/remove" />
+    <item
+        android:id="@+id/downloadCardViewMenu_restart"
+        android:title="@string/restart" />
+</menu>

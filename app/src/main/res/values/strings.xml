@@ -21,24 +21,20 @@
     <string name="downloadStatus_removed">Removed</string>
     <string name="downloadStatus_active">Active</string>
 
-    <string name="completed_length">Completed length: %1$s</string>
-    <string name="total_length">Total length: %1$s</string>
-    <string name="uploaded_length">Uploaded length: %1$s</string>
-    <string name="pieces">Pieces: %1$d</string>
-    <string name="pieces_length">Piece length: %1$s</string>
-    <string name="connections">Uploaded length: %1$d</string>
-    <string name="gid" translatable="false">GID: %1$s</string>
-    <string name="seeder">Seeder: %1$s</string>
-    <string name="info_hash" translatable="false">InfoHash: %1$s</string>
-    <string name="numSeeder">Seeders number: %1$d</string>
-    <string name="creation_date">Creation date: %1$s</string>
-    <string name="mode">Mode: %1$s</string>
-    <string name="comment">Comment: %1$s</string>
-    <string name="index" translatable="false">Index: %1$d</string>
-    <plurals name="announceList">
-        <item quantity="zero">Announce list: empty</item>
-        <item quantity="one">Announce list: %1$s</item>
-    </plurals>
+    <string name="completed_length"><b>Completed length:</b> %1$s</string>
+    <string name="total_length"><b>Total length:</b>  %1$s</string>
+    <string name="uploaded_length"><b>Uploaded length:</b> %1$s</string>
+    <string name="pieces"><b>Pieces:</b> %1$d</string>
+    <string name="pieces_length"><b>Piece length:</b> %1$s</string>
+    <string name="connections"><b>Uploaded length:</b> %1$d</string>
+    <string name="gid" translatable="false"><b>GID:</b> %1$s</string>
+    <string name="seeder"><b>Seeder:</b> %1$s</string>
+    <string name="info_hash" translatable="false"><b>InfoHash:</b> %1$s</string>
+    <string name="numSeeder"><b>Seeders number:</b> %1$d</string>
+    <string name="creation_date"><b>Creation date:</b> %1$s</string>
+    <string name="mode"><b>Mode:</b> %1$s</string>
+    <string name="comment"><b>Comment:</b> %1$s</string>
+    <string name="index" translatable="false"><b>Index:</b> %1$d</string>
 
     <string name="selectFile">Download file</string>
     <string name="selectFileNotPaused">Download file (available only when download is paused)</string>
@@ -166,7 +162,7 @@
 
     <string name="remove">Remove</string>
     <string name="pause">Pause</string>
-    <string name="show_more">Show more…</string>
+    <string name="more">More</string>
     <string name="resume">Resume</string>
     <string name="restart">Restart</string>
 

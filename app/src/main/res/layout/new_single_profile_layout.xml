@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- TODO: Improve layout (use enable/disable, not visibility) -->
+    <!-- TODO: Improve layout (use gone, not visibility) -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

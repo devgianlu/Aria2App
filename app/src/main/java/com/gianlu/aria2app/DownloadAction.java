@@ -195,8 +195,7 @@ public class DownloadAction {
         MOVE_DOWN,
         REMOVE,
         RESTART,
-        RESUME,
-        SHOW_MORE
+        RESUME
     }
 
     public interface IPause {

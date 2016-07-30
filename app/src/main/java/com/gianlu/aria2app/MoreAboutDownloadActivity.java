@@ -16,12 +16,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.UpdateUI;
@@ -49,8 +49,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     private UpdateUI updateUI;
     private String gid;
     private Download.STATUS status;
-    private LineChart chart;
-    private ViewGroup rootView;
+    private ViewHolder holder;
     private boolean canWrite = false;
 
     @Override
@@ -60,13 +59,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
         View root = findViewById(android.R.id.content);
         assert root != null;
-        rootView = (ViewGroup) root.getRootView();
+        holder = new ViewHolder(root.getRootView());
 
         gid = getIntent().getStringExtra("gid");
         status = Download.STATUS.valueOf(getIntent().getStringExtra("status"));
         setTitle(getIntent().getStringExtra("name"));
-
-        chart = (LineChart) findViewById(R.id.moreAboutDownload_chart);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             canWrite = true;
@@ -85,11 +82,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             }
         }
 
-        Charting.newChart(chart);
+        // Charting.newChart(chart);
         updateUI = new UpdateUI(this, new UpdateUI.IFirstUpdate() {
             @Override
             public void onFirstUpdate(Download item) { /* NOT USED */}
-        }, canWrite, gid, chart, rootView);
+        }, canWrite, gid, holder);
         new Thread(updateUI).start();
     }
 
@@ -107,18 +104,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.moreAboutDownloadMenu_refresh:
-                if (updateUI != null) {
-                    updateUI.stop(new IThread() {
-                        @Override
-                        public void stopped() {
-                            updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, chart, rootView);
-                            new Thread(updateUI).start();
-                        }
-                    });
-                } else {
-                    updateUI = new UpdateUI(this, null, canWrite, gid, chart, rootView);
-                    new Thread(updateUI).start();
-                }
+                UpdateUI.stop(updateUI, new IThread() {
+                    @Override
+                    public void stopped() {
+                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
+                        new Thread(updateUI).start();
+                    }
+                });
                 break;
             case R.id.moreAboutDownloadMenu_options:
                 showOptionsDialog();
@@ -134,7 +126,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (updateUI != null) updateUI.stop();
+        UpdateUI.stop(updateUI);
         finishActivity(0);
         super.onDestroy();
     }
@@ -148,7 +140,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        if (updateUI != null) updateUI.stop();
+        UpdateUI.stop(updateUI);
         finishActivity(0);
         super.onStop();
     }
@@ -247,20 +239,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                         MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                if (updateUI != null) {
-                                                    updateUI.stop(new IThread() {
-                                                        @Override
-                                                        public void stopped() {
-                                                            Charting.newChart(chart);
-                                                            updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, chart, rootView);
-                                                            new Thread(updateUI).start();
-                                                        }
-                                                    });
-                                                } else {
-                                                    Charting.newChart(chart);
-                                                    updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, chart, rootView);
-                                                    new Thread(updateUI).start();
-                                                }
+                                                UpdateUI.stop(updateUI, new IThread() {
+                                                    @Override
+                                                    public void stopped() {
+                                                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
+                                                        new Thread(updateUI).start();
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -280,20 +265,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                         MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (updateUI != null) {
-                                    updateUI.stop(new IThread() {
-                                        @Override
-                                        public void stopped() {
-                                            Charting.newChart(chart);
-                                            updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, chart, rootView);
-                                            new Thread(updateUI).start();
-                                        }
-                                    });
-                                } else {
-                                    Charting.newChart(chart);
-                                    updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, chart, rootView);
-                                    new Thread(updateUI).start();
-                                }
+                                UpdateUI.stop(updateUI, new IThread() {
+                                    @Override
+                                    public void stopped() {
+                                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
+                                        new Thread(updateUI).start();
+                                    }
+                                });
                             }
                         });
                     }
@@ -324,5 +302,53 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                 Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
         });
+    }
+
+    public class ViewHolder {
+        public LineChart chart;
+        public TextView downloadSpeed;
+        public TextView uploadSpeed;
+        public TextView time;
+        public TextView percentage;
+        public TextView completedLength;
+        public TextView totalLength;
+        public TextView uploadedLength;
+        public TextView piecesNumber;
+        public TextView piecesLength;
+        public TextView connections;
+        public TextView gid;
+        public TextView seedersNumber;
+        public RelativeLayout bitTorrentContainer;
+        public TextView bitTorrentMode;
+        public TextView bitTorrentAnnounceList;
+        public TextView infoHash;
+        public TextView seeder;
+        public TextView bitTorrentComment;
+        public TextView bitTorrentCreationDate;
+        public RelativeLayout treeNodeContainer;
+
+        public ViewHolder(View rootView) {
+            chart = (LineChart) rootView.findViewById(R.id.moreAboutDownload_chart);
+            treeNodeContainer = (RelativeLayout) rootView.findViewById(R.id.moreAboutDownload_treeViewContainer);
+            downloadSpeed = (TextView) rootView.findViewById(R.id.moreAboutDownload_downloadSpeed);
+            uploadSpeed = (TextView) rootView.findViewById(R.id.moreAboutDownload_uploadSpeed);
+            time = (TextView) rootView.findViewById(R.id.moreAboutDownload_time);
+            percentage = (TextView) rootView.findViewById(R.id.moreAboutDownload_percentage);
+            completedLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_completedLength);
+            totalLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_totalLength);
+            uploadedLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_uploadedLength);
+            piecesNumber = (TextView) rootView.findViewById(R.id.moreAboutDownload_piecesNumber);
+            piecesLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_piecesLength);
+            connections = (TextView) rootView.findViewById(R.id.moreAboutDownload_connections);
+            gid = (TextView) rootView.findViewById(R.id.moreAboutDownload_gid);
+            seedersNumber = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentSeedersNumber);
+            bitTorrentContainer = (RelativeLayout) rootView.findViewById(R.id.moreAboutDownload_bitTorrentContainer);
+            bitTorrentMode = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentMode);
+            bitTorrentAnnounceList = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentAnnounceList);
+            infoHash = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentInfoHash);
+            seeder = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentSeeder);
+            bitTorrentComment = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentComment);
+            bitTorrentCreationDate = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentCreationDate);
+        }
     }
 }

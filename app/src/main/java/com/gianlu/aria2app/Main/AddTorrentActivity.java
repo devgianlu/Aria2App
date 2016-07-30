@@ -148,7 +148,13 @@ public class AddTorrentActivity extends AppCompatActivity {
                 }
             });
 
-            optionsListView.setAdapter(new OptionAdapter(this, Utils.colorToHex(this, getIntent().getBooleanExtra("torrentMode", true) ? R.color.colorTorrent_pressed : R.color.colorMetalink_pressed), headers, children));
+            int colorRes;
+            if (getIntent().getBooleanExtra("torrentMode", true))
+                colorRes = R.color.colorTorrent_pressed;
+            else
+                colorRes = R.color.colorMetalink_pressed;
+
+            optionsListView.setAdapter(new OptionAdapter(this, colorRes, headers, children));
         } catch (IOException | NoSuchAlgorithmException ex) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
         }

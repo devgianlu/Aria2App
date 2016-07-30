@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#282726</color>
     <color name="colorAccent">#ff5722</color>
     <color name="colorAccent_pressed">#cc451b</color>
+    <color name="colorAccent_ripple">#f8ff5722</color>
 
     <color name="colorTorrent">#66bb6a</color>
     <color name="colorTorrent_pressed">#2e7d32</color>
@@ -11,4 +12,7 @@
     <color name="colorMetalink_pressed">#311b92</color>
     <color name="colorURI">#666666</color>
     <color name="colorURI_pressed">#323232</color>
+
+    <color name="white">#ffffff</color>
+    <color name="text_default_material_dark">#b3ffffff</color>
 </resources>

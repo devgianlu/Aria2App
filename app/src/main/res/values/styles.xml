@@ -13,13 +13,20 @@
         <item name="colorPrimaryDark">@color/colorTorrent_pressed</item>
         <item name="colorAccent">@color/colorTorrent_pressed</item>
     </style>
-
     <style name="AddMetalinkTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorMetalink</item>
         <item name="colorPrimaryDark">@color/colorMetalink_pressed</item>
         <item name="colorAccent">@color/colorMetalink_pressed</item>
     </style>
 
+    <style name="CardViewTopSection">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <style name="CardViewButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
 
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_layout</item>
@@ -31,12 +38,4 @@
         <item name="android:showDividers">middle</item>
         <item name="android:divider">@android:drawable/divider_horizontal_bright</item>
     </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

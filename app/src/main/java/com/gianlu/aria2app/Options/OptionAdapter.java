@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Options;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.ColorRes;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -25,10 +26,9 @@ public class OptionAdapter extends BaseExpandableListAdapter {
     private Map<OptionHeader, OptionChild> children;
     private String colorAccent;
 
-    public OptionAdapter(Context context, String hexColorAccent, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children) {
+    public OptionAdapter(Context context, @ColorRes int colorAccent, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children) {
         this.context = context;
-        this.colorAccent = hexColorAccent;
-        if (this.colorAccent.length() == 8) this.colorAccent = this.colorAccent.substring(2);
+        this.colorAccent = Utils.colorToHex(context, colorAccent);
         this.headers = headers;
         this.children = children;
     }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
@@ -103,9 +104,9 @@ public class Utils {
     }
 
     public static String colorToHex(Context context, @ColorRes int colorRes) {
-        String hex = Integer.toHexString(ContextCompat.getColor(context, colorRes));
-        if (hex.length() == 8) return hex.substring(2);
-        return hex;
+        int color = ContextCompat.getColor(context, colorRes);
+        String hex = Integer.toHexString(Color.rgb(Color.red(color), Color.green(color), Color.blue(color)));
+        return hex.length() == 8 ? hex.substring(2) : hex;
     }
 
     public static WebSocket readyWebSocket(boolean isSSL, String url, @NonNull String username, @NonNull String password) throws IOException, NoSuchAlgorithmException {

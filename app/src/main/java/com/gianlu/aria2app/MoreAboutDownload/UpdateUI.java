@@ -7,14 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
@@ -26,6 +23,7 @@ import com.gianlu.aria2app.FileListing.FilesTree;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.NetIO.JTA2.BitTorrent;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
@@ -35,7 +33,6 @@ import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -61,28 +58,9 @@ public class UpdateUI implements Runnable {
     private boolean enableAnimations;
     private JTA2 jta2;
     private AndroidTreeView treeView;
-    private String downloadGID;
-    private RelativeLayout treeNodeContainer;
-    private LineChart chart;
-    private TextView downloadSpeed;
-    private TextView uploadSpeed;
-    private TextView time;
-    private TextView percentage;
-    private TextView completedLength;
-    private TextView totalLength;
-    private TextView uploadedLength;
-    private TextView piecesNumber;
-    private TextView piecesLength;
-    private TextView connections;
-    private TextView gidd;
-    private TextView seedersNumber;
-    private RelativeLayout bitTorrentContainer;
-    private TextView bitTorrentMode;
-    private TextView bitTorrentAnnounceList;
-    private TextView infoHash;
-    private TextView seeder;
-    private TextView bitTorrentComment;
-    private TextView bitTorrentCreationDate;
+    private String gid;
+
+
     private Resources res;
     private boolean directDownloadEnabled;
     private int updateTreeViewCount = 1;
@@ -91,39 +69,20 @@ public class UpdateUI implements Runnable {
     private int updateRate;
     private IFirstUpdate handler;
     private boolean canWrite;
+    private MoreAboutDownloadActivity.ViewHolder viewHolder;
     private boolean firstRun = true;
 
-    public UpdateUI(Activity context, IFirstUpdate handler, boolean canWrite, String gid, LineChart chart, @NonNull ViewGroup rootView) {
+
+    public UpdateUI(Activity context, IFirstUpdate handler, boolean canWrite, String gid, MoreAboutDownloadActivity.ViewHolder viewHolder) {
         this.handler = handler;
         this.canWrite = canWrite;
+        this.viewHolder = viewHolder;
         _shouldStop = false;
         _stopped = false;
         this.context = context;
-        this.chart = chart;
-        this.downloadGID = gid;
+        this.gid = gid;
 
-        Charting.newChart(chart);
-
-        treeNodeContainer = (RelativeLayout) rootView.findViewById(R.id.moreAboutDownload_treeViewContainer);
-        downloadSpeed = (TextView) rootView.findViewById(R.id.moreAboutDownload_downloadSpeed);
-        uploadSpeed = (TextView) rootView.findViewById(R.id.moreAboutDownload_uploadSpeed);
-        time = (TextView) rootView.findViewById(R.id.moreAboutDownload_time);
-        percentage = (TextView) rootView.findViewById(R.id.moreAboutDownload_percentage);
-        completedLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_completedLength);
-        totalLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_totalLength);
-        uploadedLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_uploadedLength);
-        piecesNumber = (TextView) rootView.findViewById(R.id.moreAboutDownload_piecesNumber);
-        piecesLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_piecesLength);
-        connections = (TextView) rootView.findViewById(R.id.moreAboutDownload_connections);
-        gidd = (TextView) rootView.findViewById(R.id.moreAboutDownload_gid);
-        seedersNumber = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentSeedersNumber);
-        bitTorrentContainer = (RelativeLayout) rootView.findViewById(R.id.moreAboutDownload_bitTorrentContainer);
-        bitTorrentMode = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentMode);
-        bitTorrentAnnounceList = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentAnnounceList);
-        infoHash = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentInfoHash);
-        seeder = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentSeeder);
-        bitTorrentComment = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentComment);
-        bitTorrentCreationDate = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentCreationDate);
+        viewHolder.chart = Charting.setupChart(viewHolder.chart);
 
         //sharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -142,6 +101,17 @@ public class UpdateUI implements Runnable {
         res = context.getResources();
     }
 
+    public static void stop(UpdateUI updateUI) {
+        if (updateUI != null) updateUI.stop();
+    }
+
+    public static void stop(UpdateUI updateUI, IThread handler) {
+        if (updateUI == null)
+            handler.stopped();
+        else
+            updateUI.stop(handler);
+    }
+
     public void stop() {
         _shouldStop = true;
     }
@@ -158,7 +128,7 @@ public class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
 
         while ((!_shouldStop) && jta2 != null) {
-            jta2.tellStatus(downloadGID, new IDownload() {
+            jta2.tellStatus(gid, new IDownload() {
                 @Override
                 public void onDownload(final Download download) {
                     final String timeRemaining;
@@ -202,64 +172,53 @@ public class UpdateUI implements Runnable {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            downloadSpeed.setText(Utils.SpeedFormatter(download.downloadSpeed));
-                            uploadSpeed.setText(Utils.SpeedFormatter(download.uploadSpeed));
-                            time.setText(timeRemaining);
-                            percentage.setText(download.getPercentage());
-                            completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(download.completedLength)));
-                            totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(download.length)));
-                            uploadedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.uploaded_length), Utils.DimensionFormatter(download.uploadedLength)));
-                            piecesNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces), download.numPieces));
-                            piecesLength.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces_length), Utils.DimensionFormatter(download.pieceLength)));
-                            connections.setText(String.format(Locale.getDefault(), res.getString(R.string.connections), download.connections));
-                            gidd.setText(String.format(Locale.getDefault(), res.getString(R.string.gid), download.GID));
+                            viewHolder.downloadSpeed.setText(Utils.SpeedFormatter(download.downloadSpeed));
+                            viewHolder.uploadSpeed.setText(Utils.SpeedFormatter(download.uploadSpeed));
+                            viewHolder.time.setText(timeRemaining);
+                            viewHolder.percentage.setText(download.getPercentage());
+                            viewHolder.completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(download.completedLength)));
+                            viewHolder.totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(download.length)));
+                            viewHolder.uploadedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.uploaded_length), Utils.DimensionFormatter(download.uploadedLength)));
+                            viewHolder.piecesNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces), download.numPieces));
+                            viewHolder.piecesLength.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces_length), Utils.DimensionFormatter(download.pieceLength)));
+                            viewHolder.connections.setText(String.format(Locale.getDefault(), res.getString(R.string.connections), download.connections));
+                            viewHolder.gid.setText(String.format(Locale.getDefault(), res.getString(R.string.gid), download.GID));
 
 
                             if (download.isBitTorrent) {
-                                seedersNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.numSeeder), download.numSeeders));
-                                infoHash.setText(String.format(Locale.getDefault(), res.getString(R.string.info_hash), download.infoHash));
-                                seeder.setText(String.format(Locale.getDefault(), res.getString(R.string.seeder), String.valueOf(download.seeder)));
-                                bitTorrentCreationDate.setText(String.format(Locale.getDefault(), res.getString(R.string.creation_date), download.bitTorrent.creationDate));
-                                bitTorrentComment.setText(String.format(Locale.getDefault(), res.getString(R.string.comment), download.bitTorrent.creationDate));
-                                bitTorrentMode.setText(String.format(Locale.getDefault(), res.getString(R.string.mode), download.bitTorrent.mode.equals(BitTorrent.MODE.SINGLE) ? "single" : "multi"));
-                                bitTorrentAnnounceList.setText(loadBTAnnounceList(download.bitTorrent));
+                                viewHolder.seedersNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.numSeeder), download.numSeeders));
+                                viewHolder.infoHash.setText(String.format(Locale.getDefault(), res.getString(R.string.info_hash), download.infoHash));
+                                viewHolder.seeder.setText(String.format(Locale.getDefault(), res.getString(R.string.seeder), String.valueOf(download.seeder)));
+                                viewHolder.bitTorrentCreationDate.setText(String.format(Locale.getDefault(), res.getString(R.string.creation_date), download.bitTorrent.creationDate));
+                                viewHolder.bitTorrentComment.setText(String.format(Locale.getDefault(), res.getString(R.string.comment), download.bitTorrent.creationDate));
+                                viewHolder.bitTorrentMode.setText(String.format(Locale.getDefault(), res.getString(R.string.mode), download.bitTorrent.mode.equals(BitTorrent.MODE.SINGLE) ? "single" : "multi"));
+                                viewHolder.bitTorrentAnnounceList.setText(loadBTAnnounceList(download.bitTorrent));
                             } else {
-                                bitTorrentContainer.removeAllViews();
+                                viewHolder.bitTorrentContainer.removeAllViews();
                             }
                         }
                     });
 
 
                     // Chart
-                    chart.setNoDataText(noDataTextChart);
+                    viewHolder.chart.setNoDataText(noDataTextChart);
                     if (download.status.equals(Download.STATUS.ACTIVE)) {
-                        final LineData data = chart.getData();
+                        final LineData data = viewHolder.chart.getData();
                         ILineDataSet downloadSet = data.getDataSetByIndex(0);
                         ILineDataSet uploadSet = data.getDataSetByIndex(1);
-
-                        if (downloadSet == null) {
-                            downloadSet = Charting.InitDownloadSet(context);
-                            data.addDataSet(downloadSet);
-                        }
-
-                        if (uploadSet == null) {
-                            uploadSet = Charting.InitUploadSet(context);
-                            data.addDataSet(uploadSet);
-                        }
-
 
                         data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
                         data.addEntry(new Entry(download.downloadSpeed, downloadSet.getEntryCount()), 0);
                         data.addEntry(new Entry(download.uploadSpeed, uploadSet.getEntryCount()), 1);
 
-                        chart.notifyDataSetChanged();
-                        chart.setVisibleXRangeMaximum(90);
-                        chart.moveViewToX(data.getXValCount() - 91);
+                        viewHolder.chart.notifyDataSetChanged();
+                        viewHolder.chart.setVisibleXRangeMaximum(90);
+                        viewHolder.chart.moveViewToX(data.getXValCount() - 91);
                     } else {
                         context.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                chart.clear();
+                                viewHolder.chart.clear();
                             }
                         });
                     }
@@ -283,8 +242,8 @@ public class UpdateUI implements Runnable {
                             context.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    treeNodeContainer.removeAllViews();
-                                    treeNodeContainer.addView(treeRealView);
+                                    viewHolder.treeNodeContainer.removeAllViews();
+                                    viewHolder.treeNodeContainer.addView(treeRealView);
                                 }
                             });
                         }
@@ -377,7 +336,7 @@ public class UpdateUI implements Runnable {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
                 final List<Integer> indexes = new ArrayList<>();
-                jta2.getOption(downloadGID, new IOption() {
+                jta2.getOption(gid, new IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
                         if (!(options.get("select-file") == null || options.get("select-file").isEmpty())) {
@@ -408,7 +367,7 @@ public class UpdateUI implements Runnable {
                         Map<String, String> newerOptions = new HashMap<>();
                         newerOptions.put("select-file", newerValue);
 
-                        jta2.changeOption(downloadGID, newerOptions, new ISuccess() {
+                        jta2.changeOption(gid, newerOptions, new ISuccess() {
                             @Override
                             public void onSuccess() {
                                 Utils.UIToast(context, (b ? Utils.TOAST_MESSAGES.FILE_INCLUDED : Utils.TOAST_MESSAGES.FILE_EXCLUDED), "Index: " + file.index);
@@ -603,7 +562,7 @@ public class UpdateUI implements Runnable {
             public void onCheckedChanged(CompoundButton compoundButton, final boolean b) {
                 final List<Integer> indexes = new ArrayList<>();
 
-                jta2.getOption(downloadGID, new IOption() {
+                jta2.getOption(gid, new IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
                         if (!(options.get("select-file") == null || options.get("select-file").isEmpty())) {
@@ -634,7 +593,7 @@ public class UpdateUI implements Runnable {
                         Map<String, String> newerOptions = new HashMap<>();
                         newerOptions.put("select-file", newerValue);
 
-                        jta2.changeOption(downloadGID, newerOptions, new ISuccess() {
+                        jta2.changeOption(gid, newerOptions, new ISuccess() {
                             @Override
                             public void onSuccess() {
                                 Utils.UIToast(context, (b ? Utils.TOAST_MESSAGES.FILES_INCLUDED : Utils.TOAST_MESSAGES.FILES_EXCLUDED), "Folder: " + directory.name);
@@ -672,11 +631,7 @@ public class UpdateUI implements Runnable {
             announces += "\n    " + announce;
         }
 
-        if (announces.equals("")) {
-            return res.getQuantityString(R.plurals.announceList, 0);
-        } else {
-            return String.format(Locale.getDefault(), res.getQuantityString(R.plurals.announceList, 1), announces);
-        }
+        return announces;
     }
 
     public interface IFirstUpdate {
