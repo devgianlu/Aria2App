@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.ExpandableListView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.DownloadsListing.LoadDownloads;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
@@ -325,6 +326,32 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+        final FloatingActionsMenu fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
+        assert fabMenu != null;
+        fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {
+                findViewById(R.id.main_opaqueMask).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+                findViewById(R.id.main_opaqueMask).setVisibility(View.GONE);
+            }
+        });
+        // TODO: Check things
+        mainRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int threshold = 10;
+
+                if (dy > threshold)
+                    fabMenu.setVisibility(View.GONE);
+                else if (dy < threshold)
+                    fabMenu.setVisibility(View.VISIBLE);
+            }
+        });
 
         FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFab_addURI);
         assert fabAddURI != null;

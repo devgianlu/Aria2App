@@ -18,4 +18,6 @@
 
     <color name="white">#ffffff</color>
     <color name="text_default_material_dark">#b3ffffff</color>
+
+    <color name="background_opaque">#1affffff</color>
 </resources>

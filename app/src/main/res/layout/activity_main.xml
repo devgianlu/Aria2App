@@ -20,8 +20,13 @@
             android:layout_height="wrap_content" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <!-- TODO: FAB should disappear where you're not at the top -->
-    <!-- TODO: Background became opaque when FAB is open -->
+    <FrameLayout
+        android:id="@+id/main_opaqueMask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_opaque"
+        android:visibility="gone" />
+
     <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_fab"
         android:layout_width="wrap_content"
