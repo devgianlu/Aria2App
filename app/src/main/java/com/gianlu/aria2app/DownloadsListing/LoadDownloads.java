@@ -18,6 +18,7 @@ public class LoadDownloads implements Runnable {
     private JTA2 jta2;
     private boolean hideMetadata;
 
+    // TODO: When called to reload should return newer downloads or removed (RecyclerView.Adapter.notifyItem[Inserted|Removed]())
     public LoadDownloads(Activity context, ILoading handler) {
         this.handler = handler;
 

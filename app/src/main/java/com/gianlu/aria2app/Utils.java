@@ -54,7 +54,10 @@ public class Utils {
             return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
         }
     }
-    public static String TimeFormatter(long sec) {
+
+    public static String TimeFormatter(Long sec) {
+        if (sec == null) return "∞";
+
         int day = (int) TimeUnit.SECONDS.toDays(sec);
         long hours = TimeUnit.SECONDS.toHours(sec) -
                 TimeUnit.DAYS.toHours(day);
@@ -266,6 +269,8 @@ public class Utils {
     }
 
     public static void SecretLog(Activity context, Throwable exx) {
+        exx.printStackTrace();
+
         try {
             FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".secret", Context.MODE_APPEND);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
@@ -275,7 +280,6 @@ public class Utils {
             osw.close();
         } catch (IOException ex) {
             UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
-            ex.printStackTrace();
         }
     }
     public static void LogMe(Activity context, String message, boolean isError) {
@@ -288,7 +292,6 @@ public class Utils {
             osw.close();
         } catch (IOException ex) {
             UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
-            ex.printStackTrace();
         }
     }
 

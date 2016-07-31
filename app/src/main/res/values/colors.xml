@@ -13,6 +13,9 @@
     <color name="colorURI">#666666</color>
     <color name="colorURI_pressed">#323232</color>
 
+    <color name="downloadColor">#ffc107</color>
+    <color name="uploadColor">#009688</color>
+
     <color name="white">#ffffff</color>
     <color name="text_default_material_dark">#b3ffffff</color>
 </resources>

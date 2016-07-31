@@ -273,6 +273,11 @@ public class Download {
         return String.format(Locale.getDefault(), "%.2f", (completedLength.floatValue() / length.floatValue() * 100)) + " %";
     }
 
+    public Long getMissingTime() {
+        if (downloadSpeed == 0) return null;
+        return (length - completedLength) / downloadSpeed;
+    }
+
     // Status
     public enum STATUS {
         ACTIVE,

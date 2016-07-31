@@ -153,8 +153,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
             LineData data = holder.detailsChart.getData();
             data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(0).getEntryCount()), 0);
-            data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(1).getEntryCount()), 1);
+            data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
+            data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
             holder.detailsChart.notifyDataSetChanged();
             holder.detailsChart.setVisibleXRangeMaximum(90);
             holder.detailsChart.moveViewToX(data.getXValCount() - 91);
@@ -162,6 +162,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
             holder.donutProgress.setProgress(item.getProgress().intValue());
             holder.downloadName.setText(item.getName());
             holder.downloadStatus.setText(item.status.toString());
+            holder.downloadSpeed.setText(Utils.SpeedFormatter(item.downloadSpeed));
+            holder.downloadMissingTime.setText(Utils.TimeFormatter(item.getMissingTime()));
             holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.DimensionFormatter(item.completedLength))));
             holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.DimensionFormatter(item.uploadedLength))));
         }
@@ -184,16 +186,24 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
         holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.DimensionFormatter(item.length))));
 
-        holder.header.setOnClickListener(new View.OnClickListener() {
+        holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isExpanded(holder.details)) {
+                    holder.expand.setImageResource(R.drawable.ic_keyboard_arrow_down_white_48dp);
                     collapse(holder.details);
                     collapseTitle(holder.downloadName);
                 } else {
+                    holder.expand.setImageResource(R.drawable.ic_keyboard_arrow_up_white_48dp);
                     expand(holder.details);
                     expandTitle(holder.downloadName);
                 }
+            }
+        });
+        holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.detailsChart = Charting.setupChart(holder.detailsChart);
             }
         });
         holder.more.setOnClickListener(new View.OnClickListener() {
@@ -280,14 +290,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 popupMenu.show();
             }
         });
-
-
-        // Non-Static
-        holder.donutProgress.setProgress(item.getProgress().intValue());
-        holder.downloadName.setText(item.getName());
-        holder.downloadStatus.setText(item.status.toString());
-        holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.DimensionFormatter(item.completedLength))));
-        holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.DimensionFormatter(item.uploadedLength))));
     }
 
     @Override

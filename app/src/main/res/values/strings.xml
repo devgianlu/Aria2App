@@ -21,20 +21,20 @@
     <string name="downloadStatus_removed">Removed</string>
     <string name="downloadStatus_active">Active</string>
 
-    <string name="completed_length"><b>Completed length:</b> %1$s</string>
-    <string name="total_length"><b>Total length:</b>  %1$s</string>
-    <string name="uploaded_length"><b>Uploaded length:</b> %1$s</string>
-    <string name="pieces"><b>Pieces:</b> %1$d</string>
-    <string name="pieces_length"><b>Piece length:</b> %1$s</string>
-    <string name="connections"><b>Uploaded length:</b> %1$d</string>
-    <string name="gid" translatable="false"><b>GID:</b> %1$s</string>
-    <string name="seeder"><b>Seeder:</b> %1$s</string>
-    <string name="info_hash" translatable="false"><b>InfoHash:</b> %1$s</string>
-    <string name="numSeeder"><b>Seeders number:</b> %1$d</string>
-    <string name="creation_date"><b>Creation date:</b> %1$s</string>
-    <string name="mode"><b>Mode:</b> %1$s</string>
-    <string name="comment"><b>Comment:</b> %1$s</string>
-    <string name="index" translatable="false"><b>Index:</b> %1$d</string>
+    <string name="completed_length"><![CDATA[<b>Completed length:</b>]]> %s</string>
+    <string name="total_length"><![CDATA[<b>Total length:</b>]]> %s</string>
+    <string name="uploaded_length"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
+    <string name="pieces"><![CDATA[<b>Pieces:</b>]]> %s</string>
+    <string name="pieces_length"><![CDATA[<b>Piece length:</b>]]> %s</string>
+    <string name="connections"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
+    <string name="gid" translatable="false"><![CDATA[<b>GID:</b>]]> %s</string>
+    <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
+    <string name="info_hash" translatable="false"><![CDATA[<b>InfoHash:</b>]]> %s</string>
+    <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %s</string>
+    <string name="creation_date"><![CDATA[<b>Creation date:</b>]]> %s</string>
+    <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
+    <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
+    <string name="index" translatable="false"><![CDATA[<b>Index:</b>]]> %s</string>
 
     <string name="selectFile">Download file</string>
     <string name="selectFileNotPaused">Download file (available only when download is paused)</string>

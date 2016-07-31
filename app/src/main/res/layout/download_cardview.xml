@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="8dp"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -13,7 +14,6 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/downloadCardView_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
@@ -22,8 +22,8 @@
 
             <com.github.lzyzsd.circleprogress.DonutProgress
                 android:id="@+id/downloadCardView_donutProgress"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginEnd="8dp"
@@ -33,25 +33,75 @@
                 app:donut_unfinished_color="#1affffff" />
 
             <TextView
-                android:id="@+id/downloadCardView_name"
+                android:id="@+id/downloadCardView_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/downloadCardView_donutProgress"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_toEndOf="@+id/downloadCardView_donutProgress"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/downloadCardView_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/downloadCardView_status"
+                android:layout_marginBottom="4dp"
                 android:layout_toEndOf="@+id/downloadCardView_donutProgress"
                 android:ellipsize="marquee"
                 android:lines="1"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <ImageView
+                android:id="@+id/downloadCardView_downloadSpeedImage"
+                android:layout_width="16sp"
+                android:layout_height="16sp"
+                android:layout_below="@+id/downloadCardView_name"
+                android:layout_marginEnd="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_toEndOf="@+id/downloadCardView_donutProgress"
+                android:src="@drawable/ic_file_download_white_48dp" />
+
             <TextView
-                android:id="@+id/downloadCardView_status"
+                android:id="@+id/downloadCardView_downloadSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/downloadCardView_name"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@+id/downloadCardView_downloadSpeedImage"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/downloadCardView_missingTimeImage"
+                android:layout_width="16sp"
+                android:layout_height="16sp"
+                android:layout_below="@+id/downloadCardView_name"
+                android:layout_marginEnd="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_toEndOf="@+id/downloadCardView_downloadSpeed"
+                android:src="@drawable/ic_access_time_white_48dp" />
+
+            <TextView
+                android:id="@+id/downloadCardView_missingTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/downloadCardView_name"
-                android:layout_toEndOf="@+id/downloadCardView_donutProgress"
-                android:textSize="12sp" />
+                android:layout_marginEnd="4dp"
+                android:layout_toEndOf="@+id/downloadCardView_missingTimeImage"
+                android:layout_toStartOf="@+id/downloadCardView_expand"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/downloadCardView_expand"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/downloadCardView_name"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/ripple_effect_light"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
         </RelativeLayout>
 
         <LinearLayout
@@ -62,13 +112,28 @@
             android:padding="16dp"
             android:visibility="gone">
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/downloadCardViewDetails_chart"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content">
 
-            <!-- TODO: Info name should be BOLD -->
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/downloadCardViewDetails_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="16dp" />
+
+                <ImageButton
+                    android:id="@+id/downloadCardViewDetails_chartRefresh"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_alignBottom="@+id/downloadCardViewDetails_chart"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/ripple_effect_dark"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_refresh_black_48dp" />
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/downloadCardViewDetails_gid"
                 android:layout_width="wrap_content"
