@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                 .putExtra("gid", item.GID)
                                 .putExtra("name", item.getName())
+                                .putExtra("isTorrent", item.isBitTorrent)
                                 .putExtra("status", item.status.name());
                         if (!(item.status.equals(Download.STATUS.UNKNOWN) || item.status.equals(Download.STATUS.ERROR)))
                             MainActivity.this.startActivity(launchActivity);
@@ -238,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
                                     Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
                                     Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                             .putExtra("gid", item.GID)
+                                            .putExtra("isTorrent", item.isBitTorrent)
                                             .putExtra("status", item.status.name())
                                             .putExtra("name", item.getName());
 

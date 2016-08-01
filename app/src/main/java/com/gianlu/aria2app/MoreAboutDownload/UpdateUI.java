@@ -23,7 +23,6 @@ import com.gianlu.aria2app.FileListing.FilesTree;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
-import com.gianlu.aria2app.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.NetIO.JTA2.BitTorrent;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
@@ -33,6 +32,7 @@ import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -69,11 +69,10 @@ public class UpdateUI implements Runnable {
     private int updateRate;
     private IFirstUpdate handler;
     private boolean canWrite;
-    private MoreAboutDownloadActivity.ViewHolder viewHolder;
+    private ViewHolder viewHolder;
     private boolean firstRun = true;
 
-
-    public UpdateUI(Activity context, IFirstUpdate handler, boolean canWrite, String gid, MoreAboutDownloadActivity.ViewHolder viewHolder) {
+    public UpdateUI(Activity context, IFirstUpdate handler, boolean canWrite, String gid, ViewHolder viewHolder) {
         this.handler = handler;
         this.canWrite = canWrite;
         this.viewHolder = viewHolder;
@@ -172,6 +171,7 @@ public class UpdateUI implements Runnable {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            /*
                             viewHolder.downloadSpeed.setText(Utils.SpeedFormatter(download.downloadSpeed));
                             viewHolder.uploadSpeed.setText(Utils.SpeedFormatter(download.uploadSpeed));
                             viewHolder.time.setText(timeRemaining);
@@ -196,6 +196,7 @@ public class UpdateUI implements Runnable {
                             } else {
                                 viewHolder.bitTorrentContainer.removeAllViews();
                             }
+                            */
                         }
                     });
 
@@ -242,8 +243,8 @@ public class UpdateUI implements Runnable {
                             context.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    viewHolder.treeNodeContainer.removeAllViews();
-                                    viewHolder.treeNodeContainer.addView(treeRealView);
+                                    // viewHolder.treeNodeContainer.removeAllViews();
+                                    // viewHolder.treeNodeContainer.addView(treeRealView);
                                 }
                             });
                         }
@@ -636,5 +637,9 @@ public class UpdateUI implements Runnable {
 
     public interface IFirstUpdate {
         void onFirstUpdate(Download download);
+    }
+
+    class ViewHolder {
+        public LineChart chart;
     }
 }

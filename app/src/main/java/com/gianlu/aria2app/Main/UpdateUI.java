@@ -23,6 +23,7 @@ public class UpdateUI implements Runnable {
     private Integer updateRate;
     private boolean _stopped;
 
+    // TODO: ??(Move all Toast to UI thread)??
     public UpdateUI(Activity context, MainCardAdapter adapter) {
         _shouldStop = false;
         _stopped = false;

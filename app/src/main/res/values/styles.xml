@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="AddTorrentTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorTorrent</item>
         <item name="colorPrimaryDark">@color/colorTorrent_pressed</item>
