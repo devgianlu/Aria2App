@@ -86,6 +86,7 @@ public class WebSocketing extends WebSocketAdapter {
         IReceived handler = requests.remove(response.getInt("id"));
         if (handler == null) return;
         if (response.isNull("error")) {
+            // TODO: Passing invalid JSON?!
             handler.onResponse(response);
             return;
         }

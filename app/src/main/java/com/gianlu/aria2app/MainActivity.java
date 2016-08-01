@@ -327,29 +327,24 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         final FloatingActionsMenu fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
         assert fabMenu != null;
         fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
-                findViewById(R.id.main_opaqueMask).setVisibility(View.VISIBLE);
+                View mask = findViewById(R.id.main_opaqueMask);
+                assert mask != null;
+                mask.setVisibility(View.VISIBLE);
+                mask.setClickable(true);
             }
 
             @Override
             public void onMenuCollapsed() {
-                findViewById(R.id.main_opaqueMask).setVisibility(View.GONE);
-            }
-        });
-        // TODO: Check things
-        mainRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                int threshold = 10;
-
-                if (dy > threshold)
-                    fabMenu.setVisibility(View.GONE);
-                else if (dy < threshold)
-                    fabMenu.setVisibility(View.VISIBLE);
+                View mask = findViewById(R.id.main_opaqueMask);
+                assert mask != null;
+                mask.setVisibility(View.GONE);
+                mask.setClickable(false);
             }
         });
 
