@@ -81,7 +81,7 @@ public class UpdateUI implements Runnable {
         this.context = context;
         this.gid = gid;
 
-        viewHolder.chart = Charting.setupChart(viewHolder.chart);
+        viewHolder.chart = Charting.setupChart(viewHolder.chart, false);
 
         //sharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -136,9 +136,9 @@ public class UpdateUI implements Runnable {
                     switch (download.status) {
                         case ACTIVE:
                             if (download.downloadSpeed == 0) {
-                                timeRemaining = Utils.TimeFormatter(0L);
+                                timeRemaining = Utils.timeFormatter(0L);
                             } else {
-                                timeRemaining = Utils.TimeFormatter((download.length - download.completedLength) / download.downloadSpeed);
+                                timeRemaining = Utils.timeFormatter((download.length - download.completedLength) / download.downloadSpeed);
                             }
                             noDataTextChart = context.getString(R.string.downloadStatus_waiting);
                             break;
@@ -172,15 +172,15 @@ public class UpdateUI implements Runnable {
                         @Override
                         public void run() {
                             /*
-                            viewHolder.downloadSpeed.setText(Utils.SpeedFormatter(download.downloadSpeed));
-                            viewHolder.uploadSpeed.setText(Utils.SpeedFormatter(download.uploadSpeed));
+                            viewHolder.downloadSpeed.setText(Utils.speedFormatter(download.downloadSpeed));
+                            viewHolder.uploadSpeed.setText(Utils.speedFormatter(download.uploadSpeed));
                             viewHolder.time.setText(timeRemaining);
                             viewHolder.percentage.setText(download.getPercentage());
-                            viewHolder.completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(download.completedLength)));
-                            viewHolder.totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(download.length)));
-                            viewHolder.uploadedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.uploaded_length), Utils.DimensionFormatter(download.uploadedLength)));
+                            viewHolder.completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.dimensionFormatter(download.completedLength)));
+                            viewHolder.totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.dimensionFormatter(download.length)));
+                            viewHolder.uploadedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.uploaded_length), Utils.dimensionFormatter(download.uploadedLength)));
                             viewHolder.piecesNumber.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces), download.numPieces));
-                            viewHolder.piecesLength.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces_length), Utils.DimensionFormatter(download.pieceLength)));
+                            viewHolder.piecesLength.setText(String.format(Locale.getDefault(), res.getString(R.string.pieces_length), Utils.dimensionFormatter(download.pieceLength)));
                             viewHolder.connections.setText(String.format(Locale.getDefault(), res.getString(R.string.connections), download.connections));
                             viewHolder.gid.setText(String.format(Locale.getDefault(), res.getString(R.string.gid), download.GID));
 
@@ -314,8 +314,8 @@ public class UpdateUI implements Runnable {
         TextView fileUris = (TextView) main.findViewById(R.id.fileListing_customDialog_fileUris);
         CheckBox fileSelected = (CheckBox) main.findViewById(R.id.fileListing_customDialog_selected);
 
-        totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(file.length)));
-        completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(file.completedLength)));
+        totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.dimensionFormatter(file.length)));
+        completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.dimensionFormatter(file.completedLength)));
         fileProgress.setText(file.getPercentage());
         fileIndex.setText(String.format(Locale.getDefault(), res.getString(R.string.index), file.index));
 
@@ -539,8 +539,8 @@ public class UpdateUI implements Runnable {
         main.findViewById(R.id.fileListing_customDialog_fileUris).setVisibility(View.INVISIBLE);
         CheckBox filesSelected = (CheckBox) main.findViewById(R.id.fileListing_customDialog_selected);
 
-        totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.DimensionFormatter(directory.getTotalLength())));
-        completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.DimensionFormatter(directory.getCompletedLength())));
+        totalLength.setText(String.format(Locale.getDefault(), res.getString(R.string.total_length), Utils.dimensionFormatter(directory.getTotalLength())));
+        completedLength.setText(String.format(Locale.getDefault(), res.getString(R.string.completed_length), Utils.dimensionFormatter(directory.getCompletedLength())));
         directoryProgress.setText(directory.getPercentage());
 
         if (download.status.equals(Download.STATUS.ACTIVE)) {

@@ -162,10 +162,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
             holder.donutProgress.setProgress(item.getProgress().intValue());
             holder.downloadName.setText(item.getName());
             holder.downloadStatus.setText(item.status.toString());
-            holder.downloadSpeed.setText(Utils.SpeedFormatter(item.downloadSpeed));
-            holder.downloadMissingTime.setText(Utils.TimeFormatter(item.getMissingTime()));
-            holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.DimensionFormatter(item.completedLength))));
-            holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.DimensionFormatter(item.uploadedLength))));
+            holder.downloadSpeed.setText(Utils.speedFormatter(item.downloadSpeed));
+            holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
+            holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
+            holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength))));
         }
     }
 
@@ -180,11 +180,12 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         else
             color = ContextCompat.getColor(context, R.color.colorAccent);
 
-        holder.detailsChart = Charting.setupChart(holder.detailsChart);
+        // TODO: Disable chart when status grantee no net activity (same for MoreAboutDownload)
+        holder.detailsChart = Charting.setupChart(holder.detailsChart, true);
         holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.GID)));
         holder.donutProgress.setFinishedStrokeColor(color);
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
-        holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.DimensionFormatter(item.length))));
+        holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length))));
 
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,7 +204,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.detailsChart = Charting.setupChart(holder.detailsChart);
+                holder.detailsChart = Charting.setupChart(holder.detailsChart, true);
             }
         });
         holder.more.setOnClickListener(new View.OnClickListener() {

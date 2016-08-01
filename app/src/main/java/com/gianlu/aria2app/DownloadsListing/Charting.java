@@ -8,6 +8,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -18,7 +19,7 @@ public class Charting {
     public static final int DOWNLOAD_SET = 1;
     public static final int UPLOAD_SET = 0;
 
-    public static LineChart setupChart(LineChart chart) {
+    public static LineChart setupChart(LineChart chart, boolean isCardView) {
         chart.clear();
 
         chart.setDescription("");
@@ -38,16 +39,21 @@ public class Charting {
         YAxis ya = chart.getAxisLeft();
         ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
         ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
-        ya.setTextSize(8);
+        ya.setTextSize(isCardView ? 8 : 9);
         ya.setDrawAxisLine(false);
-        ya.setLabelCount(4, true);
+        ya.setLabelCount(isCardView ? 4 : 8, true);
         ya.setEnabled(true);
         ya.setAxisMinValue(0f);
         ya.setDrawGridLines(true);
         ya.setValueFormatter(new CustomYAxisValueFormatter());
 
         chart.getAxisRight().setEnabled(false);
-        chart.getXAxis().setEnabled(false);
+        XAxis xa = chart.getXAxis();
+        xa.setEnabled(!isCardView);
+        if (!isCardView) {
+            xa.setDrawGridLines(false);
+            xa.setTextSize(9);
+        }
 
         data.addDataSet(initUploadSet(chart.getContext()));
         data.addDataSet(initDownloadSet(chart.getContext()));
@@ -82,7 +88,7 @@ public class Charting {
     public static class CustomYAxisValueFormatter implements YAxisValueFormatter {
         @Override
         public String getFormattedValue(float v, YAxis yAxis) {
-            return Utils.SpeedFormatter(v);
+            return Utils.speedFormatter(v);
         }
     }
 }

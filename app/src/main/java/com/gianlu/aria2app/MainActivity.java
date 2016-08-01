@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pd.show();
+                        if (!isFinishing()) pd.show();
                     }
                 });
             }

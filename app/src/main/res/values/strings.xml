@@ -26,8 +26,9 @@
     <string name="uploaded_length"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
     <string name="pieces"><![CDATA[<b>Pieces:</b>]]> %s</string>
     <string name="pieces_length"><![CDATA[<b>Piece length:</b>]]> %s</string>
-    <string name="connections"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
+    <string name="connections"><![CDATA[<b>Connections:</b>]]> %s</string>
     <string name="gid" translatable="false"><![CDATA[<b>GID:</b>]]> %s</string>
+    <string name="directory"><![CDATA[<b>Destination directory:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
     <string name="info_hash" translatable="false"><![CDATA[<b>InfoHash:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %s</string>

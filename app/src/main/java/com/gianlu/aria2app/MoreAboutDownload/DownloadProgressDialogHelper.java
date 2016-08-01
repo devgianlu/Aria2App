@@ -56,7 +56,7 @@ public class DownloadProgressDialogHelper {
             public void run() {
                 bar.setProgress((int) (downloaded.floatValue() / fileLength.floatValue() * 100));
                 percentage.setText(String.format(Locale.getDefault(), "%.02f %%", downloaded.floatValue() / fileLength.floatValue() * 100));
-                progressSize.setText(String.format(Locale.getDefault(), "%s / %s", Utils.DimensionFormatter(downloaded.floatValue()), Utils.DimensionFormatter(fileLength.floatValue())));
+                progressSize.setText(String.format(Locale.getDefault(), "%s / %s", Utils.dimensionFormatter(downloaded.floatValue()), Utils.dimensionFormatter(fileLength.floatValue())));
             }
         });
     }

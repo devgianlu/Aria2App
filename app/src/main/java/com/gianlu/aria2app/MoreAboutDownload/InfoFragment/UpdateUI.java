@@ -86,16 +86,22 @@ public class UpdateUI implements Runnable {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.DimensionFormatter(download.completedLength))));
-                            holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.DimensionFormatter(download.length))));
-                            holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.DimensionFormatter(download.uploadedLength))));
+                            holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.GID)));
+                            holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength))));
+                            holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(download.length))));
+                            holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(download.uploadedLength))));
+                            holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, Utils.dimensionFormatter(download.pieceLength))));
+                            holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces)));
+                            holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections)));
+                            holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir)));
                         }
                     });
                 }
 
                 @Override
                 public void onException(Exception exception) {
-
+                    // TODO: Add some exception counters to stop Thread
+                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                 }
             });
 

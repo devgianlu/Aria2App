@@ -18,7 +18,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
         fab.setTag(false);
         fab.animate()
                 .translationYBy(400)
-                .setDuration(200)
+                .setDuration(150)
                 .start();
     }
 
@@ -26,7 +26,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
         fab.setTag(true);
         fab.animate()
                 .translationYBy(-400)
-                .setDuration(200)
+                .setDuration(150)
                 .start();
     }
 

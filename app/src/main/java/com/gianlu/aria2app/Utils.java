@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 public class Utils {
-    public static String SpeedFormatter(float v) {
+    public static String speedFormatter(float v) {
         if (v <= 0) {
             return "0 B/s";
         } else {
@@ -45,7 +45,8 @@ public class Utils {
             return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
         }
     }
-    public static String DimensionFormatter(float v) {
+
+    public static String dimensionFormatter(float v) {
         if (v <= 0) {
             return "0 B";
         } else {
@@ -55,7 +56,7 @@ public class Utils {
         }
     }
 
-    public static String TimeFormatter(Long sec) {
+    public static String timeFormatter(Long sec) {
         if (sec == null) return "∞";
 
         int day = (int) TimeUnit.SECONDS.toDays(sec);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,26 +49,32 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(getIntent().getBooleanExtra("isTorrent", false) ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
-        String gid = getIntent().getStringExtra("gid");
+        final String gid = getIntent().getStringExtra("gid");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
         assert toolbar != null;
-        setSupportActionBar(toolbar); // TODO: Set homeAsUp
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         assert pager != null;
 
-        List<Fragment> fragments = new ArrayList<>();
+        final List<Fragment> fragments = new ArrayList<>();
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid));
         if (getIntent().getBooleanExtra("isTorrent", false))
             fragments.add(TorrentPagerFragment.newInstance(getString(R.string.bitTorrent), gid));
         fragments.add(FilesPagerFragment.newInstance(getString(R.string.files), gid));
+        // TODO: Peers/servers tab
 
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager(), fragments));
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
         assert tabLayout != null;
         tabLayout.setupWithViewPager(pager);
 
