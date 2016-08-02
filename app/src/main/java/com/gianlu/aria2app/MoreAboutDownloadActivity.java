@@ -24,7 +24,7 @@ import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MoreAboutDownload.FilesPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
-import com.gianlu.aria2app.MoreAboutDownload.TorrentPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.TorrentFragment.TorrentPagerFragment;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;

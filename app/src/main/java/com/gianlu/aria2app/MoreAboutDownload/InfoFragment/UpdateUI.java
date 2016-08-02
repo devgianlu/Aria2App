@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.view.View;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class UpdateUI implements Runnable {
+    boolean first = true;
     private Activity context;
     private InfoPagerFragment.ViewHolder holder;
     private JTA2 jta2;
@@ -75,17 +77,43 @@ public class UpdateUI implements Runnable {
             jta2.tellStatus(gid, new IDownload() {
                 @Override
                 public void onDownload(final Download download) {
-                    LineData data = holder.chart.getData();
-                    data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                    data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
-                    data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
-                    holder.chart.notifyDataSetChanged();
-                    holder.chart.setVisibleXRangeMaximum(90);
-                    holder.chart.moveViewToX(data.getXValCount() - 91);
+                    int xPosition;
+                    if (download.status == Download.STATUS.ACTIVE) {
+                        LineData data = holder.chart.getData();
+                        data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                        data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
+                        data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
+                        xPosition = data.getXValCount() - 91;
+                    } else {
+                        xPosition = 0;
+                    }
 
+                    final int finalXPosition = xPosition;
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (download.status == Download.STATUS.ACTIVE) {
+                                holder.chartRefresh.setEnabled(true);
+
+                                holder.chart.notifyDataSetChanged();
+                                holder.chart.setVisibleXRangeMaximum(90);
+                                holder.chart.moveViewToX(finalXPosition);
+                            } else {
+                                holder.chartRefresh.setEnabled(false);
+
+                                holder.chart.clear();
+                                holder.chart.setNoDataText(context.getString(R.string.downloadIs, download.status.getFormal(context, false)));
+                            }
+
+                            /* TODO: Bitfield representation
+                            if (first) {
+                                boolean[] pieces = Utils.bitfieldProcessor(download.numPieces, download.bitfield);
+                                System.out.println(Arrays.toString(pieces));
+                                first = false;
+                            }
+                            */
+
+
                             holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
                             holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength))));
                             holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(download.length))));
@@ -94,6 +122,35 @@ public class UpdateUI implements Runnable {
                             holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces)));
                             holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections)));
                             holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir)));
+
+                            if (download.status == Download.STATUS.WAITING)
+                                holder.verifyIntegrityPending.setText(Html.fromHtml(context.getString(R.string.verifyIntegrityPending, String.valueOf(download.verifyIntegrityPending))));
+                            else
+                                holder.verifyIntegrityPending.setVisibility(View.GONE);
+
+                            if (download.verifiedLength != null)
+                                holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, Utils.dimensionFormatter(download.verifiedLength))));
+                            else
+                                holder.verifiedLength.setVisibility(View.GONE);
+
+
+                            if (download.isBitTorrent) {
+                                holder.btMode.setText(context.getString(R.string.mode, download.bitTorrent.mode));
+                                holder.btSeeders.setText(context.getString(R.string.numSeeder, download.numSeeders));
+                                holder.btSeeder.setText(context.getString(R.string.seeder, String.valueOf(download.seeder)));
+                                if (download.bitTorrent.comment != null)
+                                    holder.btComment.setText(context.getString(R.string.numSeeder, download.bitTorrent.comment));
+                                else
+                                    holder.btComment.setVisibility(View.GONE);
+                                if (download.bitTorrent.creationDate != null)
+                                    holder.btCreationDate.setText(context.getString(R.string.numSeeder, download.bitTorrent.creationDate)); // TODO: timestamp to date
+                                else
+                                    holder.btCreationDate.setVisibility(View.GONE);
+
+                                // TODO: Announce list (ListView)
+                            } else {
+                                holder.bitTorrentOnly.setVisibility(View.GONE);
+                            }
                         }
                     });
                 }

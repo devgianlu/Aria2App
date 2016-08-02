@@ -11,8 +11,8 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/infoFragment_chart"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="180dp"
+            android:layout_marginBottom="32dp" />
 
         <ImageButton
             android:id="@+id/infoFragment_chartRefresh"
@@ -67,14 +67,56 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/infoFragment_verifiedLength"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
         android:id="@+id/infoFragment_verifyIntegrityPending"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <!-- TODO: Uris -->
+    <TextView
+        android:id="@+id/infoFragment_verifiedLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <LinearLayout
+        android:id="@+id/infoFragment_bitTorrentOnly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/infoFragment_btMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/infoFragment_btSeeders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/infoFragment_btSeeder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/infoFragment_btComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/infoFragment_btCreationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/infoFragment_btInfoHash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/infoFragment_btAnnounceList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 </LinearLayout>

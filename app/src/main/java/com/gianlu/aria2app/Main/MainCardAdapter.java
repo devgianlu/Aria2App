@@ -151,13 +151,23 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         } else {
             Download item = (Download) payloads.get(0);
 
-            LineData data = holder.detailsChart.getData();
-            data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
-            data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
-            holder.detailsChart.notifyDataSetChanged();
-            holder.detailsChart.setVisibleXRangeMaximum(90);
-            holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+            if (item.status == Download.STATUS.ACTIVE) {
+                holder.detailsChartRefresh.setEnabled(true);
+
+                LineData data = holder.detailsChart.getData();
+                data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
+                data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
+
+                holder.detailsChart.notifyDataSetChanged();
+                holder.detailsChart.setVisibleXRangeMaximum(90);
+                holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+            } else {
+                holder.detailsChartRefresh.setEnabled(false);
+
+                holder.detailsChart.clear();
+                holder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
+            }
 
             holder.donutProgress.setProgress(item.getProgress().intValue());
             holder.downloadName.setText(item.getName());
@@ -180,7 +190,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         else
             color = ContextCompat.getColor(context, R.color.colorAccent);
 
-        // TODO: Disable chart when status grantee no net activity (same for MoreAboutDownload)
         holder.detailsChart = Charting.setupChart(holder.detailsChart, true);
         holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
         holder.donutProgress.setFinishedStrokeColor(color);

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
@@ -72,6 +73,15 @@ public class InfoPagerFragment extends Fragment {
         public TextView verifiedLength;
         public TextView verifyIntegrityPending;
 
+        public LinearLayout bitTorrentOnly;
+        public TextView btMode;
+        public TextView btSeeders;
+        public TextView btSeeder;
+        public TextView btComment;
+        public TextView btCreationDate;
+        public TextView btInfoHash;
+        public TextView btAnnounceList;
+
         public ViewHolder(View rootView) {
             this.rootView = rootView;
 
@@ -87,6 +97,15 @@ public class InfoPagerFragment extends Fragment {
             directory = (TextView) rootView.findViewById(R.id.infoFragment_directory);
             verifiedLength = (TextView) rootView.findViewById(R.id.infoFragment_verifiedLength);
             verifyIntegrityPending = (TextView) rootView.findViewById(R.id.infoFragment_verifyIntegrityPending);
+
+            bitTorrentOnly = (LinearLayout) rootView.findViewById(R.id.infoFragment_bitTorrentOnly);
+            btMode = (TextView) rootView.findViewById(R.id.infoFragment_btMode);
+            btSeeders = (TextView) rootView.findViewById(R.id.infoFragment_btSeeders);
+            btSeeder = (TextView) rootView.findViewById(R.id.infoFragment_btSeeder);
+            btComment = (TextView) rootView.findViewById(R.id.infoFragment_btComment);
+            btCreationDate = (TextView) rootView.findViewById(R.id.infoFragment_btCreationDate);
+            btInfoHash = (TextView) rootView.findViewById(R.id.infoFragment_btInfoHash);
+            btAnnounceList = (TextView) rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
     }
 }

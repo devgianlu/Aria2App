@@ -27,6 +27,8 @@
     <string name="pieces"><![CDATA[<b>Pieces:</b>]]> %s</string>
     <string name="pieces_length"><![CDATA[<b>Piece length:</b>]]> %s</string>
     <string name="connections"><![CDATA[<b>Connections:</b>]]> %s</string>
+    <string name="verifyIntegrityPending"><![CDATA[<b>Integrity verification pending:</b>]]> %s</string>
+    <string name="verifiedLength"><![CDATA[<b>Verified length:</b>]]> %s</string>
     <string name="gid" translatable="false"><![CDATA[<b>GID:</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>Destination directory:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
@@ -78,6 +80,7 @@
     <string name="mode_single">Single mode (use same address for every connection)</string>
     <string name="mode_multi">Multi mode (use different addresses for different connectivity situations)</string>
     <string name="address">Address:</string>
+    <string name="downloadIs">Download is %s</string>
     <string name="address_hint" translatable="false">127.0.0.1</string>
     <string name="port">Port:</string>
     <string name="move_up">Move up in queue</string>

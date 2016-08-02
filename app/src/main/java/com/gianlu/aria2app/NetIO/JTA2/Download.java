@@ -1,7 +1,10 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.gianlu.aria2app.R;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +50,7 @@ public class Download {
         try {
             return Integer.parseInt(val);
         } catch (Exception ex) {
-            return 0;
+            return null;
         }
     }
 
@@ -56,7 +59,7 @@ public class Download {
         try {
             return Long.parseLong(val);
         } catch (Exception ex) {
-            return 0L;
+            return null;
         }
     }
 
@@ -97,7 +100,8 @@ public class Download {
                 download.files.add(File.fromJSON(array.optJSONObject(i)));
         }
 
-        if (jResult.isNull("bittorrent")) {
+        download.isBitTorrent = !jResult.isNull("bittorrent");
+        if (!jResult.isNull("bittorrent")) {
             download.infoHash = jResult.optString("infoHash");
             download.numSeeders = parseInt(jResult.optString("numSeeders"));
             download.seeder = parseBoolean(jResult.optString("seeder"));
@@ -164,6 +168,40 @@ public class Download {
         WAITING,
         ERROR,
         COMPLETE,
-        UNKNOWN
+        UNKNOWN;
+
+
+        public String getFormal(Context context, boolean firstCapital) {
+            String val;
+            switch (this) {
+                case ACTIVE:
+                    val = context.getString(R.string.downloadStatus_active);
+                    break;
+                case PAUSED:
+                    val = context.getString(R.string.downloadStatus_paused);
+                    break;
+                case REMOVED:
+                    val = context.getString(R.string.downloadStatus_removed);
+                    break;
+                case WAITING:
+                    val = context.getString(R.string.downloadStatus_waiting);
+                    break;
+                case ERROR:
+                    val = context.getString(R.string.downloadStatus_error);
+                    break;
+                case COMPLETE:
+                    val = context.getString(R.string.downloadStatus_complete);
+                    break;
+                case UNKNOWN:
+                default:
+                    val = context.getString(R.string.downloadStatus_unknown);
+                    break;
+            }
+
+            if (firstCapital)
+                return val;
+            else
+                return val.substring(0, 1).toLowerCase() + val.substring(1);
+        }
     }
 }

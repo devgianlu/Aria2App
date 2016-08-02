@@ -107,6 +107,38 @@ public class Utils {
         }
     }
 
+    public static boolean[] bitfieldProcessor(int numPieces, String bitfield) {
+        boolean[] pieces = new boolean[numPieces];
+        int numTotal = 0;
+
+        for (String _byte : splitStringEvery(bitfield, 2)) {
+            String[] _bits = splitStringEvery(String.format("%8s", Integer.toBinaryString(Integer.parseInt(_byte, 16))).replace(' ', '0'), 1);
+            for (String _bit : _bits) {
+                if (numTotal == numPieces) return pieces;
+
+                pieces[numTotal] = Integer.parseInt(_bit) != 0;
+                numTotal++;
+            }
+        }
+
+        return pieces;
+    }
+
+    public static String[] splitStringEvery(String s, int interval) {
+        int arrayLength = (int) Math.ceil(((s.length() / (double) interval)));
+        String[] result = new String[arrayLength];
+
+        int j = 0;
+        int lastIndex = result.length - 1;
+        for (int i = 0; i < lastIndex; i++) {
+            result[i] = s.substring(j, j + interval);
+            j += interval;
+        }
+        result[lastIndex] = s.substring(j);
+
+        return result;
+    }
+
     public static String colorToHex(Context context, @ColorRes int colorRes) {
         int color = ContextCompat.getColor(context, colorRes);
         String hex = Integer.toHexString(Color.rgb(Color.red(color), Color.green(color), Color.blue(color)));

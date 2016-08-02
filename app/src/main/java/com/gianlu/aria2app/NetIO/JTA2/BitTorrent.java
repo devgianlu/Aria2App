@@ -65,7 +65,7 @@ public class BitTorrent {
                 bitTorrent.announceList.add(obj.optJSONArray("announceList").optJSONArray(i).optString(0));
         }
 
-        bitTorrent.name = obj.optJSONObject("info").optString("name");
+        if (!obj.isNull("info")) bitTorrent.name = obj.optJSONObject("info").optString("name");
 
         return bitTorrent;
     }
