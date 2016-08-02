@@ -86,7 +86,7 @@ public class UpdateUI implements Runnable {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.GID)));
+                            holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
                             holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength))));
                             holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(download.length))));
                             holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(download.uploadedLength))));

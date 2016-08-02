@@ -133,7 +133,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
     public Download getItem(String gid) {
         for (Download download : objs) {
-            if (download.GID.equals(gid)) return download;
+            if (download.gid.equals(gid)) return download;
         }
 
         return null;
@@ -182,7 +182,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
         // TODO: Disable chart when status grantee no net activity (same for MoreAboutDownload)
         holder.detailsChart = Charting.setupChart(holder.detailsChart, true);
-        holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.GID)));
+        holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
         holder.donutProgress.setFinishedStrokeColor(color);
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
         holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length))));

@@ -494,7 +494,7 @@ public class UpdateUI implements Runnable {
 
                     // TODO: Working really bad :((
                     final Intent downloadIntent = new Intent(context, DownloadFile.class)
-                            .putExtra("gid", download.GID)
+                            .putExtra("gid", download.gid)
                             .putExtra("url", uri.toASCIIString())
                             .putExtra("fileName", file.getName());
                     if (download.completedLength.equals(download.length)) {

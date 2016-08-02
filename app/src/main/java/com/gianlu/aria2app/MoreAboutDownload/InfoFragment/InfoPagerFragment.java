@@ -69,6 +69,8 @@ public class InfoPagerFragment extends Fragment {
         public TextView numPieces;
         public TextView connections;
         public TextView directory;
+        public TextView verifiedLength;
+        public TextView verifyIntegrityPending;
 
         public ViewHolder(View rootView) {
             this.rootView = rootView;
@@ -83,6 +85,8 @@ public class InfoPagerFragment extends Fragment {
             numPieces = (TextView) rootView.findViewById(R.id.infoFragment_numPieces);
             connections = (TextView) rootView.findViewById(R.id.infoFragment_connections);
             directory = (TextView) rootView.findViewById(R.id.infoFragment_directory);
+            verifiedLength = (TextView) rootView.findViewById(R.id.infoFragment_verifiedLength);
+            verifyIntegrityPending = (TextView) rootView.findViewById(R.id.infoFragment_verifyIntegrityPending);
         }
     }
 }

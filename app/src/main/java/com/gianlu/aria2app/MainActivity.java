@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view, int position, Download item) {
                         Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                .putExtra("gid", item.GID)
+                                .putExtra("gid", item.gid)
                                 .putExtra("name", item.getName())
                                 .putExtra("isTorrent", item.isBitTorrent)
                                 .putExtra("status", item.status.name());
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
                         switch (action) {
                             case PAUSE:
-                                downloadAction.pause(MainActivity.this, item.GID, new DownloadAction.IPause() {
+                                downloadAction.pause(MainActivity.this, item.gid, new DownloadAction.IPause() {
                                     @Override
                                     public void onPaused(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.PAUSED, gid);
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case REMOVE:
-                                downloadAction.remove(MainActivity.this, item.GID, item.status, new DownloadAction.IRemove() {
+                                downloadAction.remove(MainActivity.this, item.gid, item.status, new DownloadAction.IRemove() {
                                     @Override
                                     public void onRemoved(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.REMOVED, gid);
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case RESTART:
-                                downloadAction.restart(item.GID, new DownloadAction.IRestart() {
+                                downloadAction.restart(item.gid, new DownloadAction.IRestart() {
                                     @Override
                                     public void onRestarted(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESTARTED);
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case RESUME:
-                                downloadAction.unpause(item.GID, new DownloadAction.IUnpause() {
+                                downloadAction.unpause(item.gid, new DownloadAction.IUnpause() {
                                     @Override
                                     public void onUnpaused(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESUMED, gid);
@@ -208,10 +208,10 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case MOVE_DOWN:
-                                downloadAction.moveDown(item.GID, iMove);
+                                downloadAction.moveDown(item.gid, iMove);
                                 break;
                             case MOVE_UP:
-                                downloadAction.moveUp(item.GID, iMove);
+                                downloadAction.moveUp(item.gid, iMove);
                                 break;
                         }
                     }
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (getIntent().getStringExtra("gid") != null) {
                                     Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
                                     Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                            .putExtra("gid", item.GID)
+                                            .putExtra("gid", item.gid)
                                             .putExtra("isTorrent", item.isBitTorrent)
                                             .putExtra("status", item.status.name())
                                             .putExtra("name", item.getName());

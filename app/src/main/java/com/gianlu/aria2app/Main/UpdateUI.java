@@ -84,7 +84,7 @@ public class UpdateUI implements Runnable {
 
             for (int c = 0; c < adapter.getItemCount(); c++) {
                 final int finalC = c;
-                jta2.tellStatus(adapter.getItem(c).GID, new IDownload() {
+                jta2.tellStatus(adapter.getItem(c).gid, new IDownload() {
                     @Override
                     public void onDownload(Download download) {
                         adapter.updateItem(finalC, download);

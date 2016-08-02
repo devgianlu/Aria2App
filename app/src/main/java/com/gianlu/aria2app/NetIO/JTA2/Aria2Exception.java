@@ -6,6 +6,8 @@ public class Aria2Exception extends Exception {
     public Aria2Exception(String detailMessage, int code) {
         super(detailMessage);
         this.code = code;
+
+        // TODO: Assign message to each exit code
     }
 
     @Override

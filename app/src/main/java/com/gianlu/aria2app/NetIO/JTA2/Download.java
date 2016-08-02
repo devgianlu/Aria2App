@@ -4,14 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class Download {
     // General
@@ -22,7 +18,7 @@ public class Download {
     public Long uploadedLength;
     public String dir;
     public Integer connections;
-    public String GID;
+    public String gid;
     public Integer numPieces;
     public Long pieceLength;
     public STATUS status;
@@ -32,66 +28,18 @@ public class Download {
     public Integer errorCode;
     public String errorMessage;
     public String followedBy;
+    public String following;
+    public String belongsTo;
+    public Long verifiedLength;
+    public boolean verifyIntegrityPending;
+
     // BitTorrent only
     public boolean seeder;
     public Integer numSeeders;
     public String infoHash;
     public BitTorrent bitTorrent;
 
-    // FakeDownload (Chart card)
-    public Download() {
-        GID = "0";
-        status = null;
-    }
-
-    // HTTP(S)/FTP
-    public Download(boolean isBitTorrent, String bitfield, Long completedLength, Long length, Long uploadedLength, String dir, Integer connections, String GID, Integer numPieces, Long pieceLength, STATUS status, Integer downloadSpeed, Integer uploadSpeed, List<File> files, Integer errorCode, String errorMessage, String followedBy) {
-        this.isBitTorrent = isBitTorrent;
-        this.completedLength = completedLength;
-        this.bitfield = bitfield;
-        this.length = length;
-        this.uploadedLength = uploadedLength;
-        this.dir = dir;
-        this.connections = connections;
-        this.GID = GID;
-        this.numPieces = numPieces;
-        this.pieceLength = pieceLength;
-        this.files = files;
-        this.status = status;
-        this.downloadSpeed = downloadSpeed;
-        this.uploadSpeed = uploadSpeed;
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-        this.followedBy = followedBy;
-        this.bitTorrent = null;
-        this.numSeeders = null;
-        this.infoHash = null;
-        this.seeder = false;
-    }
-
-    // BitTorrent
-    public Download(boolean isBitTorrent, String bitfield, Long completedLength, Long length, Long uploadedLength, String dir, Integer connections, String GID, Integer numPieces, Long pieceLength, STATUS status, Integer downloadSpeed, Integer uploadSpeed, List<File> files, Integer errorCode, String errorMessage, String followedBy, BitTorrent bitTorrent, boolean seeder, Integer numSeeders, String infoHash) {
-        this.isBitTorrent = isBitTorrent;
-        this.completedLength = completedLength;
-        this.bitfield = bitfield;
-        this.length = length;
-        this.uploadedLength = uploadedLength;
-        this.dir = dir;
-        this.connections = connections;
-        this.GID = GID;
-        this.numPieces = numPieces;
-        this.pieceLength = pieceLength;
-        this.numSeeders = numSeeders;
-        this.infoHash = infoHash;
-        this.files = files;
-        this.status = status;
-        this.downloadSpeed = downloadSpeed;
-        this.uploadSpeed = uploadSpeed;
-        this.followedBy = followedBy;
-        this.bitTorrent = bitTorrent;
-        this.seeder = seeder;
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    private Download() {
     }
 
     @Nullable
@@ -121,107 +69,42 @@ public class Download {
         }
     }
 
-    public static Download fromString(JSONObject jResult) throws JSONException {
-        if (!jResult.isNull("bittorrent")) {
-            // BitTorrent
-            List<File> files = new ArrayList<>();
-            JSONArray jFiles = jResult.getJSONArray("files");
-            for (int c = 0; c < jFiles.length(); c++) {
-                JSONObject jFile = jFiles.getJSONObject(c);
+    public static Download fromJSON(JSONObject jResult) {
+        Download download = new Download();
+        download.gid = jResult.optString("gid");
+        download.status = statusFromString(jResult.optString("status"));
+        download.length = parseLong(jResult.optString("totalLength"));
+        download.completedLength = parseLong(jResult.optString("completedLength"));
+        download.uploadedLength = parseLong(jResult.optString("uploadLength"));
+        download.bitfield = jResult.optString("bitfield");
+        download.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
+        download.uploadSpeed = parseInt(jResult.optString("downloadSpeed"));
+        download.pieceLength = parseLong(jResult.optString("pieceLength"));
+        download.numPieces = parseInt(jResult.optString("numPieces"));
+        download.connections = parseInt(jResult.optString("connections"));
+        download.followedBy = jResult.optString("followedBy");
+        download.following = jResult.optString("following");
+        download.belongsTo = jResult.optString("belongsTo");
+        download.dir = jResult.optString("dir");
+        download.verifiedLength = parseLong(jResult.optString("verifiedLength"));
+        download.verifyIntegrityPending = parseBoolean(jResult.optString("verifyIntegrityPending"));
+        download.files = new ArrayList<>();
 
-                Map<File.URI_STATUS, String> uris = new HashMap<>();
-                JSONArray jUris = jFile.getJSONArray("uris");
-                for (int cc = 0; cc < jUris.length(); cc++) {
-                    JSONObject jUri = jUris.getJSONObject(cc);
-                    uris.put(File.uriStatusFromString(jUri.optString("status")), jUri.optString("uri"));
-                }
+        if (!jResult.isNull("files")) {
+            JSONArray array = jResult.optJSONArray("files");
 
-                files.add(new File(parseInt(jFile.optString("index")),
-                        jFile.optString("path"),
-                        parseLong(jFile.optString("completedLength")),
-                        parseLong(jFile.optString("length")),
-                        parseBoolean(jFile.optString("selected")),
-                        uris));
-            }
-
-            List<String> announceList = new ArrayList<>();
-            JSONArray jAnnounceList = jResult.getJSONObject("bittorrent").getJSONArray("announceList");
-            for (int c = 0; c < jAnnounceList.length(); c++) {
-                announceList.add(jAnnounceList.getJSONArray(c).optString(0));
-            }
-
-            JSONObject info = jResult.getJSONObject("bittorrent").optJSONObject("info");
-            String name = null;
-            if (info != null) name = info.optString("name");
-
-            BitTorrent bitTorrent = new BitTorrent(announceList,
-                    BitTorrent.modeFromString(
-                            jResult.getJSONObject("bittorrent").optString("mode")),
-                    jResult.getJSONObject("bittorrent").optString("comment"),
-                    parseInt(jResult.getJSONObject("bittorrent").optString("creationDate")),
-                    name);
-
-            return new Download(true,
-                    jResult.optString("bitfield"),
-                    parseLong(jResult.optString("completedLength")),
-                    parseLong(jResult.optString("totalLength")),
-                    parseLong(jResult.optString("uploadLength")),
-                    jResult.optString("dir"),
-                    parseInt(jResult.optString("connections")),
-                    jResult.optString("gid"),
-                    parseInt(jResult.optString("numPieces")),
-                    parseLong(jResult.optString("pieceLength")),
-                    Download.statusFromString(jResult.optString("status")),
-                    parseInt(jResult.optString("downloadSpeed")),
-                    parseInt(jResult.optString("uploadSpeed")),
-                    files,
-                    parseInt(jResult.optString("errorCode")),
-                    jResult.optString("errorMessage"),
-                    jResult.optString("followedBy"),
-                    bitTorrent,
-                    parseBoolean(jResult.optString("seeder")),
-                    parseInt(jResult.optString("numSeeders")),
-                    jResult.optString("infoHash"));
-        } else {
-            // HTTP
-            List<File> files = new ArrayList<>();
-            JSONArray jFiles = jResult.optJSONArray("files");
-            for (int c = 0; c < jFiles.length(); c++) {
-                JSONObject jFile = jFiles.getJSONObject(c);
-
-                Map<File.URI_STATUS, String> uris = new HashMap<>();
-                JSONArray jUris = jFile.getJSONArray("uris");
-                for (int cc = 0; cc < jUris.length(); cc++) {
-                    JSONObject jUri = jUris.getJSONObject(cc);
-                    uris.put(File.uriStatusFromString(jUri.optString("status")), jUri.optString("uri"));
-                }
-
-                files.add(new File(parseInt(jFile.optString("index")),
-                        jFile.optString("path"),
-                        parseLong(jFile.optString("completedLength")),
-                        parseLong(jFile.optString("length")),
-                        parseBoolean(jFile.optString("selected")),
-                        uris));
-            }
-
-            return new Download(false,
-                    jResult.optString("bitfield"),
-                    parseLong(jResult.optString("completedLength")),
-                    parseLong(jResult.optString("totalLength")),
-                    parseLong(jResult.optString("uploadLength")),
-                    jResult.optString("dir"),
-                    parseInt(jResult.optString("connections")),
-                    jResult.optString("gid"),
-                    parseInt(jResult.optString("numPieces")),
-                    parseLong(jResult.optString("pieceLength")),
-                    Download.statusFromString(jResult.optString("status")),
-                    parseInt(jResult.optString("downloadSpeed")),
-                    parseInt(jResult.optString("uploadSpeed")),
-                    files,
-                    parseInt(jResult.optString("errorCode")),
-                    jResult.optString("errorMessage"),
-                    jResult.optString("followedBy"));
+            for (int i = 0; i < array.length(); i++)
+                download.files.add(File.fromJSON(array.optJSONObject(i)));
         }
+
+        if (jResult.isNull("bittorrent")) {
+            download.infoHash = jResult.optString("infoHash");
+            download.numSeeders = parseInt(jResult.optString("numSeeders"));
+            download.seeder = parseBoolean(jResult.optString("seeder"));
+            download.bitTorrent = BitTorrent.fromJSON(jResult.optJSONObject("bittorrent"));
+        }
+
+        return download;
     }
 
     public static STATUS statusFromString(String status) {
@@ -269,16 +152,11 @@ public class Download {
         return completedLength.floatValue() / length.floatValue() * 100;
     }
 
-    public String getPercentage() {
-        return String.format(Locale.getDefault(), "%.2f", (completedLength.floatValue() / length.floatValue() * 100)) + " %";
-    }
-
     public Long getMissingTime() {
         if (downloadSpeed == 0) return null;
         return (length - completedLength) / downloadSpeed;
     }
 
-    // Status
     public enum STATUS {
         ACTIVE,
         PAUSED,
@@ -288,5 +166,4 @@ public class Download {
         COMPLETE,
         UNKNOWN
     }
-
 }

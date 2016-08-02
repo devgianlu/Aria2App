@@ -211,7 +211,7 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onDownload(Download.fromString(response.getJSONObject("result")));
+                handler.onDownload(Download.fromJSON(response.getJSONObject("result")));
             }
 
             @Override
@@ -241,7 +241,7 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onStats(GlobalStats.fromString(response.getJSONObject("result")));
+                handler.onStats(GlobalStats.fromJSON(response.getJSONObject("result")));
             }
 
             @Override
@@ -275,7 +275,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromString(jResult.getJSONObject(c)));
+                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -315,7 +315,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromString(jResult.getJSONObject(c)));
+                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -355,7 +355,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromString(jResult.getJSONObject(c)));
+                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
