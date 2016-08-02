@@ -5,11 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     private Context context;
@@ -26,6 +31,7 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     }
 
     public void onUpdate(List<Peer> peers) {
+        if (objs == null || peers == null) return;
 
         for (Peer newPeer : peers) {
             for (Peer listPeer : objs) {
@@ -44,9 +50,18 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
 
         if (payloads.get(0) instanceof Peer) {
             Peer peer = (Peer) payloads.get(0);
+
+            LineData data = holder.chart.getData();
+            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+            data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
+            data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
+
+            holder.chart.notifyDataSetChanged();
+            holder.chart.setVisibleXRangeMaximum(60);
+            holder.chart.moveViewToX(data.getXValCount() - 61);
+
             holder.peerId.setText(peer.getPeerId());
             holder.fullAddr.setText(peer.getFullAddress());
-
             holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
             holder.downloadSpeed.setText(Utils.speedFormatter(peer.downloadSpeed));
         }
@@ -55,6 +70,8 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     @Override
     public void onBindViewHolder(PeerViewHolder holder, int position) {
         Peer peer = getItem(position);
+
+        holder.chart = Charting.setupPeerChart(holder.chart);
 
         holder.peerId.setText(peer.getPeerId());
         holder.fullAddr.setText(peer.getFullAddress());

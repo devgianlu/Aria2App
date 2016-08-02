@@ -54,6 +54,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// TODO: Basic functionalities (such as version and shutdown)
+// TODO: Check functionalities (if support Metalink... etc)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private List<Download.STATUS> filtered = new ArrayList<>();

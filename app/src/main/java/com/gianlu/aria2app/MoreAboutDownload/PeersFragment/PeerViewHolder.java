@@ -5,12 +5,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
+import com.github.mikephil.charting.charts.LineChart;
 
 public class PeerViewHolder extends RecyclerView.ViewHolder {
     public TextView peerId;
     public TextView fullAddr;
     public TextView downloadSpeed;
     public TextView uploadSpeed;
+    public LineChart chart;
 
     public PeerViewHolder(View itemView) {
         super(itemView);
@@ -19,5 +21,6 @@ public class PeerViewHolder extends RecyclerView.ViewHolder {
         fullAddr = (TextView) itemView.findViewById(R.id.peerCardView_fullAddr);
         downloadSpeed = (TextView) itemView.findViewById(R.id.peerCardView_downloadSpeed);
         uploadSpeed = (TextView) itemView.findViewById(R.id.peerCardView_uploadSpeed);
+        chart = (LineChart) itemView.findViewById(R.id.peerCardView_chart);
     }
 }

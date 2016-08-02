@@ -55,16 +55,49 @@ public class Charting {
             xa.setTextSize(9);
         }
 
-        data.addDataSet(initUploadSet(chart.getContext()));
-        data.addDataSet(initDownloadSet(chart.getContext()));
+        data.addDataSet(initUploadSet(chart.getContext(), 2f));
+        data.addDataSet(initDownloadSet(chart.getContext(), 2f));
 
         return chart;
     }
 
-    public static LineDataSet initDownloadSet(Context context) {
+    public static LineChart setupPeerChart(LineChart chart) {
+        chart.clear();
+
+        chart.setDescription("");
+        chart.setDrawGridBackground(false);
+        chart.setBackgroundColor(Color.alpha(0));
+        chart.setTouchEnabled(false);
+        chart.getLegend().setEnabled(false);
+
+        LineData data = new LineData();
+        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        chart.setData(data);
+
+        YAxis ya = chart.getAxisLeft();
+        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        ya.setTextSize(8);
+        ya.setDrawAxisLine(false);
+        ya.setLabelCount(3, true);
+        ya.setEnabled(true);
+        ya.setAxisMinValue(0f);
+        ya.setDrawGridLines(true);
+        ya.setValueFormatter(new CustomYAxisValueFormatter());
+
+        chart.getAxisRight().setEnabled(false);
+        chart.getXAxis().setEnabled(false);
+
+        data.addDataSet(initUploadSet(chart.getContext(), 1f));
+        data.addDataSet(initDownloadSet(chart.getContext(), 1f));
+
+        return chart;
+    }
+
+    public static LineDataSet initDownloadSet(Context context, float lineWidth) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setLineWidth(2f);
+        set.setLineWidth(lineWidth);
         set.setColor(ContextCompat.getColor(context, R.color.downloadColor));
         set.setDrawCircles(false);
         set.setDrawValues(false);
@@ -73,10 +106,10 @@ public class Charting {
         return set;
     }
 
-    public static LineDataSet initUploadSet(Context context) {
+    public static LineDataSet initUploadSet(Context context, float lineWidth) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.uploadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setLineWidth(2f);
+        set.setLineWidth(lineWidth);
         set.setColor(ContextCompat.getColor(context, R.color.uploadColor));
         set.setDrawCircles(false);
         set.setDrawValues(false);

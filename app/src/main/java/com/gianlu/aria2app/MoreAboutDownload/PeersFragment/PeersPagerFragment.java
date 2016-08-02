@@ -41,6 +41,7 @@ public class PeersPagerFragment extends Fragment {
             Utils.readyJTA2(getActivity()).getPeers(getArguments().getString("gid"), new IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
+                    // TODO: Keep working with Systrace to get it working
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -48,8 +49,6 @@ public class PeersPagerFragment extends Fragment {
                             ((RecyclerView) view.findViewById(R.id.peersFragment_recyclerView)).setAdapter(adapter);
                         }
                     });
-
-                    // TODO: Bit of LAG here
 
                     updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), adapter);
                     new Thread(updateUI).start();
