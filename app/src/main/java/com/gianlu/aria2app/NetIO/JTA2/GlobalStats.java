@@ -12,15 +12,6 @@ public class GlobalStats {
     public Integer numStopped;
     public Integer numStoppedTotal;
 
-    public GlobalStats(Integer downloadSpeed, Integer uploadSpeed, Integer numActive, Integer numWaiting, Integer numStopped, Integer numStoppedTotal) {
-        this.downloadSpeed = downloadSpeed;
-        this.uploadSpeed = uploadSpeed;
-        this.numActive = numActive;
-        this.numWaiting = numWaiting;
-        this.numStopped = numStopped;
-        this.numStoppedTotal = numStoppedTotal;
-    }
-
     private GlobalStats() {
     }
 

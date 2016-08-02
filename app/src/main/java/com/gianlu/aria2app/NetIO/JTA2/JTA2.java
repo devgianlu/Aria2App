@@ -24,6 +24,8 @@ public class JTA2 {
 
     // Caster
     private Map<String, String> fromOptions(JSONObject jResult) throws JSONException {
+        if (jResult == null) return null;
+
         Iterator<?> keys = jResult.keys();
 
         Map<String, String> options = new HashMap<>();
@@ -35,8 +37,9 @@ public class JTA2 {
 
         return options;
     }
-
     private List<String> fromMethods(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
         List<String> methods = new ArrayList<>();
 
         for (int i = 0; i < jResult.length(); i++) {
@@ -44,6 +47,18 @@ public class JTA2 {
         }
 
         return methods;
+    }
+
+    private List<Peer> fromPeers(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
+        List<Peer> peers = new ArrayList<>();
+
+        for (int i = 0; i < jResult.length(); i++) {
+            peers.add(Peer.fromJSON(jResult.getJSONObject(i)));
+        }
+
+        return peers;
     }
 
     // Requests
@@ -734,7 +749,38 @@ public class JTA2 {
         });
     }
 
-    //system.listMethods
+    // aria2.getPeers
+    public void getPeers(String gid, final IPeers handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getPeers");
+            request.put("params", Utils.readyParams(webSocketing.getContext())
+                    .put(gid));
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onPeers(fromPeers(response.optJSONArray("result")));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
+
+    // system.listMethods
     public void listMethods(final IMethod handler) {
         JSONObject request;
         try {

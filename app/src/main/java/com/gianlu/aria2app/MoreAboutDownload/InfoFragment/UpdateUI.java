@@ -1,10 +1,17 @@
 package com.gianlu.aria2app.MoreAboutDownload.InfoFragment;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
@@ -23,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class UpdateUI implements Runnable {
-    boolean first = true;
     private Activity context;
     private InfoPagerFragment.ViewHolder holder;
     private JTA2 jta2;
@@ -80,7 +86,7 @@ public class UpdateUI implements Runnable {
                     int xPosition;
                     if (download.status == Download.STATUS.ACTIVE) {
                         LineData data = holder.chart.getData();
-                        data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                        data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
                         data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
                         data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
                         xPosition = data.getXValCount() - 91;
@@ -135,19 +141,40 @@ public class UpdateUI implements Runnable {
 
 
                             if (download.isBitTorrent) {
-                                holder.btMode.setText(context.getString(R.string.mode, download.bitTorrent.mode));
-                                holder.btSeeders.setText(context.getString(R.string.numSeeder, download.numSeeders));
-                                holder.btSeeder.setText(context.getString(R.string.seeder, String.valueOf(download.seeder)));
-                                if (download.bitTorrent.comment != null)
-                                    holder.btComment.setText(context.getString(R.string.numSeeder, download.bitTorrent.comment));
+                                holder.btMode.setText(Html.fromHtml(context.getString(R.string.mode, download.bitTorrent.mode.toString())));
+                                holder.btSeeders.setText(Html.fromHtml(context.getString(R.string.numSeeder, download.numSeeders)));
+                                holder.btSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(download.seeder))));
+                                if (download.bitTorrent.comment != null && (!download.bitTorrent.comment.isEmpty()))
+                                    holder.btComment.setText(Html.fromHtml(context.getString(R.string.comment, download.bitTorrent.comment)));
                                 else
                                     holder.btComment.setVisibility(View.GONE);
                                 if (download.bitTorrent.creationDate != null)
-                                    holder.btCreationDate.setText(context.getString(R.string.numSeeder, download.bitTorrent.creationDate)); // TODO: timestamp to date
+                                    holder.btCreationDate.setText(Html.fromHtml(context.getString(R.string.creation_date, new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(new java.util.Date(download.bitTorrent.creationDate)))));
                                 else
                                     holder.btCreationDate.setVisibility(View.GONE);
 
-                                // TODO: Announce list (ListView)
+
+                                View.OnClickListener trackerListener = new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                                        manager.setPrimaryClip(ClipData.newPlainText("announceTracker", ((TextView) view).getText().toString()));
+
+                                        Utils.UIToast(context, context.getString(R.string.copiedClipboard));
+                                    }
+                                };
+
+                                holder.btAnnounceList.removeAllViews();
+                                for (String tracker : download.bitTorrent.announceList) {
+                                    TextView _tracker = new TextView(context);
+                                    _tracker.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                    _tracker.setPadding(50, 10, 0, 10);
+                                    _tracker.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
+                                    _tracker.setText(tracker);
+                                    _tracker.setOnClickListener(trackerListener);
+
+                                    holder.btAnnounceList.addView(_tracker);
+                                }
                             } else {
                                 holder.bitTorrentOnly.setVisibility(View.GONE);
                             }

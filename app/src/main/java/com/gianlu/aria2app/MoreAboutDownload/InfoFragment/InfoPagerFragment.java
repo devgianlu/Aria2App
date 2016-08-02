@@ -80,7 +80,7 @@ public class InfoPagerFragment extends Fragment {
         public TextView btComment;
         public TextView btCreationDate;
         public TextView btInfoHash;
-        public TextView btAnnounceList;
+        public LinearLayout btAnnounceList;
 
         public ViewHolder(View rootView) {
             this.rootView = rootView;
@@ -105,7 +105,7 @@ public class InfoPagerFragment extends Fragment {
             btComment = (TextView) rootView.findViewById(R.id.infoFragment_btComment);
             btCreationDate = (TextView) rootView.findViewById(R.id.infoFragment_btCreationDate);
             btInfoHash = (TextView) rootView.findViewById(R.id.infoFragment_btInfoHash);
-            btAnnounceList = (TextView) rootView.findViewById(R.id.infoFragment_btAnnounceList);
+            btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
     }
 }

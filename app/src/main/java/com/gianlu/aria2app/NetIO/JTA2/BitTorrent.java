@@ -16,14 +16,6 @@ public class BitTorrent {
     public Integer creationDate;
     public String name;
 
-    public BitTorrent(List<String> announceList, MODE mode, String comment, Integer creationDate, String name) {
-        this.announceList = announceList;
-        this.mode = mode;
-        this.name = name;
-        this.comment = comment;
-        this.creationDate = creationDate;
-    }
-
     private BitTorrent() {
     }
 
@@ -45,7 +37,7 @@ public class BitTorrent {
         try {
             return Integer.parseInt(val);
         } catch (Exception ex) {
-            return 0;
+            return null;
         }
     }
 
@@ -72,6 +64,11 @@ public class BitTorrent {
 
     public enum MODE {
         MULTI,
-        SINGLE
+        SINGLE;
+
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase();
+        }
     }
 }

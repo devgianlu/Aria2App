@@ -34,7 +34,7 @@ import java.util.Locale;
 
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private Activity context;
-    private List<Download> objs = new ArrayList<>();
+    private List<Download> objs;
     private IActionMore actionMore;
     private IMenuSelected actionMenu;
 
@@ -155,7 +155,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.detailsChartRefresh.setEnabled(true);
 
                 LineData data = holder.detailsChart.getData();
-                data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
                 data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
                 data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
 

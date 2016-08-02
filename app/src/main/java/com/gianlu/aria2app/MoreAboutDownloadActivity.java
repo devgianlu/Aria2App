@@ -24,7 +24,8 @@ import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MoreAboutDownload.FilesPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
-import com.gianlu.aria2app.MoreAboutDownload.TorrentFragment.TorrentPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.PeersFragment.PeersPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.ServersPagerFragment;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
@@ -67,10 +68,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
         final List<Fragment> fragments = new ArrayList<>();
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid));
+
         if (getIntent().getBooleanExtra("isTorrent", false))
-            fragments.add(TorrentPagerFragment.newInstance(getString(R.string.bitTorrent), gid));
+            fragments.add(PeersPagerFragment.newInstance(getString(R.string.peers), gid));
+        else
+            fragments.add(ServersPagerFragment.newInstance(getString(R.string.servers), gid));
+
         fragments.add(FilesPagerFragment.newInstance(getString(R.string.files), gid));
-        // TODO: Peers/servers tab
 
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager(), fragments));
 
