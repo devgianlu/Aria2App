@@ -43,7 +43,6 @@ public class PeersPagerFragment extends CommonFragment {
             Utils.readyJTA2(getActivity()).getPeers(getArguments().getString("gid"), new IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
-                    // TODO: Keep working with Systrace to get it working
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers, (CardView) view.findViewById(R.id.peersFragment_noData));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override

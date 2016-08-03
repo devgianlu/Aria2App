@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadAction;
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -156,8 +155,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
                 LineData data = holder.detailsChart.getData();
                 data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
-                data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
+                data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+                data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
 
                 holder.detailsChart.notifyDataSetChanged();
                 holder.detailsChart.setVisibleXRangeMaximum(90);
@@ -190,7 +189,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         else
             color = ContextCompat.getColor(context, R.color.colorAccent);
 
-        holder.detailsChart = Charting.setupChart(holder.detailsChart, true);
+        holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
         holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
         holder.donutProgress.setFinishedStrokeColor(color);
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
@@ -213,7 +212,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.detailsChart = Charting.setupChart(holder.detailsChart, true);
+                holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
             }
         });
         holder.more.setOnClickListener(new View.OnClickListener() {

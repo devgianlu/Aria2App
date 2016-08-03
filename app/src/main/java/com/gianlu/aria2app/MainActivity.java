@@ -22,12 +22,12 @@ import android.widget.ExpandableListView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.gianlu.aria2app.DownloadsListing.LoadDownloads;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;

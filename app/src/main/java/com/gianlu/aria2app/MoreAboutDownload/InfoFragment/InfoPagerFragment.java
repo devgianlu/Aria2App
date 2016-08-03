@@ -9,9 +9,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.github.mikephil.charting.charts.LineChart;
 
 public class InfoPagerFragment extends CommonFragment {
@@ -43,11 +43,11 @@ public class InfoPagerFragment extends CommonFragment {
         holder.chartRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.chart = Charting.setupChart(holder.chart, false);
+                holder.chart = Utils.setupChart(holder.chart, false);
             }
         });
 
-        holder.chart = Charting.setupChart(holder.chart, false);
+        holder.chart = Utils.setupChart(holder.chart, false);
 
         return holder.rootView;
     }

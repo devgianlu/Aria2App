@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.DownloadsListing;
+package com.gianlu.aria2app.Main;
 
 import android.app.Activity;
 import android.preference.PreferenceManager;

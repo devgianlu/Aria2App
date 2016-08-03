@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -85,7 +84,7 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             LineData data = holder.chart.getData();
             data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(server.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
+            data.addEntry(new Entry(server.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
 
             holder.chart.notifyDataSetChanged();
             holder.chart.setVisibleXRangeMaximum(60);
@@ -111,7 +110,7 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);
             holder.downloadSpeed.setText(Utils.speedFormatter(server.downloadSpeed));
-            holder.chart = Charting.setupPeerChart(holder.chart);
+            holder.chart = Utils.setupPeerChart(holder.chart);
         }
     }
 

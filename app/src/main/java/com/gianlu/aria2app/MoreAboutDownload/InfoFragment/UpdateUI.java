@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -90,8 +89,8 @@ public class UpdateUI implements Runnable {
                     if (download.status == Download.STATUS.ACTIVE) {
                         LineData data = holder.chart.getData();
                         data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                        data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
-                        data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
+                        data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+                        data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
                         xPosition = data.getXValCount() - 91;
                     } else {
                         xPosition = 0;

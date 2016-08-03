@@ -11,7 +11,6 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -114,8 +113,8 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
             LineData data = holder.chart.getData();
             data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
-            data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
+            data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+            data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
 
             holder.chart.notifyDataSetChanged();
             holder.chart.setVisibleXRangeMaximum(60);
@@ -142,7 +141,7 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
         Peer peer = getItem(position);
 
-        holder.chart = Charting.setupPeerChart(holder.chart);
+        holder.chart = Utils.setupPeerChart(holder.chart);
         holder.peerId.setText(peer.getPeerId());
         holder.fullAddr.setText(peer.getFullAddress());
         holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
