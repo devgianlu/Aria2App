@@ -50,7 +50,7 @@ public class Download {
         try {
             return Integer.parseInt(val);
         } catch (Exception ex) {
-            return null;
+            return 0;
         }
     }
 
@@ -59,7 +59,7 @@ public class Download {
         try {
             return Long.parseLong(val);
         } catch (Exception ex) {
-            return null;
+            return 0L;
         }
     }
 

@@ -2,7 +2,6 @@ package com.gianlu.aria2app.MoreAboutDownload.ServersFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.NetIO.JTA2.IServers;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
@@ -21,7 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
-public class ServersPagerFragment extends Fragment {
+public class ServersPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
 
     // TODO: Order by
@@ -88,5 +88,10 @@ public class ServersPagerFragment extends Fragment {
         recyclerView.setLayoutManager(llm);
 
         return rootView;
+    }
+
+    @Override
+    public void stopUpdater() {
+        UpdateUI.stop(updateUI);
     }
 }

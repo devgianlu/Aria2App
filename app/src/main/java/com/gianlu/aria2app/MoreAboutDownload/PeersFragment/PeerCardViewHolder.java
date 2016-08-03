@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.R;
 import com.github.mikephil.charting.charts.LineChart;
 
-public class PeerViewHolder extends RecyclerView.ViewHolder {
+public class PeerCardViewHolder extends RecyclerView.ViewHolder {
     public RelativeLayout header;
     public TextView peerId;
     public TextView fullAddr;
@@ -22,7 +22,7 @@ public class PeerViewHolder extends RecyclerView.ViewHolder {
     public TextView detailsPeerChoking;
     public TextView detailsSeeder;
 
-    public PeerViewHolder(View itemView) {
+    public PeerCardViewHolder(View itemView) {
         super(itemView);
 
         header = (RelativeLayout) itemView.findViewById(R.id.peerCardView_header);

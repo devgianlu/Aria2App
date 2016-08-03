@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
+public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
     private Context context;
     private List<Peer> objs;
 
@@ -84,8 +84,8 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     }
 
     @Override
-    public PeerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new PeerViewHolder(LayoutInflater.from(context).inflate(R.layout.peer_cardview, parent, false));
+    public PeerCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new PeerCardViewHolder(LayoutInflater.from(context).inflate(R.layout.peer_cardview, parent, false));
     }
 
     public void onUpdate(List<Peer> peers) {
@@ -100,7 +100,7 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(PeerViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(PeerCardViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
             return;
@@ -130,7 +130,7 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final PeerViewHolder holder, int position) {
+    public void onBindViewHolder(final PeerCardViewHolder holder, int position) {
         Peer peer = getItem(position);
 
         // TODO: Show no peer data CardView if nothing to show ("Aria2Exception #1: No peer data is available for GID#6e46f8b06b973595")

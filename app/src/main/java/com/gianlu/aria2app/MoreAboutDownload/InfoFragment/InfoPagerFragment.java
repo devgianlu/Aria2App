@@ -2,7 +2,6 @@ package com.gianlu.aria2app.MoreAboutDownload.InfoFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
+import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.R;
 import com.github.mikephil.charting.charts.LineChart;
 
-public class InfoPagerFragment extends Fragment {
+public class InfoPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
     private ViewHolder holder;
 
@@ -53,9 +53,8 @@ public class InfoPagerFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        updateUI.stop();
+    public void stopUpdater() {
+        UpdateUI.stop(updateUI);
     }
 
     public class ViewHolder {

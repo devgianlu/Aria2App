@@ -1,13 +1,10 @@
 package com.gianlu.aria2app.MoreAboutDownload.ServersFragment;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
@@ -35,91 +32,39 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             items.add(header);
 
             for (Server server : objs.get(index)) {
+                server.setMembershipIndex(index);
                 items.add(server);
             }
         }
     }
 
-    public static boolean isExpanded(View v) {
-        return v.getVisibility() == View.VISIBLE;
-    }
-
-    public static void expand(final View v) {
-        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? RelativeLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == Item.HEADER) {
-            return new HeaderViewHolder(new TextView(context));
+            TextView title = new TextView(context);
+            title.setPadding(0, 15, 0, 5);
+            title.setTypeface(Typeface.DEFAULT_BOLD);
+            title.setTextSize(14);
+            return new HeaderViewHolder(title);
         } else {
-            return new ServerViewHolder(LayoutInflater.from(context).inflate(R.layout.server_cardview, parent, false));
+            return new ServerCardViewHolder(LayoutInflater.from(context).inflate(R.layout.server_cardview, parent, false));
         }
     }
 
     public void onUpdate(Map<Integer, List<Server>> servers) {
         if (items == null || servers == null) return;
 
-        /**
-         for (Integer index : servers.keySet()) {
-         for (Item item : items) {
-         if (item.getItemType() == Item.HEADER)
-         if (((HeaderItem) item).getIndex() == index)
-         }
-         }
-
-         for (Server newServer : servers) {
-         for (Server listServer : objs) {
-         if (listServer.currentUri.equals(newServer.currentUri))
-         notifyItemChanged(objs.indexOf(listServer), newServer);
-         }
-         }
-         **/
+        for (Integer index : servers.keySet()) {
+            for (Server newServer : servers.get(index)) {
+                for (Item item : items) {
+                    if (item.getItemType() == Item.SERVER
+                            && ((Server) item).getMembershipIndex() == index
+                            && newServer.currentUri.equals(((Server) item).currentUri)) {
+                        notifyItemChanged(items.indexOf(item), newServer);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -134,9 +79,9 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return;
         }
 
-        if (payloads.get(0) instanceof Server && cHolder instanceof ServerViewHolder) {
+        if (payloads.get(0) instanceof Server && cHolder instanceof ServerCardViewHolder) {
             Server server = (Server) payloads.get(0);
-            ServerViewHolder holder = (ServerViewHolder) cHolder;
+            ServerCardViewHolder holder = (ServerCardViewHolder) cHolder;
 
             LineData data = holder.chart.getData();
             data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
@@ -146,6 +91,8 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.chart.setVisibleXRangeMaximum(60);
             holder.chart.moveViewToX(data.getXValCount() - 61);
 
+            holder.currentUri.setText(server.currentUri);
+            holder.uri.setText(server.uri);
             holder.downloadSpeed.setText(Utils.speedFormatter(server.downloadSpeed));
         }
     }
@@ -159,20 +106,12 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.title.setText(header.getTitle());
         } else {
             Server server = (Server) getItem(position);
-            final ServerViewHolder holder = (ServerViewHolder) cHolder;
+            final ServerCardViewHolder holder = (ServerCardViewHolder) cHolder;
 
-            holder.chart = Charting.setupPeerChart(holder.chart);
+            holder.currentUri.setText(server.currentUri);
+            holder.uri.setText(server.uri);
             holder.downloadSpeed.setText(Utils.speedFormatter(server.downloadSpeed));
-
-            holder.header.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (isExpanded(holder.details))
-                        collapse(holder.details);
-                    else
-                        expand(holder.details);
-                }
-            });
+            holder.chart = Charting.setupPeerChart(holder.chart);
         }
     }
 

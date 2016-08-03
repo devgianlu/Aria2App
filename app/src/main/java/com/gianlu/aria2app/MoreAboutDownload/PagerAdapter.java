@@ -7,11 +7,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.List;
 
 public class PagerAdapter extends FragmentPagerAdapter {
-    private List<Fragment> fragments;
+    private List<CommonFragment> fragments;
 
-    public PagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public PagerAdapter(FragmentManager fm, List<CommonFragment> fragments) {
         super(fm);
         this.fragments = fragments;
+    }
+
+    public void stopAllUpdater() {
+        for (CommonFragment fragment : fragments) {
+            fragment.stopUpdater();
+        }
     }
 
     @Override

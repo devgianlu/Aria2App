@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -21,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.ExpandableListView;
 
 import com.gianlu.aria2app.Google.Analytics;
+import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.MoreAboutDownload.FilesPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
@@ -47,6 +47,7 @@ import java.util.Map;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity {
     private Download.STATUS status;
+    private PagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         assert pager != null;
 
-        final List<Fragment> fragments = new ArrayList<>();
+        final List<CommonFragment> fragments = new ArrayList<>();
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid));
 
         if (getIntent().getBooleanExtra("isTorrent", false))
@@ -76,7 +77,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
         fragments.add(FilesPagerFragment.newInstance(getString(R.string.files), gid));
 
-        pager.setAdapter(new PagerAdapter(getSupportFragmentManager(), fragments));
+        adapter = new PagerAdapter(getSupportFragmentManager(), fragments);
+        pager.setAdapter(adapter);
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
         assert tabLayout != null;
@@ -151,7 +153,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // UpdateUI.stop(updateUI);
+        adapter.stopAllUpdater();
         finishActivity(0);
         super.onDestroy();
     }
@@ -165,7 +167,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        // UpdateUI.stop(updateUI);
+        adapter.stopAllUpdater();
         finishActivity(0);
         super.onStop();
     }

@@ -2,7 +2,6 @@ package com.gianlu.aria2app.MoreAboutDownload.PeersFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.NetIO.JTA2.IPeers;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public class PeersPagerFragment extends Fragment {
+public class PeersPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
 
     // TODO: Order by
@@ -90,4 +90,8 @@ public class PeersPagerFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void stopUpdater() {
+        UpdateUI.stop(updateUI);
+    }
 }
