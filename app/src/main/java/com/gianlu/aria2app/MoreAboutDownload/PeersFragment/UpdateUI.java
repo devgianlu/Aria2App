@@ -23,6 +23,7 @@ public class UpdateUI implements Runnable {
     private int updateRate;
     private boolean _shouldStop;
     private boolean _stopped;
+    private int errorCounter = 0;
 
     public UpdateUI(Activity context, String gid, PeerCardAdapter adapter) {
         this.gid = gid;
@@ -69,6 +70,8 @@ public class UpdateUI implements Runnable {
             jta2.getPeers(gid, new IPeers() {
                 @Override
                 public void onPeers(final List<Peer> peers) {
+                    errorCounter = 0;
+
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -79,7 +82,12 @@ public class UpdateUI implements Runnable {
 
                 @Override
                 public void onException(Exception exception) {
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    errorCounter++;
+                    if (errorCounter <= 2) {
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    } else {
+                        _shouldStop = true;
+                    }
                 }
             });
 

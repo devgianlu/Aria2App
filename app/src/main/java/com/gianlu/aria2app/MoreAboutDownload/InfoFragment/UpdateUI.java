@@ -37,6 +37,7 @@ public class UpdateUI implements Runnable {
     private int updateRate;
     private boolean _shouldStop;
     private boolean _stopped;
+    private int errorCounter = 0;
 
     public UpdateUI(Activity context, String gid, InfoPagerFragment.ViewHolder holder) {
         this.gid = gid;
@@ -83,6 +84,8 @@ public class UpdateUI implements Runnable {
             jta2.tellStatus(gid, new IDownload() {
                 @Override
                 public void onDownload(final Download download) {
+                    errorCounter = 0;
+
                     int xPosition;
                     if (download.status == Download.STATUS.ACTIVE) {
                         LineData data = holder.chart.getData();
@@ -118,7 +121,6 @@ public class UpdateUI implements Runnable {
                                 first = false;
                             }
                             */
-
 
                             holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
                             holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength))));
@@ -184,8 +186,12 @@ public class UpdateUI implements Runnable {
 
                 @Override
                 public void onException(Exception exception) {
-                    // TODO: Add some exception counters to stop Thread
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    errorCounter++;
+                    if (errorCounter <= 2) {
+                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    } else {
+                        _shouldStop = true;
+                    }
                 }
             });
 
