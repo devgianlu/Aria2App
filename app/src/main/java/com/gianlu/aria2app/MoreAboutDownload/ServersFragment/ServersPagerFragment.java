@@ -3,11 +3,14 @@ package com.gianlu.aria2app.MoreAboutDownload.ServersFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
@@ -42,7 +45,7 @@ public class ServersPagerFragment extends CommonFragment {
             Utils.readyJTA2(getActivity()).getServers(getArguments().getString("gid"), new IServers() {
                 @Override
                 public void onServers(Map<Integer, List<Server>> servers) {
-                    final ServerCardAdapter adapter = new ServerCardAdapter(getContext(), servers);
+                    final ServerCardAdapter adapter = new ServerCardAdapter(getContext(), servers, (CardView) view.findViewById(R.id.serversFragment_noData));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -58,6 +61,12 @@ public class ServersPagerFragment extends CommonFragment {
                 public void onException(Exception exception) {
                     Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                 }
+
+                @Override
+                public void onDownloadNotActive(Exception exception) {
+                    view.findViewById(R.id.serversFragment_noData).setVisibility(View.VISIBLE);
+                    ((TextView) view.findViewById(R.id.serversFragment_noDataLabel)).setText(getString(R.string.noServersMessage, exception.getMessage()));
+                }
             });
         } catch (IOException | NoSuchAlgorithmException ex) {
             Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
@@ -67,16 +76,18 @@ public class ServersPagerFragment extends CommonFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
-        final SwipeRefreshLayout rootView = (SwipeRefreshLayout) inflater.inflate(R.layout.servers_fragment, container, false);
-        rootView.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        rootView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        final LinearLayout rootView = (LinearLayout) inflater.inflate(R.layout.servers_fragment, container, false);
+        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.serversFragment_swipeLayout);
+
+        swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 UpdateUI.stop(updateUI, new IThread() {
                     @Override
                     public void stopped() {
                         onViewCreated(rootView, savedInstanceState);
-                        rootView.setRefreshing(false);
+                        swipeLayout.setRefreshing(false);
                     }
                 });
             }

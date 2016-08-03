@@ -2,8 +2,10 @@ package com.gianlu.aria2app.MoreAboutDownload.ServersFragment;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -21,10 +23,12 @@ import java.util.Map;
 
 public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
+    private CardView noDataCardView;
     private List<Item> items = new ArrayList<>();
 
-    public ServerCardAdapter(Context context, Map<Integer, List<Server>> objs) {
+    public ServerCardAdapter(Context context, Map<Integer, List<Server>> objs, CardView noDataCardView) {
         this.context = context;
+        this.noDataCardView = noDataCardView;
 
         for (Integer index : objs.keySet()) {
             HeaderItem header = new HeaderItem(index);
@@ -66,6 +70,11 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    public void onDisplayNoData(String message) {
+        noDataCardView.setVisibility(View.VISIBLE);
+        ((TextView) noDataCardView.findViewById(R.id.serversFragment_noDataLabel)).setText(context.getString(R.string.noServersMessage, message));
+    }
+
     @Override
     public int getItemViewType(int position) {
         return items.get(position).getItemType();
@@ -98,6 +107,12 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder cHolder, int position) {
+        if (items.isEmpty())
+            noDataCardView.setVisibility(View.VISIBLE);
+        else
+            noDataCardView.setVisibility(View.GONE);
+
+
         if (getItemViewType(position) == Item.HEADER) {
             HeaderItem header = (HeaderItem) getItem(position);
             final HeaderViewHolder holder = (HeaderViewHolder) cHolder;

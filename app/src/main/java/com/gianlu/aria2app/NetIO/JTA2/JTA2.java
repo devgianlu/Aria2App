@@ -799,7 +799,11 @@ public class JTA2 {
 
             @Override
             public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
+                if (code == 1 && reason.startsWith("No active download")) {
+                    handler.onDownloadNotActive(new Aria2Exception(reason, code));
+                } else {
+                    handler.onException(new Aria2Exception(reason, code));
+                }
             }
         });
     }

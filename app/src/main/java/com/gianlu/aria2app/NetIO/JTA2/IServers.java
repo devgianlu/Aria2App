@@ -7,4 +7,6 @@ public interface IServers {
     void onServers(Map<Integer, List<Server>> servers);
 
     void onException(Exception exception);
+
+    void onDownloadNotActive(Exception exception);
 }

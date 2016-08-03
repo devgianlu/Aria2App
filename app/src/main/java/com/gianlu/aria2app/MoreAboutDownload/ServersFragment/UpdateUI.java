@@ -91,6 +91,11 @@ public class UpdateUI implements Runnable {
                         _shouldStop = true;
                     }
                 }
+
+                @Override
+                public void onDownloadNotActive(Exception exception) {
+                    adapter.onDisplayNoData(exception.getMessage());
+                }
             });
 
             try {

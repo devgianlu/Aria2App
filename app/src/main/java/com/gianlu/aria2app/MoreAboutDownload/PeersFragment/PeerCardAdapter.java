@@ -133,11 +133,11 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
     @Override
     public void onBindViewHolder(final PeerCardViewHolder holder, int position) {
-        if (objs.isEmpty()) {
+        if (objs.isEmpty())
             noDataCardView.setVisibility(View.VISIBLE);
-        } else {
+        else
             noDataCardView.setVisibility(View.GONE);
-        }
+
 
         Peer peer = getItem(position);
 
