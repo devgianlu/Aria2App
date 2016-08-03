@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.MoreAboutDownload.PeersFragment;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -24,10 +25,12 @@ import java.util.Locale;
 public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
     private Context context;
     private List<Peer> objs;
+    private CardView noDataCardView;
 
-    public PeerCardAdapter(Context context, List<Peer> objs) {
+    public PeerCardAdapter(Context context, List<Peer> objs, CardView noDataCardView) {
         this.context = context;
         this.objs = objs;
+        this.noDataCardView = noDataCardView;
     }
 
     public static boolean isExpanded(View v) {
@@ -131,9 +134,13 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
     @Override
     public void onBindViewHolder(final PeerCardViewHolder holder, int position) {
-        Peer peer = getItem(position);
+        if (objs.isEmpty()) {
+            noDataCardView.setVisibility(View.VISIBLE);
+        } else {
+            noDataCardView.setVisibility(View.GONE);
+        }
 
-        // TODO: Show no peer data CardView if nothing to show ("Aria2Exception #1: No peer data is available for GID#6e46f8b06b973595")
+        Peer peer = getItem(position);
 
         holder.chart = Charting.setupPeerChart(holder.chart);
         holder.peerId.setText(peer.getPeerId());

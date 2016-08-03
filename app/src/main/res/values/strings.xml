@@ -70,6 +70,7 @@
     <string name="updateOptions">Update options\' source file</string>
     <string name="updateOptions_summary">That file contains information about options.</string>
     <string name="unknown">Unknown</string>
+    <string name="noPeers">No peers. Swipe down to refresh</string>
     <string name="loading_downloads">Loading downloads. Please wait…</string>
     <string name="downloading_file">Downloading file…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
