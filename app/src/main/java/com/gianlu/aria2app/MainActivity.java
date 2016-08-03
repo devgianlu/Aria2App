@@ -61,8 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private List<Download.STATUS> filtered = new ArrayList<>();
     private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
+    // private boolean isFirstUpdate = true;
     private LoadDownloads loadDownloads;
     private Timer reloadDownloadsListTimer;
+    private MainCardAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
+
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -104,7 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLoaded(List<Download> downloads) {
-                final MainCardAdapter adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
+                // isFirstUpdate = false;
+
+                adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
                     public void onClick(View view, int position, Download item) {
                         Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
@@ -254,6 +259,18 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
+            /*
+            @Override
+            public void onPartialUpdate(final List<Download> downloads) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.onPartialUpdate(downloads);
+                    }
+                });
+            }
+            */
+
             @Override
             public void onException(boolean queuing, Exception ex) {
                 try {
@@ -377,9 +394,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        loadDownloads = new LoadDownloads(this, loadingHandler);
-        new Thread(loadDownloads).start();
-
         if (autoReloadDownloadsListRate != 0) {
             reloadDownloadsListTimer = new Timer(false);
             reloadDownloadsListTimer.schedule(new TimerTask() {
@@ -394,6 +408,9 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }, 1000, autoReloadDownloadsListRate);
+        } else {
+            loadDownloads = new LoadDownloads(this, loadingHandler);
+            new Thread(loadDownloads).start();
         }
 
         if (enableNotifications) {
@@ -414,14 +431,12 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_filters, menu.findItem(R.id.a2menu_filtering).getSubMenu());
         return true;
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (reloadDownloadsListTimer != null) reloadDownloadsListTimer.cancel();
         finishActivity(0);
     }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -432,7 +447,6 @@ public class MainActivity extends AppCompatActivity {
     public void reloadPage() {
         reloadPage(null);
     }
-
     public void reloadPage(final IThread handler) {
         UpdateUI.stop(updateUI, new IThread() {
             @Override

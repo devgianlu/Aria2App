@@ -6,9 +6,7 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.IDownload;
-import com.gianlu.aria2app.NetIO.JTA2.IStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
 
@@ -22,8 +20,8 @@ public class UpdateUI implements Runnable {
     private Activity context;
     private Integer updateRate;
     private boolean _stopped;
+    private int errorCounter = 0;
 
-    // TODO: ??(Move all Toast to UI thread)??
     public UpdateUI(Activity context, MainCardAdapter adapter) {
         _shouldStop = false;
         _stopped = false;
@@ -45,18 +43,15 @@ public class UpdateUI implements Runnable {
     public static void stop(UpdateUI updateUI) {
         if (updateUI != null) updateUI.stop();
     }
-
     public static void stop(UpdateUI updateUI, IThread handler) {
         if (updateUI == null)
             handler.stopped();
         else
             updateUI.stop(handler);
     }
-
     private void stop() {
         _shouldStop = true;
     }
-
     @SuppressWarnings("StatementWithEmptyBody")
     private void stop(IThread handler) {
         _shouldStop = true;
@@ -69,10 +64,11 @@ public class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
 
         while ((!_shouldStop) && jta2 != null) {
+            /* TODO: Update main chart
             jta2.getGlobalStat(new IStats() {
                 @Override
                 public void onStats(GlobalStats stats) {
-                    // TODO: Update main chart
+
                 }
 
                 @Override
@@ -81,19 +77,25 @@ public class UpdateUI implements Runnable {
                     Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
                 }
             });
+            */
 
-            for (int c = 0; c < adapter.getItemCount(); c++) {
-                final int finalC = c;
-                jta2.tellStatus(adapter.getItem(c).gid, new IDownload() {
+            for (final Download d : adapter.getItems()) {
+                jta2.tellStatus(d.gid, new IDownload() {
                     @Override
                     public void onDownload(Download download) {
-                        adapter.updateItem(finalC, download);
+                        errorCounter = 0;
+
+                        adapter.updateItem(adapter.getItems().indexOf(d), download);
                     }
 
                     @Override
                     public void onException(Exception exception) {
-                        _shouldStop = true;
+                        if (exception.getMessage().endsWith("is not found")) return;
+
                         Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+
+                        errorCounter++;
+                        if (errorCounter >= 2) _shouldStop = true;
                     }
                 });
             }

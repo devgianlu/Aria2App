@@ -29,6 +29,11 @@ public class InfoPagerFragment extends CommonFragment {
         return fragment;
     }
 
+    public InfoPagerFragment setStatusObserver(UpdateUI.IDownloadStatusObserver observer) {
+        updateUI.setStatusObserver(observer);
+        return this;
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), holder);

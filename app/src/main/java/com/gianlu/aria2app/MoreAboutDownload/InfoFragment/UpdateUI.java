@@ -27,10 +27,13 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 public class UpdateUI implements Runnable {
     private Activity context;
     private InfoPagerFragment.ViewHolder holder;
+    private IDownloadStatusObserver statusObserver = null;
+    private Download.STATUS lastStatus = null;
     private JTA2 jta2;
     private String gid;
     private int updateRate;
@@ -75,6 +78,10 @@ public class UpdateUI implements Runnable {
         handler.stopped();
     }
 
+    public void setStatusObserver(IDownloadStatusObserver statusObserver) {
+        this.statusObserver = statusObserver;
+    }
+
     @Override
     public void run() {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
@@ -84,6 +91,11 @@ public class UpdateUI implements Runnable {
                 @Override
                 public void onDownload(final Download download) {
                     errorCounter = 0;
+
+                    if (!Objects.equals(download.status, lastStatus))
+                        if (statusObserver != null)
+                            statusObserver.onDownloadStatusChanged(download.status);
+                    lastStatus = download.status;
 
                     int xPosition;
                     if (download.status == Download.STATUS.ACTIVE) {
@@ -211,5 +223,9 @@ public class UpdateUI implements Runnable {
         }
 
         _stopped = true;
+    }
+
+    public interface IDownloadStatusObserver {
+        void onDownloadStatusChanged(Download.STATUS newStatus);
     }
 }

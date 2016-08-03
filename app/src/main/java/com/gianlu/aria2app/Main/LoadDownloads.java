@@ -15,10 +15,11 @@ import java.util.List;
 
 public class LoadDownloads implements Runnable {
     private ILoading handler;
+    // private boolean partialUpdate;
     private JTA2 jta2;
     private boolean hideMetadata;
 
-    // TODO: When called to reload should return newer downloads or removed (RecyclerView.Adapter.notifyItem[Inserted|Removed]())
+    // TODO: Partial update
     public LoadDownloads(Activity context, ILoading handler) {
         this.handler = handler;
 
@@ -70,6 +71,11 @@ public class LoadDownloads implements Runnable {
                                 }
 
                                 handler.onLoaded(downloadsList);
+
+                                /*
+                                if (partialUpdate)
+                                    handler.onPartialUpdate(downloadsList);
+                                */
                             }
 
                             @Override
@@ -97,6 +103,7 @@ public class LoadDownloads implements Runnable {
         void onStarted();
 
         void onLoaded(List<Download> downloads);
+        // void onPartialUpdate(List<Download> downloads);
 
         void onException(boolean queuing, Exception ex);
     }

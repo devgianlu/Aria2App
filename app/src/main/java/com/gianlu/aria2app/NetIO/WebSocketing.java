@@ -40,14 +40,15 @@ public class WebSocketing extends WebSocketAdapter {
         return webSocketing;
     }
 
-    public static void enableEventManager(final MainActivity mainActivity) throws IOException, NoSuchAlgorithmException {
-        if (mainActivity == null) return;
+    // TODO: Implement partial update
+    public static void enableEventManager(final MainActivity context) throws IOException, NoSuchAlgorithmException {
+        if (context == null) return;
 
-        newInstance(mainActivity).socket.addListener(new WebSocketAdapter() {
+        newInstance(context).socket.addListener(new WebSocketAdapter() {
             @Override
             public void onFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-                if (new JSONObject(frame.getPayloadText()).getString("method").startsWith("aria2.on"))
-                    mainActivity.reloadPage();
+                if (frame.getPayloadText().contains("\"method\":\"aria2.on"))
+                    context.reloadPage();
             }
         });
     }

@@ -23,6 +23,7 @@ import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.MoreAboutDownload.FilesPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
 import com.gianlu.aria2app.MoreAboutDownload.PeersFragment.PeersPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.ServersFragment.ServersPagerFragment;
@@ -46,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity {
-    private Download.STATUS status;
+    private Menu menu;
     private PagerAdapter adapter;
 
     @Override
@@ -54,6 +55,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         setTheme(getIntent().getBooleanExtra("isTorrent", false) ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
+        setTitle(getIntent().getStringExtra("name"));
+
         final String gid = getIntent().getStringExtra("gid");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
@@ -67,8 +70,94 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         assert pager != null;
 
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
+        assert tabLayout != null;
+
         final List<CommonFragment> fragments = new ArrayList<>();
-        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid));
+        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setStatusObserver(new UpdateUI.IDownloadStatusObserver() {
+            @Override
+            public void onDownloadStatusChanged(Download.STATUS newStatus) {
+                if (menu == null) return;
+
+                // TODO
+                switch (newStatus) {
+                    case ACTIVE:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: ACTIVE
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: ACTIVE
+                                } else {
+                                    // TAB: SERVERS, STATUS: ACTIVE
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: ACTIVE
+                                break;
+                        }
+                        break;
+                    case PAUSED:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: PAUSED
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: PAUSED
+                                } else {
+                                    // TAB: SERVERS, STATUS: PAUSED
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: PAUSED
+                                break;
+                        }
+                        break;
+                    case WAITING:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: WAITING
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: WAITING
+                                } else {
+                                    // TAB: SERVERS, STATUS: WAITING
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: WAITING
+                                break;
+                        }
+                        break;
+                    case REMOVED:
+                    case ERROR:
+                    case COMPLETE:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: FROZEN
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: FROZEN
+                                } else {
+                                    // TAB: SERVERS, STATUS: FROZEN
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: FROZEN
+                                break;
+                        }
+                        break;
+                    case UNKNOWN:
+                    default:
+                        menu.clear();
+                        break;
+                }
+            }
+        }));
 
         if (getIntent().getBooleanExtra("isTorrent", false))
             fragments.add(PeersPagerFragment.newInstance(getString(R.string.peers), gid));
@@ -80,12 +169,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         adapter = new PagerAdapter(getSupportFragmentManager(), fragments);
         pager.setAdapter(adapter);
 
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
-        assert tabLayout != null;
         tabLayout.setupWithViewPager(pager);
-
-        status = Download.STATUS.valueOf(getIntent().getStringExtra("status"));
-        setTitle(getIntent().getStringExtra("name"));
 
         /* TODO: Move this to download button click
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -111,9 +195,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.more_about_download, menu);
-        MenuItem item = menu.findItem(R.id.moreAboutDownloadMenu_options);
-        if (status.equals(Download.STATUS.COMPLETE) || status.equals(Download.STATUS.ERROR) || status.equals(Download.STATUS.REMOVED))
-            item.setVisible(false);
+        this.menu = menu;
         return true;
     }
 

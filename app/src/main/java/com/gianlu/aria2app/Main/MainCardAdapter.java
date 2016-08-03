@@ -34,12 +34,14 @@ import java.util.Locale;
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private Activity context;
     private List<Download> objs;
+    private List<String> objs_gids = new ArrayList<>();
     private IActionMore actionMore;
     private IMenuSelected actionMenu;
 
     public MainCardAdapter(Activity context, List<Download> objs, IActionMore actionMore, IMenuSelected actionMenu) {
         this.context = context;
         this.objs = objs;
+        for (Download d : objs) objs_gids.add(d.gid);
         this.actionMore = actionMore;
         this.actionMenu = actionMenu;
     }
@@ -137,6 +139,40 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
         return null;
     }
+
+    /**
+     * public void onPartialUpdate(List<Download> downloads) {
+     * List<String> newGids = new ArrayList<>();
+     * for (Download d : downloads) newGids.add(d.gid);
+     * <p/>
+     * for (String newGid : newGids) {
+     * if (!objs_gids.contains(newGid)) {
+     * for (Download newOne : downloads) {
+     * if (Objects.equals(newOne.gid, newGid)) {
+     * objs.add(newOne);
+     * notifyItemInserted(objs.size());
+     * }
+     * }
+     * }
+     * }
+     * <p/>
+     * for (String listGid : objs_gids) {
+     * if (!newGids.contains(listGid)) {
+     * for (Download removedOne : objs) {
+     * if (Objects.equals(removedOne.gid, listGid)) {
+     * int removedPosition = objs.indexOf(removedOne);
+     * <p/>
+     * objs.remove(removedOne);
+     * notifyItemRemoved(removedPosition);
+     * }
+     * }
+     * }
+     * }
+     * <p/>
+     * objs_gids.clear();
+     * for (Download d : objs) objs_gids.add(d.gid);
+     * }
+     */
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -308,6 +344,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     @Override
     public int getItemCount() {
         return objs.size();
+    }
+
+    public List<Download> getItems() {
+        return objs;
     }
 
     public interface IActionMore {

@@ -132,26 +132,30 @@ public class Download {
     }
 
     public String getName() {
-        if (this.isBitTorrent) {
-            if (this.bitTorrent != null && this.bitTorrent.name != null) {
-                return this.bitTorrent.name;
-            } else {
-                String[] splitted = this.files.get(0).path.split("/");
-                return splitted[splitted.length - 1];
-            }
-        } else {
-            String[] splitted = this.files.get(0).path.split("/");
-            if (splitted.length == 1) {
-                if (this.files.get(0).uris.get(File.URI_STATUS.USED) != null) {
-                    return this.files.get(0).uris.get(File.URI_STATUS.USED);
-                } else if (this.files.get(0).uris.get(File.URI_STATUS.WAITING) != null) {
-                    return this.files.get(0).uris.get(File.URI_STATUS.WAITING);
+        try {
+            if (isBitTorrent) {
+                if (bitTorrent != null && bitTorrent.name != null) {
+                    return bitTorrent.name;
                 } else {
-                    return "Unknown";
+                    String[] splitted = files.get(0).path.split("/");
+                    return splitted[splitted.length - 1];
                 }
             } else {
-                return splitted[splitted.length - 1];
+                String[] splitted = files.get(0).path.split("/");
+                if (splitted.length == 1) {
+                    if (files.get(0).uris.get(File.URI_STATUS.USED) != null) {
+                        return files.get(0).uris.get(File.URI_STATUS.USED);
+                    } else if (files.get(0).uris.get(File.URI_STATUS.WAITING) != null) {
+                        return files.get(0).uris.get(File.URI_STATUS.WAITING);
+                    } else {
+                        return "Unknown";
+                    }
+                } else {
+                    return splitted[splitted.length - 1];
+                }
             }
+        } catch (Exception ex) {
+            return "Unknown";
         }
     }
 

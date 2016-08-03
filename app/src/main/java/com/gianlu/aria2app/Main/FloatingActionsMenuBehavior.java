@@ -14,6 +14,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
         super(context, attrs);
     }
 
+    // TODO: A bit bugged
     private static void kickOut(View fab) {
         fab.setTag(false);
         fab.animate()

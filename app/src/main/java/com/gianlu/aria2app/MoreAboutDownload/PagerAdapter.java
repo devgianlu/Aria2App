@@ -34,4 +34,6 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         return getItem(position).getArguments().getString("title");
     }
+
+
 }
