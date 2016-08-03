@@ -154,13 +154,17 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.detailsChartRefresh.setEnabled(true);
 
                 LineData data = holder.detailsChart.getData();
-                data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-                data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+                if (data == null) holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
 
-                holder.detailsChart.notifyDataSetChanged();
-                holder.detailsChart.setVisibleXRangeMaximum(90);
-                holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+                if (data != null) {
+                    data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                    data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+
+                    holder.detailsChart.notifyDataSetChanged();
+                    holder.detailsChart.setVisibleXRangeMaximum(90);
+                    holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+                }
             } else {
                 holder.detailsChartRefresh.setEnabled(false);
 

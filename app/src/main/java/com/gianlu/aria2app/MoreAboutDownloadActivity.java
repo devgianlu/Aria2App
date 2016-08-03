@@ -105,14 +105,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             }
         }
         */
-
-        /*
-        updateUI = new UpdateUI(this, new UpdateUI.IFirstUpdate() {
-            @Override
-            public void onFirstUpdate(Download item) {}
-        }, canWrite, gid, holder);
-        new Thread(updateUI).start();
-        */
     }
 
     @Override
@@ -128,24 +120,12 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.moreAboutDownloadMenu_refresh:
-                /*
-                UpdateUI.stop(updateUI, new IThread() {
-                    @Override
-                    public void stopped() {
-                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
-                        new Thread(updateUI).start();
-                    }
-                });
-                */
-                break;
             case R.id.moreAboutDownloadMenu_options:
                 showOptionsDialog();
                 break;
             case android.R.id.home:
                 onBackPressed();
                 break;
-            // TODO: Show peers
         }
 
         return super.onOptionsItemSelected(item);

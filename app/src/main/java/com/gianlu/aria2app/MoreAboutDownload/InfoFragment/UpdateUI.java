@@ -88,10 +88,16 @@ public class UpdateUI implements Runnable {
                     int xPosition;
                     if (download.status == Download.STATUS.ACTIVE) {
                         LineData data = holder.chart.getData();
-                        data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                        data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-                        data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
-                        xPosition = data.getXValCount() - 91;
+                        if (data == null) holder.chart = Utils.setupChart(holder.chart, false);
+
+                        if (data != null) {
+                            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                            data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+                            data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+                            xPosition = data.getXValCount() - 91;
+                        } else {
+                            xPosition = -1;
+                        }
                     } else {
                         xPosition = 0;
                     }
@@ -103,9 +109,11 @@ public class UpdateUI implements Runnable {
                             if (download.status == Download.STATUS.ACTIVE) {
                                 holder.chartRefresh.setEnabled(true);
 
-                                holder.chart.notifyDataSetChanged();
-                                holder.chart.setVisibleXRangeMaximum(90);
-                                holder.chart.moveViewToX(finalXPosition);
+                                if (finalXPosition != -1) {
+                                    holder.chart.notifyDataSetChanged();
+                                    holder.chart.setVisibleXRangeMaximum(90);
+                                    holder.chart.moveViewToX(finalXPosition);
+                                }
                             } else {
                                 holder.chartRefresh.setEnabled(false);
 
