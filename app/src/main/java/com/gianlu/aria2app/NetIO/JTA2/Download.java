@@ -132,24 +132,27 @@ public class Download {
     }
 
     public String getName() {
-        String downloadName;
         if (this.isBitTorrent) {
             if (this.bitTorrent != null && this.bitTorrent.name != null) {
-                downloadName = this.bitTorrent.name;
+                return this.bitTorrent.name;
             } else {
                 String[] splitted = this.files.get(0).path.split("/");
-                downloadName = splitted[splitted.length - 1];
+                return splitted[splitted.length - 1];
             }
         } else {
             String[] splitted = this.files.get(0).path.split("/");
-            downloadName = splitted[splitted.length - 1];
-            /*
-            String[] splitted = (this.files.get(0).uris.get(File.URI_STATUS.USED) == null ? this.files.get(0).uris.get(File.URI_STATUS.WAITING).split("/") : this.files.get(0).uris.get(File.URI_STATUS.USED).split("/"));
-            downloadName = splitted[splitted.length - 1];
-            */
+            if (splitted.length == 1) {
+                if (this.files.get(0).uris.get(File.URI_STATUS.USED) != null) {
+                    return this.files.get(0).uris.get(File.URI_STATUS.USED);
+                } else if (this.files.get(0).uris.get(File.URI_STATUS.WAITING) != null) {
+                    return this.files.get(0).uris.get(File.URI_STATUS.WAITING);
+                } else {
+                    return "Unknown";
+                }
+            } else {
+                return splitted[splitted.length - 1];
+            }
         }
-
-        return downloadName;
     }
 
     public Float getProgress() {
@@ -169,7 +172,6 @@ public class Download {
         ERROR,
         COMPLETE,
         UNKNOWN;
-
 
         public String getFormal(Context context, boolean firstCapital) {
             String val;

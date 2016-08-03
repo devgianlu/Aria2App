@@ -170,7 +170,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
             holder.donutProgress.setProgress(item.getProgress().intValue());
             holder.downloadName.setText(item.getName());
-            holder.downloadStatus.setText(item.status.toString());
+            holder.downloadStatus.setText(item.status.getFormal(context, true));
             holder.downloadSpeed.setText(Utils.speedFormatter(item.downloadSpeed));
             holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
             holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
