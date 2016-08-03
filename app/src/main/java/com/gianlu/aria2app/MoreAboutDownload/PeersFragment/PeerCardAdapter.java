@@ -2,8 +2,13 @@ package com.gianlu.aria2app.MoreAboutDownload.PeersFragment;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.RelativeLayout;
 
 import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
@@ -23,6 +28,59 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
     public PeerCardAdapter(Context context, List<Peer> objs) {
         this.context = context;
         this.objs = objs;
+    }
+
+    public static boolean isExpanded(View v) {
+        return v.getVisibility() == View.VISIBLE;
+    }
+
+    public static void expand(final View v) {
+        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        v.getLayoutParams().height = 0;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? RelativeLayout.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 
     @Override
@@ -64,20 +122,38 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerViewHolder> {
             holder.fullAddr.setText(peer.getFullAddress());
             holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
             holder.downloadSpeed.setText(Utils.speedFormatter(peer.downloadSpeed));
+
+            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
+            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
+            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
         }
     }
 
     @Override
-    public void onBindViewHolder(PeerViewHolder holder, int position) {
+    public void onBindViewHolder(final PeerViewHolder holder, int position) {
         Peer peer = getItem(position);
 
-        holder.chart = Charting.setupPeerChart(holder.chart);
+        // TODO: Show no peer data CardView if nothing to show ("Aria2Exception #1: No peer data is available for GID#6e46f8b06b973595")
 
+        holder.chart = Charting.setupPeerChart(holder.chart);
         holder.peerId.setText(peer.getPeerId());
         holder.fullAddr.setText(peer.getFullAddress());
-
         holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
         holder.downloadSpeed.setText(Utils.speedFormatter(peer.downloadSpeed));
+
+        holder.header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isExpanded(holder.details))
+                    collapse(holder.details);
+                else
+                    expand(holder.details);
+            }
+        });
+
+        holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
+        holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
+        holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
     }
 
     @Override

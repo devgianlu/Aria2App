@@ -38,6 +38,8 @@
     <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
     <string name="index" translatable="false"><![CDATA[<b>Index:</b>]]> %s</string>
+    <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
+    <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
 
     <string name="selectFile">Download file</string>
     <string name="selectFileNotPaused">Download file (available only when download is paused)</string>

@@ -61,6 +61,30 @@ public class JTA2 {
         return peers;
     }
 
+    private Map<Integer, List<Server>> fromServers(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
+        Map<Integer, List<Server>> list = new HashMap<>();
+
+        for (int i = 0; i < jResult.length(); i++) {
+            JSONObject jServer = jResult.getJSONObject(i);
+
+            int index = jServer.getInt("index");
+
+            JSONArray _servers = jServer.getJSONArray("servers");
+
+            List<Server> servers = new ArrayList<>();
+            for (int ii = 0; ii < _servers.length(); ii++) {
+                servers.add(Server.fromJSON(_servers.getJSONObject(i)));
+            }
+            list.put(index, servers);
+        }
+
+
+        return list;
+    }
+
+
     // Requests
     //aria2.addUri
     public void addUri(List<String> uris, @Nullable Integer position, @Nullable Map<String, String> options, final IGID handler) {
@@ -748,6 +772,38 @@ public class JTA2 {
             }
         });
     }
+
+    // aria2.getServers
+    public void getServers(String gid, final IServers handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getServers");
+            request.put("params", Utils.readyParams(webSocketing.getContext())
+                    .put(gid));
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onServers(fromServers(response.optJSONArray("result")));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
+
 
     // aria2.getPeers
     public void getPeers(String gid, final IPeers handler) {

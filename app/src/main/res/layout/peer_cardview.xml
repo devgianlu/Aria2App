@@ -7,80 +7,108 @@
     android:layout_marginTop="4dp"
     app:cardCornerRadius="5dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:padding="8dp"
-        android:theme="@style/CardViewTopSection">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/peerCardView_peerId"
+        <RelativeLayout
+            android:id="@+id/peerCardView_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/peerCardView_chart"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:padding="8dp"
+            android:theme="@style/CardViewTopSection">
 
-        <TextView
-            android:id="@+id/peerCardView_fullAddr"
+            <TextView
+                android:id="@+id/peerCardView_peerId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/peerCardView_chart"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/peerCardView_fullAddr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/peerCardView_peerId"
+                android:layout_toStartOf="@+id/peerCardView_chart"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/peerCardView_downloadSpeedImage"
+                android:layout_width="16sp"
+                android:layout_height="16sp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/peerCardView_fullAddr"
+                android:layout_marginEnd="2dp"
+                android:layout_marginTop="1dp"
+                android:src="@drawable/ic_file_download_white_48dp" />
+
+            <TextView
+                android:id="@+id/peerCardView_downloadSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/peerCardView_fullAddr"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@+id/peerCardView_downloadSpeedImage"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/peerCardView_uploadSpeedImage"
+                android:layout_width="16sp"
+                android:layout_height="16sp"
+                android:layout_below="@+id/peerCardView_fullAddr"
+                android:layout_marginEnd="2dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="1dp"
+                android:layout_toEndOf="@+id/peerCardView_downloadSpeed"
+                android:src="@drawable/ic_file_upload_white_48dp" />
+
+            <TextView
+                android:id="@+id/peerCardView_uploadSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/peerCardView_fullAddr"
+                android:layout_marginEnd="8dp"
+                android:layout_toEndOf="@+id/peerCardView_uploadSpeedImage"
+                android:layout_toStartOf="@+id/peerCardView_chart"
+                android:textSize="14sp" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/peerCardView_chart"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/peerCardView_uploadSpeed"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/peerCardView_details"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/peerCardView_peerId"
-            android:layout_toStartOf="@+id/peerCardView_chart"
-            android:textSize="13sp" />
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/peerCardView_downloadSpeedImage"
-            android:layout_width="16sp"
-            android:layout_height="16sp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/peerCardView_fullAddr"
-            android:layout_marginEnd="2dp"
-            android:layout_marginTop="1dp"
-            android:src="@drawable/ic_file_download_white_48dp" />
+            <TextView
+                android:id="@+id/peerCardView_detailsAmChoking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/peerCardView_downloadSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/peerCardView_fullAddr"
-            android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@+id/peerCardView_downloadSpeedImage"
-            android:textSize="14sp" />
+            <TextView
+                android:id="@+id/peerCardView_detailsPeerChoking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/peerCardView_uploadSpeedImage"
-            android:layout_width="16sp"
-            android:layout_height="16sp"
-            android:layout_below="@+id/peerCardView_fullAddr"
-            android:layout_marginEnd="2dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="1dp"
-            android:layout_toEndOf="@+id/peerCardView_downloadSpeed"
-            android:src="@drawable/ic_file_upload_white_48dp" />
+            <TextView
+                android:id="@+id/peerCardView_detailsSeeder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/peerCardView_uploadSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/peerCardView_fullAddr"
-            android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@+id/peerCardView_uploadSpeedImage"
-            android:layout_toStartOf="@+id/peerCardView_chart"
-            android:textSize="14sp" />
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/peerCardView_chart"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/peerCardView_uploadSpeed"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true" />
-
-        <!-- TODO: expandable view-->
-    </RelativeLayout>
-
+    </LinearLayout>
 </android.support.v7.widget.CardView>
