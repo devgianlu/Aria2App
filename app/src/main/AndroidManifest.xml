@@ -74,9 +74,6 @@
             android:exported="false" />
 
         <!-- Download service -->
-        <service
-            android:name=".MoreAboutDownload.DownloadFile"
-            android:exported="false" />
 
         <!-- Google Analytics -->
         <receiver
