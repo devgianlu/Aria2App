@@ -26,8 +26,11 @@
     <string name="uploaded_length"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
     <string name="pieces"><![CDATA[<b>Pieces:</b>]]> %s</string>
     <string name="pieces_length"><![CDATA[<b>Piece length:</b>]]> %s</string>
-    <string name="connections"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
+    <string name="connections"><![CDATA[<b>Connections:</b>]]> %s</string>
+    <string name="verifyIntegrityPending"><![CDATA[<b>Integrity verification pending:</b>]]> %s</string>
+    <string name="verifiedLength"><![CDATA[<b>Verified length:</b>]]> %s</string>
     <string name="gid" translatable="false"><![CDATA[<b>GID:</b>]]> %s</string>
+    <string name="directory"><![CDATA[<b>Destination directory:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
     <string name="info_hash" translatable="false"><![CDATA[<b>InfoHash:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %s</string>
@@ -35,6 +38,8 @@
     <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
     <string name="index" translatable="false"><![CDATA[<b>Index:</b>]]> %s</string>
+    <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
+    <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
 
     <string name="selectFile">Download file</string>
     <string name="selectFileNotPaused">Download file (available only when download is paused)</string>
@@ -65,16 +70,25 @@
     <string name="updateOptions">Update options\' source file</string>
     <string name="updateOptions_summary">That file contains information about options.</string>
     <string name="unknown">Unknown</string>
+    <string name="noPeers">No peers. Swipe down to refresh</string>
+    <string name="noServers">No servers</string>
+    <string name="noServersMessage">No servers: %s</string>
     <string name="loading_downloads">Loading downloads. Please wait…</string>
     <string name="downloading_file">Downloading file…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
     <string name="processing_data">Processing some data. Please wait…</string>
+    <string name="info">Info</string>
+    <string name="files">Files</string>
     <string name="imei_box">The application need to access your phone state to retrieve information to check the license. A message box will display now.</string>
     <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
     <string name="profile_hint">My profile</string>
     <string name="mode_single">Single mode (use same address for every connection)</string>
     <string name="mode_multi">Multi mode (use different addresses for different connectivity situations)</string>
     <string name="address">Address:</string>
+    <string name="downloadIs">Download is %s</string>
+    <string name="peers">Peers</string>
+    <string name="servers">Servers</string>
+    <string name="announceList"><b>Announce list:</b></string>
     <string name="address_hint" translatable="false">127.0.0.1</string>
     <string name="port">Port:</string>
     <string name="move_up">Move up in queue</string>

@@ -24,6 +24,8 @@ public class JTA2 {
 
     // Caster
     private Map<String, String> fromOptions(JSONObject jResult) throws JSONException {
+        if (jResult == null) return null;
+
         Iterator<?> keys = jResult.keys();
 
         Map<String, String> options = new HashMap<>();
@@ -35,8 +37,9 @@ public class JTA2 {
 
         return options;
     }
-
     private List<String> fromMethods(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
         List<String> methods = new ArrayList<>();
 
         for (int i = 0; i < jResult.length(); i++) {
@@ -45,6 +48,42 @@ public class JTA2 {
 
         return methods;
     }
+
+    private List<Peer> fromPeers(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
+        List<Peer> peers = new ArrayList<>();
+
+        for (int i = 0; i < jResult.length(); i++) {
+            peers.add(Peer.fromJSON(jResult.getJSONObject(i)));
+        }
+
+        return peers;
+    }
+
+    private Map<Integer, List<Server>> fromServers(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
+        Map<Integer, List<Server>> list = new HashMap<>();
+
+        for (int i = 0; i < jResult.length(); i++) {
+            JSONObject jServer = jResult.getJSONObject(i);
+
+            int index = jServer.getInt("index");
+
+            JSONArray _servers = jServer.getJSONArray("servers");
+
+            List<Server> servers = new ArrayList<>();
+            for (int ii = 0; ii < _servers.length(); ii++) {
+                servers.add(Server.fromJSON(_servers.getJSONObject(i)));
+            }
+            list.put(index, servers);
+        }
+
+
+        return list;
+    }
+
 
     // Requests
     //aria2.addUri
@@ -211,7 +250,7 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onDownload(Download.fromString(response.getJSONObject("result")));
+                handler.onDownload(Download.fromJSON(response.getJSONObject("result")));
             }
 
             @Override
@@ -241,7 +280,7 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onStats(GlobalStats.fromString(response.getJSONObject("result")));
+                handler.onStats(GlobalStats.fromJSON(response.getJSONObject("result")));
             }
 
             @Override
@@ -275,7 +314,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromString(jResult.getJSONObject(c)));
+                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -315,7 +354,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromString(jResult.getJSONObject(c)));
+                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -355,7 +394,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromString(jResult.getJSONObject(c)));
+                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -734,7 +773,74 @@ public class JTA2 {
         });
     }
 
-    //system.listMethods
+    // aria2.getServers
+    public void getServers(String gid, final IServers handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getServers");
+            request.put("params", Utils.readyParams(webSocketing.getContext())
+                    .put(gid));
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onServers(fromServers(response.optJSONArray("result")));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                if (code == 1 && reason.startsWith("No active download")) {
+                    handler.onDownloadNotActive(new Aria2Exception(reason, code));
+                } else {
+                    handler.onException(new Aria2Exception(reason, code));
+                }
+            }
+        });
+    }
+
+
+    // aria2.getPeers
+    public void getPeers(String gid, final IPeers handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getPeers");
+            request.put("params", Utils.readyParams(webSocketing.getContext())
+                    .put(gid));
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onPeers(fromPeers(response.optJSONArray("result")));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
+
+    // system.listMethods
     public void listMethods(final IMethod handler) {
         JSONObject request;
         try {

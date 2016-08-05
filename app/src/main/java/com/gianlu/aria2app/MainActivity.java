@@ -22,12 +22,12 @@ import android.widget.ExpandableListView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.gianlu.aria2app.DownloadsListing.LoadDownloads;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -54,13 +54,17 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// TODO: Basic functionalities (such as version and shutdown)
+// TODO: Check functionalities (if support Metalink... etc)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private List<Download.STATUS> filtered = new ArrayList<>();
     private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
+    // private boolean isFirstUpdate = true;
     private LoadDownloads loadDownloads;
     private Timer reloadDownloadsListTimer;
+    private MainCardAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,22 +96,26 @@ public class MainActivity extends AppCompatActivity {
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
+
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pd.show();
+                        if (!isFinishing()) pd.show();
                     }
                 });
             }
 
             @Override
             public void onLoaded(List<Download> downloads) {
-                final MainCardAdapter adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
+                // isFirstUpdate = false;
+
+                adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
                     public void onClick(View view, int position, Download item) {
                         Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                .putExtra("gid", item.GID)
+                                .putExtra("gid", item.gid)
                                 .putExtra("name", item.getName())
+                                .putExtra("isTorrent", item.isBitTorrent)
                                 .putExtra("status", item.status.name());
                         if (!(item.status.equals(Download.STATUS.UNKNOWN) || item.status.equals(Download.STATUS.ERROR)))
                             MainActivity.this.startActivity(launchActivity);
@@ -137,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
                         switch (action) {
                             case PAUSE:
-                                downloadAction.pause(MainActivity.this, item.GID, new DownloadAction.IPause() {
+                                downloadAction.pause(MainActivity.this, item.gid, new DownloadAction.IPause() {
                                     @Override
                                     public void onPaused(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.PAUSED, gid);
@@ -150,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case REMOVE:
-                                downloadAction.remove(MainActivity.this, item.GID, item.status, new DownloadAction.IRemove() {
+                                downloadAction.remove(MainActivity.this, item.gid, item.status, new DownloadAction.IRemove() {
                                     @Override
                                     public void onRemoved(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.REMOVED, gid);
@@ -171,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case RESTART:
-                                downloadAction.restart(item.GID, new DownloadAction.IRestart() {
+                                downloadAction.restart(item.gid, new DownloadAction.IRestart() {
                                     @Override
                                     public void onRestarted(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESTARTED);
@@ -194,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case RESUME:
-                                downloadAction.unpause(item.GID, new DownloadAction.IUnpause() {
+                                downloadAction.unpause(item.gid, new DownloadAction.IUnpause() {
                                     @Override
                                     public void onUnpaused(String gid) {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESUMED, gid);
@@ -207,10 +215,10 @@ public class MainActivity extends AppCompatActivity {
                                 });
                                 break;
                             case MOVE_DOWN:
-                                downloadAction.moveDown(item.GID, iMove);
+                                downloadAction.moveDown(item.gid, iMove);
                                 break;
                             case MOVE_UP:
-                                downloadAction.moveUp(item.GID, iMove);
+                                downloadAction.moveUp(item.gid, iMove);
                                 break;
                         }
                     }
@@ -237,7 +245,8 @@ public class MainActivity extends AppCompatActivity {
                                 if (getIntent().getStringExtra("gid") != null) {
                                     Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
                                     Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                            .putExtra("gid", item.GID)
+                                            .putExtra("gid", item.gid)
+                                            .putExtra("isTorrent", item.isBitTorrent)
                                             .putExtra("status", item.status.name())
                                             .putExtra("name", item.getName());
 
@@ -249,6 +258,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+
+            /*
+            @Override
+            public void onPartialUpdate(final List<Download> downloads) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.onPartialUpdate(downloads);
+                    }
+                });
+            }
+            */
 
             @Override
             public void onException(boolean queuing, Exception ex) {
@@ -327,29 +348,24 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         final FloatingActionsMenu fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
         assert fabMenu != null;
         fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
-                findViewById(R.id.main_opaqueMask).setVisibility(View.VISIBLE);
+                View mask = findViewById(R.id.main_opaqueMask);
+                assert mask != null;
+                mask.setVisibility(View.VISIBLE);
+                mask.setClickable(true);
             }
 
             @Override
             public void onMenuCollapsed() {
-                findViewById(R.id.main_opaqueMask).setVisibility(View.GONE);
-            }
-        });
-        // TODO: Check things
-        mainRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                int threshold = 10;
-
-                if (dy > threshold)
-                    fabMenu.setVisibility(View.GONE);
-                else if (dy < threshold)
-                    fabMenu.setVisibility(View.VISIBLE);
+                View mask = findViewById(R.id.main_opaqueMask);
+                assert mask != null;
+                mask.setVisibility(View.GONE);
+                mask.setClickable(false);
             }
         });
 
@@ -378,9 +394,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        loadDownloads = new LoadDownloads(this, loadingHandler);
-        new Thread(loadDownloads).start();
-
         if (autoReloadDownloadsListRate != 0) {
             reloadDownloadsListTimer = new Timer(false);
             reloadDownloadsListTimer.schedule(new TimerTask() {
@@ -395,6 +408,9 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }, 1000, autoReloadDownloadsListRate);
+        } else {
+            loadDownloads = new LoadDownloads(this, loadingHandler);
+            new Thread(loadDownloads).start();
         }
 
         if (enableNotifications) {
@@ -414,14 +430,12 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_filters, menu.findItem(R.id.a2menu_filtering).getSubMenu());
         return true;
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (reloadDownloadsListTimer != null) reloadDownloadsListTimer.cancel();
         finishActivity(0);
     }
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -432,7 +446,6 @@ public class MainActivity extends AppCompatActivity {
     public void reloadPage() {
         reloadPage(null);
     }
-
     public void reloadPage(final IThread handler) {
         UpdateUI.stop(updateUI, new IThread() {
             @Override

@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadAction;
-import com.gianlu.aria2app.DownloadsListing.Charting;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -34,13 +33,15 @@ import java.util.Locale;
 
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private Activity context;
-    private List<Download> objs = new ArrayList<>();
+    private List<Download> objs;
+    private List<String> objs_gids = new ArrayList<>();
     private IActionMore actionMore;
     private IMenuSelected actionMenu;
 
     public MainCardAdapter(Activity context, List<Download> objs, IActionMore actionMore, IMenuSelected actionMenu) {
         this.context = context;
         this.objs = objs;
+        for (Download d : objs) objs_gids.add(d.gid);
         this.actionMore = actionMore;
         this.actionMenu = actionMenu;
     }
@@ -133,11 +134,45 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
     public Download getItem(String gid) {
         for (Download download : objs) {
-            if (download.GID.equals(gid)) return download;
+            if (download.gid.equals(gid)) return download;
         }
 
         return null;
     }
+
+    /**
+     * public void onPartialUpdate(List<Download> downloads) {
+     * List<String> newGids = new ArrayList<>();
+     * for (Download d : downloads) newGids.add(d.gid);
+     * <p/>
+     * for (String newGid : newGids) {
+     * if (!objs_gids.contains(newGid)) {
+     * for (Download newOne : downloads) {
+     * if (Objects.equals(newOne.gid, newGid)) {
+     * objs.add(newOne);
+     * notifyItemInserted(objs.size());
+     * }
+     * }
+     * }
+     * }
+     * <p/>
+     * for (String listGid : objs_gids) {
+     * if (!newGids.contains(listGid)) {
+     * for (Download removedOne : objs) {
+     * if (Objects.equals(removedOne.gid, listGid)) {
+     * int removedPosition = objs.indexOf(removedOne);
+     * <p/>
+     * objs.remove(removedOne);
+     * notifyItemRemoved(removedPosition);
+     * }
+     * }
+     * }
+     * }
+     * <p/>
+     * objs_gids.clear();
+     * for (Download d : objs) objs_gids.add(d.gid);
+     * }
+     */
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -151,21 +186,35 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         } else {
             Download item = (Download) payloads.get(0);
 
-            LineData data = holder.detailsChart.getData();
-            data.addXValue(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Charting.DOWNLOAD_SET).getEntryCount()), Charting.DOWNLOAD_SET);
-            data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Charting.UPLOAD_SET).getEntryCount()), Charting.UPLOAD_SET);
-            holder.detailsChart.notifyDataSetChanged();
-            holder.detailsChart.setVisibleXRangeMaximum(90);
-            holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+            if (item.status == Download.STATUS.ACTIVE) {
+                holder.detailsChartRefresh.setEnabled(true);
+
+                LineData data = holder.detailsChart.getData();
+                if (data == null) holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
+
+                if (data != null) {
+                    data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                    data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+
+                    holder.detailsChart.notifyDataSetChanged();
+                    holder.detailsChart.setVisibleXRangeMaximum(90);
+                    holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+                }
+            } else {
+                holder.detailsChartRefresh.setEnabled(false);
+
+                holder.detailsChart.clear();
+                holder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
+            }
 
             holder.donutProgress.setProgress(item.getProgress().intValue());
             holder.downloadName.setText(item.getName());
-            holder.downloadStatus.setText(item.status.toString());
-            holder.downloadSpeed.setText(Utils.SpeedFormatter(item.downloadSpeed));
-            holder.downloadMissingTime.setText(Utils.TimeFormatter(item.getMissingTime()));
-            holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.DimensionFormatter(item.completedLength))));
-            holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.DimensionFormatter(item.uploadedLength))));
+            holder.downloadStatus.setText(item.status.getFormal(context, true));
+            holder.downloadSpeed.setText(Utils.speedFormatter(item.downloadSpeed));
+            holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
+            holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
+            holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength))));
         }
     }
 
@@ -180,11 +229,11 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         else
             color = ContextCompat.getColor(context, R.color.colorAccent);
 
-        holder.detailsChart = Charting.setupChart(holder.detailsChart);
-        holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.GID)));
+        holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
+        holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
         holder.donutProgress.setFinishedStrokeColor(color);
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
-        holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.DimensionFormatter(item.length))));
+        holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length))));
 
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,7 +252,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.detailsChart = Charting.setupChart(holder.detailsChart);
+                holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
             }
         });
         holder.more.setOnClickListener(new View.OnClickListener() {
@@ -295,6 +344,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     @Override
     public int getItemCount() {
         return objs.size();
+    }
+
+    public List<Download> getItems() {
+        return objs;
     }
 
     public interface IActionMore {

@@ -1,17 +1,16 @@
 package com.gianlu.aria2app;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,12 +18,15 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
-import com.gianlu.aria2app.Main.IThread;
-import com.gianlu.aria2app.MoreAboutDownload.UpdateUI;
+import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
+import com.gianlu.aria2app.MoreAboutDownload.FilesPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
+import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
+import com.gianlu.aria2app.MoreAboutDownload.PeersFragment.PeersPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.ServersFragment.ServersPagerFragment;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
@@ -33,7 +35,6 @@ import com.gianlu.aria2app.Options.LocalParser;
 import com.gianlu.aria2app.Options.OptionAdapter;
 import com.gianlu.aria2app.Options.OptionChild;
 import com.gianlu.aria2app.Options.OptionHeader;
-import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
@@ -46,25 +47,131 @@ import java.util.List;
 import java.util.Map;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity {
-    private UpdateUI updateUI;
-    private String gid;
-    private Download.STATUS status;
-    private ViewHolder holder;
-    private boolean canWrite = false;
+    private Menu menu;
+    private PagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(getIntent().getBooleanExtra("isTorrent", false) ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
-
-        View root = findViewById(android.R.id.content);
-        assert root != null;
-        holder = new ViewHolder(root.getRootView());
-
-        gid = getIntent().getStringExtra("gid");
-        status = Download.STATUS.valueOf(getIntent().getStringExtra("status"));
         setTitle(getIntent().getStringExtra("name"));
 
+        final String gid = getIntent().getStringExtra("gid");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
+        assert toolbar != null;
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
+        assert pager != null;
+
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
+        assert tabLayout != null;
+
+        final List<CommonFragment> fragments = new ArrayList<>();
+        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setStatusObserver(new UpdateUI.IDownloadStatusObserver() {
+            @Override
+            public void onDownloadStatusChanged(Download.STATUS newStatus) {
+                if (menu == null) return;
+
+                // TODO
+                switch (newStatus) {
+                    case ACTIVE:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: ACTIVE
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: ACTIVE
+                                } else {
+                                    // TAB: SERVERS, STATUS: ACTIVE
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: ACTIVE
+                                break;
+                        }
+                        break;
+                    case PAUSED:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: PAUSED
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: PAUSED
+                                } else {
+                                    // TAB: SERVERS, STATUS: PAUSED
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: PAUSED
+                                break;
+                        }
+                        break;
+                    case WAITING:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: WAITING
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: WAITING
+                                } else {
+                                    // TAB: SERVERS, STATUS: WAITING
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: WAITING
+                                break;
+                        }
+                        break;
+                    case REMOVED:
+                    case ERROR:
+                    case COMPLETE:
+                        switch (tabLayout.getSelectedTabPosition()) {
+                            case 0:
+                                // TAB: INFO, STATUS: FROZEN
+                                break;
+                            case 1:
+                                if (getIntent().getBooleanExtra("isTorrent", false)) {
+                                    // TAB: PEERS, STATUS: FROZEN
+                                } else {
+                                    // TAB: SERVERS, STATUS: FROZEN
+                                }
+                                break;
+                            case 2:
+                                // TAB: FILES, STATUS: FROZEN
+                                break;
+                        }
+                        break;
+                    case UNKNOWN:
+                    default:
+                        menu.clear();
+                        break;
+                }
+            }
+        }));
+
+        if (getIntent().getBooleanExtra("isTorrent", false))
+            fragments.add(PeersPagerFragment.newInstance(getString(R.string.peers), gid));
+        else
+            fragments.add(ServersPagerFragment.newInstance(getString(R.string.servers), gid));
+
+        fragments.add(FilesPagerFragment.newInstance(getString(R.string.files), gid));
+
+        adapter = new PagerAdapter(getSupportFragmentManager(), fragments);
+        pager.setAdapter(adapter);
+
+        tabLayout.setupWithViewPager(pager);
+
+        /* TODO: Move this to download button click
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             canWrite = true;
         } else {
@@ -81,44 +188,26 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 45);
             }
         }
-
-        // Charting.newChart(chart);
-        updateUI = new UpdateUI(this, new UpdateUI.IFirstUpdate() {
-            @Override
-            public void onFirstUpdate(Download item) { /* NOT USED */}
-        }, canWrite, gid, holder);
-        new Thread(updateUI).start();
+        */
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.more_about_download, menu);
-        MenuItem item = menu.findItem(R.id.moreAboutDownloadMenu_options);
-        if (status.equals(Download.STATUS.COMPLETE) || status.equals(Download.STATUS.ERROR) || status.equals(Download.STATUS.REMOVED))
-            item.setVisible(false);
+        this.menu = menu;
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.moreAboutDownloadMenu_refresh:
-                UpdateUI.stop(updateUI, new IThread() {
-                    @Override
-                    public void stopped() {
-                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
-                        new Thread(updateUI).start();
-                    }
-                });
-                break;
             case R.id.moreAboutDownloadMenu_options:
                 showOptionsDialog();
                 break;
             case android.R.id.home:
                 onBackPressed();
                 break;
-            // TODO: Show peers
         }
 
         return super.onOptionsItemSelected(item);
@@ -126,7 +215,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        UpdateUI.stop(updateUI);
+        adapter.stopAllUpdater();
         finishActivity(0);
         super.onDestroy();
     }
@@ -140,23 +229,9 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        UpdateUI.stop(updateUI);
+        adapter.stopAllUpdater();
         finishActivity(0);
         super.onStop();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 45:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    canWrite = true;
-                } else {
-                    canWrite = false;
-                    Utils.UIToast(this, Utils.TOAST_MESSAGES.NO_WRITE_PERMISSION);
-                }
-                break;
-        }
     }
 
     private void showOptionsDialog() {
@@ -173,7 +248,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
         pd.show();
 
-        jta2.getOption(gid, new IOption() {
+        jta2.getOption("", new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
                 LocalParser localOptions;
@@ -230,7 +305,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                             .setAction(Analytics.ACTION_CHANGED_DOWNLOAD_OPTIONS)
                                             .build());
 
-                                jta2.changeOption(gid, map, new ISuccess() {
+                                jta2.changeOption("", map, new ISuccess() {
                                     @Override
                                     public void onSuccess() {
                                         pd.dismiss();
@@ -239,6 +314,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                         MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
+                                                /*
                                                 UpdateUI.stop(updateUI, new IThread() {
                                                     @Override
                                                     public void stopped() {
@@ -246,6 +322,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                                         new Thread(updateUI).start();
                                                     }
                                                 });
+                                                */
                                             }
                                         });
                                     }
@@ -265,6 +342,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                         MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                /*
                                 UpdateUI.stop(updateUI, new IThread() {
                                     @Override
                                     public void stopped() {
@@ -272,6 +350,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                         new Thread(updateUI).start();
                                     }
                                 });
+                                */
                             }
                         });
                     }
@@ -302,53 +381,5 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                 Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
         });
-    }
-
-    public class ViewHolder {
-        public LineChart chart;
-        public TextView downloadSpeed;
-        public TextView uploadSpeed;
-        public TextView time;
-        public TextView percentage;
-        public TextView completedLength;
-        public TextView totalLength;
-        public TextView uploadedLength;
-        public TextView piecesNumber;
-        public TextView piecesLength;
-        public TextView connections;
-        public TextView gid;
-        public TextView seedersNumber;
-        public RelativeLayout bitTorrentContainer;
-        public TextView bitTorrentMode;
-        public TextView bitTorrentAnnounceList;
-        public TextView infoHash;
-        public TextView seeder;
-        public TextView bitTorrentComment;
-        public TextView bitTorrentCreationDate;
-        public RelativeLayout treeNodeContainer;
-
-        public ViewHolder(View rootView) {
-            chart = (LineChart) rootView.findViewById(R.id.moreAboutDownload_chart);
-            treeNodeContainer = (RelativeLayout) rootView.findViewById(R.id.moreAboutDownload_treeViewContainer);
-            downloadSpeed = (TextView) rootView.findViewById(R.id.moreAboutDownload_downloadSpeed);
-            uploadSpeed = (TextView) rootView.findViewById(R.id.moreAboutDownload_uploadSpeed);
-            time = (TextView) rootView.findViewById(R.id.moreAboutDownload_time);
-            percentage = (TextView) rootView.findViewById(R.id.moreAboutDownload_percentage);
-            completedLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_completedLength);
-            totalLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_totalLength);
-            uploadedLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_uploadedLength);
-            piecesNumber = (TextView) rootView.findViewById(R.id.moreAboutDownload_piecesNumber);
-            piecesLength = (TextView) rootView.findViewById(R.id.moreAboutDownload_piecesLength);
-            connections = (TextView) rootView.findViewById(R.id.moreAboutDownload_connections);
-            gid = (TextView) rootView.findViewById(R.id.moreAboutDownload_gid);
-            seedersNumber = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentSeedersNumber);
-            bitTorrentContainer = (RelativeLayout) rootView.findViewById(R.id.moreAboutDownload_bitTorrentContainer);
-            bitTorrentMode = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentMode);
-            bitTorrentAnnounceList = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentAnnounceList);
-            infoHash = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentInfoHash);
-            seeder = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentSeeder);
-            bitTorrentComment = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentComment);
-            bitTorrentCreationDate = (TextView) rootView.findViewById(R.id.moreAboutDownload_bitTorrentCreationDate);
-        }
     }
 }

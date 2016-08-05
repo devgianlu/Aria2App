@@ -8,13 +8,19 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.widget.Toast;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
@@ -36,7 +42,109 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 public class Utils {
-    public static String SpeedFormatter(float v) {
+    public static final int CHART_DOWNLOAD_SET = 1;
+    public static final int CHART_UPLOAD_SET = 0;
+
+    public static LineChart setupChart(LineChart chart, boolean isCardView) {
+        chart.clear();
+
+        chart.setDescription("");
+        chart.setDrawGridBackground(false);
+        chart.setBackgroundColor(Color.alpha(0));
+        chart.setTouchEnabled(false);
+        Legend l = chart.getLegend();
+        l.setCustom(
+                new int[]{ContextCompat.getColor(chart.getContext(), R.color.downloadColor), ContextCompat.getColor(chart.getContext(), R.color.uploadColor)},
+                new String[]{chart.getContext().getString(R.string.downloadSpeed), chart.getContext().getString(R.string.uploadSpeed)});
+        l.setEnabled(true);
+
+        LineData data = new LineData();
+        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
+        chart.setData(data);
+
+        YAxis ya = chart.getAxisLeft();
+        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
+        ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
+        ya.setTextSize(isCardView ? 8 : 9);
+        ya.setDrawAxisLine(false);
+        ya.setLabelCount(isCardView ? 4 : 8, true);
+        ya.setEnabled(true);
+        ya.setAxisMinValue(0f);
+        ya.setDrawGridLines(true);
+        ya.setValueFormatter(new CustomYAxisValueFormatter());
+
+        chart.getAxisRight().setEnabled(false);
+        XAxis xa = chart.getXAxis();
+        xa.setEnabled(!isCardView);
+        if (!isCardView) {
+            xa.setDrawGridLines(false);
+            xa.setTextSize(9);
+        }
+
+        data.addDataSet(initUploadSet(chart.getContext(), 2f));
+        data.addDataSet(initDownloadSet(chart.getContext(), 2f));
+
+        return chart;
+    }
+
+    public static LineChart setupPeerChart(LineChart chart) {
+        chart.clear();
+
+        chart.setDescription("");
+        chart.setDrawGridBackground(false);
+        chart.setBackgroundColor(Color.alpha(0));
+        chart.setTouchEnabled(false);
+        chart.getLegend().setEnabled(false);
+
+        LineData data = new LineData();
+        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        chart.setData(data);
+
+        YAxis ya = chart.getAxisLeft();
+        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        ya.setTextSize(8);
+        ya.setDrawAxisLine(false);
+        ya.setLabelCount(3, true);
+        ya.setEnabled(true);
+        ya.setAxisMinValue(0f);
+        ya.setDrawGridLines(true);
+        ya.setValueFormatter(new CustomYAxisValueFormatter());
+
+        chart.getAxisRight().setEnabled(false);
+        chart.getXAxis().setEnabled(false);
+
+        data.addDataSet(initUploadSet(chart.getContext(), 1f));
+        data.addDataSet(initDownloadSet(chart.getContext(), 1f));
+
+        return chart;
+    }
+
+    public static LineDataSet initDownloadSet(Context context, float lineWidth) {
+        LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setLineWidth(lineWidth);
+        set.setColor(ContextCompat.getColor(context, R.color.downloadColor));
+        set.setDrawCircles(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setDrawFilled(false);
+        return set;
+    }
+
+    public static LineDataSet initUploadSet(Context context, float lineWidth) {
+        LineDataSet set = new LineDataSet(null, context.getString(R.string.uploadSpeed));
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setLineWidth(lineWidth);
+        set.setColor(ContextCompat.getColor(context, R.color.uploadColor));
+        set.setDrawCircles(false);
+        set.setDrawValues(false);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setDrawFilled(false);
+        return set;
+    }
+
+    public static String speedFormatter(float v) {
         if (v <= 0) {
             return "0 B/s";
         } else {
@@ -45,7 +153,8 @@ public class Utils {
             return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
         }
     }
-    public static String DimensionFormatter(float v) {
+
+    public static String dimensionFormatter(float v) {
         if (v <= 0) {
             return "0 B";
         } else {
@@ -55,7 +164,7 @@ public class Utils {
         }
     }
 
-    public static String TimeFormatter(Long sec) {
+    public static String timeFormatter(Long sec) {
         if (sec == null) return "∞";
 
         int day = (int) TimeUnit.SECONDS.toDays(sec);
@@ -89,21 +198,36 @@ public class Utils {
         }
     }
 
-    @Nullable
-    public static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return null;
+    public static boolean[] bitfieldProcessor(int numPieces, String bitfield) {
+        boolean[] pieces = new boolean[numPieces];
+        int numTotal = 0;
+
+        for (String _byte : splitStringEvery(bitfield, 2)) {
+            String[] _bits = splitStringEvery(String.format("%8s", Integer.toBinaryString(Integer.parseInt(_byte, 16))).replace(' ', '0'), 1);
+            for (String _bit : _bits) {
+                if (numTotal == numPieces) return pieces;
+
+                pieces[numTotal] = Integer.parseInt(_bit) != 0;
+                numTotal++;
+            }
         }
+
+        return pieces;
     }
-    @Nullable
-    public static Boolean parseBoolean(String val) {
-        try {
-            return Boolean.parseBoolean(val);
-        } catch (Exception ex) {
-            return false;
+
+    public static String[] splitStringEvery(String s, int interval) {
+        int arrayLength = (int) Math.ceil(((s.length() / (double) interval)));
+        String[] result = new String[arrayLength];
+
+        int j = 0;
+        int lastIndex = result.length - 1;
+        for (int i = 0; i < lastIndex; i++) {
+            result[i] = s.substring(j, j + interval);
+            j += interval;
         }
+        result[lastIndex] = s.substring(j);
+
+        return result;
     }
 
     public static String colorToHex(Context context, @ColorRes int colorRes) {
@@ -124,6 +248,7 @@ public class Utils {
                     .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         }
     }
+
     public static WebSocket readyWebSocket(boolean isSSL, String url) throws NoSuchAlgorithmException, IOException {
         if (isSSL) {
             WebSocketFactory factory = new WebSocketFactory();
@@ -133,6 +258,7 @@ public class Utils {
             return new WebSocketFactory().createSocket(url.replace("http://", "ws://"), 5000);
         }
     }
+
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean("a2_serverSSL", false)) {
@@ -162,6 +288,7 @@ public class Utils {
         pd.setCancelable(cancelable);
         return pd;
     }
+
     public static ProgressDialog fastProgressDialog(Context context, int message, boolean indeterminate, boolean cancelable) {
         return fastProgressDialog(context, "", context.getString(message), indeterminate, cancelable);
     }
@@ -175,6 +302,7 @@ public class Utils {
 
         return array;
     }
+
     public static JSONObject readyRequest() throws JSONException {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(2000)));
     }
@@ -186,6 +314,7 @@ public class Utils {
     public static void UIToast(final Activity context, final String text) {
         UIToast(context, text, Toast.LENGTH_SHORT);
     }
+
     public static void UIToast(final Activity context, final String text, final int duration) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -194,6 +323,7 @@ public class Utils {
             }
         });
     }
+
     public static void UIToast(final Activity context, final String text, final int duration, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -203,6 +333,7 @@ public class Utils {
         });
         context.runOnUiThread(extra);
     }
+
     public static void UIToast(final Activity context, final TOAST_MESSAGES message) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -212,6 +343,7 @@ public class Utils {
         });
         LogMe(context, message.toString(), message.isError());
     }
+
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -234,6 +366,7 @@ public class Utils {
         LogMe(context, message + " Details: " + exception.getMessage(), message.isError());
         SecretLog(context, exception);
     }
+
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -257,6 +390,7 @@ public class Utils {
         LogMe(context, message + " Details: " + exception.getMessage(), message.isError());
         SecretLog(context, exception);
     }
+
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, Runnable extra) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -282,6 +416,7 @@ public class Utils {
             UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
         }
     }
+
     public static void LogMe(Activity context, String message, boolean isError) {
         try {
             FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".log", Context.MODE_APPEND);
@@ -294,7 +429,6 @@ public class Utils {
             UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
         }
     }
-
     public enum TOAST_MESSAGES {
         /* WebSocket */
         WS_OPENED("WebSocket connected!", false),
@@ -302,9 +436,6 @@ public class Utils {
         WS_EXCEPTION("WebSocket exception!", true),
         /* Gathering information */
         FAILED_GATHERING_INFORMATION("Failed on gathering information!", true),
-        FILE_DOWNLOAD_COMPLETED("Download complete!", false),
-        FILE_DOWNLOAD_FAILED("Download failed!", true),
-        FILE_DOWNLOAD_USER_STOPPED("User stopped the download!", false),
         /* Actions on downloads */
         PAUSED("Download paused.", false),
         REMOVED("Download removed.", false),
@@ -318,13 +449,7 @@ public class Utils {
         FAILED_REMOVE_RESULT("Failed to remove download's result!", true),
         FAILED_ADD_DOWNLOAD("Failed to add new download!", true),
         FAILED_CHANGE_OPTIONS("Failed to change options for download!", true),
-        FILE_INCLUDED("File included!", false),
-        FILE_EXCLUDED("File excluded!", false),
-        FAILED_INCEXCFILE("Failed including/excluding file!", true),
         DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
-        FILES_INCLUDED("Files included!", false),
-        FILES_EXCLUDED("Files excluded!", false),
-        FAILED_INCEXCFILES("Failed including/excluding files!", true),
         FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
         /* Application */
         UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
@@ -345,10 +470,7 @@ public class Utils {
         MUST_PICK_DEFAULT("You must select one profile as default!", false),
         INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
         INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
-        CANNOT_START_DOWNLOAD("Cannot start download!", true),
-        NO_WRITE_PERMISSION("You denied write permission!", true),
         CANT_VERIFY_LICENSE("Can't verify Google license!", true),
-        ANOTHER_DOWNLOAD_RUNNING("Another file is current downloading! Please wait...", false),
         CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
         SOURCE_REFRESHED("Source file for options refreshed!", false);
 
@@ -364,8 +486,16 @@ public class Utils {
         public String toString() {
             return text;
         }
+
         public boolean isError() {
             return isError;
+        }
+    }
+
+    public static class CustomYAxisValueFormatter implements YAxisValueFormatter {
+        @Override
+        public String getFormattedValue(float v, YAxis yAxis) {
+            return Utils.speedFormatter(v);
         }
     }
 }

@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/moreAboutDownloadMenu_refresh"
-        android:title="@string/menu_refreshPage"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/moreAboutDownloadMenu_options"
         android:title="@string/menu_downloadOptions"
         app:showAsAction="never" />

@@ -50,7 +50,8 @@
         <!-- More about download activity -->
         <activity
             android:name=".MoreAboutDownloadActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Settings activity -->
         <activity
@@ -73,9 +74,6 @@
             android:exported="false" />
 
         <!-- Download service -->
-        <service
-            android:name=".MoreAboutDownload.DownloadFile"
-            android:exported="false" />
 
         <!-- Google Analytics -->
         <receiver

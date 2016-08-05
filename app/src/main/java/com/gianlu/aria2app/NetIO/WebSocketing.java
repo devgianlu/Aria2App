@@ -40,6 +40,7 @@ public class WebSocketing extends WebSocketAdapter {
         return webSocketing;
     }
 
+    // TODO: Implement partial update
     public static void enableEventManager(final MainActivity mainActivity) throws IOException, NoSuchAlgorithmException {
         if (mainActivity == null) return;
 
@@ -67,7 +68,6 @@ public class WebSocketing extends WebSocketAdapter {
             socket.sendText(request.toString());
         } catch (JSONException ex) {
             handler.onException(false, ex);
-        } catch (Exception ignored) {
         }
     }
 

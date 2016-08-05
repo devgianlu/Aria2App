@@ -1,5 +1,12 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -21,6 +28,37 @@ public class File {
         this.uris = uris;
     }
 
+    private File() {
+    }
+
+    @Nullable
+    private static Integer parseInt(String val) {
+        try {
+            return Integer.parseInt(val);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    @Nullable
+    private static Long parseLong(String val) {
+        try {
+            return Long.parseLong(val);
+        } catch (Exception ex) {
+            return 0L;
+        }
+    }
+
+    @NonNull
+    private static Boolean parseBoolean(String val) {
+        try {
+            return Boolean.parseBoolean(val);
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+
     public static URI_STATUS uriStatusFromString(String status) {
         if (status == null) return URI_STATUS.WAITING;
         switch (status.toLowerCase()) {
@@ -31,6 +69,27 @@ public class File {
             default:
                 return URI_STATUS.WAITING;
         }
+    }
+
+    public static File fromJSON(JSONObject obj) {
+        if (obj == null) return null;
+
+        File file = new File();
+        file.index = parseInt(obj.optString("index"));
+        file.path = obj.optString("path");
+        file.length = parseLong(obj.optString("length"));
+        file.completedLength = parseLong(obj.optString("completedLength"));
+        file.selected = parseBoolean(obj.optString("selected"));
+        file.uris = new HashMap<>();
+
+        if (!obj.isNull("uris")) {
+            JSONArray array = obj.optJSONArray("uris");
+
+            for (int i = 0; i < array.length(); i++)
+                file.uris.put(uriStatusFromString(array.optJSONObject(i).optString("status")), array.optJSONObject(i).optString("uri"));
+        }
+
+        return file;
     }
 
     public String getName() {
@@ -54,7 +113,6 @@ public class File {
             return "/" + relPath;
     }
 
-    // Uris
     public enum URI_STATUS {
         USED,
         WAITING
