@@ -67,6 +67,7 @@ public class WebSocketing extends WebSocketAdapter {
             socket.sendText(request.toString());
         } catch (JSONException ex) {
             handler.onException(false, ex);
+        } catch (Exception ignored) {
         }
     }
 

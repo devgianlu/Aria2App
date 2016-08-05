@@ -399,11 +399,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (enableNotifications) {
             Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("a2_profileName", ""));
-            if (startNotification != null) {
+            if (startNotification != null)
                 startService(startNotification);
-            } else {
+            else
                 Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, "NULL notification intent");
-            }
         } else {
             stopService(new Intent(this, NotificationWebSocketService.class));
         }

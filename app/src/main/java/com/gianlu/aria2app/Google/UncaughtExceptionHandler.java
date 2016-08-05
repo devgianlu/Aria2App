@@ -62,7 +62,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                builder.create().show();
+                if (!context.isFinishing())
+                    builder.create().show();
             }
         });
     }
