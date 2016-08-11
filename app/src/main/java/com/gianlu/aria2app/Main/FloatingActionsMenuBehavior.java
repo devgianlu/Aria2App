@@ -9,16 +9,15 @@ import android.view.View;
 
 @SuppressLint("unused")
 public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
-
     public FloatingActionsMenuBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    // TODO: A bit bugged
     private static void kickOut(View fab) {
         fab.setTag(false);
         fab.animate()
-                .translationYBy(400)
+                .scaleX(0)
+                .scaleY(0)
                 .setDuration(150)
                 .start();
     }
@@ -26,7 +25,8 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
     private static void kickIn(View fab) {
         fab.setTag(true);
         fab.animate()
-                .translationYBy(-400)
+                .scaleX(fab.getMeasuredWidth()) /* TODO: Probably not the way to be done */
+                .scaleY(fab.getMeasuredHeight())
                 .setDuration(150)
                 .start();
     }

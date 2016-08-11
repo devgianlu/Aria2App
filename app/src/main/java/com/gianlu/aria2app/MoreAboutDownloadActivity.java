@@ -48,6 +48,7 @@ import java.util.Map;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity {
     private Menu menu;
+    private Download.STATUS lastStatus = Download.STATUS.UNKNOWN;
     private PagerAdapter adapter;
 
     @Override
@@ -77,85 +78,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setStatusObserver(new UpdateUI.IDownloadStatusObserver() {
             @Override
             public void onDownloadStatusChanged(Download.STATUS newStatus) {
-                if (menu == null) return;
-
-                // TODO
-                switch (newStatus) {
-                    case ACTIVE:
-                        switch (tabLayout.getSelectedTabPosition()) {
-                            case 0:
-                                // TAB: INFO, STATUS: ACTIVE
-                                break;
-                            case 1:
-                                if (getIntent().getBooleanExtra("isTorrent", false)) {
-                                    // TAB: PEERS, STATUS: ACTIVE
-                                } else {
-                                    // TAB: SERVERS, STATUS: ACTIVE
-                                }
-                                break;
-                            case 2:
-                                // TAB: FILES, STATUS: ACTIVE
-                                break;
-                        }
-                        break;
-                    case PAUSED:
-                        switch (tabLayout.getSelectedTabPosition()) {
-                            case 0:
-                                // TAB: INFO, STATUS: PAUSED
-                                break;
-                            case 1:
-                                if (getIntent().getBooleanExtra("isTorrent", false)) {
-                                    // TAB: PEERS, STATUS: PAUSED
-                                } else {
-                                    // TAB: SERVERS, STATUS: PAUSED
-                                }
-                                break;
-                            case 2:
-                                // TAB: FILES, STATUS: PAUSED
-                                break;
-                        }
-                        break;
-                    case WAITING:
-                        switch (tabLayout.getSelectedTabPosition()) {
-                            case 0:
-                                // TAB: INFO, STATUS: WAITING
-                                break;
-                            case 1:
-                                if (getIntent().getBooleanExtra("isTorrent", false)) {
-                                    // TAB: PEERS, STATUS: WAITING
-                                } else {
-                                    // TAB: SERVERS, STATUS: WAITING
-                                }
-                                break;
-                            case 2:
-                                // TAB: FILES, STATUS: WAITING
-                                break;
-                        }
-                        break;
-                    case REMOVED:
-                    case ERROR:
-                    case COMPLETE:
-                        switch (tabLayout.getSelectedTabPosition()) {
-                            case 0:
-                                // TAB: INFO, STATUS: FROZEN
-                                break;
-                            case 1:
-                                if (getIntent().getBooleanExtra("isTorrent", false)) {
-                                    // TAB: PEERS, STATUS: FROZEN
-                                } else {
-                                    // TAB: SERVERS, STATUS: FROZEN
-                                }
-                                break;
-                            case 2:
-                                // TAB: FILES, STATUS: FROZEN
-                                break;
-                        }
-                        break;
-                    case UNKNOWN:
-                    default:
-                        menu.clear();
-                        break;
-                }
+                lastStatus = newStatus;
+                menuAdapter(tabLayout.getSelectedTabPosition(), newStatus);
             }
         }));
 
@@ -170,6 +94,22 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         pager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(pager);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                menuAdapter(tab.getPosition(), lastStatus);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         /* TODO: Move this to download button click
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -189,6 +129,95 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             }
         }
         */
+    }
+
+    private void menuAdapter(int tabPosition, Download.STATUS status) {
+        if (menu == null) return;
+
+        switch (status) {
+            case ACTIVE:
+                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
+
+                switch (tabPosition) {
+                    case 0:
+                        // TAB: INFO, STATUS: ACTIVE
+                        break;
+                    case 1:
+                        if (getIntent().getBooleanExtra("isTorrent", false)) {
+                            // TAB: PEERS, STATUS: ACTIVE
+                        } else {
+                            // TAB: SERVERS, STATUS: ACTIVE
+                        }
+                        break;
+                    case 2:
+                        // TAB: FILES, STATUS: ACTIVE
+                        break;
+                }
+                break;
+            case PAUSED:
+                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
+
+                switch (tabPosition) {
+                    case 0:
+                        // TAB: INFO, STATUS: PAUSED
+                        break;
+                    case 1:
+                        if (getIntent().getBooleanExtra("isTorrent", false)) {
+                            // TAB: PEERS, STATUS: PAUSED
+                        } else {
+                            // TAB: SERVERS, STATUS: PAUSED
+                        }
+                        break;
+                    case 2:
+                        // TAB: FILES, STATUS: PAUSED
+                        break;
+                }
+                break;
+            case WAITING:
+                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
+
+                switch (tabPosition) {
+                    case 0:
+                        // TAB: INFO, STATUS: WAITING
+                        break;
+                    case 1:
+                        if (getIntent().getBooleanExtra("isTorrent", false)) {
+                            // TAB: PEERS, STATUS: WAITING
+                        } else {
+                            // TAB: SERVERS, STATUS: WAITING
+                        }
+                        break;
+                    case 2:
+                        // TAB: FILES, STATUS: WAITING
+                        break;
+                }
+                break;
+            case REMOVED:
+            case ERROR:
+            case COMPLETE:
+                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(false);
+
+                switch (tabPosition) {
+                    case 0:
+                        // TAB: INFO, STATUS: FROZEN
+                        break;
+                    case 1:
+                        if (getIntent().getBooleanExtra("isTorrent", false)) {
+                            // TAB: PEERS, STATUS: FROZEN
+                        } else {
+                            // TAB: SERVERS, STATUS: FROZEN
+                        }
+                        break;
+                    case 2:
+                        // TAB: FILES, STATUS: FROZEN
+                        break;
+                }
+                break;
+            case UNKNOWN:
+            default:
+                menu.clear();
+                break;
+        }
     }
 
     @Override

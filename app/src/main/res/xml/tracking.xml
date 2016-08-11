@@ -15,6 +15,7 @@
     <screenName name="com.gianlu.aria2app.TerminalActivity">Screen~Terminal</screenName>
     <screenName name="com.gianlu.aria2app.SelectProfile.AddProfileActivity">Screen~AddProfile
     </screenName>
-    <screenName name="com.gianlu.aria2app.Main.AddDownloadActivity">Screen~AddDownload</screenName>
+    <screenName name="com.gianlu.aria2app.Main.AddURIActivity">Screen~AddURI</screenName>
+    <screenName name="com.gianlu.aria2app.Main.AddTorrentActivity">Screen~AddTorrent</screenName>
     <screenName name="com.gianlu.aria2app.MainSettingsActivity">Screen~Settings</screenName>
 </resources>
