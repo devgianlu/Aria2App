@@ -15,18 +15,18 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
 
     private static void kickOut(View fab) {
         fab.setTag(false);
+
         fab.animate()
-                .scaleX(0)
-                .scaleY(0)
+                .translationY(fab.getHeight())
                 .setDuration(150)
                 .start();
     }
 
     private static void kickIn(View fab) {
         fab.setTag(true);
+
         fab.animate()
-                .scaleX(fab.getMeasuredWidth()) /* TODO: Probably not the way to be done */
-                .scaleY(fab.getMeasuredHeight())
+                .translationY(0)
                 .setDuration(150)
                 .start();
     }
