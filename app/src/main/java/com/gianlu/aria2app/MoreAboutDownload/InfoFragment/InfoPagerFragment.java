@@ -16,6 +16,7 @@ import com.github.mikephil.charting.charts.LineChart;
 
 public class InfoPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
+    private UpdateUI.IDownloadStatusObserver pendingObserver;
     private ViewHolder holder;
 
     public static InfoPagerFragment newInstance(String title, String gid) {
@@ -30,13 +31,18 @@ public class InfoPagerFragment extends CommonFragment {
     }
 
     public InfoPagerFragment setStatusObserver(UpdateUI.IDownloadStatusObserver observer) {
-        updateUI.setStatusObserver(observer);
+        if (updateUI == null)
+            pendingObserver = observer;
+        else
+            updateUI.setStatusObserver(observer);
+
         return this;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), holder);
+        if (pendingObserver != null) updateUI.setStatusObserver(pendingObserver);
         new Thread(updateUI).start();
     }
 
