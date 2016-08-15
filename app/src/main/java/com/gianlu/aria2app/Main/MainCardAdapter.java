@@ -184,6 +184,9 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
             holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
             holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
             holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength))));
+
+            if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
+                holder.more.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -308,6 +311,9 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 popupMenu.show();
             }
         });
+
+        if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
+            holder.more.setVisibility(View.INVISIBLE);
     }
 
     @Override
