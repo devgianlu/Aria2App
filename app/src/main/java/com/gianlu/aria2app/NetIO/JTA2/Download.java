@@ -108,6 +108,11 @@ public class Download {
             download.bitTorrent = BitTorrent.fromJSON(jResult.optJSONObject("bittorrent"));
         }
 
+        if (!jResult.isNull("errorCode")) {
+            download.errorCode = parseInt(jResult.optString("errorCode"));
+            download.errorMessage = jResult.optString("errorMessage");
+        }
+
         return download;
     }
 

@@ -140,40 +140,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         return null;
     }
 
-    /**
-     * public void onPartialUpdate(List<Download> downloads) {
-     * List<String> newGids = new ArrayList<>();
-     * for (Download d : downloads) newGids.add(d.gid);
-     * <p/>
-     * for (String newGid : newGids) {
-     * if (!objs_gids.contains(newGid)) {
-     * for (Download newOne : downloads) {
-     * if (Objects.equals(newOne.gid, newGid)) {
-     * objs.add(newOne);
-     * notifyItemInserted(objs.size());
-     * }
-     * }
-     * }
-     * }
-     * <p/>
-     * for (String listGid : objs_gids) {
-     * if (!newGids.contains(listGid)) {
-     * for (Download removedOne : objs) {
-     * if (Objects.equals(removedOne.gid, listGid)) {
-     * int removedPosition = objs.indexOf(removedOne);
-     * <p/>
-     * objs.remove(removedOne);
-     * notifyItemRemoved(removedPosition);
-     * }
-     * }
-     * }
-     * }
-     * <p/>
-     * objs_gids.clear();
-     * for (Download d : objs) objs_gids.add(d.gid);
-     * }
-     */
-
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new CardViewHolder(LayoutInflater.from(context).inflate(R.layout.download_cardview, parent, false));
@@ -210,7 +176,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
             holder.donutProgress.setProgress(item.getProgress().intValue());
             holder.downloadName.setText(item.getName());
-            holder.downloadStatus.setText(item.status.getFormal(context, true));
+            if (item.status == Download.STATUS.ERROR)
+                holder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
+            else
+                holder.downloadStatus.setText(item.status.getFormal(context, true));
             holder.downloadSpeed.setText(Utils.speedFormatter(item.downloadSpeed));
             holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
             holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));

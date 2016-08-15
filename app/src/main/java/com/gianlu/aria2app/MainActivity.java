@@ -56,6 +56,7 @@ import java.util.TimerTask;
 
 // TODO: Basic functionalities (such as version and shutdown)
 // TODO: Check functionalities (if support Metalink... etc)
+// TODO: ServerStatusListener, it got checked before every request and (as a listener) show a dialog on thing happens (may receive calls from requester itself to avoit too frequent 'control' requests)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private List<Download.STATUS> filtered = new ArrayList<>();
