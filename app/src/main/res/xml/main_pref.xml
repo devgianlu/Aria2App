@@ -30,13 +30,6 @@
             android:summaryOff="@string/forceActionOff"
             android:summaryOn="@string/forceActionOn"
             android:title="@string/forceAction" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="a2_enableAnimations"
-            android:summaryOff="@string/enableAnimationsOff"
-            android:summaryOn="@string/enableAnimationsOn"
-            android:title="@string/enableAnimations" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notifications">

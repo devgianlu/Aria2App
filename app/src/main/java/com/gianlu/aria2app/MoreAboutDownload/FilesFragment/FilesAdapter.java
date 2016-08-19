@@ -15,10 +15,14 @@ import com.gianlu.aria2app.R;
 import java.util.List;
 
 public class FilesAdapter {
-    private final Tree tree;
+    private Tree tree;
+    private LinearLayout view;
+    private Context context;
 
     public FilesAdapter(Tree tree, LinearLayout view) {
         this.tree = tree;
+        this.view = view;
+        this.context = view.getContext();
 
         setupViews(view.getContext(), tree.getCommonRoot());
         populateDirectory(view, tree.getCommonRoot(), 1);
@@ -60,19 +64,6 @@ public class FilesAdapter {
             });
 
             file.viewHolder = holder;
-        }
-    }
-
-    private static void setupView(TreeFile file) {
-        file.viewHolder.name.setText(file.file.getName());
-        file.viewHolder.progressBar.setProgress(file.file.getProgress().intValue());
-        file.viewHolder.percentage.setText(file.file.getPercentage());
-        if (file.file.isCompleted()) {
-            file.viewHolder.status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
-        } else if (file.file.selected) {
-            file.viewHolder.status.setImageResource(R.drawable.ic_cloud_download_black_48dp);
-        } else {
-            file.viewHolder.status.setImageResource(R.drawable.ic_cloud_off_black_48dp);
         }
     }
 
@@ -158,15 +149,8 @@ public class FilesAdapter {
         v.startAnimation(a);
     }
 
-    public void onUpdate(List<File> files) {
-        // TODO: Check me
-        for (File newFile : files) {
-            TreeFile listFile = tree.findFile(newFile.path);
-
-            if (listFile != null) {
-                listFile.file = newFile;
-                setupView(listFile);
-            }
-        }
+    @SuppressLint("InflateParams")
+    public void onUpdate(final List<File> files) {
+        // TODO
     }
 }

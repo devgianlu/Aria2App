@@ -74,6 +74,7 @@ public class AddURIActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: options should be placed better
         try {
             final List<OptionHeader> headers = new ArrayList<>();
             final Map<OptionHeader, OptionChild> children = new HashMap<>();
