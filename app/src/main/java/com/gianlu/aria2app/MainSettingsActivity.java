@@ -69,15 +69,6 @@ public class MainSettingsActivity extends PreferenceActivity {
             }
         });
 
-        findPreference("androidTreeView").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                builder.setTitle("AndroidTreeView")
-                        .setMessage(R.string.androidTreeView_details)
-                        .create().show();
-                return true;
-            }
-        });
-
         findPreference("mpAndroidChart").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 builder.setTitle("MPAndroidChart")
