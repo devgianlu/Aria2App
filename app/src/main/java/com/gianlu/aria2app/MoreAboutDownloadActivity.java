@@ -21,7 +21,7 @@ import android.widget.ExpandableListView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
-import com.gianlu.aria2app.MoreAboutDownload.FilesPagerFragment;
+import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.FilesPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
@@ -50,6 +50,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     private Menu menu;
     private Download.STATUS lastStatus = Download.STATUS.UNKNOWN;
     private PagerAdapter adapter;
+    private String gid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_more_about_download);
         setTitle(getIntent().getStringExtra("name"));
 
-        final String gid = getIntent().getStringExtra("gid");
+        gid = getIntent().getStringExtra("gid");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
         assert toolbar != null;
@@ -277,7 +278,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
         pd.show();
 
-        jta2.getOption("", new IOption() {
+        jta2.getOption(gid, new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
                 LocalParser localOptions;
@@ -334,7 +335,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                             .setAction(Analytics.ACTION_CHANGED_DOWNLOAD_OPTIONS)
                                             .build());
 
-                                jta2.changeOption("", map, new ISuccess() {
+                                jta2.changeOption(gid, map, new ISuccess() {
                                     @Override
                                     public void onSuccess() {
                                         pd.dismiss();

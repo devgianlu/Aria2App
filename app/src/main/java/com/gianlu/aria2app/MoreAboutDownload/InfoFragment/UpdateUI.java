@@ -133,13 +133,13 @@ public class UpdateUI implements Runnable {
                                 holder.chart.setNoDataText(context.getString(R.string.downloadIs, download.status.getFormal(context, false)));
                             }
 
-                            /* TODO: Bitfield representation
-                            if (first) {
-                                boolean[] pieces = Utils.bitfieldProcessor(download.numPieces, download.bitfield);
-                                System.out.println(Arrays.toString(pieces));
-                                first = false;
-                            }
+
+                            // TODO: Numbers 1-8 defines opacity
+                            /*
+                            int[] pieces = Utils.bitfieldProcessor(download.numPieces, download.bitfield);
+                            System.out.println(Arrays.toString(pieces));
                             */
+
 
                             holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
                             holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength))));

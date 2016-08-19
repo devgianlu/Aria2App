@@ -61,6 +61,17 @@ public class JTA2 {
         return peers;
     }
 
+    private List<File> fromFiles(JSONArray jResult) throws JSONException {
+        if (jResult == null) return null;
+
+        List<File> files = new ArrayList<>();
+
+        for (int i = 0; i < jResult.length(); i++) {
+            files.add(File.fromJSON(jResult.getJSONObject(i)));
+        }
+
+        return files;
+    }
     private Map<Integer, List<Server>> fromServers(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -826,6 +837,37 @@ public class JTA2 {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onPeers(fromPeers(response.optJSONArray("result")));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
+
+    // aria2.getFiles
+    public void getFiles(String gid, final IFiles handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getFiles");
+            request.put("params", Utils.readyParams(webSocketing.getContext())
+                    .put(gid));
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onFiles(fromFiles(response.optJSONArray("result")));
             }
 
             @Override

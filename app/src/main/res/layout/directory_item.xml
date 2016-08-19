@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <ImageButton
+        android:id="@+id/directoryItem_toggle"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:background="@drawable/ripple_effect_dark"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_keyboard_arrow_right_black_48dp" />
+
+    <ImageView
+        android:id="@+id/directoryItem_type"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/directoryItem_toggle"
+        android:src="@drawable/ic_folder_black_48dp" />
+
+    <TextView
+        android:id="@+id/directoryItem_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/directoryItem_type"
+        android:ellipsize="end"
+        android:lines="1" />
+
+    <ProgressBar
+        android:id="@+id/directoryItem_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/directoryItem_name"
+        android:layout_below="@+id/directoryItem_name"
+        android:layout_toStartOf="@+id/directoryItem_percentage" />
+
+    <TextView
+        android:id="@+id/directoryItem_percentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/directoryItem_name"
+        android:layout_marginStart="8dp" />
+</RelativeLayout>

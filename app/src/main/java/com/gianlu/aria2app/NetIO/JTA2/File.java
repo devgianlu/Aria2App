@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class File {
     // Global
@@ -103,6 +104,10 @@ public class File {
 
     public String getPercentage() {
         return String.format(Locale.getDefault(), "%.2f", getProgress()) + " %";
+    }
+
+    public boolean isCompleted() {
+        return Objects.equals(completedLength, length);
     }
 
     public String getRelativePath(String dir) {

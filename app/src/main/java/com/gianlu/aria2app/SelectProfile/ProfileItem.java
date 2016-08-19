@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -42,6 +43,19 @@ public class ProfileItem implements Parcelable {
     }
 
     public ProfileItem() {
+    }
+
+    public static boolean exists(Context context, String name) {
+        return exists(context, new File(name + ".profile"));
+    }
+
+    public static boolean exists(Context context, File file) {
+        try {
+            context.openFileInput(file.getName());
+            return true;
+        } catch (FileNotFoundException ex) {
+            return false;
+        }
     }
 
     public static boolean isSingleMode(Context context, File file) throws JSONException, IOException {

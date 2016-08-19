@@ -27,7 +27,6 @@ import java.util.Map;
 public class ServersPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
 
-    // TODO: Order by
     public static ServersPagerFragment newInstance(String title, String gid) {
         ServersPagerFragment fragment = new ServersPagerFragment();
 

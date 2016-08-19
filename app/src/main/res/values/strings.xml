@@ -72,6 +72,8 @@
     <string name="unknown">Unknown</string>
     <string name="noPeers">No peers. Swipe down to refresh</string>
     <string name="noServers">No servers</string>
+    <string name="saveProfile">Save profile</string>
+    <string name="saveProfile_message">This profile doesn\'t exists. Would you like to save it?\nIf so you can access the server directly from here.</string>
     <string name="noServersMessage">No servers: %s</string>
     <string name="loading_downloads">Loading downloads. Please wait…</string>
     <string name="downloading_file">Downloading file…</string>

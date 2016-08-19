@@ -1,6 +1,7 @@
 package com.gianlu.aria2app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,8 +38,10 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.security.NoSuchAlgorithmException;
@@ -173,6 +176,63 @@ public class SelectProfileActivity extends AppCompatActivity {
                 }));
 
         new Thread(new LoadProfileStatus(this, listView)).start();
+
+
+        if (getIntent().getBooleanExtra("external", false)) {
+            if (ProfileItem.exists(this, "Local device")) {
+                startExternal(getIntent());
+            } else {
+                new AlertDialog.Builder(this).
+                        setTitle(R.string.saveProfile)
+                        .setMessage(R.string.saveProfile_message)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    FileOutputStream fOut = openFileOutput("Local device.profile", Context.MODE_PRIVATE);
+                                    OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
+                                    osw.write(new SingleModeProfileItem("Local device",
+                                            "localhost",
+                                            getIntent().getIntExtra("port", 6800),
+                                            "/jsonrpc",
+                                            JTA2.AUTH_METHOD.TOKEN,
+                                            false,
+                                            getIntent().getStringExtra("token"),
+                                            false,
+                                            null).toJSON().toString());
+                                    osw.flush();
+                                    osw.close();
+                                } catch (IOException | JSONException ex) {
+                                    Utils.UIToast(SelectProfileActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+                                    ex.printStackTrace();
+                                }
+
+                                startExternal(getIntent());
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                startExternal(getIntent());
+                            }
+                        }).create().show();
+            }
+        }
+    }
+
+    private void startExternal(Intent intent) {
+        startActivity(new Intent(this, MainActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("profile", new SingleModeProfileItem("Local device",
+                        "localhost",
+                        intent.getIntExtra("port", 6800),
+                        "/jsonrpc",
+                        JTA2.AUTH_METHOD.TOKEN,
+                        false,
+                        intent.getStringExtra("token"),
+                        false,
+                        null).setGlobalProfileName("Local device")));
     }
 
     @Override

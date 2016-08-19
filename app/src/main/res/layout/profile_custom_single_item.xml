@@ -12,6 +12,8 @@
         android:layout_centerVertical="true"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_keyboard_arrow_down_black_48dp" />
 

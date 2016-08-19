@@ -36,6 +36,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -198,18 +199,23 @@ public class Utils {
         }
     }
 
-    public static boolean[] bitfieldProcessor(int numPieces, String bitfield) {
-        boolean[] pieces = new boolean[numPieces];
+    public static int[] bitfieldProcessor(int numPieces, String bitfield) {
+        int[] pieces = new int[numPieces];
         int numTotal = 0;
 
         for (String _byte : splitStringEvery(bitfield, 2)) {
             String[] _bits = splitStringEvery(String.format("%8s", Integer.toBinaryString(Integer.parseInt(_byte, 16))).replace(' ', '0'), 1);
+            int numDownloaded = 0;
+
             for (String _bit : _bits) {
                 if (numTotal == numPieces) return pieces;
 
-                pieces[numTotal] = Integer.parseInt(_bit) != 0;
+                if (Objects.equals(_bit, "1")) numDownloaded += 1;
+
                 numTotal++;
             }
+
+            pieces[numTotal] = numDownloaded;
         }
 
         return pieces;
