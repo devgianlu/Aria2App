@@ -40,6 +40,8 @@ public class TreeDirectory {
     }
 
     public void addElement(String currentPath, String[] list, File file) {
+        if (list.length == 0) return;
+
         while (list[0] == null || list[0].isEmpty())
             list = Arrays.copyOfRange(list, 1, list.length);
 

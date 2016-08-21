@@ -103,7 +103,7 @@ public class TerminalActivity extends AppCompatActivity {
         });
 
         try {
-            JTA2 jta2 = Utils.readyJTA2(this);
+            JTA2 jta2 = JTA2.newInstance(this);
 
             final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
             pd.show();

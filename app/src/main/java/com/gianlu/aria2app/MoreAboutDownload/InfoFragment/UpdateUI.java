@@ -50,7 +50,7 @@ public class UpdateUI implements Runnable {
         updateRate = Integer.parseInt(sharedPreferences.getString("a2_updateRate", "2")) * 1000;
 
         try {
-            jta2 = Utils.readyJTA2(context);
+            jta2 = JTA2.newInstance(context);
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

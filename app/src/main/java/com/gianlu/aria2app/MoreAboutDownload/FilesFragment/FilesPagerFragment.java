@@ -12,6 +12,7 @@ import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.NetIO.JTA2.IFiles;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 
@@ -37,7 +38,7 @@ public class FilesPagerFragment extends CommonFragment {
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         try {
-            Utils.readyJTA2(getActivity()).getFiles(getArguments().getString("gid"), new IFiles() {
+            JTA2.newInstance(getActivity()).getFiles(getArguments().getString("gid"), new IFiles() {
                 @Override
                 public void onFiles(final List<File> files) {
                     getActivity().runOnUiThread(new Runnable() {

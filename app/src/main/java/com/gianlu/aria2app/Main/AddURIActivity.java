@@ -79,7 +79,7 @@ public class AddURIActivity extends AppCompatActivity {
             final List<OptionHeader> headers = new ArrayList<>();
             final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
-            JTA2 jta2 = Utils.readyJTA2(this);
+            JTA2 jta2 = JTA2.newInstance(this);
 
             final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
             pd.show();
@@ -170,7 +170,7 @@ public class AddURIActivity extends AppCompatActivity {
             case R.id.addDownloadMenu_done:
                 JTA2 jta2;
                 try {
-                    jta2 = Utils.readyJTA2(this);
+                    jta2 = JTA2.newInstance(this);
                 } catch (IOException | NoSuchAlgorithmException ex) {
                     Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
                     return true;

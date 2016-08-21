@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.NetIO.JTA2.IServers;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -41,7 +42,7 @@ public class ServersPagerFragment extends CommonFragment {
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         try {
-            Utils.readyJTA2(getActivity()).getServers(getArguments().getString("gid"), new IServers() {
+            JTA2.newInstance(getActivity()).getServers(getArguments().getString("gid"), new IServers() {
                 @Override
                 public void onServers(Map<Integer, List<Server>> servers) {
                     final ServerCardAdapter adapter = new ServerCardAdapter(getContext(), servers, (CardView) view.findViewById(R.id.serversFragment_noData));

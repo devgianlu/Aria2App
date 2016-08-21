@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IDownloadList;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Utils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -26,7 +25,7 @@ public class LoadDownloads implements Runnable {
         hideMetadata = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_hideMetadata", false);
 
         try {
-            jta2 = Utils.readyJTA2(context);
+            jta2 = JTA2.newInstance(context);
         } catch (IOException | NoSuchAlgorithmException ex) {
             handler.onException(false, ex);
             jta2 = null;
@@ -103,7 +102,6 @@ public class LoadDownloads implements Runnable {
         void onStarted();
 
         void onLoaded(List<Download> downloads);
-        // void onPartialUpdate(List<Download> downloads);
 
         void onException(boolean queuing, Exception ex);
     }

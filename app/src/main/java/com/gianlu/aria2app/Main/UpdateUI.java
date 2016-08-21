@@ -33,7 +33,7 @@ public class UpdateUI implements Runnable {
 
 
         try {
-            jta2 = Utils.readyJTA2(context);
+            jta2 = JTA2.newInstance(context);
         } catch (IOException | NoSuchAlgorithmException ex) {
             Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
             stop();

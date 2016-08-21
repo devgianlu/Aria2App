@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.app.Activity;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.WebSocketing;
@@ -9,6 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +23,10 @@ public class JTA2 {
 
     public JTA2(WebSocketing webSocketing) {
         this.webSocketing = webSocketing;
+    }
+
+    public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
+        return new JTA2(WebSocketing.newInstance(context));
     }
 
     // Caster

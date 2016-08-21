@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
-
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -260,31 +259,19 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
 
-            /*
-            @Override
-            public void onPartialUpdate(final List<Download> downloads) {
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.onPartialUpdate(downloads);
-                    }
-                });
-            }
-            */
-
             @Override
             public void onException(boolean queuing, Exception ex) {
+                if (queuing) {
+                    loadDownloads = new LoadDownloads(MainActivity.this, this);
+                    new Thread(loadDownloads).start();
+                    return;
+                }
+
                 try {
                     pd.dismiss();
                     swipeLayout.setRefreshing(false);
                 } catch (Exception exx) {
                     exx.printStackTrace();
-                }
-
-                if (queuing) {
-                    loadDownloads = new LoadDownloads(MainActivity.this, this);
-                    new Thread(loadDownloads).start();
-                    return;
                 }
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
@@ -341,14 +328,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
-
-        // Start WebSocketing and enabling event manager
-        try {
-            WebSocketing.enableEventManager(this);
-        } catch (IOException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
 
         final FloatingActionsMenu fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
         assert fabMenu != null;
@@ -413,6 +392,13 @@ public class MainActivity extends AppCompatActivity {
             loadDownloads = new LoadDownloads(this, loadingHandler);
             new Thread(loadDownloads).start();
         }
+
+        try {
+            WebSocketing.enableEventManager(this);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
 
         if (enableNotifications) {
             Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("a2_profileName", ""));
@@ -531,7 +517,7 @@ public class MainActivity extends AppCompatActivity {
 
         final JTA2 jta2;
         try {
-            jta2 = Utils.readyJTA2(this);
+            jta2 = JTA2.newInstance(this);
         } catch (IOException | NoSuchAlgorithmException ex) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
             return;

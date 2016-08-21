@@ -12,8 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.widget.Toast;
 
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -257,19 +255,23 @@ public class Utils {
 
     public static WebSocket readyWebSocket(boolean isSSL, String url) throws NoSuchAlgorithmException, IOException {
         if (isSSL) {
-            WebSocketFactory factory = new WebSocketFactory();
-            factory.setSSLContext(SSLContext.getDefault());
-            return factory.createSocket(url.replace("http://", "wss://"), 5000);
+            return new WebSocketFactory()
+                    .setSSLContext(SSLContext.getDefault())
+                    .setConnectionTimeout(5000)
+                    .createSocket(url.replace("http://", "wss://"), 5000);
         } else {
-            return new WebSocketFactory().createSocket(url.replace("http://", "ws://"), 5000);
+            return new WebSocketFactory()
+                    .setConnectionTimeout(5000)
+                    .createSocket(url.replace("http://", "ws://"), 5000);
         }
     }
 
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean("a2_serverSSL", false)) {
-            WebSocketFactory factory = new WebSocketFactory();
-            factory.setSSLContext(SSLContext.getDefault());
+            WebSocketFactory factory = new WebSocketFactory()
+                    .setSSLContext(SSLContext.getDefault())
+                    .setConnectionTimeout(5000);
             WebSocket socket = factory.createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "wss://"), 5000);
 
             if (preferences.getString("a2_authMethod", "NONE").equals("HTTP"))
@@ -277,7 +279,9 @@ public class Utils {
 
             return socket;
         } else {
-            WebSocket socket = new WebSocketFactory().createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "ws://"), 5000);
+            WebSocket socket = new WebSocketFactory()
+                    .setConnectionTimeout(5000)
+                    .createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "ws://"), 5000);
 
             if (preferences.getString("a2_authMethod", "NONE").equals("HTTP"))
                 socket.addHeader("Authorization", "Basic " + Base64.encodeToString((preferences.getString("a2_serverUsername", "username") + ":" + preferences.getString("a2_serverPassword", "password")).getBytes(), Base64.NO_WRAP));
@@ -311,10 +315,6 @@ public class Utils {
 
     public static JSONObject readyRequest() throws JSONException {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(2000)));
-    }
-
-    public static JTA2 readyJTA2(Activity context) throws IOException, NoSuchAlgorithmException {
-        return new JTA2(WebSocketing.newInstance(context));
     }
 
     public static void UIToast(final Activity context, final String text) {

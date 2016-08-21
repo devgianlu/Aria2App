@@ -21,7 +21,7 @@ public class DownloadAction {
     private JTA2 jta2;
 
     public DownloadAction(Activity context) throws IOException, NoSuchAlgorithmException {
-        jta2 = Utils.readyJTA2(context);
+        jta2 = JTA2.newInstance(context);
     }
 
     public void pause(final Context context, final String gid, final IPause handler) {

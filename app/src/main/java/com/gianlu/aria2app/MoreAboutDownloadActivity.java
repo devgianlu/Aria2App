@@ -270,7 +270,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
         final JTA2 jta2;
         try {
-            jta2 = Utils.readyJTA2(this);
+            jta2 = JTA2.newInstance(this);
         } catch (IOException | NoSuchAlgorithmException ex) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
             return;
