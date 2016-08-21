@@ -32,9 +32,10 @@ import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -197,41 +198,46 @@ public class Utils {
         }
     }
 
-    public static int[] bitfieldProcessor(int numPieces, String bitfield) {
-        int[] pieces = new int[numPieces];
-        int numTotal = 0;
+    @NonNull
+    public static List<Integer> bitfieldProcessor(int numPieces, String bitfield) {
+        List<Integer> pieces = new ArrayList<>();
 
-        for (String _byte : splitStringEvery(bitfield, 2)) {
-            String[] _bits = splitStringEvery(String.format("%8s", Integer.toBinaryString(Integer.parseInt(_byte, 16))).replace(' ', '0'), 1);
-            int numDownloaded = 0;
-
-            for (String _bit : _bits) {
-                if (numTotal == numPieces) return pieces;
-
-                if (Objects.equals(_bit, "1")) numDownloaded += 1;
-
-                numTotal++;
+        for (char hexChar : bitfield.toLowerCase().toCharArray()) {
+            switch (hexChar) {
+                case '0':
+                    pieces.add(0);
+                    break;
+                case '1':
+                case '2':
+                case '4':
+                case '8':
+                    pieces.add(1);
+                    break;
+                case '3':
+                case '5':
+                case '6':
+                case '9':
+                case 'a':
+                case 'c':
+                    pieces.add(2);
+                    break;
+                case '7':
+                case 'b':
+                case 'd':
+                case 'e':
+                    pieces.add(3);
+                    break;
+                case 'f':
+                    pieces.add(4);
+                    break;
             }
-
-            pieces[numTotal] = numDownloaded;
         }
 
-        return pieces;
+        return pieces.subList(0, numPieces / 4);
     }
 
-    public static String[] splitStringEvery(String s, int interval) {
-        int arrayLength = (int) Math.ceil(((s.length() / (double) interval)));
-        String[] result = new String[arrayLength];
-
-        int j = 0;
-        int lastIndex = result.length - 1;
-        for (int i = 0; i < lastIndex; i++) {
-            result[i] = s.substring(j, j + interval);
-            j += interval;
-        }
-        result[lastIndex] = s.substring(j);
-
-        return result;
+    public static int mapAlpha(int val) {
+        return 255 / 4 * val;
     }
 
     public static String colorToHex(Context context, @ColorRes int colorRes) {

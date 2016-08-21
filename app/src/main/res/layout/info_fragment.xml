@@ -84,7 +84,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-
         <LinearLayout
             android:id="@+id/infoFragment_bitTorrentOnly"
             android:layout_width="match_parent"
@@ -132,5 +131,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bitfield"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:id="@+id/infoFragment_bitfield"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal" />
     </LinearLayout>
 </ScrollView>

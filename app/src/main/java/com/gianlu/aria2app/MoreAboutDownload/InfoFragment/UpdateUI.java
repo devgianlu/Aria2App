@@ -5,11 +5,14 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -133,12 +136,22 @@ public class UpdateUI implements Runnable {
                                 holder.chart.setNoDataText(context.getString(R.string.downloadIs, download.status.getFormal(context, false)));
                             }
 
+                            holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
+                            LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            bitParams.gravity = Gravity.CENTER_HORIZONTAL;
+                            holder.bitfield.setLayoutParams(bitParams);
+                            holder.bitfield.removeAllViews();
 
-                            // TODO: Numbers 1-8 defines opacity
-                            /*
-                            int[] pieces = Utils.bitfieldProcessor(download.numPieces, download.bitfield);
-                            System.out.println(Arrays.toString(pieces));
-                            */
+                            for (int piece : Utils.bitfieldProcessor(download.numPieces, download.bitfield)) {
+                                View view = new View(context);
+                                view.setBackgroundColor(Color.argb(Utils.mapAlpha(piece), 255, 0, 0));
+                                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                                params.setMargins(4, 4, 4, 4);
+                                params.height = 32;
+                                params.width = 32;
+                                view.setLayoutParams(params);
+                                holder.bitfield.addView(view);
+                            }
 
 
                             holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));

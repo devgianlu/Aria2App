@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -92,6 +93,8 @@ public class InfoPagerFragment extends CommonFragment {
         public TextView btInfoHash;
         public LinearLayout btAnnounceList;
 
+        public GridLayout bitfield;
+
         public ViewHolder(View rootView) {
             this.rootView = rootView;
 
@@ -116,6 +119,8 @@ public class InfoPagerFragment extends CommonFragment {
             btCreationDate = (TextView) rootView.findViewById(R.id.infoFragment_btCreationDate);
             btInfoHash = (TextView) rootView.findViewById(R.id.infoFragment_btInfoHash);
             btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
+
+            bitfield = (GridLayout) rootView.findViewById(R.id.infoFragment_bitfield);
         }
     }
 }

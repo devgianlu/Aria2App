@@ -81,6 +81,7 @@
     <string name="processing_data">Processing some data. Please wait…</string>
     <string name="info">Info</string>
     <string name="files">Files</string>
+    <string name="bitfield">Bitfield</string>
     <string name="imei_box">The application need to access your phone state to retrieve information to check the license. A message box will display now.</string>
     <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
     <string name="profile_hint">My profile</string>
