@@ -93,8 +93,13 @@ public class UpdateUI implements Runnable {
                 }
 
                 @Override
-                public void onDownloadNotActive(Exception exception) {
-                    adapter.onDisplayNoData(exception.getMessage());
+                public void onDownloadNotActive(final Exception exception) {
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.onDisplayNoData(exception.getMessage());
+                        }
+                    });
                 }
             });
 

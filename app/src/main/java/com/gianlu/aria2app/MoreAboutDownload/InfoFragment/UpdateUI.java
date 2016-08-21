@@ -150,7 +150,7 @@ public class UpdateUI implements Runnable {
 
                                 for (int piece : Utils.bitfieldProcessor(download.numPieces, download.bitfield)) {
                                     View view = new View(context);
-                                    view.setBackgroundColor(Color.argb(Utils.mapAlpha(piece), 255, 0, 0));
+                                    view.setBackgroundColor(Color.argb(Utils.mapAlpha(piece), 255, 87, 34));
                                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                                     params.setMargins(4, 4, 4, 4);
                                     params.height = 32;
