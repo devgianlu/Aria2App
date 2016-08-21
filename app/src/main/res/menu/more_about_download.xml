@@ -6,4 +6,10 @@
         android:id="@+id/moreAboutDownloadMenu_options"
         android:title="@string/menu_downloadOptions"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/moreAboutDownloadMenu_bitfield"
+        android:checkable="true"
+        android:title="@string/showBitfield"
+        app:showAsAction="never" />
 </menu>

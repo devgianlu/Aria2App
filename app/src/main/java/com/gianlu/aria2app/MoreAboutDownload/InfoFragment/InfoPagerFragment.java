@@ -47,6 +47,12 @@ public class InfoPagerFragment extends CommonFragment {
         new Thread(updateUI).start();
     }
 
+    public void setBitfieldVisibility(boolean visible) {
+        holder.bitfieldLabel.setVisibility(visible ? View.VISIBLE : View.GONE);
+        holder.bitfield.setVisibility(visible ? View.VISIBLE : View.GONE);
+        UpdateUI.setBitfieldEnabled(visible);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -93,6 +99,7 @@ public class InfoPagerFragment extends CommonFragment {
         public TextView btInfoHash;
         public LinearLayout btAnnounceList;
 
+        public TextView bitfieldLabel;
         public GridLayout bitfield;
 
         public ViewHolder(View rootView) {
@@ -121,6 +128,7 @@ public class InfoPagerFragment extends CommonFragment {
             btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
 
             bitfield = (GridLayout) rootView.findViewById(R.id.infoFragment_bitfield);
+            bitfieldLabel = (TextView) rootView.findViewById(R.id.infoFragment_bitfieldLabel);
         }
     }
 }

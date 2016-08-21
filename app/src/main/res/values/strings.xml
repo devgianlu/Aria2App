@@ -79,6 +79,7 @@
     <string name="downloading_file">Downloading file…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
     <string name="processing_data">Processing some data. Please wait…</string>
+    <string name="showBitfield">Show bitfield</string>
     <string name="info">Info</string>
     <string name="files">Files</string>
     <string name="bitfield">Bitfield</string>

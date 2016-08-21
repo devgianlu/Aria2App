@@ -320,7 +320,7 @@ public class Utils {
     }
 
     public static JSONObject readyRequest() throws JSONException {
-        return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(2000)));
+        return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
     public static void UIToast(final Activity context, final String text) {

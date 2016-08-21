@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class UpdateUI implements Runnable {
+    private static boolean bitfieldEnbaled = true;
     private Activity context;
     private InfoPagerFragment.ViewHolder holder;
     private IDownloadStatusObserver statusObserver = null;
@@ -68,6 +69,10 @@ public class UpdateUI implements Runnable {
             handler.stopped();
         else
             updateUI.stop(handler);
+    }
+
+    public static void setBitfieldEnabled(boolean enabled) {
+        bitfieldEnbaled = enabled;
     }
 
     public void stop() {
@@ -136,21 +141,23 @@ public class UpdateUI implements Runnable {
                                 holder.chart.setNoDataText(context.getString(R.string.downloadIs, download.status.getFormal(context, false)));
                             }
 
-                            holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
-                            LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            bitParams.gravity = Gravity.CENTER_HORIZONTAL;
-                            holder.bitfield.setLayoutParams(bitParams);
-                            holder.bitfield.removeAllViews();
+                            if (bitfieldEnbaled) {
+                                holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
+                                LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                bitParams.gravity = Gravity.CENTER_HORIZONTAL;
+                                holder.bitfield.setLayoutParams(bitParams);
+                                holder.bitfield.removeAllViews();
 
-                            for (int piece : Utils.bitfieldProcessor(download.numPieces, download.bitfield)) {
-                                View view = new View(context);
-                                view.setBackgroundColor(Color.argb(Utils.mapAlpha(piece), 255, 0, 0));
-                                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                                params.setMargins(4, 4, 4, 4);
-                                params.height = 32;
-                                params.width = 32;
-                                view.setLayoutParams(params);
-                                holder.bitfield.addView(view);
+                                for (int piece : Utils.bitfieldProcessor(download.numPieces, download.bitfield)) {
+                                    View view = new View(context);
+                                    view.setBackgroundColor(Color.argb(Utils.mapAlpha(piece), 255, 0, 0));
+                                    GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                                    params.setMargins(4, 4, 4, 4);
+                                    params.height = 32;
+                                    params.width = 32;
+                                    view.setLayoutParams(params);
+                                    holder.bitfield.addView(view);
+                                }
                             }
 
 

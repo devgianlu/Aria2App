@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -47,10 +48,9 @@ import java.util.List;
 import java.util.Map;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity {
-    private Menu menu;
-    private Download.STATUS lastStatus = Download.STATUS.UNKNOWN;
     private PagerAdapter adapter;
     private String gid;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
+        final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         assert pager != null;
 
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
@@ -79,8 +79,22 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setStatusObserver(new UpdateUI.IDownloadStatusObserver() {
             @Override
             public void onDownloadStatusChanged(Download.STATUS newStatus) {
-                lastStatus = newStatus;
-                menuAdapter(tabLayout.getSelectedTabPosition(), newStatus);
+                if (menu == null) return;
+
+                switch (newStatus) {
+                    case ACTIVE:
+                    case PAUSED:
+                    case WAITING:
+                        menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
+                        break;
+                    case REMOVED:
+                    case ERROR:
+                    case COMPLETE:
+                    case UNKNOWN:
+                    default:
+                        menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(false);
+                        break;
+                }
             }
         }));
 
@@ -98,7 +112,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                menuAdapter(tab.getPosition(), lastStatus);
+                pager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -132,100 +146,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         */
     }
 
-    private void menuAdapter(int tabPosition, Download.STATUS status) {
-        if (menu == null) return;
-
-        switch (status) {
-            case ACTIVE:
-                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
-
-                switch (tabPosition) {
-                    case 0:
-                        // TAB: INFO, STATUS: ACTIVE
-                        break;
-                    case 1:
-                        if (getIntent().getBooleanExtra("isTorrent", false)) {
-                            // TAB: PEERS, STATUS: ACTIVE
-                        } else {
-                            // TAB: SERVERS, STATUS: ACTIVE
-                        }
-                        break;
-                    case 2:
-                        // TAB: FILES, STATUS: ACTIVE
-                        break;
-                }
-                break;
-            case PAUSED:
-                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
-
-                switch (tabPosition) {
-                    case 0:
-                        // TAB: INFO, STATUS: PAUSED
-                        break;
-                    case 1:
-                        if (getIntent().getBooleanExtra("isTorrent", false)) {
-                            // TAB: PEERS, STATUS: PAUSED
-                        } else {
-                            // TAB: SERVERS, STATUS: PAUSED
-                        }
-                        break;
-                    case 2:
-                        // TAB: FILES, STATUS: PAUSED
-                        break;
-                }
-                break;
-            case WAITING:
-                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
-
-                switch (tabPosition) {
-                    case 0:
-                        // TAB: INFO, STATUS: WAITING
-                        break;
-                    case 1:
-                        if (getIntent().getBooleanExtra("isTorrent", false)) {
-                            // TAB: PEERS, STATUS: WAITING
-                        } else {
-                            // TAB: SERVERS, STATUS: WAITING
-                        }
-                        break;
-                    case 2:
-                        // TAB: FILES, STATUS: WAITING
-                        break;
-                }
-                break;
-            case REMOVED:
-            case ERROR:
-            case COMPLETE:
-                menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(false);
-
-                switch (tabPosition) {
-                    case 0:
-                        // TAB: INFO, STATUS: FROZEN
-                        break;
-                    case 1:
-                        if (getIntent().getBooleanExtra("isTorrent", false)) {
-                            // TAB: PEERS, STATUS: FROZEN
-                        } else {
-                            // TAB: SERVERS, STATUS: FROZEN
-                        }
-                        break;
-                    case 2:
-                        // TAB: FILES, STATUS: FROZEN
-                        break;
-                }
-                break;
-            case UNKNOWN:
-            default:
-                menu.clear();
-                break;
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.more_about_download, menu);
         this.menu = menu;
+        menu.findItem(R.id.moreAboutDownloadMenu_bitfield).setChecked(PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("a2_showBitfield", true));
         return true;
     }
 
@@ -234,6 +161,14 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.moreAboutDownloadMenu_options:
                 showOptionsDialog();
+                break;
+            case R.id.moreAboutDownloadMenu_bitfield:
+                item.setChecked(!item.isChecked());
+                ((InfoPagerFragment) adapter.getItem(0)).setBitfieldVisibility(item.isChecked());
+
+                PreferenceManager.getDefaultSharedPreferences(this).edit()
+                        .putBoolean("a2_showBitfield", item.isChecked())
+                        .apply();
                 break;
             case android.R.id.home:
                 onBackPressed();
