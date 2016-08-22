@@ -59,10 +59,8 @@ import java.util.TimerTask;
 // TODO: ServerStatusListener, it got checked before every request and (as a listener) show a dialog on thing happens (may receive calls from requester itself to avoit too frequent 'control' requests)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
-    private List<Download.STATUS> filtered = new ArrayList<>();
     private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
-    // private boolean isFirstUpdate = true;
     private LoadDownloads loadDownloads;
     private Timer reloadDownloadsListTimer;
     private MainCardAdapter adapter;
@@ -107,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLoaded(List<Download> downloads) {
-                // isFirstUpdate = false;
-
                 adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
                     public void onClick(View view, int position, Download item) {
@@ -464,48 +460,48 @@ public class MainActivity extends AppCompatActivity {
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    filtered.add(Download.STATUS.ACTIVE);
+                    adapter.addFilter(Download.STATUS.ACTIVE);
                 else
-                    filtered.remove(Download.STATUS.ACTIVE);
+                    adapter.removeFilter(Download.STATUS.ACTIVE);
             case R.id.a2menu_paused:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    filtered.add(Download.STATUS.PAUSED);
+                    adapter.addFilter(Download.STATUS.PAUSED);
                 else
-                    filtered.remove(Download.STATUS.PAUSED);
+                    adapter.removeFilter(Download.STATUS.PAUSED);
                 break;
             case R.id.a2menu_error:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    filtered.add(Download.STATUS.ERROR);
+                    adapter.addFilter(Download.STATUS.ERROR);
                 else
-                    filtered.remove(Download.STATUS.ERROR);
+                    adapter.removeFilter(Download.STATUS.ERROR);
                 break;
             case R.id.a2menu_waiting:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    filtered.add(Download.STATUS.WAITING);
+                    adapter.addFilter(Download.STATUS.WAITING);
                 else
-                    filtered.remove(Download.STATUS.WAITING);
+                    adapter.removeFilter(Download.STATUS.WAITING);
                 break;
             case R.id.a2menu_complete:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    filtered.add(Download.STATUS.COMPLETE);
+                    adapter.addFilter(Download.STATUS.COMPLETE);
                 else
-                    filtered.remove(Download.STATUS.COMPLETE);
+                    adapter.removeFilter(Download.STATUS.COMPLETE);
                 break;
             case R.id.a2menu_removed:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    filtered.add(Download.STATUS.REMOVED);
+                    adapter.addFilter(Download.STATUS.REMOVED);
                 else
-                    filtered.remove(Download.STATUS.REMOVED);
+                    adapter.removeFilter(Download.STATUS.REMOVED);
                 break;
         }
         return super.onOptionsItemSelected(item);

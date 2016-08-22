@@ -34,26 +34,16 @@ import java.util.Locale;
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private Activity context;
     private List<Download> objs;
-    private List<String> objs_gids = new ArrayList<>();
     private IActionMore actionMore;
     private IMenuSelected actionMenu;
+    private List<Download.STATUS> filters;
 
     public MainCardAdapter(Activity context, List<Download> objs, IActionMore actionMore, IMenuSelected actionMenu) {
         this.context = context;
         this.objs = objs;
-        for (Download d : objs) objs_gids.add(d.gid);
         this.actionMore = actionMore;
         this.actionMenu = actionMenu;
-    }
-
-    public static List<Download> processFilters(List<Download.STATUS> filters, List<Download> objs) {
-        List<Download> downloads = new ArrayList<>(objs);
-
-        for (Download download : downloads)
-            if (filters.contains(download.status))
-                downloads.remove(download);
-
-        return downloads;
+        this.filters = new ArrayList<>();
     }
 
     public static boolean isExpanded(View v) {
@@ -119,6 +109,16 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         v.setEllipsize(TextUtils.TruncateAt.MARQUEE);
     }
 
+    public void addFilter(Download.STATUS status) {
+        filters.add(status);
+        notifyDataSetChanged();
+    }
+
+    public void removeFilter(Download.STATUS status) {
+        filters.remove(status);
+        notifyDataSetChanged();
+    }
+
     public void updateItem(final int position, final Download update) {
         context.runOnUiThread(new Runnable() {
             @Override
@@ -131,7 +131,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     public Download getItem(int position) {
         return objs.get(position);
     }
-
     public Download getItem(String gid) {
         for (Download download : objs) {
             if (download.gid.equals(gid)) return download;
@@ -189,7 +188,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.more.setVisibility(View.INVISIBLE);
         }
     }
-
     @Override
     public void onBindViewHolder(final CardViewHolder holder, int position) {
         final Download item = getItem(position);
@@ -314,13 +312,15 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
         if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
             holder.more.setVisibility(View.INVISIBLE);
+
+        if (filters.contains(item.status))
+            holder.itemView.setVisibility(View.GONE);
     }
 
     @Override
     public int getItemCount() {
         return objs.size();
     }
-
     public List<Download> getItems() {
         return objs;
     }
@@ -328,7 +328,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     public interface IActionMore {
         void onClick(View view, int position, Download item);
     }
-
     public interface IMenuSelected {
         void onItemSelected(Download download, DownloadAction.ACTION action);
     }
