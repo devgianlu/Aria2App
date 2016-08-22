@@ -41,11 +41,11 @@
 
         <ImageButton
             android:id="@+id/addURI_newUri"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/add"
+            android:background="@drawable/ripple_effect_dark"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_add_black_48dp" />
     </RelativeLayout>

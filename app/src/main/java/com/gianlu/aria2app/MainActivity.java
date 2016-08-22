@@ -258,8 +258,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onException(boolean queuing, Exception ex) {
                 if (queuing) {
-                    loadDownloads = new LoadDownloads(MainActivity.this, this);
-                    new Thread(loadDownloads).start();
+                    WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
+                        @Override
+                        public void onConnected() {
+                            loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
+                            new Thread(loadDownloads).start();
+                        }
+                    });
                     return;
                 }
 

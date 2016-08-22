@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
+    private static IConnecting handler;
     private WebSocket socket;
     private Activity context;
     private Map<Integer, IReceived> requests = new ArrayMap<>();
@@ -38,6 +39,16 @@ public class WebSocketing extends WebSocketAdapter {
     public static WebSocketing newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
         if (webSocketing == null) webSocketing = new WebSocketing(context);
         return webSocketing;
+    }
+
+    public static void notifyConnection(IConnecting handler) {
+        if (webSocketing != null) {
+            if (webSocketing.socket.getState() == WebSocketState.OPEN) {
+                handler.onConnected();
+                return;
+            }
+        }
+        WebSocketing.handler = handler;
     }
 
     // TODO: Implement partial update
@@ -98,6 +109,8 @@ public class WebSocketing extends WebSocketAdapter {
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
         Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_OPENED);
+        if (handler != null)
+            handler.onConnected();
     }
 
     @Override
@@ -129,5 +142,9 @@ public class WebSocketing extends WebSocketAdapter {
 
         void onException(boolean queuing, Exception ex);
         void onException(int code, String reason);
+    }
+
+    public interface IConnecting {
+        void onConnected();
     }
 }
