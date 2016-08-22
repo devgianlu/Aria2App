@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -15,7 +16,6 @@ public class Analytics {
     public static final String ACTION_DELETE_PROFILE = "Profile deleted";
     public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "Global options changed";
     public static final String ACTION_CHANGED_DOWNLOAD_OPTIONS = "Download options changed";
-    public static final String ACTION_DOWNLOAD_FILE = "File download started";
     public static final String ACTION_NEW_TORRENT = "New Torrent download";
     public static final String ACTION_NEW_METALINK = "New Metalink download";
     public static final String ACTION_NEW_URI = "New URI download";
@@ -35,6 +35,6 @@ public class Analytics {
     }
 
     public static boolean isTrackingAllowed(Context context) {
-        return !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false);
+        return !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false) && !BuildConfig.DEBUG;
     }
 }
