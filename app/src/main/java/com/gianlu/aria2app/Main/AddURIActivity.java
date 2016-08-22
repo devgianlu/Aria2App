@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Main;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,9 +8,14 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.ArrayMap;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -40,7 +46,7 @@ import java.util.Map;
 public class AddURIActivity extends AppCompatActivity {
     private List<String> urisList = new ArrayList<>();
     private EditText position;
-    private ExpandableListView optionsListView;
+    private Map<String, String> options = new ArrayMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,6 @@ public class AddURIActivity extends AppCompatActivity {
         ImageButton addUri = (ImageButton) findViewById(R.id.addURI_newUri);
         assert addUri != null;
         position = (EditText) findViewById(R.id.addURI_position);
-        optionsListView = (ExpandableListView) findViewById(R.id.addURI_options);
 
         addUri.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,59 +79,148 @@ public class AddURIActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: options should be placed better
-        try {
-            final List<OptionHeader> headers = new ArrayList<>();
-            final Map<OptionHeader, OptionChild> children = new HashMap<>();
-
-            JTA2 jta2 = JTA2.newInstance(this);
-
-            final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-            pd.show();
-
-            jta2.getGlobalOption(new IOption() {
-                @Override
-                public void onOptions(Map<String, String> options) {
-                    LocalParser localOptions;
-                    try {
-                        localOptions = new LocalParser(AddURIActivity.this, false);
-                    } catch (IOException | JSONException ex) {
-                        pd.dismiss();
-                        Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                        return;
-                    }
-
-                    for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
-                        try {
-                            OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
-                            headers.add(header);
-
-                            children.put(header, new OptionChild(
-                                    localOptions.getDefinition(resOption),
-                                    String.valueOf(localOptions.getDefaultValue(resOption)),
-                                    String.valueOf(options.get(resOption))));
-                        } catch (JSONException ex) {
-                            pd.dismiss();
-                            Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                        }
-                    }
-
-                    pd.dismiss();
-                }
-
-                @Override
-                public void onException(Exception exception) {
-                    pd.dismiss();
-                    Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-                }
-            });
-
-            optionsListView.setAdapter(new OptionAdapter(this, headers, children));
-        } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
-        }
+        Button options = (Button) findViewById(R.id.addURI_options);
+        assert options != null;
+        options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOptionsDialog();
+            }
+        });
 
         addUri.performClick();
+    }
+
+    private void buildDialog(List<OptionHeader> headers, final Map<OptionHeader, OptionChild> children) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.options_dialog, null);
+        ((ViewGroup) view).removeView(view.findViewById(R.id.optionsDialog_info));
+        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.moreAboutDownload_dialog_expandableListView);
+        listView.setAdapter(new OptionAdapter(this, headers, children));
+
+        builder.setView(view)
+                .setTitle(R.string.menu_globalOptions)
+                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        for (Map.Entry<OptionHeader, OptionChild> item : children.entrySet()) {
+                            if (!item.getValue().isChanged()) continue;
+                            options.put(item.getKey().getOptionName(), item.getValue().getValue());
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+    }
+
+    private void showOptionsDialog() {
+        final List<OptionHeader> headers = new ArrayList<>();
+        final Map<OptionHeader, OptionChild> children = new HashMap<>();
+
+        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+        pd.show();
+
+        try {
+            if (options.isEmpty()) {
+                JTA2 jta2 = JTA2.newInstance(this);
+
+                jta2.getGlobalOption(new IOption() {
+                    @Override
+                    public void onOptions(Map<String, String> options) {
+                        LocalParser localOptions;
+                        try {
+                            localOptions = new LocalParser(AddURIActivity.this, false);
+                        } catch (IOException | JSONException ex) {
+                            pd.dismiss();
+                            Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                            return;
+                        }
+
+                        for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
+                            try {
+                                OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
+                                headers.add(header);
+
+                                children.put(header, new OptionChild(
+                                        localOptions.getDefinition(resOption),
+                                        String.valueOf(localOptions.getDefaultValue(resOption)),
+                                        String.valueOf(options.get(resOption))));
+                            } catch (JSONException ex) {
+                                pd.dismiss();
+                                Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                            }
+                        }
+
+                        AddURIActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                buildDialog(headers, children);
+                            }
+                        });
+
+                        pd.dismiss();
+                    }
+
+                    @Override
+                    public void onException(Exception exception) {
+                        pd.dismiss();
+                        Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    }
+                });
+            } else {
+                LocalParser localOptions;
+                try {
+                    localOptions = new LocalParser(AddURIActivity.this, false);
+                } catch (IOException | JSONException ex) {
+                    pd.dismiss();
+                    Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                    return;
+                }
+
+                for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
+                    try {
+                        OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
+                        headers.add(header);
+
+                        children.put(header, new OptionChild(
+                                localOptions.getDefinition(resOption),
+                                String.valueOf(localOptions.getDefaultValue(resOption)),
+                                String.valueOf(options.get(resOption))));
+                    } catch (JSONException ex) {
+                        pd.dismiss();
+                        Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                    }
+                }
+
+                AddURIActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        buildDialog(headers, children);
+                    }
+                });
+
+                pd.dismiss();
+            }
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            pd.dismiss();
+        }
     }
 
     @Override
@@ -144,14 +238,7 @@ public class AddURIActivity extends AppCompatActivity {
     }
 
     public Map<String, String> getOptions() {
-        Map<String, String> map = new HashMap<>();
-
-        for (Map.Entry<OptionHeader, OptionChild> item : ((OptionAdapter) optionsListView.getExpandableListAdapter()).getChildren().entrySet()) {
-            if (!item.getValue().isChanged()) continue;
-            map.put(item.getKey().getOptionName(), item.getValue().getValue());
-        }
-
-        return map;
+        return options;
     }
 
     @Override

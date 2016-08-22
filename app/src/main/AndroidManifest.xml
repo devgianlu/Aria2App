@@ -32,7 +32,8 @@
         <!-- Add profile activity -->
         <activity
             android:name=".SelectProfile.AddProfileActivity"
-            android:parentActivityName=".SelectProfileActivity" />
+            android:parentActivityName=".SelectProfileActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <!-- Main activity -->
         <activity android:name=".MainActivity" />
@@ -41,10 +42,11 @@
         <activity
             android:name=".Main.AddTorrentActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AddTorrentTheme" />
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Main.AddURIActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <!-- More about download activity -->
         <activity
@@ -65,14 +67,13 @@
         <!-- aria2 terminal activity -->
         <activity
             android:name=".TerminalActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <!-- Notification service -->
         <service
             android:name=".Services.NotificationWebSocketService"
             android:exported="false" />
-
-        <!-- Download service -->
 
         <!-- Google Analytics -->
         <receiver

@@ -118,7 +118,6 @@ public class OptionAdapter extends BaseExpandableListAdapter {
                 });
 
 
-        // TODO: Search through options
         ((TextView) convertView.findViewById(R.id.moreAboutDownload_option_optionDesc)).setText(Parser.formatDefinition(colorAccent, item.getDescription()));
 
         return convertView;

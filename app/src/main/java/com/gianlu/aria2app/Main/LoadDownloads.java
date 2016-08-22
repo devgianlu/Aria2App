@@ -68,11 +68,6 @@ public class LoadDownloads implements Runnable {
                                 }
 
                                 handler.onLoaded(downloadsList);
-
-                                /*
-                                if (partialUpdate)
-                                    handler.onPartialUpdate(downloadsList);
-                                */
                             }
 
                             @Override
