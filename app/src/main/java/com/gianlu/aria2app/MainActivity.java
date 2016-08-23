@@ -465,48 +465,48 @@ public class MainActivity extends AppCompatActivity {
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    adapter.addFilter(Download.STATUS.ACTIVE);
-                else
                     adapter.removeFilter(Download.STATUS.ACTIVE);
+                else
+                    adapter.addFilter(Download.STATUS.ACTIVE);
             case R.id.a2menu_paused:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    adapter.addFilter(Download.STATUS.PAUSED);
-                else
                     adapter.removeFilter(Download.STATUS.PAUSED);
+                else
+                    adapter.addFilter(Download.STATUS.PAUSED);
                 break;
             case R.id.a2menu_error:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    adapter.addFilter(Download.STATUS.ERROR);
-                else
                     adapter.removeFilter(Download.STATUS.ERROR);
+                else
+                    adapter.addFilter(Download.STATUS.ERROR);
                 break;
             case R.id.a2menu_waiting:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    adapter.addFilter(Download.STATUS.WAITING);
-                else
                     adapter.removeFilter(Download.STATUS.WAITING);
+                else
+                    adapter.addFilter(Download.STATUS.WAITING);
                 break;
             case R.id.a2menu_complete:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    adapter.addFilter(Download.STATUS.COMPLETE);
-                else
                     adapter.removeFilter(Download.STATUS.COMPLETE);
+                else
+                    adapter.addFilter(Download.STATUS.COMPLETE);
                 break;
             case R.id.a2menu_removed:
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
-                    adapter.addFilter(Download.STATUS.REMOVED);
-                else
                     adapter.removeFilter(Download.STATUS.REMOVED);
+                else
+                    adapter.addFilter(Download.STATUS.REMOVED);
                 break;
         }
         return super.onOptionsItemSelected(item);

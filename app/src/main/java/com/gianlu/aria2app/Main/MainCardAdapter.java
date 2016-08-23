@@ -315,6 +315,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
         if (filters.contains(item.status))
             holder.itemView.setVisibility(View.GONE);
+        else
+            holder.itemView.setVisibility(View.VISIBLE);
     }
 
     @Override

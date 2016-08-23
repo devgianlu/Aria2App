@@ -38,18 +38,14 @@
     <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
     <string name="index" translatable="false"><![CDATA[<b>Index:</b>]]> %s</string>
+    <string name="path" translatable="false"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
 
-    <string name="selectFile">Download file</string>
-    <string name="selectFileNotPaused">Download file (available only when download is paused)</string>
-    <string name="selectFileNotTorrent">Download file (available only on BitTorrent downloads)</string>
-    <string name="selectFileSingleFile">Download file (not available on single file downloads)</string>
-
-    <string name="selectDirectory">Download files in directory</string>
-    <string name="selectDirectoryNotPaused">Download files in directory (available only when download is paused)</string>
-    <string name="selectDirectoryNotTorrent">Download files in directory (available only on BitTorrent downloads)</string>
-    <string name="selectDirectorySingleFile">Download files in directory (not available on single file downloads)</string>
+    <string name="selectFile">Select file</string>
+    <string name="selectFileNotPaused">Select file (available only when download is paused)</string>
+    <string name="selectFileNotTorrent">Select file (available only on BitTorrent downloads)</string>
+    <string name="selectFileSingleFile">Select file (not available on single file downloads)</string>
 
     <string name="notificationComplete">Download completed!</string>
     <string name="notificationStarted">New download started!</string>

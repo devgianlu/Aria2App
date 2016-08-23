@@ -63,9 +63,15 @@ public class ServersPagerFragment extends CommonFragment {
                 }
 
                 @Override
-                public void onDownloadNotActive(Exception exception) {
-                    view.findViewById(R.id.serversFragment_noData).setVisibility(View.VISIBLE);
-                    ((TextView) view.findViewById(R.id.serversFragment_noDataLabel)).setText(getString(R.string.noServersMessage, exception.getMessage()));
+                public void onDownloadNotActive(final Exception exception) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((ServerCardAdapter) ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).getAdapter()).clear();
+                            view.findViewById(R.id.serversFragment_noData).setVisibility(View.VISIBLE);
+                            ((TextView) view.findViewById(R.id.serversFragment_noDataLabel)).setText(getString(R.string.noServersMessage, exception.getMessage()));
+                        }
+                    });
                 }
             });
         } catch (IOException | NoSuchAlgorithmException ex) {

@@ -44,7 +44,7 @@ public class FilesPagerFragment extends CommonFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
+                            updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(getActivity(), Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
                         }
                     });
 

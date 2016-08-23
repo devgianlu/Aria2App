@@ -41,6 +41,11 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    public void clear() {
+        items.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == Item.HEADER) {

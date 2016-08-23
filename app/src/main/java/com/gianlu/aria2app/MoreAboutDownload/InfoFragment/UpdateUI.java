@@ -33,7 +33,10 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class UpdateUI implements Runnable {
-    private static boolean bitfieldEnbaled = true;
+    public static boolean isTorrent = false;
+    public static Download.STATUS status = Download.STATUS.UNKNOWN;
+    public static boolean isSingleFile = true;
+    private static boolean bitfieldEnabled = true;
     private Activity context;
     private InfoPagerFragment.ViewHolder holder;
     private IDownloadStatusObserver statusObserver = null;
@@ -72,7 +75,7 @@ public class UpdateUI implements Runnable {
     }
 
     public static void setBitfieldEnabled(boolean enabled) {
-        bitfieldEnbaled = enabled;
+        bitfieldEnabled = enabled;
     }
 
     public void stop() {
@@ -100,9 +103,19 @@ public class UpdateUI implements Runnable {
                 public void onDownload(final Download download) {
                     errorCounter = 0;
 
+                    isTorrent = download.isBitTorrent;
+                    status = download.status;
+                    isSingleFile = download.files.size() <= 1;
+
                     if (!Objects.equals(download.status, lastStatus))
-                        if (statusObserver != null)
-                            statusObserver.onDownloadStatusChanged(download.status);
+                        if (statusObserver != null) {
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusObserver.onDownloadStatusChanged(download.status);
+                                }
+                            });
+                        }
                     lastStatus = download.status;
 
                     int xPosition;
@@ -141,7 +154,7 @@ public class UpdateUI implements Runnable {
                                 holder.chart.setNoDataText(context.getString(R.string.downloadIs, download.status.getFormal(context, false)));
                             }
 
-                            if (bitfieldEnbaled) {
+                            if (bitfieldEnabled) {
                                 holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
                                 LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                 bitParams.gravity = Gravity.CENTER_HORIZONTAL;

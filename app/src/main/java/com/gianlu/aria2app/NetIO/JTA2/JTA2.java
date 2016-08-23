@@ -268,7 +268,13 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onDownload(Download.fromJSON(response.getJSONObject("result")));
+                // TODO: Troubleshooting
+                try {
+                    handler.onDownload(Download.fromJSON(response.getJSONObject("result")));
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    System.out.println(response);
+                }
             }
 
             @Override

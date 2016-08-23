@@ -7,6 +7,7 @@ import com.gianlu.aria2app.NetIO.JTA2.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class TreeDirectory {
@@ -37,6 +38,34 @@ public class TreeDirectory {
 
     public static boolean areEquals(TreeDirectory first, TreeDirectory second) {
         return Objects.equals(first.incrementalPath, second.incrementalPath) && Objects.equals(first.name, second.name);
+    }
+
+    private static Long doLengthSum(TreeDirectory parent) {
+        Long length = 0L;
+
+        for (TreeFile file : parent.files) {
+            length += file.file.length;
+        }
+
+        for (TreeDirectory child : parent.children) {
+            length += doLengthSum(child);
+        }
+
+        return length;
+    }
+
+    private static Long doCompletedLengthSum(TreeDirectory parent) {
+        Long completedLength = 0L;
+
+        for (TreeFile file : parent.files) {
+            completedLength += file.file.completedLength;
+        }
+
+        for (TreeDirectory child : parent.children) {
+            completedLength += doLengthSum(child);
+        }
+
+        return completedLength;
     }
 
     public void addElement(String currentPath, String[] list, File file) {
@@ -85,5 +114,21 @@ public class TreeDirectory {
 
     public String getName() {
         return name;
+    }
+
+    public Long getLength() {
+        return doLengthSum(this);
+    }
+
+    public Long getCompletedLength() {
+        return doCompletedLengthSum(this);
+    }
+
+    public Float getProgress() {
+        return getCompletedLength().floatValue() / getLength().floatValue() * 100;
+    }
+
+    public String getPercentage() {
+        return String.format(Locale.getDefault(), "%.2f", getProgress()) + " %";
     }
 }
