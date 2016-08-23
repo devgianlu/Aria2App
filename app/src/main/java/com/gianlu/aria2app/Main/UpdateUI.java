@@ -64,7 +64,7 @@ public class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
 
         while ((!_shouldStop) && jta2 != null) {
-            /* TODO: Update main chart
+            /* TODO: Main chart
             jta2.getGlobalStat(new IStats() {
                 @Override
                 public void onStats(GlobalStats stats) {

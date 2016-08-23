@@ -39,6 +39,8 @@ public class PeersPagerFragment extends CommonFragment {
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        UpdateUI.stop(updateUI);
+
         try {
             JTA2.newInstance(getActivity()).getPeers(getArguments().getString("gid"), new IPeers() {
                 @Override

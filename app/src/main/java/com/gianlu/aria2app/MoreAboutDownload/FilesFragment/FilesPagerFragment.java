@@ -37,17 +37,13 @@ public class FilesPagerFragment extends CommonFragment {
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        UpdateUI.stop(updateUI);
+
         try {
             JTA2.newInstance(getActivity()).getFiles(getArguments().getString("gid"), new IFiles() {
                 @Override
                 public void onFiles(final List<File> files) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(getActivity(), Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
-                        }
-                    });
-
+                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(getActivity(), Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
                     new Thread(updateUI).start();
                 }
 

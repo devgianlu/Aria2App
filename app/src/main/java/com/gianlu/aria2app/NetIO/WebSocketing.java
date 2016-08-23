@@ -100,10 +100,9 @@ public class WebSocketing extends WebSocketAdapter {
         if (handler == null) return;
         if (response.isNull("error")) {
             handler.onResponse(response);
-            return;
+        } else {
+            handler.onException(response.getJSONObject("error").getInt("code"), response.getJSONObject("error").getString("message"));
         }
-
-        handler.onException(response.getJSONObject("error").getInt("code"), response.getJSONObject("error").getString("message"));
     }
 
     @Override

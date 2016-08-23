@@ -41,6 +41,8 @@ public class ServersPagerFragment extends CommonFragment {
 
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        UpdateUI.stop(updateUI);
+
         try {
             JTA2.newInstance(getActivity()).getServers(getArguments().getString("gid"), new IServers() {
                 @Override

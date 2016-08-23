@@ -33,19 +33,24 @@ public class FilesAdapter {
     private LinearLayout view;
     private Activity context;
 
-    public FilesAdapter(Activity context, Tree tree, LinearLayout view) {
+    public FilesAdapter(Activity context, final Tree tree, final LinearLayout view) {
         this.tree = tree;
         this.view = view;
         this.context = context;
 
         setupViews(context, tree.getCommonRoot());
-        populateDirectory(view, tree.getCommonRoot(), 1);
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                populateDirectory(view, tree.getCommonRoot(), 1);
+            }
+        });
     }
 
     @SuppressLint("InflateParams")
     private static void setupViews(final Activity context, TreeDirectory parent) {
         for (TreeDirectory child : parent.getChildren()) {
-            DirectoryViewHolder holder = new DirectoryViewHolder(((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.directory_item, null));
+            DirectoryViewHolder holder = new DirectoryViewHolder(View.inflate(context, R.layout.directory_item, null));
             holder.name.setText(child.getName());
             holder.progressBar.setProgress(child.getProgress().intValue());
             holder.percentage.setText(child.getPercentage());
@@ -55,7 +60,7 @@ public class FilesAdapter {
         }
 
         for (final TreeFile file : parent.getFiles()) {
-            FileViewHolder holder = new FileViewHolder(((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.file_item, null));
+            FileViewHolder holder = new FileViewHolder(View.inflate(context, R.layout.file_item, null));
             holder.name.setText(file.file.getName());
             holder.progressBar.setProgress(file.file.getProgress().intValue());
             holder.percentage.setText(file.file.getPercentage());
@@ -92,7 +97,7 @@ public class FilesAdapter {
                     selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                            // TODO
                         }
                     });
 
@@ -129,10 +134,7 @@ public class FilesAdapter {
 
             file.viewHolder = holder;
         }
-
-
     }
-
 
     private static void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
         for (TreeDirectory subDir : parentNode.getChildren()) {
@@ -218,6 +220,30 @@ public class FilesAdapter {
 
     @SuppressLint("InflateParams")
     public void onUpdate(final List<File> files) {
-        // TODO
+        if (files == null) return;
+
+        for (File _file : files) {
+            final TreeFile found = tree.findFile(_file.path);
+
+            if (found != null) {
+                int pos = view.indexOfChild(found.viewHolder.rootView);
+
+                found.file = _file;
+                found.viewHolder.percentage.setText(_file.getPercentage());
+                found.viewHolder.progressBar.setProgress(_file.getProgress().intValue());
+                if (found.file.isCompleted()) {
+                    found.viewHolder.status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
+                } else if (found.file.selected) {
+                    found.viewHolder.status.setImageResource(R.drawable.ic_cloud_download_black_48dp);
+                } else {
+                    found.viewHolder.status.setImageResource(R.drawable.ic_cloud_off_black_48dp);
+                }
+
+                view.removeViewAt(pos);
+                view.addView(found.viewHolder.rootView, pos);
+            }
+        }
+
+        // TODO: Now calls directories sum
     }
 }

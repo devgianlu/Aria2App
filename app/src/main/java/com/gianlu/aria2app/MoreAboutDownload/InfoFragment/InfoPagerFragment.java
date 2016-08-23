@@ -42,6 +42,8 @@ public class InfoPagerFragment extends CommonFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        UpdateUI.stop(updateUI);
+
         updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), holder);
         if (pendingObserver != null) updateUI.setStatusObserver(pendingObserver);
         new Thread(updateUI).start();

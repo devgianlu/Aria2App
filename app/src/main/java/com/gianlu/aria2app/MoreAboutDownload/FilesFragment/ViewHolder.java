@@ -3,8 +3,8 @@ package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 import android.view.View;
 
 public class ViewHolder {
-    public TYPE type;
     public View rootView;
+    public TYPE type;
 
     public ViewHolder(View rootView, TYPE type) {
         this.rootView = rootView;
