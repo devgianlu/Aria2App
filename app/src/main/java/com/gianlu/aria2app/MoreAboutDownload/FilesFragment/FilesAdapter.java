@@ -61,8 +61,8 @@ public class FilesAdapter {
         for (TreeDirectory child : parent.getChildren()) {
             DirectoryViewHolder holder = new DirectoryViewHolder(View.inflate(context, R.layout.directory_item, null));
             holder.name.setText(child.getName());
-            holder.progressBar.setProgress(child.getProgress().intValue());
-            holder.percentage.setText(child.getPercentage());
+            // holder.progressBar.setProgress(child.getProgress().intValue());
+            // holder.percentage.setText(child.getPercentage());
             child.viewHolder = holder;
 
             setupViews(context, gid, child);
@@ -91,6 +91,7 @@ public class FilesAdapter {
                     ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(file.file.length))));
                     ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(file.file.completedLength))));
                     CheckBox selected = (CheckBox) view.findViewById(R.id.fileAboutDialog_selected);
+                    selected.setChecked(file.file.selected);
                     if (!UpdateUI.isTorrent) {
                         selected.setEnabled(false);
                         selected.setText(R.string.selectFileNotTorrent);
@@ -317,7 +318,5 @@ public class FilesAdapter {
                 view.addView(found.viewHolder.rootView, pos);
             }
         }
-
-        // TODO: Now calls directories sum
     }
 }
