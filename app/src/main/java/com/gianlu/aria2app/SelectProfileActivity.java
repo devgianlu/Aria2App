@@ -5,23 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
 import com.gianlu.aria2app.Google.Analytics;
-import com.gianlu.aria2app.Google.CheckerCallback;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Parser;
 import com.gianlu.aria2app.SelectProfile.AddProfileActivity;
@@ -92,23 +85,6 @@ public class SelectProfileActivity extends AppCompatActivity {
                 }
             });
             sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
-        }
-
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            CheckerCallback.check(this, getPackageName(), Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
-        } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_PHONE_STATE)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.imei_box)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(SelectProfileActivity.this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, 45);
-                            }
-                        });
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, 45);
-            }
         }
 
         listView = (ExpandableListView) findViewById(R.id.selectProfile_listView);
@@ -234,19 +210,6 @@ public class SelectProfileActivity extends AppCompatActivity {
                         intent.getStringExtra("token"),
                         false,
                         null).setGlobalProfileName("Local device")));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 45:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    CheckerCallback.check(this, getPackageName(), ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId());
-                } else {
-                    Utils.UIToast(this, Utils.TOAST_MESSAGES.CANT_VERIFY_LICENSE);
-                }
-                break;
-        }
     }
 
     @Override

@@ -476,15 +476,12 @@ public class Utils {
         INVALID_CONDITIONS_NUMBER("Mutli profile should contains more than one condition", false),
         FILE_NOT_FOUND("File not found!", true),
         FATAL_EXCEPTION("Fatal exception!", true),
-        FAILED_LICENSE_VERIFICATION("Failed license verification due to app error!", true),
-        APPLICATION_NOT_LICENSED("The application is not licensed! Please download it from Google Play!", true),
         FAILED_LOADING_AUTOCOMPLETION("Unable to load method's suggestions!", true),
         NO_EMAIL_CLIENT("There are no email clients installed.", true),
         INVALID_SSID("Invalid SSID!", false),
         MUST_PICK_DEFAULT("You must select one profile as default!", false),
         INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
         INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
-        CANT_VERIFY_LICENSE("Can't verify Google license!", true),
         CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
         SOURCE_REFRESHED("Source file for options refreshed!", false);
 
