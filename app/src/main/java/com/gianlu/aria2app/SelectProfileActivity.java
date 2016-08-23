@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -94,7 +95,7 @@ public class SelectProfileActivity extends AppCompatActivity {
         }
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            CheckerCallback.check(this, getPackageName(), ((TelephonyManager) getSystemService(TELEPHONY_SERVICE)).getDeviceId());
+            CheckerCallback.check(this, getPackageName(), Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_PHONE_STATE)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

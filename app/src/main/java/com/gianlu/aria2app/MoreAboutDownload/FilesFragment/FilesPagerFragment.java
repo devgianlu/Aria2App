@@ -69,7 +69,6 @@ public class FilesPagerFragment extends CommonFragment {
                 UpdateUI.stop(updateUI, new IThread() {
                     @Override
                     public void stopped() {
-                        // TODO: Not working
                         onViewCreated(rootView, savedInstanceState);
                         rootView.setRefreshing(false);
                     }

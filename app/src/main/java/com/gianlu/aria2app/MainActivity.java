@@ -604,7 +604,6 @@ public class MainActivity extends AppCompatActivity {
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                reloadPage();
                             }
                         });
 

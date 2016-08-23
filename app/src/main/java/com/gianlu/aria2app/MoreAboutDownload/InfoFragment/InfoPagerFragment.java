@@ -49,9 +49,14 @@ public class InfoPagerFragment extends CommonFragment {
         new Thread(updateUI).start();
     }
 
-    public void setBitfieldVisibility(boolean visible) {
-        holder.bitfieldLabel.setVisibility(visible ? View.VISIBLE : View.GONE);
-        holder.bitfield.setVisibility(visible ? View.VISIBLE : View.GONE);
+    public void setBitfieldVisibility(final boolean visible) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                holder.bitfieldLabel.setVisibility(visible ? View.VISIBLE : View.GONE);
+                holder.bitfield.setVisibility(visible ? View.VISIBLE : View.GONE);
+            }
+        });
         UpdateUI.setBitfieldEnabled(visible);
     }
 

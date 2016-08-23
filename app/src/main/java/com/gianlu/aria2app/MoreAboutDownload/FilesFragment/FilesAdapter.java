@@ -2,12 +2,14 @@ package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,33 +24,40 @@ import android.widget.TextView;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.IOption;
+import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class FilesAdapter {
     private Tree tree;
     private LinearLayout view;
-    private Activity context;
 
-    public FilesAdapter(Activity context, final Tree tree, final LinearLayout view) {
+    public FilesAdapter(final Activity context, final String gid, final Tree tree, final LinearLayout view) {
         this.tree = tree;
         this.view = view;
-        this.context = context;
 
-        setupViews(context, tree.getCommonRoot());
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                view.removeAllViews();
+                setupViews(context, gid, tree.getCommonRoot());
                 populateDirectory(view, tree.getCommonRoot(), 1);
             }
         });
     }
 
     @SuppressLint("InflateParams")
-    private static void setupViews(final Activity context, TreeDirectory parent) {
+    private static void setupViews(final Activity context, final String gid, TreeDirectory parent) {
         for (TreeDirectory child : parent.getChildren()) {
             DirectoryViewHolder holder = new DirectoryViewHolder(View.inflate(context, R.layout.directory_item, null));
             holder.name.setText(child.getName());
@@ -56,7 +65,7 @@ public class FilesAdapter {
             holder.percentage.setText(child.getPercentage());
             child.viewHolder = holder;
 
-            setupViews(context, child);
+            setupViews(context, gid, child);
         }
 
         for (final TreeFile file : parent.getFiles()) {
@@ -96,8 +105,73 @@ public class FilesAdapter {
                     }
                     selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            // TODO
+                        public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                            final JTA2 jta2;
+                            try {
+                                jta2 = JTA2.newInstance(context);
+                            } catch (IOException | NoSuchAlgorithmException e) {
+                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, e);
+                                return;
+                            }
+
+                            final ProgressDialog pd = Utils.fastProgressDialog(context, R.string.gathering_information, true, false);
+                            pd.show();
+
+                            jta2.getOption(gid, new IOption() {
+                                @Override
+                                public void onOptions(Map<String, String> options) throws JSONException {
+                                    String selected = options.get("select-file");
+                                    if (selected == null)
+                                        selected = "";
+
+                                    List<Integer> selected_files = new ArrayList<>();
+
+                                    for (String i : selected.split("-")) {
+                                        selected_files.add(Integer.parseInt(i));
+                                    }
+
+                                    if (isChecked) {
+                                        if (!selected_files.contains(file.file.index))
+                                            selected_files.add(file.file.index);
+                                    } else {
+                                        selected_files.remove(file.file.index);
+                                    }
+
+                                    Map<String, String> newOptions = new ArrayMap<>();
+                                    String newSelected = "";
+                                    boolean firstItem = true;
+                                    for (Integer i : selected_files) {
+                                        if (!firstItem)
+                                            newSelected += ",";
+
+                                        newSelected += String.valueOf(i);
+
+                                        firstItem = false;
+                                    }
+                                    newOptions.put("select-file", newSelected);
+
+                                    jta2.changeOption(gid, newOptions, new ISuccess() {
+                                        @Override
+                                        public void onSuccess() {
+                                            pd.dismiss();
+                                            Utils.UIToast(context, Utils.TOAST_MESSAGES.CHANGED_SELECTION);
+                                        }
+
+                                        @Override
+                                        public void onException(Exception exception) {
+                                            pd.dismiss();
+                                            Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_CHANGE_FILE_SELECTION, exception);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onException(Exception exception) {
+                                    pd.dismiss();
+                                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                                }
+                            });
+
                         }
                     });
 

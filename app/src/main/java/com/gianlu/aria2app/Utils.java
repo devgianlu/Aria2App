@@ -455,6 +455,7 @@ public class Utils {
         MOVED("Download moved.", false),
         RESUMED("Download resumed.", false),
         RESTARTED("Download restarted.", false),
+        CHANGED_SELECTION("File selected/deselected.", false),
         FAILED_PAUSE("Failed to pause download!", true),
         FAILED_REMOVE("Failed to remove download!", true),
         FAILED_UNPAUSE("Failed to resume download!", true),
@@ -463,6 +464,7 @@ public class Utils {
         FAILED_CHANGE_OPTIONS("Failed to change options for download!", true),
         DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
         FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
+        FAILED_CHANGE_FILE_SELECTION("Failed selecting/deseletcing file!", true),
         /* Application */
         UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
         INVALID_PROFILE_NAME("Invalid profile name!", false),
