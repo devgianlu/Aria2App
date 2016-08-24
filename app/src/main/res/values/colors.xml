@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3d3c3b</color>
+    <color name="colorPrimary_ripple">#a43d3c3b</color>
     <color name="colorPrimaryDark">#282726</color>
     <color name="colorAccent">#ff5722</color>
     <color name="colorAccent_pressed">#cc451b</color>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
+import com.gianlu.aria2app.Main.DrawerManager;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
@@ -59,6 +61,7 @@ import java.util.TimerTask;
 // TODO: ServerStatusListener, it got checked before every request and (as a listener) show a dialog on thing happens (may receive calls from requester itself to avoit too frequent 'control' requests)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
+    private DrawerManager drawerManager;
     private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
     private LoadDownloads loadDownloads;
@@ -72,6 +75,15 @@ public class MainActivity extends AppCompatActivity {
 
         UncaughtExceptionHandler.application = getApplication();
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
+
+        drawerManager = new DrawerManager(this, (DrawerLayout) findViewById(R.id.main_drawer));
+        drawerManager.build();
+        drawerManager.setDrawerListener(new DrawerManager.IDrawerListener() {
+            @Override
+            public void onListItemSelected(DrawerManager.DrawerListItems which) {
+
+            }
+        });
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerView);
         assert mainRecyclerView != null;
@@ -104,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLoaded(List<Download> downloads) {
+            public void onLoaded(final List<Download> downloads) {
                 adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
                     public void onClick(View view, int position, Download item) {
@@ -225,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         mainRecyclerView.setAdapter(adapter);
 
+                        drawerManager.updateBadge(downloads.size());
+
                         UpdateUI.stop(updateUI, new IThread() {
                             @Override
                             public void stopped() {
@@ -296,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         builder.create().show();
+                        drawerManager.updateBadge(-1);
                     }
                 });
             }

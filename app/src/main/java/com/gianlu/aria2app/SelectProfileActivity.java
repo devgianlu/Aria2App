@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
 import com.gianlu.aria2app.Google.Analytics;
+import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Parser;
 import com.gianlu.aria2app.SelectProfile.AddProfileActivity;
@@ -51,6 +52,9 @@ public class SelectProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_profile);
         setTitle(R.string.title_activity_select_profile);
+
+        UncaughtExceptionHandler.application = getApplication();
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         long intervalLastSourceRefresh = System.currentTimeMillis() - sharedPreferences.getLong("lastSourceRefresh", System.currentTimeMillis());
