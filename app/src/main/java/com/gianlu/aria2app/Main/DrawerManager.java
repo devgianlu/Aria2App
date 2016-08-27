@@ -40,9 +40,9 @@ public class DrawerManager {
     private LinearLayout drawerProfilesFooter;
     private IDrawerListener listener;
     private ProfilesAdapter profilesAdapter;
-
     private boolean isProfilesLockedUntilSelected;
 
+    // TODO: Finish header
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;

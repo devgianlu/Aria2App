@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Fix that one
 public class AddProfileActivity extends AppCompatActivity {
     private Activity _this;
     private boolean isEditMode = true;

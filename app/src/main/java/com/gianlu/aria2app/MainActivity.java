@@ -430,6 +430,7 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
         }
 
+        // TODO: If no profiles...
         try {
             SingleModeProfileItem profile = defaultProfile();
             if (profile == null) {

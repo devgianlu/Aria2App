@@ -20,6 +20,7 @@ import com.gianlu.aria2app.Utils;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Optimizing
 public class OptionAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<OptionHeader> headers;
