@@ -96,5 +96,4 @@
         android:focusableInTouchMode="false"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_arrow_forward_black_48dp" />
-
 </RelativeLayout>

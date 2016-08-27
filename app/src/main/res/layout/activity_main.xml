@@ -1,107 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="7dp"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/main_swipeLayout"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/main_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_below="@+id/main_toolbar"
+            android:background="@drawable/material_drawer_shadow_bottom" />
+
+        <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_below="@+id/main_toolbar"
+            android:fitsSystemWindows="false">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/main_recyclerView"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/main_swipeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout
-            android:id="@+id/main_opaqueMask"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background_opaque"
-            android:visibility="gone" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/main_recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.v4.widget.SwipeRefreshLayout>
 
-        <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/main_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
-            fab:fab_addButtonColorNormal="@color/colorAccent"
-            fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
-            fab:fab_addButtonPlusIconColor="@android:color/white"
-            fab:fab_labelStyle="@style/menu_labels_style">
+            <View
+                android:id="@+id/main_opaqueMask"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:background="@color/background_opaque"
+                android:visibility="gone" />
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/mainFab_addMetalink"
+            <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/main_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/colorMetalink"
-                fab:fab_colorPressed="@color/colorMetalink_pressed"
-                fab:fab_icon="@drawable/ic_metalink"
-                fab:fab_size="mini"
-                fab:fab_title="Add Metalink" />
+                android:layout_gravity="bottom|end"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
+                fab:fab_addButtonColorNormal="@color/colorAccent"
+                fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
+                fab:fab_addButtonPlusIconColor="@android:color/white"
+                fab:fab_labelStyle="@style/menu_labels_style">
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/mainFab_addTorrent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/colorTorrent"
-                fab:fab_colorPressed="@color/colorTorrent_pressed"
-                fab:fab_icon="@drawable/ic_bit_torrent"
-                fab:fab_size="mini"
-                fab:fab_title="Add Torrent" />
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_addMetalink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorMetalink"
+                    fab:fab_colorPressed="@color/colorMetalink_pressed"
+                    fab:fab_icon="@drawable/ic_metalink"
+                    fab:fab_size="mini"
+                    fab:fab_title="Add Metalink" />
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/mainFab_addURI"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/colorURI"
-                fab:fab_colorPressed="@color/colorURI_pressed"
-                fab:fab_icon="@drawable/ic_file_download_white_48dp"
-                fab:fab_size="mini"
-                fab:fab_title="Add URI" />
-        </com.getbase.floatingactionbutton.FloatingActionsMenu>
-    </android.support.design.widget.CoordinatorLayout>
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_addTorrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorTorrent"
+                    fab:fab_colorPressed="@color/colorTorrent_pressed"
+                    fab:fab_icon="@drawable/ic_bit_torrent"
+                    fab:fab_size="mini"
+                    fab:fab_title="Add Torrent" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_addURI"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorURI"
+                    fab:fab_colorPressed="@color/colorURI_pressed"
+                    fab:fab_icon="@drawable/ic_file_download_white_48dp"
+                    fab:fab_size="mini"
+                    fab:fab_title="Add URI" />
+            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+        </android.support.design.widget.CoordinatorLayout>
+    </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/mainDrawer_drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/white"
+        android:background="@color/colorAccent"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/mainDrawer_header"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/material_drawer_account_header_height"
+            android:layout_height="156dp"
             android:background="@color/colorAccent">
 
             <ImageView
                 android:id="@+id/mainDrawerHeader_currentAccount"
-                android:layout_width="@dimen/material_drawer_account_header_selected"
-                android:layout_height="@dimen/material_drawer_account_header_selected"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="@dimen/material_drawer_account_header_horizontal_bottom"
-                android:layout_marginStart="@dimen/material_drawer_vertical_padding"
-                android:layout_marginTop="@dimen/material_drawer_account_header_horizontal_top"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:elevation="2dp"
                 android:src="@mipmap/ic_launcher" />
@@ -115,9 +140,9 @@
 
                 <ImageView
                     android:id="@+id/mainDrawerHeader_firstAccount"
-                    android:layout_width="@dimen/material_drawer_account_header_secondary"
-                    android:layout_height="@dimen/material_drawer_account_header_secondary"
-                    android:layout_marginEnd="@dimen/material_drawer_vertical_padding"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="16dp"
                     android:clickable="true"
                     android:elevation="2dp"
                     android:src="@mipmap/ic_launcher"
@@ -125,9 +150,9 @@
 
                 <ImageView
                     android:id="@+id/mainDrawerHeader_secondAccount"
-                    android:layout_width="@dimen/material_drawer_account_header_secondary"
-                    android:layout_height="@dimen/material_drawer_account_header_secondary"
-                    android:layout_marginEnd="@dimen/material_drawer_vertical_padding"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="16dp"
                     android:clickable="true"
                     android:elevation="2dp"
                     android:src="@mipmap/ic_launcher"
@@ -135,9 +160,9 @@
 
                 <ImageView
                     android:id="@+id/mainDrawerHeader_thirdAccount"
-                    android:layout_width="@dimen/material_drawer_account_header_secondary"
-                    android:layout_height="@dimen/material_drawer_account_header_secondary"
-                    android:layout_marginEnd="@dimen/material_drawer_vertical_padding"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="16dp"
                     android:clickable="true"
                     android:elevation="2dp"
                     android:src="@mipmap/ic_launcher"
@@ -147,66 +172,103 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="@dimen/material_drawer_padding"
+                android:layout_below="@+id/mainDrawerHeader_currentAccount"
                 android:layout_toStartOf="@+id/mainDrawerHeader_dropdown"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingEnd="56dp"
-                android:paddingStart="0dp">
+                android:paddingBottom="8dp"
+                android:paddingEnd="56dp">
 
                 <TextView
                     android:id="@+id/mainDrawerHeader_profileName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/material_drawer_vertical_padding"
+                    android:layout_marginStart="16dp"
                     android:lines="1"
-                    android:text="Server home"
-                    android:textSize="@dimen/material_drawer_account_header_text" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/mainDrawerHeader_profileEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/material_drawer_vertical_padding"
+                    android:layout_marginStart="16dp"
                     android:lines="1"
-                    android:text="http://localhost:444/jsonrpc"
-                    android:textSize="@dimen/material_drawer_account_header_text" />
-
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/mainDrawerHeader_dropdown"
-                android:layout_width="@dimen/material_drawer_account_header_dropdown"
-                android:layout_height="@dimen/material_drawer_account_header_dropdown"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginBottom="@dimen/material_drawer_account_header_dropdown_margin_bottom"
-                android:layout_marginEnd="@dimen/material_drawer_vertical_padding"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_arrow_drop_down_white_48dp" />
 
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/material_drawer_shadow_bottom" />
-
         <LinearLayout
-            android:id="@+id/mainDrawer_list"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical" />
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/mainDrawer_footerList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/material_drawer_shadow_bottom" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp">
+
+                <LinearLayout
+                    android:id="@+id/mainDrawer_menuContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/mainDrawer_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical" />
+
+                    <LinearLayout
+                        android:id="@+id/mainDrawer_footerList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/mainDrawer_profileContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <ListView
+                        android:id="@+id/mainDrawer_profiles"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:id="@+id/mainDrawer_profilesFooter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
 

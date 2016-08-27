@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.google.android.gms.analytics.HitBuilders;
@@ -23,8 +24,9 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
 
     @Override
     public void uncaughtException(final Thread thread, final Throwable throwable) {
-        throwable.printStackTrace();
-        Analytics.getDefaultTracker(application).send(new HitBuilders.ExceptionBuilder().setDescription(String.format(Locale.getDefault(), "Thread %d: %s @@ %s", thread.getId(), thread.getName(), throwable.toString() + "\n" + Arrays.toString(throwable.getStackTrace()))).setFatal(true).build());
+        if (BuildConfig.DEBUG) throwable.printStackTrace();
+        if (!BuildConfig.DEBUG)
+            Analytics.getDefaultTracker(application).send(new HitBuilders.ExceptionBuilder().setDescription(String.format(Locale.getDefault(), "Thread %d: %s @@ %s", thread.getId(), thread.getName(), throwable.toString() + "\n" + Arrays.toString(throwable.getStackTrace()))).setFatal(true).build());
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.fatalException)

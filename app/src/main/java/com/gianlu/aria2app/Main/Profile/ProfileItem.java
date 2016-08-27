@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.SelectProfile;
+package com.gianlu.aria2app.Main.Profile;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -28,10 +28,10 @@ public class ProfileItem implements Parcelable {
     };
     protected String globalProfileName;
     protected boolean singleMode;
-    protected STATUS status;
+    protected STATUS status = STATUS.UNKNOWN;
     protected String statusMessage;
     protected boolean isDefault;
-    private long latency = -1;
+    private Long latency = -1L;
 
     protected ProfileItem(Parcel in) {
         globalProfileName = in.readString();
@@ -46,10 +46,11 @@ public class ProfileItem implements Parcelable {
     }
 
     public static boolean exists(Context context, String name) {
-        return exists(context, new File(name + ".profile"));
+        return name != null && exists(context, new File(name + ".profile"));
     }
 
     public static boolean exists(Context context, File file) {
+        if (file == null) return false;
         try {
             context.openFileInput(file.getName());
             return true;
@@ -99,11 +100,11 @@ public class ProfileItem implements Parcelable {
         isDefault = aDefault;
     }
 
-    public long getLatency() {
+    public Long getLatency() {
         return latency;
     }
 
-    public void setLatency(long latency) {
+    public void setLatency(Long latency) {
         this.latency = latency;
     }
 

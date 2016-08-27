@@ -6,20 +6,4 @@
     <dimen name="appbar_padding_top">8dp</dimen>
 
     <!-- TODO: Uniform dimens -->
-    <dimen name="material_drawer_account_header_height">148dp</dimen>
-    <dimen name="material_drawer_padding">8dp</dimen>
-    <dimen name="material_drawer_vertical_padding">16dp</dimen>
-    <dimen name="material_drawer_account_header_text">14sp</dimen>
-    <dimen name="material_drawer_account_header_dropdown">22dp</dimen>
-    <dimen name="material_drawer_account_header_dropdown_margin_bottom">14dp</dimen>
-    <dimen name="material_drawer_account_header_selected">64dp</dimen>
-    <dimen name="material_drawer_account_header_secondary">40dp</dimen>
-    <dimen name="material_drawer_account_header_horizontal_top">16dp</dimen>
-    <dimen name="material_drawer_account_header_horizontal_bottom">4dp</dimen>
-    <dimen name="material_drawer_item_primary">48dp</dimen>
-    <dimen name="material_drawer_item_primary_icon">56dp</dimen>
-    <dimen name="material_drawer_item_primary_icon_padding">12dp</dimen>
-    <dimen name="material_drawer_item_primary_icon_padding_right">32dp</dimen>
-    <dimen name="material_drawer_item_primary_text">14sp</dimen>
-    <dimen name="material_drawer_item_primary_description">14sp</dimen>
 </resources>

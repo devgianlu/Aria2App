@@ -1,18 +1,23 @@
 package com.gianlu.aria2app;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +36,10 @@ import com.gianlu.aria2app.Main.DrawerManager;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
+import com.gianlu.aria2app.Main.Profile.AddProfileActivity;
+import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
+import com.gianlu.aria2app.Main.Profile.ProfileItem;
+import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
@@ -41,7 +50,7 @@ import com.gianlu.aria2app.Options.LocalParser;
 import com.gianlu.aria2app.Options.OptionAdapter;
 import com.gianlu.aria2app.Options.OptionChild;
 import com.gianlu.aria2app.Options.OptionHeader;
-import com.gianlu.aria2app.SelectProfile.SingleModeProfileItem;
+import com.gianlu.aria2app.Options.Parser;
 import com.gianlu.aria2app.Services.NotificationWebSocketService;
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -62,6 +71,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
+    private FloatingActionsMenu fabMenu;
     private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
     private LoadDownloads loadDownloads;
@@ -72,18 +82,79 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(R.string.app_name);
+
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        getWindow().setStatusBarColor(Color.TRANSPARENT); // TODO: May need a fix
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        assert toolbar != null;
+        setSupportActionBar(toolbar);
 
         UncaughtExceptionHandler.application = getApplication();
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         drawerManager = new DrawerManager(this, (DrawerLayout) findViewById(R.id.main_drawer));
-        drawerManager.build();
-        drawerManager.setDrawerListener(new DrawerManager.IDrawerListener() {
-            @Override
-            public void onListItemSelected(DrawerManager.DrawerListItems which) {
+        drawerManager.buildProfiles()
+                .buildMenu()
+                .setDrawerListener(new DrawerManager.IDrawerListener() {
+                    @Override
+                    public boolean onListItemSelected(DrawerManager.DrawerListItems which) {
+                        switch (which) {
+                            case HOME:
+                                reloadPage();
+                                break;
+                            case TERMINAL:
+                                startActivity(new Intent(MainActivity.this, TerminalActivity.class));
+                                break;
+                            case GLOBAL_OPTIONS:
+                                showOptionsDialog();
+                                break;
+                            case PREFERENCES:
+                                startActivity(new Intent(MainActivity.this, MainSettingsActivity.class));
+                                break;
+                            case SUPPORT:
+                                break;
+                        }
 
-            }
-        });
+                        return false;
+                    }
+
+                    @Override
+                    public void onProfileItemSelected(final SingleModeProfileItem profile) {
+                        if (profile.getStatus() != ProfileItem.STATUS.ONLINE) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setMessage(R.string.serverOffline)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            startWithProfile(profile, true);
+                                            drawerManager.setDrawerState(false, true);
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            drawerManager.setDrawerState(true, true);
+                                        }
+                                    }).create().show();
+                        } else {
+                            drawerManager.setDrawerState(false, true);
+                            startWithProfile(profile, true);
+                        }
+                    }
+
+                    @Override
+                    public void onAddProfile() {
+                        startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
+                                .putExtra("edit", false));
+                    }
+
+                    @Override
+                    public void onManageProfiles() {
+
+                    }
+                });
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerView);
         assert mainRecyclerView != null;
@@ -270,11 +341,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onException(boolean queuing, Exception ex) {
+            public void onException(boolean queuing, final Exception ex) {
                 if (queuing) {
                     WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
                         @Override
-                        public void onConnected() {
+                        public void onDone(boolean connected) {
                             loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
                             new Thread(loadDownloads).start();
                         }
@@ -304,6 +375,12 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 System.exit(0);
                             }
+                        })
+                        .setNeutralButton(R.string.changeProfile, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                drawerManager.openProfiles(true);
+                            }
                         });
 
                 Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
@@ -319,49 +396,129 @@ public class MainActivity extends AppCompatActivity {
         UpdateUI.stop(updateUI);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (getIntent().getParcelableExtra("profile") != null) {
-            SingleModeProfileItem profile = getIntent().getParcelableExtra("profile");
-            setTitle(getResources().getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+        long intervalLastSourceRefresh = System.currentTimeMillis() - sharedPreferences.getLong("lastSourceRefresh", System.currentTimeMillis());
+        if ((intervalLastSourceRefresh > 604800000) || (intervalLastSourceRefresh < 100)) {
+            new Parser().refreshSource(this, new Parser.ISourceProcessor() {
+                @Override
+                public void onStarted() {
+                }
 
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("a2_profileName", profile.getProfileName())
-                    .putString("a2_serverIP", profile.getFullServerAddr())
-                    .putString("a2_authMethod", profile.getAuthMethod().name())
-                    .putString("a2_serverToken", profile.getServerToken())
-                    .putString("a2_serverUsername", profile.getServerUsername())
-                    .putString("a2_serverPassword", profile.getServerPassword())
-                    .putBoolean("a2_serverSSL", profile.isServerSSL())
-                    .putBoolean("a2_directDownload", profile.isDirectDownloadEnabled());
-            if (profile.isDirectDownloadEnabled()) {
-                editor.putString("dd_addr", profile.getDirectDownload().getAddress())
-                        .putBoolean("dd_auth", profile.getDirectDownload().isAuth())
-                        .putString("dd_user", profile.getDirectDownload().getUsername())
-                        .putString("dd_passwd", profile.getDirectDownload().getPassword());
-            }
-            editor.apply();
-        } else {
-            setTitle(getResources().getString(R.string.app_name) + " - " + sharedPreferences.getString("a2_profileName", getString(R.string.unknown_profile)));
+                @Override
+                public void onDownloadEnded(String source) {
+                }
+
+                @Override
+                public void onConnectionError(int code, String message) {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
+                }
+
+                @Override
+                public void onFailed() {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
+                }
+
+                @Override
+                public void onEnd() {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
+                }
+            });
+            sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
         }
+
+        try {
+            SingleModeProfileItem profile = defaultProfile();
+            if (profile == null) {
+                drawerManager.openProfiles(true);
+                return;
+            }
+
+            setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+
+            startWithProfile(profile, false);
+        } catch (IOException | JSONException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+        }
+
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
 
-        final FloatingActionsMenu fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
+        fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
         assert fabMenu != null;
         fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
-                View mask = findViewById(R.id.main_opaqueMask);
+                final View mask = findViewById(R.id.main_opaqueMask);
                 assert mask != null;
                 mask.setVisibility(View.VISIBLE);
-                mask.setClickable(true);
+                mask.setAlpha(0);
+                mask.animate()
+                        .alpha(1)
+                        .setDuration(300)
+                        .setListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                mask.setClickable(true);
+                                mask.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        fabMenu.collapse();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
+
+                            }
+                        })
+                        .start();
             }
 
             @Override
             public void onMenuCollapsed() {
-                View mask = findViewById(R.id.main_opaqueMask);
+                final View mask = findViewById(R.id.main_opaqueMask);
                 assert mask != null;
-                mask.setVisibility(View.GONE);
-                mask.setClickable(false);
+                mask.animate()
+                        .alpha(0)
+                        .setDuration(300)
+                        .setListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                mask.setVisibility(View.GONE);
+                                mask.setClickable(false);
+                            }
+
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
+
+                            }
+                        })
+                        .start();
             }
         });
 
@@ -427,6 +584,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Nullable
+    public SingleModeProfileItem defaultProfile() throws IOException, JSONException {
+        String lastProfile = PreferenceManager.getDefaultSharedPreferences(this).getString("lastUsedProfile", null);
+
+        if (ProfileItem.exists(this, lastProfile)) {
+            if (ProfileItem.isSingleMode(this, lastProfile))
+                return SingleModeProfileItem.fromString(this, lastProfile);
+            else
+                return MultiModeProfileItem.fromString(this, lastProfile).getCurrentProfile(this);
+        } else {
+            return null;
+        }
+    }
+
+    public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("lastUsedProfile", profile.getGlobalProfileName())
+                .putString("a2_profileName", profile.getProfileName())
+                .putString("a2_serverIP", profile.getFullServerAddr())
+                .putString("a2_authMethod", profile.getAuthMethod().name())
+                .putString("a2_serverToken", profile.getServerToken())
+                .putString("a2_serverUsername", profile.getServerUsername())
+                .putString("a2_serverPassword", profile.getServerPassword())
+                .putBoolean("a2_serverSSL", profile.isServerSSL())
+                .putBoolean("a2_directDownload", profile.isDirectDownloadEnabled());
+
+        if (profile.isDirectDownloadEnabled()) {
+            editor.putString("dd_addr", profile.getDirectDownload().getAddress())
+                    .putBoolean("dd_auth", profile.getDirectDownload().isAuth())
+                    .putString("dd_user", profile.getDirectDownload().getUsername())
+                    .putString("dd_passwd", profile.getDirectDownload().getPassword());
+        }
+        editor.apply();
+
+        WebSocketing.destroyInstance();
+        if (recreate)
+            recreate();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -461,19 +657,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (fabMenu.isExpanded()) {
+            fabMenu.collapse();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.a2menu_refreshPage:
                 reloadPage();
-                break;
-            case R.id.a2menu_globalOptions:
-                showOptionsDialog();
-                break;
-            case R.id.a2menu_preferences:
-                startActivity(new Intent(this, MainSettingsActivity.class));
-                break;
-            case R.id.a2menu_terminal:
-                startActivity(new Intent(this, TerminalActivity.class));
                 break;
             // Filters
             case R.id.a2menu_active:

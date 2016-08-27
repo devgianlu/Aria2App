@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.SelectProfile;
+package com.gianlu.aria2app.Main.Profile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -106,7 +106,6 @@ public class ProfilesCustomAdapter extends BaseExpandableListAdapter {
         final ImageButton expand = (ImageButton) view.findViewById(R.id.profileCustomItem_expand);
 
         profileName.setText(item.getGlobalProfileName());
-        latency.setText(String.format(Locale.getDefault(), "%s ms", item.getLatency() == -1 ? "-" : String.valueOf(item.getLatency())));
         serverIP.setText(item.isSingleMode() ? ((SingleModeProfileItem) item).getFullServerAddr() : ((MultiModeProfileItem) item).getCurrentProfile(context).getFullServerAddr());
 
         select.setOnClickListener(new View.OnClickListener() {

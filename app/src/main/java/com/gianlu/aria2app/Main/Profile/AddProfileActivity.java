@@ -1,11 +1,10 @@
-package com.gianlu.aria2app.SelectProfile;
+package com.gianlu.aria2app.Main.Profile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.SelectProfileActivity;
 import com.gianlu.aria2app.Utils;
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -964,11 +962,6 @@ public class AddProfileActivity extends AppCompatActivity {
                     .build());
 
         onBackPressed();
-    }
-
-    @Override
-    public void onBackPressed() {
-        startActivity(new Intent(this, SelectProfileActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
     private class SingleOnTextChangedListener implements TextWatcher {

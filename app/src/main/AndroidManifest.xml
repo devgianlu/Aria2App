@@ -16,25 +16,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        tools:replace="android:theme">
+        tools:ignore="GoogleAppIndexingWarning">
 
-        <!-- Select profile activity -->
-        <activity android:name=".SelectProfileActivity">
+        <!-- Add profile activity -->
+        <activity
+            android:name=".Main.Profile.AddProfileActivity"
+            android:parentActivityName=".SelectProfileActivity"
+            android:windowSoftInputMode="stateHidden" />
+
+        <!-- Main activity -->
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Add profile activity -->
-        <activity
-            android:name=".SelectProfile.AddProfileActivity"
-            android:parentActivityName=".SelectProfileActivity"
-            android:windowSoftInputMode="stateHidden" />
-
-        <!-- Main activity -->
-        <activity android:name=".MainActivity" />
 
         <!-- Add download activities -->
         <activity

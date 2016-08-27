@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/material_drawer_item_primary"
+    android:layout_height="48dp"
     android:background="@drawable/ripple_effect_dark"
     android:orientation="horizontal"
-    android:paddingEnd="@dimen/material_drawer_vertical_padding"
-    android:paddingLeft="@dimen/material_drawer_vertical_padding"
-    android:paddingRight="@dimen/material_drawer_vertical_padding"
-    android:paddingStart="@dimen/material_drawer_vertical_padding">
+    android:paddingBottom="12dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    android:paddingTop="12dp">
 
     <ImageView
-        android:id="@+id/material_drawer_icon"
-        android:layout_width="@dimen/material_drawer_item_primary_icon"
-        android:layout_height="@dimen/material_drawer_item_primary"
+        android:id="@+id/materialDrawer_itemIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_gravity="center_vertical"
-        android:paddingBottom="@dimen/material_drawer_item_primary_icon_padding"
-        android:paddingEnd="@dimen/material_drawer_item_primary_icon_padding_right"
-        android:paddingStart="0dp"
-        android:paddingTop="@dimen/material_drawer_item_primary_icon_padding" />
+        android:layout_marginEnd="32dp"
+        android:alpha="0.5" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -27,32 +25,25 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/material_drawer_name"
+            android:id="@+id/materialDrawer_itemName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical|start"
             android:lines="1"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/material_drawer_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|start"
-            android:lines="1"
-            android:textColor="@android:color/black" />
+            android:textColor="#dd000000"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/material_drawer_badge_container"
+        android:id="@+id/materialDrawer_itemBadgeContainer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:paddingEnd="0dp"
-        android:paddingStart="@dimen/material_drawer_padding">
+        android:gravity="center_vertical|end"
+        android:paddingEnd="16dp">
 
         <TextView
-            android:id="@+id/material_drawer_badge"
+            android:id="@+id/materialDrawer_itemBadge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/material_drawer_badge"

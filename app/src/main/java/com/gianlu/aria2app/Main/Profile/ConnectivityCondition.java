@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.SelectProfile;
+package com.gianlu.aria2app.Main.Profile;
 
 public class ConnectivityCondition {
     private TYPE type;

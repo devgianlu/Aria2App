@@ -24,6 +24,7 @@ import java.util.Map;
 public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
     private static IConnecting handler;
+    private static boolean isDestroying;
     private WebSocket socket;
     private Activity context;
     private Map<Integer, IReceived> requests = new ArrayMap<>();
@@ -36,6 +37,14 @@ public class WebSocketing extends WebSocketAdapter {
                 .connectAsynchronously();
     }
 
+    public static void destroyInstance() {
+        if (webSocketing != null) {
+            isDestroying = true;
+            webSocketing.socket.disconnect();
+            webSocketing = null;
+        }
+    }
+
     public static WebSocketing newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
         if (webSocketing == null) webSocketing = new WebSocketing(context);
         return webSocketing;
@@ -44,7 +53,7 @@ public class WebSocketing extends WebSocketAdapter {
     public static void notifyConnection(IConnecting handler) {
         if (webSocketing != null) {
             if (webSocketing.socket.getState() == WebSocketState.OPEN) {
-                handler.onConnected();
+                handler.onDone(true);
                 return;
             }
         }
@@ -65,7 +74,7 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public void send(JSONObject request, IReceived handler) {
-        if (socket.getState() == WebSocketState.CONNECTING) {
+        if (socket.getState() == WebSocketState.CONNECTING || socket.getState() == WebSocketState.CREATED) {
             connectionQueue.add(new Pair<>(request, handler));
             handler.onException(true, new Exception("WebSocket is connecting! Requests queued."));
             return;
@@ -109,7 +118,7 @@ public class WebSocketing extends WebSocketAdapter {
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
         Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_OPENED);
         if (handler != null)
-            handler.onConnected();
+            handler.onDone(true);
     }
 
     @Override
@@ -120,16 +129,27 @@ public class WebSocketing extends WebSocketAdapter {
     @Override
     public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
         Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause);
+        if (handler != null)
+            handler.onDone(false);
     }
 
     @Override
     public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
         Utils.UIToast(context, Utils.TOAST_MESSAGES.UNKNOWN_EXCEPTION, cause);
+        if (handler != null)
+            handler.onDone(false);
     }
 
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+        if (isDestroying) {
+            isDestroying = false;
+            return;
+        }
+
         Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_CLOSED, "Closed by server: " + closedByServer + "\nServer frame: " + serverCloseFrame + "\nClient frame: " + clientCloseFrame);
+        if (handler != null)
+            handler.onDone(false);
     }
 
     public Activity getContext() {
@@ -144,6 +164,6 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public interface IConnecting {
-        void onConnected();
+        void onDone(boolean connected);
     }
 }

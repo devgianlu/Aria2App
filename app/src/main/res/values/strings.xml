@@ -89,6 +89,8 @@
     <string name="peers">Peers</string>
     <string name="servers">Servers</string>
     <string name="terminal">Terminal</string>
+    <string name="addProfile">Add profile</string>
+    <string name="manageProfiles">Manage profiles</string>
     <string name="home">Home</string>
     <string name="announceList"><b>Announce list:</b></string>
     <string name="address_hint" translatable="false">127.0.0.1</string>
@@ -131,6 +133,8 @@
     <string name="uris" translatable="false">URIs</string>
     <string name="_default" translatable="false">Default</string>
     <string name="save">Save</string>
+    <string name="support">Support</string>
+    <string name="changeProfile">Change profile</string>
     <string name="add">Add</string>
     <string name="change">Change</string>
     <string name="options">Options</string>
@@ -151,7 +155,6 @@
     <string name="optionsDisclaimer">Options marked in red requires download restart and may not work.</string>
     <string name="ssid" translatable="false">SSID:</string>
     <string name="ssid_hint" translatable="false">My-WiFi</string>
-    <string name="addProfile">Add profile</string>
     <string name="noDefault">No default</string>
     <string name="delete">Delete</string>
     <string name="choose">Choose…</string>

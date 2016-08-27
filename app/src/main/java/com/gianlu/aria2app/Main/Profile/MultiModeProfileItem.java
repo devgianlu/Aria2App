@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.SelectProfile;
+package com.gianlu.aria2app.Main.Profile;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

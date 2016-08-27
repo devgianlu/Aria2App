@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.SelectProfile;
+package com.gianlu.aria2app.Main.Profile;
 
 import android.os.Parcel;
 import android.os.Parcelable;
