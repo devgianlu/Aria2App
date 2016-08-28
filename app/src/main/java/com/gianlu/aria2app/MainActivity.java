@@ -600,6 +600,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
+        drawerManager.setCurrentProfile(profile);
+
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("lastUsedProfile", profile.getGlobalProfileName())
                 .putString("a2_profileName", profile.getProfileName())

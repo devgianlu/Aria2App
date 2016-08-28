@@ -118,7 +118,7 @@
             android:layout_height="156dp"
             android:background="@color/colorAccent">
 
-            <ImageView
+            <com.gianlu.aria2app.LetterIconBig
                 android:id="@+id/mainDrawerHeader_currentAccount"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
@@ -128,8 +128,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:clickable="true"
-                android:elevation="2dp"
-                android:src="@mipmap/ic_launcher" />
+                android:elevation="2dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -138,34 +137,31 @@
                 android:layout_alignTop="@+id/mainDrawerHeader_currentAccount"
                 android:gravity="end">
 
-                <ImageView
+                <com.gianlu.aria2app.LetterIconSmall
                     android:id="@+id/mainDrawerHeader_firstAccount"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:elevation="2dp"
-                    android:src="@mipmap/ic_launcher"
                     android:visibility="gone" />
 
-                <ImageView
+                <com.gianlu.aria2app.LetterIconSmall
                     android:id="@+id/mainDrawerHeader_secondAccount"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:elevation="2dp"
-                    android:src="@mipmap/ic_launcher"
                     android:visibility="gone" />
 
-                <ImageView
+                <com.gianlu.aria2app.LetterIconSmall
                     android:id="@+id/mainDrawerHeader_thirdAccount"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_marginEnd="16dp"
                     android:clickable="true"
                     android:elevation="2dp"
-                    android:src="@mipmap/ic_launcher"
                     android:visibility="gone" />
             </LinearLayout>
 
@@ -186,16 +182,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:ellipsize="end"
                     android:lines="1"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/mainDrawerHeader_profileEmail"
+                    android:id="@+id/mainDrawerHeader_profileAddr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:ellipsize="end"
                     android:lines="1"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
             </LinearLayout>
 

@@ -2,7 +2,9 @@ package com.gianlu.aria2app.Main;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.LetterIconBig;
+import com.gianlu.aria2app.LetterIconSmall;
 import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Main.Profile.ProfileItem;
 import com.gianlu.aria2app.Main.Profile.ProfilesAdapter;
@@ -32,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrawerManager {
+    private static String lastProfile;
     private Activity context;
     private DrawerLayout drawerLayout;
     private LinearLayout drawerList;
@@ -41,8 +46,11 @@ public class DrawerManager {
     private IDrawerListener listener;
     private ProfilesAdapter profilesAdapter;
     private boolean isProfilesLockedUntilSelected;
+    private LetterIconBig currentAccount;
+    private LetterIconSmall firstAccount;
+    private LetterIconSmall secondAccount;
+    private LetterIconSmall thirdAccount;
 
-    // TODO: Finish header
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;
@@ -50,6 +58,63 @@ public class DrawerManager {
         this.drawerFooterList = (LinearLayout) drawerLayout.findViewById(R.id.mainDrawer_footerList);
         this.drawerProfiles = (ListView) drawerLayout.findViewById(R.id.mainDrawer_profiles);
         this.drawerProfilesFooter = (LinearLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesFooter);
+
+        this.currentAccount = (LetterIconBig) drawerLayout.findViewById(R.id.mainDrawerHeader_currentAccount);
+        this.firstAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_firstAccount);
+        this.secondAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_secondAccount);
+        this.thirdAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_thirdAccount);
+    }
+
+    public void reloadRecentProfiles() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String first = preferences.getString("recentProfiles_first", null);
+        String second = preferences.getString("recentProfiles_second", null);
+        String third = preferences.getString("recentProfiles_third", null);
+
+        firstAccount.setVisibility(first == null ? View.GONE : View.VISIBLE);
+        secondAccount.setVisibility(second == null ? View.GONE : View.VISIBLE);
+        thirdAccount.setVisibility(third == null ? View.GONE : View.VISIBLE);
+
+        firstAccount.setProfileName(first)
+                .setTextColor(R.color.white)
+                .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
+                .build();
+        secondAccount.setProfileName(second)
+                .setTextColor(R.color.white)
+                .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
+                .build();
+        thirdAccount.setProfileName(third)
+                .setTextColor(R.color.white)
+                .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
+                .build();
+    }
+
+    public DrawerManager setCurrentProfile(SingleModeProfileItem profile) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String oldFirst = preferences.getString("recentProfiles_first", null);
+        String oldSecond = preferences.getString("recentProfiles_second", null);
+
+        preferences.edit()
+                .putString("recentProfiles_third", oldSecond)
+                .putString("recentProfiles_second", oldFirst)
+                .putString("recentProfiles_first", lastProfile)
+                .apply();
+
+        currentAccount.setProfileName(profile.getGlobalProfileName())
+                .setProfileAddress(profile.getServerAddr())
+                .setProfilePort(profile.getServerPort())
+                .setBigTextColor(R.color.colorAccent)
+                .setSmallTextColor(R.color.colorPrimary)
+                .setShapeColor(R.color.white, R.color.colorPrimary_shadow)
+                .build();
+        ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileName)).setText(profile.getGlobalProfileName());
+        ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileAddr)).setText(profile.getFullServerAddr());
+
+        lastProfile = profile.getGlobalProfileName();
+
+        reloadRecentProfiles();
+
+        return this;
     }
 
     public DrawerManager setDrawerListener(IDrawerListener listener) {
@@ -181,7 +246,7 @@ public class DrawerManager {
         });
         drawerFooterList.addView(preferences);
 
-        View support = newItem(R.drawable.ic_settings_black_48dp, context.getString(R.string.support), false);
+        View support = newItem(R.drawable.ic_report_problem_black_48dp, context.getString(R.string.support), false);
         support.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -391,6 +456,8 @@ public class DrawerManager {
             }
         });
         drawerProfiles.setAdapter(profilesAdapter);
+
+        reloadRecentProfiles();
 
         return this;
     }
