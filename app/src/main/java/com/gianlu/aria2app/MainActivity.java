@@ -303,35 +303,29 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mainRecyclerView.setAdapter(adapter);
-
                         drawerManager.updateBadge(downloads.size());
 
-                        UpdateUI.stop(updateUI, new IThread() {
-                            @Override
-                            public void stopped() {
-                                updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
-                                new Thread(updateUI).start();
+                        updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
+                        new Thread(updateUI).start();
 
-                                try {
-                                    pd.dismiss();
-                                    swipeLayout.setRefreshing(false);
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
+                        try {
+                            pd.dismiss();
+                            swipeLayout.setRefreshing(false);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
 
-                                if (getIntent().getStringExtra("gid") != null) {
-                                    Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
-                                    Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                            .putExtra("gid", item.gid)
-                                            .putExtra("isTorrent", item.isBitTorrent)
-                                            .putExtra("status", item.status.name())
-                                            .putExtra("name", item.getName());
+                        if (getIntent().getStringExtra("gid") != null) {
+                            Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                            Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                                    .putExtra("gid", item.gid)
+                                    .putExtra("isTorrent", item.isBitTorrent)
+                                    .putExtra("status", item.status.name())
+                                    .putExtra("name", item.getName());
 
-                                    if (item.status == Download.STATUS.UNKNOWN) return;
-                                    startActivity(launchActivity);
-                                }
-                            }
-                        });
+                            if (item.status == Download.STATUS.UNKNOWN) return;
+                            startActivity(launchActivity);
+                        }
                     }
                 });
             }

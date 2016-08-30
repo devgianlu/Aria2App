@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class UpdateUI implements Runnable {
     private MainCardAdapter adapter;
-    private boolean _shouldStop;
+    private boolean _shouldStop = false;
     private JTA2 jta2;
     private Activity context;
     private Integer updateRate;
@@ -23,7 +23,6 @@ public class UpdateUI implements Runnable {
     private IThread handler;
 
     public UpdateUI(Activity context, MainCardAdapter adapter) {
-        _shouldStop = false;
         this.context = context;
         this.adapter = adapter;
 
@@ -105,6 +104,7 @@ public class UpdateUI implements Runnable {
             }
         }
 
+        _shouldStop = false;
         if (handler != null)
             handler.stopped();
     }

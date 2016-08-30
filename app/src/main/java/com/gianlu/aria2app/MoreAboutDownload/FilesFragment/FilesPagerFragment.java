@@ -70,7 +70,13 @@ public class FilesPagerFragment extends CommonFragment {
                     @Override
                     public void stopped() {
                         onViewCreated(rootView, savedInstanceState);
-                        rootView.setRefreshing(false);
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                rootView.setRefreshing(false);
+                            }
+                        });
                     }
                 });
             }
