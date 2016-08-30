@@ -46,6 +46,7 @@ public class DrawerManager {
     private IDrawerListener listener;
     private ProfilesAdapter profilesAdapter;
     private boolean isProfilesLockedUntilSelected;
+    private boolean hasProfiles;
     private LetterIconBig currentAccount;
     private LetterIconSmall firstAccount;
     private LetterIconSmall secondAccount;
@@ -426,6 +427,8 @@ public class DrawerManager {
             }
         });
 
+        hasProfiles = !profiles.isEmpty();
+
         for (File profile : files) {
             try {
                 if (ProfileItem.isSingleMode(context, profile)) {
@@ -460,6 +463,10 @@ public class DrawerManager {
         reloadRecentProfiles();
 
         return this;
+    }
+
+    public boolean hasProfiles() {
+        return hasProfiles;
     }
 
     public enum DrawerListItems {

@@ -89,6 +89,11 @@ public class UpdateUI implements Runnable {
                         _shouldStop = true;
                     }
                 }
+
+                @Override
+                public void onNoPeerData(Exception exception) {
+                    adapter.onDisplayNoData(exception.getMessage());
+                }
             });
 
             try {

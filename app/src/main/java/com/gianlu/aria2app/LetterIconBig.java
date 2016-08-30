@@ -78,6 +78,8 @@ public class LetterIconBig extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (shapePaint == null || letterPaint == null || textPaint == null) return;
+
         int viewWidthHalf = this.getMeasuredWidth() / 2;
         int viewHeightHalf = this.getMeasuredHeight() / 2;
 

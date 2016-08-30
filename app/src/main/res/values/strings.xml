@@ -66,11 +66,12 @@
     <string name="updateOptions">Update options\' source file</string>
     <string name="updateOptions_summary">That file contains information about options.</string>
     <string name="unknown">Unknown</string>
-    <string name="noPeers">No peers. Swipe down to refresh</string>
+    <string name="noPeers">No peers</string>
     <string name="noServers">No servers</string>
     <string name="saveProfile">Save profile</string>
     <string name="saveProfile_message">This profile doesn\'t exists. Would you like to save it?\nIf so you can access the server directly from here.</string>
     <string name="noServersMessage">No servers: %s</string>
+    <string name="noPeersMessage">No peers: %s</string>
     <string name="loading_downloads">Loading downloads. Please wait…</string>
     <string name="downloading_file">Downloading file…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>

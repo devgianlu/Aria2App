@@ -21,25 +21,16 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
-    // AppCompact
     compile 'com.android.support:support-v4:24.2.0'
-    // Support library
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
-    // Charting
     compile 'com.neovisionaries:nv-websocket-client:1.28'
-    // WebSocket
-    compile 'com.google.android.gms:play-services-analytics:9.2.1'
-    // Google Analytics
+    compile 'com.google.android.gms:play-services-analytics:9.4.0'
     compile 'com.android.support:design:24.2.0'
-    // Support Design library
     compile 'com.getbase:floatingactionbutton:1.10.1'
-    // FAB
     compile 'com.android.support:cardview-v7:24.2.0'
-    // CardView
     compile 'com.android.support:recyclerview-v7:24.2.0'
-    // RecyclerView
     compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
-    // Circular progress
 }
+
 
 apply plugin: 'com.google.gms.google-services'

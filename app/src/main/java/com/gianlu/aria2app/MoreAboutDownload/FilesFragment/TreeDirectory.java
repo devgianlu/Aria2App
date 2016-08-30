@@ -71,8 +71,10 @@ public class TreeDirectory {
     public void addElement(String currentPath, String[] list, File file) {
         if (list.length == 0) return;
 
-        while (list[0] == null || list[0].isEmpty())
+        while (list[0] == null || list[0].isEmpty()) {
             list = Arrays.copyOfRange(list, 1, list.length);
+            if (list.length == 0) return;
+        }
 
         if (list.length == 1) {
             files.add(new TreeFile(file));

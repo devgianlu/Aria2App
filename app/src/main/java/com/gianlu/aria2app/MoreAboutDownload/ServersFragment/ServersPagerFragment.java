@@ -69,7 +69,9 @@ public class ServersPagerFragment extends CommonFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ((ServerCardAdapter) ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).getAdapter()).clear();
+                            ServerCardAdapter adapter = ((ServerCardAdapter) ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).getAdapter());
+                            if (adapter != null)
+                                adapter.clear();
                             view.findViewById(R.id.serversFragment_noData).setVisibility(View.VISIBLE);
                             ((TextView) view.findViewById(R.id.serversFragment_noDataLabel)).setText(getString(R.string.noServersMessage, exception.getMessage()));
                         }

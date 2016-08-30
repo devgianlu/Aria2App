@@ -25,6 +25,8 @@ public class Tree {
     }
 
     public Tree addElements(List<File> elements) {
+        if (elements.isEmpty()) return this;
+
         for (File e : elements) {
             addElement(e);
         }
@@ -37,7 +39,9 @@ public class Tree {
             return commonRoot;
         } else {
             TreeDirectory curr = root;
+
             while (curr.getFiles().size() <= 0) {
+                if (curr.getChildren().size() == 0) return null;
                 curr = curr.getChildren().get(0);
             }
 
@@ -47,6 +51,7 @@ public class Tree {
     }
 
     public TreeFile findFile(String path) {
+        if (getCommonRoot() == null) return null;
         return getCommonRoot().findFile(path);
     }
 }

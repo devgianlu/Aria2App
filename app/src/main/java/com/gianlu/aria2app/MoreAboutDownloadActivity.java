@@ -3,7 +3,6 @@ package com.gianlu.aria2app;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
@@ -109,7 +108,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         pager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(pager);
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 pager.setCurrentItem(tab.getPosition());
@@ -161,23 +160,20 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        adapter.stopAllUpdater();
-        finishActivity(0);
         super.onDestroy();
+        adapter.stopAllUpdater();
     }
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this, MainActivity.class));
-        finishActivity(0);
         super.onBackPressed();
+        adapter.stopAllUpdater();
     }
 
     @Override
     protected void onStop() {
-        adapter.stopAllUpdater();
-        finishActivity(0);
         super.onStop();
+        adapter.stopAllUpdater();
     }
 
     private void showOptionsDialog() {
@@ -256,21 +252,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                                     public void onSuccess() {
                                         pd.dismiss();
                                         Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
-
-                                        MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                /*
-                                                UpdateUI.stop(updateUI, new IThread() {
-                                                    @Override
-                                                    public void stopped() {
-                                                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
-                                                        new Thread(updateUI).start();
-                                                    }
-                                                });
-                                                */
-                                            }
-                                        });
                                     }
 
                                     @Override
@@ -285,20 +266,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        MoreAboutDownloadActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                /*
-                                UpdateUI.stop(updateUI, new IThread() {
-                                    @Override
-                                    public void stopped() {
-                                        updateUI = new UpdateUI(MoreAboutDownloadActivity.this, null, canWrite, gid, holder);
-                                        new Thread(updateUI).start();
-                                    }
-                                });
-                                */
-                            }
-                        });
                     }
                 });
 

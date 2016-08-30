@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
@@ -45,6 +46,8 @@ public class PeersPagerFragment extends CommonFragment {
             JTA2.newInstance(getActivity()).getPeers(getArguments().getString("gid"), new IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
+                    view.findViewById(R.id.peersFragment_noData).setVisibility(View.GONE);
+
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers, (CardView) view.findViewById(R.id.peersFragment_noData));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -60,6 +63,20 @@ public class PeersPagerFragment extends CommonFragment {
                 @Override
                 public void onException(Exception exception) {
                     Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                }
+
+                @Override
+                public void onNoPeerData(final Exception exception) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PeerCardAdapter adapter = ((PeerCardAdapter) ((RecyclerView) view.findViewById(R.id.peersFragment_recyclerView)).getAdapter());
+                            if (adapter != null)
+                                adapter.clear();
+                            view.findViewById(R.id.peersFragment_noData).setVisibility(View.VISIBLE);
+                            ((TextView) view.findViewById(R.id.peersFragment_noDataLabel)).setText(getString(R.string.noPeersMessage, exception.getMessage()));
+                        }
+                    });
                 }
             });
         } catch (IOException | NoSuchAlgorithmException ex) {

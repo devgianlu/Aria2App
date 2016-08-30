@@ -30,6 +30,37 @@ public class JTA2 {
     }
 
     // Caster
+    private List<FEATURES> fromFeatures(JSONArray features) throws JSONException {
+        if (features == null) return null;
+
+        List<FEATURES> featuresList = new ArrayList<>();
+        for (int i = 0; i < features.length(); i++) {
+            String _feature = features.getString(i);
+
+            switch (_feature.toLowerCase()) {
+                case "bittorrent":
+                    featuresList.add(FEATURES.BITTORRENT);
+                    break;
+                case "gzip":
+                    featuresList.add(FEATURES.GZIP);
+                    break;
+                case "https":
+                    featuresList.add(FEATURES.HTTPS);
+                    break;
+                case "message digest":
+                    featuresList.add(FEATURES.MESSAGE_DIGEST);
+                    break;
+                case "metalink":
+                    featuresList.add(FEATURES.METALINK);
+                    break;
+                case "xml-rpc":
+                    featuresList.add(FEATURES.XML_RPC);
+                    break;
+            }
+        }
+
+        return featuresList;
+    }
     private Map<String, String> fromOptions(JSONObject jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -55,7 +86,6 @@ public class JTA2 {
 
         return methods;
     }
-
     private List<Peer> fromPeers(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -67,7 +97,6 @@ public class JTA2 {
 
         return peers;
     }
-
     private List<File> fromFiles(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -102,8 +131,37 @@ public class JTA2 {
         return list;
     }
 
-
     // Requests
+    //aria2.getVersion
+    public void getVersion(final IVersion handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getVersion");
+            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            request.put("params", params);
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onVersion(fromFeatures(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
     //aria2.addUri
     public void addUri(List<String> uris, @Nullable Integer position, @Nullable Map<String, String> options, final IGID handler) {
         JSONObject request;
@@ -853,7 +911,11 @@ public class JTA2 {
 
             @Override
             public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
+                if (code == 1 && reason.startsWith("No peer data")) {
+                    handler.onNoPeerData(new Aria2Exception(reason, code));
+                } else {
+                    handler.onException(new Aria2Exception(reason, code));
+                }
             }
         });
     }
@@ -922,6 +984,15 @@ public class JTA2 {
         NONE,
         HTTP,
         TOKEN
+    }
+
+    public enum FEATURES {
+        BITTORRENT,
+        GZIP,
+        HTTPS,
+        MESSAGE_DIGEST,
+        METALINK,
+        XML_RPC
     }
 
     public enum POSITION_HOW {

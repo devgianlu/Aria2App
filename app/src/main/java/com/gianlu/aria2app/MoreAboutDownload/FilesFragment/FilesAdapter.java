@@ -58,6 +58,8 @@ public class FilesAdapter {
 
     @SuppressLint("InflateParams")
     private static void setupViews(final Activity context, final String gid, TreeDirectory parent) {
+        if (parent == null) return;
+
         for (TreeDirectory child : parent.getChildren()) {
             DirectoryViewHolder holder = new DirectoryViewHolder(View.inflate(context, R.layout.directory_item, null));
             holder.name.setText(child.getName());
@@ -212,6 +214,8 @@ public class FilesAdapter {
     }
 
     private static void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
+        if (parentNode == null) return;
+
         for (TreeDirectory subDir : parentNode.getChildren()) {
             parentView.addView(subDir.viewHolder.rootView);
 

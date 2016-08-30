@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
@@ -88,6 +89,16 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
     @Override
     public PeerCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new PeerCardViewHolder(LayoutInflater.from(context).inflate(R.layout.peer_cardview, parent, false));
+    }
+
+    public void clear() {
+        objs.clear();
+        notifyDataSetChanged();
+    }
+
+    public void onDisplayNoData(String message) {
+        noDataCardView.setVisibility(View.VISIBLE);
+        ((TextView) noDataCardView.findViewById(R.id.peersFragment_noDataLabel)).setText(context.getString(R.string.noPeersMessage, message));
     }
 
     public void onUpdate(List<Peer> peers) {

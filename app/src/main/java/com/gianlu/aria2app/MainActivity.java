@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -430,7 +429,6 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
         }
 
-        // TODO: If no profiles...
         try {
             SingleModeProfileItem profile = defaultProfile();
             if (profile == null) {
@@ -453,73 +451,24 @@ public class MainActivity extends AppCompatActivity {
         fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
-                final View mask = findViewById(R.id.main_opaqueMask);
+                final View mask = findViewById(R.id.main_mask);
                 assert mask != null;
                 mask.setVisibility(View.VISIBLE);
-                mask.setAlpha(0);
-                mask.animate()
-                        .alpha(1)
-                        .setDuration(300)
-                        .setListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animator) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animator) {
-                                mask.setClickable(true);
-                                mask.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        fabMenu.collapse();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animator) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animator) {
-
-                            }
-                        })
-                        .start();
+                mask.setClickable(true);
+                mask.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fabMenu.collapse();
+                    }
+                });
             }
 
             @Override
             public void onMenuCollapsed() {
-                final View mask = findViewById(R.id.main_opaqueMask);
+                final View mask = findViewById(R.id.main_mask);
                 assert mask != null;
-                mask.animate()
-                        .alpha(0)
-                        .setDuration(300)
-                        .setListener(new Animator.AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animator) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animator animator) {
-                                mask.setVisibility(View.GONE);
-                                mask.setClickable(false);
-                            }
-
-                            @Override
-                            public void onAnimationCancel(Animator animator) {
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animator animator) {
-
-                            }
-                        })
-                        .start();
+                mask.setVisibility(View.GONE);
+                mask.setClickable(false);
             }
         });
 
@@ -631,18 +580,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         getMenuInflater().inflate(R.menu.main_filters, menu.findItem(R.id.a2menu_filtering).getSubMenu());
         return true;
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (reloadDownloadsListTimer != null) reloadDownloadsListTimer.cancel();
-        finishActivity(0);
-    }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (reloadDownloadsListTimer != null) reloadDownloadsListTimer.cancel();
-        finishActivity(0);
     }
 
     public void reloadPage() {

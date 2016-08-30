@@ -483,7 +483,8 @@ public class Utils {
         INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
         INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
         CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
-        SOURCE_REFRESHED("Source file for options refreshed!", false);
+        SOURCE_REFRESHED("Source file for options refreshed!", false),
+        CREATE_PROFILE("Create your first profile!", false);
 
         private final String text;
         private final boolean isError;
