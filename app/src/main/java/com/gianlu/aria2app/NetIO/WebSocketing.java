@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// TODO: On request failed due to lost connection set a global key that stops everything
 public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
     private static IConnecting handler;

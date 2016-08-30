@@ -70,7 +70,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 // TODO: Implement external start
-// TODO: ServerStatusListener, it got checked before every request and (as a listener) show a dialog on thing happens (may receive calls from requester itself to avoit too frequent 'control' requests)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
