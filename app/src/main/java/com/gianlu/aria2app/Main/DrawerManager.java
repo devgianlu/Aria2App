@@ -224,7 +224,7 @@ public class DrawerManager {
     public DrawerManager buildMenu() {
         drawerList.removeAllViews();
 
-        View home = newItem(R.drawable.ic_home_black_48dp, context.getString(R.string.home), true, 0, R.color.colorAccent, R.color.colorAccent_tint);
+        View home = newItem(R.drawable.ic_home_black_48dp, context.getString(R.string.home), true, 0, R.color.colorAccent, R.color.colorPrimary_drawerSelected);
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

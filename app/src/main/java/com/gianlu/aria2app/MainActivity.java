@@ -99,21 +99,21 @@ public class MainActivity extends AppCompatActivity {
                         switch (which) {
                             case HOME:
                                 reloadPage();
-                                break;
+                                return true;
                             case TERMINAL:
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
-                                break;
+                                return false;
                             case GLOBAL_OPTIONS:
                                 showOptionsDialog();
-                                break;
+                                return true;
                             case PREFERENCES:
                                 startActivity(new Intent(MainActivity.this, MainSettingsActivity.class));
-                                break;
+                                return false;
                             case SUPPORT:
-                                break;
+                                return true;
+                            default:
+                                return true;
                         }
-
-                        return false;
                     }
 
                     @Override
