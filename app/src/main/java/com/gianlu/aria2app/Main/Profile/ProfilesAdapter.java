@@ -2,6 +2,8 @@ package com.gianlu.aria2app.Main.Profile;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,15 +33,31 @@ public class ProfilesAdapter extends BaseAdapter {
     private List<ProfileItem> profiles;
     private IProfile handler;
 
-    public ProfilesAdapter(Activity context, List<ProfileItem> profiles, IProfile handler) {
+    public ProfilesAdapter(Activity context, List<ProfileItem> profiles, final SwipeRefreshLayout swipeRefreshLayout, IProfile handler) {
         this.context = context;
         this.profiles = profiles;
         this.handler = handler;
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                startProfilesTest(new IFinished() {
+                    @Override
+                    public void onFinished() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            }
+        });
     }
 
-    public void startProfilesTest() {
+    public void startProfilesTest(IFinished handler) {
         for (int i = 0; i < profiles.size(); i++) {
-            runTest(i);
+            if (i == profiles.size() - 1)
+                runTest(i, handler);
+            else
+                runTest(i, null);
         }
     }
 
@@ -109,7 +127,7 @@ public class ProfilesAdapter extends BaseAdapter {
         return view;
     }
 
-    public void runTest(int pos) {
+    public void runTest(int pos, @Nullable IFinished handler) {
         SingleModeProfileItem profile = getItem(pos);
 
         try {
@@ -119,13 +137,15 @@ public class ProfilesAdapter extends BaseAdapter {
             else
                 webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddr());
 
-            webSocket.addListener(new StatusWebSocketHandler(profile))
+            webSocket.addListener(new StatusWebSocketHandler(profile, handler))
                     .connectAsynchronously();
         } catch (IOException | NoSuchAlgorithmException ex) {
             profile.setStatus(ProfileItem.STATUS.ERROR);
             profile.setStatusMessage(ex.getMessage());
 
             notifyDataSetChanged();
+            if (handler != null)
+                handler.onFinished();
         }
     }
 
@@ -133,12 +153,19 @@ public class ProfilesAdapter extends BaseAdapter {
         void onProfileSelected(SingleModeProfileItem which);
     }
 
+    private interface IFinished {
+        void onFinished();
+    }
+
     private class StatusWebSocketHandler extends WebSocketAdapter {
         private long startTime;
         private SingleModeProfileItem profile;
+        @Nullable
+        private IFinished handler;
 
-        public StatusWebSocketHandler(SingleModeProfileItem profile) {
+        public StatusWebSocketHandler(SingleModeProfileItem profile, @Nullable IFinished handler) {
             this.profile = profile;
+            this.handler = handler;
         }
 
         @Override
@@ -152,6 +179,8 @@ public class ProfilesAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
+            if (handler != null)
+                handler.onFinished();
 
             startTime = System.currentTimeMillis();
             websocket.sendPing();
@@ -180,6 +209,8 @@ public class ProfilesAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
+            if (handler != null)
+                handler.onFinished();
         }
 
         @Override
@@ -194,6 +225,8 @@ public class ProfilesAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
+            if (handler != null)
+                handler.onFinished();
         }
 
         @Override
@@ -213,6 +246,8 @@ public class ProfilesAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
+            if (handler != null)
+                handler.onFinished();
         }
 
         @Override
@@ -231,6 +266,8 @@ public class ProfilesAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 }
             });
+            if (handler != null)
+                handler.onFinished();
         }
     }
 }

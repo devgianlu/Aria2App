@@ -23,8 +23,8 @@ public class UpdateUI implements Runnable {
     private String gid;
     private int updateRate;
     private boolean _shouldStop;
-    private boolean _stopped;
     private int errorCounter = 0;
+    private IThread handler;
 
     public UpdateUI(Activity context, String gid, ServerCardAdapter adapter) {
         this.gid = gid;
@@ -59,8 +59,7 @@ public class UpdateUI implements Runnable {
     @SuppressWarnings("StatementWithEmptyBody")
     public void stop(IThread handler) {
         _shouldStop = true;
-        while (!_stopped) ;
-        handler.stopped();
+        this.handler = handler;
     }
 
     @Override
@@ -111,6 +110,9 @@ public class UpdateUI implements Runnable {
             }
         }
 
-        _stopped = true;
+        if (handler != null) {
+            handler.stopped();
+            handler = null;
+        }
     }
 }

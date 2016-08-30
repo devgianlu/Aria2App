@@ -19,18 +19,16 @@ public class UpdateUI implements Runnable {
     private JTA2 jta2;
     private Activity context;
     private Integer updateRate;
-    private boolean _stopped;
     private int errorCounter = 0;
+    private IThread handler;
 
     public UpdateUI(Activity context, MainCardAdapter adapter) {
         _shouldStop = false;
-        _stopped = false;
         this.context = context;
         this.adapter = adapter;
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         updateRate = Integer.parseInt(sharedPreferences.getString("a2_updateRate", "2")) * 1000;
-
 
         try {
             jta2 = JTA2.newInstance(context);
@@ -54,9 +52,8 @@ public class UpdateUI implements Runnable {
     }
     @SuppressWarnings("StatementWithEmptyBody")
     private void stop(IThread handler) {
+        this.handler = handler;
         _shouldStop = true;
-        while (!_stopped) ;
-        handler.stopped();
     }
 
     @Override
@@ -108,6 +105,7 @@ public class UpdateUI implements Runnable {
             }
         }
 
-        _stopped = true;
+        if (handler != null)
+            handler.stopped();
     }
 }

@@ -10,6 +10,7 @@ import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -46,7 +47,6 @@ public class DrawerManager {
     private IDrawerListener listener;
     private ProfilesAdapter profilesAdapter;
     private boolean isProfilesLockedUntilSelected;
-    private boolean hasProfiles;
     private LetterIconBig currentAccount;
     private LetterIconSmall firstAccount;
     private LetterIconSmall secondAccount;
@@ -64,6 +64,9 @@ public class DrawerManager {
         this.firstAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_firstAccount);
         this.secondAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_secondAccount);
         this.thirdAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_thirdAccount);
+
+        context.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        context.getWindow().setStatusBarColor(Color.TRANSPARENT);
     }
 
     public void reloadRecentProfiles() {
@@ -283,7 +286,7 @@ public class DrawerManager {
                                 @Override
                                 public void onAnimationEnd(Animator animator) {
                                     profileContainer.setAlpha(1);
-                                    profilesAdapter.startProfilesTest();
+                                    profilesAdapter.startProfilesTest(null);
                                 }
 
                                 @Override
@@ -427,8 +430,6 @@ public class DrawerManager {
             }
         });
 
-        hasProfiles = !profiles.isEmpty();
-
         for (File profile : files) {
             try {
                 if (ProfileItem.isSingleMode(context, profile)) {
@@ -444,7 +445,7 @@ public class DrawerManager {
             }
         }
 
-        profilesAdapter = new ProfilesAdapter(context, profiles, new ProfilesAdapter.IProfile() {
+        profilesAdapter = new ProfilesAdapter(context, profiles, (SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh), new ProfilesAdapter.IProfile() {
             @Override
             public void onProfileSelected(SingleModeProfileItem which) {
                 if (isProfilesLockedUntilSelected) {
@@ -463,10 +464,6 @@ public class DrawerManager {
         reloadRecentProfiles();
 
         return this;
-    }
-
-    public boolean hasProfiles() {
-        return hasProfiles;
     }
 
     public enum DrawerListItems {

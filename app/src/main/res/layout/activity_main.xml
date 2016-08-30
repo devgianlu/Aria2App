@@ -112,8 +112,13 @@
         <RelativeLayout
             android:id="@+id/mainDrawer_header"
             android:layout_width="match_parent"
-            android:layout_height="156dp"
-            android:background="@color/colorAccent">
+            android:layout_height="156dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/drawer_background" />
 
             <com.gianlu.aria2app.LetterIconBig
                 android:id="@+id/mainDrawerHeader_currentAccount"
@@ -221,14 +226,14 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="15dp">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:id="@+id/mainDrawer_menuContainer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingTop="15dp">
 
                     <LinearLayout
                         android:id="@+id/mainDrawer_list"
@@ -252,11 +257,17 @@
                     android:orientation="vertical"
                     android:visibility="invisible">
 
-                    <ListView
-                        android:id="@+id/mainDrawer_profiles"
+                    <android.support.v4.widget.SwipeRefreshLayout
+                        android:id="@+id/mainDrawer_profilesRefresh"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1" />
+                        android:layout_weight="1">
+
+                        <ListView
+                            android:id="@+id/mainDrawer_profiles"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </android.support.v4.widget.SwipeRefreshLayout>
 
                     <LinearLayout
                         android:id="@+id/mainDrawer_profilesFooter"
