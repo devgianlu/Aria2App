@@ -254,8 +254,6 @@ public class ProfilesAdapter extends BaseAdapter {
 
             profile.setStatusMessage(exception.getMessage());
 
-            exception.printStackTrace();
-
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

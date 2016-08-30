@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Main;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
@@ -11,6 +12,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -52,6 +55,8 @@ public class DrawerManager {
     private LetterIconSmall secondAccount;
     private LetterIconSmall thirdAccount;
 
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;
@@ -67,6 +72,23 @@ public class DrawerManager {
 
         context.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         context.getWindow().setStatusBarColor(Color.TRANSPARENT);
+    }
+
+    public DrawerManager setToolbar(Toolbar toolbar) {
+        actionBarDrawerToggle = new ActionBarDrawerToggle(context, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer);
+        actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+        actionBarDrawerToggle.syncState();
+        return this;
+    }
+
+    public void syncTogglerState() {
+        if (actionBarDrawerToggle != null)
+            actionBarDrawerToggle.syncState();
+    }
+
+    public void onTogglerConfigurationChanged(Configuration conf) {
+        if (actionBarDrawerToggle != null)
+            actionBarDrawerToggle.onConfigurationChanged(conf);
     }
 
     public void reloadRecentProfiles() {

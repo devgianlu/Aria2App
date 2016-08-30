@@ -238,6 +238,8 @@
     <string name="developer">Developer: Gianlu (Report bugs or any suggestion)</string>
     <string name="email" translatable="false">altomanigianluca@gmail.com</string>
     <string name="unknownMillisecond">- ms</string>
+    <string name="openDrawer">Open drawer</string>
+    <string name="closeDrawer">Close drawer</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

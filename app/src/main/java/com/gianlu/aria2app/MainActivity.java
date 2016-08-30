@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
     private LoadDownloads loadDownloads;
-    private Timer reloadDownloadsListTimer;
     private MainCardAdapter adapter;
 
     @Override
@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         drawerManager = new DrawerManager(this, (DrawerLayout) findViewById(R.id.main_drawer));
-        drawerManager.buildProfiles()
+        drawerManager.setToolbar(toolbar)
+                .buildProfiles()
                 .buildMenu()
                 .setDrawerListener(new DrawerManager.IDrawerListener() {
                     @Override
@@ -494,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (autoReloadDownloadsListRate != 0) {
-            reloadDownloadsListTimer = new Timer(false);
+            Timer reloadDownloadsListTimer = new Timer(false);
             reloadDownloadsListTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -531,6 +532,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             stopService(new Intent(this, NotificationWebSocketService.class));
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerManager.onTogglerConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerManager.syncTogglerState();
     }
 
     @Nullable
