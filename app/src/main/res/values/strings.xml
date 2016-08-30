@@ -69,6 +69,9 @@
     <string name="noPeers">No peers</string>
     <string name="noServers">No servers</string>
     <string name="saveProfile">Save profile</string>
+    <string name="features"><![CDATA[<b>Features:</b>]]> %s</string>
+    <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
+    <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
     <string name="saveProfile_message">This profile doesn\'t exists. Would you like to save it?\nIf so you can access the server directly from here.</string>
     <string name="noServersMessage">No servers: %s</string>
     <string name="noPeersMessage">No peers: %s</string>
@@ -240,6 +243,7 @@
     <string name="unknownMillisecond">- ms</string>
     <string name="openDrawer">Open drawer</string>
     <string name="closeDrawer">Close drawer</string>
+    <string name="about_aria2">About aria2</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

@@ -254,6 +254,16 @@ public class DrawerManager {
         });
         drawerList.addView(globalOptions);
 
+        View aboutAria2 = newItem(R.drawable.ic_cloud_black_48dp, context.getString(R.string.about_aria2), true);
+        aboutAria2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null)
+                    setDrawerState(false, listener.onListItemSelected(DrawerListItems.ABOUT_ARIA2));
+            }
+        });
+        drawerList.addView(aboutAria2);
+
         // Footer group
         drawerFooterList.removeAllViews();
 
@@ -492,6 +502,7 @@ public class DrawerManager {
         HOME,
         TERMINAL,
         GLOBAL_OPTIONS,
+        ABOUT_ARIA2,
         PREFERENCES,
         SUPPORT
     }

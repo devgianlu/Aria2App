@@ -56,7 +56,24 @@ public class JTA2 {
                 case "xml-rpc":
                     featuresList.add(FEATURES.XML_RPC);
                     break;
+                case "async dns":
+                    featuresList.add(FEATURES.ASYNC_DNS);
+                    break;
+                case "firefox3 cookie":
+                    featuresList.add(FEATURES.FIREFOX3_COOKIE);
+                    break;
             }
+        }
+
+        return featuresList;
+    }
+
+    private List<String> fromFeaturesRaw(JSONArray features) throws JSONException {
+        if (features == null) return null;
+
+        List<String> featuresList = new ArrayList<>();
+        for (int i = 0; i < features.length(); i++) {
+            featuresList.add(features.getString(i));
         }
 
         return featuresList;
@@ -148,7 +165,38 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onVersion(fromFeatures(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
+                handler.onVersion(fromFeaturesRaw(response.getJSONObject("result").optJSONArray("enabledFeatures")), fromFeatures(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
+
+    //aria2.getSessionInfo
+    public void getSessionInfo(final ISession handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.getSessionInfo");
+            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            request.put("params", params);
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                handler.onSessionInfo(response.getJSONObject("result").optString("sessionId"));
             }
 
             @Override
@@ -992,7 +1040,9 @@ public class JTA2 {
         HTTPS,
         MESSAGE_DIGEST,
         METALINK,
-        XML_RPC
+        XML_RPC,
+        ASYNC_DNS,
+        FIREFOX3_COOKIE
     }
 
     public enum POSITION_HOW {

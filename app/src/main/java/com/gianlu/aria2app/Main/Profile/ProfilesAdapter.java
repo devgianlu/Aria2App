@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -96,23 +95,14 @@ public class ProfilesAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.materialDrawer_profileAddress)).setText(profile.getFullServerAddr());
 
         if (profile.getLatency() != -1) {
-            view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.GONE);
             view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.VISIBLE);
-
             ((TextView) view.findViewById(R.id.materialDrawer_profilePing)).setText(String.format(Locale.getDefault(), "%s ms", profile.getLatency()));
         } else {
-            view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.VISIBLE);
-            ((ProgressBar) view.findViewById(R.id.materialDrawer_profileProgressBar)).setIndeterminate(true);
-            view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.INVISIBLE);
-            view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.GONE);
-
-            ((TextView) view.findViewById(R.id.materialDrawer_profilePing)).setText(R.string.unknownMillisecond);
+            view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.GONE);
         }
 
         if (profile.getStatus() != null) {
             view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.GONE);
-            view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.VISIBLE);
             view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.VISIBLE);
         }
 

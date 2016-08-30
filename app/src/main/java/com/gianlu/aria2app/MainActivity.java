@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -42,7 +45,9 @@ import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
+import com.gianlu.aria2app.NetIO.JTA2.ISession;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
+import com.gianlu.aria2app.NetIO.JTA2.IVersion;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.LocalParser;
@@ -64,8 +69,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: Basic functionalities (such as version and shutdown)
-// TODO: Check functionalities (if support Metalink... etc)
+// TODO: Implement external start
 // TODO: ServerStatusListener, it got checked before every request and (as a listener) show a dialog on thing happens (may receive calls from requester itself to avoit too frequent 'control' requests)
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
@@ -82,12 +86,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
+        UncaughtExceptionHandler.application = getApplication();
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         assert toolbar != null;
         setSupportActionBar(toolbar);
-
-        UncaughtExceptionHandler.application = getApplication();
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         drawerManager = new DrawerManager(this, (DrawerLayout) findViewById(R.id.main_drawer));
         drawerManager.setToolbar(toolbar)
@@ -110,6 +114,77 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, MainSettingsActivity.class));
                                 return false;
                             case SUPPORT:
+                                return true;
+                            case ABOUT_ARIA2:
+                                final JTA2 jta2;
+                                try {
+                                    jta2 = JTA2.newInstance(MainActivity.this);
+                                } catch (IOException | NoSuchAlgorithmException ex) {
+                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                                    return true;
+                                }
+
+                                // TODO: It can be better
+                                // TODO: Basic functionalities (shutdown, saveSession, etc)
+                                final ProgressDialog pd = Utils.fastProgressDialog(MainActivity.this, R.string.gathering_information, true, false);
+                                pd.show();
+                                jta2.getVersion(new IVersion() {
+                                    @Override
+                                    public void onVersion(List<String> rawFeatures, List<JTA2.FEATURES> enabledFeatures, String version) {
+                                        final LinearLayout text = new LinearLayout(MainActivity.this);
+                                        text.setOrientation(LinearLayout.VERTICAL);
+                                        text.setPadding(16, 16, 16, 16);
+
+                                        TextView versionText = new TextView(MainActivity.this);
+                                        versionText.setText(Html.fromHtml(getString(R.string.version, version)));
+                                        text.addView(versionText);
+
+                                        String extendedList = "";
+                                        boolean first = true;
+                                        for (String _feature : rawFeatures) {
+                                            if (!first)
+                                                extendedList += ", ";
+                                            extendedList += _feature;
+
+                                            first = false;
+                                        }
+
+                                        final TextView featuresText = new TextView(MainActivity.this);
+                                        featuresText.setText(Html.fromHtml(getString(R.string.features, extendedList)));
+                                        text.addView(featuresText);
+
+                                        jta2.getSessionInfo(new ISession() {
+                                            @Override
+                                            public void onSessionInfo(String sessionID) {
+                                                TextView sessionText = new TextView(MainActivity.this);
+                                                sessionText.setText(Html.fromHtml(getString(R.string.sessionId, sessionID)));
+                                                text.addView(sessionText);
+
+                                                pd.dismiss();
+                                                MainActivity.this.runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
+                                                                .setView(text)
+                                                                .create().show();
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onException(Exception exception) {
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                                                pd.dismiss();
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onException(Exception exception) {
+                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                                        pd.dismiss();
+                                    }
+                                });
                                 return true;
                             default:
                                 return true;
@@ -471,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddURIActivity.class));
             }
         });
-        FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
+        final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
         assert fabAddTorrent != null;
         fabAddTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -479,7 +554,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
             }
         });
-        FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
+        final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
         assert fabAddMetalink != null;
         fabAddMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
