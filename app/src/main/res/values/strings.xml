@@ -237,6 +237,7 @@
     <string name="app_version">Application version</string>
     <string name="developer">Developer: Gianlu (Report bugs or any suggestion)</string>
     <string name="email" translatable="false">altomanigianluca@gmail.com</string>
+    <string name="unknownMillisecond">- ms</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

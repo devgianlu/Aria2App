@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
+import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -50,7 +52,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Fix that one
 public class AddProfileActivity extends AppCompatActivity {
     private Activity _this;
     private boolean isEditMode = true;
@@ -87,6 +88,12 @@ public class AddProfileActivity extends AppCompatActivity {
     private Map<ConnectivityCondition, SingleModeProfileItem> mProfiles = new ArrayMap<>();
     private ListView mListView;
     private Spinner mSpinner;
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class).putExtra("backFromAddProfile", true));
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

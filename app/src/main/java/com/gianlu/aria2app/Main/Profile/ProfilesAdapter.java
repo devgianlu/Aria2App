@@ -45,7 +45,12 @@ public class ProfilesAdapter extends BaseAdapter {
                 startProfilesTest(new IFinished() {
                     @Override
                     public void onFinished() {
-                        swipeRefreshLayout.setRefreshing(false);
+                        ProfilesAdapter.this.context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
                     }
                 });
             }
@@ -84,6 +89,7 @@ public class ProfilesAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = LayoutInflater.from(context).inflate(R.layout.material_drawer_profile_item, viewGroup, false);
+
         final SingleModeProfileItem profile = getItem(i);
 
         ((TextView) view.findViewById(R.id.materialDrawer_profileName)).setText(profile.getProfileName());
@@ -100,6 +106,14 @@ public class ProfilesAdapter extends BaseAdapter {
             ((ProgressBar) view.findViewById(R.id.materialDrawer_profileProgressBar)).setIndeterminate(true);
             view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.GONE);
+
+            ((TextView) view.findViewById(R.id.materialDrawer_profilePing)).setText(R.string.unknownMillisecond);
+        }
+
+        if (profile.getStatus() != null) {
+            view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.GONE);
+            view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.VISIBLE);
         }
 
         switch (profile.getStatus()) {
@@ -239,6 +253,8 @@ public class ProfilesAdapter extends BaseAdapter {
                 profile.setStatus(ProfileItem.STATUS.ERROR);
 
             profile.setStatusMessage(exception.getMessage());
+
+            exception.printStackTrace();
 
             context.runOnUiThread(new Runnable() {
                 @Override

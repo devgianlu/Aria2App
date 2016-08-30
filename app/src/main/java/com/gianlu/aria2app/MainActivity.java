@@ -518,6 +518,9 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        if (getIntent().getBooleanExtra("backFromAddProfile", false)) {
+            drawerManager.buildProfiles().openProfiles(false);
+        }
 
         if (enableNotifications) {
             Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("a2_profileName", ""));
