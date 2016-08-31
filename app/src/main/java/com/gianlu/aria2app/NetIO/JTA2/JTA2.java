@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class JTA2 {
     private WebSocketing webSocketing;
@@ -180,6 +181,39 @@ public class JTA2 {
         });
     }
 
+    //aria2.saveSession
+    public void saveSession(final ISuccess handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.saveSession");
+            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            request.put("params", params);
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        webSocketing.send(request, new WebSocketing.IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                if (Objects.equals(response.optString("result"), "OK"))
+                    handler.onSuccess();
+                else
+                    handler.onException(new Aria2Exception(response.toString(), -1));
+            }
+
+            @Override
+            public void onException(boolean q, Exception ex) {
+                handler.onException(ex);
+            }
+
+            @Override
+            public void onException(int code, String reason) {
+                handler.onException(new Aria2Exception(reason, code));
+            }
+        });
+    }
     //aria2.getSessionInfo
     public void getSessionInfo(final ISession handler) {
         JSONObject request;
@@ -812,7 +846,10 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onSuccess();
+                if (Objects.equals(response.optString("result"), "OK"))
+                    handler.onSuccess();
+                else
+                    handler.onException(new Aria2Exception(response.toString(), -1));
             }
 
             @Override
@@ -846,7 +883,10 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onSuccess();
+                if (Objects.equals(response.optString("result"), "OK"))
+                    handler.onSuccess();
+                else
+                    handler.onException(new Aria2Exception(response.toString(), -1));
             }
 
             @Override
@@ -882,7 +922,10 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onSuccess();
+                if (Objects.equals(response.optString("result"), "OK"))
+                    handler.onSuccess();
+                else
+                    handler.onException(new Aria2Exception(response.toString(), -1));
             }
 
             @Override

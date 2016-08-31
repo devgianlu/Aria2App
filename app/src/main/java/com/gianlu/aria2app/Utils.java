@@ -9,7 +9,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.text.Spanned;
 import android.util.Base64;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -296,6 +298,20 @@ public class Utils {
         }
     }
 
+    public static TextView fastTextView(Context context, String text) {
+        TextView textView = new TextView(context);
+        textView.setText(text);
+
+        return textView;
+    }
+
+    public static TextView fastTextView(Context context, Spanned text) {
+        TextView textView = new TextView(context);
+        textView.setText(text);
+
+        return textView;
+    }
+
     public static ProgressDialog fastProgressDialog(Context context, String title, String message, boolean indeterminate, boolean cancelable) {
         ProgressDialog pd = new ProgressDialog(context);
         pd.setTitle(title);
@@ -456,6 +472,8 @@ public class Utils {
         RESUMED("Download resumed.", false),
         RESTARTED("Download restarted.", false),
         CHANGED_SELECTION("File selected/deselected.", false),
+        SESSION_SAVED("Session saved correctly.", false),
+        FAILED_SAVE_SESSION("Failed saving current session!", true),
         FAILED_PAUSE("Failed to pause download!", true),
         FAILED_REMOVE("Failed to remove download!", true),
         FAILED_UNPAUSE("Failed to resume download!", true),
@@ -483,8 +501,7 @@ public class Utils {
         INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
         INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
         CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
-        SOURCE_REFRESHED("Source file for options refreshed!", false),
-        CREATE_PROFILE("Create your first profile!", false);
+        SOURCE_REFRESHED("Source file for options refreshed!", false);
 
         private final String text;
         private final boolean isError;

@@ -244,6 +244,8 @@
     <string name="openDrawer">Open drawer</string>
     <string name="closeDrawer">Close drawer</string>
     <string name="about_aria2">About aria2</string>
+    <string name="shutdown">Shutdown aria2</string>
+    <string name="saveSession">Save session</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

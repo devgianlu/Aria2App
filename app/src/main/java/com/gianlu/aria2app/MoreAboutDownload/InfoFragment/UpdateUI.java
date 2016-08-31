@@ -219,11 +219,10 @@ public class UpdateUI implements Runnable {
 
                                 holder.btAnnounceList.removeAllViews();
                                 for (String tracker : download.bitTorrent.announceList) {
-                                    TextView _tracker = new TextView(context);
+                                    TextView _tracker = Utils.fastTextView(context, tracker);
                                     _tracker.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     _tracker.setPadding(50, 10, 0, 10);
                                     _tracker.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
-                                    _tracker.setText(tracker);
                                     _tracker.setOnClickListener(trackerListener);
 
                                     holder.btAnnounceList.addView(_tracker);

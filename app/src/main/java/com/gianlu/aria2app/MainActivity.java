@@ -18,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,6 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -123,20 +123,17 @@ public class MainActivity extends AppCompatActivity {
                                     return true;
                                 }
 
-                                // TODO: It can be better
-                                // TODO: Basic functionalities (shutdown, saveSession, etc)
                                 final ProgressDialog pd = Utils.fastProgressDialog(MainActivity.this, R.string.gathering_information, true, false);
                                 pd.show();
                                 jta2.getVersion(new IVersion() {
                                     @Override
                                     public void onVersion(List<String> rawFeatures, List<JTA2.FEATURES> enabledFeatures, String version) {
-                                        final LinearLayout text = new LinearLayout(MainActivity.this);
-                                        text.setOrientation(LinearLayout.VERTICAL);
-                                        text.setPadding(16, 16, 16, 16);
+                                        final LinearLayout box = new LinearLayout(MainActivity.this);
+                                        box.setOrientation(LinearLayout.VERTICAL);
+                                        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+                                        box.setPadding(padding, padding, padding, padding);
 
-                                        TextView versionText = new TextView(MainActivity.this);
-                                        versionText.setText(Html.fromHtml(getString(R.string.version, version)));
-                                        text.addView(versionText);
+                                        box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
 
                                         String extendedList = "";
                                         boolean first = true;
@@ -148,23 +145,40 @@ public class MainActivity extends AppCompatActivity {
                                             first = false;
                                         }
 
-                                        final TextView featuresText = new TextView(MainActivity.this);
-                                        featuresText.setText(Html.fromHtml(getString(R.string.features, extendedList)));
-                                        text.addView(featuresText);
+                                        box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
 
                                         jta2.getSessionInfo(new ISession() {
                                             @Override
                                             public void onSessionInfo(String sessionID) {
-                                                TextView sessionText = new TextView(MainActivity.this);
-                                                sessionText.setText(Html.fromHtml(getString(R.string.sessionId, sessionID)));
-                                                text.addView(sessionText);
+                                                box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
 
                                                 pd.dismiss();
                                                 MainActivity.this.runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
-                                                                .setView(text)
+                                                                .setView(box)
+                                                                .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                        jta2.saveSession(new ISuccess() {
+                                                                            @Override
+                                                                            public void onSuccess() {
+                                                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SESSION_SAVED);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onException(Exception exception) {
+                                                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_SAVE_SESSION, exception);
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                })
+                                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                    }
+                                                                })
                                                                 .create().show();
                                                     }
                                                 });

@@ -191,11 +191,10 @@ public class FilesAdapter {
                     LinearLayout urisLayout = (LinearLayout) view.findViewById(R.id.fileAboutDialog_uris);
                     urisLayout.removeAllViews();
                     for (Map.Entry<File.URI_STATUS, String> uri : file.file.uris.entrySet()) {
-                        TextView _uri = new TextView(context);
+                        TextView _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
                         _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         _uri.setPadding(50, 10, 0, 10);
                         _uri.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
-                        _uri.setText(Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
                         _uri.setTag(uri.getValue());
                         _uri.setOnClickListener(uriListener);
 
