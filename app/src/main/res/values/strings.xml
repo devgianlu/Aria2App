@@ -246,6 +246,9 @@
     <string name="about_aria2">About aria2</string>
     <string name="shutdown">Shutdown aria2</string>
     <string name="saveSession">Save session</string>
+    <string name="infoTag">"INFO: "</string>
+    <string name="warningTag">"WARNING: "</string>
+    <string name="errorTag">"ERROR: "</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

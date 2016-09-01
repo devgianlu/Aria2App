@@ -2,6 +2,7 @@ package com.gianlu.aria2app;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,7 +62,9 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,7 +73,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: Implement external start
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -529,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
 
-            startWithExternalProfile(new SingleModeProfileItem("Local device",
+            saveExternalProfile(new SingleModeProfileItem("Local device",
                     "localhost",
                     getIntent().getIntExtra("port", 6800),
                     "/jsonrpc",
@@ -537,10 +539,18 @@ public class MainActivity extends AppCompatActivity {
                     false,
                     getIntent().getStringExtra("token"),
                     false,
-                    null));
-        } else {
+                    null)
+                    .setGlobalProfileName("Local device"));
+        }
+
             try {
-                SingleModeProfileItem profile = defaultProfile();
+                SingleModeProfileItem profile;
+                if (getIntent().getBooleanExtra("external", false)) {
+                    profile = SingleModeProfileItem.fromString(this, "Local device");
+                } else {
+                    profile = defaultProfile();
+                }
+
                 if (profile == null) {
                     drawerManager.openProfiles(true);
                     return;
@@ -552,7 +562,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException | JSONException ex) {
                 Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
             }
-        }
+
 
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
@@ -674,28 +684,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startWithExternalProfile(@NonNull SingleModeProfileItem profile) {
-        drawerManager.setCurrentProfile(profile, true);
+    public void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
+        try {
+            deleteFile("Local device.profile");
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("a2_profileName", profile.getProfileName())
-                .putString("a2_serverIP", profile.getFullServerAddr())
-                .putString("a2_authMethod", profile.getAuthMethod().name())
-                .putString("a2_serverToken", profile.getServerToken())
-                .putString("a2_serverUsername", profile.getServerUsername())
-                .putString("a2_serverPassword", profile.getServerPassword())
-                .putBoolean("a2_serverSSL", profile.isServerSSL())
-                .putBoolean("a2_directDownload", profile.isDirectDownloadEnabled());
+            FileOutputStream fOut = openFileOutput("Local device.profile", Context.MODE_PRIVATE);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
-        if (profile.isDirectDownloadEnabled()) {
-            editor.putString("dd_addr", profile.getDirectDownload().getAddress())
-                    .putBoolean("dd_auth", profile.getDirectDownload().isAuth())
-                    .putString("dd_user", profile.getDirectDownload().getUsername())
-                    .putString("dd_passwd", profile.getDirectDownload().getPassword());
+            osw.write(profile.toJSON().toString());
+            osw.flush();
+            osw.close();
+        } catch (IOException | JSONException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+            ex.printStackTrace();
         }
-        editor.apply();
-
-        WebSocketing.destroyInstance();
     }
     public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
         drawerManager.setCurrentProfile(profile, false);

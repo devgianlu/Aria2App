@@ -1,12 +1,12 @@
 package com.gianlu.aria2app;
 
-import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,7 +48,7 @@ public class LogsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("stack trace", ((LogLineItem) adapterView.getItemAtPosition(i)).getMessage());
+                ClipData clip = ClipData.newPlainText("stack trace", ((LoglineItem) adapterView.getItemAtPosition(i)).getMessage());
                 clipboard.setPrimaryClip(clip);
 
                 Utils.UIToast(LogsActivity.this, getString(R.string.copiedClipboard), Toast.LENGTH_SHORT);
@@ -70,20 +71,24 @@ public class LogsActivity extends AppCompatActivity {
         logs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                List<LogLineItem> logLines = new ArrayList<>();
+                List<LoglineItem> logLines = new ArrayList<>();
                 try {
                     FileInputStream in = openFileInput(adapterView.getItemAtPosition(i).toString());
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        logLines.add(new LogLineItem(line.startsWith("--ERROR--"), line.replace(line.startsWith("--ERROR--") ? "--ERROR--" : "--INFO--", "")));
+                        if (line.startsWith("--ERROR--")) {
+                            logLines.add(new LoglineItem(TYPE.ERROR, line.replace("--ERROR--", "")));
+                        } else if (line.startsWith("--INFO--")) {
+                            logLines.add(new LoglineItem(TYPE.INFO, line.replace("--INFO--", "")));
+                        }
                     }
                 } catch (IOException ex) {
                     Utils.UIToast(LogsActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
                     onBackPressed();
                 }
 
-                log.setAdapter(new LogLineAdapter(logLines));
+                log.setAdapter(new LoglineAdapter(logLines));
                 log.setSelection(log.getCount() - 1);
             }
 
@@ -126,17 +131,23 @@ public class LogsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class LogLineItem {
-        private boolean isError;
+    public enum TYPE {
+        INFO,
+        WARNING,
+        ERROR
+    }
+
+    private class LoglineItem {
+        private TYPE type;
         private String message;
 
-        public LogLineItem(boolean isError, String message) {
-            this.isError = isError;
+        public LoglineItem(TYPE type, String message) {
+            this.type = type;
             this.message = message;
         }
 
-        public boolean isError() {
-            return isError;
+        public TYPE getType() {
+            return type;
         }
 
         public String getMessage() {
@@ -144,10 +155,10 @@ public class LogsActivity extends AppCompatActivity {
         }
     }
 
-    private class LogLineAdapter extends BaseAdapter {
-        private List<LogLineItem> objs;
+    private class LoglineAdapter extends BaseAdapter {
+        private List<LoglineItem> objs;
 
-        public LogLineAdapter(List<LogLineItem> objs) {
+        public LoglineAdapter(List<LoglineItem> objs) {
             this.objs = objs;
         }
 
@@ -157,7 +168,7 @@ public class LogsActivity extends AppCompatActivity {
         }
 
         @Override
-        public LogLineItem getItem(int i) {
+        public LoglineItem getItem(int i) {
             return objs.get(i);
         }
 
@@ -166,20 +177,35 @@ public class LogsActivity extends AppCompatActivity {
             return i;
         }
 
-        @SuppressLint({"ViewHolder", "InflateParams", "SetTextI18n"})
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            convertView = getLayoutInflater().inflate(R.layout.logline_custom_item, null);
+            LinearLayout linearLayout = new LinearLayout(LogsActivity.this);
+            linearLayout.setPadding(12, 12, 12, 12);
+            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-            LogLineItem item = getItem(position);
+            LoglineItem item = getItem(position);
 
-            TextView type = (TextView) convertView.findViewById(R.id.log_line_type);
-            ((TextView) convertView.findViewById(R.id.log_line_message)).setText(item.getMessage());
+            TextView type = new TextView(LogsActivity.this);
+            type.setTypeface(Typeface.DEFAULT_BOLD);
+            switch (item.getType()) {
+                case INFO:
+                    type.setText(R.string.infoTag);
+                    type.setTextColor(Color.BLACK);
+                    break;
+                case WARNING:
+                    type.setText(R.string.warningTag);
+                    type.setTextColor(Color.YELLOW);
+                    break;
+                case ERROR:
+                    type.setText(R.string.errorTag);
+                    type.setTextColor(Color.RED);
+                    break;
+            }
+            linearLayout.addView(type);
+            linearLayout.addView(Utils.fastTextView(LogsActivity.this, item.getMessage()));
 
-            type.setText(item.isError() ? "ERROR:" : "INFO:");
-            type.setTextColor(ContextCompat.getColor(LogsActivity.this, item.isError() ? android.R.color.holo_red_dark : android.R.color.black));
 
-            return convertView;
+            return linearLayout;
         }
     }
 }

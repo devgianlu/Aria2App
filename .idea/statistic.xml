@@ -4,7 +4,6 @@
     <option name="excludeDotArtifactDirectory" value="true" />
     <option name="excludedDirectories">
       <list>
-        <option value="$PROJECT_DIR$/google_licensing" />
         <option value="$PROJECT_DIR$/app/build" />
       </list>
     </option>
