@@ -56,7 +56,7 @@ public class DrawerManager {
     private LetterIconSmall thirdAccount;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    //TODO: Edit profile
+    //TODO: Edit profile & fix recent profiles
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;
