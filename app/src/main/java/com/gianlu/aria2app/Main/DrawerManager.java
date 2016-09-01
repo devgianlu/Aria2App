@@ -115,16 +115,18 @@ public class DrawerManager {
                 .build();
     }
 
-    public DrawerManager setCurrentProfile(SingleModeProfileItem profile) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String oldFirst = preferences.getString("recentProfiles_first", null);
-        String oldSecond = preferences.getString("recentProfiles_second", null);
+    public DrawerManager setCurrentProfile(SingleModeProfileItem profile, boolean external) {
+        if (!external) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            String oldFirst = preferences.getString("recentProfiles_first", null);
+            String oldSecond = preferences.getString("recentProfiles_second", null);
 
-        preferences.edit()
-                .putString("recentProfiles_third", oldSecond)
-                .putString("recentProfiles_second", oldFirst)
-                .putString("recentProfiles_first", lastProfile)
-                .apply();
+            preferences.edit()
+                    .putString("recentProfiles_third", oldSecond)
+                    .putString("recentProfiles_second", oldFirst)
+                    .putString("recentProfiles_first", lastProfile)
+                    .apply();
+        }
 
         currentAccount.setProfileName(profile.getGlobalProfileName())
                 .setProfileAddress(profile.getServerAddr())

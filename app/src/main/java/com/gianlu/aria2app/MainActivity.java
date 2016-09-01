@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -133,7 +134,13 @@ public class MainActivity extends AppCompatActivity {
                                         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
                                         box.setPadding(padding, padding, padding, padding);
 
-                                        box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version), Html.FROM_HTML_MODE_COMPACT)));
+                                        } else {
+                                            //noinspection deprecation
+                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
+                                        }
 
                                         String extendedList = "";
                                         boolean first = true;
@@ -145,12 +152,23 @@ public class MainActivity extends AppCompatActivity {
                                             first = false;
                                         }
 
-                                        box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList), Html.FROM_HTML_MODE_COMPACT)));
+                                        } else {
+                                            //noinspection deprecation
+                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
+
+                                        }
 
                                         jta2.getSessionInfo(new ISession() {
                                             @Override
                                             public void onSessionInfo(String sessionID) {
-                                                box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                                    box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID), Html.FROM_HTML_MODE_COMPACT)));
+                                                } else {
+                                                    //noinspection deprecation
+                                                    box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
+                                                }
 
                                                 pd.dismiss();
                                                 MainActivity.this.runOnUiThread(new Runnable() {
@@ -508,18 +526,32 @@ public class MainActivity extends AppCompatActivity {
             sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
         }
 
-        try {
-            SingleModeProfileItem profile = defaultProfile();
-            if (profile == null) {
-                drawerManager.openProfiles(true);
-                return;
+        if (getIntent().getBooleanExtra("external", false)) {
+            setTitle(getString(R.string.app_name) + " - Local device");
+
+            startWithExternalProfile(new SingleModeProfileItem("Local device",
+                    "localhost",
+                    getIntent().getIntExtra("port", 6800),
+                    "/jsonrpc",
+                    JTA2.AUTH_METHOD.TOKEN,
+                    false,
+                    getIntent().getStringExtra("token"),
+                    false,
+                    null));
+        } else {
+            try {
+                SingleModeProfileItem profile = defaultProfile();
+                if (profile == null) {
+                    drawerManager.openProfiles(true);
+                    return;
+                }
+
+                setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+
+                startWithProfile(profile, false);
+            } catch (IOException | JSONException ex) {
+                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
             }
-
-            setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
-
-            startWithProfile(profile, false);
-        } catch (IOException | JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
         }
 
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
@@ -642,8 +674,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startWithExternalProfile(@NonNull SingleModeProfileItem profile) {
+        drawerManager.setCurrentProfile(profile, true);
+
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("a2_profileName", profile.getProfileName())
+                .putString("a2_serverIP", profile.getFullServerAddr())
+                .putString("a2_authMethod", profile.getAuthMethod().name())
+                .putString("a2_serverToken", profile.getServerToken())
+                .putString("a2_serverUsername", profile.getServerUsername())
+                .putString("a2_serverPassword", profile.getServerPassword())
+                .putBoolean("a2_serverSSL", profile.isServerSSL())
+                .putBoolean("a2_directDownload", profile.isDirectDownloadEnabled());
+
+        if (profile.isDirectDownloadEnabled()) {
+            editor.putString("dd_addr", profile.getDirectDownload().getAddress())
+                    .putBoolean("dd_auth", profile.getDirectDownload().isAuth())
+                    .putString("dd_user", profile.getDirectDownload().getUsername())
+                    .putString("dd_passwd", profile.getDirectDownload().getPassword());
+        }
+        editor.apply();
+
+        WebSocketing.destroyInstance();
+    }
     public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
-        drawerManager.setCurrentProfile(profile);
+        drawerManager.setCurrentProfile(profile, false);
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("lastUsedProfile", profile.getGlobalProfileName())

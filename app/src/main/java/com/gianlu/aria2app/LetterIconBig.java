@@ -40,6 +40,9 @@ public class LetterIconBig extends View {
     }
 
     public LetterIconBig setProfileName(String name) {
+        if (name == null)
+            name = "Unknown";
+
         if (name.length() <= 2) letters = name;
         letters = name.substring(0, 2);
 

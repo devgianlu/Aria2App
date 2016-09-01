@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -387,7 +388,10 @@ public class Utils {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
+                if (exception instanceof Aria2Exception)
+                    Toast.makeText(context, message.toString(exception.getMessage()), Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -410,7 +414,10 @@ public class Utils {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
+                if (exception instanceof Aria2Exception)
+                    Toast.makeText(context, message.toString(exception.getMessage()), Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
             }
         });
         context.runOnUiThread(extra);
@@ -514,6 +521,10 @@ public class Utils {
         @Override
         public String toString() {
             return text;
+        }
+
+        public String toString(String extra) {
+            return text + " " + extra;
         }
 
         public boolean isError() {
