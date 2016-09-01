@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -13,37 +14,34 @@
         android:id="@+id/addProfile_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="4dp"
         android:autoLink="web"
         android:text="@string/profile_help"
         android:textAlignment="center" />
 
-    <TextView
-        android:id="@+id/addProfile_nameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/addProfile_name"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="10dp"
-        android:text="@string/profile" />
-
-    <EditText
-        android:id="@+id/addProfile_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/addProfile_help"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/addProfile_nameLabel"
-        android:hint="@string/profile_hint" />
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/profile" />
+
+        <EditText
+            android:id="@+id/addProfile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/profile_hint" />
+    </LinearLayout>
 
     <RadioGroup
         android:id="@+id/addProfile_modeGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/addProfile_name"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="12dp">
 
         <RadioButton
             android:id="@+id/addProfile_singleMode"
@@ -59,43 +57,46 @@
             android:text="@string/mode_multi" />
     </RadioGroup>
 
+    <!-- Single mode -->
     <include
         layout="@layout/new_single_profile_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addProfile_modeGroup" />
+        android:layout_height="wrap_content" />
 
     <!-- Multi mode -->
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/addProfile_multiModeContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/addProfile_modeGroup"
-        android:visibility="invisible">
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <Spinner
-            android:id="@+id/addProfile_multiModeSpinner"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="12dp"
-            android:layout_toStartOf="@+id/addProfile_multiModeAdd" />
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/addProfile_multiModeAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/addNew" />
+            <Spinner
+                android:id="@+id/addProfile_multiModeSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/addProfile_multiModeAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:text="@string/addNew" />
+        </LinearLayout>
 
         <ListView
             android:id="@+id/addProfile_multiModeListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/addProfile_multiModeAdd"
-            android:layout_marginBottom="5dp"
             android:choiceMode="singleChoice" />
-    </RelativeLayout>
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

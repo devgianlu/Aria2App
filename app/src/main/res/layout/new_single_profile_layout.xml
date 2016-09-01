@@ -4,299 +4,286 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- TODO: Improve layout (use gone, not visibility) -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/addProfile_serverAddrLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addProfile_serverAddr"
-            android:layout_alignParentStart="true"
-            android:layout_marginEnd="10dp"
-            android:text="@string/address" />
-
-        <EditText
-            android:id="@+id/addProfile_serverAddr"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/addProfile_serverAddrLabel"
-            android:hint="@string/address_hint"
-            android:inputType="textUri" />
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/addProfile_serverPortLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addProfile_serverPort"
-            android:layout_alignParentStart="true"
-            android:layout_marginEnd="10dp"
-            android:text="@string/port" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/address" />
 
-        <EditText
-            android:id="@+id/addProfile_serverPort"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/addProfile_serverAddr"
-            android:layout_toEndOf="@+id/addProfile_serverPortLabel"
-            android:hint="@string/port_hint"
-            android:inputType="number" />
+            <EditText
+                android:id="@+id/addProfile_serverAddr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/address_hint"
+                android:inputType="textUri" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/addProfile_endpointLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addProfile_serverPortLabel"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="15dp"
-            android:layout_toEndOf="@+id/addProfile_serverPort"
-            android:text="@string/endpoint" />
-
-        <EditText
-            android:id="@+id/addProfile_serverEndpoint"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addProfile_serverPort"
-            android:layout_toEndOf="@+id/addProfile_endpointLabel"
-            android:hint="@string/endpoint_default"
-            android:inputType="textVisiblePassword"
-            android:text="@string/endpoint_default" />
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/port" />
+
+            <EditText
+                android:id="@+id/addProfile_serverPort"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:hint="@string/port_hint"
+                android:inputType="number" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/endpoint" />
+
+            <EditText
+                android:id="@+id/addProfile_serverEndpoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/endpoint_default"
+                android:inputType="textUri"
+                android:text="@string/endpoint_default" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/addProfile_completeURL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/addProfile_serverPort"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/completeURL_default"
             android:textAlignment="center"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/addProfile_authMethodLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/addProfile_completeURL"
-            android:layout_marginBottom="2dp"
+            android:layout_marginBottom="4dp"
             android:text="@string/authenticationMethod" />
 
-        <RelativeLayout
-            android:id="@+id/addProfile_authMethod"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/addProfile_authMethodLabel"
-            android:paddingStart="25dp">
+            android:orientation="vertical"
+            android:paddingStart="36dp">
 
             <RadioButton
                 android:id="@+id/addProfile_authMethodNone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:checked="true"
-                android:text="@string/none"
-                android:textColor="@android:color/tertiary_text_dark" />
+                android:text="@string/none" />
 
-            <RadioButton
-                android:id="@+id/addProfile_authMethodToken"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/addProfile_authMethodNone"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="@string/token"
-                android:textColor="@android:color/tertiary_text_dark" />
-
-            <EditText
-                android:id="@+id/addProfile_authMethodTokenToken"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/addProfile_authMethodToken"
-                android:layout_toEndOf="@id/addProfile_authMethodToken"
-                android:enabled="false"
-                android:hint="@string/token_hint"
-                android:inputType="textVisiblePassword" />
+                android:orientation="horizontal">
 
-            <RadioButton
-                android:id="@+id/addProfile_authMethodHTTP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/addProfile_authMethodToken"
-                android:text="@string/user_passwd"
-                android:textColor="@android:color/tertiary_text_dark" />
+                <RadioButton
+                    android:id="@+id/addProfile_authMethodToken"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/token" />
 
-            <RelativeLayout
+                <EditText
+                    android:id="@+id/addProfile_authMethodTokenToken"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/token_hint"
+                    android:inputType="textPassword"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/addProfile_authMethodHTTP">
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/addProfile_authMethodHTTPUserLabel"
+                <RadioButton
+                    android:id="@+id/addProfile_authMethodHTTP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/addProfile_authMethodHTTPUser"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="40dp"
-                    android:enabled="false"
-                    android:text="@string/username" />
+                    android:text="@string/user_passwd" />
 
-                <EditText
-                    android:id="@+id/addProfile_authMethodHTTPUser"
+                <LinearLayout
+                    android:id="@+id/addProfile_authMethodHTTPUserContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/addProfile_authMethodHTTPUserLabel"
-                    android:enabled="false"
-                    android:hint="@string/username_hint"
-                    android:inputType="textVisiblePassword" />
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="32dp"
+                    android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/addProfile_authMethodHTTPPasswdLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/addProfile_authMethodHTTPPasswd"
-                    android:layout_alignStart="@+id/addProfile_authMethodHTTPUserLabel"
-                    android:layout_marginEnd="5dp"
-                    android:enabled="false"
-                    android:text="@string/password" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/username" />
 
-                <EditText
-                    android:id="@+id/addProfile_authMethodHTTPPasswd"
+                    <EditText
+                        android:id="@+id/addProfile_authMethodHTTPUser"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/username_hint"
+                        android:inputType="textVisiblePassword" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/addProfile_authMethodHTTPPasswdContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/addProfile_authMethodHTTPUser"
-                    android:layout_toEndOf="@+id/addProfile_authMethodHTTPPasswdLabel"
-                    android:enabled="false"
-                    android:hint="@string/password_hint"
-                    android:inputType="textPassword" />
-            </RelativeLayout>
-        </RelativeLayout>
+                    android:orientation="horizontal"
+                    android:paddingStart="32dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/password" />
+
+                    <EditText
+                        android:id="@+id/addProfile_authMethodHTTPPasswd"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password_hint"
+                        android:inputType="textPassword" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
         <CheckBox
             android:id="@+id/addProfile_serverSSL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/addProfile_authMethod"
-            android:layout_marginTop="5dp"
-            android:text="@string/encryption"
-            android:textColor="@android:color/tertiary_text_dark" />
+            android:layout_marginBottom="8dp"
+            android:text="@string/encryption" />
 
         <CheckBox
             android:id="@+id/addProfile_directDownload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/addProfile_serverSSL"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="4dp"
             android:checked="true"
-            android:text="@string/enableDirectDownload"
-            android:textColor="@android:color/tertiary_text_dark" />
+            android:text="@string/enableDirectDownload" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/addProfile_directDownloadContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/addProfile_directDownload">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/addProfile_directDownload_help"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="4dp"
                 android:autoLink="web"
                 android:text="@string/directDownload_help"
                 android:textAlignment="center" />
 
-            <TextView
-                android:id="@+id/addProfile_directDownload_addrLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/addProfile_directDownload_addr"
-                android:layout_marginEnd="10dp"
-                android:text="@string/address" />
-
-            <EditText
-                android:id="@+id/addProfile_directDownload_addr"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/addProfile_directDownload_help"
-                android:layout_toEndOf="@+id/addProfile_directDownload_addrLabel"
-                android:hint="@string/directDownload_addrHint"
-                android:inputType="textUri" />
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/address" />
+
+                <EditText
+                    android:id="@+id/addProfile_directDownload_addr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/directDownload_addrHint"
+                    android:inputType="textUri" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/addProfile_directDownload_addrHelp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/addProfile_directDownload_addr"
-                android:layout_below="@+id/addProfile_directDownload_addr"
-                android:text="@string/directDownload_addrHelp" />
+                android:layout_marginBottom="4dp"
+                android:text="@string/directDownload_addrHelp"
+                android:textAlignment="center" />
 
-            <Switch
+            <CheckBox
                 android:id="@+id/addProfile_directDownload_auth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/addProfile_directDownload_addrHelp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:text="@string/authentication"
-                android:textColor="@android:color/tertiary_text_dark" />
+                android:text="@string/authentication" />
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/addProfile_directDownload_authContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/addProfile_directDownload_auth"
-                android:layout_alignTop="@+id/addProfile_directDownload_auth"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/addProfile_directDownload_auth"
-                android:autoLink="web"
-                android:text="@string/directDownload_authHelp"
-                android:textAlignment="center" />
+                android:orientation="vertical"
+                android:paddingStart="36dp">
 
-            <TextView
-                android:id="@+id/addProfile_directDownload_userLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/addProfile_directDownload_user"
-                android:layout_marginEnd="5dp"
-                android:text="@string/username"
-                android:visibility="invisible" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
-            <EditText
-                android:id="@+id/addProfile_directDownload_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/addProfile_directDownload_auth"
-                android:layout_toEndOf="@+id/addProfile_directDownload_userLabel"
-                android:hint="@string/directDownload_usernameHint"
-                android:inputType="text"
-                android:visibility="invisible" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/username" />
 
-            <TextView
-                android:id="@+id/addProfile_directDownload_passwdLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/addProfile_directDownload_passwd"
-                android:layout_alignParentStart="true"
-                android:layout_marginEnd="5dp"
-                android:text="@string/password"
-                android:visibility="invisible" />
+                    <EditText
+                        android:id="@+id/addProfile_directDownload_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/directDownload_usernameHint"
+                        android:inputType="text" />
+                </LinearLayout>
 
-            <EditText
-                android:id="@+id/addProfile_directDownload_passwd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/addProfile_directDownload_user"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/addProfile_directDownload_passwdLabel"
-                android:hint="@string/directDownload_passwordHint"
-                android:inputType="textPassword"
-                android:visibility="invisible" />
-        </RelativeLayout>
-    </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/password" />
+
+                    <EditText
+                        android:id="@+id/addProfile_directDownload_passwd"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/directDownload_passwordHint"
+                        android:inputType="textPassword" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </ScrollView>

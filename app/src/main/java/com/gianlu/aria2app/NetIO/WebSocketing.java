@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// TODO: On request failed due to lost connection set a global key that stops everything
 public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
     private static IConnecting handler;
     private static boolean isDestroying;
     private WebSocket socket;
     private Activity context;
+    private boolean errorShown;
     private Map<Integer, IReceived> requests = new ArrayMap<>();
     private List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
 
@@ -80,7 +80,10 @@ public class WebSocketing extends WebSocketAdapter {
             handler.onException(true, new Exception("WebSocket is connecting! Requests queued."));
             return;
         } else if (socket.getState() != WebSocketState.OPEN) {
-            handler.onException(false, new Exception("WebSocket not open! State: " + socket.getState().name()));
+            if (!errorShown) {
+                handler.onException(false, new Exception("WebSocket not open! State: " + socket.getState().name()));
+                errorShown = true;
+            }
             return;
         }
 

@@ -106,7 +106,7 @@
     <string name="endpoint_default" translatable="false">/jsonrpc</string>
     <string name="completeURL_default" translatable="false">http://127.0.0.1:6800/jsonrpc</string>
     <string name="authenticationMethod">Authentication method:</string>
-    <string name="token" translatable="false">Token:</string>
+    <string name="token" translatable="false">Token</string>
     <string name="token_hint" translatable="false">token</string>
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
@@ -165,7 +165,7 @@
     <string name="downloads">Downloads</string>
     <string name="downloadFile">Download file</string>
     <string name="x" translatable="false">X</string>
-    <string name="user_passwd">Username and password:</string>
+    <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
     <string name="externalStorage_box">The application need to write the external storage to download files! A message box will display now.</string>
     <string name="background" translatable="false">Background</string>
@@ -174,7 +174,7 @@
     <string name="directDownload_authHelp"><a>https://gist.github.com/fxsjy/5465353</a></string>
     <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a></string>
     <string name="directDownload_addrHint" translatable="false">http://127.0.0.1:6801/</string>
-    <string name="directDownload_addrHelp">The address should be pointing to a directory listing of the aria2 download directory.</string>
+    <string name="directDownload_addrHelp">The address must be pointing to a directory listing of the aria2 download directory.</string>
     <string name="username" translatable="false">Username:</string>
     <string name="directDownload_usernameHint" translatable="false">myusername</string>
     <string name="password" translatable="false">Password:</string>

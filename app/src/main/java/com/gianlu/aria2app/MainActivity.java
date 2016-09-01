@@ -543,25 +543,25 @@ public class MainActivity extends AppCompatActivity {
                     .setGlobalProfileName("Local device"));
         }
 
-            try {
-                SingleModeProfileItem profile;
-                if (getIntent().getBooleanExtra("external", false)) {
-                    profile = SingleModeProfileItem.fromString(this, "Local device");
-                } else {
-                    profile = defaultProfile();
-                }
-
-                if (profile == null) {
-                    drawerManager.openProfiles(true);
-                    return;
-                }
-
-                setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
-
-                startWithProfile(profile, false);
-            } catch (IOException | JSONException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+        try {
+            SingleModeProfileItem profile;
+            if (getIntent().getBooleanExtra("external", false)) {
+                profile = SingleModeProfileItem.fromString(this, "Local device");
+            } else {
+                profile = defaultProfile();
             }
+
+            if (profile == null) {
+                drawerManager.openProfiles(true);
+                return;
+            }
+
+            setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+
+            startWithProfile(profile, false);
+        } catch (IOException | JSONException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+        }
 
 
         Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
@@ -699,6 +699,7 @@ public class MainActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
+
     public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
         drawerManager.setCurrentProfile(profile, false);
 
@@ -736,6 +737,7 @@ public class MainActivity extends AppCompatActivity {
     public void reloadPage() {
         reloadPage(null);
     }
+
     public void reloadPage(final IThread handler) {
         UpdateUI.stop(updateUI, new IThread() {
             @Override

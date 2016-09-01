@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Main.Profile;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,13 +22,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
@@ -53,37 +50,13 @@ import java.util.List;
 import java.util.Map;
 
 public class AddProfileActivity extends AppCompatActivity {
-    private Activity _this;
     private boolean isEditMode = true;
 
     private EditText profileName;
     private RadioGroup modeGroup;
-    private ScrollView singleModeContainer;
-    private RelativeLayout multiModeContainer;
 
     // Single mode
-    private EditText sAddr;
-    private EditText sPort;
-    private EditText sEndpoint;
-    private TextView sCompleteURL;
-    private RadioButton sAuthMethodNone;
-    private RadioButton sAuthMethodToken;
-    private EditText sAuthMethodTokenToken;
-    private RadioButton sAuthMethodHTTP;
-    private TextView sAuthMethodHTTPUsernameLabel;
-    private EditText sAuthMethodHTTPUsername;
-    private TextView sAuthMethodHTTPPasswordLabel;
-    private EditText sAuthMethodHTTPPassword;
-    private CheckBox sSSL;
-    private CheckBox sDirectDownload;
-    private RelativeLayout sDirectDownloadContainer;
-    private EditText sDirectDownloadAddr;
-    private Switch sDirectDownloadAuth;
-    private TextView sDirectDownloadUsernameLabel;
-    private EditText sDirectDownloadUsername;
-    private TextView sDirectDownloadPasswordLabel;
-    private EditText sDirectDownloadPassword;
-
+    private SingleModeViewHolder sViewHolder;
     // Multi mode
     private Map<ConnectivityCondition, SingleModeProfileItem> mProfiles = new ArrayMap<>();
     private ListView mListView;
@@ -99,154 +72,24 @@ public class AddProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
-        _this = this;
 
         profileName = (EditText) findViewById(R.id.addProfile_name);
-        assert profileName != null;
         modeGroup = (RadioGroup) findViewById(R.id.addProfile_modeGroup);
-        assert modeGroup != null;
-        singleModeContainer = (ScrollView) findViewById(R.id.addProfile_singleModeContainer);
-        assert singleModeContainer != null;
-        multiModeContainer = (RelativeLayout) findViewById(R.id.addProfile_multiModeContainer);
-        assert multiModeContainer != null;
         modeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if (i == R.id.addProfile_singleMode) {
-                    singleModeContainer.setVisibility(View.VISIBLE);
-                    multiModeContainer.setVisibility(View.INVISIBLE);
+                    findViewById(R.id.addProfile_singleModeContainer).setVisibility(View.VISIBLE);
+                    findViewById(R.id.addProfile_multiModeContainer).setVisibility(View.GONE);
                 } else {
-                    multiModeContainer.setVisibility(View.VISIBLE);
-                    singleModeContainer.setVisibility(View.INVISIBLE);
+                    findViewById(R.id.addProfile_singleModeContainer).setVisibility(View.GONE);
+                    findViewById(R.id.addProfile_multiModeContainer).setVisibility(View.VISIBLE);
                 }
             }
         });
 
         // Single mode
-        SingleOnTextChangedListener sListener = new SingleOnTextChangedListener();
-        sAddr = (EditText) findViewById(R.id.addProfile_serverAddr);
-        assert sAddr != null;
-        sAddr.addTextChangedListener(sListener);
-        sPort = (EditText) findViewById(R.id.addProfile_serverPort);
-        assert sPort != null;
-        sPort.addTextChangedListener(sListener);
-        sEndpoint = (EditText) findViewById(R.id.addProfile_serverEndpoint);
-        assert sEndpoint != null;
-        sEndpoint.addTextChangedListener(sListener);
-        sCompleteURL = (TextView) findViewById(R.id.addProfile_completeURL);
-        assert sCompleteURL != null;
-        sAuthMethodNone = (RadioButton) findViewById(R.id.addProfile_authMethodNone);
-        assert sAuthMethodNone != null;
-        sAuthMethodToken = (RadioButton) findViewById(R.id.addProfile_authMethodToken);
-        assert sAuthMethodToken != null;
-        sAuthMethodTokenToken = (EditText) findViewById(R.id.addProfile_authMethodTokenToken);
-        assert sAuthMethodTokenToken != null;
-        sAuthMethodHTTP = (RadioButton) findViewById(R.id.addProfile_authMethodHTTP);
-        assert sAuthMethodHTTP != null;
-        sAuthMethodHTTPUsernameLabel = (TextView) findViewById(R.id.addProfile_authMethodHTTPUserLabel);
-        assert sAuthMethodHTTPUsernameLabel != null;
-        sAuthMethodHTTPUsername = (EditText) findViewById(R.id.addProfile_authMethodHTTPUser);
-        assert sAuthMethodHTTPUsername != null;
-        sAuthMethodHTTPPasswordLabel = (TextView) findViewById(R.id.addProfile_authMethodHTTPPasswdLabel);
-        assert sAuthMethodHTTPPasswordLabel != null;
-        sAuthMethodHTTPPassword = (EditText) findViewById(R.id.addProfile_authMethodHTTPPasswd);
-        assert sAuthMethodHTTPPassword != null;
-        sSSL = (CheckBox) findViewById(R.id.addProfile_serverSSL);
-        assert sSSL != null;
-        sDirectDownload = (CheckBox) findViewById(R.id.addProfile_directDownload);
-        assert sDirectDownload != null;
-        sDirectDownloadContainer = (RelativeLayout) findViewById(R.id.addProfile_directDownloadContainer);
-        assert sDirectDownloadContainer != null;
-        sDirectDownloadAddr = (EditText) sDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_addr);
-        assert sDirectDownloadAddr != null;
-        sDirectDownloadAuth = (Switch) sDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_auth);
-        assert sDirectDownloadAuth != null;
-        sDirectDownloadUsernameLabel = (TextView) findViewById(R.id.addProfile_directDownload_userLabel);
-        assert sDirectDownloadUsernameLabel != null;
-        sDirectDownloadUsername = (EditText) sDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_user);
-        assert sDirectDownloadUsername != null;
-        sDirectDownloadPasswordLabel = (TextView) findViewById(R.id.addProfile_directDownload_passwdLabel);
-        assert sDirectDownloadPasswordLabel != null;
-        sDirectDownloadPassword = (EditText) sDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_passwd);
-        assert sDirectDownloadPassword != null;
-        sDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    sDirectDownloadContainer.setEnabled(true);
-                } else {
-                    sDirectDownloadContainer.setEnabled(false);
-                }
-            }
-        });
-        sDirectDownloadAuth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    sDirectDownloadUsernameLabel.setVisibility(View.VISIBLE);
-                    sDirectDownloadUsername.setVisibility(View.VISIBLE);
-                    sDirectDownloadPassword.setVisibility(View.VISIBLE);
-                    sDirectDownloadPasswordLabel.setVisibility(View.VISIBLE);
-                } else {
-                    sDirectDownloadUsernameLabel.setVisibility(View.INVISIBLE);
-                    sDirectDownloadUsername.setVisibility(View.INVISIBLE);
-                    sDirectDownloadPassword.setVisibility(View.INVISIBLE);
-                    sDirectDownloadPasswordLabel.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-        sAuthMethodNone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) return;
-
-                sAuthMethodNone.setChecked(true);
-                sAuthMethodToken.setChecked(false);
-                sAuthMethodHTTP.setChecked(false);
-
-                sAuthMethodHTTPPassword.setEnabled(false);
-                sAuthMethodHTTPUsername.setEnabled(false);
-                sAuthMethodHTTPUsernameLabel.setEnabled(false);
-                sAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                sAuthMethodTokenToken.setEnabled(false);
-            }
-        });
-        sAuthMethodToken.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) return;
-
-                sAuthMethodNone.setChecked(false);
-                sAuthMethodToken.setChecked(true);
-                sAuthMethodHTTP.setChecked(false);
-
-                sAuthMethodHTTPPassword.setEnabled(false);
-                sAuthMethodHTTPUsername.setEnabled(false);
-                sAuthMethodHTTPUsernameLabel.setEnabled(false);
-                sAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                sAuthMethodTokenToken.setEnabled(true);
-            }
-        });
-        sAuthMethodHTTP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) return;
-
-                sAuthMethodNone.setChecked(false);
-                sAuthMethodToken.setChecked(false);
-                sAuthMethodHTTP.setChecked(true);
-
-                sAuthMethodTokenToken.setEnabled(false);
-
-                sAuthMethodHTTPPassword.setEnabled(true);
-                sAuthMethodHTTPUsername.setEnabled(true);
-                sAuthMethodHTTPUsernameLabel.setEnabled(true);
-                sAuthMethodHTTPPasswordLabel.setEnabled(true);
-            }
-        });
-
+        sViewHolder = new SingleModeViewHolder(findViewById(R.id.addProfile_singleModeContainer));
 
         // Multi mode
         mListView = (ListView) findViewById(R.id.addProfile_multiModeListView);
@@ -329,59 +172,50 @@ public class AddProfileActivity extends AppCompatActivity {
         SingleModeProfileItem item = SingleModeProfileItem.fromString(this, name);
 
         profileName.setText(item.getProfileName());
-        sAddr.setText(item.getServerAddr());
-        sPort.setText(String.valueOf(item.getServerPort()));
-        sEndpoint.setText(item.getServerEndpoint());
+        sViewHolder.addr.setText(item.getServerAddr());
+        sViewHolder.port.setText(String.valueOf(item.getServerPort()));
+        sViewHolder.endpoint.setText(item.getServerEndpoint());
 
         switch (item.getAuthMethod()) {
             case NONE:
-                sAuthMethodNone.setChecked(true);
-                sAuthMethodToken.setChecked(false);
-                sAuthMethodHTTP.setChecked(false);
+                sViewHolder.authMethodNone.setChecked(true);
+                sViewHolder.authMethodToken.setChecked(false);
+                sViewHolder.authMethodHTTP.setChecked(false);
 
-                sAuthMethodHTTPPassword.setEnabled(false);
-                sAuthMethodHTTPUsername.setEnabled(false);
-                sAuthMethodHTTPUsernameLabel.setEnabled(false);
-                sAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                sAuthMethodTokenToken.setEnabled(false);
+                sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
+                sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
                 break;
             case HTTP:
-                sAuthMethodNone.setChecked(false);
-                sAuthMethodToken.setChecked(false);
-                sAuthMethodHTTP.setChecked(true);
+                sViewHolder.authMethodNone.setChecked(false);
+                sViewHolder.authMethodToken.setChecked(true);
+                sViewHolder.authMethodHTTP.setChecked(false);
 
-                sAuthMethodTokenToken.setEnabled(false);
+                sViewHolder.authMethodHTTPUsername.setText(item.getServerUsername());
+                sViewHolder.authMethodHTTPPassword.setText(item.getServerPassword());
 
-                sAuthMethodHTTPPassword.setEnabled(true);
-                sAuthMethodHTTPPassword.setText(item.getServerPassword());
-                sAuthMethodHTTPUsername.setEnabled(true);
-                sAuthMethodHTTPUsername.setText(item.getServerUsername());
-                sAuthMethodHTTPUsernameLabel.setEnabled(true);
-                sAuthMethodHTTPPasswordLabel.setEnabled(true);
+                sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
+                sViewHolder.authMethodTokenToken.setVisibility(View.VISIBLE);
                 break;
             case TOKEN:
-                sAuthMethodNone.setChecked(false);
-                sAuthMethodToken.setChecked(true);
-                sAuthMethodHTTP.setChecked(false);
+                sViewHolder.authMethodNone.setChecked(false);
+                sViewHolder.authMethodToken.setChecked(false);
+                sViewHolder.authMethodHTTP.setChecked(true);
 
-                sAuthMethodHTTPPassword.setEnabled(false);
-                sAuthMethodHTTPUsername.setEnabled(false);
-                sAuthMethodHTTPUsernameLabel.setEnabled(false);
-                sAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                sAuthMethodTokenToken.setEnabled(true);
-                sAuthMethodTokenToken.setText(item.getServerToken());
+                sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
+                sViewHolder.authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
+                sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
                 break;
         }
-        sSSL.setChecked(item.isServerSSL());
+        sViewHolder.SSL.setChecked(item.isServerSSL());
 
-        sDirectDownload.setChecked(item.isDirectDownloadEnabled());
+        sViewHolder.directDownload.setChecked(item.isDirectDownloadEnabled());
         if (item.isDirectDownloadEnabled()) {
-            sDirectDownloadAddr.setText(item.getDirectDownload().getAddress());
-            sDirectDownloadAuth.setChecked(item.getDirectDownload().isAuth());
-            sDirectDownloadUsername.setText(item.getDirectDownload().getUsername());
-            sDirectDownloadPassword.setText(item.getDirectDownload().getPassword());
+            sViewHolder.directDownloadAddr.setText(item.getDirectDownload().getAddress());
+            sViewHolder.directDownloadAuth.setChecked(item.getDirectDownload().isAuth());
+            sViewHolder.directDownloadUsername.setText(item.getDirectDownload().getUsername());
+            sViewHolder.directDownloadPassword.setText(item.getDirectDownload().getPassword());
         }
     }
 
@@ -401,7 +235,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
     private void createNewCondition(final ConnectivityCondition.TYPE type, final Pair<ConnectivityCondition, SingleModeProfileItem> edit) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        @SuppressLint("InflateParams") final RelativeLayout view = (RelativeLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null);
+        @SuppressLint("InflateParams") final LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null);
 
         AutoCompleteTextView ssid = null;
         switch (type) {
@@ -427,115 +261,16 @@ public class AddProfileActivity extends AppCompatActivity {
             case MOBILE:
             case ETHERNET:
             case BLUETOOTH:
-                view.removeView(view.findViewById(R.id.newConditionDialog_containerWiFi));
+                view.findViewById(R.id.newConditionDialog_containerWiFi).setVisibility(View.GONE);
                 break;
         }
 
-        final ScrollView include = (ScrollView) view.findViewById(R.id.newConditionDialog_include);
-        final TextView mCompleteURL = (TextView) include.findViewById(R.id.addProfile_completeURL);
-        final RadioButton mAuthMethodNone = (RadioButton) include.findViewById(R.id.addProfile_authMethodNone);
-        final RadioButton mAuthMethodToken = (RadioButton) include.findViewById(R.id.addProfile_authMethodToken);
-        final EditText mAuthMethodTokenToken = (EditText) include.findViewById(R.id.addProfile_authMethodTokenToken);
-        final RadioButton mAuthMethodHTTP = (RadioButton) include.findViewById(R.id.addProfile_authMethodHTTP);
-        final TextView mAuthMethodHTTPUsernameLabel = (TextView) include.findViewById(R.id.addProfile_authMethodHTTPUserLabel);
-        final EditText mAuthMethodHTTPUsername = (EditText) include.findViewById(R.id.addProfile_authMethodHTTPUser);
-        final TextView mAuthMethodHTTPPasswordLabel = (TextView) include.findViewById(R.id.addProfile_authMethodHTTPPasswdLabel);
-        final EditText mAuthMethodHTTPPassword = (EditText) include.findViewById(R.id.addProfile_authMethodHTTPPasswd);
-        final EditText mAddr = (EditText) include.findViewById(R.id.addProfile_serverAddr);
-        final EditText mPort = (EditText) include.findViewById(R.id.addProfile_serverPort);
-        final EditText mEndpoint = (EditText) include.findViewById(R.id.addProfile_serverEndpoint);
-        final CheckBox mSSL = (CheckBox) include.findViewById(R.id.addProfile_serverSSL);
-        final CheckBox mDirectDownload = (CheckBox) include.findViewById(R.id.addProfile_directDownload);
-        final RelativeLayout mDirectDownloadContainer = (RelativeLayout) view.findViewById(R.id.addProfile_directDownloadContainer);
-        assert mDirectDownloadContainer != null;
-        final EditText mDirectDownloadAddr = (EditText) mDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_addr);
-        final Switch mDirectDownloadAuth = (Switch) mDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_auth);
-        final TextView mDirectDownloadUsernameLabel = (TextView) mDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_userLabel);
-        final EditText mDirectDownloadUsername = (EditText) mDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_user);
-        final TextView mDirectDownloadPasswordLabel = (TextView) mDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_passwdLabel);
-        final EditText mDirectDownloadPassword = (EditText) mDirectDownloadContainer.findViewById(R.id.addProfile_directDownload_passwd);
+        final SingleModeViewHolder holder = new SingleModeViewHolder(view.findViewById(R.id.newConditionDialog_include));
 
-        MultiOnTextChangedListener listener = new MultiOnTextChangedListener(mCompleteURL, mAddr, mPort, mEndpoint);
-        mAddr.addTextChangedListener(listener);
-        mPort.addTextChangedListener(listener);
-        mEndpoint.addTextChangedListener(listener);
-        mAuthMethodNone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) return;
-
-                mAuthMethodNone.setChecked(true);
-                mAuthMethodToken.setChecked(false);
-                mAuthMethodHTTP.setChecked(false);
-
-                mAuthMethodHTTPPassword.setEnabled(false);
-                mAuthMethodHTTPUsername.setEnabled(false);
-                mAuthMethodHTTPUsernameLabel.setEnabled(false);
-                mAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                mAuthMethodTokenToken.setEnabled(false);
-            }
-        });
-        mAuthMethodToken.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) return;
-
-                mAuthMethodNone.setChecked(false);
-                mAuthMethodToken.setChecked(true);
-                mAuthMethodHTTP.setChecked(false);
-
-                mAuthMethodHTTPPassword.setEnabled(false);
-                mAuthMethodHTTPUsername.setEnabled(false);
-                mAuthMethodHTTPUsernameLabel.setEnabled(false);
-                mAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                mAuthMethodTokenToken.setEnabled(true);
-            }
-        });
-        mAuthMethodHTTP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) return;
-
-                mAuthMethodNone.setChecked(false);
-                mAuthMethodToken.setChecked(false);
-                mAuthMethodHTTP.setChecked(true);
-
-                mAuthMethodTokenToken.setEnabled(false);
-
-                mAuthMethodHTTPPassword.setEnabled(true);
-                mAuthMethodHTTPUsername.setEnabled(true);
-                mAuthMethodHTTPUsernameLabel.setEnabled(true);
-                mAuthMethodHTTPPasswordLabel.setEnabled(true);
-            }
-        });
-        mDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    mDirectDownloadContainer.setEnabled(true);
-                } else {
-                    mDirectDownloadContainer.setEnabled(false);
-                }
-            }
-        });
-        mDirectDownloadAuth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    mDirectDownloadUsernameLabel.setVisibility(View.VISIBLE);
-                    mDirectDownloadUsername.setVisibility(View.VISIBLE);
-                    mDirectDownloadPassword.setVisibility(View.VISIBLE);
-                    mDirectDownloadPasswordLabel.setVisibility(View.VISIBLE);
-                } else {
-                    mDirectDownloadUsernameLabel.setVisibility(View.INVISIBLE);
-                    mDirectDownloadUsername.setVisibility(View.INVISIBLE);
-                    mDirectDownloadPassword.setVisibility(View.INVISIBLE);
-                    mDirectDownloadPasswordLabel.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
+        MultiOnTextChangedListener listener = new MultiOnTextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint);
+        holder.addr.addTextChangedListener(listener);
+        holder.port.addTextChangedListener(listener);
+        holder.endpoint.addTextChangedListener(listener);
 
         builder.setPositiveButton(edit != null ? R.string.save : R.string.add, null)
                 .setTitle(type.getFormal())
@@ -552,7 +287,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mProfiles.remove(edit.first);
 
-                    mListView.setAdapter(new ConditionsCustomAdapter(_this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
+                    mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
                         @Override
                         public void onClick(View view, int i, SingleModeProfileItem item, ConnectivityCondition condition) {
                             createNewCondition(condition.getType(), new Pair<>(condition, item));
@@ -565,58 +300,51 @@ public class AddProfileActivity extends AppCompatActivity {
                 }
             });
 
-            mAddr.setText(edit.second.getServerAddr());
-            mPort.setText(String.valueOf(edit.second.getServerPort()));
-            mEndpoint.setText(edit.second.getServerEndpoint());
-            mCompleteURL.setText(edit.second.getFullServerAddr());
+            holder.addr.setText(edit.second.getServerAddr());
+            holder.port.setText(String.valueOf(edit.second.getServerPort()));
+            holder.endpoint.setText(edit.second.getServerEndpoint());
+            holder.completeURL.setText(edit.second.getFullServerAddr());
             switch (edit.second.getAuthMethod()) {
                 case NONE:
-                    mAuthMethodNone.setChecked(true);
-                    mAuthMethodToken.setChecked(false);
-                    mAuthMethodHTTP.setChecked(false);
+                    sViewHolder.authMethodNone.setChecked(true);
+                    sViewHolder.authMethodToken.setChecked(false);
+                    sViewHolder.authMethodHTTP.setChecked(false);
 
-                    mAuthMethodHTTPPassword.setEnabled(false);
-                    mAuthMethodHTTPUsername.setEnabled(false);
-                    mAuthMethodHTTPUsernameLabel.setEnabled(false);
-                    mAuthMethodHTTPPasswordLabel.setEnabled(false);
-
-                    mAuthMethodTokenToken.setEnabled(false);
+                    sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                    sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
+                    sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
                     break;
                 case HTTP:
-                    mAuthMethodNone.setChecked(false);
-                    mAuthMethodToken.setChecked(false);
-                    mAuthMethodHTTP.setChecked(true);
+                    sViewHolder.authMethodNone.setChecked(false);
+                    sViewHolder.authMethodToken.setChecked(true);
+                    sViewHolder.authMethodHTTP.setChecked(false);
 
-                    mAuthMethodTokenToken.setEnabled(false);
+                    sViewHolder.authMethodHTTPUsername.setText(edit.second.getServerUsername());
+                    sViewHolder.authMethodHTTPPassword.setText(edit.second.getServerPassword());
 
-                    mAuthMethodHTTPPassword.setEnabled(true);
-                    mAuthMethodHTTPPassword.setText(edit.second.getServerPassword());
-                    mAuthMethodHTTPUsername.setEnabled(true);
-                    mAuthMethodHTTPUsername.setText(edit.second.getServerUsername());
-                    mAuthMethodHTTPUsernameLabel.setEnabled(true);
-                    mAuthMethodHTTPPasswordLabel.setEnabled(true);
+                    sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                    sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
+                    sViewHolder.authMethodTokenToken.setVisibility(View.VISIBLE);
                     break;
                 case TOKEN:
-                    mAuthMethodNone.setChecked(false);
-                    mAuthMethodToken.setChecked(true);
-                    mAuthMethodHTTP.setChecked(false);
+                    sViewHolder.authMethodNone.setChecked(false);
+                    sViewHolder.authMethodToken.setChecked(false);
+                    sViewHolder.authMethodHTTP.setChecked(true);
 
-                    mAuthMethodHTTPPassword.setEnabled(false);
-                    mAuthMethodHTTPUsername.setEnabled(false);
-                    mAuthMethodHTTPUsernameLabel.setEnabled(false);
-                    mAuthMethodHTTPPasswordLabel.setEnabled(false);
+                    sViewHolder.authMethodTokenToken.setText(edit.second.getServerToken());
 
-                    mAuthMethodTokenToken.setEnabled(true);
-                    mAuthMethodTokenToken.setText(edit.second.getServerToken());
+                    sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
+                    sViewHolder.authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
+                    sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
                     break;
             }
-            mSSL.setChecked(edit.second.isServerSSL());
-            mDirectDownload.setChecked(edit.second.isDirectDownloadEnabled());
+            holder.SSL.setChecked(edit.second.isServerSSL());
+            holder.directDownload.setChecked(edit.second.isDirectDownloadEnabled());
             if (edit.second.isDirectDownloadEnabled()) {
-                mDirectDownloadAddr.setText(edit.second.getDirectDownload().getAddress());
-                mDirectDownloadAuth.setChecked(edit.second.getDirectDownload().isAuth());
-                mDirectDownloadUsername.setText(edit.second.getDirectDownload().getUsername());
-                mDirectDownloadPassword.setText(edit.second.getDirectDownload().getPassword());
+                holder.directDownloadAddr.setText(edit.second.getDirectDownload().getAddress());
+                holder.directDownloadAuth.setChecked(edit.second.getDirectDownload().isAuth());
+                holder.directDownloadUsername.setText(edit.second.getDirectDownload().getUsername());
+                holder.directDownloadPassword.setText(edit.second.getDirectDownload().getPassword());
             }
         }
 
@@ -630,7 +358,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 switch (type) {
                     case WIFI:
                         if (finalSsid.getText().toString().trim().isEmpty()) {
-                            Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SSID);
+                            Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SSID);
                             return;
                         }
                         condition = ConnectivityCondition.newWiFiCondition(finalSsid.getText().toString().trim());
@@ -647,111 +375,111 @@ public class AddProfileActivity extends AppCompatActivity {
                 }
 
                 if (condition == null) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, "CONDITION is null");
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, "CONDITION is null");
                     return;
                 }
 
-                if (mAddr.getText().toString().trim().isEmpty()) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_IP);
+                if (holder.addr.getText().toString().trim().isEmpty()) {
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_IP);
                     return;
                 }
 
-                if (!mPort.getText().toString().trim().isEmpty()) {
-                    if (0 > Integer.parseInt(mPort.getText().toString()) && Integer.parseInt(mPort.getText().toString()) < 65536) {
-                        Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
+                if (!holder.port.getText().toString().trim().isEmpty()) {
+                    if (0 > Integer.parseInt(holder.port.getText().toString()) && Integer.parseInt(holder.port.getText().toString()) < 65536) {
+                        Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
                         return;
                     }
                 } else {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
                     return;
                 }
 
-                if (mEndpoint.getText().toString().trim().isEmpty() || (!mEndpoint.getText().toString().startsWith("/"))) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_ENDPOINT);
+                if (holder.endpoint.getText().toString().trim().isEmpty() || (!holder.endpoint.getText().toString().startsWith("/"))) {
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_ENDPOINT);
                     return;
                 }
 
-                if (mAuthMethodToken.isChecked() && mAuthMethodTokenToken.getText().toString().trim().isEmpty()) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_TOKEN);
+                if (holder.authMethodToken.isChecked() && holder.authMethodTokenToken.getText().toString().trim().isEmpty()) {
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_TOKEN);
                     return;
                 }
 
-                if (mAuthMethodHTTP.isChecked() && (mAuthMethodHTTPUsername.getText().toString().trim().isEmpty() || mAuthMethodHTTPPassword.getText().toString().trim().isEmpty())) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_USER_OR_PASSWD);
+                if (holder.authMethodHTTP.isChecked() && (holder.authMethodHTTPUsername.getText().toString().trim().isEmpty() || holder.authMethodHTTPPassword.getText().toString().trim().isEmpty())) {
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_USER_OR_PASSWD);
                     return;
                 }
 
-                if (mDirectDownload.isChecked() && mDirectDownloadAddr.getText().toString().trim().isEmpty()) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_ADDR);
+                if (holder.directDownload.isChecked() && holder.directDownloadAddr.getText().toString().trim().isEmpty()) {
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_ADDR);
                     return;
                 }
 
-                if (mDirectDownload.isChecked() && (!mDirectDownloadAddr.getText().toString().trim().endsWith("/"))) {
-                    mDirectDownloadAddr.setText(String.format("%s/", mDirectDownloadAddr.getText().toString().trim()));
+                if (holder.directDownload.isChecked() && (!holder.directDownloadAddr.getText().toString().trim().endsWith("/"))) {
+                    holder.directDownloadAddr.setText(String.format("%s/", holder.directDownloadAddr.getText().toString().trim()));
                 }
 
-                if (mDirectDownload.isChecked() && mDirectDownloadAuth.isChecked() && (mDirectDownloadUsername.getText().toString().trim().isEmpty() || mDirectDownloadPassword.getText().toString().trim().isEmpty())) {
-                    Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
+                if (holder.directDownload.isChecked() && holder.directDownloadAuth.isChecked() && (holder.directDownloadUsername.getText().toString().trim().isEmpty() || holder.directDownloadPassword.getText().toString().trim().isEmpty())) {
+                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
                     return;
                 }
 
                 SingleModeProfileItem profile;
-                if (mAuthMethodNone.isChecked()) {
+                if (holder.authMethodNone.isChecked()) {
                     profile = new SingleModeProfileItem(condition.getFormalName(),
-                            mAddr.getText().toString().trim(),
-                            Integer.parseInt(mPort.getText().toString().trim()),
-                            mEndpoint.getText().toString().trim(),
+                            holder.addr.getText().toString().trim(),
+                            Integer.parseInt(holder.port.getText().toString().trim()),
+                            holder.endpoint.getText().toString().trim(),
                             JTA2.AUTH_METHOD.NONE,
-                            mSSL.isChecked(),
-                            mDirectDownload.isChecked(),
-                            new DirectDownload(mDirectDownloadAddr.getText().toString().trim(),
-                                    mDirectDownloadAuth.isChecked(),
-                                    mDirectDownloadUsername.getText().toString().trim(),
-                                    mDirectDownloadPassword.getText().toString().trim()));
-                } else if (mAuthMethodToken.isChecked()) {
+                            holder.SSL.isChecked(),
+                            holder.directDownload.isChecked(),
+                            new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
+                                    holder.directDownloadAuth.isChecked(),
+                                    holder.directDownloadUsername.getText().toString().trim(),
+                                    holder.directDownloadPassword.getText().toString().trim()));
+                } else if (holder.authMethodToken.isChecked()) {
                     profile = new SingleModeProfileItem(condition.getFormalName(),
-                            mAddr.getText().toString().trim(),
-                            Integer.parseInt(mPort.getText().toString().trim()),
-                            mEndpoint.getText().toString().trim(),
+                            holder.addr.getText().toString().trim(),
+                            Integer.parseInt(holder.port.getText().toString().trim()),
+                            holder.endpoint.getText().toString().trim(),
                             JTA2.AUTH_METHOD.TOKEN,
-                            mSSL.isChecked(),
-                            mAuthMethodTokenToken.getText().toString().trim(),
-                            mDirectDownload.isChecked(),
-                            new DirectDownload(mDirectDownloadAddr.getText().toString().trim(),
-                                    mDirectDownloadAuth.isChecked(),
-                                    mDirectDownloadUsername.getText().toString().trim(),
-                                    mDirectDownloadPassword.getText().toString().trim()));
-                } else if (mAuthMethodHTTP.isChecked()) {
+                            holder.SSL.isChecked(),
+                            holder.authMethodTokenToken.getText().toString().trim(),
+                            holder.directDownload.isChecked(),
+                            new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
+                                    holder.directDownloadAuth.isChecked(),
+                                    holder.directDownloadUsername.getText().toString().trim(),
+                                    holder.directDownloadPassword.getText().toString().trim()));
+                } else if (holder.authMethodHTTP.isChecked()) {
                     profile = new SingleModeProfileItem(condition.getFormalName(),
-                            mAddr.getText().toString().trim(),
-                            Integer.parseInt(mPort.getText().toString().trim()),
-                            mEndpoint.getText().toString().trim(),
+                            holder.addr.getText().toString().trim(),
+                            Integer.parseInt(holder.port.getText().toString().trim()),
+                            holder.endpoint.getText().toString().trim(),
                             JTA2.AUTH_METHOD.HTTP,
-                            mSSL.isChecked(),
-                            mAuthMethodHTTPUsername.getText().toString().trim(),
-                            mAuthMethodHTTPPassword.getText().toString().trim(),
-                            mDirectDownload.isChecked(),
-                            new DirectDownload(mDirectDownloadAddr.getText().toString().trim(),
-                                    mDirectDownloadAuth.isChecked(),
-                                    mDirectDownloadUsername.getText().toString().trim(),
-                                    mDirectDownloadPassword.getText().toString().trim()));
+                            holder.SSL.isChecked(),
+                            holder.authMethodHTTPUsername.getText().toString().trim(),
+                            holder.authMethodHTTPPassword.getText().toString().trim(),
+                            holder.directDownload.isChecked(),
+                            new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
+                                    holder.directDownloadAuth.isChecked(),
+                                    holder.directDownloadUsername.getText().toString().trim(),
+                                    holder.directDownloadPassword.getText().toString().trim()));
                 } else {
                     profile = new SingleModeProfileItem(condition.getFormalName(),
-                            mAddr.getText().toString().trim(),
-                            Integer.parseInt(mPort.getText().toString().trim()),
-                            mEndpoint.getText().toString().trim(),
+                            holder.addr.getText().toString().trim(),
+                            Integer.parseInt(holder.port.getText().toString().trim()),
+                            holder.endpoint.getText().toString().trim(),
                             JTA2.AUTH_METHOD.NONE,
-                            mSSL.isChecked(),
-                            mDirectDownload.isChecked(),
-                            new DirectDownload(mDirectDownloadAddr.getText().toString().trim(),
-                                    mDirectDownloadAuth.isChecked(),
-                                    mDirectDownloadUsername.getText().toString().trim(),
-                                    mDirectDownloadPassword.getText().toString().trim()));
+                            holder.SSL.isChecked(),
+                            holder.directDownload.isChecked(),
+                            new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
+                                    holder.directDownloadAuth.isChecked(),
+                                    holder.directDownloadUsername.getText().toString().trim(),
+                                    holder.directDownloadPassword.getText().toString().trim()));
                 }
 
                 if (edit != null && edit.first != null) mProfiles.remove(edit.first);
                 mProfiles.put(condition, profile);
-                mListView.setAdapter(new ConditionsCustomAdapter(_this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
+                mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
                     @Override
                     public void onClick(View view, int i, SingleModeProfileItem item, ConnectivityCondition condition) {
                         createNewCondition(condition.getType(), new Pair<>(condition, item));
@@ -791,13 +519,13 @@ public class AddProfileActivity extends AppCompatActivity {
             return;
         }
 
-        if (sAddr.getText().toString().trim().isEmpty()) {
+        if (sViewHolder.addr.getText().toString().trim().isEmpty()) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_IP);
             return;
         }
 
-        if (!sPort.getText().toString().trim().isEmpty()) {
-            if (0 > Integer.parseInt(sPort.getText().toString()) && Integer.parseInt(sPort.getText().toString()) < 65536) {
+        if (!sViewHolder.port.getText().toString().trim().isEmpty()) {
+            if (0 > Integer.parseInt(sViewHolder.port.getText().toString()) && Integer.parseInt(sViewHolder.port.getText().toString()) < 65536) {
                 Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
                 return;
             }
@@ -806,88 +534,88 @@ public class AddProfileActivity extends AppCompatActivity {
             return;
         }
 
-        if (sEndpoint.getText().toString().trim().isEmpty() || (!sEndpoint.getText().toString().startsWith("/"))) {
+        if (sViewHolder.endpoint.getText().toString().trim().isEmpty() || (!sViewHolder.endpoint.getText().toString().startsWith("/"))) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_ENDPOINT);
             return;
         }
 
-        if (sAuthMethodToken.isChecked() && sAuthMethodTokenToken.getText().toString().trim().isEmpty()) {
-            Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_TOKEN);
+        if (sViewHolder.authMethodToken.isChecked() && sViewHolder.authMethodTokenToken.getText().toString().trim().isEmpty()) {
+            Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_TOKEN);
             return;
         }
 
-        if (sAuthMethodHTTP.isChecked() && (sAuthMethodHTTPUsername.getText().toString().trim().isEmpty() || sAuthMethodHTTPPassword.getText().toString().trim().isEmpty())) {
-            Utils.UIToast(_this, Utils.TOAST_MESSAGES.INVALID_SERVER_USER_OR_PASSWD);
+        if (sViewHolder.authMethodHTTP.isChecked() && (sViewHolder.authMethodHTTPUsername.getText().toString().trim().isEmpty() || sViewHolder.authMethodHTTPPassword.getText().toString().trim().isEmpty())) {
+            Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_USER_OR_PASSWD);
             return;
         }
 
-        if (sDirectDownload.isChecked() && sDirectDownloadAddr.getText().toString().trim().isEmpty()) {
+        if (sViewHolder.directDownload.isChecked() && sViewHolder.directDownloadAddr.getText().toString().trim().isEmpty()) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_ADDR);
             return;
         }
 
-        if (sDirectDownload.isChecked() && (!sDirectDownloadAddr.getText().toString().trim().endsWith("/"))) {
-            sDirectDownloadAddr.setText(String.format("%s/", sDirectDownloadAddr.getText().toString().trim()));
+        if (sViewHolder.directDownload.isChecked() && (!sViewHolder.directDownloadAddr.getText().toString().trim().endsWith("/"))) {
+            sViewHolder.directDownloadAddr.setText(String.format("%s/", sViewHolder.directDownloadAddr.getText().toString().trim()));
         }
 
-        if (sDirectDownload.isChecked() && sDirectDownloadAuth.isChecked() && (sDirectDownloadUsername.getText().toString().trim().isEmpty() || sDirectDownloadPassword.getText().toString().trim().isEmpty())) {
+        if (sViewHolder.directDownload.isChecked() && sViewHolder.directDownloadAuth.isChecked() && (sViewHolder.directDownloadUsername.getText().toString().trim().isEmpty() || sViewHolder.directDownloadPassword.getText().toString().trim().isEmpty())) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
             return;
         }
 
 
         SingleModeProfileItem profile;
-        if (sAuthMethodNone.isChecked()) {
+        if (sViewHolder.authMethodNone.isChecked()) {
             profile = new SingleModeProfileItem(profileName.getText().toString().trim(),
-                    sAddr.getText().toString().trim(),
-                    Integer.parseInt(sPort.getText().toString().trim()),
-                    sEndpoint.getText().toString().trim(),
+                    sViewHolder.addr.getText().toString().trim(),
+                    Integer.parseInt(sViewHolder.port.getText().toString().trim()),
+                    sViewHolder.endpoint.getText().toString().trim(),
                     JTA2.AUTH_METHOD.NONE,
-                    sSSL.isChecked(),
-                    sDirectDownload.isChecked(),
-                    new DirectDownload(sDirectDownloadAddr.getText().toString().trim(),
-                            sDirectDownloadAuth.isChecked(),
-                            sDirectDownloadUsername.getText().toString().trim(),
-                            sDirectDownloadPassword.getText().toString().trim()));
-        } else if (sAuthMethodToken.isChecked()) {
+                    sViewHolder.SSL.isChecked(),
+                    sViewHolder.directDownload.isChecked(),
+                    new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
+                            sViewHolder.directDownloadAuth.isChecked(),
+                            sViewHolder.directDownloadUsername.getText().toString().trim(),
+                            sViewHolder.directDownloadPassword.getText().toString().trim()));
+        } else if (sViewHolder.authMethodToken.isChecked()) {
             profile = new SingleModeProfileItem(profileName.getText().toString().trim(),
-                    sAddr.getText().toString().trim(),
-                    Integer.parseInt(sPort.getText().toString().trim()),
-                    sEndpoint.getText().toString().trim(),
+                    sViewHolder.addr.getText().toString().trim(),
+                    Integer.parseInt(sViewHolder.port.getText().toString().trim()),
+                    sViewHolder.endpoint.getText().toString().trim(),
                     JTA2.AUTH_METHOD.TOKEN,
-                    sSSL.isChecked(),
-                    sAuthMethodTokenToken.getText().toString().trim(),
-                    sDirectDownload.isChecked(),
-                    new DirectDownload(sDirectDownloadAddr.getText().toString().trim(),
-                            sDirectDownloadAuth.isChecked(),
-                            sDirectDownloadUsername.getText().toString().trim(),
-                            sDirectDownloadPassword.getText().toString().trim()));
-        } else if (sAuthMethodHTTP.isChecked()) {
+                    sViewHolder.SSL.isChecked(),
+                    sViewHolder.authMethodTokenToken.getText().toString().trim(),
+                    sViewHolder.directDownload.isChecked(),
+                    new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
+                            sViewHolder.directDownloadAuth.isChecked(),
+                            sViewHolder.directDownloadUsername.getText().toString().trim(),
+                            sViewHolder.directDownloadPassword.getText().toString().trim()));
+        } else if (sViewHolder.authMethodHTTP.isChecked()) {
             profile = new SingleModeProfileItem(profileName.getText().toString().trim(),
-                    sAddr.getText().toString().trim(),
-                    Integer.parseInt(sPort.getText().toString().trim()),
-                    sEndpoint.getText().toString().trim(),
+                    sViewHolder.addr.getText().toString().trim(),
+                    Integer.parseInt(sViewHolder.port.getText().toString().trim()),
+                    sViewHolder.endpoint.getText().toString().trim(),
                     JTA2.AUTH_METHOD.HTTP,
-                    sSSL.isChecked(),
-                    sAuthMethodHTTPUsername.getText().toString().trim(),
-                    sAuthMethodHTTPPassword.getText().toString().trim(),
-                    sDirectDownload.isChecked(),
-                    new DirectDownload(sDirectDownloadAddr.getText().toString().trim(),
-                            sDirectDownloadAuth.isChecked(),
-                            sDirectDownloadUsername.getText().toString().trim(),
-                            sDirectDownloadPassword.getText().toString().trim()));
+                    sViewHolder.SSL.isChecked(),
+                    sViewHolder.authMethodHTTPUsername.getText().toString().trim(),
+                    sViewHolder.authMethodHTTPPassword.getText().toString().trim(),
+                    sViewHolder.directDownload.isChecked(),
+                    new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
+                            sViewHolder.directDownloadAuth.isChecked(),
+                            sViewHolder.directDownloadUsername.getText().toString().trim(),
+                            sViewHolder.directDownloadPassword.getText().toString().trim()));
         } else {
             profile = new SingleModeProfileItem(profileName.getText().toString().trim(),
-                    sAddr.getText().toString().trim(),
-                    Integer.parseInt(sPort.getText().toString().trim()),
-                    sEndpoint.getText().toString().trim(),
+                    sViewHolder.addr.getText().toString().trim(),
+                    Integer.parseInt(sViewHolder.port.getText().toString().trim()),
+                    sViewHolder.endpoint.getText().toString().trim(),
                     JTA2.AUTH_METHOD.NONE,
-                    sSSL.isChecked(),
-                    sDirectDownload.isChecked(),
-                    new DirectDownload(sDirectDownloadAddr.getText().toString().trim(),
-                            sDirectDownloadAuth.isChecked(),
-                            sDirectDownloadUsername.getText().toString().trim(),
-                            sDirectDownloadPassword.getText().toString().trim()));
+                    sViewHolder.SSL.isChecked(),
+                    sViewHolder.directDownload.isChecked(),
+                    new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
+                            sViewHolder.directDownloadAuth.isChecked(),
+                            sViewHolder.directDownloadUsername.getText().toString().trim(),
+                            sViewHolder.directDownloadPassword.getText().toString().trim()));
         }
 
         try {
@@ -972,6 +700,121 @@ public class AddProfileActivity extends AppCompatActivity {
         onBackPressed();
     }
 
+    private class SingleModeViewHolder {
+        public EditText addr;
+        public EditText port;
+        public EditText endpoint;
+        public TextView completeURL;
+        public RadioButton authMethodNone;
+        public RadioButton authMethodToken;
+        public EditText authMethodTokenToken;
+        public RadioButton authMethodHTTP;
+        public LinearLayout authMethodHTTPUserContainer;
+        public EditText authMethodHTTPUsername;
+        public LinearLayout authMethodHTTPPasswdContainer;
+        public EditText authMethodHTTPPassword;
+        public CheckBox SSL;
+        public CheckBox directDownload;
+        public LinearLayout directDownloadContainer;
+        public EditText directDownloadAddr;
+        public CheckBox directDownloadAuth;
+        public LinearLayout directDownloadAuthContainer;
+        public EditText directDownloadUsername;
+        public EditText directDownloadPassword;
+
+        public SingleModeViewHolder(View rootView) {
+            addr = (EditText) rootView.findViewById(R.id.addProfile_serverAddr);
+            port = (EditText) rootView.findViewById(R.id.addProfile_serverPort);
+            endpoint = (EditText) rootView.findViewById(R.id.addProfile_serverEndpoint);
+            completeURL = (TextView) rootView.findViewById(R.id.addProfile_completeURL);
+            authMethodNone = (RadioButton) rootView.findViewById(R.id.addProfile_authMethodNone);
+            authMethodToken = (RadioButton) rootView.findViewById(R.id.addProfile_authMethodToken);
+            authMethodTokenToken = (EditText) rootView.findViewById(R.id.addProfile_authMethodTokenToken);
+            authMethodHTTP = (RadioButton) rootView.findViewById(R.id.addProfile_authMethodHTTP);
+
+            authMethodHTTPUserContainer = (LinearLayout) rootView.findViewById(R.id.addProfile_authMethodHTTPUserContainer);
+            authMethodHTTPUsername = (EditText) rootView.findViewById(R.id.addProfile_authMethodHTTPUser);
+            authMethodHTTPPasswdContainer = (LinearLayout) rootView.findViewById(R.id.addProfile_authMethodHTTPPasswdContainer);
+            authMethodHTTPPassword = (EditText) rootView.findViewById(R.id.addProfile_authMethodHTTPPasswd);
+            SSL = (CheckBox) rootView.findViewById(R.id.addProfile_serverSSL);
+            directDownload = (CheckBox) rootView.findViewById(R.id.addProfile_directDownload);
+            directDownloadContainer = (LinearLayout) rootView.findViewById(R.id.addProfile_directDownloadContainer);
+            directDownloadAddr = (EditText) rootView.findViewById(R.id.addProfile_directDownload_addr);
+            directDownloadAuth = (CheckBox) rootView.findViewById(R.id.addProfile_directDownload_auth);
+            directDownloadAuthContainer = (LinearLayout) rootView.findViewById(R.id.addProfile_directDownload_authContainer);
+            directDownloadUsername = (EditText) rootView.findViewById(R.id.addProfile_directDownload_user);
+            directDownloadPassword = (EditText) rootView.findViewById(R.id.addProfile_directDownload_passwd);
+
+            //Setup
+            SingleOnTextChangedListener listener = new SingleOnTextChangedListener();
+            addr.addTextChangedListener(listener);
+            port.addTextChangedListener(listener);
+            endpoint.addTextChangedListener(listener);
+
+            directDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b)
+                        directDownloadContainer.setVisibility(View.VISIBLE);
+                    else
+                        directDownloadContainer.setVisibility(View.GONE);
+                }
+            });
+            directDownloadAuth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b)
+                        directDownloadAuthContainer.setVisibility(View.VISIBLE);
+                    else
+                        directDownloadAuthContainer.setVisibility(View.GONE);
+                }
+            });
+
+            authMethodNone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (!b) return;
+
+                    authMethodNone.setChecked(true);
+                    authMethodToken.setChecked(false);
+                    authMethodHTTP.setChecked(false);
+
+                    authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                    authMethodHTTPUserContainer.setVisibility(View.GONE);
+                    authMethodTokenToken.setVisibility(View.GONE);
+                }
+            });
+            authMethodToken.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (!b) return;
+
+                    authMethodNone.setChecked(false);
+                    authMethodToken.setChecked(true);
+                    authMethodHTTP.setChecked(false);
+
+                    authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                    authMethodHTTPUserContainer.setVisibility(View.GONE);
+                    authMethodTokenToken.setVisibility(View.VISIBLE);
+                }
+            });
+            authMethodHTTP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (!b) return;
+
+                    authMethodNone.setChecked(false);
+                    authMethodToken.setChecked(false);
+                    authMethodHTTP.setChecked(true);
+
+                    authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
+                    authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
+                    authMethodTokenToken.setVisibility(View.GONE);
+                }
+            });
+        }
+    }
+
     private class SingleOnTextChangedListener implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -985,10 +828,9 @@ public class AddProfileActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            sCompleteURL.setText(String.format("http://%s:%s%s", sAddr.getText().toString(), sPort.getText().toString(), sEndpoint.getText().toString()));
+            sViewHolder.completeURL.setText(String.format("http://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
         }
     }
-
     private class MultiOnTextChangedListener implements TextWatcher {
         private TextView completeURL;
         private EditText addr;
