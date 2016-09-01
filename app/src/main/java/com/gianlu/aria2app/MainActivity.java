@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private LoadDownloads loadDownloads;
     private MainCardAdapter adapter;
 
+    // TODO: Log cleaner
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
