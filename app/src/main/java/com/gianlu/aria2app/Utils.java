@@ -509,6 +509,7 @@ public class Utils {
         SESSION_SAVED("Session saved correctly.", false),
         FAILED_SAVE_SESSION("Failed saving current session!", true),
         FAILED_PAUSE("Failed to pause download!", true),
+        MUST_CREATE_FIRST_PROFILE("You must create your first profile to run the application!", false),
         CANNOT_EDIT_PROFILE("Cannot edit this profile!", true),
         PROFILE_DOES_NOT_EXIST("Profile doesn't exist!", true),
         FAILED_REMOVE("Failed to remove download!", true),

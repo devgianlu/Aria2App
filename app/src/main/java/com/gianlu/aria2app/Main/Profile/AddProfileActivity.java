@@ -66,6 +66,7 @@ public class AddProfileActivity extends AppCompatActivity {
     public void onBackPressed() {
         startActivity(new Intent(this, MainActivity.class).putExtra("backFromAddProfile", true));
         finish();
+
     }
 
     @Override
@@ -147,7 +148,11 @@ public class AddProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                if (getIntent().getBooleanExtra("canGoBack", true)) {
+                    onBackPressed();
+                } else {
+                    Utils.UIToast(this, Utils.TOAST_MESSAGES.MUST_CREATE_FIRST_PROFILE);
+                }
                 break;
             case R.id.addProfileMenu_done:
                 if (modeGroup.getCheckedRadioButtonId() == R.id.addProfile_singleMode)

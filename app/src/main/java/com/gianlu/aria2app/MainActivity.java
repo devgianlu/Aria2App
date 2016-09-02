@@ -344,6 +344,11 @@ public class MainActivity extends AppCompatActivity {
             SingleModeProfileItem profile;
             if (getIntent().getBooleanExtra("external", false)) {
                 profile = SingleModeProfileItem.fromString(this, "Local device");
+            } else if (!drawerManager.hasProfiles()) {
+                profile = null;
+                startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
+                        .putExtra("canGoBack", false)
+                        .putExtra("edit", false));
             } else {
                 profile = defaultProfile();
             }
@@ -679,6 +684,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerManager.syncTogglerState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (drawerManager != null)
+            drawerManager.syncTogglerState();
     }
 
     @Nullable

@@ -294,10 +294,10 @@ public class AddTorrentActivity extends AppCompatActivity {
                     return true;
                 }
 
+                if (data == null) break;
+
                 final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
                 pd.show();
-
-                if (data == null) break;
 
                 InputStream in;
                 try {

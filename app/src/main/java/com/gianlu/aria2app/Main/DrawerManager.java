@@ -452,6 +452,15 @@ public class DrawerManager {
         return this;
     }
 
+    public boolean hasProfiles() {
+        return context.getFilesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.toLowerCase().endsWith(".profile");
+            }
+        }).length > 0;
+    }
+
     public DrawerManager buildProfiles() {
         drawerProfilesFooter.removeAllViews();
 
