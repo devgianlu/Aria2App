@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     private LoadDownloads loadDownloads;
     private MainCardAdapter adapter;
 
-    // TODO: Log cleaner
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
         UncaughtExceptionHandler.application = getApplication();
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
+
+        Utils.logCleaner(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         assert toolbar != null;

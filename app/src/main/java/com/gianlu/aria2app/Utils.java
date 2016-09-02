@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -29,14 +30,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -47,6 +52,28 @@ import javax.net.ssl.SSLContext;
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressLint("SimpleDateFormat")
+    public static void logCleaner(Activity context) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -7);
+
+        for (File file : context.getFilesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.toLowerCase().endsWith(".log") || s.toLowerCase().endsWith(".secret");
+            }
+        })) {
+            try {
+                if (new SimpleDateFormat("d-LL-yyyy").parse(file.getName().replace(".log", "").replace(".secret", "")).before(cal.getTime())) {
+                    file.delete();
+                }
+            } catch (ParseException ex) {
+                UIToast(context, TOAST_MESSAGES.FAILED_CLEARING_LOGS, ex);
+            }
+        }
+    }
 
     public static LineChart setupChart(LineChart chart, boolean isCardView) {
         chart.clear();
@@ -489,7 +516,7 @@ public class Utils {
         FAILED_CHANGE_OPTIONS("Failed to change options for download!", true),
         DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
         FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
-        FAILED_CHANGE_FILE_SELECTION("Failed selecting/deseletcing file!", true),
+        FAILED_CHANGE_FILE_SELECTION("Failed selecting/deselecting file!", true),
         /* Application */
         UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
         INVALID_PROFILE_NAME("Invalid profile name!", false),
@@ -502,6 +529,7 @@ public class Utils {
         FILE_NOT_FOUND("File not found!", true),
         FATAL_EXCEPTION("Fatal exception!", true),
         FAILED_LOADING_AUTOCOMPLETION("Unable to load method's suggestions!", true),
+        FAILED_CLEARING_LOGS("Failed clearing old logs!", true),
         NO_EMAIL_CLIENT("There are no email clients installed.", true),
         INVALID_SSID("Invalid SSID!", false),
         MUST_PICK_DEFAULT("You must select one profile as default!", false),
