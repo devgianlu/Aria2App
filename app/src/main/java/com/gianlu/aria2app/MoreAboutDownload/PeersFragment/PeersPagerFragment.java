@@ -38,6 +38,10 @@ public class PeersPagerFragment extends CommonFragment {
         return fragment;
     }
 
+    public void setChartsVisibility(final boolean visible) {
+        UpdateUI.setChartsEnabled(visible);
+    }
+
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         UpdateUI.stop(updateUI);
@@ -98,7 +102,12 @@ public class PeersPagerFragment extends CommonFragment {
                     @Override
                     public void stopped() {
                         onViewCreated(rootView, savedInstanceState);
-                        swipeLayout.setRefreshing(false);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeLayout.setRefreshing(false);
+                            }
+                        });
                     }
                 });
             }

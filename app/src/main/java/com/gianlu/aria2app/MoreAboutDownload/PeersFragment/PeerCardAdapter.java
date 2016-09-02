@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.MoreAboutDownload.PeersFragment;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -25,6 +26,7 @@ import java.util.Locale;
 public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
     private Context context;
     private List<Peer> objs;
+    private boolean showCharts = false;
     private CardView noDataCardView;
 
     public PeerCardAdapter(Context context, List<Peer> objs, CardView noDataCardView) {
@@ -101,7 +103,8 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         ((TextView) noDataCardView.findViewById(R.id.peersFragment_noDataLabel)).setText(context.getString(R.string.noPeersMessage, message));
     }
 
-    public void onUpdate(List<Peer> peers) {
+    public void onUpdate(List<Peer> peers, boolean showCharts) {
+        this.showCharts = showCharts;
         if (objs == null || peers == null) return;
 
         for (Peer newPeer : peers) {
@@ -112,6 +115,7 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(PeerCardViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
@@ -122,33 +126,45 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         if (payloads.get(0) instanceof Peer) {
             Peer peer = (Peer) payloads.get(0);
 
-            LineData data = holder.chart.getData();
-            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-            data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+            if (showCharts) {
+                holder.chart.setVisibility(View.VISIBLE);
 
-            holder.chart.notifyDataSetChanged();
-            holder.chart.setVisibleXRangeMaximum(60);
-            holder.chart.moveViewToX(data.getXValCount() - 61);
+                LineData data = holder.chart.getData();
+                data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+                data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+
+                holder.chart.notifyDataSetChanged();
+                holder.chart.setVisibleXRangeMaximum(60);
+                holder.chart.moveViewToX(data.getXValCount() - 61);
+            } else {
+                holder.chart.setVisibility(View.GONE);
+            }
 
             holder.peerId.setText(peer.getPeerId());
             holder.fullAddr.setText(peer.getFullAddress());
             holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
             holder.downloadSpeed.setText(Utils.speedFormatter(peer.downloadSpeed));
 
-            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
-            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
-            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking)), Html.FROM_HTML_MODE_COMPACT));
+                holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking)), Html.FROM_HTML_MODE_COMPACT));
+                holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder)), Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
+                holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
+                holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
+            }
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(final PeerCardViewHolder holder, int position) {
         if (objs.isEmpty())
             noDataCardView.setVisibility(View.VISIBLE);
         else
             noDataCardView.setVisibility(View.GONE);
-
 
         Peer peer = getItem(position);
 
@@ -168,9 +184,20 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
             }
         });
 
-        holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
-        holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
-        holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking)), Html.FROM_HTML_MODE_COMPACT));
+            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking)), Html.FROM_HTML_MODE_COMPACT));
+            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder)), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
+            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
+            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
+        }
+
+        if (showCharts)
+            holder.chart.setVisibility(View.VISIBLE);
+        else
+            holder.chart.setVisibility(View.GONE);
     }
 
     @Override

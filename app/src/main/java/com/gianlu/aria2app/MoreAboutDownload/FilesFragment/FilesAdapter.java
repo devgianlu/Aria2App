@@ -97,7 +97,7 @@ public class FilesAdapter {
                     if (!UpdateUI.isTorrent) {
                         selected.setEnabled(false);
                         selected.setText(R.string.selectFileNotTorrent);
-                    } else if (UpdateUI.isSingleFile) {
+                    } else if (UpdateUI.fileNum <= 1) {
                         selected.setEnabled(false);
                         selected.setText(R.string.selectFileSingleFile);
                     } else if (UpdateUI.status != Download.STATUS.PAUSED) {
@@ -129,8 +129,17 @@ public class FilesAdapter {
 
                                     List<Integer> selected_files = new ArrayList<>();
 
-                                    for (String i : selected.split("-")) {
-                                        selected_files.add(Integer.parseInt(i));
+                                    for (String i : selected.split(",")) {
+                                        try {
+                                            selected_files.add(Integer.parseInt(i));
+                                        } catch (Exception ignored) {
+                                        }
+                                    }
+
+                                    if (selected_files.size() == 0) {
+                                        for (int i = 1; i <= UpdateUI.fileNum; i++) {
+                                            selected_files.add(i);
+                                        }
                                     }
 
                                     if (isChecked) {

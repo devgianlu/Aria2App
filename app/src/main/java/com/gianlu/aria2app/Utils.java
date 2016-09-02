@@ -510,6 +510,7 @@ public class Utils {
         FAILED_SAVE_SESSION("Failed saving current session!", true),
         FAILED_PAUSE("Failed to pause download!", true),
         CANNOT_EDIT_PROFILE("Cannot edit this profile!", true),
+        PROFILE_DOES_NOT_EXIST("Profile doesn't exist!", true),
         FAILED_REMOVE("Failed to remove download!", true),
         FAILED_UNPAUSE("Failed to resume download!", true),
         FAILED_REMOVE_RESULT("Failed to remove download's result!", true),

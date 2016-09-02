@@ -114,6 +114,12 @@ public class DrawerManager {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String name = ((LetterIconSmall) view).getProfileName();
+                if (!ProfileItem.exists(context, name)) {
+                    Utils.UIToast(context, Utils.TOAST_MESSAGES.PROFILE_DOES_NOT_EXIST, name);
+                    return;
+                }
+
                 if (isProfilesLockedUntilSelected) {
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     drawerLayout.findViewById(R.id.mainDrawerHeader_dropdown).setEnabled(true);
@@ -122,10 +128,10 @@ public class DrawerManager {
                 }
 
                 try {
-                    if (ProfileItem.isSingleMode(context, ((LetterIconSmall) view).getProfileName()))
-                        listener.onProfileItemSelected(SingleModeProfileItem.fromString(context, ((LetterIconSmall) view).getProfileName()), true);
+                    if (ProfileItem.isSingleMode(context, name))
+                        listener.onProfileItemSelected(SingleModeProfileItem.fromString(context, name), true);
                     else
-                        listener.onProfileItemSelected(MultiModeProfileItem.fromString(context, ((LetterIconSmall) view).getProfileName()).getCurrentProfile(context), true);
+                        listener.onProfileItemSelected(MultiModeProfileItem.fromString(context, name).getCurrentProfile(context), true);
                 } catch (JSONException | IOException ex) {
                     Utils.UIToast(context, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
                 }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
+    private boolean showCharts = false;
     private CardView noDataCardView;
     private List<Item> items = new ArrayList<>();
 
@@ -59,7 +60,8 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    public void onUpdate(Map<Integer, List<Server>> servers) {
+    public void onUpdate(Map<Integer, List<Server>> servers, boolean showCharts) {
+        this.showCharts = showCharts;
         if (items == null || servers == null) return;
 
         for (Integer index : servers.keySet()) {
@@ -96,13 +98,19 @@ public class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Server server = (Server) payloads.get(0);
             ServerCardViewHolder holder = (ServerCardViewHolder) cHolder;
 
-            LineData data = holder.chart.getData();
-            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(server.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+            if (showCharts) {
+                holder.chart.setVisibility(View.VISIBLE);
 
-            holder.chart.notifyDataSetChanged();
-            holder.chart.setVisibleXRangeMaximum(60);
-            holder.chart.moveViewToX(data.getXValCount() - 61);
+                LineData data = holder.chart.getData();
+                data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                data.addEntry(new Entry(server.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+
+                holder.chart.notifyDataSetChanged();
+                holder.chart.setVisibleXRangeMaximum(60);
+                holder.chart.moveViewToX(data.getXValCount() - 61);
+            } else {
+                holder.chart.setVisibility(View.GONE);
+            }
 
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);

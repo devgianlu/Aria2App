@@ -35,7 +35,7 @@ import java.util.Objects;
 public class UpdateUI implements Runnable {
     public static boolean isTorrent = false;
     public static Download.STATUS status = Download.STATUS.UNKNOWN;
-    public static boolean isSingleFile = true;
+    public static int fileNum = 0;
     private static boolean bitfieldEnabled = true;
     private Activity context;
     private InfoPagerFragment.ViewHolder holder;
@@ -104,7 +104,7 @@ public class UpdateUI implements Runnable {
 
                     isTorrent = download.isBitTorrent;
                     status = download.status;
-                    isSingleFile = download.files.size() <= 1;
+                    fileNum = download.files.size();
 
                     if (!Objects.equals(download.status, lastStatus))
                         if (statusObserver != null) {

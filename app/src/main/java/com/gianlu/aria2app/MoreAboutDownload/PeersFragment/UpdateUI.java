@@ -16,6 +16,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class UpdateUI implements Runnable {
+    private static boolean chartsEnabled;
+    private static boolean changed;
     private Activity context;
     private PeerCardAdapter adapter;
     private JTA2 jta2;
@@ -38,6 +40,11 @@ public class UpdateUI implements Runnable {
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void setChartsEnabled(boolean enabled) {
+        chartsEnabled = enabled;
+        changed = true;
     }
 
     public static void stop(UpdateUI updateUI) {
@@ -74,7 +81,11 @@ public class UpdateUI implements Runnable {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.onUpdate(peers);
+                            adapter.onUpdate(peers, chartsEnabled);
+                            if (changed) {
+                                adapter.notifyDataSetChanged();
+                                changed = false;
+                            }
                         }
                     });
                 }
