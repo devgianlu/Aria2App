@@ -14,6 +14,7 @@ import android.view.View;
 public class LetterIconSmall extends View {
     private Context context;
     private String letters;
+    private String profileName;
     private Rect lettersBounds = new Rect();
     private Paint shapePaint;
     private Paint letterPaint;
@@ -23,12 +24,17 @@ public class LetterIconSmall extends View {
         this.context = context;
     }
 
+    public String getProfileName() {
+        return profileName;
+    }
+
     public LetterIconSmall setProfileName(String name) {
         if (name == null) {
             setVisibility(GONE);
             return this;
         }
 
+        profileName = name;
         if (name.length() <= 2) letters = name;
         letters = name.substring(0, 2);
 

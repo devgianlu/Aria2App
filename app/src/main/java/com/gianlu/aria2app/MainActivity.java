@@ -227,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onProfileItemSelected(final SingleModeProfileItem profile) {
-                        if (profile.getStatus() != ProfileItem.STATUS.ONLINE) {
+                    public void onProfileItemSelected(final SingleModeProfileItem profile, boolean fromRecent) {
+                        if (!fromRecent && profile.getStatus() != ProfileItem.STATUS.ONLINE) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                             builder.setMessage(R.string.serverOffline)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -699,7 +699,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
-        drawerManager.setCurrentProfile(profile, false);
+        drawerManager.setCurrentProfile(profile);
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString("lastUsedProfile", profile.getGlobalProfileName())

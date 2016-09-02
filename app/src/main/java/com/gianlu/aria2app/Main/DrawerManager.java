@@ -43,6 +43,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DrawerManager {
     private static String lastProfile;
@@ -58,10 +59,8 @@ public class DrawerManager {
     private LetterIconBig currentAccount;
     private LetterIconSmall firstAccount;
     private LetterIconSmall secondAccount;
-    private LetterIconSmall thirdAccount;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    //TODO: fix recent profiles
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;
@@ -73,7 +72,6 @@ public class DrawerManager {
         this.currentAccount = (LetterIconBig) drawerLayout.findViewById(R.id.mainDrawerHeader_currentAccount);
         this.firstAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_firstAccount);
         this.secondAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_secondAccount);
-        this.thirdAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_thirdAccount);
 
         context.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         context.getWindow().setStatusBarColor(Color.TRANSPARENT);
@@ -100,11 +98,9 @@ public class DrawerManager {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String first = preferences.getString("recentProfiles_first", null);
         String second = preferences.getString("recentProfiles_second", null);
-        String third = preferences.getString("recentProfiles_third", null);
 
         firstAccount.setVisibility(first == null ? View.GONE : View.VISIBLE);
         secondAccount.setVisibility(second == null ? View.GONE : View.VISIBLE);
-        thirdAccount.setVisibility(third == null ? View.GONE : View.VISIBLE);
 
         firstAccount.setProfileName(first)
                 .setTextColor(R.color.white)
@@ -114,20 +110,38 @@ public class DrawerManager {
                 .setTextColor(R.color.white)
                 .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
                 .build();
-        thirdAccount.setProfileName(third)
-                .setTextColor(R.color.white)
-                .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
-                .build();
+
+        View.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isProfilesLockedUntilSelected) {
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    drawerLayout.findViewById(R.id.mainDrawerHeader_dropdown).setEnabled(true);
+
+                    isProfilesLockedUntilSelected = false;
+                }
+
+                try {
+                    if (ProfileItem.isSingleMode(context, ((LetterIconSmall) view).getProfileName()))
+                        listener.onProfileItemSelected(SingleModeProfileItem.fromString(context, ((LetterIconSmall) view).getProfileName()), true);
+                    else
+                        listener.onProfileItemSelected(MultiModeProfileItem.fromString(context, ((LetterIconSmall) view).getProfileName()).getCurrentProfile(context), true);
+                } catch (JSONException | IOException ex) {
+                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+                }
+            }
+        };
+
+        firstAccount.setOnClickListener(clickListener);
+        secondAccount.setOnClickListener(clickListener);
     }
 
-    public DrawerManager setCurrentProfile(SingleModeProfileItem profile, boolean external) {
-        if (!external) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String oldFirst = preferences.getString("recentProfiles_first", null);
-            String oldSecond = preferences.getString("recentProfiles_second", null);
+    public DrawerManager setCurrentProfile(SingleModeProfileItem profile) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String oldFirst = preferences.getString("recentProfiles_first", null);
 
+        if (!Objects.equals(oldFirst, profile.getGlobalProfileName())) {
             preferences.edit()
-                    .putString("recentProfiles_third", oldSecond)
                     .putString("recentProfiles_second", oldFirst)
                     .putString("recentProfiles_first", lastProfile)
                     .apply();
@@ -531,7 +545,7 @@ public class DrawerManager {
                 }
 
                 if (listener != null)
-                    listener.onProfileItemSelected(which);
+                    listener.onProfileItemSelected(which, false);
             }
         });
         drawerProfiles.setAdapter(profilesAdapter);
@@ -553,7 +567,7 @@ public class DrawerManager {
     public interface IDrawerListener {
         boolean onListItemSelected(DrawerListItems which);
 
-        void onProfileItemSelected(SingleModeProfileItem profile);
+        void onProfileItemSelected(SingleModeProfileItem profile, boolean fromRecent);
 
         void onAddProfile();
     }
