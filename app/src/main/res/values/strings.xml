@@ -69,7 +69,7 @@
     <string name="noPeers">No peers</string>
     <string name="noServers">No servers</string>
     <string name="saveProfile">Save profile</string>
-    <string name="features"><![CDATA[<b>Features:</b>]]> %s</string>
+    <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
     <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
     <string name="saveProfile_message">This profile doesn\'t exists. Would you like to save it?\nIf so you can access the server directly from here.</string>
