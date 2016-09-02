@@ -125,7 +125,7 @@ public class LogsActivity extends AppCompatActivity {
                 }
 
                 Utils.UIToast(this, getString(R.string.logsDeleted), Toast.LENGTH_SHORT);
-                startActivity(new Intent(this, MainSettingsActivity.class));
+                startActivity(new Intent(this, MainPreferencesActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

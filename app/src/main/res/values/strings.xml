@@ -117,7 +117,7 @@
     <string name="pickFromFile">Pick from file</string>
     <string name="magnetURI_help">If you want to add a magnet link go to URI section.</string>
     <string name="noCommunication">No communication</string>
-    <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me from the preferences.</string>
+    <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me from.</string>
     <string name="filters">Filters</string>
     <string name="method" translatable="false">Method:</string>
     <string name="jsonrpc" translatable="false">JSONRPC:</string>
@@ -246,9 +246,9 @@
     <string name="about_aria2">About aria2</string>
     <string name="shutdown">Shutdown aria2</string>
     <string name="saveSession">Save session</string>
-    <string name="infoTag">"INFO: "</string>
-    <string name="warningTag">"WARNING: "</string>
-    <string name="errorTag">"ERROR: "</string>
+    <string name="infoTag">INFO: </string>
+    <string name="warningTag">WARNING: </string>
+    <string name="errorTag">ERROR: </string>
     <string name="editProfile">Select the profile to edit</string>
 
     <!-- String-arrays -->
@@ -296,7 +296,6 @@
         <item>BitTorrent complete</item>
         <item>Error</item>
     </string-array>
-
 
     <string-array name="noRestart_downloadOptions">
         <item>bt-max-peers</item>

@@ -12,7 +12,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.gianlu.aria2app.Options.Parser;
 
-public class MainSettingsActivity extends PreferenceActivity {
+public class MainPreferencesActivity extends PreferenceActivity {
 
     @SuppressWarnings("deprecation")
     @Override
@@ -34,7 +34,7 @@ public class MainSettingsActivity extends PreferenceActivity {
                 try {
                     startActivity(Intent.createChooser(i, "Send mail to the developer..."));
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
+                    Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
                 }
                 return true;
             }
@@ -48,7 +48,7 @@ public class MainSettingsActivity extends PreferenceActivity {
 
         findPreference("logs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(MainSettingsActivity.this, LogsActivity.class));
+                startActivity(new Intent(MainPreferencesActivity.this, LogsActivity.class));
                 return true;
             }
         });
@@ -88,12 +88,12 @@ public class MainSettingsActivity extends PreferenceActivity {
         findPreference("updateOptions").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                final ProgressDialog pd = Utils.fastProgressDialog(MainSettingsActivity.this, R.string.gathering_information, true, false);
+                final ProgressDialog pd = Utils.fastProgressDialog(MainPreferencesActivity.this, R.string.gathering_information, true, false);
 
-                new Parser().refreshSource(MainSettingsActivity.this, new Parser.ISourceProcessor() {
+                new Parser().refreshSource(MainPreferencesActivity.this, new Parser.ISourceProcessor() {
                     @Override
                     public void onStarted() {
-                        MainSettingsActivity.this.runOnUiThread(new Runnable() {
+                        MainPreferencesActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 pd.show();
@@ -103,7 +103,7 @@ public class MainSettingsActivity extends PreferenceActivity {
 
                     @Override
                     public void onDownloadEnded(String source) {
-                        MainSettingsActivity.this.runOnUiThread(new Runnable() {
+                        MainPreferencesActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 pd.setMessage(getString(R.string.processing_data));
@@ -114,24 +114,24 @@ public class MainSettingsActivity extends PreferenceActivity {
                     @Override
                     public void onConnectionError(int code, String message) {
                         pd.dismiss();
-                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
+                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
                     }
 
                     @Override
                     public void onError(Exception ex) {
                         pd.dismiss();
-                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
+                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
                     }
 
                     @Override
                     public void onFailed() {
-                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
+                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
                     }
 
                     @Override
                     public void onEnd() {
                         pd.dismiss();
-                        Utils.UIToast(MainSettingsActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
+                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
                     }
                 });
                 return true;
