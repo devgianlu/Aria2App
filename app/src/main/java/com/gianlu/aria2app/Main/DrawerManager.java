@@ -2,6 +2,8 @@ package com.gianlu.aria2app.Main;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -13,9 +15,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,6 +27,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.LetterIconBig;
 import com.gianlu.aria2app.LetterIconSmall;
+import com.gianlu.aria2app.Main.Profile.AddProfileActivity;
 import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Main.Profile.ProfileItem;
 import com.gianlu.aria2app.Main.Profile.ProfilesAdapter;
@@ -56,7 +61,7 @@ public class DrawerManager {
     private LetterIconSmall thirdAccount;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    //TODO: Edit profile & fix recent profiles
+    //TODO: fix recent profiles
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;
@@ -449,8 +454,24 @@ public class DrawerManager {
         manage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null)
-                    listener.onManageProfiles();
+                if (profilesAdapter == null || profilesAdapter.getCount() == 0) return;
+
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.editProfile)
+                        .setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, profilesAdapter.getItemsName()), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                try {
+                                    context.startActivity(new Intent(context, AddProfileActivity.class)
+                                            .putExtra("edit", true)
+                                            .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).getGlobalProfileName()))
+                                            .putExtra("name", profilesAdapter.getItem(i).getGlobalProfileName()));
+                                } catch (JSONException | IOException ex) {
+                                    Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_EDIT_PROFILE, ex);
+                                    context.deleteFile(profilesAdapter.getItem(i).getGlobalProfileName() + ".profile");
+                                }
+                            }
+                        }).create().show();
             }
         });
         drawerProfilesFooter.addView(manage);
@@ -479,7 +500,27 @@ public class DrawerManager {
             }
         }
 
-        profilesAdapter = new ProfilesAdapter(context, profiles, (SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh), new ProfilesAdapter.IProfile() {
+        ((SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh)).setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        ((SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh)).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                buildProfiles();
+                if (profilesAdapter != null)
+                    profilesAdapter.startProfilesTest(new ProfilesAdapter.IFinished() {
+                        @Override
+                        public void onFinished() {
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh)).setRefreshing(false);
+                                }
+                            });
+                        }
+                    });
+            }
+        });
+
+        profilesAdapter = new ProfilesAdapter(context, profiles, new ProfilesAdapter.IProfile() {
             @Override
             public void onProfileSelected(SingleModeProfileItem which) {
                 if (isProfilesLockedUntilSelected) {
@@ -515,7 +556,5 @@ public class DrawerManager {
         void onProfileItemSelected(SingleModeProfileItem profile);
 
         void onAddProfile();
-
-        void onManageProfiles();
     }
 }

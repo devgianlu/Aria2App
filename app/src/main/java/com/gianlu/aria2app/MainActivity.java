@@ -255,11 +255,6 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
                                 .putExtra("edit", false));
                     }
-
-                    @Override
-                    public void onManageProfiles() {
-
-                    }
                 });
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerView);
@@ -620,6 +615,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (getIntent().getBooleanExtra("backFromAddProfile", false)) {
+            drawerManager.buildProfiles().openProfiles(false);
+        }
+
         if (autoReloadDownloadsListRate != 0) {
             Timer reloadDownloadsListTimer = new Timer(false);
             reloadDownloadsListTimer.schedule(new TimerTask() {
@@ -645,9 +644,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if (getIntent().getBooleanExtra("backFromAddProfile", false)) {
-            drawerManager.buildProfiles().openProfiles(false);
-        }
 
         if (enableNotifications) {
             Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("a2_profileName", ""));

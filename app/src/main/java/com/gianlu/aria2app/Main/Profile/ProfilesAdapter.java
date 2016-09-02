@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Main.Profile;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,28 +32,10 @@ public class ProfilesAdapter extends BaseAdapter {
     private List<ProfileItem> profiles;
     private IProfile handler;
 
-    public ProfilesAdapter(Activity context, List<ProfileItem> profiles, final SwipeRefreshLayout swipeRefreshLayout, IProfile handler) {
+    public ProfilesAdapter(Activity context, List<ProfileItem> profiles, IProfile handler) {
         this.context = context;
         this.profiles = profiles;
         this.handler = handler;
-
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                startProfilesTest(new IFinished() {
-                    @Override
-                    public void onFinished() {
-                        ProfilesAdapter.this.context.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
-                    }
-                });
-            }
-        });
     }
 
     public void startProfilesTest(IFinished handler) {
@@ -79,9 +61,21 @@ public class ProfilesAdapter extends BaseAdapter {
         }
     }
 
+    public boolean isItemSingleMode(int position) {
+        return profiles.get(position).isSingleMode();
+    }
+
     @Override
     public long getItemId(int i) {
         return i;
+    }
+
+    public List<String> getItemsName() {
+        List<String> names = new ArrayList<>();
+        for (ProfileItem item : profiles) {
+            names.add(item.getGlobalProfileName());
+        }
+        return names;
     }
 
     @SuppressLint("ViewHolder")
@@ -90,6 +84,17 @@ public class ProfilesAdapter extends BaseAdapter {
         view = LayoutInflater.from(context).inflate(R.layout.material_drawer_profile_item, viewGroup, false);
 
         final SingleModeProfileItem profile = getItem(i);
+
+        if (isItemSingleMode(i)) {
+            view.findViewById(R.id.materialDrawer_profileGlobalName).setVisibility(View.GONE);
+            view.findViewById(R.id.materialDrawer_profileName).setPadding(0, 0, 0, 0);
+            view.findViewById(R.id.materialDrawer_profileAddress).setPadding(0, 0, 0, 0);
+        } else {
+            view.findViewById(R.id.materialDrawer_profileGlobalName).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.materialDrawer_profileName).setPadding(18, 0, 0, 0);
+            view.findViewById(R.id.materialDrawer_profileAddress).setPadding(18, 0, 0, 0);
+            ((TextView) view.findViewById(R.id.materialDrawer_profileGlobalName)).setText(profile.getGlobalProfileName());
+        }
 
         ((TextView) view.findViewById(R.id.materialDrawer_profileName)).setText(profile.getProfileName());
         ((TextView) view.findViewById(R.id.materialDrawer_profileAddress)).setText(profile.getFullServerAddr());
@@ -157,7 +162,7 @@ public class ProfilesAdapter extends BaseAdapter {
         void onProfileSelected(SingleModeProfileItem which);
     }
 
-    private interface IFinished {
+    public interface IFinished {
         void onFinished();
     }
 

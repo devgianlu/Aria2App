@@ -249,6 +249,7 @@
     <string name="infoTag">"INFO: "</string>
     <string name="warningTag">"WARNING: "</string>
     <string name="errorTag">"ERROR: "</string>
+    <string name="editProfile">Select the profile to edit</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">
