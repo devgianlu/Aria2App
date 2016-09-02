@@ -288,6 +288,137 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        UpdateUI.stop(updateUI);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        long intervalLastSourceRefresh = System.currentTimeMillis() - sharedPreferences.getLong("lastSourceRefresh", System.currentTimeMillis());
+        if ((intervalLastSourceRefresh > 604800000) || (intervalLastSourceRefresh < 100)) {
+            new Parser().refreshSource(this, new Parser.ISourceProcessor() {
+                @Override
+                public void onStarted() {
+                }
+
+                @Override
+                public void onDownloadEnded(String source) {
+                }
+
+                @Override
+                public void onConnectionError(int code, String message) {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
+                }
+
+                @Override
+                public void onFailed() {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
+                }
+
+                @Override
+                public void onEnd() {
+                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
+                }
+            });
+            sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
+        }
+
+        if (getIntent().getBooleanExtra("external", false)) {
+            setTitle(getString(R.string.app_name) + " - Local device");
+
+            saveExternalProfile(new SingleModeProfileItem("Local device",
+                    "localhost",
+                    getIntent().getIntExtra("port", 6800),
+                    "/jsonrpc",
+                    JTA2.AUTH_METHOD.TOKEN,
+                    false,
+                    getIntent().getStringExtra("token"),
+                    false,
+                    null)
+                    .setGlobalProfileName("Local device"));
+        }
+
+        try {
+            SingleModeProfileItem profile;
+            if (getIntent().getBooleanExtra("external", false)) {
+                profile = SingleModeProfileItem.fromString(this, "Local device");
+            } else {
+                profile = defaultProfile();
+            }
+
+            if (profile == null) {
+                drawerManager.openProfiles(true);
+                return;
+            }
+
+            setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+
+            startWithProfile(profile, false);
+        } catch (IOException | JSONException ex) {
+            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+        }
+
+
+        Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
+        boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
+
+        fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
+        assert fabMenu != null;
+        fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {
+                final View mask = findViewById(R.id.main_mask);
+                assert mask != null;
+                mask.setVisibility(View.VISIBLE);
+                mask.setClickable(true);
+                mask.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fabMenu.collapse();
+                    }
+                });
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+                final View mask = findViewById(R.id.main_mask);
+                assert mask != null;
+                mask.setVisibility(View.GONE);
+                mask.setClickable(false);
+            }
+        });
+
+        FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFab_addURI);
+        assert fabAddURI != null;
+        fabAddURI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddURIActivity.class));
+            }
+        });
+        final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
+        assert fabAddTorrent != null;
+        fabAddTorrent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
+            }
+        });
+        final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
+        assert fabAddMetalink != null;
+        fabAddMetalink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", false));
+            }
+        });
+
+        if (getIntent().getBooleanExtra("backFromAddProfile", false)) {
+            drawerManager.buildProfiles().openProfiles(false);
+        }
+
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.loading_downloads, true, false);
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
@@ -501,137 +632,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        UpdateUI.stop(updateUI);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        long intervalLastSourceRefresh = System.currentTimeMillis() - sharedPreferences.getLong("lastSourceRefresh", System.currentTimeMillis());
-        if ((intervalLastSourceRefresh > 604800000) || (intervalLastSourceRefresh < 100)) {
-            new Parser().refreshSource(this, new Parser.ISourceProcessor() {
-                @Override
-                public void onStarted() {
-                }
-
-                @Override
-                public void onDownloadEnded(String source) {
-                }
-
-                @Override
-                public void onConnectionError(int code, String message) {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
-                }
-
-                @Override
-                public void onFailed() {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
-                }
-
-                @Override
-                public void onEnd() {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
-                }
-            });
-            sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
-        }
-
-        if (getIntent().getBooleanExtra("external", false)) {
-            setTitle(getString(R.string.app_name) + " - Local device");
-
-            saveExternalProfile(new SingleModeProfileItem("Local device",
-                    "localhost",
-                    getIntent().getIntExtra("port", 6800),
-                    "/jsonrpc",
-                    JTA2.AUTH_METHOD.TOKEN,
-                    false,
-                    getIntent().getStringExtra("token"),
-                    false,
-                    null)
-                    .setGlobalProfileName("Local device"));
-        }
-
-        try {
-            SingleModeProfileItem profile;
-            if (getIntent().getBooleanExtra("external", false)) {
-                profile = SingleModeProfileItem.fromString(this, "Local device");
-            } else {
-                profile = defaultProfile();
-            }
-
-            if (profile == null) {
-                drawerManager.openProfiles(true);
-                return;
-            }
-
-            setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
-
-            startWithProfile(profile, false);
-        } catch (IOException | JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
-        }
-
-
-        Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
-        boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
-
-        fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
-        assert fabMenu != null;
-        fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                final View mask = findViewById(R.id.main_mask);
-                assert mask != null;
-                mask.setVisibility(View.VISIBLE);
-                mask.setClickable(true);
-                mask.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        fabMenu.collapse();
-                    }
-                });
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                final View mask = findViewById(R.id.main_mask);
-                assert mask != null;
-                mask.setVisibility(View.GONE);
-                mask.setClickable(false);
-            }
-        });
-
-        FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFab_addURI);
-        assert fabAddURI != null;
-        fabAddURI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddURIActivity.class));
-            }
-        });
-        final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
-        assert fabAddTorrent != null;
-        fabAddTorrent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
-            }
-        });
-        final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
-        assert fabAddMetalink != null;
-        fabAddMetalink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", false));
-            }
-        });
-
-        if (getIntent().getBooleanExtra("backFromAddProfile", false)) {
-            drawerManager.buildProfiles().openProfiles(false);
-        }
-
         if (autoReloadDownloadsListRate != 0) {
             Timer reloadDownloadsListTimer = new Timer(false);
             reloadDownloadsListTimer.schedule(new TimerTask() {
@@ -733,9 +733,10 @@ public class MainActivity extends AppCompatActivity {
         }
         editor.apply();
 
-        WebSocketing.destroyInstance();
-        if (recreate)
+        if (recreate) {
+            WebSocketing.destroyInstance();
             recreate();
+        }
     }
 
     @Override
