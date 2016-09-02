@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Main;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -144,6 +146,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         return new CardViewHolder(LayoutInflater.from(context).inflate(R.layout.download_cardview, parent, false));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
@@ -158,7 +161,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 if (data == null) holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
 
                 if (data != null) {
-                    data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+                    data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date()));
                     data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
                     data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
 
@@ -181,8 +184,15 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.downloadStatus.setText(item.status.getFormal(context, true));
             holder.downloadSpeed.setText(Utils.speedFormatter(item.downloadSpeed));
             holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
-            holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
-            holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength))));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength)), Html.FROM_HTML_MODE_COMPACT));
+                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
+                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength))));
+            }
+
 
             if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
                 holder.more.setVisibility(View.INVISIBLE);

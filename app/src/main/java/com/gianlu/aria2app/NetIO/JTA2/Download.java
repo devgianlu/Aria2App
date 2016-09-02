@@ -81,7 +81,7 @@ public class Download {
         download.uploadedLength = parseLong(jResult.optString("uploadLength"));
         download.bitfield = jResult.optString("bitfield");
         download.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
-        download.uploadSpeed = parseInt(jResult.optString("downloadSpeed"));
+        download.uploadSpeed = parseInt(jResult.optString("uploadSpeed"));
         download.pieceLength = parseLong(jResult.optString("pieceLength"));
         download.numPieces = parseInt(jResult.optString("numPieces"));
         download.connections = parseInt(jResult.optString("connections"));
