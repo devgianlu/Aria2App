@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+// TODO: Only view that created... bla bla somewhere
 public class PeersPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
 

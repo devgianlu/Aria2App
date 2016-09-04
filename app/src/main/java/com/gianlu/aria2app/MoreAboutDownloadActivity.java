@@ -134,7 +134,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         menu.findItem(R.id.moreAboutDownloadMenu_bitfield).setChecked(PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("a2_showBitfield", true));
         menu.findItem(R.id.moreAboutDownloadMenu_charts).setChecked(PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("a2_showCharts", true));
+                .getBoolean("a2_showCharts", false));
         return true;
     }
 
