@@ -106,9 +106,12 @@ public class ProfilesAdapter extends BaseAdapter {
             view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.GONE);
         }
 
-        if (profile.getStatus() != null) {
+        if (profile.getStatus() != null || profile.getStatus() == ProfileItem.STATUS.UNKNOWN) {
             view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.GONE);
             view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.VISIBLE);
+        } else {
+            view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.GONE);
         }
 
         switch (profile.getStatus()) {

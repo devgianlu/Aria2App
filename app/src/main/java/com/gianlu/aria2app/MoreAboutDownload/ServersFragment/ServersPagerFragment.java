@@ -101,7 +101,12 @@ public class ServersPagerFragment extends CommonFragment {
                     @Override
                     public void stopped() {
                         onViewCreated(rootView, savedInstanceState);
-                        swipeLayout.setRefreshing(false);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeLayout.setRefreshing(false);
+                            }
+                        });
                     }
                 });
             }
