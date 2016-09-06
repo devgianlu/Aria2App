@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,9 +42,10 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         super(in);
     }
 
-    public static MultiModeProfileItem fromJSON(String json) throws JSONException, IOException {
+    public static MultiModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
         JSONObject jProfile = new JSONObject(json);
         MultiModeProfileItem item = new MultiModeProfileItem();
+        item.fileName = fileName;
         item.globalProfileName = jProfile.getString("name");
 
         JSONArray conditions = jProfile.getJSONArray("conditions");
@@ -53,7 +53,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         for (int i = 0; i < conditions.length(); i++) {
             JSONObject condition = conditions.getJSONObject(i);
 
-            SingleModeProfileItem profile = SingleModeProfileItem.fromJSON(condition.getJSONObject("profile").toString());
+            SingleModeProfileItem profile = SingleModeProfileItem.fromJSON(fileName, condition.getJSONObject("profile").toString());
             profile.setGlobalProfileName(item.globalProfileName);
             switch (ConnectivityCondition.getTypeFromString(condition.getString("type"))) {
                 case WIFI:
@@ -74,12 +74,8 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         return item;
     }
 
-    public static MultiModeProfileItem fromString(Context context, String name) throws IOException, JSONException {
-        return fromFile(context, new File(name + ".profile"));
-    }
-
-    public static MultiModeProfileItem fromFile(Context context, File file) throws IOException, JSONException {
-        FileInputStream in = context.openFileInput(file.getName());
+    public static MultiModeProfileItem fromString(Context context, String base64name) throws IOException, JSONException {
+        FileInputStream in = context.openFileInput(base64name);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder builder = new StringBuilder();
 
@@ -88,7 +84,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
             builder.append(line);
         }
 
-        return fromJSON(builder.toString());
+        return fromJSON(base64name, builder.toString());
     }
 
     @Override

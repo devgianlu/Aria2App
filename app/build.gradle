@@ -23,7 +23,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:support-v4:24.2.0'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
-    compile 'com.neovisionaries:nv-websocket-client:1.28'
+    compile 'com.neovisionaries:nv-websocket-client:1.30'
     compile 'com.google.android.gms:play-services-analytics:9.4.0'
     compile 'com.android.support:design:24.2.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'

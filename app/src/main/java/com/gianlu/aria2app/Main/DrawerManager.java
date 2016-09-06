@@ -38,11 +38,8 @@ import com.gianlu.aria2app.Utils;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class DrawerManager {
@@ -102,11 +99,11 @@ public class DrawerManager {
         firstAccount.setVisibility(first == null ? View.GONE : View.VISIBLE);
         secondAccount.setVisibility(second == null ? View.GONE : View.VISIBLE);
 
-        firstAccount.setProfileName(first)
+        firstAccount.setProfileName(first, ProfileItem.getProfileName(first))
                 .setTextColor(R.color.white)
                 .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
                 .build();
-        secondAccount.setProfileName(second)
+        secondAccount.setProfileName(second, ProfileItem.getProfileName(second))
                 .setTextColor(R.color.white)
                 .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
                 .build();
@@ -114,7 +111,7 @@ public class DrawerManager {
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = ((LetterIconSmall) view).getProfileName();
+                String name = ((LetterIconSmall) view).getProfileFileName();
                 if (!ProfileItem.exists(context, name)) {
                     Utils.UIToast(context, Utils.TOAST_MESSAGES.PROFILE_DOES_NOT_EXIST, name);
                     return;
@@ -146,7 +143,7 @@ public class DrawerManager {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String oldFirst = preferences.getString("recentProfiles_first", null);
 
-        if (!Objects.equals(oldFirst, profile.getGlobalProfileName())) {
+        if (!Objects.equals(oldFirst, profile.getFileName())) {
             preferences.edit()
                     .putString("recentProfiles_second", oldFirst)
                     .putString("recentProfiles_first", lastProfile)
@@ -163,7 +160,7 @@ public class DrawerManager {
         ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileName)).setText(profile.getGlobalProfileName());
         ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileAddr)).setText(profile.getFullServerAddr());
 
-        lastProfile = profile.getGlobalProfileName();
+        lastProfile = profile.getFileName();
 
         reloadRecentProfiles();
 
@@ -494,7 +491,7 @@ public class DrawerManager {
                                     context.startActivity(new Intent(context, AddProfileActivity.class)
                                             .putExtra("edit", true)
                                             .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).getGlobalProfileName()))
-                                            .putExtra("name", profilesAdapter.getItem(i).getGlobalProfileName()));
+                                            .putExtra("base64name", profilesAdapter.getItem(i).getFileName()));
                                 } catch (JSONException | IOException ex) {
                                     Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_EDIT_PROFILE, ex);
                                     context.deleteFile(profilesAdapter.getItem(i).getGlobalProfileName() + ".profile");
@@ -506,29 +503,6 @@ public class DrawerManager {
         drawerProfilesFooter.addView(manage);
 
         // Load profiles
-        List<ProfileItem> profiles = new ArrayList<>();
-        File files[] = context.getFilesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return s.toLowerCase().endsWith(".profile");
-            }
-        });
-
-        for (File profile : files) {
-            try {
-                if (ProfileItem.isSingleMode(context, profile)) {
-                    profiles.add(SingleModeProfileItem.fromFile(context, profile));
-                } else {
-                    profiles.add(MultiModeProfileItem.fromFile(context, profile));
-                }
-            } catch (FileNotFoundException ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FILE_NOT_FOUND, ex);
-            } catch (JSONException | IOException ex) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
-                ex.printStackTrace();
-            }
-        }
-
         ((SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh)).setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         ((SwipeRefreshLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesRefresh)).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -549,7 +523,7 @@ public class DrawerManager {
             }
         });
 
-        profilesAdapter = new ProfilesAdapter(context, profiles, new ProfilesAdapter.IProfile() {
+        profilesAdapter = new ProfilesAdapter(context, ProfileItem.getProfiles(context), new ProfilesAdapter.IProfile() {
             @Override
             public void onProfileSelected(SingleModeProfileItem which) {
                 if (isProfilesLockedUntilSelected) {

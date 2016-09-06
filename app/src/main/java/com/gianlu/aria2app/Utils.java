@@ -54,6 +54,25 @@ public class Utils {
     public static final int CHART_UPLOAD_SET = 0;
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static void renameOldProfiles(Context context) {
+        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("oldProfiles", true))
+            return;
+
+        for (File file : context.getFilesDir().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.toLowerCase().endsWith(".profile");
+            }
+        })) {
+            if (!file.renameTo(new File(file.getParent(), new String(Base64.encode(file.getName().trim().replace(".profile", "").getBytes(), Base64.NO_WRAP)) + ".profile"))) {
+                file.delete();
+            }
+        }
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("oldProfiles", false).apply();
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @SuppressLint("SimpleDateFormat")
     public static void logCleaner(Activity context) {
         Calendar cal = Calendar.getInstance();

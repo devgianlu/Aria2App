@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -109,9 +108,11 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         directDownload = in.readParcelable(DirectDownload.class.getClassLoader());
     }
 
-    public static SingleModeProfileItem fromJSON(String json) throws JSONException, IOException {
+    public static SingleModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
         JSONObject jProfile = new JSONObject(json);
         SingleModeProfileItem item = new SingleModeProfileItem();
+        item.fileName = fileName;
+
         item.profileName = jProfile.getString("name");
         item.globalProfileName = item.profileName;
         if (!jProfile.isNull("serverAuth")) {
@@ -146,12 +147,8 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         return item;
     }
 
-    public static SingleModeProfileItem fromString(Context context, String name) throws IOException, JSONException {
-        return fromFile(context, new File(name + ".profile"));
-    }
-
-    public static SingleModeProfileItem fromFile(Context context, File file) throws IOException, JSONException {
-        FileInputStream in = context.openFileInput(file.getName());
+    public static SingleModeProfileItem fromString(Context context, String base64name) throws IOException, JSONException {
+        FileInputStream in = context.openFileInput(base64name);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder builder = new StringBuilder();
 
@@ -160,7 +157,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
             builder.append(line);
         }
 
-        return fromJSON(builder.toString());
+        return fromJSON(base64name, builder.toString());
     }
 
     @Override

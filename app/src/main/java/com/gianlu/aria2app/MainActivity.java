@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         Utils.logCleaner(this);
+        Utils.renameOldProfiles(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         assert toolbar != null;
@@ -571,6 +572,8 @@ public class MainActivity extends AppCompatActivity {
 
                         if (getIntent().getStringExtra("gid") != null) {
                             Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                            if (item == null) return;
+                            
                             Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                     .putExtra("gid", item.gid)
                                     .putExtra("isTorrent", item.isBitTorrent)
@@ -662,9 +665,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         if (enableNotifications) {
-            Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("a2_profileName", ""));
+            Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("lastUsedProfile", null));
             if (startNotification != null)
                 startService(startNotification);
             else
@@ -727,7 +729,7 @@ public class MainActivity extends AppCompatActivity {
         drawerManager.setCurrentProfile(profile);
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("lastUsedProfile", profile.getGlobalProfileName())
+        editor.putString("lastUsedProfile", profile.getFileName())
                 .putString("a2_profileName", profile.getProfileName())
                 .putString("a2_serverIP", profile.getFullServerAddr())
                 .putString("a2_authMethod", profile.getAuthMethod().name())
@@ -775,6 +777,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (fabMenu == null) {
+            super.onBackPressed();
+            return;
+        }
+
         if (fabMenu.isExpanded()) {
             fabMenu.collapse();
         } else {

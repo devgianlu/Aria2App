@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.ArrayMap;
+import android.util.Base64;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +52,7 @@ import java.util.Map;
 
 public class AddProfileActivity extends AppCompatActivity {
     private boolean isEditMode = true;
+    private String oldFileName;
 
     private EditText profileName;
     private RadioGroup modeGroup;
@@ -73,6 +75,8 @@ public class AddProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
+
+        oldFileName = getIntent().getStringExtra("base64name");
 
         profileName = (EditText) findViewById(R.id.addProfile_name);
         modeGroup = (RadioGroup) findViewById(R.id.addProfile_modeGroup);
@@ -115,10 +119,10 @@ public class AddProfileActivity extends AppCompatActivity {
             try {
                 if (edit.getBoolean("isSingleMode", true)) {
                     modeGroup.check(R.id.addProfile_singleMode);
-                    loadSingle(edit.getString("name"));
+                    loadSingle(edit.getString("base64name"));
                 } else {
                     modeGroup.check(R.id.addProfile_multiMode);
-                    loadMulti(edit.getString("name"));
+                    loadMulti(edit.getString("base64name"));
                 }
 
                 modeGroup.getChildAt(0).setEnabled(false);
@@ -624,9 +628,10 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         try {
-            deleteFile(profileName.getText().toString().trim() + ".profile");
+            if (oldFileName != null)
+                deleteFile(oldFileName + ".profile");
 
-            FileOutputStream fOut = openFileOutput(profileName.getText().toString().trim() + ".profile", Context.MODE_PRIVATE);
+            FileOutputStream fOut = openFileOutput(new String(Base64.encode(profileName.getText().toString().trim().getBytes(), Base64.NO_WRAP)) + ".profile", Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
             osw.write(profile.toJSON().toString());
@@ -681,9 +686,10 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         try {
-            deleteFile(profileName.getText().toString().trim() + ".profile");
+            if (oldFileName != null)
+                deleteFile(oldFileName + ".profile");
 
-            FileOutputStream fOut = openFileOutput(profileName.getText().toString().trim() + ".profile", Context.MODE_PRIVATE);
+            FileOutputStream fOut = openFileOutput(new String(Base64.encode(profileName.getText().toString().trim().getBytes(), Base64.NO_WRAP)) + ".profile", Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
             osw.write(profile.toString());

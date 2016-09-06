@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.media.RingtoneManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -37,22 +36,23 @@ public class NotificationWebSocketService extends IntentService {
     }
 
     @Nullable
-    public static Intent createStartIntent(Context context, String profileName) {
-        if (profileName.isEmpty()) return null;
-        Intent intent = new Intent(context, NotificationWebSocketService.class);
-        intent.putExtra("profileName", profileName);
+    public static Intent createStartIntent(Context context, String profileFileName) {
+        if (profileFileName == null) return null;
+
         SingleModeProfileItem profile;
         try {
-            if (ProfileItem.isSingleMode(context, profileName)) {
-                profile = SingleModeProfileItem.fromString(context, profileName);
+            if (ProfileItem.isSingleMode(context, profileFileName)) {
+                profile = SingleModeProfileItem.fromString(context, profileFileName);
             } else {
-                profile = MultiModeProfileItem.fromString(context, profileName).getCurrentProfile(context);
+                profile = MultiModeProfileItem.fromString(context, profileFileName).getCurrentProfile(context);
             }
         } catch (IOException | JSONException ex) {
             ex.printStackTrace();
             return null;
         }
 
+        Intent intent = new Intent(context, NotificationWebSocketService.class);
+        intent.putExtra("profileName", profile.getGlobalProfileName());
         intent.putExtra("foreground", PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_enablePersistent", true));
         intent.putExtra("SSL", profile.isServerSSL());
         intent.putExtra("serverIP", profile.getFullServerAddr());
@@ -62,7 +62,11 @@ public class NotificationWebSocketService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra("foreground", true)) {
+        if (intent == null) {
+            stopSelf();
+        }
+
+        if (intent != null && intent.getBooleanExtra("foreground", true)) {
             Notification.Builder builder = new Notification.Builder(this);
             builder.setShowWhen(false)
                     .setPriority(Notification.PRIORITY_MIN)
@@ -83,6 +87,11 @@ public class NotificationWebSocketService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (intent == null) {
+            stopSelf();
+            return;
+        }
+
         WebSocket webSocket;
         try {
             webSocket = Utils.readyWebSocket(intent.getBooleanExtra("SSL", false), intent.getStringExtra("serverIP"));
@@ -129,9 +138,9 @@ public class NotificationWebSocketService extends IntentService {
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
             JSONObject jResponse = new JSONObject(text);
+
             for (int c = 0; c < jResponse.getJSONArray("params").length(); c++) {
                 String gid = jResponse.getJSONArray("params").getJSONObject(c).getString("gid");
-                Resources res = getResources();
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 Set<String> selectedNotifications = sharedPreferences.getStringSet("a2_selectedNotifications", null);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
@@ -149,27 +158,27 @@ public class NotificationWebSocketService extends IntentService {
                 switch (EVENT.parseEvent(jResponse.getString("method"))) {
                     case START:
                         if (!selectedNotifications.contains("START")) return;
-                        builder.setContentTitle(res.getString(R.string.notificationStarted));
+                        builder.setContentTitle(getString(R.string.notificationStarted));
                         break;
                     case STOP:
                         if (!selectedNotifications.contains("STOP")) return;
-                        builder.setContentTitle(res.getString(R.string.notificationStopped));
+                        builder.setContentTitle(getString(R.string.notificationStopped));
                         break;
                     case PAUSE:
                         if (!selectedNotifications.contains("PAUSE")) return;
-                        builder.setContentTitle(res.getString(R.string.notificationPaused));
+                        builder.setContentTitle(getString(R.string.notificationPaused));
                         break;
                     case COMPLETE:
                         if (!selectedNotifications.contains("COMPLETE")) return;
-                        builder.setContentTitle(res.getString(R.string.notificationComplete));
+                        builder.setContentTitle(getString(R.string.notificationComplete));
                         break;
                     case BTCOMPLETE:
                         if (!selectedNotifications.contains("BTCOMPLETE")) return;
-                        builder.setContentTitle(res.getString(R.string.notificationBTComplete));
+                        builder.setContentTitle(getString(R.string.notificationBTComplete));
                         break;
                     case ERROR:
                         if (!selectedNotifications.contains("ERROR")) return;
-                        builder.setContentTitle(res.getString(R.string.notificationError));
+                        builder.setContentTitle(getString(R.string.notificationError));
                         break;
                 }
 
