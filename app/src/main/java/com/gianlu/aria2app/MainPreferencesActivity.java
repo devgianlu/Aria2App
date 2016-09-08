@@ -62,18 +62,18 @@ public class MainPreferencesActivity extends PreferenceActivity {
 
         findPreference("nv-websocket-client").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                builder.setTitle("nv-websocket-client")
-                        .setMessage(R.string.nv_websocket_client_license)
-                        .create().show();
+                Utils.showDialog(MainPreferencesActivity.this, builder
+                        .setTitle("nv-websocket-client")
+                        .setMessage(R.string.nv_websocket_client_license));
                 return true;
             }
         });
 
         findPreference("mpAndroidChart").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                builder.setTitle("MPAndroidChart")
-                        .setMessage(R.string.mpAndroidChart_details)
-                        .create().show();
+                Utils.showDialog(MainPreferencesActivity.this, builder
+                        .setTitle("MPAndroidChart")
+                        .setMessage(R.string.mpAndroidChart_details));
                 return true;
             }
         });
@@ -93,12 +93,7 @@ public class MainPreferencesActivity extends PreferenceActivity {
                 new Parser().refreshSource(MainPreferencesActivity.this, new Parser.ISourceProcessor() {
                     @Override
                     public void onStarted() {
-                        MainPreferencesActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                pd.show();
-                            }
-                        });
+                        Utils.showDialog(MainPreferencesActivity.this, pd);
                     }
 
                     @Override

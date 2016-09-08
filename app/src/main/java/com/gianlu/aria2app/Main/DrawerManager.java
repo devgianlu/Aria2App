@@ -482,7 +482,7 @@ public class DrawerManager {
             public void onClick(View view) {
                 if (profilesAdapter == null || profilesAdapter.getCount() == 0) return;
 
-                new AlertDialog.Builder(context)
+                Utils.showDialog(context, new AlertDialog.Builder(context)
                         .setTitle(R.string.editProfile)
                         .setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, profilesAdapter.getItemsName()), new DialogInterface.OnClickListener() {
                             @Override
@@ -497,7 +497,7 @@ public class DrawerManager {
                                     context.deleteFile(profilesAdapter.getItem(i).getGlobalProfileName() + ".profile");
                                 }
                             }
-                        }).create().show();
+                        }));
             }
         });
         drawerProfilesFooter.addView(manage);

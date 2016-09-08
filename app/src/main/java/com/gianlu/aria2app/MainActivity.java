@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                                 final ProgressDialog pd = Utils.fastProgressDialog(MainActivity.this, R.string.gathering_information, true, false);
-                                pd.show();
+                                Utils.showDialog(MainActivity.this, pd);
                                 jta2.getVersion(new IVersion() {
                                     @Override
                                     public void onVersion(List<String> rawFeatures, List<JTA2.FEATURES> enabledFeatures, String version) {
@@ -189,35 +189,29 @@ public class MainActivity extends AppCompatActivity {
                                                 }
 
                                                 pd.dismiss();
-                                                MainActivity.this.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
-                                                                .setView(box)
-                                                                .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                                                Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
+                                                        .setView(box)
+                                                        .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                jta2.saveSession(new ISuccess() {
                                                                     @Override
-                                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                                        jta2.saveSession(new ISuccess() {
-                                                                            @Override
-                                                                            public void onSuccess() {
-                                                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SESSION_SAVED);
-                                                                            }
+                                                                    public void onSuccess() {
+                                                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SESSION_SAVED);
+                                                                    }
 
-                                                                            @Override
-                                                                            public void onException(Exception exception) {
-                                                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_SAVE_SESSION, exception);
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                })
-                                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                                                     @Override
-                                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                                    public void onException(Exception exception) {
+                                                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_SAVE_SESSION, exception);
                                                                     }
-                                                                })
-                                                                .create().show();
-                                                    }
-                                                });
+                                                                });
+                                                            }
+                                                        })
+                                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                            }
+                                                        }));
                                             }
 
                                             @Override
@@ -243,8 +237,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onProfileItemSelected(final SingleModeProfileItem profile, boolean fromRecent) {
                         if (!fromRecent && profile.getStatus() != ProfileItem.STATUS.ONLINE) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setMessage(R.string.serverOffline)
+                            Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -257,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             drawerManager.setDrawerState(true, true);
                                         }
-                                    }).create().show();
+                                    }));
                         } else {
                             drawerManager.setDrawerState(false, true);
                             startWithProfile(profile, true);
@@ -429,12 +422,7 @@ public class MainActivity extends AppCompatActivity {
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!isFinishing()) pd.show();
-                    }
-                });
+                Utils.showDialog(MainActivity.this, pd);
             }
 
             @Override
@@ -607,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
                     exx.printStackTrace();
                 }
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.noCommunication)
                         .setCancelable(false)
                         .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))
@@ -628,12 +616,11 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 drawerManager.openProfiles(true);
                             }
-                        });
+                        }));
 
                 Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
                     @Override
                     public void run() {
-                        builder.create().show();
                         drawerManager.updateBadge(-1);
                     }
                 });
@@ -859,7 +846,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        pd.show();
+        Utils.showDialog(this, pd);
 
         jta2.getGlobalOption(new IOption() {
             @Override
@@ -911,7 +898,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (map.entrySet().size() == 0) return;
 
-                                pd.show();
+                                Utils.showDialog(MainActivity.this, pd);
 
                                 if (Analytics.isTrackingAllowed(MainActivity.this))
                                     Analytics.getDefaultTracker(MainActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
@@ -946,7 +933,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         final AlertDialog dialog = builder.create();
-                        dialog.show();
+                        Utils.showDialog(MainActivity.this, dialog);
                         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
                         ViewTreeObserver vto = view.getViewTreeObserver();

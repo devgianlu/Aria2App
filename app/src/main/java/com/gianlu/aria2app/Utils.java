@@ -2,6 +2,7 @@ package com.gianlu.aria2app;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Spanned;
 import android.util.Base64;
 import android.widget.TextView;
@@ -52,6 +54,28 @@ import javax.net.ssl.SSLContext;
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
+
+    public static void showDialog(Activity activity, final Dialog dialog) {
+        if (activity == null || activity.isFinishing()) return;
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.show();
+            }
+        });
+    }
+
+    public static void showDialog(Activity activity, final AlertDialog.Builder builder) {
+        if (activity == null || activity.isFinishing()) return;
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                builder.create().show();
+            }
+        });
+    }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void renameOldProfiles(Context context) {

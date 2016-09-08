@@ -358,7 +358,7 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         final AlertDialog dialog = builder.create();
-        dialog.show();
+        Utils.showDialog(this, dialog);
         final AutoCompleteTextView finalSsid = ssid;
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override

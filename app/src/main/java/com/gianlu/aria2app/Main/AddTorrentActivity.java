@@ -89,10 +89,10 @@ public class AddTorrentActivity extends AppCompatActivity {
         addUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(AddTorrentActivity.this);
                 final EditText uri = new EditText(AddTorrentActivity.this);
                 uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                dialog.setView(uri)
+
+                Utils.showDialog(AddTorrentActivity.this, new AlertDialog.Builder(AddTorrentActivity.this).setView(uri)
                         .setTitle(R.string.uri)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
@@ -101,7 +101,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                                 urisList.add(uri.getText().toString().trim());
                                 uris.setAdapter(new URIAdapter(AddTorrentActivity.this, urisList));
                             }
-                        }).create().show();
+                        }));
             }
         });
 
@@ -147,7 +147,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                 });
 
         final AlertDialog dialog = builder.create();
-        dialog.show();
+        Utils.showDialog(this, dialog);
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
         ViewTreeObserver vto = view.getViewTreeObserver();
@@ -165,7 +165,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        pd.show();
+        Utils.showDialog(this, pd);
 
         try {
             if (options.isEmpty()) {
@@ -297,7 +297,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                 if (data == null) break;
 
                 final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-                pd.show();
+                Utils.showDialog(this, pd);
 
                 InputStream in;
                 try {

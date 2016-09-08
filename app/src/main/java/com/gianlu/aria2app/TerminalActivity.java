@@ -106,7 +106,7 @@ public class TerminalActivity extends AppCompatActivity {
             JTA2 jta2 = JTA2.newInstance(this);
 
             final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-            pd.show();
+            Utils.showDialog(this, pd);
             jta2.listMethods(new IMethod() {
                 @Override
                 public void onMethods(final List<String> methods) {

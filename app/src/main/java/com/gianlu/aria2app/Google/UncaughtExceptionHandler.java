@@ -1,10 +1,10 @@
 package com.gianlu.aria2app.Google;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
@@ -61,12 +61,6 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
                     }
                 });
 
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!context.isFinishing())
-                    builder.create().show();
-            }
-        });
+        Utils.showDialog(context, builder);
     }
 }

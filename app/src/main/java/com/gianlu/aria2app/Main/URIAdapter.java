@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Main;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -13,14 +14,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 
 import java.util.List;
 
 public class URIAdapter extends BaseAdapter {
-    private Context context;
+    private Activity context;
     private List<String> objs;
 
-    public URIAdapter(Context context, List<String> objs) {
+    public URIAdapter(Activity context, List<String> objs) {
         this.context = context;
         this.objs = objs;
     }
@@ -49,12 +51,11 @@ public class URIAdapter extends BaseAdapter {
         view.findViewById(R.id.uriCustomItem_edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context);
                 final EditText uri = new EditText(context);
                 uri.setText(getItem(i));
                 uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
 
-                dialog.setView(uri)
+                Utils.showDialog(context, new AlertDialog.Builder(context).setView(uri)
                         .setTitle(R.string.uri)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
@@ -65,7 +66,7 @@ public class URIAdapter extends BaseAdapter {
 
                                 notifyDataSetChanged();
                             }
-                        }).create().show();
+                        }));
             }
         });
         view.findViewById(R.id.uriCustomItem_remove).setOnClickListener(new View.OnClickListener() {

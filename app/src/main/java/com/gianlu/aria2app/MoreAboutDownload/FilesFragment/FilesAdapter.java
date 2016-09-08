@@ -87,8 +87,6 @@ public class FilesAdapter {
                 @SuppressWarnings("deprecation")
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
                     final LinearLayout view = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.file_about_dialog, null);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index), Html.FROM_HTML_MODE_COMPACT));
@@ -128,7 +126,7 @@ public class FilesAdapter {
                             }
 
                             final ProgressDialog pd = Utils.fastProgressDialog(context, R.string.gathering_information, true, false);
-                            pd.show();
+                            Utils.showDialog(context, pd);
 
                             jta2.getOption(gid, new IOption() {
                                 @Override
@@ -225,10 +223,9 @@ public class FilesAdapter {
                         urisLayout.addView(_uri);
                     }
 
-                    builder.setView(view)
-                            .setTitle(file.file.getName());
-
-                    builder.create().show();
+                    Utils.showDialog(context, new AlertDialog.Builder(context)
+                            .setView(view)
+                            .setTitle(file.file.getName()));
                 }
             });
 

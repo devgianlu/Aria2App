@@ -63,10 +63,11 @@ public class AddURIActivity extends AppCompatActivity {
         addUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(AddURIActivity.this);
                 final EditText uri = new EditText(AddURIActivity.this);
                 uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                dialog.setView(uri)
+
+                Utils.showDialog(AddURIActivity.this, new AlertDialog.Builder(AddURIActivity.this)
+                        .setView(uri)
                         .setTitle(R.string.uri)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
@@ -75,7 +76,7 @@ public class AddURIActivity extends AppCompatActivity {
                                 urisList.add(uri.getText().toString().trim());
                                 uris.setAdapter(new URIAdapter(AddURIActivity.this, urisList));
                             }
-                        }).create().show();
+                        }));
             }
         });
 
@@ -116,7 +117,7 @@ public class AddURIActivity extends AppCompatActivity {
                 });
 
         final AlertDialog dialog = builder.create();
-        dialog.show();
+        Utils.showDialog(this, dialog);
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
         ViewTreeObserver vto = view.getViewTreeObserver();
@@ -134,7 +135,7 @@ public class AddURIActivity extends AppCompatActivity {
         final Map<OptionHeader, OptionChild> children = new HashMap<>();
 
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        pd.show();
+        Utils.showDialog(this, pd);
 
         try {
             if (options.isEmpty()) {
@@ -266,7 +267,7 @@ public class AddURIActivity extends AppCompatActivity {
                 final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
 
                 if (urisList.size() == 0) break;
-                pd.show();
+                Utils.showDialog(this, pd);
 
                 if (Analytics.isTrackingAllowed(this))
                     Analytics.getDefaultTracker(this.getApplication()).send(new HitBuilders.EventBuilder()

@@ -202,7 +202,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             return;
         }
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        pd.show();
+        Utils.showDialog(this, pd);
 
         jta2.getOption(gid, new IOption() {
             @Override
@@ -253,7 +253,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
                                 if (map.entrySet().size() == 0) return;
 
-                                pd.show();
+                                Utils.showDialog(MoreAboutDownloadActivity.this, pd);
 
                                 if (Analytics.isTrackingAllowed(MoreAboutDownloadActivity.this))
                                     Analytics.getDefaultTracker(MoreAboutDownloadActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
@@ -287,7 +287,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         final AlertDialog dialog = builder.create();
-                        dialog.show();
+                        Utils.showDialog(MoreAboutDownloadActivity.this, dialog);
                         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
                         ViewTreeObserver vto = view.getViewTreeObserver();
