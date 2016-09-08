@@ -116,7 +116,7 @@ public class Parser {
         return options;
     }
 
-    public void refreshSource(Context context, ISourceProcessor handler) {
+    public static void refreshSource(Context context, ISourceProcessor handler) {
         new Thread(new DownloadSource(context, handler)).start();
     }
 
@@ -129,7 +129,7 @@ public class Parser {
         void onEnd();
     }
 
-    private class DownloadSource implements Runnable {
+    private static class DownloadSource implements Runnable {
         private ISourceProcessor handler;
         private Context context;
 

@@ -298,14 +298,6 @@
         <item>Error</item>
     </string-array>
 
-    <string-array name="noRestart_downloadOptions">
-        <item>bt-max-peers</item>
-        <item>bt-request-peer-speed-limit</item>
-        <item>bt-remove-unselected-file</item>
-        <item>force-save</item>
-        <item>max-download-limit</item>
-        <item>max-upload-limit</item>
-    </string-array>
     <string-array name="downloadOptions">
         <item>bt-max-peers</item>
         <item>bt-request-peer-speed-limit</item>

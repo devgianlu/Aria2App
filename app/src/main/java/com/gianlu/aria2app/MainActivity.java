@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,10 +23,6 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
-import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -46,16 +41,12 @@ import com.gianlu.aria2app.Main.Profile.ProfileItem;
 import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.ISession;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.IVersion;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.aria2app.Options.LocalParser;
-import com.gianlu.aria2app.Options.OptionAdapter;
-import com.gianlu.aria2app.Options.OptionChild;
-import com.gianlu.aria2app.Options.OptionHeader;
+import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.Options.Parser;
 import com.gianlu.aria2app.Services.NotificationWebSocketService;
 import com.google.android.gms.analytics.HitBuilders;
@@ -66,8 +57,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -113,7 +102,35 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
                                 return false;
                             case GLOBAL_OPTIONS:
-                                showOptionsDialog();
+                                new OptionsDialog(MainActivity.this, R.array.globalOptions, R.color.colorAccent, new OptionsDialog.IDialog() {
+                                    @Override
+                                    public void onApply(JTA2 jta2, Map<String, String> options) {
+                                        if (options.entrySet().size() == 0) return;
+
+                                        final ProgressDialog pd = Utils.fastProgressDialog(MainActivity.this, R.string.gathering_information, true, false);
+                                        Utils.showDialog(MainActivity.this, pd);
+
+                                        if (Analytics.isTrackingAllowed(MainActivity.this))
+                                            Analytics.getDefaultTracker(getApplication()).send(new HitBuilders.EventBuilder()
+                                                    .setCategory(Analytics.CATEGORY_USER_INPUT)
+                                                    .setAction(Analytics.ACTION_CHANGED_GLOBAL_OPTIONS)
+                                                    .build());
+
+                                        jta2.changeGlobalOption(options, new ISuccess() {
+                                            @Override
+                                            public void onSuccess() {
+                                                pd.dismiss();
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
+                                            }
+
+                                            @Override
+                                            public void onException(Exception exception) {
+                                                pd.dismiss();
+                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
+                                            }
+                                        });
+                                    }
+                                }).showDialog();
                                 return true;
                             case PREFERENCES:
                                 startActivity(new Intent(MainActivity.this, MainPreferencesActivity.class));
@@ -832,127 +849,5 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showOptionsDialog() {
-        final List<OptionHeader> headers = new ArrayList<>();
-        final Map<OptionHeader, OptionChild> children = new HashMap<>();
-
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.newInstance(this);
-        } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
-            return;
-        }
-        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        Utils.showDialog(this, pd);
-
-        jta2.getGlobalOption(new IOption() {
-            @Override
-            public void onOptions(Map<String, String> options) {
-                LocalParser localOptions;
-                try {
-                    localOptions = new LocalParser(MainActivity.this, false);
-                } catch (IOException | JSONException ex) {
-                    pd.dismiss();
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                    return;
-                }
-
-                for (String resOption : getResources().getStringArray(R.array.globalOptions)) {
-                    try {
-                        OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
-                        headers.add(header);
-
-                        children.put(header, new OptionChild(
-                                localOptions.getDefinition(resOption),
-                                String.valueOf(localOptions.getDefaultValue(resOption)),
-                                String.valueOf(options.get(resOption))));
-                    } catch (JSONException ex) {
-                        pd.dismiss();
-                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                    }
-                }
-
-                pd.dismiss();
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
-                @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.options_dialog, null);
-                ((ViewGroup) view).removeView(view.findViewById(R.id.optionsDialog_info));
-                ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.moreAboutDownload_dialog_expandableListView);
-                listView.setAdapter(new OptionAdapter(MainActivity.this, headers, children));
-
-                builder.setView(view)
-                        .setTitle(R.string.menu_globalOptions)
-                        .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Map<String, String> map = new HashMap<>();
-
-                                for (Map.Entry<OptionHeader, OptionChild> item : children.entrySet()) {
-                                    if (!item.getValue().isChanged()) continue;
-                                    map.put(item.getKey().getOptionName(), item.getValue().getValue());
-                                }
-
-                                if (map.entrySet().size() == 0) return;
-
-                                Utils.showDialog(MainActivity.this, pd);
-
-                                if (Analytics.isTrackingAllowed(MainActivity.this))
-                                    Analytics.getDefaultTracker(MainActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
-                                            .setCategory(Analytics.CATEGORY_USER_INPUT)
-                                            .setAction(Analytics.ACTION_CHANGED_GLOBAL_OPTIONS)
-                                            .build());
-
-                                jta2.changeGlobalOption(map, new ISuccess() {
-                                    @Override
-                                    public void onSuccess() {
-                                        pd.dismiss();
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
-
-                                        reloadPage();
-                                    }
-
-                                    @Override
-                                    public void onException(Exception exception) {
-                                        pd.dismiss();
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
-                                    }
-                                });
-                            }
-                        })
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final AlertDialog dialog = builder.create();
-                        Utils.showDialog(MainActivity.this, dialog);
-                        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-                        ViewTreeObserver vto = view.getViewTreeObserver();
-                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
-                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            }
-                        });
-                    }
-                });
-            }
-
-            @Override
-            public void onException(Exception exception) {
-                pd.dismiss();
-                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-            }
-        });
     }
 }

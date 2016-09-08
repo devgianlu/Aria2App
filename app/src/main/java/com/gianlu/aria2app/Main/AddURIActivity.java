@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Main;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,34 +11,23 @@ import android.util.ArrayMap;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.IGID;
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Options.LocalParser;
-import com.gianlu.aria2app.Options.OptionAdapter;
-import com.gianlu.aria2app.Options.OptionChild;
-import com.gianlu.aria2app.Options.OptionHeader;
+import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.google.android.gms.analytics.HitBuilders;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,143 +73,16 @@ public class AddURIActivity extends AppCompatActivity {
         options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showOptionsDialog();
+                new OptionsDialog(AddURIActivity.this, R.array.downloadOptions, R.color.colorAccent, new OptionsDialog.IDialog() {
+                    @Override
+                    public void onApply(JTA2 jta2, Map<String, String> options) {
+                        AddURIActivity.this.options = options;
+                    }
+                }).showDialog();
             }
         });
 
         addUri.performClick();
-    }
-
-    private void buildDialog(List<OptionHeader> headers, final Map<OptionHeader, OptionChild> children) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.options_dialog, null);
-        ((ViewGroup) view).removeView(view.findViewById(R.id.optionsDialog_info));
-        ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.moreAboutDownload_dialog_expandableListView);
-        listView.setAdapter(new OptionAdapter(this, headers, children));
-
-        builder.setView(view)
-                .setTitle(R.string.menu_globalOptions)
-                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        for (Map.Entry<OptionHeader, OptionChild> item : children.entrySet()) {
-                            if (!item.getValue().isChanged()) continue;
-                            options.put(item.getKey().getOptionName(), item.getValue().getValue());
-                        }
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
-
-        final AlertDialog dialog = builder.create();
-        Utils.showDialog(this, dialog);
-        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
-                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
-    }
-
-    private void showOptionsDialog() {
-        final List<OptionHeader> headers = new ArrayList<>();
-        final Map<OptionHeader, OptionChild> children = new HashMap<>();
-
-        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
-        Utils.showDialog(this, pd);
-
-        try {
-            if (options.isEmpty()) {
-                JTA2 jta2 = JTA2.newInstance(this);
-
-                jta2.getGlobalOption(new IOption() {
-                    @Override
-                    public void onOptions(Map<String, String> options) {
-                        LocalParser localOptions;
-                        try {
-                            localOptions = new LocalParser(AddURIActivity.this, false);
-                        } catch (IOException | JSONException ex) {
-                            pd.dismiss();
-                            Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                            return;
-                        }
-
-                        for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
-                            try {
-                                OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
-                                headers.add(header);
-
-                                children.put(header, new OptionChild(
-                                        localOptions.getDefinition(resOption),
-                                        String.valueOf(localOptions.getDefaultValue(resOption)),
-                                        String.valueOf(options.get(resOption))));
-                            } catch (JSONException ex) {
-                                pd.dismiss();
-                                Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                            }
-                        }
-
-                        AddURIActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                buildDialog(headers, children);
-                            }
-                        });
-
-                        pd.dismiss();
-                    }
-
-                    @Override
-                    public void onException(Exception exception) {
-                        pd.dismiss();
-                        Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-                    }
-                });
-            } else {
-                LocalParser localOptions;
-                try {
-                    localOptions = new LocalParser(AddURIActivity.this, false);
-                } catch (IOException | JSONException ex) {
-                    pd.dismiss();
-                    Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                    return;
-                }
-
-                for (String resOption : getResources().getStringArray(R.array.downloadOptions)) {
-                    try {
-                        OptionHeader header = new OptionHeader(resOption, localOptions.getCommandLine(resOption), options.get(resOption), false);
-                        headers.add(header);
-
-                        children.put(header, new OptionChild(
-                                localOptions.getDefinition(resOption),
-                                String.valueOf(localOptions.getDefaultValue(resOption)),
-                                String.valueOf(options.get(resOption))));
-                    } catch (JSONException ex) {
-                        pd.dismiss();
-                        Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
-                    }
-                }
-
-                AddURIActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        buildDialog(headers, children);
-                    }
-                });
-
-                pd.dismiss();
-            }
-        } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
-            pd.dismiss();
-        }
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.gianlu.aria2app.Utils;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Optimizing
 public class OptionAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<OptionHeader> headers;
@@ -32,13 +31,6 @@ public class OptionAdapter extends BaseExpandableListAdapter {
         this.colorAccent = Utils.colorToHex(context, colorAccent);
         this.headers = headers;
         this.children = children;
-    }
-
-    public OptionAdapter(Context context, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children) {
-        this.context = context;
-        this.children = children;
-        this.headers = headers;
-        this.colorAccent = Utils.colorToHex(context, R.color.colorAccent);
     }
 
     @Override
