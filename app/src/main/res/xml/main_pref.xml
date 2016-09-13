@@ -98,10 +98,6 @@
             android:summaryOn="@string/trackingOn"
             android:title="@string/tracking" />
         <Preference
-            android:key="updateOptions"
-            android:summary="@string/updateOptions_summary"
-            android:title="@string/updateOptions" />
-        <Preference
             android:key="app_version"
             android:title="@string/app_version" />
         <Preference

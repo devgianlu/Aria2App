@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -66,7 +67,7 @@ public class NotificationWebSocketService extends IntentService {
             stopSelf();
         }
 
-        if (intent != null && intent.getBooleanExtra("foreground", true)) {
+        if (intent != null && intent.getBooleanExtra("foreground", true) && !Objects.equals(intent.getAction(), "STOP")) {
             Notification.Builder builder = new Notification.Builder(this);
             builder.setShowWhen(false)
                     .setPriority(Notification.PRIORITY_MIN)
@@ -75,6 +76,11 @@ public class NotificationWebSocketService extends IntentService {
                     .setContentText(intent.getStringExtra("profileName"))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
+                    .addAction(new Notification.Action(R.drawable.ic_clear_black_48dp,
+                            getApplicationContext().getString(R.string.stopNotificationService),
+                            PendingIntent.getService(getApplicationContext(), 0,
+                                    new Intent(getApplicationContext(),
+                                            NotificationWebSocketService.class).setAction("STOP"), 0)))
                     .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                     .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
 
@@ -87,7 +93,7 @@ public class NotificationWebSocketService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent == null) {
+        if (intent == null || Objects.equals(intent.getAction(), "STOP")) {
             stopSelf();
             return;
         }

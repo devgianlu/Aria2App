@@ -564,6 +564,7 @@ public class Utils {
         FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
         FAILED_CHANGE_FILE_SELECTION("Failed selecting/deselecting file!", true),
         /* Application */
+        LOGS_DELETED("Logs deleted!", false),
         UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
         INVALID_PROFILE_NAME("Invalid profile name!", false),
         INVALID_SERVER_IP("Invalid server address!", false),

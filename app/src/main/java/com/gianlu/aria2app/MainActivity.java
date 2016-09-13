@@ -47,7 +47,6 @@ import com.gianlu.aria2app.NetIO.JTA2.IVersion;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsDialog;
-import com.gianlu.aria2app.Options.Parser;
 import com.gianlu.aria2app.Services.NotificationWebSocketService;
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                                 }).showDialog();
                                 return true;
                             case PREFERENCES:
-                                startActivity(new Intent(MainActivity.this, MainPreferencesActivity.class));
+                                startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                                 return false;
                             case SUPPORT:
                                 Intent i = new Intent(Intent.ACTION_SEND);
@@ -302,39 +301,6 @@ public class MainActivity extends AppCompatActivity {
         UpdateUI.stop(updateUI);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        long intervalLastSourceRefresh = System.currentTimeMillis() - sharedPreferences.getLong("lastSourceRefresh", System.currentTimeMillis());
-        if ((intervalLastSourceRefresh > 604800000) || (intervalLastSourceRefresh < 100)) {
-            new Parser().refreshSource(this, new Parser.ISourceProcessor() {
-                @Override
-                public void onStarted() {
-                }
-
-                @Override
-                public void onDownloadEnded(String source) {
-                }
-
-                @Override
-                public void onConnectionError(int code, String message) {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
-                }
-
-                @Override
-                public void onFailed() {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
-                }
-
-                @Override
-                public void onEnd() {
-                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
-                }
-            });
-            sharedPreferences.edit().putLong("lastSourceRefresh", System.currentTimeMillis()).apply();
-        }
 
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");

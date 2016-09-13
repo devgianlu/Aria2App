@@ -53,13 +53,13 @@
 
         <!-- Settings activity -->
         <activity
-            android:name=".MainPreferencesActivity"
+            android:name=".PreferencesActivity"
             android:label="@string/title_activity_main_settings" />
 
         <!-- Logs activity -->
         <activity
             android:name=".LogsActivity"
-            android:parentActivityName=".MainPreferencesActivity" />
+            android:parentActivityName=".PreferencesActivity" />
 
         <!-- aria2 terminal activity -->
         <activity

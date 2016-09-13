@@ -251,6 +251,8 @@
     <string name="errorTag">ERROR: </string>
     <string name="editProfile">Select the profile to edit</string>
     <string name="showCharts">Show charts</string>
+    <string name="downloading_source">Download options\' source file</string>
+    <string name="stopNotificationService">Stop service</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

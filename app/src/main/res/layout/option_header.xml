@@ -8,7 +8,7 @@
     tools:ignore="RtlSymmetry">
 
     <TextView
-        android:id="@+id/moreAboutDownload_option_optionText"
+        android:id="@+id/optionHeader_optionLong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -16,18 +16,18 @@
         android:layout_marginEnd="12dp" />
 
     <TextView
-        android:id="@+id/moreAboutDownload_option_optionFull"
+        android:id="@+id/optionHeader_optionShort"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/moreAboutDownload_option_optionText"
+        android:layout_below="@+id/optionHeader_optionLong"
         android:textSize="12sp" />
 
     <TextView
-        android:id="@+id/moreAboutDownload_option_optionTextVal"
+        android:id="@+id/optionHeader_optionValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/moreAboutDownload_option_optionText"
-        android:layout_toEndOf="@+id/moreAboutDownload_option_optionText"
+        android:layout_alignBaseline="@+id/optionHeader_optionLong"
+        android:layout_toEndOf="@+id/optionHeader_optionLong"
         android:textStyle="bold" />
 </RelativeLayout>

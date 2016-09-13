@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:padding="8dp"
     android:paddingEnd="35dp"
     android:paddingStart="35dp">
 
-    <TextView
-        android:id="@+id/moreAboutDownload_option_valueText"
-        android:layout_width="wrap_content"
+    <ToggleButton
+        android:id="@+id/optionChild_toggle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="12dp" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
+
+    <Spinner
+        android:id="@+id/optionChild_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:visibility="gone" />
 
     <EditText
-        android:id="@+id/moreAboutDownload_option_editText"
-        android:layout_width="wrap_content"
+        android:id="@+id/optionChild_editText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/moreAboutDownload_option_valueText"
-        android:inputType="text"
-        tools:ignore="LabelFor" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        tools:ignore="TextFields" />
 
-    <TextView
-        android:id="@+id/moreAboutDownload_option_optionDesc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/moreAboutDownload_option_editText"
-        android:layout_marginTop="10dp"
-        android:maxLines="10"
-        android:textAlignment="center" />
-</RelativeLayout>
+    <ImageButton
+        android:id="@+id/optionChild_help"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end|center_vertical"
+        android:adjustViewBounds="true"
+        android:background="@drawable/ripple_effect_dark"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_help_black_48dp" />
+</LinearLayout>

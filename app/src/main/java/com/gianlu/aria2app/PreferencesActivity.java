@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,9 +9,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 
-import com.gianlu.aria2app.Options.Parser;
-
-public class MainPreferencesActivity extends PreferenceActivity {
+public class PreferencesActivity extends PreferenceActivity {
 
     @SuppressWarnings("deprecation")
     @Override
@@ -34,7 +31,7 @@ public class MainPreferencesActivity extends PreferenceActivity {
                 try {
                     startActivity(Intent.createChooser(i, "Send mail to the developer..."));
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
+                    Utils.UIToast(PreferencesActivity.this, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
                 }
                 return true;
             }
@@ -48,7 +45,7 @@ public class MainPreferencesActivity extends PreferenceActivity {
 
         findPreference("logs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(MainPreferencesActivity.this, LogsActivity.class));
+                startActivity(new Intent(PreferencesActivity.this, LogsActivity.class));
                 return true;
             }
         });
@@ -62,7 +59,7 @@ public class MainPreferencesActivity extends PreferenceActivity {
 
         findPreference("nv-websocket-client").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                Utils.showDialog(MainPreferencesActivity.this, builder
+                Utils.showDialog(PreferencesActivity.this, builder
                         .setTitle("nv-websocket-client")
                         .setMessage(R.string.nv_websocket_client_license));
                 return true;
@@ -71,7 +68,7 @@ public class MainPreferencesActivity extends PreferenceActivity {
 
         findPreference("mpAndroidChart").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                Utils.showDialog(MainPreferencesActivity.this, builder
+                Utils.showDialog(PreferencesActivity.this, builder
                         .setTitle("MPAndroidChart")
                         .setMessage(R.string.mpAndroidChart_details));
                 return true;
@@ -81,54 +78,6 @@ public class MainPreferencesActivity extends PreferenceActivity {
         findPreference("apacheLicense").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.apache.org/licenses/LICENSE-2.0")));
-                return true;
-            }
-        });
-
-        findPreference("updateOptions").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                final ProgressDialog pd = Utils.fastProgressDialog(MainPreferencesActivity.this, R.string.gathering_information, true, false);
-
-                new Parser().refreshSource(MainPreferencesActivity.this, new Parser.ISourceProcessor() {
-                    @Override
-                    public void onStarted() {
-                        Utils.showDialog(MainPreferencesActivity.this, pd);
-                    }
-
-                    @Override
-                    public void onDownloadEnded(String source) {
-                        MainPreferencesActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                pd.setMessage(getString(R.string.processing_data));
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onConnectionError(int code, String message) {
-                        pd.dismiss();
-                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, code + ": " + message);
-                    }
-
-                    @Override
-                    public void onError(Exception ex) {
-                        pd.dismiss();
-                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
-                    }
-
-                    @Override
-                    public void onFailed() {
-                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE);
-                    }
-
-                    @Override
-                    public void onEnd() {
-                        pd.dismiss();
-                        Utils.UIToast(MainPreferencesActivity.this, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
-                    }
-                });
                 return true;
             }
         });

@@ -3,11 +3,11 @@ package com.gianlu.aria2app;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,13 +36,23 @@ public class LogsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_logs);
         setTitle(R.string.title_activity_logs);
 
-        final ListView log = (ListView) findViewById(R.id.logs_text);
-        assert log != null;
-        Spinner logs = (Spinner) findViewById(R.id.logs_spinner);
-        assert logs != null;
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        int dpPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+        layout.setPadding(dpPadding, dpPadding, dpPadding, dpPadding);
+
+        Spinner logs = new Spinner(this);
+        logs.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        layout.addView(logs);
+        final ListView log = new ListView(this);
+        LinearLayout.LayoutParams logParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1);
+        logParams.setMargins(0, 16, 0, 0);
+        log.setLayoutParams(logParams);
+        layout.addView(log);
+
+        setContentView(layout);
 
         log.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -55,7 +65,7 @@ public class LogsActivity extends AppCompatActivity {
             }
         });
 
-        File files[] = getFilesDir().listFiles(new FilenameFilter() {
+        final File files[] = getFilesDir().listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
                 return s.toLowerCase().endsWith(".log");
@@ -124,8 +134,8 @@ public class LogsActivity extends AppCompatActivity {
                     logFile.delete();
                 }
 
-                Utils.UIToast(this, getString(R.string.logsDeleted), Toast.LENGTH_SHORT);
-                startActivity(new Intent(this, MainPreferencesActivity.class));
+                Utils.UIToast(this, Utils.TOAST_MESSAGES.LOGS_DELETED);
+                recreate();
                 break;
         }
         return super.onOptionsItemSelected(item);
