@@ -195,22 +195,24 @@ public class AddProfileActivity extends AppCompatActivity {
                 sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
                 sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
                 break;
-            case HTTP:
+            case TOKEN:
                 sViewHolder.authMethodNone.setChecked(false);
                 sViewHolder.authMethodToken.setChecked(true);
                 sViewHolder.authMethodHTTP.setChecked(false);
 
-                sViewHolder.authMethodHTTPUsername.setText(item.getServerUsername());
-                sViewHolder.authMethodHTTPPassword.setText(item.getServerPassword());
+                sViewHolder.authMethodTokenToken.setText(item.getServerToken());
 
                 sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
                 sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
                 sViewHolder.authMethodTokenToken.setVisibility(View.VISIBLE);
                 break;
-            case TOKEN:
+            case HTTP:
                 sViewHolder.authMethodNone.setChecked(false);
                 sViewHolder.authMethodToken.setChecked(false);
                 sViewHolder.authMethodHTTP.setChecked(true);
+
+                sViewHolder.authMethodHTTPUsername.setText(item.getServerUsername());
+                sViewHolder.authMethodHTTPPassword.setText(item.getServerPassword());
 
                 sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
                 sViewHolder.authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
@@ -323,7 +325,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
                     sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
                     break;
-                case HTTP:
+                case TOKEN:
                     sViewHolder.authMethodNone.setChecked(false);
                     sViewHolder.authMethodToken.setChecked(true);
                     sViewHolder.authMethodHTTP.setChecked(false);
@@ -335,7 +337,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
                     sViewHolder.authMethodTokenToken.setVisibility(View.VISIBLE);
                     break;
-                case TOKEN:
+                case HTTP:
                     sViewHolder.authMethodNone.setChecked(false);
                     sViewHolder.authMethodToken.setChecked(false);
                     sViewHolder.authMethodHTTP.setChecked(true);

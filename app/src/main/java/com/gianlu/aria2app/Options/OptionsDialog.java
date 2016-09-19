@@ -29,7 +29,6 @@ public class OptionsDialog extends AlertDialog.Builder {
     private JTA2 jta2;
     private Activity context;
     private int allowedOptions;
-    private int colorRes;
     private IDialog handler;
     private ExpandableListView view;
 
@@ -39,7 +38,6 @@ public class OptionsDialog extends AlertDialog.Builder {
 
         this.context = context;
         this.allowedOptions = allowedOptions;
-        this.colorRes = colorRes;
         this.handler = handler;
         view = new ExpandableListView(context);
         setTitle(R.string.menu_globalOptions);
@@ -136,7 +134,6 @@ public class OptionsDialog extends AlertDialog.Builder {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Map<String, String> map = new HashMap<>();
 
-                        // TODO: Not working
                         for (Map.Entry<OptionHeader, OptionChild> item : children.entrySet()) {
                             if (!item.getValue().isChanged()) continue;
                             map.put(item.getKey().getOptionLong(), String.valueOf(item.getValue().getValue()));

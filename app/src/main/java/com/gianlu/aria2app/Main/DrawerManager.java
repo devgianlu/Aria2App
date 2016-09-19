@@ -490,7 +490,7 @@ public class DrawerManager {
                                 try {
                                     context.startActivity(new Intent(context, AddProfileActivity.class)
                                             .putExtra("edit", true)
-                                            .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).getGlobalProfileName()))
+                                            .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).getFileName()))
                                             .putExtra("base64name", profilesAdapter.getItem(i).getFileName()));
                                 } catch (JSONException | IOException ex) {
                                     Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_EDIT_PROFILE, ex);
