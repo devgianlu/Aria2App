@@ -7,7 +7,6 @@
     <bool name="ga_anonymizeIp">false</bool>
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
-    <screenName name="com.gianlu.aria2app.SelectProfileActivity">Screen~SelectProfile</screenName>
     <screenName name="com.gianlu.aria2app.MainActivity">Screen~Main</screenName>
     <screenName name="com.gianlu.aria2app.LogsActivity">Screen~Logs</screenName>
     <screenName name="com.gianlu.aria2app.MoreAboutDownloadActivity">Screen~MoreAboutDownload
