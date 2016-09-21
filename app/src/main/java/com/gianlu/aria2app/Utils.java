@@ -243,7 +243,7 @@ public class Utils {
         return set;
     }
 
-    static String formatConnectionError(int code, String message) {
+    public static String formatConnectionError(int code, String message) {
         return "#" + code + ": " + message;
     }
 

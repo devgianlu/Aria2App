@@ -60,21 +60,6 @@ public class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
 
         while ((!_shouldStop) && jta2 != null) {
-            /* TODO: Main chart
-            jta2.getGlobalStat(new IStats() {
-                @Override
-                public void onStats(GlobalStats stats) {
-
-                }
-
-                @Override
-                public void onException(Exception exception) {
-                    _shouldStop = true;
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
-                }
-            });
-            */
-
             for (final Download d : adapter.getItems()) {
                 jta2.tellStatus(d.gid, new IDownload() {
                     @Override

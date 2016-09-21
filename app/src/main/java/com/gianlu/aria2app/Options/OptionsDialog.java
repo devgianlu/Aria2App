@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.ArrayMap;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
 
@@ -76,7 +77,7 @@ public class OptionsDialog extends AlertDialog.Builder {
                 @Override
                 public void onConnectionFailed(int code, String message) {
                     pd.dismiss();
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, "#" + code + ": " + message);
+                    Utils.UIToast(context, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, Utils.formatConnectionError(code, message));
                 }
 
                 @Override
@@ -149,7 +150,9 @@ public class OptionsDialog extends AlertDialog.Builder {
                         final AlertDialog dialog = create();
 
                         Utils.showDialog(context, dialog);
-                        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+                        Window window = dialog.getWindow();
+                        if (window != null)
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
                         ViewTreeObserver vto = view.getViewTreeObserver();
                         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
