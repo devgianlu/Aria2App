@@ -51,7 +51,7 @@
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <!-- Settings activity -->
+        <!-- Preferences activity -->
         <activity
             android:name=".PreferencesActivity"
             android:label="@string/title_activity_main_settings" />

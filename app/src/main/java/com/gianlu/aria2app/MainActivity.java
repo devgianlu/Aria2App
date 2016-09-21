@@ -40,6 +40,8 @@ import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Main.Profile.ProfileItem;
 import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Main.UpdateUI;
+import com.gianlu.aria2app.NetIO.AsyncRequest;
+import com.gianlu.aria2app.NetIO.IResponse;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.ISession;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
@@ -50,6 +52,7 @@ import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.Services.NotificationWebSocketService;
 import com.google.android.gms.analytics.HitBuilders;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.FileOutputStream;
@@ -58,6 +61,7 @@ import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -300,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
         UpdateUI.stop(updateUI);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
@@ -409,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onLoaded(final List<Download> downloads) {
+            public void onLoaded(JTA2 jta2, final List<Download> downloads) {
                 adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
                     public void onClick(View view, int position, Download item) {
@@ -556,6 +560,58 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+                if (sharedPreferences.getBoolean("a2_runVersionCheckAtStartup", true)) {
+                    jta2.getVersion(new IVersion() {
+                        @Override
+                        public void onVersion(List<String> rawFeatures, List<JTA2.FEATURES> enabledFeatures, final String version) {
+                            new Thread(new AsyncRequest(getString(R.string.versionCheckURL), new IResponse() {
+                                @Override
+                                public void onStart() {
+
+                                }
+
+                                @Override
+                                public void onResponse(String response) {
+                                    String latest;
+                                    try {
+                                        latest = new JSONArray(response).getJSONObject(0).getString("name");
+                                        latest = latest.replace("aria2 ", "");
+                                    } catch (JSONException ex) {
+                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, ex);
+                                        return;
+                                    }
+
+                                    if (!Objects.equals(latest, version)) {
+                                        Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                                                .setTitle(R.string.dialogVersionCheck)
+                                                .setMessage(R.string.dialogVersionCheckMessage)
+                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                    }
+                                                }));
+                                    }
+                                }
+
+                                @Override
+                                public void onException(Exception exception) {
+                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, exception);
+                                }
+
+                                @Override
+                                public void onFailed(int code, String message) {
+                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, Utils.formatConnectionError(code, message));
+                                }
+                            })).start();
+                        }
+
+                        @Override
+                        public void onException(Exception exception) {
+                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, exception);
+                        }
+                    });
+                }
             }
 
             @Override

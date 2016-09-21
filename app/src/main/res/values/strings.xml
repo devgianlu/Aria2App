@@ -253,6 +253,12 @@
     <string name="showCharts">Show charts</string>
     <string name="downloading_source">Download options\' source file</string>
     <string name="stopNotificationService">Stop service</string>
+    <string name="versionCheck">Check aria2 version at startup</string>
+    <string name="enabledVersionCheck">Version will be checked and you\'ll be notified if your version it\'s outdated</string>
+    <string name="disabledVersionCheck">No version check will be permormed</string>
+    <string name="versionCheckURL">https://api.github.com/repos/aria2/aria2/releases</string>
+    <string name="dialogVersionCheck">Outdated version</string>
+    <string name="dialogVersionCheckMessage">Your version of aria2 is outdated. Please update it to the latest to avoid bugs or problem of any kind.\nYou can disable this feature in the preferences.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

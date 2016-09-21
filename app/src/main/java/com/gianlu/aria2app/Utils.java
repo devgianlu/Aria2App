@@ -217,6 +217,10 @@ public class Utils {
         return set;
     }
 
+    public static String formatConnectionError(int code, String message) {
+        return "#" + code + ": " + message;
+    }
+
     public static String speedFormatter(float v) {
         if (v <= 0) {
             return "0 B/s";
@@ -535,13 +539,10 @@ public class Utils {
         }
     }
     public enum TOAST_MESSAGES {
-        /* WebSocket */
         WS_OPENED("WebSocket connected!", false),
         WS_CLOSED("WebSocket has been closed!", true),
         WS_EXCEPTION("WebSocket exception!", true),
-        /* Gathering information */
         FAILED_GATHERING_INFORMATION("Failed on gathering information!", true),
-        /* Actions on downloads */
         PAUSED("Download paused.", false),
         REMOVED("Download removed.", false),
         REMOVED_RESULT("Download result removed.", false),
@@ -563,7 +564,7 @@ public class Utils {
         DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
         FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
         FAILED_CHANGE_FILE_SELECTION("Failed selecting/deselecting file!", true),
-        /* Application */
+        FAILED_CHECKING_VERSION("Failed checking aria2 version!", true),
         LOGS_DELETED("Logs deleted!", false),
         UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
         INVALID_PROFILE_NAME("Invalid profile name!", false),

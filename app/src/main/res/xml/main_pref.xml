@@ -70,6 +70,13 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/others">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="a2_runVersionCheckAtStartup"
+            android:summaryOff="@string/disabledVersionCheck"
+            android:summaryOn="@string/enabledVersionCheck"
+            android:title="@string/versionCheck" />
+
         <Preference
             android:key="logs"
             android:summary="@string/logsSummary"

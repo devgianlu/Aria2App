@@ -34,7 +34,8 @@ public class LoadDownloads implements Runnable {
     public void run() {
         if (jta2 == null) return;
 
-        handler.onStarted();
+        if (handler != null)
+            handler.onStarted();
         final List<Download> downloadsList = new ArrayList<>();
 
         //Active
@@ -66,27 +67,30 @@ public class LoadDownloads implements Runnable {
                                         continue;
                                     downloadsList.add(download);
                                 }
-
-                                handler.onLoaded(downloadsList);
+                                if (handler != null)
+                                    handler.onLoaded(jta2, downloadsList);
                             }
 
                             @Override
                             public void onException(boolean q, final Exception exception) {
-                                handler.onException(q, exception);
+                                if (handler != null)
+                                    handler.onException(q, exception);
                             }
                         });
                     }
 
                     @Override
                     public void onException(boolean q, final Exception exception) {
-                        handler.onException(q, exception);
+                        if (handler != null)
+                            handler.onException(q, exception);
                     }
                 });
             }
 
             @Override
             public void onException(boolean q, final Exception exception) {
-                handler.onException(q, exception);
+                if (handler != null)
+                    handler.onException(q, exception);
             }
         });
     }
@@ -94,7 +98,7 @@ public class LoadDownloads implements Runnable {
     public interface ILoading {
         void onStarted();
 
-        void onLoaded(List<Download> downloads);
+        void onLoaded(JTA2 jta2, List<Download> downloads);
 
         void onException(boolean queuing, Exception ex);
     }
