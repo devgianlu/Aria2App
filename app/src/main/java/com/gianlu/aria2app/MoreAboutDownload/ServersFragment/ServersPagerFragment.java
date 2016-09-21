@@ -39,10 +39,6 @@ public class ServersPagerFragment extends CommonFragment {
         return fragment;
     }
 
-    public void setChartsVisibility(final boolean visible) {
-        UpdateUI.setChartsEnabled(visible);
-    }
-
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         UpdateUI.stop(updateUI);

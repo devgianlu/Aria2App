@@ -11,24 +11,24 @@ import com.gianlu.aria2app.R;
 import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.github.mikephil.charting.charts.LineChart;
 
-public class CardViewHolder extends RecyclerView.ViewHolder {
-    public DonutProgress donutProgress;
-    public TextView downloadName;
-    public TextView downloadStatus;
-    public TextView downloadSpeed;
-    public TextView downloadMissingTime;
-    public LinearLayout details;
-    public LineChart detailsChart;
-    public ImageButton detailsChartRefresh;
-    public TextView detailsGid;
-    public TextView detailsTotalLength;
-    public TextView detailsCompletedLength;
-    public TextView detailsUploadLength;
-    public ImageButton expand;
-    public Button more;
-    public ImageButton menu;
+class CardViewHolder extends RecyclerView.ViewHolder {
+    DonutProgress donutProgress;
+    TextView downloadName;
+    TextView downloadStatus;
+    TextView downloadSpeed;
+    TextView downloadMissingTime;
+    LinearLayout details;
+    LineChart detailsChart;
+    ImageButton detailsChartRefresh;
+    TextView detailsGid;
+    TextView detailsTotalLength;
+    TextView detailsCompletedLength;
+    TextView detailsUploadLength;
+    ImageButton expand;
+    Button more;
+    ImageButton menu;
 
-    public CardViewHolder(View itemView) {
+    CardViewHolder(View itemView) {
         super(itemView);
 
         donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCardView_donutProgress);

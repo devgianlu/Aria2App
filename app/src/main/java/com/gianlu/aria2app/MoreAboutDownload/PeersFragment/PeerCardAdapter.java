@@ -23,23 +23,22 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
+class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
     private Context context;
     private List<Peer> objs;
-    private boolean showCharts = false;
     private CardView noDataCardView;
 
-    public PeerCardAdapter(Context context, List<Peer> objs, CardView noDataCardView) {
+    PeerCardAdapter(Context context, List<Peer> objs, CardView noDataCardView) {
         this.context = context;
         this.objs = objs;
         this.noDataCardView = noDataCardView;
     }
 
-    public static boolean isExpanded(View v) {
+    private static boolean isExpanded(View v) {
         return v.getVisibility() == View.VISIBLE;
     }
 
-    public static void expand(final View v) {
+    private static void expand(final View v) {
         v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = v.getMeasuredHeight();
 
@@ -64,7 +63,7 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         v.startAnimation(a);
     }
 
-    public static void collapse(final View v) {
+    private static void collapse(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -93,18 +92,17 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         return new PeerCardViewHolder(LayoutInflater.from(context).inflate(R.layout.peer_cardview, parent, false));
     }
 
-    public void clear() {
+    void clear() {
         objs.clear();
         notifyDataSetChanged();
     }
 
-    public void onDisplayNoData(String message) {
+    void onDisplayNoData(String message) {
         noDataCardView.setVisibility(View.VISIBLE);
         ((TextView) noDataCardView.findViewById(R.id.peersFragment_noDataLabel)).setText(context.getString(R.string.noPeersMessage, message));
     }
 
-    public void onUpdate(List<Peer> peers, boolean showCharts) {
-        this.showCharts = showCharts;
+    void onUpdate(List<Peer> peers) {
         if (objs == null || peers == null) return;
 
         for (Peer newPeer : peers) {
@@ -126,20 +124,16 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         if (payloads.get(0) instanceof Peer) {
             Peer peer = (Peer) payloads.get(0);
 
-            if (showCharts) {
-                holder.chart.setVisibility(View.VISIBLE);
+            holder.chart.setVisibility(View.VISIBLE);
 
-                LineData data = holder.chart.getData();
-                data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-                data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+            LineData data = holder.chart.getData();
+            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
+            data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+            data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
 
-                holder.chart.notifyDataSetChanged();
-                holder.chart.setVisibleXRangeMaximum(60);
-                holder.chart.moveViewToX(data.getXValCount() - 61);
-            } else {
-                holder.chart.setVisibility(View.GONE);
-            }
+            holder.chart.notifyDataSetChanged();
+            holder.chart.setVisibleXRangeMaximum(60);
+            holder.chart.moveViewToX(data.getXValCount() - 61);
 
             holder.peerId.setText(peer.getPeerId());
             holder.fullAddr.setText(peer.getFullAddress());
@@ -193,11 +187,6 @@ public class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
             holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
             holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
         }
-
-        if (showCharts)
-            holder.chart.setVisibility(View.VISIBLE);
-        else
-            holder.chart.setVisibility(View.GONE);
     }
 
     @Override

@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 public class UpdateUI implements Runnable {
-    private static boolean chartsEnabled;
-    private static boolean changed;
     private Activity context;
     private ServerCardAdapter adapter;
     private JTA2 jta2;
@@ -41,11 +39,6 @@ public class UpdateUI implements Runnable {
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void setChartsEnabled(boolean enabled) {
-        chartsEnabled = enabled;
-        changed = true;
     }
 
     public static void stop(UpdateUI updateUI) {
@@ -82,11 +75,7 @@ public class UpdateUI implements Runnable {
                     context.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.onUpdate(servers, chartsEnabled);
-                            if (changed) {
-                                adapter.notifyDataSetChanged();
-                                changed = false;
-                            }
+                            adapter.onUpdate(servers);
                         }
                     });
                 }

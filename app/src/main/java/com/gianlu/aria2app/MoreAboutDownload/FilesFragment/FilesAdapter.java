@@ -18,6 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,11 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FilesAdapter {
+class FilesAdapter {
     private Tree tree;
     private LinearLayout view;
 
-    public FilesAdapter(final Activity context, final String gid, final Tree tree, final LinearLayout view) {
+    FilesAdapter(final Activity context, final String gid, final Tree tree, final LinearLayout view) {
         this.tree = tree;
         this.view = view;
 
@@ -64,8 +65,6 @@ public class FilesAdapter {
         for (TreeDirectory child : parent.getChildren()) {
             DirectoryViewHolder holder = new DirectoryViewHolder(View.inflate(context, R.layout.directory_item, null));
             holder.name.setText(child.getName());
-            // holder.progressBar.setProgress(child.getProgress().intValue());
-            // holder.percentage.setText(child.getPercentage());
             child.viewHolder = holder;
 
             setupViews(context, gid, child);
@@ -87,6 +86,8 @@ public class FilesAdapter {
                 @SuppressWarnings("deprecation")
                 @Override
                 public void onClick(View v) {
+                    System.out.println(v.getHeight());
+
                     final LinearLayout view = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.file_about_dialog, null);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index), Html.FROM_HTML_MODE_COMPACT));
@@ -207,20 +208,26 @@ public class FilesAdapter {
 
                     LinearLayout urisLayout = (LinearLayout) view.findViewById(R.id.fileAboutDialog_uris);
                     urisLayout.removeAllViews();
-                    for (Map.Entry<File.URI_STATUS, String> uri : file.file.uris.entrySet()) {
-                        TextView _uri;
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                            _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)", Html.FROM_HTML_MODE_COMPACT));
-                        } else {
-                            _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
-                        }
-                        _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        _uri.setPadding(50, 10, 0, 10);
-                        _uri.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
-                        _uri.setTag(uri.getValue());
-                        _uri.setOnClickListener(uriListener);
+                    if (file.file.uris.size() <= 0) {
+                        view.findViewById(R.id.fileAboutDialog_urisLabel).setVisibility(View.GONE);
+                    } else {
+                        view.findViewById(R.id.fileAboutDialog_urisLabel).setVisibility(View.VISIBLE);
 
-                        urisLayout.addView(_uri);
+                        for (Map.Entry<File.URI_STATUS, String> uri : file.file.uris.entrySet()) {
+                            TextView _uri;
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)", Html.FROM_HTML_MODE_COMPACT));
+                            } else {
+                                _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
+                            }
+                            _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            _uri.setPadding(50, 10, 0, 10);
+                            _uri.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
+                            _uri.setTag(uri.getValue());
+                            _uri.setOnClickListener(uriListener);
+
+                            urisLayout.addView(_uri);
+                        }
                     }
 
                     Utils.showDialog(context, new AlertDialog.Builder(context)
@@ -236,7 +243,7 @@ public class FilesAdapter {
     private static void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
         if (parentNode == null) return;
 
-        for (TreeDirectory subDir : parentNode.getChildren()) {
+        for (final TreeDirectory subDir : parentNode.getChildren()) {
             parentView.addView(subDir.viewHolder.rootView);
 
             final LinearLayout subView = new LinearLayout(parentView.getContext());
@@ -249,10 +256,13 @@ public class FilesAdapter {
             subDir.viewHolder.toggle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (isExpanded(subView))
+                    Utils.animateCollapsingArrowList((ImageButton) v, isExpanded(subView));
+
+                    if (isExpanded(subView)) {
                         collapse(subView);
-                    else
+                    } else {
                         expand(subView);
+                    }
                 }
             });
 
@@ -264,11 +274,11 @@ public class FilesAdapter {
         }
     }
 
-    public static boolean isExpanded(View v) {
+    private static boolean isExpanded(View v) {
         return v.getVisibility() == View.VISIBLE;
     }
 
-    public static void expand(final View v) {
+    private static void expand(final View v) {
         v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = v.getMeasuredHeight();
 
@@ -293,7 +303,7 @@ public class FilesAdapter {
         v.startAnimation(a);
     }
 
-    public static void collapse(final View v) {
+    private static void collapse(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -338,8 +348,10 @@ public class FilesAdapter {
                     found.viewHolder.status.setImageResource(R.drawable.ic_cloud_off_black_48dp);
                 }
 
-                view.removeViewAt(pos);
-                view.addView(found.viewHolder.rootView, pos);
+                if (view.getChildAt(pos) != null) {
+                    view.removeViewAt(pos);
+                    view.addView(found.viewHolder.rootView, pos);
+                }
             }
         }
     }

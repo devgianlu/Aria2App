@@ -38,10 +38,6 @@ public class PeersPagerFragment extends CommonFragment {
         return fragment;
     }
 
-    public void setChartsVisibility(final boolean visible) {
-        UpdateUI.setChartsEnabled(visible);
-    }
-
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         UpdateUI.stop(updateUI);
@@ -50,12 +46,11 @@ public class PeersPagerFragment extends CommonFragment {
             JTA2.newInstance(getActivity()).getPeers(getArguments().getString("gid"), new IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
-                    view.findViewById(R.id.peersFragment_noData).setVisibility(View.GONE);
-
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers, (CardView) view.findViewById(R.id.peersFragment_noData));
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            view.findViewById(R.id.peersFragment_noData).setVisibility(View.GONE);
                             ((RecyclerView) view.findViewById(R.id.peersFragment_recyclerView)).setAdapter(adapter);
                         }
                     });

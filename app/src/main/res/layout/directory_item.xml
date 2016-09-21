@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="42dp"
     android:padding="6dp">
 
     <ImageButton
@@ -31,21 +32,4 @@
         android:layout_toEndOf="@+id/directoryItem_type"
         android:ellipsize="end"
         android:lines="1" />
-
-    <ProgressBar
-        android:id="@+id/directoryItem_progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/directoryItem_name"
-        android:layout_below="@+id/directoryItem_name"
-        android:layout_toStartOf="@+id/directoryItem_percentage" />
-
-    <TextView
-        android:id="@+id/directoryItem_percentage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/directoryItem_name"
-        android:layout_marginStart="8dp" />
 </RelativeLayout>

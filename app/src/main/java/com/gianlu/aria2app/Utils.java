@@ -8,12 +8,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Spanned;
 import android.util.Base64;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +55,32 @@ public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
 
+    public static void animateCollapsingArrowList(ImageButton view, boolean expanded) {
+        if (expanded)
+            view.animate()
+                    .rotation(0)
+                    .setDuration(200)
+                    .start();
+        else
+            view.animate()
+                    .rotation(90)
+                    .setDuration(200)
+                    .start();
+    }
+
+    public static void animateCollapsingArrowBellows(ImageButton view, boolean expanded) {
+        if (expanded)
+            view.animate()
+                    .rotation(0)
+                    .setDuration(200)
+                    .start();
+        else
+            view.animate()
+                    .rotation(180)
+                    .setDuration(200)
+                    .start();
+    }
+
     public static void showDialog(Activity activity, final Dialog dialog) {
         if (activity == null || activity.isFinishing()) return;
 
@@ -78,7 +104,7 @@ public class Utils {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void renameOldProfiles(Context context) {
+    static void renameOldProfiles(Context context) {
         if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("oldProfiles", true))
             return;
 
@@ -193,7 +219,7 @@ public class Utils {
         return chart;
     }
 
-    public static LineDataSet initDownloadSet(Context context, float lineWidth) {
+    private static LineDataSet initDownloadSet(Context context, float lineWidth) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setLineWidth(lineWidth);
@@ -205,7 +231,7 @@ public class Utils {
         return set;
     }
 
-    public static LineDataSet initUploadSet(Context context, float lineWidth) {
+    private static LineDataSet initUploadSet(Context context, float lineWidth) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.uploadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setLineWidth(lineWidth);
@@ -217,7 +243,7 @@ public class Utils {
         return set;
     }
 
-    public static String formatConnectionError(int code, String message) {
+    static String formatConnectionError(int code, String message) {
         return "#" + code + ": " + message;
     }
 
@@ -317,12 +343,6 @@ public class Utils {
         return 255 / 4 * val;
     }
 
-    public static String colorToHex(Context context, @ColorRes int colorRes) {
-        int color = ContextCompat.getColor(context, colorRes);
-        String hex = Integer.toHexString(Color.rgb(Color.red(color), Color.green(color), Color.blue(color)));
-        return hex.length() == 8 ? hex.substring(2) : hex;
-    }
-
     public static WebSocket readyWebSocket(boolean isSSL, String url, @NonNull String username, @NonNull String password) throws IOException, NoSuchAlgorithmException {
         if (isSSL) {
             WebSocketFactory factory = new WebSocketFactory();
@@ -387,7 +407,7 @@ public class Utils {
         return textView;
     }
 
-    public static ProgressDialog fastProgressDialog(Context context, String title, String message, boolean indeterminate, boolean cancelable) {
+    private static ProgressDialog fastProgressDialog(Context context, String title, String message, boolean indeterminate, boolean cancelable) {
         ProgressDialog pd = new ProgressDialog(context);
         pd.setTitle(title);
         pd.setMessage(message);
@@ -511,7 +531,7 @@ public class Utils {
         LogMe(context, message.toString(), message.isError());
     }
 
-    public static void SecretLog(Activity context, Throwable exx) {
+    private static void SecretLog(Activity context, Throwable exx) {
         exx.printStackTrace();
 
         try {
@@ -526,7 +546,7 @@ public class Utils {
         }
     }
 
-    public static void LogMe(Activity context, String message, boolean isError) {
+    private static void LogMe(Activity context, String message, boolean isError) {
         try {
             FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".log", Context.MODE_APPEND);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
@@ -608,7 +628,7 @@ public class Utils {
         }
     }
 
-    public static class CustomYAxisValueFormatter implements YAxisValueFormatter {
+    private static class CustomYAxisValueFormatter implements YAxisValueFormatter {
         @Override
         public String getFormattedValue(float v, YAxis yAxis) {
             return Utils.speedFormatter(v);

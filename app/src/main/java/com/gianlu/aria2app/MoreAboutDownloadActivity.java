@@ -117,8 +117,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         this.menu = menu;
         menu.findItem(R.id.moreAboutDownloadMenu_bitfield).setChecked(PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("a2_showBitfield", true));
-        menu.findItem(R.id.moreAboutDownloadMenu_charts).setChecked(PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("a2_showCharts", false));
         return true;
     }
 
@@ -162,18 +160,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
                         .putBoolean("a2_showBitfield", item.isChecked())
-                        .apply();
-                break;
-            case R.id.moreAboutDownloadMenu_charts:
-                item.setChecked(!item.isChecked());
-                if (adapter.getItem(1) instanceof PeersPagerFragment) {
-                    ((PeersPagerFragment) adapter.getItem(1)).setChartsVisibility(item.isChecked());
-                } else {
-                    ((ServersPagerFragment) adapter.getItem(1)).setChartsVisibility(item.isChecked());
-                }
-
-                PreferenceManager.getDefaultSharedPreferences(this).edit()
-                        .putBoolean("a2_showCharts", item.isChecked())
                         .apply();
                 break;
             case android.R.id.home:

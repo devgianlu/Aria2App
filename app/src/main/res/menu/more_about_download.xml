@@ -12,10 +12,4 @@
         android:checkable="true"
         android:title="@string/showBitfield"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/moreAboutDownloadMenu_charts"
-        android:checkable="true"
-        android:title="@string/showCharts"
-        app:showAsAction="never" />
 </menu>

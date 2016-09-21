@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -48,11 +49,11 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         this.filters = new ArrayList<>();
     }
 
-    public static boolean isExpanded(View v) {
+    private static boolean isExpanded(View v) {
         return v.getVisibility() == View.VISIBLE;
     }
 
-    public static void expand(final View v) {
+    private static void expand(final View v) {
         v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = v.getMeasuredHeight();
 
@@ -77,12 +78,12 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         v.startAnimation(a);
     }
 
-    public static void expandTitle(TextView v) {
+    private static void expandTitle(TextView v) {
         v.setSingleLine(false);
         v.setEllipsize(null);
     }
 
-    public static void collapse(final View v) {
+    private static void collapse(final View v) {
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -106,7 +107,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         v.startAnimation(a);
     }
 
-    public static void collapseTitle(TextView v) {
+    private static void collapseTitle(TextView v) {
         v.setSingleLine(true);
         v.setEllipsize(TextUtils.TruncateAt.MARQUEE);
     }
@@ -121,7 +122,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void updateItem(final int position, final Download update) {
+    void updateItem(final int position, final Download update) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -198,6 +199,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.more.setVisibility(View.INVISIBLE);
         }
     }
+
+    @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(final CardViewHolder holder, int position) {
         final Download item = getItem(position);
@@ -210,20 +213,28 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
             color = ContextCompat.getColor(context, R.color.colorAccent);
 
         holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
-        holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
         holder.donutProgress.setFinishedStrokeColor(color);
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
-        holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length))));
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid), Html.FROM_HTML_MODE_COMPACT));
+            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length)), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
+            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length))));
+        }
+
 
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Utils.animateCollapsingArrowBellows((ImageButton) view, isExpanded(holder.details));
+
                 if (isExpanded(holder.details)) {
-                    holder.expand.setImageResource(R.drawable.ic_keyboard_arrow_down_white_48dp);
                     collapse(holder.details);
                     collapseTitle(holder.downloadName);
                 } else {
-                    holder.expand.setImageResource(R.drawable.ic_keyboard_arrow_up_white_48dp);
                     expand(holder.details);
                     expandTitle(holder.downloadName);
                 }
@@ -333,7 +344,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     public int getItemCount() {
         return objs.size();
     }
-    public List<Download> getItems() {
+
+    List<Download> getItems() {
         return objs;
     }
 

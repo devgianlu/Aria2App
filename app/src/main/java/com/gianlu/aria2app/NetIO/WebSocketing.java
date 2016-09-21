@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 public class WebSocketing extends WebSocketAdapter {
+    // TODO
     private static WebSocketing webSocketing;
+
     private static IConnecting handler;
     private static boolean isDestroying;
     private WebSocket socket;
@@ -61,7 +63,6 @@ public class WebSocketing extends WebSocketAdapter {
         WebSocketing.handler = handler;
     }
 
-    // TODO: Implement partial update
     public static void enableEventManager(final MainActivity mainActivity) throws IOException, NoSuchAlgorithmException {
         if (mainActivity == null) return;
 
@@ -139,6 +140,8 @@ public class WebSocketing extends WebSocketAdapter {
 
     @Override
     public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+        if (cause instanceof ArrayIndexOutOfBoundsException) return;
+
         Utils.UIToast(context, Utils.TOAST_MESSAGES.UNKNOWN_EXCEPTION, cause);
         if (handler != null)
             handler.onDone(false);
