@@ -99,15 +99,14 @@ public class LetterIconBig extends View {
         letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
         boolean isTextBoundOK = false;
         int textSize = 16;
+        String cAddr = addr;
         while (!isTextBoundOK) {
-            if (textSize <= 8) {
-                addr = addr.substring(0, 13);
-                addr += "...";
-            }
-            textPaint.getTextBounds(addr, 0, addr.length(), textBounds);
+            textPaint.getTextBounds(cAddr, 0, cAddr.length(), textBounds);
 
             if (textBounds.width() <= getMeasuredWidth() - 24) {
                 isTextBoundOK = true;
+            } else if (textSize <= 8) {
+                cAddr = cAddr.substring(0, cAddr.length() - 1);
             } else {
                 textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize--, context.getResources().getDisplayMetrics()));
             }
@@ -115,7 +114,7 @@ public class LetterIconBig extends View {
         textPaint.getTextBounds(port, 0, port.length(), portBounds);
 
         canvas.drawText(letters, viewWidthHalf - lettersBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() - textBounds.height() - 2, letterPaint);
-        canvas.drawText(addr, viewWidthHalf - textBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() + 8, textPaint);
+        canvas.drawText(cAddr, viewWidthHalf - textBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() + 8, textPaint);
         canvas.drawText(port, viewWidthHalf - portBounds.exactCenterX(), viewHeightHalf + lettersBounds.height() + 12, textPaint);
     }
 
