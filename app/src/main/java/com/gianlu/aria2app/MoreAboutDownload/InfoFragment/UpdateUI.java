@@ -76,7 +76,7 @@ public class UpdateUI implements Runnable {
             updateUI.stop(handler);
     }
 
-    public static void setBitfieldEnabled(boolean enabled) {
+    static void setBitfieldEnabled(boolean enabled) {
         bitfieldEnabled = enabled;
     }
 
@@ -90,7 +90,7 @@ public class UpdateUI implements Runnable {
         this.handler = handler;
     }
 
-    public void setStatusObserver(IDownloadStatusObserver statusObserver) {
+    void setStatusObserver(IDownloadStatusObserver statusObserver) {
         this.statusObserver = statusObserver;
     }
 
@@ -171,7 +171,10 @@ public class UpdateUI implements Runnable {
                                     params.height = 32;
                                     params.width = 32;
                                     view.setLayoutParams(params);
-                                    holder.bitfield.addView(view);
+                                    try {
+                                        holder.bitfield.addView(view);
+                                    } catch (IllegalArgumentException ignored) {
+                                    }
                                 }
                             }
 
