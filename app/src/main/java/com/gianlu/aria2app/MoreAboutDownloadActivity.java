@@ -33,6 +33,35 @@ import java.util.Map;
 public class MoreAboutDownloadActivity extends AppCompatActivity {
     private PagerAdapter adapter;
     private String gid;
+    public OptionsDialog.IDialog optionsChanged = new OptionsDialog.IDialog() {
+        @Override
+        public void onApply(JTA2 jta2, Map<String, String> options) {
+            if (options.entrySet().size() == 0) return;
+
+            final ProgressDialog pd = Utils.fastProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information, true, false);
+            Utils.showDialog(MoreAboutDownloadActivity.this, pd);
+
+            if (Analytics.isTrackingAllowed(MoreAboutDownloadActivity.this))
+                Analytics.getDefaultTracker(MoreAboutDownloadActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
+                        .setCategory(Analytics.CATEGORY_USER_INPUT)
+                        .setAction(Analytics.ACTION_CHANGED_DOWNLOAD_OPTIONS)
+                        .build());
+
+            jta2.changeOption(gid, options, new ISuccess() {
+                @Override
+                public void onSuccess() {
+                    pd.dismiss();
+                    Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
+                }
+
+                @Override
+                public void onException(Exception exception) {
+                    pd.dismiss();
+                    Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
+                }
+            });
+        }
+    };
     private Menu menu;
 
     @Override
@@ -124,35 +153,10 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.moreAboutDownloadMenu_options:
-                new OptionsDialog(this, R.array.downloadOptions, R.color.colorAccent, new OptionsDialog.IDialog() {
-                    @Override
-                    public void onApply(JTA2 jta2, Map<String, String> options) {
-                        if (options.entrySet().size() == 0) return;
-
-                        final ProgressDialog pd = Utils.fastProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information, true, false);
-                        Utils.showDialog(MoreAboutDownloadActivity.this, pd);
-
-                        if (Analytics.isTrackingAllowed(MoreAboutDownloadActivity.this))
-                            Analytics.getDefaultTracker(MoreAboutDownloadActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
-                                    .setCategory(Analytics.CATEGORY_USER_INPUT)
-                                    .setAction(Analytics.ACTION_CHANGED_DOWNLOAD_OPTIONS)
-                                    .build());
-
-                        jta2.changeOption(gid, options, new ISuccess() {
-                            @Override
-                            public void onSuccess() {
-                                pd.dismiss();
-                                Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
-                            }
-
-                            @Override
-                            public void onException(Exception exception) {
-                                pd.dismiss();
-                                Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
-                            }
-                        });
-                    }
-                });
+                new OptionsDialog(this, R.array.downloadOptions, false, optionsChanged).showDialog();
+                break;
+            case R.id.moreAboutDownloadMenu_quickOptions:
+                new OptionsDialog(this, R.array.downloadOptions, true, optionsChanged).showDialog();
                 break;
             case R.id.moreAboutDownloadMenu_bitfield:
                 item.setChecked(!item.isChecked());

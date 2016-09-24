@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -61,6 +62,7 @@ public class NotificationWebSocketService extends IntentService {
         return intent;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
@@ -148,7 +150,7 @@ public class NotificationWebSocketService extends IntentService {
             for (int c = 0; c < jResponse.getJSONArray("params").length(); c++) {
                 String gid = jResponse.getJSONArray("params").getJSONObject(c).getString("gid");
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                Set<String> selectedNotifications = sharedPreferences.getStringSet("a2_selectedNotifications", null);
+                Set<String> selectedNotifications = sharedPreferences.getStringSet("a2_selectedNotifications", new HashSet<String>());
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
                 builder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class).putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
                         .setContentText("GID: " + gid)
@@ -158,8 +160,6 @@ public class NotificationWebSocketService extends IntentService {
                         .setAutoCancel(true);
                 if (sharedPreferences.getBoolean("a2_enableSound", true))
                     builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-
-                if (selectedNotifications == null) return;
 
                 switch (EVENT.parseEvent(jResponse.getString("method"))) {
                     case START:

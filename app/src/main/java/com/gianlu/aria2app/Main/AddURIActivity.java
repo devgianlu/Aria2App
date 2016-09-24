@@ -73,7 +73,7 @@ public class AddURIActivity extends AppCompatActivity {
         options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new OptionsDialog(AddURIActivity.this, R.array.downloadOptions, R.color.colorAccent, new OptionsDialog.IDialog() {
+                new OptionsDialog(AddURIActivity.this, R.array.downloadOptions, false, new OptionsDialog.IDialog() {
                     @Override
                     public void onApply(JTA2 jta2, Map<String, String> options) {
                         AddURIActivity.this.options = options;

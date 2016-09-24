@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/moreAboutDownloadMenu_quickOptions"
+        android:icon="@drawable/ic_list_favourite_white_48px"
+        android:title="@string/menu_downloadQuickOptions"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/moreAboutDownloadMenu_options"
         android:title="@string/menu_downloadOptions"
         app:showAsAction="never" />

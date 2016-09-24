@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="12dp" />
+        android:layout_marginEnd="2dp" />
 
     <TextView
         android:id="@+id/optionHeader_optionShort"
@@ -29,5 +29,18 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/optionHeader_optionLong"
         android:layout_toEndOf="@+id/optionHeader_optionLong"
+        android:layout_toStartOf="@+id/optionHeader_toggleQuick"
         android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/optionHeader_toggleQuick"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:alpha="0.7"
+        android:background="@drawable/ripple_effect_dark"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_favorite_border_black_48dp" />
 </RelativeLayout>

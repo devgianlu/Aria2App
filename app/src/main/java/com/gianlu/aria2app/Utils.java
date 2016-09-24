@@ -604,6 +604,7 @@ public class Utils {
         INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
         INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
         CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
+        ADD_QUICK_OPTIONS("You have no quick options!", false),
         SOURCE_REFRESHED("Source file for options refreshed!", false);
 
         private final String text;

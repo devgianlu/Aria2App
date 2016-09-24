@@ -1,18 +1,19 @@
 package com.gianlu.aria2app.Options;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.preference.PreferenceManager;
 import android.support.annotation.ArrayRes;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.ArrayMap;
+import android.view.LayoutInflater;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -23,25 +24,32 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class OptionsDialog extends AlertDialog.Builder {
     private JTA2 jta2;
     private Activity context;
     private int allowedOptions;
+    private boolean quickOptionsFilter;
     private IDialog handler;
-    private ExpandableListView view;
+    private FrameLayout view;
 
-    @SuppressLint("InflateParams")
-    public OptionsDialog(@NonNull final Activity context, @ArrayRes int allowedOptions, @ColorRes int colorRes, IDialog handler) {
+    public OptionsDialog(@NonNull final Activity context, @ArrayRes int allowedOptions, boolean quickOptionsFilter, IDialog handler) {
         super(context);
 
         this.context = context;
         this.allowedOptions = allowedOptions;
+        this.quickOptionsFilter = quickOptionsFilter;
+        if (quickOptionsFilter)
+            setTitle(R.string.menu_downloadQuickOptions);
+        else
+            setTitle(R.string.options);
         this.handler = handler;
-        view = new ExpandableListView(context);
-        setTitle(R.string.menu_globalOptions);
+        view = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null);
+
         setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -56,6 +64,14 @@ public class OptionsDialog extends AlertDialog.Builder {
     }
 
     public void showDialog() {
+        if (quickOptionsFilter) {
+            Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
+            if (quickOptions.size() <= 0) {
+                Utils.UIToast(context, Utils.TOAST_MESSAGES.ADD_QUICK_OPTIONS);
+                return;
+            }
+        }
+
         final Map<String, Option> localOptions = Option.loadOptionsMap(context);
 
         if (localOptions == null) {
@@ -102,6 +118,8 @@ public class OptionsDialog extends AlertDialog.Builder {
         final ProgressDialog pd = Utils.fastProgressDialog(context, R.string.gathering_information, true, false);
         Utils.showDialog(context, pd);
 
+        final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
+
         jta2.getGlobalOption(new IOption() {
             @Override
             public void onOptions(final Map<String, String> options) {
@@ -109,16 +127,18 @@ public class OptionsDialog extends AlertDialog.Builder {
                 final Map<OptionHeader, OptionChild> children = new ArrayMap<>();
 
                 for (String resLongOption : context.getResources().getStringArray(allowedOptions)) {
+                    if (quickOptionsFilter && !quickOptions.contains(resLongOption)) continue;
+
                     Option opt = localOptions.get(resLongOption);
                     if (opt == null) {
-                        OptionHeader header = new OptionHeader(resLongOption, null, options.get(resLongOption));
+                        OptionHeader header = new OptionHeader(resLongOption, null, options.get(resLongOption), quickOptions.contains(resLongOption));
                         headers.add(header);
 
                         children.put(header, new OptionChild(Option.TYPE.STRING, null, options.get(resLongOption)));
                         continue;
                     }
 
-                    OptionHeader header = new OptionHeader(resLongOption, opt.short_option, options.get(opt.long_option));
+                    OptionHeader header = new OptionHeader(resLongOption, opt.short_option, options.get(opt.long_option), quickOptions.contains(resLongOption));
                     headers.add(header);
 
                     children.put(header, new OptionChild(opt.type, opt.def, options.get(opt.long_option)));
@@ -126,8 +146,7 @@ public class OptionsDialog extends AlertDialog.Builder {
 
                 pd.dismiss();
 
-                view.setPadding(16, 16, 16, 16);
-                view.setAdapter(new OptionAdapter(context, headers, children));
+                ((ExpandableListView) view.findViewById(R.id.optionsDialog_list)).setAdapter(new OptionAdapter(context, headers, children, quickOptionsFilter));
                 setView(view);
 
                 setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
@@ -151,7 +170,7 @@ public class OptionsDialog extends AlertDialog.Builder {
 
                         Utils.showDialog(context, dialog);
                         Window window = dialog.getWindow();
-                        if (window != null)
+                        if (window != null) 
                             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
                         ViewTreeObserver vto = view.getViewTreeObserver();

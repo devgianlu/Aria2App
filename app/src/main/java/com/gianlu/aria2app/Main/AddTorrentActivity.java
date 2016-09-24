@@ -99,13 +99,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int colorRes;
-                if (getIntent().getBooleanExtra("torrentMode", true))
-                    colorRes = R.color.colorTorrent_pressed;
-                else
-                    colorRes = R.color.colorMetalink_pressed;
-
-                new OptionsDialog(AddTorrentActivity.this, R.array.downloadOptions, colorRes, new OptionsDialog.IDialog() {
+                new OptionsDialog(AddTorrentActivity.this, R.array.downloadOptions, false, new OptionsDialog.IDialog() {
                     @Override
                     public void onApply(JTA2 jta2, Map<String, String> options) {
                         AddTorrentActivity.this.options = options;

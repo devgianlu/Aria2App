@@ -2,17 +2,17 @@ package com.gianlu.aria2app.Options;
 
 import java.util.List;
 
-public class OptionChild {
+class OptionChild {
     private String defValue;
     private String currValue;
     private List<String> values;
     private Option.TYPE type;
 
-    public OptionChild(Option.TYPE type, Object defValue, String currValue) {
+    OptionChild(Option.TYPE type, Object defValue, String currValue) {
         this(type, defValue, currValue, null);
     }
 
-    public OptionChild(Option.TYPE type, Object defValue, String currValue, List<String> values) {
+    private OptionChild(Option.TYPE type, Object defValue, String currValue, List<String> values) {
         this.type = type;
         if (defValue == null)
             this.defValue = null;
@@ -22,15 +22,15 @@ public class OptionChild {
         this.values = values;
     }
 
-    public boolean isChanged() {
+    boolean isChanged() {
         return currValue != null;
     }
 
-    public void setCurrentValue(String currValue) {
+    void setCurrentValue(String currValue) {
         this.currValue = currValue;
     }
 
-    public List<String> getValues() {
+    List<String> getValues() {
         return values;
     }
 
@@ -43,7 +43,7 @@ public class OptionChild {
         return type;
     }
 
-    public String getDefaultValue() {
+    String getDefaultValue() {
         if (defValue == null) return "";
         return defValue;
     }
