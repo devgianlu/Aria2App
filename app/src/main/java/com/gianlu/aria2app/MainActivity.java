@@ -64,6 +64,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
@@ -405,15 +406,50 @@ public class MainActivity extends AppCompatActivity {
             drawerManager.buildProfiles().openProfiles(false);
         }
 
+        final AtomicBoolean shouldReport = new AtomicBoolean(true);
         final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.loading_downloads, true, false);
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                shouldReport.set(false);
+                drawerManager.openProfiles(true);
+                dialog.dismiss();
+            }
+        });
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
-                Utils.showDialog(MainActivity.this, pd);
+                if (!shouldReport.get()) return;
+
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (MainActivity.this.isFinishing()) return;
+
+                        pd.show();
+                        pd.getButton(DialogInterface.BUTTON_NEGATIVE).setVisibility(View.GONE);
+                    }
+                });
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (!pd.isShowing()) return;
+
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                pd.getButton(DialogInterface.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                }, 2000);
             }
 
             @Override
             public void onLoaded(JTA2 jta2, final List<Download> downloads) {
+                if (!shouldReport.get()) return;
+
                 adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
                     public void onClick(View view, int position, Download item) {
@@ -616,6 +652,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onException(boolean queuing, final Exception ex) {
+                if (!shouldReport.get()) return;
+
                 if (queuing) {
                     WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
                         @Override
