@@ -33,6 +33,7 @@ public class ProfileItem implements Parcelable {
     String fileName;
     String globalProfileName;
     boolean singleMode;
+    boolean notificationsEnabled;
     STATUS status;
     boolean isDefault;
     private String statusMessage;
@@ -42,6 +43,7 @@ public class ProfileItem implements Parcelable {
         fileName = in.readString();
         globalProfileName = in.readString();
         singleMode = in.readByte() != 0;
+        notificationsEnabled = in.readByte() != 0;
         status = STATUS.valueOf(in.readString());
         statusMessage = in.readString();
         isDefault = in.readByte() != 0;
@@ -106,6 +108,10 @@ public class ProfileItem implements Parcelable {
         return new String(Base64.decode(fileName.replace(".profile", "").getBytes(), Base64.DEFAULT));
     }
 
+    public boolean areNotificationsEnabled() {
+        return notificationsEnabled;
+    }
+
     public STATUS getStatus() {
         return status;
     }
@@ -118,7 +124,7 @@ public class ProfileItem implements Parcelable {
         return globalProfileName;
     }
 
-    boolean isSingleMode() {
+    public boolean isSingleMode() {
         return singleMode;
     }
 
@@ -160,6 +166,7 @@ public class ProfileItem implements Parcelable {
         parcel.writeString(fileName);
         parcel.writeString(globalProfileName);
         parcel.writeByte((byte) (singleMode ? 1 : 0));
+        parcel.writeByte((byte) (notificationsEnabled ? 1 : 0));
         parcel.writeString(status.name());
         parcel.writeString(statusMessage);
         parcel.writeByte((byte) (isDefault ? 1 : 0));

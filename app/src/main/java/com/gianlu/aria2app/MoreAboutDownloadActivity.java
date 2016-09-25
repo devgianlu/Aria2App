@@ -144,7 +144,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.more_about_download, menu);
         this.menu = menu;
-        menu.findItem(R.id.moreAboutDownloadMenu_bitfield).setChecked(PreferenceManager.getDefaultSharedPreferences(this)
+        menu.findItem(R.id.moreAboutDownloadMenu_bitfield).setChecked(PreferenceManager
+                .getDefaultSharedPreferences(this)
                 .getBoolean("a2_showBitfield", true));
         return true;
     }

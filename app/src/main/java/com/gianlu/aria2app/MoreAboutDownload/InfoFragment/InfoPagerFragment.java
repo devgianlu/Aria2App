@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.MoreAboutDownload.InfoFragment;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,8 @@ public class InfoPagerFragment extends CommonFragment {
         updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), holder);
         if (pendingObserver != null) updateUI.setStatusObserver(pendingObserver);
         new Thread(updateUI).start();
+
+        setBitfieldVisibility(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("a2_showBitfield", true));
     }
 
     public void setBitfieldVisibility(final boolean visible) {

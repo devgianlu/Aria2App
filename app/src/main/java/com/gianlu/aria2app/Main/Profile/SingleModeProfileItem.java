@@ -44,12 +44,13 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         this.singleMode = true;
     }
 
-    SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
+    SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
         this.authMethod = JTA2.AUTH_METHOD.NONE;
         this.serverUsername = null;
         this.serverPassword = null;
         this.serverToken = null;
         this.profileName = profileName;
+        this.notificationsEnabled = notificationsEnabled;
         this.singleMode = true;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
@@ -59,9 +60,10 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         this.directDownload = directDownload;
     }
 
-    public SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, String serverToken, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
+    public SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, String serverToken, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
         this.authMethod = JTA2.AUTH_METHOD.TOKEN;
         this.profileName = profileName;
+        this.notificationsEnabled = notificationsEnabled;
         this.serverUsername = null;
         this.serverPassword = null;
         this.singleMode = true;
@@ -74,8 +76,9 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         this.directDownload = directDownload;
     }
 
-    SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, String serverUsername, String serverPassword, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
+    SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, String serverUsername, String serverPassword, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
         this.authMethod = JTA2.AUTH_METHOD.HTTP;
+        this.notificationsEnabled = notificationsEnabled;
         this.serverUsername = serverUsername;
         this.serverPassword = serverPassword;
         this.serverToken = null;
@@ -110,6 +113,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         item.fileName = fileName;
 
         item.profileName = jProfile.getString("name");
+        item.notificationsEnabled = jProfile.optBoolean("notificationsEnabled", true);
         item.globalProfileName = item.profileName;
         if (!jProfile.isNull("serverAuth")) {
             item.authMethod = JTA2.AUTH_METHOD.TOKEN;
@@ -236,6 +240,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         profile.put("name", profileName)
                 .put("serverAddr", serverAddr)
                 .put("serverPort", serverPort)
+                .put("notificationsEnabled", notificationsEnabled)
                 .put("serverEndpoint", serverEndpoint)
                 .put("authMethod", authMethod.name())
                 .put("serverToken", serverToken)

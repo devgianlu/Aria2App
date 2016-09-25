@@ -33,9 +33,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notifications">
-        <!-- TODO: Multi profile notification -->
-        <Preference android:summary="Notifications will be displayed for the last used profile" />
-
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="a2_enableNotifications"

@@ -70,7 +70,7 @@
 
         <!-- Notification service -->
         <service
-            android:name=".Services.NotificationWebSocketService"
+            android:name=".Services.NotificationService"
             android:exported="false" />
 
         <!-- Google Analytics -->

@@ -47,6 +47,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         MultiModeProfileItem item = new MultiModeProfileItem();
         item.fileName = fileName;
         item.globalProfileName = jProfile.getString("name");
+        item.notificationsEnabled = jProfile.optBoolean("notificationsEnabled", true);
 
         JSONArray conditions = jProfile.getJSONArray("conditions");
 

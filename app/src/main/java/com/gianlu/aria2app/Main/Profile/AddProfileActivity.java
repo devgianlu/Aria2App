@@ -54,6 +54,7 @@ public class AddProfileActivity extends AppCompatActivity {
     private String oldFileName;
 
     private EditText profileName;
+    private CheckBox enableNotifications;
     private RadioGroup modeGroup;
 
     // Single mode
@@ -67,7 +68,6 @@ public class AddProfileActivity extends AppCompatActivity {
     public void onBackPressed() {
         startActivity(new Intent(this, MainActivity.class).putExtra("backFromAddProfile", true));
         finish();
-
     }
 
     @Override
@@ -78,6 +78,7 @@ public class AddProfileActivity extends AppCompatActivity {
         oldFileName = getIntent().getStringExtra("base64name");
 
         profileName = (EditText) findViewById(R.id.addProfile_name);
+        enableNotifications = (CheckBox) findViewById(R.id.addProfile_enableNotifications);
         modeGroup = (RadioGroup) findViewById(R.id.addProfile_modeGroup);
         modeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -180,6 +181,7 @@ public class AddProfileActivity extends AppCompatActivity {
         SingleModeProfileItem item = SingleModeProfileItem.fromString(this, name);
 
         profileName.setText(item.getProfileName());
+        enableNotifications.setChecked(item.areNotificationsEnabled());
         sViewHolder.addr.setText(item.getServerAddr());
         sViewHolder.port.setText(String.valueOf(item.getServerPort()));
         sViewHolder.endpoint.setText(item.getServerEndpoint());
@@ -233,6 +235,7 @@ public class AddProfileActivity extends AppCompatActivity {
         MultiModeProfileItem item = MultiModeProfileItem.fromString(this, name);
 
         profileName.setText(item.getGlobalProfileName());
+        enableNotifications.setChecked(item.areNotificationsEnabled());
         mProfiles = item.getProfiles();
         mListView.setAdapter(new ConditionsCustomAdapter(this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
             @Override
@@ -440,6 +443,7 @@ public class AddProfileActivity extends AppCompatActivity {
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
                             holder.SSL.isChecked(),
+                            enableNotifications.isChecked(),
                             holder.directDownload.isChecked(),
                             new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
                                     holder.directDownloadAuth.isChecked(),
@@ -451,6 +455,7 @@ public class AddProfileActivity extends AppCompatActivity {
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
                             holder.SSL.isChecked(),
+                            enableNotifications.isChecked(),
                             holder.authMethodTokenToken.getText().toString().trim(),
                             holder.directDownload.isChecked(),
                             new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
@@ -463,6 +468,7 @@ public class AddProfileActivity extends AppCompatActivity {
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
                             holder.SSL.isChecked(),
+                            enableNotifications.isChecked(),
                             holder.authMethodHTTPUsername.getText().toString().trim(),
                             holder.authMethodHTTPPassword.getText().toString().trim(),
                             holder.directDownload.isChecked(),
@@ -476,6 +482,7 @@ public class AddProfileActivity extends AppCompatActivity {
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
                             holder.SSL.isChecked(),
+                            enableNotifications.isChecked(),
                             holder.directDownload.isChecked(),
                             new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
                                     holder.directDownloadAuth.isChecked(),
@@ -577,6 +584,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
                     sViewHolder.SSL.isChecked(),
+                    enableNotifications.isChecked(),
                     sViewHolder.directDownload.isChecked(),
                     new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
                             sViewHolder.directDownloadAuth.isChecked(),
@@ -588,6 +596,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
                     sViewHolder.SSL.isChecked(),
+                    enableNotifications.isChecked(),
                     sViewHolder.authMethodTokenToken.getText().toString().trim(),
                     sViewHolder.directDownload.isChecked(),
                     new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
@@ -600,6 +609,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
                     sViewHolder.SSL.isChecked(),
+                    enableNotifications.isChecked(),
                     sViewHolder.authMethodHTTPUsername.getText().toString().trim(),
                     sViewHolder.authMethodHTTPPassword.getText().toString().trim(),
                     sViewHolder.directDownload.isChecked(),
@@ -613,6 +623,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
                     sViewHolder.SSL.isChecked(),
+                    enableNotifications.isChecked(),
                     sViewHolder.directDownload.isChecked(),
                     new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
                             sViewHolder.directDownloadAuth.isChecked(),
@@ -671,6 +682,7 @@ public class AddProfileActivity extends AppCompatActivity {
             }
 
             profile.put("name", profileName.getText().toString().trim())
+                    .put("notificationsEnabled", enableNotifications.isChecked())
                     .put("conditions", conditions);
         } catch (JSONException ex) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);

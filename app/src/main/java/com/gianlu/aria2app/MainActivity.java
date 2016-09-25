@@ -49,7 +49,7 @@ import com.gianlu.aria2app.NetIO.JTA2.IVersion;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsDialog;
-import com.gianlu.aria2app.Services.NotificationWebSocketService;
+import com.gianlu.aria2app.Services.NotificationService;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
@@ -314,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
                     getIntent().getIntExtra("port", 6800),
                     "/jsonrpc",
                     false,
+                    false,
                     getIntent().getStringExtra("token"),
                     false,
                     null)
@@ -324,6 +325,8 @@ public class MainActivity extends AppCompatActivity {
             SingleModeProfileItem profile;
             if (getIntent().getBooleanExtra("external", false)) {
                 profile = SingleModeProfileItem.fromString(this, "Local device");
+            } else if (getIntent().getBooleanExtra("fromNotification", false)) {
+                profile = MultiModeProfileItem.fromString(this, getIntent().getStringExtra("fileName")).getCurrentProfile(this);
             } else if (!drawerManager.hasProfiles()) {
                 profile = null;
                 startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
@@ -344,10 +347,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException | JSONException ex) {
             Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
         }
-
-
-        Integer autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
-        boolean enableNotifications = sharedPreferences.getBoolean("a2_enableNotifications", true);
 
         fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
         assert fabMenu != null;
@@ -579,7 +578,7 @@ public class MainActivity extends AppCompatActivity {
                             ex.printStackTrace();
                         }
 
-                        if (getIntent().getStringExtra("gid") != null) {
+                        if (getIntent().getBooleanExtra("fromNotification", false)) {
                             Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
                             if (item == null) return;
 
@@ -697,6 +696,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        int autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         if (autoReloadDownloadsListRate != 0) {
             Timer reloadDownloadsListTimer = new Timer(false);
             reloadDownloadsListTimer.schedule(new TimerTask() {
@@ -710,7 +710,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }, 1000, autoReloadDownloadsListRate);
+            }, 0, autoReloadDownloadsListRate);
         } else {
             loadDownloads = new LoadDownloads(this, loadingHandler);
             new Thread(loadDownloads).start();
@@ -722,14 +722,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if (enableNotifications) {
-            Intent startNotification = NotificationWebSocketService.createStartIntent(this, sharedPreferences.getString("lastUsedProfile", null));
-            if (startNotification != null)
-                startService(startNotification);
-            else
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, "NULL notification intent");
+        if (sharedPreferences.getBoolean("a2_enableNotifications", true)) {
+            startService(NotificationService.createStartIntent(this));
         } else {
-            stopService(new Intent(this, NotificationWebSocketService.class));
+            stopService(new Intent(this, NotificationService.class));
         }
     }
 

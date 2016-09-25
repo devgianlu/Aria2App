@@ -36,6 +36,12 @@
             android:hint="@string/profile_hint" />
     </LinearLayout>
 
+    <CheckBox
+        android:id="@+id/addProfile_enableNotifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/enableProfileNotifications" />
+
     <RadioGroup
         android:id="@+id/addProfile_modeGroup"
         android:layout_width="match_parent"
