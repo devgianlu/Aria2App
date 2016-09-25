@@ -30,12 +30,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class OptionsDialog extends AlertDialog.Builder {
+    private final Activity context;
+    private final int allowedOptions;
+    private final boolean quickOptionsFilter;
+    private final IDialog handler;
+    private final FrameLayout view;
     private JTA2 jta2;
-    private Activity context;
-    private int allowedOptions;
-    private boolean quickOptionsFilter;
-    private IDialog handler;
-    private FrameLayout view;
+    private boolean hideHearts;
 
     public OptionsDialog(@NonNull final Activity context, @ArrayRes int allowedOptions, boolean quickOptionsFilter, IDialog handler) {
         super(context);
@@ -63,6 +64,11 @@ public class OptionsDialog extends AlertDialog.Builder {
         }
     }
 
+    public OptionsDialog hideHearts() {
+        hideHearts = true;
+        return this;
+    }
+
     public void showDialog() {
         if (quickOptionsFilter) {
             Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
@@ -75,7 +81,7 @@ public class OptionsDialog extends AlertDialog.Builder {
         final Map<String, Option> localOptions = Option.loadOptionsMap(context);
 
         if (localOptions == null) {
-            final ProgressDialog pd = Utils.fastProgressDialog(context, R.string.downloading_source, true, false);
+            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.downloading_source);
 
             new Thread(new DownloadSource(context, new DownloadSource.IDownload() {
                 @Override
@@ -115,7 +121,7 @@ public class OptionsDialog extends AlertDialog.Builder {
     private void showThatDialog(final Map<String, Option> localOptions) {
         if (jta2 == null) return;
 
-        final ProgressDialog pd = Utils.fastProgressDialog(context, R.string.gathering_information, true, false);
+        final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
         Utils.showDialog(context, pd);
 
         final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
@@ -134,19 +140,19 @@ public class OptionsDialog extends AlertDialog.Builder {
                         OptionHeader header = new OptionHeader(resLongOption, null, options.get(resLongOption), quickOptions.contains(resLongOption));
                         headers.add(header);
 
-                        children.put(header, new OptionChild(Option.TYPE.STRING, null, options.get(resLongOption)));
+                        children.put(header, new OptionChild(Option.TYPE.STRING, null, options.get(resLongOption), null));
                         continue;
                     }
 
                     OptionHeader header = new OptionHeader(resLongOption, opt.short_option, options.get(opt.long_option), quickOptions.contains(resLongOption));
                     headers.add(header);
 
-                    children.put(header, new OptionChild(opt.type, opt.def, options.get(opt.long_option)));
+                    children.put(header, new OptionChild(opt.type, opt.def, options.get(opt.long_option), opt.values));
                 }
 
                 pd.dismiss();
 
-                ((ExpandableListView) view.findViewById(R.id.optionsDialog_list)).setAdapter(new OptionAdapter(context, headers, children, quickOptionsFilter));
+                ((ExpandableListView) view.findViewById(R.id.optionsDialog_list)).setAdapter(new OptionAdapter(context, headers, children, quickOptionsFilter, hideHearts));
                 setView(view);
 
                 setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {

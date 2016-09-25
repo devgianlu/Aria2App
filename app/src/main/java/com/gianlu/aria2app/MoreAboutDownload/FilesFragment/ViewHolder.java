@@ -2,17 +2,10 @@ package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
 import android.view.View;
 
-public class ViewHolder {
-    public View rootView;
-    public TYPE type;
+class ViewHolder {
+    public final View rootView;
 
-    public ViewHolder(View rootView, TYPE type) {
+    ViewHolder(View rootView) {
         this.rootView = rootView;
-        this.type = type;
-    }
-
-    public enum TYPE {
-        FILE,
-        DIRECTORY
     }
 }

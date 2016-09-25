@@ -12,10 +12,10 @@ import android.util.TypedValue;
 import android.view.View;
 
 public class LetterIconSmall extends View {
-    private Context context;
+    private final Context context;
+    private final Rect lettersBounds = new Rect();
     private String letters;
     private String profileFileName;
-    private Rect lettersBounds = new Rect();
     private Paint shapePaint;
     private Paint letterPaint;
 

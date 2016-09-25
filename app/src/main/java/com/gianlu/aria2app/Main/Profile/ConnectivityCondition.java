@@ -1,36 +1,36 @@
 package com.gianlu.aria2app.Main.Profile;
 
-public class ConnectivityCondition {
-    private TYPE type;
-    private String ssid;
+class ConnectivityCondition {
+    private final TYPE type;
+    private final String ssid;
 
     private ConnectivityCondition(TYPE type) {
         this.type = type;
         this.ssid = null;
     }
 
-    private ConnectivityCondition(TYPE type, String ssid) {
-        this.type = type;
+    private ConnectivityCondition(String ssid) {
+        this.type = TYPE.WIFI;
         this.ssid = ssid;
     }
 
-    public static ConnectivityCondition newWiFiCondition(String ssid) {
-        return new ConnectivityCondition(TYPE.WIFI, ssid);
+    static ConnectivityCondition newWiFiCondition(String ssid) {
+        return new ConnectivityCondition(ssid);
     }
 
-    public static ConnectivityCondition newMobileCondition() {
+    static ConnectivityCondition newMobileCondition() {
         return new ConnectivityCondition(TYPE.MOBILE);
     }
 
-    public static ConnectivityCondition newBluetoothCondition() {
+    static ConnectivityCondition newBluetoothCondition() {
         return new ConnectivityCondition(TYPE.BLUETOOTH);
     }
 
-    public static ConnectivityCondition newEthernetCondition() {
+    static ConnectivityCondition newEthernetCondition() {
         return new ConnectivityCondition(TYPE.ETHERNET);
     }
 
-    public static TYPE getTypeFromString(String type) {
+    static TYPE getTypeFromString(String type) {
         switch (type.toUpperCase()) {
             case "WIFI":
                 return TYPE.WIFI;
@@ -45,26 +45,26 @@ public class ConnectivityCondition {
         }
     }
 
-    public TYPE getType() {
+    TYPE getType() {
         return type;
     }
 
-    public String getSSID() {
+    String getSSID() {
         return ssid;
     }
 
-    public String getFormalName() {
+    String getFormalName() {
         return type.getFormal() + (type == TYPE.WIFI ? ": " + ssid : "");
     }
 
-    public enum TYPE {
+    enum TYPE {
         WIFI("WiFi"),
         MOBILE("Mobile"),
         ETHERNET("Ethernet"),
         BLUETOOTH("Bluetooth"),
         UNKNOWN("Unknown");
 
-        private String formal;
+        private final String formal;
 
         TYPE(String formal) {
             this.formal = formal;

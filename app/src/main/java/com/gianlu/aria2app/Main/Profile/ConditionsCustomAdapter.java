@@ -17,13 +17,13 @@ import com.gianlu.aria2app.Utils;
 import java.util.Map;
 import java.util.Set;
 
-public class ConditionsCustomAdapter extends BaseAdapter {
+class ConditionsCustomAdapter extends BaseAdapter {
     private static int currDefault = 0;
-    private Map<ConnectivityCondition, SingleModeProfileItem> objs;
-    private Activity context;
-    private OnClickListener edit;
+    private final Map<ConnectivityCondition, SingleModeProfileItem> objs;
+    private final Activity context;
+    private final OnClickListener edit;
 
-    public ConditionsCustomAdapter(Activity context, Map<ConnectivityCondition, SingleModeProfileItem> objs, OnClickListener edit) {
+    ConditionsCustomAdapter(Activity context, Map<ConnectivityCondition, SingleModeProfileItem> objs, OnClickListener edit) {
         this.context = context;
         this.objs = objs;
         this.edit = edit;
@@ -40,7 +40,7 @@ public class ConditionsCustomAdapter extends BaseAdapter {
         return connectivityConditions.toArray(new ConnectivityCondition[connectivityConditions.size()])[i];
     }
 
-    public SingleModeProfileItem getProfileItem(ConnectivityCondition condition) {
+    private SingleModeProfileItem getProfileItem(ConnectivityCondition condition) {
         return objs.get(condition);
     }
 
@@ -58,7 +58,7 @@ public class ConditionsCustomAdapter extends BaseAdapter {
         view.findViewById(R.id.conditionCustomItem_edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                edit.onClick(view, i, getProfileItem(getItem(i)), getItem(i));
+                edit.onClick(getProfileItem(getItem(i)), getItem(i));
             }
         });
         CheckBox _default = (CheckBox) view.findViewById(R.id.conditionCustomItem_default);
@@ -81,6 +81,6 @@ public class ConditionsCustomAdapter extends BaseAdapter {
     }
 
     public interface OnClickListener {
-        void onClick(View view, int i, SingleModeProfileItem item, ConnectivityCondition condition);
+        void onClick(SingleModeProfileItem item, ConnectivityCondition condition);
     }
 }

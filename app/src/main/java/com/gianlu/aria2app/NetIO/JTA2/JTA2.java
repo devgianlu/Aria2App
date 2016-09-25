@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.Nullable;
 
@@ -20,55 +21,23 @@ import java.util.Map;
 import java.util.Objects;
 
 public class JTA2 {
-    private WebSocketing webSocketing;
+    private final WebSocketing webSocketing;
+    private Activity context;
 
-    public JTA2(WebSocketing webSocketing) {
+    private JTA2(WebSocketing webSocketing) {
         this.webSocketing = webSocketing;
     }
 
     public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
-        return new JTA2(WebSocketing.newInstance(context));
+        return new JTA2(WebSocketing.newInstance(context)).setContext(context);
+    }
+
+    private JTA2 setContext(Activity context) {
+        this.context = context;
+        return this;
     }
 
     // Caster
-    private List<FEATURES> fromFeatures(JSONArray features) throws JSONException {
-        if (features == null) return null;
-
-        List<FEATURES> featuresList = new ArrayList<>();
-        for (int i = 0; i < features.length(); i++) {
-            String _feature = features.getString(i);
-
-            switch (_feature.toLowerCase()) {
-                case "bittorrent":
-                    featuresList.add(FEATURES.BITTORRENT);
-                    break;
-                case "gzip":
-                    featuresList.add(FEATURES.GZIP);
-                    break;
-                case "https":
-                    featuresList.add(FEATURES.HTTPS);
-                    break;
-                case "message digest":
-                    featuresList.add(FEATURES.MESSAGE_DIGEST);
-                    break;
-                case "metalink":
-                    featuresList.add(FEATURES.METALINK);
-                    break;
-                case "xml-rpc":
-                    featuresList.add(FEATURES.XML_RPC);
-                    break;
-                case "async dns":
-                    featuresList.add(FEATURES.ASYNC_DNS);
-                    break;
-                case "firefox3 cookie":
-                    featuresList.add(FEATURES.FIREFOX3_COOKIE);
-                    break;
-            }
-        }
-
-        return featuresList;
-    }
-
     private List<String> fromFeaturesRaw(JSONArray features) throws JSONException {
         if (features == null) return null;
 
@@ -79,7 +48,8 @@ public class JTA2 {
 
         return featuresList;
     }
-    private Map<String, String> fromOptions(JSONObject jResult) throws JSONException {
+
+    private Map<String, String> fromOptions(JSONObject jResult) {
         if (jResult == null) return null;
 
         Iterator<?> keys = jResult.keys();
@@ -129,7 +99,7 @@ public class JTA2 {
     private Map<Integer, List<Server>> fromServers(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
-        Map<Integer, List<Server>> list = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, List<Server>> list = new HashMap<>();
 
         for (int i = 0; i < jResult.length(); i++) {
             JSONObject jServer = jResult.getJSONObject(i);
@@ -156,7 +126,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getVersion");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -166,7 +136,7 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onVersion(fromFeaturesRaw(response.getJSONObject("result").optJSONArray("enabledFeatures")), fromFeatures(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
+                handler.onVersion(fromFeaturesRaw(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
             }
 
             @Override
@@ -187,7 +157,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.saveSession");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -220,7 +190,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getSessionInfo");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -250,7 +220,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.addUri");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
 
             JSONArray jUris = new JSONArray();
             for (String uri : uris) {
@@ -297,7 +267,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.addTorrent");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(base64);
 
             JSONArray jUris = new JSONArray();
@@ -347,7 +317,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.addMetalink");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(base64);
 
             JSONArray jUris = new JSONArray();
@@ -397,7 +367,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.tellStatus");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -429,7 +399,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getGlobalStat");
-            request.put("params", Utils.readyParams(webSocketing.getContext()));
+            request.put("params", Utils.readyParams(context));
         } catch (JSONException ex) {
             handler.onException(ex);
             return;
@@ -459,7 +429,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.tellActive");
-            request.put("params", Utils.readyParams(webSocketing.getContext()));
+            request.put("params", Utils.readyParams(context));
         } catch (JSONException ex) {
             handler.onException(false, ex);
             return;
@@ -496,7 +466,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.tellWaiting");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(0);
             params.put(100);
             request.put("params", params);
@@ -536,7 +506,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.tellStopped");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(0);
             params.put(100);
             request.put("params", params);
@@ -576,7 +546,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.pause");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -608,7 +578,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.unpause");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -640,7 +610,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.remove");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -672,7 +642,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.removeDownloadResult");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -704,7 +674,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.forcePause");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -736,7 +706,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.forceRemove");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -768,7 +738,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getOption");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -800,7 +770,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getGlobalOption");
-            request.put("params", Utils.readyParams(webSocketing.getContext()));
+            request.put("params", Utils.readyParams(context));
         } catch (JSONException ex) {
             handler.onException(ex);
             return;
@@ -830,7 +800,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.changeOption");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid);
             JSONObject jOptions = new JSONObject();
             for (Map.Entry<String, String> entry : options.entrySet()) {
@@ -865,15 +835,15 @@ public class JTA2 {
     }
 
     //aria2.changePosition
-    public void changePosition(String gid, int pos, POSITION_HOW how, final ISuccess handler) {
+    public void changePosition(String gid, int pos, final ISuccess handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.changePosition");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             params.put(gid)
                     .put(pos)
-                    .put(how.name());
+                    .put("POS_CUR");
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -907,7 +877,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.changeGlobalOption");
-            JSONArray params = Utils.readyParams(webSocketing.getContext());
+            JSONArray params = Utils.readyParams(context);
             JSONObject jOptions = new JSONObject();
             for (Map.Entry<String, String> entry : options.entrySet()) {
                 jOptions.put(entry.getKey(), entry.getValue());
@@ -946,7 +916,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getServers");
-            request.put("params", Utils.readyParams(webSocketing.getContext())
+            request.put("params", Utils.readyParams(context)
                     .put(gid));
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -982,7 +952,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getPeers");
-            request.put("params", Utils.readyParams(webSocketing.getContext())
+            request.put("params", Utils.readyParams(context)
                     .put(gid));
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -1017,7 +987,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getFiles");
-            request.put("params", Utils.readyParams(webSocketing.getContext())
+            request.put("params", Utils.readyParams(context)
                     .put(gid));
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -1075,22 +1045,5 @@ public class JTA2 {
         NONE,
         HTTP,
         TOKEN
-    }
-
-    public enum FEATURES {
-        BITTORRENT,
-        GZIP,
-        HTTPS,
-        MESSAGE_DIGEST,
-        METALINK,
-        XML_RPC,
-        ASYNC_DNS,
-        FIREFOX3_COOKIE
-    }
-
-    public enum POSITION_HOW {
-        POS_CUR,
-        POS_END,
-        POS_SET
     }
 }

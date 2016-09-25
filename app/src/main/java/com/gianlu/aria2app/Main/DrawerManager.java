@@ -44,18 +44,18 @@ import java.util.Objects;
 
 public class DrawerManager {
     private static String lastProfile;
-    private Activity context;
-    private DrawerLayout drawerLayout;
-    private LinearLayout drawerList;
-    private LinearLayout drawerFooterList;
-    private ListView drawerProfiles;
-    private LinearLayout drawerProfilesFooter;
+    private final Activity context;
+    private final DrawerLayout drawerLayout;
+    private final LinearLayout drawerList;
+    private final LinearLayout drawerFooterList;
+    private final ListView drawerProfiles;
+    private final LinearLayout drawerProfilesFooter;
+    private final LetterIconBig currentAccount;
+    private final LetterIconSmall firstAccount;
+    private final LetterIconSmall secondAccount;
     private IDrawerListener listener;
     private ProfilesAdapter profilesAdapter;
     private boolean isProfilesLockedUntilSelected;
-    private LetterIconBig currentAccount;
-    private LetterIconSmall firstAccount;
-    private LetterIconSmall secondAccount;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     public DrawerManager(Activity context, DrawerLayout drawerLayout) {
@@ -91,7 +91,7 @@ public class DrawerManager {
             actionBarDrawerToggle.onConfigurationChanged(conf);
     }
 
-    public void reloadRecentProfiles() {
+    private void reloadRecentProfiles() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String first = preferences.getString("recentProfiles_first", null);
         String second = preferences.getString("recentProfiles_second", null);
@@ -139,7 +139,7 @@ public class DrawerManager {
         secondAccount.setOnClickListener(clickListener);
     }
 
-    public DrawerManager setCurrentProfile(SingleModeProfileItem profile) {
+    public void setCurrentProfile(SingleModeProfileItem profile) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String oldFirst = preferences.getString("recentProfiles_first", null);
 
@@ -163,44 +163,34 @@ public class DrawerManager {
         lastProfile = profile.getFileName();
 
         reloadRecentProfiles();
-
-        return this;
     }
 
-    public DrawerManager setDrawerListener(IDrawerListener listener) {
+    public void setDrawerListener(IDrawerListener listener) {
         this.listener = listener;
-        return this;
     }
 
-    public DrawerManager openProfiles(boolean lockUntilSelected) {
+    public void openProfiles(boolean lockUntilSelected) {
         setDrawerState(true, true);
-        setProfilesState(true);
+        setProfilesDrawerOpen();
 
         isProfilesLockedUntilSelected = lockUntilSelected;
         if (lockUntilSelected) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
             drawerLayout.findViewById(R.id.mainDrawerHeader_dropdown).setEnabled(false);
         }
-
-        return this;
     }
 
-    public DrawerManager setProfilesState(boolean open) {
-        if ((drawerLayout.findViewById(R.id.mainDrawer_profileContainer).getVisibility() == View.INVISIBLE && open)
-                || (drawerLayout.findViewById(R.id.mainDrawer_profileContainer).getVisibility() == View.VISIBLE && !open)) {
+    private void setProfilesDrawerOpen() {
+        if (drawerLayout.findViewById(R.id.mainDrawer_profileContainer).getVisibility() == View.INVISIBLE) {
             drawerLayout.findViewById(R.id.mainDrawerHeader_dropdown).callOnClick();
         }
-
-        return this;
     }
 
-    public DrawerManager setDrawerState(boolean open, boolean animate) {
+    public void setDrawerState(boolean open, boolean animate) {
         if (open)
             drawerLayout.openDrawer(GravityCompat.START, animate);
         else
             drawerLayout.closeDrawer(GravityCompat.START, animate);
-
-        return this;
     }
 
     private View newItem(@DrawableRes int icon, String title, boolean primary) {
@@ -232,7 +222,7 @@ public class DrawerManager {
         return view;
     }
 
-    public DrawerManager updateBadge(int num) {
+    public void updateBadge(int num) {
         View view = drawerList.getChildAt(0);
 
         if (num == -1) {
@@ -241,8 +231,6 @@ public class DrawerManager {
             view.findViewById(R.id.materialDrawer_itemBadgeContainer).setVisibility(View.VISIBLE);
             ((TextView) view.findViewById(R.id.materialDrawer_itemBadge)).setText(String.valueOf(num));
         }
-
-        return this;
     }
 
     public DrawerManager buildMenu() {

@@ -407,17 +407,16 @@ public class Utils {
         return textView;
     }
 
-    private static ProgressDialog fastProgressDialog(Context context, String title, String message, boolean indeterminate, boolean cancelable) {
+    private static ProgressDialog fastIndeterminateProgressDialog(Context context, String message) {
         ProgressDialog pd = new ProgressDialog(context);
-        pd.setTitle(title);
         pd.setMessage(message);
-        pd.setIndeterminate(indeterminate);
-        pd.setCancelable(cancelable);
+        pd.setIndeterminate(true);
+        pd.setCancelable(false);
         return pd;
     }
 
-    public static ProgressDialog fastProgressDialog(Context context, int message, boolean indeterminate, boolean cancelable) {
-        return fastProgressDialog(context, "", context.getString(message), indeterminate, cancelable);
+    public static ProgressDialog fastIndeterminateProgressDialog(Context context, int message) {
+        return fastIndeterminateProgressDialog(context, context.getString(message));
     }
 
     public static JSONArray readyParams(Context context) {
@@ -593,7 +592,7 @@ public class Utils {
         INVALID_SERVER_ENDPOINT("Invalid server RPC endpoint!", false),
         INVALID_SERVER_TOKEN("Invalid server token!", false),
         INVALID_SERVER_USER_OR_PASSWD("Invalid username or password!", false),
-        INVALID_CONDITIONS_NUMBER("Mutli profile should contains more than one condition", false),
+        INVALID_CONDITIONS_NUMBER("Multi profile should contains more than one condition", false),
         FILE_NOT_FOUND("File not found!", true),
         FATAL_EXCEPTION("Fatal exception!", true),
         FAILED_LOADING_AUTOCOMPLETION("Unable to load method's suggestions!", true),

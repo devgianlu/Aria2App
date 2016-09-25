@@ -83,31 +83,29 @@ public class InfoPagerFragment extends CommonFragment {
     }
 
     public class ViewHolder {
-        public View rootView;
-        public LineChart chart;
-        public ImageButton chartRefresh;
-        public TextView gid;
-        public TextView totalLength;
-        public TextView completedLength;
-        public TextView uploadLength;
-        public TextView pieceLength;
-        public TextView numPieces;
-        public TextView connections;
-        public TextView directory;
-        public TextView verifiedLength;
-        public TextView verifyIntegrityPending;
-
-        public LinearLayout bitTorrentOnly;
-        public TextView btMode;
-        public TextView btSeeders;
-        public TextView btSeeder;
-        public TextView btComment;
-        public TextView btCreationDate;
-        public TextView btInfoHash;
-        public LinearLayout btAnnounceList;
-
-        public TextView bitfieldLabel;
-        public GridLayout bitfield;
+        public final View rootView;
+        public final TextView gid;
+        final ImageButton chartRefresh;
+        final TextView totalLength;
+        final TextView completedLength;
+        final TextView uploadLength;
+        final TextView pieceLength;
+        final TextView numPieces;
+        final TextView connections;
+        final TextView directory;
+        final TextView verifiedLength;
+        final TextView verifyIntegrityPending;
+        final LinearLayout bitTorrentOnly;
+        final TextView btMode;
+        final TextView btSeeders;
+        final TextView btSeeder;
+        final TextView btComment;
+        final TextView btCreationDate;
+        final TextView btInfoHash;
+        final LinearLayout btAnnounceList;
+        final TextView bitfieldLabel;
+        final GridLayout bitfield;
+        LineChart chart;
 
         public ViewHolder(View rootView) {
             this.rootView = rootView;

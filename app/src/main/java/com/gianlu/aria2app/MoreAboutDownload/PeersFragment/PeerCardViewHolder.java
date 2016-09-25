@@ -9,20 +9,19 @@ import android.widget.TextView;
 import com.gianlu.aria2app.R;
 import com.github.mikephil.charting.charts.LineChart;
 
-public class PeerCardViewHolder extends RecyclerView.ViewHolder {
-    public RelativeLayout header;
-    public TextView peerId;
-    public TextView fullAddr;
-    public TextView downloadSpeed;
-    public TextView uploadSpeed;
-    public LineChart chart;
+class PeerCardViewHolder extends RecyclerView.ViewHolder {
+    public final TextView downloadSpeed;
+    public final TextView uploadSpeed;
+    final RelativeLayout header;
+    final TextView peerId;
+    final TextView fullAddr;
+    final LinearLayout details;
+    final TextView detailsAmChoking;
+    final TextView detailsPeerChoking;
+    final TextView detailsSeeder;
+    LineChart chart;
 
-    public LinearLayout details;
-    public TextView detailsAmChoking;
-    public TextView detailsPeerChoking;
-    public TextView detailsSeeder;
-
-    public PeerCardViewHolder(View itemView) {
+    PeerCardViewHolder(View itemView) {
         super(itemView);
 
         header = (RelativeLayout) itemView.findViewById(R.id.peerCardView_header);

@@ -26,14 +26,14 @@ public class DirectDownload implements Parcelable {
     private DirectDownload() {
     }
 
-    public DirectDownload(String address, boolean auth, String username, String password) {
+    DirectDownload(String address, boolean auth, String username, String password) {
         this.address = address;
         this.auth = auth;
         this.username = username;
         this.password = password;
     }
 
-    protected DirectDownload(Parcel in) {
+    private DirectDownload(Parcel in) {
         address = in.readString();
         auth = in.readByte() != 0;
         username = in.readString();
@@ -68,7 +68,7 @@ public class DirectDownload implements Parcelable {
         return password;
     }
 
-    public JSONObject toJSON() throws JSONException {
+    JSONObject toJSON() throws JSONException {
         JSONObject jDirectDownload = new JSONObject();
         jDirectDownload.put("addr", address)
                 .put("auth", auth)

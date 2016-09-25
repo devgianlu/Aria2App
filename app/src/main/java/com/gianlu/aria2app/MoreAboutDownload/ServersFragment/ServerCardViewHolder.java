@@ -7,13 +7,13 @@ import android.widget.TextView;
 import com.gianlu.aria2app.R;
 import com.github.mikephil.charting.charts.LineChart;
 
-public class ServerCardViewHolder extends RecyclerView.ViewHolder {
-    public TextView currentUri;
-    public TextView uri;
-    public TextView downloadSpeed;
-    public LineChart chart;
+class ServerCardViewHolder extends RecyclerView.ViewHolder {
+    public final TextView uri;
+    public final TextView downloadSpeed;
+    final TextView currentUri;
+    LineChart chart;
 
-    public ServerCardViewHolder(View itemView) {
+    ServerCardViewHolder(View itemView) {
         super(itemView);
 
         currentUri = (TextView) itemView.findViewById(R.id.serverCardView_currentUri);

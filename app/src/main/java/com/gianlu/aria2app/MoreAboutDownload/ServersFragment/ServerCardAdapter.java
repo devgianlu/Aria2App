@@ -22,9 +22,9 @@ import java.util.Locale;
 import java.util.Map;
 
 class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
-    private CardView noDataCardView;
-    private List<Item> items = new ArrayList<>();
+    private final Context context;
+    private final CardView noDataCardView;
+    private final List<Item> items = new ArrayList<>();
 
     ServerCardAdapter(Context context, Map<Integer, List<Server>> objs, CardView noDataCardView) {
         this.context = context;
@@ -141,7 +141,7 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return items.size();
     }
 
-    public Item getItem(int position) {
+    private Item getItem(int position) {
         return items.get(position);
     }
 }

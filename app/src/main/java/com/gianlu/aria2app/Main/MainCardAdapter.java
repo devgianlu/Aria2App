@@ -35,11 +35,11 @@ import java.util.Locale;
 
 
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
-    private Activity context;
-    private List<Download> objs;
-    private IActionMore actionMore;
-    private IMenuSelected actionMenu;
-    private List<Download.STATUS> filters;
+    private final Activity context;
+    private final List<Download> objs;
+    private final IActionMore actionMore;
+    private final IMenuSelected actionMenu;
+    private final List<Download.STATUS> filters;
 
     public MainCardAdapter(Activity context, List<Download> objs, IActionMore actionMore, IMenuSelected actionMenu) {
         this.context = context;
@@ -131,7 +131,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         });
     }
 
-    public Download getItem(int position) {
+    private Download getItem(int position) {
         return objs.get(position);
     }
     public Download getItem(String gid) {
@@ -249,7 +249,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionMore.onClick(view, holder.getAdapterPosition(), item);
+                actionMore.onClick(item);
             }
         });
         holder.menu.setOnClickListener(new View.OnClickListener() {
@@ -350,7 +350,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     }
 
     public interface IActionMore {
-        void onClick(View view, int position, Download item);
+        void onClick(Download item);
     }
     public interface IMenuSelected {
         void onItemSelected(Download download, DownloadAction.ACTION action);

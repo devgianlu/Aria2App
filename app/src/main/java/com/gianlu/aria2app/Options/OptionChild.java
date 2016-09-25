@@ -3,16 +3,12 @@ package com.gianlu.aria2app.Options;
 import java.util.List;
 
 class OptionChild {
-    private String defValue;
+    private final String defValue;
+    private final List<String> values;
+    private final Option.TYPE type;
     private String currValue;
-    private List<String> values;
-    private Option.TYPE type;
 
-    OptionChild(Option.TYPE type, Object defValue, String currValue) {
-        this(type, defValue, currValue, null);
-    }
-
-    private OptionChild(Option.TYPE type, Object defValue, String currValue, List<String> values) {
+    OptionChild(Option.TYPE type, Object defValue, String currValue, List<String> values) {
         this.type = type;
         if (defValue == null)
             this.defValue = null;
@@ -39,7 +35,7 @@ class OptionChild {
         return defValue;
     }
 
-    public Option.TYPE getType() {
+    Option.TYPE getType() {
         return type;
     }
 

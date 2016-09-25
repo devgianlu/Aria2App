@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Google;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -10,13 +9,13 @@ import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.Arrays;
 import java.util.Locale;
 
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
-    public static Application application;
-    private Activity context;
+    private final Activity context;
 
     public UncaughtExceptionHandler(Activity context) {
         this.context = context;
@@ -25,8 +24,11 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
     @Override
     public void uncaughtException(final Thread thread, final Throwable throwable) {
         if (BuildConfig.DEBUG) throwable.printStackTrace();
-        if (!BuildConfig.DEBUG)
-            Analytics.getDefaultTracker(application).send(new HitBuilders.ExceptionBuilder().setDescription(String.format(Locale.getDefault(), "Thread %d: %s @@ %s", thread.getId(), thread.getName(), throwable.toString() + "\n" + Arrays.toString(throwable.getStackTrace()))).setFatal(true).build());
+        if (!BuildConfig.DEBUG) {
+            Tracker tracker = Analytics.getTracker();
+            if (tracker != null)
+                tracker.send(new HitBuilders.ExceptionBuilder().setDescription(String.format(Locale.getDefault(), "Thread %d: %s @@ %s", thread.getId(), thread.getName(), throwable.toString() + "\n" + Arrays.toString(throwable.getStackTrace()))).setFatal(true).build());
+        }
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.fatalException)

@@ -22,19 +22,15 @@ import java.util.List;
 import java.util.Map;
 
 public class WebSocketing extends WebSocketAdapter {
-    // TODO
     private static WebSocketing webSocketing;
-
     private static IConnecting handler;
     private static boolean isDestroying;
+    private final Map<Integer, IReceived> requests = new ArrayMap<>();
+    private final List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
     private WebSocket socket;
-    private Activity context;
     private boolean errorShown;
-    private Map<Integer, IReceived> requests = new ArrayMap<>();
-    private List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
 
     private WebSocketing(Activity context) throws IOException, NoSuchAlgorithmException {
-        this.context = context;
         socket = Utils.readyWebSocket(context)
                 .addListener(this)
                 .connectAsynchronously();
@@ -49,14 +45,15 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public static WebSocketing newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
-        if (webSocketing == null) webSocketing = new WebSocketing(context);
+        if (webSocketing == null)
+            webSocketing = new WebSocketing(context);
         return webSocketing;
     }
 
     public static void notifyConnection(IConnecting handler) {
         if (webSocketing != null) {
             if (webSocketing.socket.getState() == WebSocketState.OPEN) {
-                handler.onDone(true);
+                handler.onDone();
                 return;
             }
         }
@@ -121,9 +118,8 @@ public class WebSocketing extends WebSocketAdapter {
 
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_OPENED);
         if (handler != null)
-            handler.onDone(true);
+            handler.onDone();
     }
 
     @Override
@@ -133,18 +129,16 @@ public class WebSocketing extends WebSocketAdapter {
 
     @Override
     public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause);
         if (handler != null)
-            handler.onDone(false);
+            handler.onDone();
     }
 
     @Override
     public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
         if (cause instanceof ArrayIndexOutOfBoundsException) return;
 
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.UNKNOWN_EXCEPTION, cause);
         if (handler != null)
-            handler.onDone(false);
+            handler.onDone();
     }
 
     @Override
@@ -154,13 +148,8 @@ public class WebSocketing extends WebSocketAdapter {
             return;
         }
 
-        Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_CLOSED, "Closed by server: " + closedByServer + "\nServer frame: " + serverCloseFrame + "\nClient frame: " + clientCloseFrame);
         if (handler != null)
-            handler.onDone(false);
-    }
-
-    public Activity getContext() {
-        return context;
+            handler.onDone();
     }
 
     public interface IReceived {
@@ -171,6 +160,6 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public interface IConnecting {
-        void onDone(boolean connected);
+        void onDone();
     }
 }

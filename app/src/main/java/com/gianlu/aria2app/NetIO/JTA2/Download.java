@@ -31,16 +31,15 @@ public class Download {
     public Integer errorCode;
     public String errorMessage;
     public String followedBy;
-    public String following;
-    public String belongsTo;
     public Long verifiedLength;
     public boolean verifyIntegrityPending;
-
     // BitTorrent only
     public boolean seeder;
     public Integer numSeeders;
-    public String infoHash;
     public BitTorrent bitTorrent;
+    private String following;
+    private String belongsTo;
+    private String infoHash;
 
     private Download() {
     }
@@ -116,7 +115,7 @@ public class Download {
         return download;
     }
 
-    public static STATUS statusFromString(String status) {
+    private static STATUS statusFromString(String status) {
         if (status == null) return STATUS.UNKNOWN;
         switch (status.toLowerCase()) {
             case "active":

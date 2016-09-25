@@ -12,13 +12,13 @@ import android.util.TypedValue;
 import android.view.View;
 
 public class LetterIconBig extends View {
-    private Context context;
+    private final Context context;
+    private final Rect lettersBounds = new Rect();
+    private final Rect textBounds = new Rect();
+    private final Rect portBounds = new Rect();
     private String letters;
     private String addr;
     private String port;
-    private Rect lettersBounds = new Rect();
-    private Rect textBounds = new Rect();
-    private Rect portBounds = new Rect();
     private Paint shapePaint;
     private Paint letterPaint;
     private Paint textPaint;

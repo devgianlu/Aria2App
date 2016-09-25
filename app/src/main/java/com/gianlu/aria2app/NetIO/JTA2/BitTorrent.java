@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -19,7 +20,7 @@ public class BitTorrent {
     private BitTorrent() {
     }
 
-    public static MODE modeFromString(String mode) {
+    private static MODE modeFromString(String mode) {
         if (mode == null) return MODE.SINGLE;
 
         switch (mode.toLowerCase()) {
@@ -62,6 +63,7 @@ public class BitTorrent {
         return bitTorrent;
     }
 
+    @SuppressLint("canBeLocal")
     public enum MODE {
         MULTI,
         SINGLE;

@@ -11,14 +11,14 @@ import java.net.URLDecoder;
 @SuppressWarnings("ConstantConditions")
 public class Peer {
     public String peerId;
-    public String ip;
-    public int port;
-    public String bitfield;
     public boolean amChoking;
     public boolean peerChoking;
     public int downloadSpeed;
     public int uploadSpeed;
     public boolean seeder;
+    private String ip;
+    private int port;
+    private String bitfield;
 
     private Peer() {
     }

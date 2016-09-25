@@ -3,9 +3,9 @@ package com.gianlu.aria2app.Options;
 import android.support.annotation.Nullable;
 
 class OptionHeader {
-    private String optionLong;
-    private String optionShort;
-    private String optionValue;
+    private final String optionLong;
+    private final String optionShort;
+    private final String optionValue;
     private boolean isQuick;
 
     OptionHeader(String optionLong, String optionShort, String optionValue, boolean isQuick) {

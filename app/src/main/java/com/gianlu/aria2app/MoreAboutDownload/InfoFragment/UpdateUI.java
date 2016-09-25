@@ -39,13 +39,13 @@ public class UpdateUI implements Runnable {
     public static Download.STATUS status = Download.STATUS.UNKNOWN;
     public static int fileNum = 0;
     private static boolean bitfieldEnabled = true;
-    private Activity context;
-    private InfoPagerFragment.ViewHolder holder;
+    private final Activity context;
+    private final InfoPagerFragment.ViewHolder holder;
+    private final String gid;
+    private final int updateRate;
     private IDownloadStatusObserver statusObserver = null;
     private Download.STATUS lastStatus = null;
     private JTA2 jta2;
-    private String gid;
-    private int updateRate;
     private boolean _shouldStop;
     private int errorCounter = 0;
     private IThread handler;
@@ -80,12 +80,12 @@ public class UpdateUI implements Runnable {
         bitfieldEnabled = enabled;
     }
 
-    public void stop() {
+    private void stop() {
         _shouldStop = true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public void stop(IThread handler) {
+    private void stop(IThread handler) {
         _shouldStop = true;
         this.handler = handler;
     }

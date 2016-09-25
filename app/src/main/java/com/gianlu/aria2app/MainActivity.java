@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        UncaughtExceptionHandler.application = getApplication();
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         Utils.logCleaner(this);
@@ -106,12 +105,13 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
                                 return false;
                             case GLOBAL_OPTIONS:
+                                // TODO: Hide hearts
                                 new OptionsDialog(MainActivity.this, R.array.globalOptions, false, new OptionsDialog.IDialog() {
                                     @Override
                                     public void onApply(JTA2 jta2, Map<String, String> options) {
                                         if (options.entrySet().size() == 0) return;
 
-                                        final ProgressDialog pd = Utils.fastProgressDialog(MainActivity.this, R.string.gathering_information, true, false);
+                                        final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
                                         Utils.showDialog(MainActivity.this, pd);
 
                                         if (Analytics.isTrackingAllowed(MainActivity.this))
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                     }
-                                }).showDialog();
+                                }).hideHearts().showDialog();
                                 return true;
                             case PREFERENCES:
                                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
@@ -163,11 +163,11 @@ public class MainActivity extends AppCompatActivity {
                                     return true;
                                 }
 
-                                final ProgressDialog pd = Utils.fastProgressDialog(MainActivity.this, R.string.gathering_information, true, false);
+                                final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
                                 Utils.showDialog(MainActivity.this, pd);
                                 jta2.getVersion(new IVersion() {
                                     @Override
-                                    public void onVersion(List<String> rawFeatures, List<JTA2.FEATURES> enabledFeatures, String version) {
+                                    public void onVersion(List<String> rawFeatures, String version) {
                                         final LinearLayout box = new LinearLayout(MainActivity.this);
                                         box.setOrientation(LinearLayout.VERTICAL);
                                         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
@@ -314,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
                     "localhost",
                     getIntent().getIntExtra("port", 6800),
                     "/jsonrpc",
-                    JTA2.AUTH_METHOD.TOKEN,
                     false,
                     getIntent().getStringExtra("token"),
                     false,
@@ -407,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final AtomicBoolean shouldReport = new AtomicBoolean(true);
-        final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.loading_downloads, true, false);
+        final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.loading_downloads);
         pd.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -452,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
 
                 adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
                     @Override
-                    public void onClick(View view, int position, Download item) {
+                    public void onClick(Download item) {
                         Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                 .putExtra("gid", item.gid)
                                 .putExtra("name", item.getName())
@@ -522,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
                             case RESTART:
                                 downloadAction.restart(item.gid, new DownloadAction.IRestart() {
                                     @Override
-                                    public void onRestarted(String gid) {
+                                    public void onRestarted() {
                                         Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESTARTED);
                                     }
 
@@ -584,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                         if (getIntent().getStringExtra("gid") != null) {
                             Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
                             if (item == null) return;
-                            
+
                             Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                     .putExtra("gid", item.gid)
                                     .putExtra("isTorrent", item.isBitTorrent)
@@ -600,13 +599,8 @@ public class MainActivity extends AppCompatActivity {
                 if (sharedPreferences.getBoolean("a2_runVersionCheckAtStartup", true)) {
                     jta2.getVersion(new IVersion() {
                         @Override
-                        public void onVersion(List<String> rawFeatures, List<JTA2.FEATURES> enabledFeatures, final String version) {
+                        public void onVersion(List<String> rawFeatures, final String version) {
                             new Thread(new AsyncRequest(getString(R.string.versionCheckURL), new IResponse() {
-                                @Override
-                                public void onStart() {
-
-                                }
-
                                 @Override
                                 public void onResponse(String response) {
                                     String latest;
@@ -657,7 +651,7 @@ public class MainActivity extends AppCompatActivity {
                 if (queuing) {
                     WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
                         @Override
-                        public void onDone(boolean connected) {
+                        public void onDone() {
                             loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
                             new Thread(loadDownloads).start();
                         }
@@ -760,7 +754,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Nullable
-    public SingleModeProfileItem defaultProfile() throws IOException, JSONException {
+    private SingleModeProfileItem defaultProfile() throws IOException, JSONException {
         String lastProfile = PreferenceManager.getDefaultSharedPreferences(this).getString("lastUsedProfile", null);
 
         if (ProfileItem.exists(this, lastProfile)) {
@@ -773,7 +767,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
+    private void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
         try {
             deleteFile("Local device.profile");
 
@@ -789,7 +783,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
+    private void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
         drawerManager.setCurrentProfile(profile);
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
@@ -825,14 +819,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reloadPage() {
-        reloadPage(null);
-    }
-
-    public void reloadPage(final IThread handler) {
         UpdateUI.stop(updateUI, new IThread() {
             @Override
             public void stopped() {
-                if (handler != null) handler.stopped();
                 loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
                 new Thread(loadDownloads).start();
             }

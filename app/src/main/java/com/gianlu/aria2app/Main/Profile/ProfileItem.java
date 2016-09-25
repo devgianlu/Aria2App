@@ -30,15 +30,15 @@ public class ProfileItem implements Parcelable {
             return new ProfileItem[size];
         }
     };
-    protected String fileName;
-    protected String globalProfileName;
-    protected boolean singleMode;
-    protected STATUS status = STATUS.UNKNOWN;
-    protected String statusMessage;
-    protected boolean isDefault;
+    String fileName;
+    String globalProfileName;
+    boolean singleMode;
+    STATUS status;
+    boolean isDefault;
+    private String statusMessage;
     private Long latency = -1L;
 
-    protected ProfileItem(Parcel in) {
+    ProfileItem(Parcel in) {
         fileName = in.readString();
         globalProfileName = in.readString();
         singleMode = in.readByte() != 0;
@@ -48,7 +48,7 @@ public class ProfileItem implements Parcelable {
         latency = in.readLong();
     }
 
-    public ProfileItem() {
+    ProfileItem() {
     }
 
     public static boolean exists(Context context, String base64name) {
@@ -118,11 +118,11 @@ public class ProfileItem implements Parcelable {
         return globalProfileName;
     }
 
-    public boolean isSingleMode() {
+    boolean isSingleMode() {
         return singleMode;
     }
 
-    public boolean isDefault() {
+    boolean isDefault() {
         return isDefault;
     }
 
@@ -130,19 +130,19 @@ public class ProfileItem implements Parcelable {
         isDefault = aDefault;
     }
 
-    public Long getLatency() {
+    Long getLatency() {
         return latency;
     }
 
-    public void setLatency(Long latency) {
+    void setLatency(Long latency) {
         this.latency = latency;
     }
 
-    public String getStatusMessage() {
+    String getStatusMessage() {
         return statusMessage;
     }
 
-    public void setStatusMessage(String statusMessage) {
+    void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
 

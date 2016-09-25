@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AddTorrentActivity extends AppCompatActivity {
-    private List<String> urisList = new ArrayList<>();
+    private final List<String> urisList = new ArrayList<>();
     private EditText position;
     private TextView path;
     private Uri data;
@@ -115,7 +115,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         return true;
     }
 
-    public Integer getPosition() {
+    private Integer getPosition() {
         try {
             return Integer.parseInt(position.getText().toString());
         } catch (NumberFormatException ex) {
@@ -123,7 +123,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         }
     }
 
-    public Map<String, String> getOptions() {
+    private Map<String, String> getOptions() {
         return options;
     }
 
@@ -151,7 +151,7 @@ public class AddTorrentActivity extends AppCompatActivity {
 
                 if (data == null) break;
 
-                final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+                final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
                 Utils.showDialog(this, pd);
 
                 InputStream in;

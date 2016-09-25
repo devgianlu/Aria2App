@@ -31,18 +31,18 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
             return new MultiModeProfileItem[size];
         }
     };
-    private Map<ConnectivityCondition, SingleModeProfileItem> profiles = new ArrayMap<>();
+    private final Map<ConnectivityCondition, SingleModeProfileItem> profiles = new ArrayMap<>();
 
     private MultiModeProfileItem() {
         this.singleMode = false;
         this.status = ProfileItem.STATUS.UNKNOWN;
     }
 
-    protected MultiModeProfileItem(Parcel in) {
+    private MultiModeProfileItem(Parcel in) {
         super(in);
     }
 
-    public static MultiModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
+    private static MultiModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
         JSONObject jProfile = new JSONObject(json);
         MultiModeProfileItem item = new MultiModeProfileItem();
         item.fileName = fileName;
@@ -88,21 +88,16 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-    }
-
-    @Override
     public int describeContents() {
         return 0;
     }
 
-    public void addProfile(ConnectivityCondition condition, SingleModeProfileItem profile) {
+    private void addProfile(ConnectivityCondition condition, SingleModeProfileItem profile) {
         profiles.put(condition, profile);
     }
 
     @NonNull
-    public SingleModeProfileItem getDefaultProfile() {
+    private SingleModeProfileItem getDefaultProfile() {
         for (ConnectivityCondition cond : profiles.keySet()) {
             if (profiles.get(cond).isDefault()) return profiles.get(cond);
         }
@@ -110,7 +105,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
     }
 
     @Nullable
-    public SingleModeProfileItem getWiFiProfile(String ssid) {
+    private SingleModeProfileItem getWiFiProfile(String ssid) {
         if (ssid.startsWith("\"") && ssid.endsWith("\"")) {
             ssid = ssid.substring(1, ssid.length() - 1);
         }
@@ -123,7 +118,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
     }
 
     @Nullable
-    public SingleModeProfileItem getMobileProfile() {
+    private SingleModeProfileItem getMobileProfile() {
         for (ConnectivityCondition cond : profiles.keySet()) {
             if (cond.getType() == ConnectivityCondition.TYPE.MOBILE) return profiles.get(cond);
         }
@@ -131,7 +126,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
     }
 
     @Nullable
-    public SingleModeProfileItem getBluetoothProfile() {
+    private SingleModeProfileItem getBluetoothProfile() {
         for (ConnectivityCondition cond : profiles.keySet()) {
             if (cond.getType() == ConnectivityCondition.TYPE.BLUETOOTH) return profiles.get(cond);
         }
@@ -139,7 +134,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
     }
 
     @Nullable
-    public SingleModeProfileItem getEthernetProfile() {
+    private SingleModeProfileItem getEthernetProfile() {
         for (ConnectivityCondition cond : profiles.keySet()) {
             if (cond.getType() == ConnectivityCondition.TYPE.BLUETOOTH) return profiles.get(cond);
         }
@@ -150,7 +145,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         return globalProfileName;
     }
 
-    public Map<ConnectivityCondition, SingleModeProfileItem> getProfiles() {
+    Map<ConnectivityCondition, SingleModeProfileItem> getProfiles() {
         return profiles;
     }
 

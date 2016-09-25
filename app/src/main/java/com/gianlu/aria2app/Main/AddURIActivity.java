@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AddURIActivity extends AppCompatActivity {
-    private List<String> urisList = new ArrayList<>();
+    private final List<String> urisList = new ArrayList<>();
     private EditText position;
     private Map<String, String> options = new ArrayMap<>();
 
@@ -91,7 +91,7 @@ public class AddURIActivity extends AppCompatActivity {
         return true;
     }
 
-    public Integer getPosition() {
+    private Integer getPosition() {
         try {
             return Integer.parseInt(position.getText().toString());
         } catch (Exception ex) {
@@ -99,7 +99,7 @@ public class AddURIActivity extends AppCompatActivity {
         }
     }
 
-    public Map<String, String> getOptions() {
+    private Map<String, String> getOptions() {
         return options;
     }
 
@@ -125,7 +125,7 @@ public class AddURIActivity extends AppCompatActivity {
                     return true;
                 }
 
-                final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+                final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
 
                 if (urisList.size() == 0) break;
                 Utils.showDialog(this, pd);

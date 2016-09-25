@@ -194,7 +194,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/addProfile_directDownload_help"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
@@ -223,7 +222,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/addProfile_directDownload_addrHelp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"

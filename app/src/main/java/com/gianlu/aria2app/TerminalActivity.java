@@ -45,9 +45,9 @@ import java.util.Map;
 import java.util.Random;
 
 public class TerminalActivity extends AppCompatActivity {
+    private final List<TerminalLine> lines = new ArrayList<>();
+    private final Map<String, Long> latencyIDs = new ArrayMap<>();
     private ListView history;
-    private List<TerminalLine> lines = new ArrayList<>();
-    private Map<String, Long> latencyIDs = new ArrayMap<>();
     private Menu menu;
 
     private RelativeLayout container;
@@ -105,7 +105,7 @@ public class TerminalActivity extends AppCompatActivity {
         try {
             JTA2 jta2 = JTA2.newInstance(this);
 
-            final ProgressDialog pd = Utils.fastProgressDialog(this, R.string.gathering_information, true, false);
+            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
             Utils.showDialog(this, pd);
             jta2.listMethods(new IMethod() {
                 @Override
@@ -124,7 +124,7 @@ public class TerminalActivity extends AppCompatActivity {
                 @Override
                 public void onException(Exception ex) {
                     pd.dismiss();
-                    Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.FAILED_LOADING_AUTOCOMPLETION);
+                    Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.FAILED_LOADING_AUTOCOMPLETION, ex);
                 }
             });
         } catch (IOException | NoSuchAlgorithmException ex) {
@@ -145,14 +145,14 @@ public class TerminalActivity extends AppCompatActivity {
                     conn.sendText(json.getText().toString());
                     latencyIDs.put(id.getText().toString(), System.currentTimeMillis());
 
-                    lines.add(new TerminalLine(false, json.getText().toString()));
+                    lines.add(new TerminalLine(json.getText().toString()));
                     history.setAdapter(new TerminalAdapter(lines));
 
                     event.setAction(Analytics.ACTION_TERMINAL_BASIC);
                 } else {
                     conn.sendText(advJson.getText().toString());
 
-                    lines.add(new TerminalLine(false, advJson.getText().toString()));
+                    lines.add(new TerminalLine(advJson.getText().toString()));
                     history.setAdapter(new TerminalAdapter(lines));
 
                     event.setAction(Analytics.ACTION_TERMINAL_ADV);
@@ -224,12 +224,12 @@ public class TerminalActivity extends AppCompatActivity {
             try {
                 String id = new JSONObject(payload).getString("id");
                 if (latencyIDs.containsKey(id)) {
-                    lines.add(new TerminalLine(true, payload, System.currentTimeMillis() - latencyIDs.remove(id)));
+                    lines.add(new TerminalLine(payload, System.currentTimeMillis() - latencyIDs.remove(id)));
                 } else {
-                    lines.add(new TerminalLine(true, payload, -1));
+                    lines.add(new TerminalLine(payload, -1));
                 }
             } catch (JSONException ex) {
-                lines.add(new TerminalLine(true, payload, -1));
+                lines.add(new TerminalLine(payload, -1));
             } finally {
                 history.setAdapter(new TerminalAdapter(lines));
             }
@@ -237,11 +237,11 @@ public class TerminalActivity extends AppCompatActivity {
     }
 
     private class OnTextChanged implements TextWatcher {
-        private TextView json;
-        private AutoCompleteTextView method;
-        private EditText id;
-        private EditText jsonrpc;
-        private EditText params;
+        private final TextView json;
+        private final AutoCompleteTextView method;
+        private final EditText id;
+        private final EditText jsonrpc;
+        private final EditText params;
 
         OnTextChanged(TextView json, AutoCompleteTextView method, EditText id, EditText jsonrpc, EditText params) {
             this.json = json;
@@ -271,39 +271,39 @@ public class TerminalActivity extends AppCompatActivity {
     }
 
     private class TerminalLine {
-        private boolean fromServer;
-        private String message;
-        private long latency;
+        private final boolean fromServer;
+        private final String message;
+        private final long latency;
 
-        public TerminalLine(boolean fromServer, String message) {
-            this.fromServer = fromServer;
+        TerminalLine(String message) {
+            this.fromServer = false;
             this.message = message;
             this.latency = -1;
         }
 
-        public TerminalLine(boolean fromServer, String message, long latency) {
-            this.fromServer = fromServer;
+        TerminalLine(String message, long latency) {
+            this.fromServer = true;
             this.message = message;
             this.latency = latency;
         }
 
-        public boolean isFromServer() {
+        boolean isFromServer() {
             return fromServer;
         }
 
-        public String getMessage() {
+        String getMessage() {
             return message;
         }
 
-        public long getLatency() {
+        long getLatency() {
             return latency;
         }
     }
 
     private class TerminalAdapter extends BaseAdapter {
-        private List<TerminalLine> objs;
+        private final List<TerminalLine> objs;
 
-        public TerminalAdapter(List<TerminalLine> objs) {
+        TerminalAdapter(List<TerminalLine> objs) {
             this.objs = objs;
         }
 

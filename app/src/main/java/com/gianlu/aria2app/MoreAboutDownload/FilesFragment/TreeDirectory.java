@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
+import android.annotation.SuppressLint;
 import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.NetIO.JTA2.File;
@@ -10,13 +11,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class TreeDirectory {
-    public DirectoryViewHolder viewHolder;
-    public LinearLayout subView;
-    private String incrementalPath;
-    private List<TreeDirectory> children;
-    private List<TreeFile> files;
-    private String name;
+class TreeDirectory {
+    private final String incrementalPath;
+    private final List<TreeDirectory> children;
+    private final List<TreeFile> files;
+    private final String name;
+    DirectoryViewHolder viewHolder;
+    LinearLayout subView;
 
     private TreeDirectory(String name, String incrementalPath) {
         children = new ArrayList<>();
@@ -25,18 +26,18 @@ public class TreeDirectory {
         this.incrementalPath = incrementalPath;
     }
 
-    public static TreeDirectory root() {
+    static TreeDirectory root() {
         return new TreeDirectory("", "");
     }
 
-    public static int indexOf(List<TreeDirectory> nodes, TreeDirectory node) {
+    private static int indexOf(List<TreeDirectory> nodes, TreeDirectory node) {
         for (int i = 0; i < nodes.size(); i++)
             if (areEquals(nodes.get(i), node)) return i;
 
         return -1;
     }
 
-    public static boolean areEquals(TreeDirectory first, TreeDirectory second) {
+    private static boolean areEquals(TreeDirectory first, TreeDirectory second) {
         return Objects.equals(first.incrementalPath, second.incrementalPath) && Objects.equals(first.name, second.name);
     }
 
@@ -68,7 +69,7 @@ public class TreeDirectory {
         return completedLength;
     }
 
-    public void addElement(String currentPath, String[] list, File file) {
+    void addElement(String currentPath, String[] list, File file) {
         if (list.length == 0) return;
 
         while (list[0] == null || list[0].isEmpty()) {
@@ -92,21 +93,25 @@ public class TreeDirectory {
         }
     }
 
-    public TreeFile findFile(String path) {
-        for (TreeFile file : files)
-            if (Objects.equals(file.file.path, path)) return file;
-
-        for (TreeDirectory dir : children)
+    @SuppressWarnings("LoopStatementThatDoesntLoop")
+    TreeFile findFile(String path) {
+        for (TreeDirectory dir : children) {
             return dir.findFile(path);
+        }
+
+        for (TreeFile file : files) {
+            if (Objects.equals(file.file.path, path))
+                return file;
+        }
 
         return null;
     }
 
-    public String getIncrementalPath() {
+    String getIncrementalPath() {
         return incrementalPath;
     }
 
-    public List<TreeDirectory> getChildren() {
+    List<TreeDirectory> getChildren() {
         return children;
     }
 
@@ -118,18 +123,19 @@ public class TreeDirectory {
         return name;
     }
 
-    public Long getLength() {
+    private Long getLength() {
         return doLengthSum(this);
     }
 
-    public Long getCompletedLength() {
+    private Long getCompletedLength() {
         return doCompletedLengthSum(this);
     }
 
-    public Float getProgress() {
+    private Float getProgress() {
         return getCompletedLength().floatValue() / getLength().floatValue() * 100;
     }
 
+    @SuppressLint("unused")
     public String getPercentage() {
         return String.format(Locale.getDefault(), "%.2f", getProgress()) + " %";
     }

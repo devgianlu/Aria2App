@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 public class UpdateUI implements Runnable {
-    private MainCardAdapter adapter;
+    private final MainCardAdapter adapter;
+    private final Activity context;
+    private final Integer updateRate;
     private boolean _shouldStop = false;
     private JTA2 jta2;
-    private Activity context;
-    private Integer updateRate;
     private int errorCounter = 0;
     private IThread handler;
 

@@ -33,12 +33,12 @@ import java.util.Map;
 public class MoreAboutDownloadActivity extends AppCompatActivity {
     private PagerAdapter adapter;
     private String gid;
-    public OptionsDialog.IDialog optionsChanged = new OptionsDialog.IDialog() {
+    private final OptionsDialog.IDialog optionsChanged = new OptionsDialog.IDialog() {
         @Override
         public void onApply(JTA2 jta2, Map<String, String> options) {
             if (options.entrySet().size() == 0) return;
 
-            final ProgressDialog pd = Utils.fastProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information, true, false);
+            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information);
             Utils.showDialog(MoreAboutDownloadActivity.this, pd);
 
             if (Analytics.isTrackingAllowed(MoreAboutDownloadActivity.this))

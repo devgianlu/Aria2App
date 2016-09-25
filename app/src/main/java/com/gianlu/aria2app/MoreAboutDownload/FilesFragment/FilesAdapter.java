@@ -32,8 +32,6 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -41,8 +39,8 @@ import java.util.List;
 import java.util.Map;
 
 class FilesAdapter {
-    private Tree tree;
-    private LinearLayout view;
+    private final Tree tree;
+    private final LinearLayout view;
 
     FilesAdapter(final Activity context, final String gid, final Tree tree, final LinearLayout view) {
         this.tree = tree;
@@ -126,12 +124,12 @@ class FilesAdapter {
                                 return;
                             }
 
-                            final ProgressDialog pd = Utils.fastProgressDialog(context, R.string.gathering_information, true, false);
+                            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
                             Utils.showDialog(context, pd);
 
                             jta2.getOption(gid, new IOption() {
                                 @Override
-                                public void onOptions(Map<String, String> options) throws JSONException {
+                                public void onOptions(Map<String, String> options) {
                                     String selected = options.get("select-file");
                                     if (selected == null)
                                         selected = "";

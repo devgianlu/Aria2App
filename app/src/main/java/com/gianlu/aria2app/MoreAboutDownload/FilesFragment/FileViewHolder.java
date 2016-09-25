@@ -7,14 +7,14 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
 
-public class FileViewHolder extends ViewHolder {
-    public TextView name;
-    public ProgressBar progressBar;
-    public TextView percentage;
-    public ImageView status;
+class FileViewHolder extends ViewHolder {
+    public final TextView name;
+    public final ImageView status;
+    final ProgressBar progressBar;
+    final TextView percentage;
 
-    public FileViewHolder(View rootView) {
-        super(rootView, TYPE.FILE);
+    FileViewHolder(View rootView) {
+        super(rootView);
 
         name = (TextView) rootView.findViewById(R.id.fileItem_name);
         progressBar = (ProgressBar) rootView.findViewById(R.id.fileItem_progressBar);

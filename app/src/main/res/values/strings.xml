@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Aria2App</string>
     <string name="title_activity_main_settings">Settings</string>
-    <string name="title_activity_select_profile">Aria2App - Profiles</string>
     <string name="title_activity_addProfile_new">Aria2App - New profile</string>
     <string name="title_activity_addProfile_edit">Aria2App - Edit profile</string>
     <string name="title_activity_logs" translatable="false">Aria2App - Logs</string>
@@ -9,7 +8,6 @@
 
     <!-- Third part -->
     <string name="nv_websocket_client_license" translatable="false"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
-    <string name="androidTreeView_details" translatable="false"><a>https://github.com/bmelnychuk</a></string>
     <string name="mpAndroidChart_details" translatable="false">Copyright 2016 Philipp Jahoda</string>
 
     <!-- In-app text -->
@@ -32,7 +30,6 @@
     <string name="gid" translatable="false"><![CDATA[<b>GID:</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>Destination directory:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
-    <string name="info_hash" translatable="false"><![CDATA[<b>InfoHash:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %d</string>
     <string name="creation_date"><![CDATA[<b>Creation date:</b>]]> %s</string>
     <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
@@ -55,35 +52,22 @@
     <string name="notificationBTComplete">BitTorrent download completed!</string>
 
     <string name="serverOffline">This server is actually offline. Would you like to use it anyway?</string>
-    <string name="downloadNotComplete">This file\'s download is not complete yet! Do you want to download it to this device anyway?</string>
-    <string name="downloadCompleted">Download completed!</string>
-    <string name="downloadFailed">Download failed!</string>
     <string name="copiedClipboard">Copied to clipboard!</string>
-    <string name="logsDeleted">All logs deleted!</string>
-    <string name="unknown_download">Unknown download!</string>
-    <string name="unknown_profile">Unknown profile</string>
     <string name="profile">Profile name:</string>
-    <string name="updateOptions">Update options\' source file</string>
-    <string name="updateOptions_summary">That file contains information about options.</string>
     <string name="unknown">Unknown</string>
     <string name="noPeers">No peers</string>
     <string name="noServers">No servers</string>
-    <string name="saveProfile">Save profile</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
     <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
-    <string name="saveProfile_message">This profile doesn\'t exists. Would you like to save it?\nIf so you can access the server directly from here.</string>
     <string name="noServersMessage">No servers: %s</string>
     <string name="noPeersMessage">No peers: %s</string>
     <string name="loading_downloads">Loading downloads. Please wait…</string>
-    <string name="downloading_file">Downloading file…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
-    <string name="processing_data">Processing some data. Please wait…</string>
     <string name="showBitfield">Show bitfield</string>
     <string name="info">Info</string>
     <string name="files">Files</string>
     <string name="bitfield">Bitfield</string>
-    <string name="imei_box">The application need to access your phone state to retrieve information to check the license. A message box will display now.</string>
     <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
     <string name="profile_hint">My profile</string>
     <string name="mode_single">Single mode (use same address for every connection)</string>
@@ -140,9 +124,7 @@
     <string name="support">Support</string>
     <string name="changeProfile">Change profile</string>
     <string name="add">Add</string>
-    <string name="change">Change</string>
     <string name="options">Options</string>
-    <string name="addURI">Add new URI</string>
     <string name="position">Queue position:</string>
     <string name="pickTorrent">Pick a Torrent file</string>
     <string name="pickMetalink">Pick a Metalink file</string>
@@ -154,24 +136,14 @@
     <string name="metalink" translatable="false">Metalink</string>
     <string name="downloadSpeed">Download speed</string>
     <string name="uploadSpeed">Upload speed</string>
-    <string name="start">Start</string>
     <string name="addNew">Add new</string>
-    <string name="optionsDisclaimer">Options marked in red requires download restart and may not work.</string>
     <string name="ssid" translatable="false">SSID:</string>
     <string name="ssid_hint" translatable="false">My-WiFi</string>
     <string name="noDefault">No default</string>
     <string name="delete">Delete</string>
-    <string name="choose">Choose…</string>
-    <string name="downloads">Downloads</string>
-    <string name="downloadFile">Download file</string>
-    <string name="x" translatable="false">X</string>
     <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
-    <string name="externalStorage_box">The application need to write the external storage to download files! A message box will display now.</string>
-    <string name="background" translatable="false">Background</string>
-    <string name="bitTorrent" translatable="false">BitTorrent</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_authHelp"><a>https://gist.github.com/fxsjy/5465353</a></string>
     <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a></string>
     <string name="directDownload_addrHint" translatable="false">http://127.0.0.1:6801/</string>
     <string name="directDownload_addrHelp">The address must be pointing to a directory listing of the aria2 download directory.</string>
@@ -190,17 +162,11 @@
     <string name="restart">Restart</string>
 
     <!-- Menus text -->
-    <string name="menu_addDownload">Add download(s)</string>
-    <string name="menu_terminal">aria2 terminal</string>
     <string name="menu_globalOptions">Global options</string>
     <string name="menu_downloadOptions">Download options</string>
     <string name="menu_refreshPage">Refresh page</string>
     <string name="menu_preferences">Preferences</string>
     <string name="menu_deleteAllLogs">Delete all logs</string>
-    <string name="menu_addProfile">Add profile</string>
-    <string name="menu_addTorrent">Add Torrent</string>
-    <string name="menu_addMetalink">Add Metalink</string>
-    <string name="menu_addURI">Add URI</string>
 
     <!-- Preference text -->
     <string name="general">General</string>
@@ -214,9 +180,6 @@
     <string name="forceAction">Force action if it fails</string>
     <string name="forceActionOn">If action on download fails, we\'ll try to force it</string>
     <string name="forceActionOff">If action on download fails, we\'re going to do nothing</string>
-    <string name="enableAnimations">Enable animations on file listing</string>
-    <string name="enableAnimationsOn">Animations are enabled (App may crash or not run smoothly with long lists)</string>
-    <string name="enableAnimationsOff">Animations are disabled</string>
     <string name="notifications">Notifications</string>
     <string name="enableNotifications">Enable notification service</string>
     <string name="notificationsOn">Notifications are enabled</string>
@@ -240,17 +203,14 @@
     <string name="app_version">Application version</string>
     <string name="developer">Developer: Gianlu (Report bugs or any suggestion)</string>
     <string name="email" translatable="false">altomanigianluca@gmail.com</string>
-    <string name="unknownMillisecond">- ms</string>
     <string name="openDrawer">Open drawer</string>
     <string name="closeDrawer">Close drawer</string>
     <string name="about_aria2">About aria2</string>
-    <string name="shutdown">Shutdown aria2</string>
     <string name="saveSession">Save session</string>
     <string name="infoTag">INFO: </string>
     <string name="warningTag">WARNING: </string>
     <string name="errorTag">ERROR: </string>
     <string name="editProfile">Select the profile to edit</string>
-    <string name="showCharts">Show charts</string>
     <string name="downloading_source">Download options\' source file</string>
     <string name="stopNotificationService">Stop service</string>
     <string name="versionCheck">Check aria2 version at startup</string>

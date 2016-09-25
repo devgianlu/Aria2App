@@ -18,11 +18,11 @@ import com.gianlu.aria2app.Utils;
 
 import java.util.List;
 
-public class URIAdapter extends BaseAdapter {
-    private Activity context;
-    private List<String> objs;
+class URIAdapter extends BaseAdapter {
+    private final Activity context;
+    private final List<String> objs;
 
-    public URIAdapter(Activity context, List<String> objs) {
+    URIAdapter(Activity context, List<String> objs) {
         this.context = context;
         this.objs = objs;
     }

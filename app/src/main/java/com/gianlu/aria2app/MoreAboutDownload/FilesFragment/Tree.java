@@ -4,10 +4,10 @@ import com.gianlu.aria2app.NetIO.JTA2.File;
 
 import java.util.List;
 
-public class Tree {
-    public static String separator = "/";
+class Tree {
+    private static final String separator = "/";
 
-    private TreeDirectory root;
+    private final TreeDirectory root;
     private TreeDirectory commonRoot;
 
     private Tree(TreeDirectory root) {
@@ -15,16 +15,16 @@ public class Tree {
         commonRoot = null;
     }
 
-    public static Tree newTree() {
+    static Tree newTree() {
         return new Tree(TreeDirectory.root());
     }
 
-    public void addElement(File element) {
+    private void addElement(File element) {
         String[] list = element.path.split(Tree.separator);
         root.addElement(root.getIncrementalPath(), list, element);
     }
 
-    public Tree addElements(List<File> elements) {
+    Tree addElements(List<File> elements) {
         if (elements.isEmpty()) return this;
 
         for (File e : elements) {
@@ -34,7 +34,7 @@ public class Tree {
         return this;
     }
 
-    public TreeDirectory getCommonRoot() {
+    TreeDirectory getCommonRoot() {
         if (commonRoot != null) {
             return commonRoot;
         } else {
@@ -50,7 +50,7 @@ public class Tree {
         }
     }
 
-    public TreeFile findFile(String path) {
+    TreeFile findFile(String path) {
         if (getCommonRoot() == null) return null;
         return getCommonRoot().findFile(path);
     }

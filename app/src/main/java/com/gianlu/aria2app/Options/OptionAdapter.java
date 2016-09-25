@@ -29,22 +29,24 @@ import java.util.Map;
 import java.util.Set;
 
 class OptionAdapter extends BaseExpandableListAdapter {
-    private Context context;
+    private final Context context;
     private final View.OnClickListener helpClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption--" + view.getTag())));
         }
     };
-    private List<OptionHeader> headers;
-    private Map<OptionHeader, OptionChild> children;
-    private boolean quickOptionsFilter;
+    private final List<OptionHeader> headers;
+    private final Map<OptionHeader, OptionChild> children;
+    private final boolean quickOptionsFilter;
+    private final boolean hideHearts;
 
-    OptionAdapter(Context context, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children, boolean quickOptionsFilter) {
+    OptionAdapter(Context context, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children, boolean quickOptionsFilter, boolean hideHearts) {
         this.context = context;
         this.headers = headers;
         this.children = children;
         this.quickOptionsFilter = quickOptionsFilter;
+        this.hideHearts = hideHearts;
     }
 
     @Override
@@ -168,7 +170,8 @@ class OptionAdapter extends BaseExpandableListAdapter {
         holder.optionLong.setText(String.format("%s: ", item.getOptionLong()));
         holder.optionValue.setText(item.getOptionValue());
         holder.optionShort.setText(item.getOptionShort());
-        if (quickOptionsFilter) {
+
+        if (quickOptionsFilter || hideHearts) {
             holder.toggleQuick.setVisibility(View.GONE);
         } else {
             holder.toggleQuick.setVisibility(View.VISIBLE);
@@ -203,11 +206,11 @@ class OptionAdapter extends BaseExpandableListAdapter {
     }
 
     private class GroupViewHolder {
-        ImageButton toggleQuick;
-        TextView optionLong;
-        TextView optionShort;
-        TextView optionValue;
-        private View rootView;
+        final ImageButton toggleQuick;
+        final TextView optionLong;
+        final TextView optionShort;
+        final TextView optionValue;
+        private final View rootView;
 
         GroupViewHolder(View rootView) {
             this.rootView = rootView;
@@ -219,11 +222,11 @@ class OptionAdapter extends BaseExpandableListAdapter {
     }
 
     private class ChildViewHolder {
-        ToggleButton optionToggle;
-        Spinner optionSpinner;
-        EditText optionEditText;
-        ImageButton help;
-        private View rootView;
+        final ToggleButton optionToggle;
+        final Spinner optionSpinner;
+        final EditText optionEditText;
+        final ImageButton help;
+        private final View rootView;
 
         ChildViewHolder(View rootView) {
             this.rootView = rootView;

@@ -16,12 +16,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
-public class UpdateUI implements Runnable {
-    private Activity context;
-    private ServerCardAdapter adapter;
+class UpdateUI implements Runnable {
+    private final Activity context;
+    private final ServerCardAdapter adapter;
+    private final String gid;
+    private final int updateRate;
     private JTA2 jta2;
-    private String gid;
-    private int updateRate;
     private boolean _shouldStop;
     private int errorCounter = 0;
     private IThread handler;
@@ -52,12 +52,12 @@ public class UpdateUI implements Runnable {
             updateUI.stop(handler);
     }
 
-    public void stop() {
+    private void stop() {
         _shouldStop = true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public void stop(IThread handler) {
+    private void stop(IThread handler) {
         _shouldStop = true;
         this.handler = handler;
     }

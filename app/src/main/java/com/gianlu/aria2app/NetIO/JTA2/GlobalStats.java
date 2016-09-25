@@ -1,16 +1,24 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.Nullable;
 
 import org.json.JSONObject;
 
-public class GlobalStats {
-    public Integer downloadSpeed;
-    public Integer uploadSpeed;
-    public Integer numActive;
-    public Integer numWaiting;
-    public Integer numStopped;
-    public Integer numStoppedTotal;
+
+class GlobalStats {
+    @SuppressLint("unused")
+    private Integer downloadSpeed;
+    @SuppressLint("unused")
+    private Integer uploadSpeed;
+    @SuppressLint("unused")
+    private Integer numActive;
+    @SuppressLint("unused")
+    private Integer numWaiting;
+    @SuppressLint("unused")
+    private Integer numStopped;
+    @SuppressLint("unused")
+    private Integer numStoppedTotal;
 
     private GlobalStats() {
     }

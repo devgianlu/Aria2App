@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
 public class Aria2Exception extends Exception {
-    private int code;
+    private final int code;
 
-    public Aria2Exception(String detailMessage, int code) {
+    Aria2Exception(String detailMessage, int code) {
         super(detailMessage);
         this.code = code;
     }

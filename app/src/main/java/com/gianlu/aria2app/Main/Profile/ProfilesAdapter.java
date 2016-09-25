@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -28,9 +29,17 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ProfilesAdapter extends BaseAdapter {
-    private Activity context;
-    private List<ProfileItem> profiles;
-    private IProfile handler;
+    private final Activity context;
+    private final List<ProfileItem> profiles;
+    private final IProfile handler;
+    private final View.OnClickListener statusClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String message = (String) v.getTag();
+            if (message != null)
+                Utils.UIToast(context, message);
+        }
+    };
 
     public ProfilesAdapter(Activity context, List<ProfileItem> profiles, IProfile handler) {
         this.context = context;
@@ -61,7 +70,7 @@ public class ProfilesAdapter extends BaseAdapter {
         }
     }
 
-    public boolean isItemSingleMode(int position) {
+    private boolean isItemSingleMode(int position) {
         return profiles.get(position).isSingleMode();
     }
 
@@ -81,65 +90,66 @@ public class ProfilesAdapter extends BaseAdapter {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = LayoutInflater.from(context).inflate(R.layout.material_drawer_profile_item, viewGroup, false);
-
+        ViewHolder holder = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.material_drawer_profile_item, viewGroup, false));
         final SingleModeProfileItem profile = getItem(i);
 
         if (isItemSingleMode(i)) {
-            view.findViewById(R.id.materialDrawer_profileGlobalName).setVisibility(View.GONE);
-            view.findViewById(R.id.materialDrawer_profileName).setPadding(0, 0, 0, 0);
-            view.findViewById(R.id.materialDrawer_profileAddress).setPadding(0, 0, 0, 0);
+            holder.globalName.setVisibility(View.GONE);
+            holder.name.setPadding(0, 0, 0, 0);
+            holder.address.setPadding(0, 0, 0, 0);
         } else {
-            view.findViewById(R.id.materialDrawer_profileGlobalName).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.materialDrawer_profileName).setPadding(18, 0, 0, 0);
-            view.findViewById(R.id.materialDrawer_profileAddress).setPadding(18, 0, 0, 0);
-            ((TextView) view.findViewById(R.id.materialDrawer_profileGlobalName)).setText(profile.getGlobalProfileName());
+            holder.globalName.setVisibility(View.VISIBLE);
+            holder.name.setPadding(18, 0, 0, 0);
+            holder.address.setPadding(18, 0, 0, 0);
+            holder.globalName.setText(profile.getGlobalProfileName());
         }
 
-        ((TextView) view.findViewById(R.id.materialDrawer_profileName)).setText(profile.getProfileName());
-        ((TextView) view.findViewById(R.id.materialDrawer_profileAddress)).setText(profile.getFullServerAddr());
+        holder.name.setText(profile.getProfileName());
+        holder.address.setText(profile.getFullServerAddr());
 
         if (profile.getLatency() != -1) {
-            view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.VISIBLE);
-            ((TextView) view.findViewById(R.id.materialDrawer_profilePing)).setText(String.format(Locale.getDefault(), "%s ms", profile.getLatency()));
+            holder.ping.setVisibility(View.VISIBLE);
+            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", profile.getLatency()));
         } else {
-            view.findViewById(R.id.materialDrawer_profilePing).setVisibility(View.GONE);
+            holder.ping.setVisibility(View.GONE);
         }
 
-        if (profile.getStatus() != null || profile.getStatus() == ProfileItem.STATUS.UNKNOWN) {
-            view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.GONE);
-            view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.VISIBLE);
+        if (profile.getStatus() == null) {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.status.setVisibility(View.GONE);
         } else {
-            view.findViewById(R.id.materialDrawer_profileProgressBar).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.materialDrawer_profileStatus).setVisibility(View.GONE);
+            holder.progressBar.setVisibility(View.GONE);
+            holder.status.setVisibility(View.VISIBLE);
+            holder.status.setOnClickListener(statusClick);
+            holder.status.setTag(profile.getStatusMessage());
+
+            switch (profile.getStatus()) {
+                case ONLINE:
+                    holder.status.setImageResource(R.drawable.ic_done_black_48dp);
+                    break;
+                case OFFLINE:
+                    holder.status.setImageResource(R.drawable.ic_clear_black_48dp);
+                    break;
+                case ERROR:
+                    holder.status.setImageResource(R.drawable.ic_error_black_48dp);
+                    break;
+                case UNKNOWN:
+                    holder.status.setImageResource(R.drawable.ic_help_black_48dp);
+                    break;
+            }
         }
 
-        switch (profile.getStatus()) {
-            case ONLINE:
-                ((ImageView) view.findViewById(R.id.materialDrawer_profileStatus)).setImageResource(R.drawable.ic_done_black_48dp);
-                break;
-            case OFFLINE:
-                ((ImageView) view.findViewById(R.id.materialDrawer_profileStatus)).setImageResource(R.drawable.ic_clear_black_48dp);
-                break;
-            case ERROR:
-                ((ImageView) view.findViewById(R.id.materialDrawer_profileStatus)).setImageResource(R.drawable.ic_error_black_48dp);
-                break;
-            case UNKNOWN:
-                ((ImageView) view.findViewById(R.id.materialDrawer_profileStatus)).setImageResource(R.drawable.ic_help_black_48dp);
-                break;
-        }
-
-        view.setOnClickListener(new View.OnClickListener() {
+        holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handler.onProfileSelected(profile);
             }
         });
 
-        return view;
+        return holder.rootView;
     }
 
-    public void runTest(int pos, @Nullable IFinished handler) {
+    private void runTest(int pos, @Nullable IFinished handler) {
         SingleModeProfileItem profile = getItem(pos);
 
         try {
@@ -169,13 +179,34 @@ public class ProfilesAdapter extends BaseAdapter {
         void onFinished();
     }
 
-    private class StatusWebSocketHandler extends WebSocketAdapter {
-        private long startTime;
-        private SingleModeProfileItem profile;
-        @Nullable
-        private IFinished handler;
+    private class ViewHolder {
+        final View rootView;
+        final TextView globalName;
+        final TextView name;
+        final TextView address;
+        final TextView ping;
+        final ProgressBar progressBar;
+        final ImageView status;
 
-        public StatusWebSocketHandler(SingleModeProfileItem profile, @Nullable IFinished handler) {
+        public ViewHolder(View rootView) {
+            this.rootView = rootView;
+
+            globalName = (TextView) rootView.findViewById(R.id.materialDrawer_profileGlobalName);
+            name = (TextView) rootView.findViewById(R.id.materialDrawer_profileName);
+            address = (TextView) rootView.findViewById(R.id.materialDrawer_profileAddress);
+            ping = (TextView) rootView.findViewById(R.id.materialDrawer_profilePing);
+            progressBar = (ProgressBar) rootView.findViewById(R.id.materialDrawer_profileProgressBar);
+            status = (ImageView) rootView.findViewById(R.id.materialDrawer_profileStatus);
+        }
+    }
+
+    private class StatusWebSocketHandler extends WebSocketAdapter {
+        private final SingleModeProfileItem profile;
+        @Nullable
+        private final IFinished handler;
+        private long startTime;
+
+        StatusWebSocketHandler(SingleModeProfileItem profile, @Nullable IFinished handler) {
             this.profile = profile;
             this.handler = handler;
         }

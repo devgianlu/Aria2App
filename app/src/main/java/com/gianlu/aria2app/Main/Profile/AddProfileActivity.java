@@ -32,7 +32,6 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.google.android.gms.analytics.HitBuilders;
@@ -237,7 +236,7 @@ public class AddProfileActivity extends AppCompatActivity {
         mProfiles = item.getProfiles();
         mListView.setAdapter(new ConditionsCustomAdapter(this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
             @Override
-            public void onClick(View view, int i, SingleModeProfileItem item, ConnectivityCondition condition) {
+            public void onClick(SingleModeProfileItem item, ConnectivityCondition condition) {
                 createNewCondition(condition.getType(), new Pair<>(condition, item));
             }
         }));
@@ -300,7 +299,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
                     mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
                         @Override
-                        public void onClick(View view, int i, SingleModeProfileItem item, ConnectivityCondition condition) {
+                        public void onClick(SingleModeProfileItem item, ConnectivityCondition condition) {
                             createNewCondition(condition.getType(), new Pair<>(condition, item));
                         }
                     }));
@@ -440,7 +439,6 @@ public class AddProfileActivity extends AppCompatActivity {
                             holder.addr.getText().toString().trim(),
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
-                            JTA2.AUTH_METHOD.NONE,
                             holder.SSL.isChecked(),
                             holder.directDownload.isChecked(),
                             new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
@@ -452,7 +450,6 @@ public class AddProfileActivity extends AppCompatActivity {
                             holder.addr.getText().toString().trim(),
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
-                            JTA2.AUTH_METHOD.TOKEN,
                             holder.SSL.isChecked(),
                             holder.authMethodTokenToken.getText().toString().trim(),
                             holder.directDownload.isChecked(),
@@ -465,7 +462,6 @@ public class AddProfileActivity extends AppCompatActivity {
                             holder.addr.getText().toString().trim(),
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
-                            JTA2.AUTH_METHOD.HTTP,
                             holder.SSL.isChecked(),
                             holder.authMethodHTTPUsername.getText().toString().trim(),
                             holder.authMethodHTTPPassword.getText().toString().trim(),
@@ -479,7 +475,6 @@ public class AddProfileActivity extends AppCompatActivity {
                             holder.addr.getText().toString().trim(),
                             Integer.parseInt(holder.port.getText().toString().trim()),
                             holder.endpoint.getText().toString().trim(),
-                            JTA2.AUTH_METHOD.NONE,
                             holder.SSL.isChecked(),
                             holder.directDownload.isChecked(),
                             new DirectDownload(holder.directDownloadAddr.getText().toString().trim(),
@@ -492,7 +487,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 mProfiles.put(condition, profile);
                 mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
                     @Override
-                    public void onClick(View view, int i, SingleModeProfileItem item, ConnectivityCondition condition) {
+                    public void onClick(SingleModeProfileItem item, ConnectivityCondition condition) {
                         createNewCondition(condition.getType(), new Pair<>(condition, item));
                     }
                 }));
@@ -581,7 +576,6 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.addr.getText().toString().trim(),
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
-                    JTA2.AUTH_METHOD.NONE,
                     sViewHolder.SSL.isChecked(),
                     sViewHolder.directDownload.isChecked(),
                     new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
@@ -593,7 +587,6 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.addr.getText().toString().trim(),
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
-                    JTA2.AUTH_METHOD.TOKEN,
                     sViewHolder.SSL.isChecked(),
                     sViewHolder.authMethodTokenToken.getText().toString().trim(),
                     sViewHolder.directDownload.isChecked(),
@@ -606,7 +599,6 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.addr.getText().toString().trim(),
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
-                    JTA2.AUTH_METHOD.HTTP,
                     sViewHolder.SSL.isChecked(),
                     sViewHolder.authMethodHTTPUsername.getText().toString().trim(),
                     sViewHolder.authMethodHTTPPassword.getText().toString().trim(),
@@ -620,7 +612,6 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.addr.getText().toString().trim(),
                     Integer.parseInt(sViewHolder.port.getText().toString().trim()),
                     sViewHolder.endpoint.getText().toString().trim(),
-                    JTA2.AUTH_METHOD.NONE,
                     sViewHolder.SSL.isChecked(),
                     sViewHolder.directDownload.isChecked(),
                     new DirectDownload(sViewHolder.directDownloadAddr.getText().toString().trim(),
@@ -714,28 +705,28 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     private class SingleModeViewHolder {
-        public EditText addr;
-        public EditText port;
-        public EditText endpoint;
-        public TextView completeURL;
-        public RadioButton authMethodNone;
-        public RadioButton authMethodToken;
-        public EditText authMethodTokenToken;
-        public RadioButton authMethodHTTP;
-        public LinearLayout authMethodHTTPUserContainer;
-        public EditText authMethodHTTPUsername;
-        public LinearLayout authMethodHTTPPasswdContainer;
-        public EditText authMethodHTTPPassword;
-        public CheckBox SSL;
-        public CheckBox directDownload;
-        public LinearLayout directDownloadContainer;
-        public EditText directDownloadAddr;
-        public CheckBox directDownloadAuth;
-        public LinearLayout directDownloadAuthContainer;
-        public EditText directDownloadUsername;
-        public EditText directDownloadPassword;
+        final EditText addr;
+        final EditText port;
+        final EditText endpoint;
+        final TextView completeURL;
+        final RadioButton authMethodNone;
+        final RadioButton authMethodToken;
+        final EditText authMethodTokenToken;
+        final RadioButton authMethodHTTP;
+        final LinearLayout authMethodHTTPUserContainer;
+        final EditText authMethodHTTPUsername;
+        final LinearLayout authMethodHTTPPasswdContainer;
+        final EditText authMethodHTTPPassword;
+        final CheckBox SSL;
+        final CheckBox directDownload;
+        final LinearLayout directDownloadContainer;
+        final EditText directDownloadAddr;
+        final CheckBox directDownloadAuth;
+        final LinearLayout directDownloadAuthContainer;
+        final EditText directDownloadUsername;
+        final EditText directDownloadPassword;
 
-        public SingleModeViewHolder(View rootView) {
+        SingleModeViewHolder(View rootView) {
             addr = (EditText) rootView.findViewById(R.id.addProfile_serverAddr);
             port = (EditText) rootView.findViewById(R.id.addProfile_serverPort);
             endpoint = (EditText) rootView.findViewById(R.id.addProfile_serverEndpoint);
@@ -844,13 +835,14 @@ public class AddProfileActivity extends AppCompatActivity {
             sViewHolder.completeURL.setText(String.format("http://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
         }
     }
-    private class MultiOnTextChangedListener implements TextWatcher {
-        private TextView completeURL;
-        private EditText addr;
-        private EditText port;
-        private EditText endpoint;
 
-        public MultiOnTextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint) {
+    private class MultiOnTextChangedListener implements TextWatcher {
+        private final TextView completeURL;
+        private final EditText addr;
+        private final EditText port;
+        private final EditText endpoint;
+
+        MultiOnTextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint) {
             this.completeURL = completeURL;
             this.addr = addr;
             this.port = port;

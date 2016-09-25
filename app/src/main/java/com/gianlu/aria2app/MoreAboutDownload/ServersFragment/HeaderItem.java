@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.MoreAboutDownload.ServersFragment;
 
-public class HeaderItem extends Item {
-    private int index;
+class HeaderItem extends Item {
+    private final int index;
 
-    public HeaderItem(int index) {
+    HeaderItem(int index) {
         this.index = index;
     }
 

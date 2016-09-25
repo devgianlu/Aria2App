@@ -14,18 +14,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Option implements Serializable {
-    public String short_option;
-    public String long_option;
-    public String def;
-    public List<String> values;
-    public TYPE type;
+class Option implements Serializable {
+    String short_option;
+    String long_option;
+    String def;
+    List<String> values;
+    TYPE type;
 
-    public Option() {
+    private Option() {
     }
 
     @Nullable
-    public static Option fromJSON(JSONObject obj) {
+    private static Option fromJSON(JSONObject obj) {
         if (obj == null) return null;
 
         Option opt = new Option();
@@ -43,7 +43,7 @@ public class Option implements Serializable {
         return opt;
     }
 
-    public static Map<String, Option> fromJSONtoMap(JSONObject obj) {
+    static Map<String, Option> fromJSONtoMap(JSONObject obj) {
         Map<String, Option> map = new HashMap<>();
 
         Iterator<String> iter = obj.keys();
@@ -58,7 +58,7 @@ public class Option implements Serializable {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public static Map<String, Option> loadOptionsMap(final Activity context) {
+    static Map<String, Option> loadOptionsMap(final Activity context) {
         try {
             return (Map<String, Option>) new ObjectInputStream(context.openFileInput("options.ser")).readObject();
         } catch (Exception ex) {
@@ -66,7 +66,7 @@ public class Option implements Serializable {
         }
     }
 
-    public enum TYPE {
+    enum TYPE {
         BOOLEAN,
         PATH_DIR,
         PATH_FILE,

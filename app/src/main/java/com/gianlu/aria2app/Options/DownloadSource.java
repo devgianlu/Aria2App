@@ -12,11 +12,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 
-public class DownloadSource implements Runnable {
-    private Activity context;
-    private IDownload handler;
+class DownloadSource implements Runnable {
+    private final Activity context;
+    private final IDownload handler;
 
-    public DownloadSource(Activity context, IDownload handler) {
+    DownloadSource(Activity context, IDownload handler) {
         this.context = context;
         this.handler = handler;
     }
@@ -44,7 +44,7 @@ public class DownloadSource implements Runnable {
         }
     }
 
-    public interface IDownload {
+    interface IDownload {
         void onStart();
 
         void onDone();

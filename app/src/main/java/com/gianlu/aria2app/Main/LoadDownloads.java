@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoadDownloads implements Runnable {
-    private ILoading handler;
+    private final ILoading handler;
+    private final boolean hideMetadata;
     private JTA2 jta2;
-    private boolean hideMetadata;
 
     public LoadDownloads(Activity context, ILoading handler) {
         this.handler = handler;

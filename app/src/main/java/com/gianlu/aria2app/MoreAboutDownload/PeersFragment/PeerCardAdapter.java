@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Locale;
 
 class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
-    private Context context;
-    private List<Peer> objs;
-    private CardView noDataCardView;
+    private final Context context;
+    private final List<Peer> objs;
+    private final CardView noDataCardView;
 
     PeerCardAdapter(Context context, List<Peer> objs, CardView noDataCardView) {
         this.context = context;
@@ -194,7 +194,7 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         return objs.size();
     }
 
-    public Peer getItem(int position) {
+    private Peer getItem(int position) {
         return objs.get(position);
     }
 }

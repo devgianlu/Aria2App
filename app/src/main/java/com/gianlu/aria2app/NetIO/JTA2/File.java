@@ -60,7 +60,7 @@ public class File {
     }
 
 
-    public static URI_STATUS uriStatusFromString(String status) {
+    private static URI_STATUS uriStatusFromString(String status) {
         if (status == null) return URI_STATUS.WAITING;
         switch (status.toLowerCase()) {
             case "used":

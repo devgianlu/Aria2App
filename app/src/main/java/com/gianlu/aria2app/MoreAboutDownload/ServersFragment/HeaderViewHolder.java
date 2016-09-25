@@ -4,10 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-public class HeaderViewHolder extends RecyclerView.ViewHolder {
-    public TextView title;
+class HeaderViewHolder extends RecyclerView.ViewHolder {
+    public final TextView title;
 
-    public HeaderViewHolder(View itemView) {
+    HeaderViewHolder(View itemView) {
         super(itemView);
 
         title = (TextView) itemView;

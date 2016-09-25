@@ -12,21 +12,21 @@ import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.github.mikephil.charting.charts.LineChart;
 
 class CardViewHolder extends RecyclerView.ViewHolder {
-    DonutProgress donutProgress;
-    TextView downloadName;
-    TextView downloadStatus;
-    TextView downloadSpeed;
-    TextView downloadMissingTime;
-    LinearLayout details;
+    final DonutProgress donutProgress;
+    final TextView downloadName;
+    final TextView downloadStatus;
+    final TextView downloadSpeed;
+    final TextView downloadMissingTime;
+    final LinearLayout details;
+    final ImageButton detailsChartRefresh;
+    final TextView detailsGid;
+    final TextView detailsTotalLength;
+    final TextView detailsCompletedLength;
+    final TextView detailsUploadLength;
+    final ImageButton expand;
+    final Button more;
+    final ImageButton menu;
     LineChart detailsChart;
-    ImageButton detailsChartRefresh;
-    TextView detailsGid;
-    TextView detailsTotalLength;
-    TextView detailsCompletedLength;
-    TextView detailsUploadLength;
-    ImageButton expand;
-    Button more;
-    ImageButton menu;
 
     CardViewHolder(View itemView) {
         super(itemView);

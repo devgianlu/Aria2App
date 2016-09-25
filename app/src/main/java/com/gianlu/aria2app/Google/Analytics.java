@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Google;
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
@@ -11,7 +12,6 @@ import com.google.android.gms.analytics.Tracker;
 
 public class Analytics {
     public static final String CATEGORY_USER_INPUT = "User input";
-    public static final String ACTION_REFRESH = "Refresh";
     public static final String ACTION_NEW_PROFILE = "New profile";
     public static final String ACTION_DELETE_PROFILE = "Profile deleted";
     public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "Global options changed";
@@ -31,6 +31,11 @@ public class Analytics {
             tracker.enableExceptionReporting(true);
         }
 
+        return tracker;
+    }
+
+    @Nullable
+    static Tracker getTracker() {
         return tracker;
     }
 
