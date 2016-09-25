@@ -945,7 +945,6 @@ public class JTA2 {
         });
     }
 
-
     // aria2.getPeers
     public void getPeers(String gid, final IPeers handler) {
         JSONObject request;

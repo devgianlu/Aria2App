@@ -70,6 +70,10 @@ public class OptionsDialog extends AlertDialog.Builder {
     }
 
     public void showDialog() {
+        showDialog(null);
+    }
+
+    public void showDialog(final String gid) {
         if (quickOptionsFilter) {
             Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
             if (quickOptions.size() <= 0) {
@@ -112,13 +116,13 @@ public class OptionsDialog extends AlertDialog.Builder {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showThatDialog(localOptions);
+                    showThatDialog(gid, localOptions);
                 }
             });
         }
     }
 
-    private void showThatDialog(final Map<String, Option> localOptions) {
+    private void showThatDialog(String gid, final Map<String, Option> localOptions) {
         if (jta2 == null) return;
 
         final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
@@ -126,9 +130,9 @@ public class OptionsDialog extends AlertDialog.Builder {
 
         final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
 
-        jta2.getGlobalOption(new IOption() {
+        final IOption optionHandler = new IOption() {
             @Override
-            public void onOptions(final Map<String, String> options) {
+            public void onOptions(Map<String, String> options) {
                 final List<OptionHeader> headers = new ArrayList<>();
                 final Map<OptionHeader, OptionChild> children = new ArrayMap<>();
 
@@ -176,7 +180,7 @@ public class OptionsDialog extends AlertDialog.Builder {
 
                         Utils.showDialog(context, dialog);
                         Window window = dialog.getWindow();
-                        if (window != null) 
+                        if (window != null)
                             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
                         ViewTreeObserver vto = view.getViewTreeObserver();
@@ -196,7 +200,13 @@ public class OptionsDialog extends AlertDialog.Builder {
                 pd.dismiss();
                 Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
             }
-        });
+        };
+
+        if (gid == null) {
+            jta2.getGlobalOption(optionHandler);
+        } else {
+            jta2.getOption(gid, optionHandler);
+        }
     }
 
     public interface IDialog {

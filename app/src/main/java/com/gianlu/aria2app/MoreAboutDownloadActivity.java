@@ -153,10 +153,10 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.moreAboutDownloadMenu_options:
-                new OptionsDialog(this, R.array.downloadOptions, false, optionsChanged).showDialog();
+                new OptionsDialog(this, R.array.downloadOptions, false, optionsChanged).showDialog(gid);
                 break;
             case R.id.moreAboutDownloadMenu_quickOptions:
-                new OptionsDialog(this, R.array.downloadOptions, true, optionsChanged).showDialog();
+                new OptionsDialog(this, R.array.downloadOptions, true, optionsChanged).showDialog(gid);
                 break;
             case R.id.moreAboutDownloadMenu_bitfield:
                 item.setChecked(!item.isChecked());
