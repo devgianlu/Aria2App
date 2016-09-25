@@ -135,7 +135,12 @@ public class WebSocketing extends WebSocketAdapter {
 
     @Override
     public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
-        if (cause instanceof ArrayIndexOutOfBoundsException) return;
+        if (cause instanceof ArrayIndexOutOfBoundsException)
+            return;
+        else if (cause instanceof OutOfMemoryError) {
+            // TODO: Maybe find a fix
+            destroyInstance();
+        }
 
         if (handler != null)
             handler.onDone();
