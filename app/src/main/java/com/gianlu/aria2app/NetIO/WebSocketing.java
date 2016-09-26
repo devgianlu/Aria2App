@@ -138,8 +138,8 @@ public class WebSocketing extends WebSocketAdapter {
         if (cause instanceof ArrayIndexOutOfBoundsException)
             return;
         else if (cause instanceof OutOfMemoryError) {
-            // TODO: Maybe find a fix
-            destroyInstance();
+            requests.clear();
+            connectionQueue.clear();
         }
 
         if (handler != null)
