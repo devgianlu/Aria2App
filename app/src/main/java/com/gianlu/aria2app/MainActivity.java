@@ -326,7 +326,10 @@ public class MainActivity extends AppCompatActivity {
             if (getIntent().getBooleanExtra("external", false)) {
                 profile = SingleModeProfileItem.fromString(this, "Local device");
             } else if (getIntent().getBooleanExtra("fromNotification", false)) {
-                profile = MultiModeProfileItem.fromString(this, getIntent().getStringExtra("fileName")).getCurrentProfile(this);
+                if (ProfileItem.isSingleMode(this, getIntent().getStringExtra("fileName")))
+                    profile = SingleModeProfileItem.fromString(this, getIntent().getStringExtra("fileName"));
+                else
+                    profile = MultiModeProfileItem.fromString(this, getIntent().getStringExtra("fileName")).getCurrentProfile(this);
             } else if (!drawerManager.hasProfiles()) {
                 profile = null;
                 startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
@@ -580,16 +583,13 @@ public class MainActivity extends AppCompatActivity {
 
                         if (getIntent().getBooleanExtra("fromNotification", false)) {
                             Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
-                            if (item == null) return;
+                            if (item == null || item.status == Download.STATUS.UNKNOWN) return;
 
-                            Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                            startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                     .putExtra("gid", item.gid)
                                     .putExtra("isTorrent", item.isBitTorrent)
                                     .putExtra("status", item.status.name())
-                                    .putExtra("name", item.getName());
-
-                            if (item.status == Download.STATUS.UNKNOWN) return;
-                            startActivity(launchActivity);
+                                    .putExtra("name", item.getName()));
                         }
                     }
                 });
@@ -851,6 +851,7 @@ public class MainActivity extends AppCompatActivity {
                     adapter.removeFilter(Download.STATUS.ACTIVE);
                 else
                     adapter.addFilter(Download.STATUS.ACTIVE);
+                break;
             case R.id.a2menu_paused:
                 item.setChecked(!item.isChecked());
 

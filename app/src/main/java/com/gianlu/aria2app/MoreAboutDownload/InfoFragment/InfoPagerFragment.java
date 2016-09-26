@@ -18,7 +18,7 @@ import com.github.mikephil.charting.charts.LineChart;
 
 public class InfoPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
-    private UpdateUI.IDownloadStatusObserver pendingObserver;
+    private UpdateUI.IDownloadObserver pendingObserver;
     private ViewHolder holder;
 
     public static InfoPagerFragment newInstance(String title, String gid) {
@@ -32,11 +32,11 @@ public class InfoPagerFragment extends CommonFragment {
         return fragment;
     }
 
-    public InfoPagerFragment setStatusObserver(UpdateUI.IDownloadStatusObserver observer) {
+    public InfoPagerFragment setObserver(UpdateUI.IDownloadObserver observer) {
         if (updateUI == null)
             pendingObserver = observer;
         else
-            updateUI.setStatusObserver(observer);
+            updateUI.setObserver(observer);
 
         return this;
     }
@@ -46,7 +46,7 @@ public class InfoPagerFragment extends CommonFragment {
         UpdateUI.stop(updateUI);
 
         updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), holder);
-        if (pendingObserver != null) updateUI.setStatusObserver(pendingObserver);
+        if (pendingObserver != null) updateUI.setObserver(pendingObserver);
         new Thread(updateUI).start();
 
         setBitfieldVisibility(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("a2_showBitfield", true));

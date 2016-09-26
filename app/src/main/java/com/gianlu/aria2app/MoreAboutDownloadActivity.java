@@ -88,7 +88,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         assert tabLayout != null;
 
         final List<CommonFragment> fragments = new ArrayList<>();
-        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setStatusObserver(new UpdateUI.IDownloadStatusObserver() {
+        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {
             @Override
             public void onDownloadStatusChanged(Download.STATUS newStatus) {
                 if (menu == null) return;
@@ -107,6 +107,12 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                         menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(false);
                         break;
                 }
+            }
+
+            @Override
+            public void onReportDownloadPieces(int numPieces) {
+                if (numPieces >= 4000 && menu.findItem(R.id.moreAboutDownloadMenu_bitfield).isChecked())
+                    onOptionsItemSelected(menu.findItem(R.id.moreAboutDownloadMenu_bitfield));
             }
         }));
 

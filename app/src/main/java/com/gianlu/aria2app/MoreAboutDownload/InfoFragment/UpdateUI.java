@@ -43,7 +43,8 @@ public class UpdateUI implements Runnable {
     private final InfoPagerFragment.ViewHolder holder;
     private final String gid;
     private final int updateRate;
-    private IDownloadStatusObserver statusObserver = null;
+    private boolean first = true;
+    private IDownloadObserver observer = null;
     private Download.STATUS lastStatus = null;
     private JTA2 jta2;
     private boolean _shouldStop;
@@ -90,8 +91,8 @@ public class UpdateUI implements Runnable {
         this.handler = handler;
     }
 
-    void setStatusObserver(IDownloadStatusObserver statusObserver) {
-        this.statusObserver = statusObserver;
+    void setObserver(IDownloadObserver observer) {
+        this.observer = observer;
     }
 
     @Override
@@ -108,12 +109,25 @@ public class UpdateUI implements Runnable {
                     status = download.status;
                     fileNum = download.files.size();
 
-                    if (!Objects.equals(download.status, lastStatus))
-                        if (statusObserver != null) {
+                    if (first) {
+                        if (observer != null) {
                             context.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    statusObserver.onDownloadStatusChanged(download.status);
+                                    observer.onReportDownloadPieces(download.numPieces);
+                                }
+                            });
+
+                            first = false;
+                        }
+                    }
+
+                    if (!Objects.equals(download.status, lastStatus))
+                        if (observer != null) {
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    observer.onDownloadStatusChanged(download.status);
                                 }
                             });
                         }
@@ -303,7 +317,9 @@ public class UpdateUI implements Runnable {
         }
     }
 
-    public interface IDownloadStatusObserver {
+    public interface IDownloadObserver {
         void onDownloadStatusChanged(Download.STATUS newStatus);
+
+        void onReportDownloadPieces(int numPieces);
     }
 }
