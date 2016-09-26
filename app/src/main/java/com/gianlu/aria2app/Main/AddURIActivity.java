@@ -78,7 +78,7 @@ public class AddURIActivity extends AppCompatActivity {
                     public void onApply(JTA2 jta2, Map<String, String> options) {
                         AddURIActivity.this.options = options;
                     }
-                }).showDialog();
+                }).hideHearts().showDialog();
             }
         });
 

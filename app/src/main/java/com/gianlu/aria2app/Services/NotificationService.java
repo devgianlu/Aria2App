@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.NotificationCompat;
 
 import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Main.Profile.ProfileItem;
@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
-// TODO: To be tested
 public class NotificationService extends IntentService {
     public NotificationService() {
         super("Aria2App notification service");
@@ -72,28 +71,25 @@ public class NotificationService extends IntentService {
         return expanded;
     }
 
-
-    // TODO: Fix deprecation
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!Objects.equals(intent.getAction(), "STOP") && intent.getBooleanExtra("foreground", true)) {
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setShowWhen(false)
+            startForeground(new Random().nextInt(10000), new NotificationCompat.Builder(this)
+                    .setShowWhen(false)
                     .setPriority(Notification.PRIORITY_MIN)
                     .setContentTitle("Notification service")
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setContentText(expandProfileList(intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles")))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
-                    .addAction(new Notification.Action(R.drawable.ic_clear_black_48dp,
+                    .addAction(new NotificationCompat.Action.Builder(
+                            R.drawable.ic_clear_black_48dp,
                             getApplicationContext().getString(R.string.stopNotificationService),
                             PendingIntent.getService(getApplicationContext(), 0,
-                                    new Intent(getApplicationContext(),
-                                            NotificationService.class).setAction("STOP"), 0)))
+                                    new Intent(getApplicationContext(), NotificationService.class)
+                                            .setAction("STOP"), 0)).build())
                     .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
-                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-
-            startForeground(startId, builder.build());
+                    .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT)).build());
         }
 
         onHandleIntent(intent);
@@ -110,7 +106,7 @@ public class NotificationService extends IntentService {
         for (SingleModeProfileItem profile : intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles")) {
             WebSocket webSocket;
             try {
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getServerAddr());
+                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddr());
             } catch (IOException | NoSuchAlgorithmException ex) {
                 stopSelf();
                 return;
@@ -169,15 +165,16 @@ public class NotificationService extends IntentService {
 
             String gid = jResponse.getJSONArray("params").getJSONObject(0).getString("gid");
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-            builder.setContentIntent(
-                    PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class)
-                            .putExtra("fromNotification", true)
-                            .putExtra("fileName", profile.getFileName())
-                            .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setContentText("From profile: " + profile.getGlobalProfileName())
-                    .setContentInfo("GID: " + gid)
-                    .setGroup(profile.getGlobalProfileName())
+            int reqCode = new Random().nextInt(10000);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentIntent(
+                            PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(getApplicationContext(), MainActivity.class)
+                                    .putExtra("fromNotification", true)
+                                    .putExtra("fileName", profile.getFileName())
+                                    .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
+                    .setContentText(profile.getGlobalProfileName())
+                    .setContentInfo("GID#" + gid)
+                    .setGroup(gid)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                     .setAutoCancel(true);
@@ -212,7 +209,7 @@ public class NotificationService extends IntentService {
                     break;
             }
 
-            NotificationManagerCompat.from(getApplicationContext()).notify(new Random().nextInt(100), builder.build());
+            NotificationManagerCompat.from(getApplicationContext()).notify(reqCode, builder.build());
         }
     }
 }

@@ -42,12 +42,14 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
 
     private SingleModeProfileItem() {
         this.singleMode = true;
+        this.status = STATUS.UNKNOWN;
     }
 
     SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
         this.authMethod = JTA2.AUTH_METHOD.NONE;
         this.serverUsername = null;
         this.serverPassword = null;
+        this.status = STATUS.UNKNOWN;
         this.serverToken = null;
         this.profileName = profileName;
         this.notificationsEnabled = notificationsEnabled;
@@ -67,6 +69,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         this.serverUsername = null;
         this.serverPassword = null;
         this.singleMode = true;
+        this.status = STATUS.UNKNOWN;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
         this.serverEndpoint = serverEndpoint;
@@ -84,6 +87,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         this.serverToken = null;
         this.profileName = profileName;
         this.singleMode = true;
+        this.status = STATUS.UNKNOWN;
         this.serverAddr = serverAddr;
         this.serverPort = serverPort;
         this.serverEndpoint = serverEndpoint;

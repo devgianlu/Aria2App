@@ -114,7 +114,7 @@ public class ProfilesAdapter extends BaseAdapter {
             holder.ping.setVisibility(View.GONE);
         }
 
-        if (profile.getStatus() == null) {
+        if (profile.getStatus() == ProfileItem.STATUS.UNKNOWN) {
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.status.setVisibility(View.GONE);
         } else {
@@ -132,9 +132,6 @@ public class ProfilesAdapter extends BaseAdapter {
                     break;
                 case ERROR:
                     holder.status.setImageResource(R.drawable.ic_error_black_48dp);
-                    break;
-                case UNKNOWN:
-                    holder.status.setImageResource(R.drawable.ic_help_black_48dp);
                     break;
             }
         }

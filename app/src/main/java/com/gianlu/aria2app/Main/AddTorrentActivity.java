@@ -104,7 +104,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                     public void onApply(JTA2 jta2, Map<String, String> options) {
                         AddTorrentActivity.this.options = options;
                     }
-                }).showDialog();
+                }).hideHearts().showDialog();
             }
         });
     }
