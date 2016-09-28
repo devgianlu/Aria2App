@@ -221,6 +221,9 @@
     <string name="dialogVersionCheckMessage">Your version of aria2 is outdated. Please update it to the latest to avoid bugs or problems of any kind.\nYou can disable this feature in the preferences.</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
     <string name="enableProfileNotifications">Enable notifications for this profile</string>
+    <string name="downloadFile">Download file</string>
+    <string name="downloadIncomplete">Incomplete download</string>
+    <string name="downloadIncompleteMessage">The current file is incomplete (aka not fully downloaded).\nWould you like to download it anyway?</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

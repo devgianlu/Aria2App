@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class DirectDownload implements Parcelable {
     public static final Creator<DirectDownload> CREATOR = new Creator<DirectDownload>() {
         @Override
@@ -26,7 +29,7 @@ public class DirectDownload implements Parcelable {
     private DirectDownload() {
     }
 
-    DirectDownload(String address, boolean auth, String username, String password) {
+    public DirectDownload(String address, boolean auth, String username, String password) {
         this.address = address;
         this.auth = auth;
         this.username = username;
@@ -54,6 +57,10 @@ public class DirectDownload implements Parcelable {
 
     public String getAddress() {
         return address;
+    }
+
+    public URL getURLAddress() throws MalformedURLException {
+        return new URL(address);
     }
 
     public boolean isAuth() {

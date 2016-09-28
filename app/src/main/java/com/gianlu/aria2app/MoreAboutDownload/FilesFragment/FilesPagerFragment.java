@@ -43,7 +43,7 @@ public class FilesPagerFragment extends CommonFragment {
             JTA2.newInstance(getActivity()).getFiles(getArguments().getString("gid"), new IFiles() {
                 @Override
                 public void onFiles(final List<File> files) {
-                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(getActivity(), getArguments().getString("gid"), Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
+                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(getActivity(), getArguments().getString("gid"), /* TODO: Should appear indeterminate progress bar until completion */ Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
                     new Thread(updateUI).start();
                 }
 

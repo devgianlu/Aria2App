@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Google Analytics -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Download files -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -71,6 +73,11 @@
         <!-- Notification service -->
         <service
             android:name=".Services.NotificationService"
+            android:exported="false" />
+
+        <!-- Download service -->
+        <service
+            android:name=".Services.DownloadService"
             android:exported="false" />
 
         <!-- Google Analytics -->

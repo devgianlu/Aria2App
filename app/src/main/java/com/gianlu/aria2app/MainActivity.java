@@ -725,7 +725,7 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean("a2_enableNotifications", true)) {
             startService(NotificationService.createStartIntent(this));
         } else {
-            stopService(new Intent(this, NotificationService.class));
+            stopService(new Intent(this, NotificationService.class).setAction("STOP"));
         }
     }
 

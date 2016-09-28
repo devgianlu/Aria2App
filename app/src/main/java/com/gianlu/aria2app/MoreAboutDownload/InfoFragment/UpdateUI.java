@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
+import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.FilesAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IDownload;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -110,6 +111,8 @@ public class UpdateUI implements Runnable {
                     fileNum = download.files.size();
 
                     if (first) {
+                        FilesAdapter.dir = download.dir;
+
                         if (observer != null) {
                             context.runOnUiThread(new Runnable() {
                                 @Override

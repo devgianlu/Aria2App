@@ -98,7 +98,7 @@ public class NotificationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (Objects.equals(intent.getAction(), "STOP")) {
+        if (Objects.equals(intent.getAction(), "STOP") || intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles").size() == 0) {
             stopSelf();
             return;
         }
@@ -153,7 +153,7 @@ public class NotificationService extends IntentService {
 
         NotificationHandler(SingleModeProfileItem profile) {
             this.profile = profile;
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(NotificationService.this);
 
             selectedNotifications = sharedPreferences.getStringSet("a2_selectedNotifications", new HashSet<String>());
             soundEnabled = sharedPreferences.getBoolean("a2_enableSound", true);
@@ -166,9 +166,9 @@ public class NotificationService extends IntentService {
             String gid = jResponse.getJSONArray("params").getJSONObject(0).getString("gid");
 
             int reqCode = new Random().nextInt(10000);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this)
                     .setContentIntent(
-                            PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(getApplicationContext(), MainActivity.class)
+                            PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, MainActivity.class)
                                     .putExtra("fromNotification", true)
                                     .putExtra("fileName", profile.getFileName())
                                     .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
@@ -209,7 +209,7 @@ public class NotificationService extends IntentService {
                     break;
             }
 
-            NotificationManagerCompat.from(getApplicationContext()).notify(reqCode, builder.build());
+            NotificationManagerCompat.from(NotificationService.this).notify(reqCode, builder.build());
         }
     }
 }
