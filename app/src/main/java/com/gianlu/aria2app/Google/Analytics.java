@@ -28,6 +28,7 @@ public class Analytics {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(application.getApplicationContext());
             analytics.enableAutoActivityReports(application);
             tracker = analytics.newTracker(R.xml.tracking);
+            tracker.enableAdvertisingIdCollection(true);
             tracker.enableExceptionReporting(true);
         }
 

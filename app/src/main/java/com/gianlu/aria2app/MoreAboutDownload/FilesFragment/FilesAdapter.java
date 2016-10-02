@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -32,7 +31,6 @@ import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Services.DownloadService;
 import com.gianlu.aria2app.Utils;
 
 import java.io.IOException;
@@ -40,7 +38,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class FilesAdapter {
     public static String dir;
@@ -235,29 +232,7 @@ public class FilesAdapter {
                             .setTitle(file.file.getName());
 
                     if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_directDownload", false) && dir != null) {
-                        builder.setNeutralButton(R.string.downloadFile, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (Objects.equals(file.file.completedLength, file.file.length)) {
-                                    context.startService(DownloadService.createStartIntent(context, file.file.getName(), file.file.getRelativePath(dir)));
-                                } else {
-                                    Utils.showDialog(context, new AlertDialog.Builder(context)
-                                            .setTitle(R.string.downloadIncomplete)
-                                            .setMessage(R.string.downloadIncompleteMessage)
-                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                }
-                                            })
-                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    context.startService(DownloadService.createStartIntent(context, file.file.getName(), file.file.getRelativePath(dir)));
-                                                }
-                                            }));
-                                }
-                            }
-                        });
+                        builder.setNeutralButton(R.string.downloadFile, new DownloadFileListener(context, file.file, dir));
                     }
 
                     Utils.showDialog(context, builder);

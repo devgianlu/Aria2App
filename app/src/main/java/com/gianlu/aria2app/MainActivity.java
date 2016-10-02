@@ -185,9 +185,10 @@ public class MainActivity extends AppCompatActivity {
                                         for (String _feature : rawFeatures) {
                                             if (!first)
                                                 extendedList += ", ";
-                                            extendedList += _feature;
+                                            else
+                                                first = false;
 
-                                            first = false;
+                                            extendedList += _feature;
                                         }
 
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
