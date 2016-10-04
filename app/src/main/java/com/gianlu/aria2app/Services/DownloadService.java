@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -25,7 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -69,6 +68,12 @@ public class DownloadService extends IntentService {
                 .setProgress(100, 0, false)
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setSmallIcon(R.drawable.ic_notification)
+                .addAction(new NotificationCompat.Action.Builder(
+                        R.drawable.ic_clear_black_48dp,
+                        getApplicationContext().getString(R.string.stopNotificationService),
+                        PendingIntent.getService(getApplicationContext(), 0,
+                                new Intent(getApplicationContext(), NotificationService.class)
+                                        .setAction("STOP"), 0)).build())
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
 
         onHandleIntent(intent);
@@ -87,41 +92,13 @@ public class DownloadService extends IntentService {
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
     }
 
-    private void setFinished() {
-        notificationManager.notify(notificationId, new NotificationCompat.Builder(this)
-                .setShowWhen(true)
-                .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentTitle("Download finished: " + file.getName())
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setProgress(0, 0, true)
-                .setCategory(Notification.CATEGORY_EVENT)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentIntent(PendingIntent.getActivity(this,
-                        new Random().nextInt(100),
-                        new Intent(Intent.ACTION_VIEW)
-                                .setDataAndType(
-                                        Uri.fromFile(file),
-                                        URLConnection.guessContentTypeFromName(file.getName()))
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                        PendingIntent.FLAG_UPDATE_CURRENT))
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
-    }
-
-    private void setFailed(Exception ex) {
-        notificationManager.notify(notificationId, new NotificationCompat.Builder(this)
-                .setShowWhen(true)
-                .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentTitle("Download failed: " + file.getName())
-                .setContentText(ex.getMessage())
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setProgress(0, 0, true)
-                .setCategory(Notification.CATEGORY_EVENT)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
-    }
-
     @Override
     protected void onHandleIntent(final Intent intent) {
+        if (Objects.equals(intent.getAction(), "STOP")) {
+            stopSelf();
+            return;
+        }
+
         final DirectDownload dd = intent.getParcelableExtra("directDownload");
 
         final URL url;
@@ -130,7 +107,6 @@ public class DownloadService extends IntentService {
             URI uri = new URI(base.getProtocol(), null, base.getHost(), base.getPort(), intent.getStringExtra("remotePath"), null, null);
             url = uri.toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
-            setFailed(ex);
             return;
         }
 
@@ -172,11 +148,12 @@ public class DownloadService extends IntentService {
                     out.close();
                     in.close();
 
+                    timer.cancel();
                     timer.purge();
-                    setFinished();
                     stopSelf();
                 } catch (IOException ex) {
-                    setFailed(ex);
+                    timer.cancel();
+                    timer.purge();
                 }
             }
         }).start();
