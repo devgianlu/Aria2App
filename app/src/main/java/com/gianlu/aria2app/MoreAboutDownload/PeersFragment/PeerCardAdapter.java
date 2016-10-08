@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
@@ -137,8 +138,8 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
             holder.peerId.setText(peer.getPeerId());
             holder.fullAddr.setText(peer.getFullAddress());
-            holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
-            holder.downloadSpeed.setText(Utils.speedFormatter(peer.downloadSpeed));
+            holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed));
+            holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking)), Html.FROM_HTML_MODE_COMPACT));
@@ -165,8 +166,8 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         holder.chart = Utils.setupPeerChart(holder.chart);
         holder.peerId.setText(peer.getPeerId());
         holder.fullAddr.setText(peer.getFullAddress());
-        holder.uploadSpeed.setText(Utils.speedFormatter(peer.uploadSpeed));
-        holder.downloadSpeed.setText(Utils.speedFormatter(peer.downloadSpeed));
+        holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed));
+        holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed));
 
         holder.header.setOnClickListener(new View.OnClickListener() {
             @Override

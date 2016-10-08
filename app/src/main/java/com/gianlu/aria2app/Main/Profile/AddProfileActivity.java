@@ -34,6 +34,7 @@ import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
@@ -362,7 +363,7 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         final AlertDialog dialog = builder.create();
-        Utils.showDialog(this, dialog);
+        CommonUtils.showDialog(this, dialog);
         final AutoCompleteTextView finalSsid = ssid;
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override

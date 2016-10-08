@@ -29,6 +29,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.ByteArrayOutputStream;
@@ -80,7 +81,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                 final EditText uri = new EditText(AddTorrentActivity.this);
                 uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
 
-                Utils.showDialog(AddTorrentActivity.this, new AlertDialog.Builder(AddTorrentActivity.this).setView(uri)
+                CommonUtils.showDialog(AddTorrentActivity.this, new AlertDialog.Builder(AddTorrentActivity.this).setView(uri)
                         .setTitle(R.string.uri)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
@@ -151,8 +152,8 @@ public class AddTorrentActivity extends AppCompatActivity {
 
                 if (data == null) break;
 
-                final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
-                Utils.showDialog(this, pd);
+                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
+                CommonUtils.showDialog(this, pd);
 
                 InputStream in;
                 try {

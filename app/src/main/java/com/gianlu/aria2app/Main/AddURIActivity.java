@@ -23,6 +23,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class AddURIActivity extends AppCompatActivity {
                 final EditText uri = new EditText(AddURIActivity.this);
                 uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
 
-                Utils.showDialog(AddURIActivity.this, new AlertDialog.Builder(AddURIActivity.this)
+                CommonUtils.showDialog(AddURIActivity.this, new AlertDialog.Builder(AddURIActivity.this)
                         .setView(uri)
                         .setTitle(R.string.uri)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
@@ -125,10 +126,10 @@ public class AddURIActivity extends AppCompatActivity {
                     return true;
                 }
 
-                final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
+                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
 
                 if (urisList.size() == 0) break;
-                Utils.showDialog(this, pd);
+                CommonUtils.showDialog(this, pd);
 
                 if (Analytics.isTrackingAllowed(this))
                     Analytics.getDefaultTracker(this.getApplication()).send(new HitBuilders.EventBuilder()

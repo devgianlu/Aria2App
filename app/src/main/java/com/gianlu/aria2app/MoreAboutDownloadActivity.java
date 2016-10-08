@@ -24,6 +24,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.OptionsDialog;
+import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         public void onApply(JTA2 jta2, Map<String, String> options) {
             if (options.entrySet().size() == 0) return;
 
-            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information);
-            Utils.showDialog(MoreAboutDownloadActivity.this, pd);
+            final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information);
+            CommonUtils.showDialog(MoreAboutDownloadActivity.this, pd);
 
             if (Analytics.isTrackingAllowed(MoreAboutDownloadActivity.this))
                 Analytics.getDefaultTracker(MoreAboutDownloadActivity.this.getApplication()).send(new HitBuilders.EventBuilder()

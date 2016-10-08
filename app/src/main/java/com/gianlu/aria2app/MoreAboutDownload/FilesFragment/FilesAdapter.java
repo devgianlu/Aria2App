@@ -32,6 +32,7 @@ import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -90,13 +91,13 @@ public class FilesAdapter {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index), Html.FROM_HTML_MODE_COMPACT));
                         ((TextView) view.findViewById(R.id.fileAboutDialog_path)).setText(Html.fromHtml(context.getString(R.string.path, file.file.path), Html.FROM_HTML_MODE_COMPACT));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(file.file.length)), Html.FROM_HTML_MODE_COMPACT));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(file.file.completedLength)), Html.FROM_HTML_MODE_COMPACT));
+                        ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(file.file.length)), Html.FROM_HTML_MODE_COMPACT));
+                        ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength)), Html.FROM_HTML_MODE_COMPACT));
                     } else {
                         ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index)));
                         ((TextView) view.findViewById(R.id.fileAboutDialog_path)).setText(Html.fromHtml(context.getString(R.string.path, file.file.path)));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(file.file.length))));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(file.file.completedLength))));
+                        ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(file.file.length))));
+                        ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength))));
                     }
 
                     CheckBox selected = (CheckBox) view.findViewById(R.id.fileAboutDialog_selected);
@@ -124,8 +125,8 @@ public class FilesAdapter {
                                 return;
                             }
 
-                            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
-                            Utils.showDialog(context, pd);
+                            final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
+                            CommonUtils.showDialog(context, pd);
 
                             jta2.getOption(gid, new IOption() {
                                 @Override
@@ -213,9 +214,9 @@ public class FilesAdapter {
                         for (Map.Entry<File.URI_STATUS, String> uri : file.file.uris.entrySet()) {
                             TextView _uri;
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)", Html.FROM_HTML_MODE_COMPACT));
+                                _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)", Html.FROM_HTML_MODE_COMPACT));
                             } else {
-                                _uri = Utils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
+                                _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
                             }
                             _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                             _uri.setPadding(50, 10, 0, 10);
@@ -235,7 +236,7 @@ public class FilesAdapter {
                         builder.setNeutralButton(R.string.downloadFile, new DownloadFileListener(context, file.file, dir));
                     }
 
-                    Utils.showDialog(context, builder);
+                    CommonUtils.showDialog(context, builder);
                 }
             });
 

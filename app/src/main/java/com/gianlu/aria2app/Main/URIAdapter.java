@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ class URIAdapter extends BaseAdapter {
                 uri.setText(getItem(i));
                 uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
 
-                Utils.showDialog(context, new AlertDialog.Builder(context).setView(uri)
+                CommonUtils.showDialog(context, new AlertDialog.Builder(context).setView(uri)
                         .setTitle(R.string.uri)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override

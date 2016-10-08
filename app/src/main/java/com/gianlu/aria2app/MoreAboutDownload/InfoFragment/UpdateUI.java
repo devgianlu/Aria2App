@@ -25,6 +25,7 @@ import com.gianlu.aria2app.NetIO.JTA2.IDownload;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
@@ -198,19 +199,19 @@ public class UpdateUI implements Runnable {
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid), Html.FROM_HTML_MODE_COMPACT));
-                                holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(download.length)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(download.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, Utils.dimensionFormatter(download.pieceLength)), Html.FROM_HTML_MODE_COMPACT));
+                                holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(download.completedLength)), Html.FROM_HTML_MODE_COMPACT));
+                                holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(download.length)), Html.FROM_HTML_MODE_COMPACT));
+                                holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(download.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
+                                holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength)), Html.FROM_HTML_MODE_COMPACT));
                                 holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces), Html.FROM_HTML_MODE_COMPACT));
                                 holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections), Html.FROM_HTML_MODE_COMPACT));
                                 holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir), Html.FROM_HTML_MODE_COMPACT));
                             } else {
                                 holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
-                                holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(download.completedLength))));
-                                holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(download.length))));
-                                holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(download.uploadedLength))));
-                                holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, Utils.dimensionFormatter(download.pieceLength))));
+                                holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(download.completedLength))));
+                                holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(download.length))));
+                                holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(download.uploadedLength))));
+                                holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength))));
                                 holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces)));
                                 holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections)));
                                 holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir)));
@@ -228,9 +229,9 @@ public class UpdateUI implements Runnable {
 
                             if (download.verifiedLength != null) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, Utils.dimensionFormatter(download.verifiedLength)), Html.FROM_HTML_MODE_COMPACT));
+                                    holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength)), Html.FROM_HTML_MODE_COMPACT));
                                 } else {
-                                    holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, Utils.dimensionFormatter(download.verifiedLength))));
+                                    holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength))));
 
                                 }
                             } else
@@ -280,7 +281,7 @@ public class UpdateUI implements Runnable {
 
                                 holder.btAnnounceList.removeAllViews();
                                 for (String tracker : download.bitTorrent.announceList) {
-                                    TextView _tracker = Utils.fastTextView(context, tracker);
+                                    TextView _tracker = CommonUtils.fastTextView(context, tracker);
                                     _tracker.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     _tracker.setPadding(50, 10, 0, 10);
                                     _tracker.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));

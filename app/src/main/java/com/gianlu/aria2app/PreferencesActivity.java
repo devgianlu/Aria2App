@@ -9,6 +9,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 
+import com.gianlu.commonutils.CommonUtils;
+
 public class PreferencesActivity extends PreferenceActivity {
 
     @SuppressWarnings("deprecation")
@@ -59,7 +61,7 @@ public class PreferencesActivity extends PreferenceActivity {
 
         findPreference("nv-websocket-client").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                Utils.showDialog(PreferencesActivity.this, builder
+                CommonUtils.showDialog(PreferencesActivity.this, builder
                         .setTitle("nv-websocket-client")
                         .setMessage(R.string.nv_websocket_client_license));
                 return true;
@@ -68,7 +70,7 @@ public class PreferencesActivity extends PreferenceActivity {
 
         findPreference("mpAndroidChart").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                Utils.showDialog(PreferencesActivity.this, builder
+                CommonUtils.showDialog(PreferencesActivity.this, builder
                         .setTitle("MPAndroidChart")
                         .setMessage(R.string.mpAndroidChart_details));
                 return true;

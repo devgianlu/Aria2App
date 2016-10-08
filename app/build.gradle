@@ -31,6 +31,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
+    compile project(':CommonUtils')
 }
 
 

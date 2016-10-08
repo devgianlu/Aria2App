@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
@@ -108,7 +109,7 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);
-            holder.downloadSpeed.setText(Utils.speedFormatter(server.downloadSpeed));
+            holder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed));
         }
     }
 
@@ -131,7 +132,7 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);
-            holder.downloadSpeed.setText(Utils.speedFormatter(server.downloadSpeed));
+            holder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed));
             holder.chart = Utils.setupPeerChart(holder.chart);
         }
     }

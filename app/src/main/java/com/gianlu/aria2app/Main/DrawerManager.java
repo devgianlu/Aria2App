@@ -34,6 +34,7 @@ import com.gianlu.aria2app.Main.Profile.ProfilesAdapter;
 import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONException;
 
@@ -470,7 +471,7 @@ public class DrawerManager {
             public void onClick(View view) {
                 if (profilesAdapter == null || profilesAdapter.getCount() == 0) return;
 
-                Utils.showDialog(context, new AlertDialog.Builder(context)
+                CommonUtils.showDialog(context, new AlertDialog.Builder(context)
                         .setTitle(R.string.editProfile)
                         .setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, profilesAdapter.getItemsName()), new DialogInterface.OnClickListener() {
                             @Override

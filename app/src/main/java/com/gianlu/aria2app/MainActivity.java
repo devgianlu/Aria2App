@@ -50,6 +50,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
-        Utils.logCleaner(this);
+        CommonUtils.logCleaner(this);
         Utils.renameOldProfiles(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
@@ -110,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
                                     public void onApply(JTA2 jta2, Map<String, String> options) {
                                         if (options.entrySet().size() == 0) return;
 
-                                        final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                                        Utils.showDialog(MainActivity.this, pd);
+                                        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+                                        CommonUtils.showDialog(MainActivity.this, pd);
 
                                         if (Analytics.isTrackingAllowed(MainActivity.this))
                                             Analytics.getDefaultTracker(getApplication()).send(new HitBuilders.EventBuilder()
@@ -162,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
                                     return true;
                                 }
 
-                                final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                                Utils.showDialog(MainActivity.this, pd);
+                                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+                                CommonUtils.showDialog(MainActivity.this, pd);
                                 jta2.getVersion(new IVersion() {
                                     @Override
                                     public void onVersion(List<String> rawFeatures, String version) {
@@ -174,10 +175,10 @@ public class MainActivity extends AppCompatActivity {
 
 
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version), Html.FROM_HTML_MODE_COMPACT)));
+                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version), Html.FROM_HTML_MODE_COMPACT)));
                                         } else {
                                             //noinspection deprecation
-                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
+                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
                                         }
 
                                         String extendedList = "";
@@ -192,10 +193,10 @@ public class MainActivity extends AppCompatActivity {
                                         }
 
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList), Html.FROM_HTML_MODE_COMPACT)));
+                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList), Html.FROM_HTML_MODE_COMPACT)));
                                         } else {
                                             //noinspection deprecation
-                                            box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
+                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
 
                                         }
 
@@ -203,14 +204,14 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void onSessionInfo(String sessionID) {
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                                    box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID), Html.FROM_HTML_MODE_COMPACT)));
+                                                    box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID), Html.FROM_HTML_MODE_COMPACT)));
                                                 } else {
                                                     //noinspection deprecation
-                                                    box.addView(Utils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
+                                                    box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
                                                 }
 
                                                 pd.dismiss();
-                                                Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
+                                                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
                                                         .setView(box)
                                                         .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
                                                             @Override
@@ -258,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onProfileItemSelected(final SingleModeProfileItem profile, boolean fromRecent) {
                         if (!fromRecent && profile.getStatus() != ProfileItem.STATUS.ONLINE) {
-                            Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
+                            CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -408,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final AtomicBoolean shouldReport = new AtomicBoolean(true);
-        final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.loading_downloads);
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.loading_downloads);
         pd.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -612,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     if (!Objects.equals(latest, version)) {
-                                        Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                                        CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                                                 .setTitle(R.string.dialogVersionCheck)
                                                 .setMessage(R.string.dialogVersionCheckMessage)
                                                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -665,7 +666,7 @@ public class MainActivity extends AppCompatActivity {
                     exx.printStackTrace();
                 }
 
-                Utils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.noCommunication)
                         .setCancelable(false)
                         .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))

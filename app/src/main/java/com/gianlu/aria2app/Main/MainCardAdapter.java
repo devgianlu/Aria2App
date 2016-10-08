@@ -24,6 +24,7 @@ import com.gianlu.aria2app.DownloadAction;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
@@ -183,15 +184,15 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
             else
                 holder.downloadStatus.setText(item.status.getFormal(context, true));
-            holder.downloadSpeed.setText(Utils.speedFormatter(item.downloadSpeed));
-            holder.downloadMissingTime.setText(Utils.timeFormatter(item.getMissingTime()));
+            holder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed));
+            holder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength)), Html.FROM_HTML_MODE_COMPACT));
-                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
+                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength)), Html.FROM_HTML_MODE_COMPACT));
+                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
             } else {
-                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, Utils.dimensionFormatter(item.completedLength))));
-                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, Utils.dimensionFormatter(item.uploadedLength))));
+                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength))));
+                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadedLength))));
             }
 
 
@@ -219,10 +220,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid), Html.FROM_HTML_MODE_COMPACT));
-            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length)), Html.FROM_HTML_MODE_COMPACT));
+            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length)), Html.FROM_HTML_MODE_COMPACT));
         } else {
             holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
-            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, Utils.dimensionFormatter(item.length))));
+            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
         }
 
 

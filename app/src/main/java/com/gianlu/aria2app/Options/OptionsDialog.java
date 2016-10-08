@@ -19,6 +19,7 @@ import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -85,12 +86,12 @@ public class OptionsDialog extends AlertDialog.Builder {
         final Map<String, Option> localOptions = Option.loadOptionsMap(context);
 
         if (localOptions == null) {
-            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.downloading_source);
+            final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.downloading_source);
 
             new Thread(new DownloadSource(context, new DownloadSource.IDownload() {
                 @Override
                 public void onStart() {
-                    Utils.showDialog(context, pd);
+                    CommonUtils.showDialog(context, pd);
                 }
 
                 @Override
@@ -125,8 +126,8 @@ public class OptionsDialog extends AlertDialog.Builder {
     private void showThatDialog(String gid, final Map<String, Option> localOptions) {
         if (jta2 == null) return;
 
-        final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
-        Utils.showDialog(context, pd);
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
+        CommonUtils.showDialog(context, pd);
 
         final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
 
@@ -178,7 +179,7 @@ public class OptionsDialog extends AlertDialog.Builder {
                     public void run() {
                         final AlertDialog dialog = create();
 
-                        Utils.showDialog(context, dialog);
+                        CommonUtils.showDialog(context, dialog);
                         Window window = dialog.getWindow();
                         if (window != null)
                             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);

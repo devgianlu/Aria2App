@@ -8,7 +8,7 @@ import android.support.v7.app.AlertDialog;
 import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.DownloadService;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ class DownloadFileListener implements DialogInterface.OnClickListener {
         if (Objects.equals(file.completedLength, file.length)) {
             shouldStartDownload();
         } else {
-            Utils.showDialog(context, new AlertDialog.Builder(context)
+            CommonUtils.showDialog(context, new AlertDialog.Builder(context)
                     .setTitle(R.string.downloadIncomplete)
                     .setMessage(R.string.downloadIncompleteMessage)
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

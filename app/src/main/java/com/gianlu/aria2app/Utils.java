@@ -1,23 +1,18 @@
 package com.gianlu.aria2app;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.text.Spanned;
 import android.util.Base64;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
+import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -33,21 +28,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.security.NoSuchAlgorithmException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -81,28 +67,6 @@ public class Utils {
                     .start();
     }
 
-    public static void showDialog(Activity activity, final Dialog dialog) {
-        if (activity == null || activity.isFinishing()) return;
-
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                dialog.show();
-            }
-        });
-    }
-
-    public static void showDialog(Activity activity, final AlertDialog.Builder builder) {
-        if (activity == null || activity.isFinishing()) return;
-
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                builder.create().show();
-            }
-        });
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
     static void renameOldProfiles(Context context) {
         if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("oldProfiles", true))
@@ -120,28 +84,6 @@ public class Utils {
         }
 
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("oldProfiles", false).apply();
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @SuppressLint("SimpleDateFormat")
-    public static void logCleaner(Activity context) {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -7);
-
-        for (File file : context.getFilesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return s.toLowerCase().endsWith(".log") || s.toLowerCase().endsWith(".secret");
-            }
-        })) {
-            try {
-                if (new SimpleDateFormat("d-LL-yyyy").parse(file.getName().replace(".log", "").replace(".secret", "")).before(cal.getTime())) {
-                    file.delete();
-                }
-            } catch (ParseException ex) {
-                UIToast(context, TOAST_MESSAGES.FAILED_CLEARING_LOGS, ex);
-            }
-        }
     }
 
     public static LineChart setupChart(LineChart chart, boolean isCardView) {
@@ -247,60 +189,6 @@ public class Utils {
         return "#" + code + ": " + message;
     }
 
-    public static String speedFormatter(float v) {
-        if (v <= 0) {
-            return "0 B/s";
-        } else {
-            final String[] units = new String[]{"B/s", "KB/s", "MB/s", "GB/s", "TB/s"};
-            int digitGroups = (int) (Math.log10(v) / Math.log10(1000));
-            return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
-        }
-    }
-
-    public static String dimensionFormatter(float v) {
-        if (v <= 0) {
-            return "0 B";
-        } else {
-            final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
-            int digitGroups = (int) (Math.log10(v) / Math.log10(1000));
-            return new DecimalFormat("#,##0.#").format(v / Math.pow(1000, digitGroups)) + " " + units[digitGroups];
-        }
-    }
-
-    public static String timeFormatter(Long sec) {
-        if (sec == null) return "∞";
-
-        int day = (int) TimeUnit.SECONDS.toDays(sec);
-        long hours = TimeUnit.SECONDS.toHours(sec) -
-                TimeUnit.DAYS.toHours(day);
-        long minute = TimeUnit.SECONDS.toMinutes(sec) -
-                TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(sec));
-        long second = TimeUnit.SECONDS.toSeconds(sec) -
-                TimeUnit.MINUTES.toSeconds(TimeUnit.SECONDS.toMinutes(sec));
-
-        if (day > 0) {
-            if (day > 1000) {
-                return "∞";
-            } else {
-                return String.format(Locale.getDefault(), "%02d", day) + "d " + String.format(Locale.getDefault(), "%02d", hours) + "h " + String.format(Locale.getDefault(), "%02d", minute) + "m " + String.format(Locale.getDefault(), "%02d", second) + "s";
-            }
-        } else {
-            if (hours > 0) {
-                return String.format(Locale.getDefault(), "%02d", hours) + "h " + String.format(Locale.getDefault(), "%02d", minute) + "m " + String.format(Locale.getDefault(), "%02d", second) + "s";
-            } else {
-                if (minute > 0) {
-                    return String.format(Locale.getDefault(), "%02d", minute) + "m " + String.format(Locale.getDefault(), "%02d", second) + "s";
-                } else {
-                    if (second > 0) {
-                        return String.format(Locale.getDefault(), "%02d", second) + "s";
-                    } else {
-                        return "∞";
-                    }
-                }
-            }
-        }
-    }
-
     @NonNull
     public static List<Integer> bitfieldProcessor(int numPieces, String bitfield) {
         List<Integer> pieces = new ArrayList<>();
@@ -393,32 +281,6 @@ public class Utils {
         }
     }
 
-    public static TextView fastTextView(Context context, String text) {
-        TextView textView = new TextView(context);
-        textView.setText(text);
-
-        return textView;
-    }
-
-    public static TextView fastTextView(Context context, Spanned text) {
-        TextView textView = new TextView(context);
-        textView.setText(text);
-
-        return textView;
-    }
-
-    private static ProgressDialog fastIndeterminateProgressDialog(Context context, String message) {
-        ProgressDialog pd = new ProgressDialog(context);
-        pd.setMessage(message);
-        pd.setIndeterminate(true);
-        pd.setCancelable(false);
-        return pd;
-    }
-
-    public static ProgressDialog fastIndeterminateProgressDialog(Context context, int message) {
-        return fastIndeterminateProgressDialog(context, context.getString(message));
-    }
-
     public static JSONArray readyParams(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -463,7 +325,7 @@ public class Utils {
                 Toast.makeText(context, message.toString() + (message.isError() ? " See logs for more..." : ""), Toast.LENGTH_SHORT).show();
             }
         });
-        LogMe(context, message.toString(), message.isError());
+        CommonUtils.logMe(context, message.toString(), message.isError());
     }
 
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras) {
@@ -474,7 +336,7 @@ public class Utils {
             }
         });
 
-        LogMe(context, message + " Details: " + message_extras, message.isError());
+        CommonUtils.logMe(context, message + " Details: " + message_extras, message.isError());
     }
 
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Throwable exception) {
@@ -488,8 +350,8 @@ public class Utils {
             }
         });
 
-        LogMe(context, message + " Details: " + exception.getMessage(), message.isError());
-        SecretLog(context, exception);
+        CommonUtils.logMe(context, message + " Details: " + exception.getMessage(), message.isError());
+        CommonUtils.secretLog(context, exception);
     }
 
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras, Runnable extra) {
@@ -500,7 +362,7 @@ public class Utils {
             }
         });
         context.runOnUiThread(extra);
-        LogMe(context, message + " Details: " + message_extras, message.isError());
+        CommonUtils.logMe(context, message + " Details: " + message_extras, message.isError());
     }
 
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Throwable exception, Runnable extra) {
@@ -515,8 +377,8 @@ public class Utils {
         });
         context.runOnUiThread(extra);
 
-        LogMe(context, message + " Details: " + exception.getMessage(), message.isError());
-        SecretLog(context, exception);
+        CommonUtils.logMe(context, message + " Details: " + exception.getMessage(), message.isError());
+        CommonUtils.secretLog(context, exception);
     }
 
     public static void UIToast(final Activity context, final TOAST_MESSAGES message, Runnable extra) {
@@ -527,36 +389,9 @@ public class Utils {
             }
         });
         context.runOnUiThread(extra);
-        LogMe(context, message.toString(), message.isError());
+        CommonUtils.logMe(context, message.toString(), message.isError());
     }
 
-    private static void SecretLog(Activity context, Throwable exx) {
-        exx.printStackTrace();
-
-        try {
-            FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".secret", Context.MODE_APPEND);
-            OutputStreamWriter osw = new OutputStreamWriter(fOut);
-
-            osw.write(new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()) + " >> " + exx.toString() + "\n" + Arrays.toString(exx.getStackTrace()) + "\n\n");
-            osw.flush();
-            osw.close();
-        } catch (IOException ex) {
-            UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
-        }
-    }
-
-    private static void LogMe(Activity context, String message, boolean isError) {
-        try {
-            FileOutputStream fOut = context.openFileOutput(new SimpleDateFormat("d-LL-yyyy", Locale.getDefault()).format(new java.util.Date()) + ".log", Context.MODE_APPEND);
-            OutputStreamWriter osw = new OutputStreamWriter(fOut);
-
-            osw.write((isError ? "--ERROR--" : "--INFO--") + new SimpleDateFormat("hh:mm:ss", Locale.getDefault()).format(new java.util.Date()) + " >> " + message.replace("\n", " ") + "\n");
-            osw.flush();
-            osw.close();
-        } catch (IOException ex) {
-            UIToast(context, "Logger: " + ex.getMessage(), Toast.LENGTH_LONG);
-        }
-    }
     public enum TOAST_MESSAGES {
         WS_OPENED("WebSocket connected!", false),
         WS_CLOSED("WebSocket has been closed!", true),
@@ -585,7 +420,6 @@ public class Utils {
         FAILED_CHANGE_FILE_SELECTION("Failed selecting/deselecting file!", true),
         FAILED_CHECKING_VERSION("Failed checking aria2 version!", true),
         LOGS_DELETED("Logs deleted!", false),
-        UNKNOWN_EXCEPTION("Unknown exception. Don't worry!", true),
         INVALID_PROFILE_NAME("Invalid profile name!", false),
         INVALID_SERVER_IP("Invalid server address!", false),
         INVALID_SERVER_PORT("Invalid server port, must be > 0 and < 65536!", false),
@@ -631,7 +465,7 @@ public class Utils {
     private static class CustomYAxisValueFormatter implements YAxisValueFormatter {
         @Override
         public String getFormattedValue(float v, YAxis yAxis) {
-            return Utils.speedFormatter(v);
+            return CommonUtils.speedFormatter(v);
         }
     }
 }

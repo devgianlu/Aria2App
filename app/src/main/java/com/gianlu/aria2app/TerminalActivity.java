@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.NetIO.JTA2.IMethod;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -105,8 +106,8 @@ public class TerminalActivity extends AppCompatActivity {
         try {
             JTA2 jta2 = JTA2.newInstance(this);
 
-            final ProgressDialog pd = Utils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
-            Utils.showDialog(this, pd);
+            final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
+            CommonUtils.showDialog(this, pd);
             jta2.listMethods(new IMethod() {
                 @Override
                 public void onMethods(final List<String> methods) {
