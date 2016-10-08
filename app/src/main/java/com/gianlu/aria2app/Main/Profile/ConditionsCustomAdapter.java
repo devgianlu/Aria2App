@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +73,7 @@ class ConditionsCustomAdapter extends BaseAdapter {
                 if (b)
                     currDefault = i;
                 else
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.MUST_PICK_DEFAULT);
+                    CommonUtils.UIToast(context, Utils.ToastMessages.MUST_PICK_DEFAULT);
                 notifyDataSetChanged();
             }
         });

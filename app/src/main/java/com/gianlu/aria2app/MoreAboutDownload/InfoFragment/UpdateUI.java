@@ -275,7 +275,7 @@ public class UpdateUI implements Runnable {
                                         ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                                         manager.setPrimaryClip(ClipData.newPlainText("announceTracker", ((TextView) view).getText().toString()));
 
-                                        Utils.UIToast(context, context.getString(R.string.copiedClipboard));
+                                        CommonUtils.UIToast(context, context.getString(R.string.copiedClipboard));
                                     }
                                 };
 
@@ -300,7 +300,7 @@ public class UpdateUI implements Runnable {
                 public void onException(Exception exception) {
                     errorCounter++;
                     if (errorCounter <= 2) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                        CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                     } else {
                         _shouldStop = true;
                     }

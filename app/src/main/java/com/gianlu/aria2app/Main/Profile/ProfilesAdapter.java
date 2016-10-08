@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -37,7 +38,7 @@ public class ProfilesAdapter extends BaseAdapter {
         public void onClick(View v) {
             String message = (String) v.getTag();
             if (message != null)
-                Utils.UIToast(context, message);
+                CommonUtils.UIToast(context, message);
         }
     };
 
@@ -255,7 +256,7 @@ public class ProfilesAdapter extends BaseAdapter {
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, cause);
+            CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, cause);
             profile.setStatus(ProfileItem.STATUS.ERROR);
             profile.setStatusMessage(cause.getMessage());
 

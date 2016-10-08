@@ -9,6 +9,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.IDownload;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +33,7 @@ public class UpdateUI implements Runnable {
         try {
             jta2 = JTA2.newInstance(context);
         } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
             stop();
         }
     }
@@ -73,7 +74,7 @@ public class UpdateUI implements Runnable {
                     public void onException(Exception exception) {
                         if (exception.getMessage().endsWith("is not found")) return;
 
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                        CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
 
                         errorCounter++;
                         if (errorCounter >= 2) _shouldStop = true;

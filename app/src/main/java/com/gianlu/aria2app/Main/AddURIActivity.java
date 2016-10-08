@@ -122,7 +122,7 @@ public class AddURIActivity extends AppCompatActivity {
                 try {
                     jta2 = JTA2.newInstance(this);
                 } catch (IOException | NoSuchAlgorithmException ex) {
-                    Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+                    CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);
                     return true;
                 }
 
@@ -151,7 +151,7 @@ public class AddURIActivity extends AppCompatActivity {
                     @Override
                     public void onException(Exception ex) {
                         pd.dismiss();
-                        Utils.UIToast(AddURIActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
+                        CommonUtils.UIToast(AddURIActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
                     }
                 });
         }

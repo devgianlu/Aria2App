@@ -114,7 +114,7 @@ public class DrawerManager {
             public void onClick(View view) {
                 String name = ((LetterIconSmall) view).getProfileFileName();
                 if (!ProfileItem.exists(context, name)) {
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.PROFILE_DOES_NOT_EXIST, name);
+                    CommonUtils.UIToast(context, Utils.ToastMessages.PROFILE_DOES_NOT_EXIST, name);
                     return;
                 }
 
@@ -131,7 +131,7 @@ public class DrawerManager {
                     else
                         listener.onProfileItemSelected(MultiModeProfileItem.fromString(context, name).getCurrentProfile(context), true);
                 } catch (JSONException | IOException ex) {
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+                    CommonUtils.UIToast(context, Utils.ToastMessages.FATAL_EXCEPTION, ex);
                 }
             }
         };
@@ -482,7 +482,7 @@ public class DrawerManager {
                                             .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).getFileName()))
                                             .putExtra("base64name", profilesAdapter.getItem(i).getFileName()));
                                 } catch (JSONException | IOException ex) {
-                                    Utils.UIToast(context, Utils.TOAST_MESSAGES.CANNOT_EDIT_PROFILE, ex);
+                                    CommonUtils.UIToast(context, Utils.ToastMessages.CANNOT_EDIT_PROFILE, ex);
                                     context.deleteFile(profilesAdapter.getItem(i).getGlobalProfileName() + ".profile");
                                 }
                             }

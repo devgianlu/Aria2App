@@ -58,9 +58,9 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
                                 "\nStacktrace: " + Arrays.toString(throwable.getStackTrace()));
                         try {
                             context.startActivity(Intent.createChooser(intent, "Send mail to the developer..."));
-                            Utils.UIToast(context, "Thank you! :)");
+                            CommonUtils.UIToast(context, "Thank you! :)");
                         } catch (android.content.ActivityNotFoundException ex) {
-                            Utils.UIToast(context, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
+                            CommonUtils.UIToast(context, Utils.ToastMessages.NO_EMAIL_CLIENT);
                         }
 
                         System.exit(1);

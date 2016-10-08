@@ -129,10 +129,10 @@ public class AddProfileActivity extends AppCompatActivity {
                 modeGroup.getChildAt(0).setEnabled(false);
                 modeGroup.getChildAt(1).setEnabled(false);
             } catch (FileNotFoundException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FILE_NOT_FOUND);
+                CommonUtils.UIToast(this, Utils.ToastMessages.FILE_NOT_FOUND);
                 onBackPressed();
             } catch (IOException | JSONException ex) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+                CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
                 ex.printStackTrace();
                 onBackPressed();
             }
@@ -156,7 +156,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 if (getIntent().getBooleanExtra("canGoBack", true)) {
                     onBackPressed();
                 } else {
-                    Utils.UIToast(this, Utils.TOAST_MESSAGES.MUST_CREATE_FIRST_PROFILE);
+                    CommonUtils.UIToast(this, Utils.ToastMessages.MUST_CREATE_FIRST_PROFILE);
                 }
                 break;
             case R.id.addProfileMenu_done:
@@ -372,7 +372,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 switch (type) {
                     case WIFI:
                         if (finalSsid.getText().toString().trim().isEmpty()) {
-                            Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SSID);
+                            CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SSID);
                             return;
                         }
                         condition = ConnectivityCondition.newWiFiCondition(finalSsid.getText().toString().trim());
@@ -389,42 +389,42 @@ public class AddProfileActivity extends AppCompatActivity {
                 }
 
                 if (condition == null) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, "CONDITION is null");
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.FATAL_EXCEPTION, "CONDITION is null");
                     return;
                 }
 
                 if (holder.addr.getText().toString().trim().isEmpty()) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_IP);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_IP);
                     return;
                 }
 
                 if (!holder.port.getText().toString().trim().isEmpty()) {
                     if (0 > Integer.parseInt(holder.port.getText().toString()) && Integer.parseInt(holder.port.getText().toString()) < 65536) {
-                        Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
+                        CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_PORT);
                         return;
                     }
                 } else {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_PORT);
                     return;
                 }
 
                 if (holder.endpoint.getText().toString().trim().isEmpty() || (!holder.endpoint.getText().toString().startsWith("/"))) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_ENDPOINT);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_ENDPOINT);
                     return;
                 }
 
                 if (holder.authMethodToken.isChecked() && holder.authMethodTokenToken.getText().toString().trim().isEmpty()) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_TOKEN);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_TOKEN);
                     return;
                 }
 
                 if (holder.authMethodHTTP.isChecked() && (holder.authMethodHTTPUsername.getText().toString().trim().isEmpty() || holder.authMethodHTTPPassword.getText().toString().trim().isEmpty())) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_USER_OR_PASSWD);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_USER_OR_PASSWD);
                     return;
                 }
 
                 if (holder.directDownload.isChecked() && holder.directDownloadAddr.getText().toString().trim().isEmpty()) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_ADDR);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_DIRECTDOWNLOAD_ADDR);
                     return;
                 }
 
@@ -433,7 +433,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 }
 
                 if (holder.directDownload.isChecked() && holder.directDownloadAuth.isChecked() && (holder.directDownloadUsername.getText().toString().trim().isEmpty() || holder.directDownloadPassword.getText().toString().trim().isEmpty())) {
-                    Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
                     return;
                 }
 
@@ -529,42 +529,42 @@ public class AddProfileActivity extends AppCompatActivity {
 
     private void createSingle() {
         if (profileName.getText().toString().trim().isEmpty()) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_PROFILE_NAME);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_PROFILE_NAME);
             return;
         }
 
         if (sViewHolder.addr.getText().toString().trim().isEmpty()) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_IP);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_IP);
             return;
         }
 
         if (!sViewHolder.port.getText().toString().trim().isEmpty()) {
             if (0 > Integer.parseInt(sViewHolder.port.getText().toString()) && Integer.parseInt(sViewHolder.port.getText().toString()) < 65536) {
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
+                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_PORT);
                 return;
             }
         } else {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_PORT);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_PORT);
             return;
         }
 
         if (sViewHolder.endpoint.getText().toString().trim().isEmpty() || (!sViewHolder.endpoint.getText().toString().startsWith("/"))) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_SERVER_ENDPOINT);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_ENDPOINT);
             return;
         }
 
         if (sViewHolder.authMethodToken.isChecked() && sViewHolder.authMethodTokenToken.getText().toString().trim().isEmpty()) {
-            Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_TOKEN);
+            CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_TOKEN);
             return;
         }
 
         if (sViewHolder.authMethodHTTP.isChecked() && (sViewHolder.authMethodHTTPUsername.getText().toString().trim().isEmpty() || sViewHolder.authMethodHTTPPassword.getText().toString().trim().isEmpty())) {
-            Utils.UIToast(AddProfileActivity.this, Utils.TOAST_MESSAGES.INVALID_SERVER_USER_OR_PASSWD);
+            CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_USER_OR_PASSWD);
             return;
         }
 
         if (sViewHolder.directDownload.isChecked() && sViewHolder.directDownloadAddr.getText().toString().trim().isEmpty()) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_ADDR);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_DIRECTDOWNLOAD_ADDR);
             return;
         }
 
@@ -573,7 +573,7 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         if (sViewHolder.directDownload.isChecked() && sViewHolder.directDownloadAuth.isChecked() && (sViewHolder.directDownloadUsername.getText().toString().trim().isEmpty() || sViewHolder.directDownloadPassword.getText().toString().trim().isEmpty())) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_DIRECTDOWNLOAD_USERORPASSWD);
             return;
         }
 
@@ -643,7 +643,7 @@ public class AddProfileActivity extends AppCompatActivity {
             osw.flush();
             osw.close();
         } catch (IOException | JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+            CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
         }
 
@@ -659,12 +659,12 @@ public class AddProfileActivity extends AppCompatActivity {
 
     private void createMulti() {
         if (profileName.getText().toString().trim().isEmpty()) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_PROFILE_NAME);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_PROFILE_NAME);
             return;
         }
 
         if (mProfiles.size() <= 1) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.INVALID_CONDITIONS_NUMBER);
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_CONDITIONS_NUMBER);
             return;
         }
 
@@ -686,7 +686,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     .put("notificationsEnabled", enableNotifications.isChecked())
                     .put("conditions", conditions);
         } catch (JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+            CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
             return;
         }
@@ -702,7 +702,7 @@ public class AddProfileActivity extends AppCompatActivity {
             osw.flush();
             osw.close();
         } catch (IOException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+            CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
         }
 

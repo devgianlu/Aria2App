@@ -52,13 +52,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     pd.dismiss();
-                    Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
+                    CommonUtils.UIToast(MoreAboutDownloadActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
                 }
 
                 @Override
                 public void onException(Exception exception) {
                     pd.dismiss();
-                    Utils.UIToast(MoreAboutDownloadActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
+                    CommonUtils.UIToast(MoreAboutDownloadActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
                 }
             });
         }

@@ -98,7 +98,7 @@ public class TerminalActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ClipData data = ClipData.newPlainText("json", ((TerminalLine) adapterView.getItemAtPosition(i)).getMessage());
                 ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(data);
-                Utils.UIToast(TerminalActivity.this, getString(R.string.copiedClipboard));
+                CommonUtils.UIToast(TerminalActivity.this, getString(R.string.copiedClipboard));
                 return true;
             }
         });
@@ -125,11 +125,11 @@ public class TerminalActivity extends AppCompatActivity {
                 @Override
                 public void onException(Exception ex) {
                     pd.dismiss();
-                    Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.FAILED_LOADING_AUTOCOMPLETION, ex);
+                    CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.FAILED_LOADING_AUTOCOMPLETION, ex);
                 }
             });
         } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
 
         method.addTextChangedListener(listener);
@@ -212,12 +212,12 @@ public class TerminalActivity extends AppCompatActivity {
     private class WSHandler extends WebSocketAdapter {
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-            Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.WS_OPENED);
+            CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_OPENED);
         }
 
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-            Utils.UIToast(TerminalActivity.this, Utils.TOAST_MESSAGES.WS_CLOSED, cause);
+            CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_CLOSED, cause);
         }
 
         @Override

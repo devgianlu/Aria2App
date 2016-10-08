@@ -124,13 +124,13 @@ public class MainActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess() {
                                                 pd.dismiss();
-                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.DOWNLOAD_OPTIONS_CHANGED);
+                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
                                             }
 
                                             @Override
                                             public void onException(Exception exception) {
                                                 pd.dismiss();
-                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_OPTIONS, exception);
+                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
                                             }
                                         });
                                     }
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                                 try {
                                     startActivity(Intent.createChooser(i, "Send mail to the developer..."));
                                 } catch (android.content.ActivityNotFoundException ex) {
-                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.NO_EMAIL_CLIENT);
                                 }
                                 return true;
                             case ABOUT_ARIA2:
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                                 try {
                                     jta2 = JTA2.newInstance(MainActivity.this);
                                 } catch (IOException | NoSuchAlgorithmException ex) {
-                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
                                     return true;
                                 }
 
@@ -219,12 +219,12 @@ public class MainActivity extends AppCompatActivity {
                                                                 jta2.saveSession(new ISuccess() {
                                                                     @Override
                                                                     public void onSuccess() {
-                                                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.SESSION_SAVED);
+                                                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
                                                                     }
 
                                                                     @Override
                                                                     public void onException(Exception exception) {
-                                                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_SAVE_SESSION, exception);
+                                                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_SAVE_SESSION, exception);
                                                                     }
                                                                 });
                                                             }
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
                                             @Override
                                             public void onException(Exception exception) {
-                                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                                                 pd.dismiss();
                                             }
                                         });
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onException(Exception exception) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                                         pd.dismiss();
                                     }
                                 });
@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
 
             startWithProfile(profile, false);
         } catch (IOException | JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+            CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
         }
 
         fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
@@ -470,19 +470,19 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             downloadAction = new DownloadAction(MainActivity.this);
                         } catch (IOException | NoSuchAlgorithmException ex) {
-                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                             return;
                         }
 
                         DownloadAction.IMove iMove = new DownloadAction.IMove() {
                             @Override
                             public void onMoved(String gid) {
-                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.MOVED, gid);
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.MOVED, gid);
                             }
 
                             @Override
                             public void onException(Exception ex) {
-                                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHANGE_POSITION, ex);
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_POSITION, ex);
                             }
                         };
 
@@ -491,12 +491,12 @@ public class MainActivity extends AppCompatActivity {
                                 downloadAction.pause(MainActivity.this, item.gid, new DownloadAction.IPause() {
                                     @Override
                                     public void onPaused(String gid) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.PAUSED, gid);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.PAUSED, gid);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_PAUSE, ex);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_PAUSE, ex);
                                     }
                                 });
                                 break;
@@ -504,20 +504,20 @@ public class MainActivity extends AppCompatActivity {
                                 downloadAction.remove(MainActivity.this, item.gid, item.status, new DownloadAction.IRemove() {
                                     @Override
                                     public void onRemoved(String gid) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.REMOVED, gid);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED, gid);
                                     }
 
                                     @Override
                                     public void onRemovedResult(String gid) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.REMOVED_RESULT, gid);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED_RESULT, gid);
                                     }
 
                                     @Override
                                     public void onException(boolean b, Exception ex) {
                                         if (b)
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE, ex);
+                                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE, ex);
                                         else
-                                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex);
+                                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE_RESULT, ex);
                                     }
                                 });
                                 break;
@@ -525,22 +525,22 @@ public class MainActivity extends AppCompatActivity {
                                 downloadAction.restart(item.gid, new DownloadAction.IRestart() {
                                     @Override
                                     public void onRestarted() {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESTARTED);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESTARTED);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
                                     }
 
                                     @Override
                                     public void onRemoveResultException(Exception ex) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_REMOVE_RESULT, ex);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE_RESULT, ex);
                                     }
 
                                     @Override
                                     public void onGatheringInformationException(Exception ex) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
                                     }
                                 });
                                 break;
@@ -548,12 +548,12 @@ public class MainActivity extends AppCompatActivity {
                                 downloadAction.unpause(item.gid, new DownloadAction.IUnpause() {
                                     @Override
                                     public void onUnpaused(String gid) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.RESUMED, gid);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESUMED, gid);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_UNPAUSE, ex);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_UNPAUSE, ex);
                                     }
                                 });
                                 break;
@@ -608,7 +608,7 @@ public class MainActivity extends AppCompatActivity {
                                         latest = new JSONArray(response).getJSONObject(0).getString("name");
                                         latest = latest.replace("aria2 ", "");
                                     } catch (JSONException ex) {
-                                        Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, ex);
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, ex);
                                         return;
                                     }
 
@@ -626,19 +626,19 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onException(Exception exception) {
-                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, exception);
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
                                 }
 
                                 @Override
                                 public void onFailed(int code, String message) {
-                                    Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, Utils.formatConnectionError(code, message));
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, Utils.formatConnectionError(code, message));
                                 }
                             })).start();
                         }
 
                         @Override
                         public void onException(Exception exception) {
-                            Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_CHECKING_VERSION, exception);
+                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
                         }
                     });
                 }
@@ -689,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }));
 
-                Utils.UIToast(MainActivity.this, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
                     @Override
                     public void run() {
                         drawerManager.updateBadge(-1);
@@ -775,7 +775,7 @@ public class MainActivity extends AppCompatActivity {
             osw.flush();
             osw.close();
         } catch (IOException | JSONException ex) {
-            Utils.UIToast(this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+            CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
             ex.printStackTrace();
         }
     }

@@ -121,7 +121,7 @@ public class FilesAdapter {
                             try {
                                 jta2 = JTA2.newInstance(context);
                             } catch (IOException | NoSuchAlgorithmException e) {
-                                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, e);
+                                CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, e);
                                 return;
                             }
 
@@ -174,13 +174,13 @@ public class FilesAdapter {
                                         @Override
                                         public void onSuccess() {
                                             pd.dismiss();
-                                            Utils.UIToast(context, Utils.TOAST_MESSAGES.CHANGED_SELECTION);
+                                            CommonUtils.UIToast(context, Utils.ToastMessages.CHANGED_SELECTION);
                                         }
 
                                         @Override
                                         public void onException(Exception exception) {
                                             pd.dismiss();
-                                            Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_CHANGE_FILE_SELECTION, exception);
+                                            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, exception);
                                         }
                                     });
                                 }
@@ -188,7 +188,7 @@ public class FilesAdapter {
                                 @Override
                                 public void onException(Exception exception) {
                                     pd.dismiss();
-                                    Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                                    CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                                 }
                             });
                         }
@@ -200,7 +200,7 @@ public class FilesAdapter {
                             ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                             manager.setPrimaryClip(ClipData.newPlainText("uri", (String) view.getTag()));
 
-                            Utils.UIToast(context, context.getString(R.string.copiedClipboard));
+                            CommonUtils.UIToast(context, context.getString(R.string.copiedClipboard));
                         }
                     };
 

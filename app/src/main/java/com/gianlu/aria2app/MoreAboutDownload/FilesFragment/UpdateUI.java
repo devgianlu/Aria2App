@@ -10,6 +10,7 @@ import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.NetIO.JTA2.IFiles;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -83,7 +84,7 @@ class UpdateUI implements Runnable {
                 public void onException(Exception exception) {
                     errorCounter++;
                     if (errorCounter <= 2) {
-                        Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                        CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                     } else {
                         _shouldStop = true;
                     }

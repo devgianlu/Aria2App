@@ -33,7 +33,7 @@ public class PreferencesActivity extends PreferenceActivity {
                 try {
                     startActivity(Intent.createChooser(i, "Send mail to the developer..."));
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Utils.UIToast(PreferencesActivity.this, Utils.TOAST_MESSAGES.NO_EMAIL_CLIENT);
+                    CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.NO_EMAIL_CLIENT);
                 }
                 return true;
             }

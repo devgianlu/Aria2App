@@ -63,7 +63,7 @@ public class LogsActivity extends AppCompatActivity {
                 ClipData clip = ClipData.newPlainText("stack trace", ((LoglineItem) adapterView.getItemAtPosition(i)).getMessage());
                 clipboard.setPrimaryClip(clip);
 
-                Utils.UIToast(LogsActivity.this, getString(R.string.copiedClipboard), Toast.LENGTH_SHORT);
+                CommonUtils.UIToast(LogsActivity.this, getString(R.string.copiedClipboard), Toast.LENGTH_SHORT);
             }
         });
 
@@ -96,7 +96,7 @@ public class LogsActivity extends AppCompatActivity {
                         }
                     }
                 } catch (IOException ex) {
-                    Utils.UIToast(LogsActivity.this, Utils.TOAST_MESSAGES.FATAL_EXCEPTION, ex);
+                    CommonUtils.UIToast(LogsActivity.this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
                     onBackPressed();
                 }
 
@@ -136,7 +136,7 @@ public class LogsActivity extends AppCompatActivity {
                     logFile.delete();
                 }
 
-                Utils.UIToast(this, Utils.TOAST_MESSAGES.LOGS_DELETED);
+                CommonUtils.UIToast(this, Utils.ToastMessages.LOGS_DELETED);
                 recreate();
                 break;
         }

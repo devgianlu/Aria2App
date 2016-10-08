@@ -61,7 +61,7 @@ public class OptionsDialog extends AlertDialog.Builder {
         try {
             jta2 = JTA2.newInstance(context);
         } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(context, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+            CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
     }
 
@@ -78,7 +78,7 @@ public class OptionsDialog extends AlertDialog.Builder {
         if (quickOptionsFilter) {
             Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
             if (quickOptions.size() <= 0) {
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.ADD_QUICK_OPTIONS);
+                CommonUtils.UIToast(context, Utils.ToastMessages.ADD_QUICK_OPTIONS);
                 return;
             }
         }
@@ -97,20 +97,20 @@ public class OptionsDialog extends AlertDialog.Builder {
                 @Override
                 public void onDone() {
                     pd.dismiss();
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.SOURCE_REFRESHED);
+                    CommonUtils.UIToast(context, Utils.ToastMessages.SOURCE_REFRESHED);
                     showDialog();
                 }
 
                 @Override
                 public void onConnectionFailed(int code, String message) {
                     pd.dismiss();
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, Utils.formatConnectionError(code, message));
+                    CommonUtils.UIToast(context, Utils.ToastMessages.CANT_REFRESH_SOURCE, Utils.formatConnectionError(code, message));
                 }
 
                 @Override
                 public void onException(Exception ex) {
                     pd.dismiss();
-                    Utils.UIToast(context, Utils.TOAST_MESSAGES.CANT_REFRESH_SOURCE, ex);
+                    CommonUtils.UIToast(context, Utils.ToastMessages.CANT_REFRESH_SOURCE, ex);
                 }
             })).start();
         } else {
@@ -199,7 +199,7 @@ public class OptionsDialog extends AlertDialog.Builder {
             @Override
             public void onException(Exception exception) {
                 pd.dismiss();
-                Utils.UIToast(context, Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
             }
         };
 

@@ -146,7 +146,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                 try {
                     jta2 = JTA2.newInstance(this);
                 } catch (IOException | NoSuchAlgorithmException ex) {
-                    Utils.UIToast(this, Utils.TOAST_MESSAGES.WS_EXCEPTION, ex);
+                    CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);
                     return true;
                 }
 
@@ -160,7 +160,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                     in = getContentResolver().openInputStream(data);
                 } catch (FileNotFoundException ex) {
                     pd.dismiss();
-                    Utils.UIToast(AddTorrentActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
+                    CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
                     break;
                 }
                 if (in == null) break;
@@ -180,7 +180,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                     base64 = Base64.encodeToString(buffer.toByteArray(), Base64.NO_WRAP);
                 } catch (IOException ex) {
                     pd.dismiss();
-                    Utils.UIToast(AddTorrentActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
+                    CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
                     break;
                 }
 
@@ -205,7 +205,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                         @Override
                         public void onException(Exception ex) {
                             pd.dismiss();
-                            Utils.UIToast(AddTorrentActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
+                            CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
                         }
                     });
                 } else {
@@ -229,7 +229,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                         @Override
                         public void onException(Exception ex) {
                             pd.dismiss();
-                            Utils.UIToast(AddTorrentActivity.this, Utils.TOAST_MESSAGES.FAILED_ADD_DOWNLOAD, ex);
+                            CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
                         }
                     });
                 }

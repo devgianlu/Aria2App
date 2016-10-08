@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -9,9 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -295,171 +292,53 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
-    public static void UIToast(final Activity context, final String text) {
-        UIToast(context, text, Toast.LENGTH_SHORT);
-    }
-
-    public static void UIToast(final Activity context, final String text, final int duration) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, text, duration).show();
-            }
-        });
-    }
-
-    public static void UIToast(final Activity context, final String text, final int duration, Runnable extra) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, text, duration).show();
-            }
-        });
-        context.runOnUiThread(extra);
-    }
-
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, message.toString() + (message.isError() ? " See logs for more..." : ""), Toast.LENGTH_SHORT).show();
-            }
-        });
-        CommonUtils.logMe(context, message.toString(), message.isError());
-    }
-
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        CommonUtils.logMe(context, message + " Details: " + message_extras, message.isError());
-    }
-
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Throwable exception) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (exception instanceof Aria2Exception)
-                    Toast.makeText(context, message.toString(exception.getMessage()), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        CommonUtils.logMe(context, message + " Details: " + exception.getMessage(), message.isError());
-        CommonUtils.secretLog(context, exception);
-    }
-
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final String message_extras, Runnable extra) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        context.runOnUiThread(extra);
-        CommonUtils.logMe(context, message + " Details: " + message_extras, message.isError());
-    }
-
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, final Throwable exception, Runnable extra) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (exception instanceof Aria2Exception)
-                    Toast.makeText(context, message.toString(exception.getMessage()), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        context.runOnUiThread(extra);
-
-        CommonUtils.logMe(context, message + " Details: " + exception.getMessage(), message.isError());
-        CommonUtils.secretLog(context, exception);
-    }
-
-    public static void UIToast(final Activity context, final TOAST_MESSAGES message, Runnable extra) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, message.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        context.runOnUiThread(extra);
-        CommonUtils.logMe(context, message.toString(), message.isError());
-    }
-
-    public enum TOAST_MESSAGES {
-        WS_OPENED("WebSocket connected!", false),
-        WS_CLOSED("WebSocket has been closed!", true),
-        WS_EXCEPTION("WebSocket exception!", true),
-        FAILED_GATHERING_INFORMATION("Failed on gathering information!", true),
-        PAUSED("Download paused.", false),
-        REMOVED("Download removed.", false),
-        REMOVED_RESULT("Download result removed.", false),
-        MOVED("Download moved.", false),
-        RESUMED("Download resumed.", false),
-        RESTARTED("Download restarted.", false),
-        CHANGED_SELECTION("File selected/deselected.", false),
-        SESSION_SAVED("Session saved correctly.", false),
-        FAILED_SAVE_SESSION("Failed saving current session!", true),
-        FAILED_PAUSE("Failed to pause download!", true),
-        MUST_CREATE_FIRST_PROFILE("You must create your first profile to run the application!", false),
-        CANNOT_EDIT_PROFILE("Cannot edit this profile!", true),
-        PROFILE_DOES_NOT_EXIST("Profile doesn't exist!", true),
-        FAILED_REMOVE("Failed to remove download!", true),
-        FAILED_UNPAUSE("Failed to resume download!", true),
-        FAILED_REMOVE_RESULT("Failed to remove download's result!", true),
-        FAILED_ADD_DOWNLOAD("Failed to add new download!", true),
-        FAILED_CHANGE_OPTIONS("Failed to change options for download!", true),
-        DOWNLOAD_OPTIONS_CHANGED("Download options successfully changed!", false),
-        FAILED_CHANGE_POSITION("Failed changing download's queue position!", true),
-        FAILED_CHANGE_FILE_SELECTION("Failed selecting/deselecting file!", true),
-        FAILED_CHECKING_VERSION("Failed checking aria2 version!", true),
-        LOGS_DELETED("Logs deleted!", false),
-        INVALID_PROFILE_NAME("Invalid profile name!", false),
-        INVALID_SERVER_IP("Invalid server address!", false),
-        INVALID_SERVER_PORT("Invalid server port, must be > 0 and < 65536!", false),
-        INVALID_SERVER_ENDPOINT("Invalid server RPC endpoint!", false),
-        INVALID_SERVER_TOKEN("Invalid server token!", false),
-        INVALID_SERVER_USER_OR_PASSWD("Invalid username or password!", false),
-        INVALID_CONDITIONS_NUMBER("Multi profile should contains more than one condition", false),
-        FILE_NOT_FOUND("File not found!", true),
-        FATAL_EXCEPTION("Fatal exception!", true),
-        FAILED_LOADING_AUTOCOMPLETION("Unable to load method's suggestions!", true),
-        FAILED_CLEARING_LOGS("Failed clearing old logs!", true),
-        NO_EMAIL_CLIENT("There are no email clients installed.", true),
-        INVALID_SSID("Invalid SSID!", false),
-        MUST_PICK_DEFAULT("You must select one profile as default!", false),
-        INVALID_DIRECTDOWNLOAD_ADDR("Invalid DirectDownload's server address!", false),
-        INVALID_DIRECTDOWNLOAD_USERORPASSWD("Invalid DirectDownload's username or password!", false),
-        CANT_REFRESH_SOURCE("Can't refresh source file for options. Retry later...", true),
-        ADD_QUICK_OPTIONS("You have no quick options!", false),
-        SOURCE_REFRESHED("Source file for options refreshed!", false);
-
-        private final String text;
-        private final boolean isError;
-
-        TOAST_MESSAGES(final String text, final boolean isError) {
-            this.text = text;
-            this.isError = isError;
-        }
-
-        @Override
-        public String toString() {
-            return text;
-        }
-
-        public String toString(String extra) {
-            return text + " " + extra;
-        }
-
-        public boolean isError() {
-            return isError;
-        }
+    public static class ToastMessages {
+        public static final CommonUtils.ToastMessage WS_OPENED = new CommonUtils.ToastMessage("WebSocket connected!", false);
+        public static final CommonUtils.ToastMessage WS_CLOSED = new CommonUtils.ToastMessage("WebSocket has been closed!", true);
+        public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
+        public static final CommonUtils.ToastMessage FAILED_GATHERING_INFORMATION = new CommonUtils.ToastMessage("Failed on gathering information!", true);
+        public static final CommonUtils.ToastMessage PAUSED = new CommonUtils.ToastMessage("Download paused.", false);
+        public static final CommonUtils.ToastMessage REMOVED = new CommonUtils.ToastMessage("Download removed.", false);
+        public static final CommonUtils.ToastMessage REMOVED_RESULT = new CommonUtils.ToastMessage("Download result removed.", false);
+        public static final CommonUtils.ToastMessage MOVED = new CommonUtils.ToastMessage("Download moved.", false);
+        public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed.", false);
+        public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted.", false);
+        public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("File selected/deselected.", false);
+        public static final CommonUtils.ToastMessage SESSION_SAVED = new CommonUtils.ToastMessage("Session saved correctly.", false);
+        public static final CommonUtils.ToastMessage FAILED_SAVE_SESSION = new CommonUtils.ToastMessage("Failed saving current session!", true);
+        public static final CommonUtils.ToastMessage FAILED_PAUSE = new CommonUtils.ToastMessage("Failed to pause download!", true);
+        public static final CommonUtils.ToastMessage MUST_CREATE_FIRST_PROFILE = new CommonUtils.ToastMessage("You must create your first profile to run the application!", false);
+        public static final CommonUtils.ToastMessage CANNOT_EDIT_PROFILE = new CommonUtils.ToastMessage("Cannot edit this profile!", true);
+        public static final CommonUtils.ToastMessage PROFILE_DOES_NOT_EXIST = new CommonUtils.ToastMessage("Profile doesn't exist!", true);
+        public static final CommonUtils.ToastMessage FAILED_REMOVE = new CommonUtils.ToastMessage("Failed to remove download!", true);
+        public static final CommonUtils.ToastMessage FAILED_UNPAUSE = new CommonUtils.ToastMessage("Failed to resume download!", true);
+        public static final CommonUtils.ToastMessage FAILED_REMOVE_RESULT = new CommonUtils.ToastMessage("Failed to remove download's result!", true);
+        public static final CommonUtils.ToastMessage FAILED_ADD_DOWNLOAD = new CommonUtils.ToastMessage("Failed to add new download!", true);
+        public static final CommonUtils.ToastMessage FAILED_CHANGE_OPTIONS = new CommonUtils.ToastMessage("Failed to change options for download!", true);
+        public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
+        public static final CommonUtils.ToastMessage FAILED_CHANGE_POSITION = new CommonUtils.ToastMessage("Failed changing download's queue position!", true);
+        public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file!", true);
+        public static final CommonUtils.ToastMessage FAILED_CHECKING_VERSION = new CommonUtils.ToastMessage("Failed checking aria2 version!", true);
+        public static final CommonUtils.ToastMessage LOGS_DELETED = new CommonUtils.ToastMessage("Logs deleted!", false);
+        public static final CommonUtils.ToastMessage INVALID_PROFILE_NAME = new CommonUtils.ToastMessage("Invalid profile name!", false);
+        public static final CommonUtils.ToastMessage INVALID_SERVER_IP = new CommonUtils.ToastMessage("Invalid server address!", false);
+        public static final CommonUtils.ToastMessage INVALID_SERVER_PORT = new CommonUtils.ToastMessage("Invalid server port, must be > 0 and < 65536!", false);
+        public static final CommonUtils.ToastMessage INVALID_SERVER_ENDPOINT = new CommonUtils.ToastMessage("Invalid server RPC endpoint!", false);
+        public static final CommonUtils.ToastMessage INVALID_SERVER_TOKEN = new CommonUtils.ToastMessage("Invalid server token!", false);
+        public static final CommonUtils.ToastMessage INVALID_SERVER_USER_OR_PASSWD = new CommonUtils.ToastMessage("Invalid username or password!", false);
+        public static final CommonUtils.ToastMessage INVALID_CONDITIONS_NUMBER = new CommonUtils.ToastMessage("Multi profile should contains more than one condition", false);
+        public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
+        public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
+        public static final CommonUtils.ToastMessage FAILED_LOADING_AUTOCOMPLETION = new CommonUtils.ToastMessage("Unable to load method's suggestions!", true);
+        public static final CommonUtils.ToastMessage FAILED_CLEARING_LOGS = new CommonUtils.ToastMessage("Failed clearing old logs!", true);
+        public static final CommonUtils.ToastMessage NO_EMAIL_CLIENT = new CommonUtils.ToastMessage("There are no email clients installed.", true);
+        public static final CommonUtils.ToastMessage INVALID_SSID = new CommonUtils.ToastMessage("Invalid SSID!", false);
+        public static final CommonUtils.ToastMessage MUST_PICK_DEFAULT = new CommonUtils.ToastMessage("You must select one profile as default!", false);
+        public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_ADDR = new CommonUtils.ToastMessage("Invalid DirectDownload's server address!", false);
+        public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_USERORPASSWD = new CommonUtils.ToastMessage("Invalid DirectDownload's username or password!", false);
+        public static final CommonUtils.ToastMessage CANT_REFRESH_SOURCE = new CommonUtils.ToastMessage("Can't refresh source file for options. Retry later...", true);
+        public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
+        public static final CommonUtils.ToastMessage SOURCE_REFRESHED = new CommonUtils.ToastMessage("Source file for options refreshed!", false);
     }
 
     private static class CustomYAxisValueFormatter implements YAxisValueFormatter {

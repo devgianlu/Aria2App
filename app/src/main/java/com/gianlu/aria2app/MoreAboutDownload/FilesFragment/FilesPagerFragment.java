@@ -15,6 +15,7 @@ import com.gianlu.aria2app.NetIO.JTA2.IFiles;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -49,11 +50,11 @@ public class FilesPagerFragment extends CommonFragment {
 
                 @Override
                 public void onException(Exception exception) {
-                    Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, exception);
+                    CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                 }
             });
         } catch (IOException | NoSuchAlgorithmException ex) {
-            Utils.UIToast(getActivity(), Utils.TOAST_MESSAGES.FAILED_GATHERING_INFORMATION, ex);
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
         }
     }
 
