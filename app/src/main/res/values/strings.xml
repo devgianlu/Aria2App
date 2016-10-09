@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">Aria2App</string>
-    <string name="title_activity_main_settings">Settings</string>
-    <string name="title_activity_addProfile_new">Aria2App - New profile</string>
-    <string name="title_activity_addProfile_edit">Aria2App - Edit profile</string>
-    <string name="title_activity_logs" translatable="false">Aria2App - Logs</string>
-    <string name="title_activity_terminal" translatable="false">Aria2App - Terminal</string>
+    <string name="title_activity_addProfile_new">New profile</string>
+    <string name="title_activity_addProfile_edit">Edit profile</string>
+    <string name="title_activity_terminal" translatable="false">Terminal</string>
 
     <!-- Third part -->
     <string name="nv_websocket_client_license" translatable="false"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
@@ -166,7 +164,6 @@
     <string name="menu_downloadOptions">Download options</string>
     <string name="menu_refreshPage">Refresh page</string>
     <string name="menu_preferences">Preferences</string>
-    <string name="menu_deleteAllLogs">Delete all logs</string>
 
     <!-- Preference text -->
     <string name="general">General</string>

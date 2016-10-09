@@ -31,8 +31,8 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class DownloadService extends IntentService {
-    private AtomicLong downloaded = new AtomicLong(0);
-    private AtomicLong length = new AtomicLong(0);
+    private final AtomicLong downloaded = new AtomicLong(0);
+    private final AtomicLong length = new AtomicLong(0);
     private NotificationManagerCompat notificationManager;
     private int notificationId;
     private File file;

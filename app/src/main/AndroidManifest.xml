@@ -55,13 +55,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
-        <activity
-            android:name=".PreferencesActivity"
-            android:label="@string/title_activity_main_settings" />
+        <activity android:name=".PreferencesActivity" />
 
         <!-- Logs activity -->
         <activity
-            android:name=".LogsActivity"
+            android:name="com.gianlu.commonutils.LogsActivity"
             android:parentActivityName=".PreferencesActivity" />
 
         <!-- aria2 terminal activity -->

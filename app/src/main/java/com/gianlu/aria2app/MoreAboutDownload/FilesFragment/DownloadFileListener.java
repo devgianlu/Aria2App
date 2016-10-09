@@ -13,9 +13,9 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.Objects;
 
 class DownloadFileListener implements DialogInterface.OnClickListener {
-    private Activity context;
-    private File file;
-    private String dDir;
+    private final Activity context;
+    private final File file;
+    private final String dDir;
 
     DownloadFileListener(Activity context, File file, String dDir) {
         this.context = context;
