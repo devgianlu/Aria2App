@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
@@ -37,15 +38,29 @@ public class FilesPagerFragment extends CommonFragment {
     }
 
     @Override
-    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View mainView, @Nullable Bundle savedInstanceState) {
         UpdateUI.stop(updateUI);
 
         try {
             JTA2.newInstance(getActivity()).getFiles(getArguments().getString("gid"), new IFiles() {
                 @Override
                 public void onFiles(final List<File> files) {
-                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(getActivity(), getArguments().getString("gid"), /* TODO: Should appear indeterminate progress bar until completion */ Tree.newTree().addElements(files), (LinearLayout) view.findViewById(R.id.filesFragment_tree)));
-                    new Thread(updateUI).start();
+                    FilesAdapter.setupAsync(getActivity(), getArguments().getString("gid"), Tree.newTree().addElements(files), new FilesAdapter.IAsync() {
+                        @Override
+                        public void onSetup(final Tree tree, final LinearLayout view) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ScrollView scrollView = (ScrollView) mainView.findViewById(R.id.filesFragment_scrollView);
+                                    scrollView.removeAllViews();
+                                    scrollView.addView(view);
+
+                                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(tree, view));
+                                    new Thread(updateUI).start();
+                                }
+                            });
+                        }
+                    });
                 }
 
                 @Override

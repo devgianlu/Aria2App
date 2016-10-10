@@ -45,18 +45,24 @@ public class FilesAdapter {
     private final Tree tree;
     private final LinearLayout view;
 
-    FilesAdapter(final Activity context, final String gid, final Tree tree, final LinearLayout view) {
+    FilesAdapter(final Tree tree, final LinearLayout view) {
         this.tree = tree;
         this.view = view;
+    }
 
-        context.runOnUiThread(new Runnable() {
+    static void setupAsync(final Activity context, final String gid, final Tree tree, final IAsync handler) {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                view.removeAllViews();
+                LinearLayout view = new LinearLayout(context);
+                view.setOrientation(LinearLayout.VERTICAL);
+
                 setupViews(context, gid, tree.getCommonRoot());
                 populateDirectory(view, tree.getCommonRoot(), 1);
+
+                handler.onSetup(tree, view);
             }
-        });
+        }).start();
     }
 
     @SuppressLint("InflateParams")
@@ -120,8 +126,8 @@ public class FilesAdapter {
                             final JTA2 jta2;
                             try {
                                 jta2 = JTA2.newInstance(context);
-                            } catch (IOException | NoSuchAlgorithmException e) {
-                                CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, e);
+                            } catch (IOException | NoSuchAlgorithmException ex) {
+                                CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
                                 return;
                             }
 
@@ -358,5 +364,9 @@ public class FilesAdapter {
                 }
             }
         }
+    }
+
+    interface IAsync {
+        void onSetup(Tree tree, LinearLayout view);
     }
 }

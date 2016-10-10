@@ -149,9 +149,6 @@
     <string name="directDownload_usernameHint" translatable="false">myusername</string>
     <string name="password" translatable="false">Password:</string>
     <string name="directDownload_passwordHint" translatable="false">mypassword</string>
-    <string name="fatalException">Fatal exception</string>
-    <string name="fatalException_message">I am sorry for the inconvenience and I would be grateful if you send me a report of what happened!\nThe Developer</string>
-    <string name="sendReport">Send report</string>
 
     <string name="remove">Remove</string>
     <string name="pause">Pause</string>
