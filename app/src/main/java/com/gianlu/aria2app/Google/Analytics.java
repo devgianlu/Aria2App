@@ -5,7 +5,6 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -21,7 +20,7 @@ public class Analytics {
     public static final String ACTION_NEW_URI = "New URI download";
     public static final String ACTION_TERMINAL_BASIC = "Sent command in basic mode";
     public static final String ACTION_TERMINAL_ADV = "Sent command in advanced mode";
-    private static Tracker tracker = null;
+    private static Tracker tracker;
 
     public static Tracker getDefaultTracker(Application application) {
         if (tracker == null) {
@@ -41,6 +40,6 @@ public class Analytics {
     }
 
     public static boolean isTrackingAllowed(Context context) {
-        return !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false) && !BuildConfig.DEBUG;
+        return !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false) && !com.gianlu.commonutils.BuildConfig.DEBUG;
     }
 }

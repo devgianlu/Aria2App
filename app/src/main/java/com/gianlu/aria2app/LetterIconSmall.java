@@ -36,8 +36,10 @@ public class LetterIconSmall extends View {
             return this;
         }
 
-        if (name.length() <= 2) letters = name;
-        letters = name.substring(0, letters.length());
+        if (name.length() <= 2)
+            letters = name;
+        else
+            letters = name.substring(0, 2);
 
         return this;
     }

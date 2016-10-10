@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
         CommonUtils.logCleaner(this);
         Utils.renameOldProfiles(this);

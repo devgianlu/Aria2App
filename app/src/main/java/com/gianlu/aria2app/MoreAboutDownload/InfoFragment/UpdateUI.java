@@ -99,7 +99,7 @@ public class UpdateUI implements Runnable {
 
     @Override
     public void run() {
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
         while ((!_shouldStop) && jta2 != null) {
             jta2.tellStatus(gid, new IDownload() {

@@ -171,7 +171,8 @@ public class AddProfileActivity extends AppCompatActivity {
                             .setCategory(Analytics.CATEGORY_USER_INPUT)
                             .setAction(Analytics.ACTION_DELETE_PROFILE)
                             .build());
-                deleteFile(profileName.getText().toString().trim() + ".profile");
+
+                deleteFile(oldFileName);
                 onBackPressed();
                 break;
         }
@@ -634,7 +635,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         try {
             if (oldFileName != null)
-                deleteFile(oldFileName + ".profile");
+                deleteFile(oldFileName);
 
             FileOutputStream fOut = openFileOutput(new String(Base64.encode(profileName.getText().toString().trim().getBytes(), Base64.NO_WRAP)) + ".profile", Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
@@ -693,7 +694,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         try {
             if (oldFileName != null)
-                deleteFile(oldFileName + ".profile");
+                deleteFile(oldFileName);
 
             FileOutputStream fOut = openFileOutput(new String(Base64.encode(profileName.getText().toString().trim().getBytes(), Base64.NO_WRAP)) + ".profile", Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
