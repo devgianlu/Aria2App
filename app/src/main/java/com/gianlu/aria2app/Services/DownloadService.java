@@ -92,6 +92,18 @@ public class DownloadService extends IntentService {
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
     }
 
+    private void setIndeterminate() {
+        notificationManager.notify(notificationId, new NotificationCompat.Builder(this)
+                .setShowWhen(false)
+                .setPriority(Notification.PRIORITY_DEFAULT)
+                .setContentTitle("Downloading: " + file.getName())
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setProgress(0, 0, true)
+                .setCategory(Notification.CATEGORY_PROGRESS)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
+    }
+
     @Override
     protected void onHandleIntent(final Intent intent) {
         if (Objects.equals(intent.getAction(), "STOP")) {
@@ -114,8 +126,10 @@ public class DownloadService extends IntentService {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (length.get() != 0) {
+                if (length.get() > 0) {
                     updateNotification(downloaded.floatValue() / length.floatValue() * 100);
+                } else {
+                    setIndeterminate();
                 }
             }
         }, 0, 1000);
@@ -133,7 +147,11 @@ public class DownloadService extends IntentService {
 
                     conn.connect();
                     downloaded.set(0);
-                    length.set(Long.parseLong(conn.getHeaderField("Content-Length")));
+                    String sLength = conn.getHeaderField("Content-Length");
+                    if (sLength == null)
+                        length.set(0);
+                    else
+                        length.set(Long.parseLong(sLength));
 
                     InputStream in = conn.getInputStream();
                     FileOutputStream out = new FileOutputStream(file);
