@@ -73,7 +73,7 @@ public class NotificationService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!Objects.equals(intent.getAction(), "STOP") && intent.getBooleanExtra("foreground", true)) {
+        if (intent != null && !Objects.equals(intent.getAction(), "STOP") && intent.getBooleanExtra("foreground", true)) {
             startForeground(new Random().nextInt(10000), new NotificationCompat.Builder(this)
                     .setShowWhen(false)
                     .setPriority(Notification.PRIORITY_MIN)
@@ -92,7 +92,8 @@ public class NotificationService extends IntentService {
                     .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT)).build());
         }
 
-        onHandleIntent(intent);
+        if (intent != null)
+            onHandleIntent(intent);
         return START_STICKY;
     }
 
