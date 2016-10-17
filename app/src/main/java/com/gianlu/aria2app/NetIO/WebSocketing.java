@@ -73,6 +73,11 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public void send(JSONObject request, IReceived handler) {
+        if (requests.size() > 10)
+            requests.clear();
+        if (connectionQueue.size() > 10)
+            connectionQueue.clear();
+
         if (socket.getState() == WebSocketState.CONNECTING || socket.getState() == WebSocketState.CREATED) {
             connectionQueue.add(new Pair<>(request, handler));
             handler.onException(true, new Exception("WebSocket is connecting! Requests queued."));
@@ -137,10 +142,6 @@ public class WebSocketing extends WebSocketAdapter {
     public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
         if (cause instanceof ArrayIndexOutOfBoundsException)
             return;
-        else if (cause instanceof OutOfMemoryError) {
-            requests.clear();
-            connectionQueue.clear();
-        }
 
         if (handler != null)
             handler.onDone();

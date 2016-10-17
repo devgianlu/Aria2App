@@ -3,13 +3,13 @@ apply plugin: 'com.android.application'
 //noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 17
-        versionName "1.4.7"
+        versionCode 18
+        versionName "1.4.8"
     }
 
     buildTypes {

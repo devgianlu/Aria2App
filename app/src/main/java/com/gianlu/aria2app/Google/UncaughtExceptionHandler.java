@@ -10,7 +10,9 @@ import java.io.StringWriter;
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(final Thread thread, final Throwable throwable) {
-        if (!BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
+            throwable.printStackTrace();
+        } else {
             Tracker tracker = Analytics.getTracker();
 
             StringWriter writer = new StringWriter();
@@ -21,8 +23,6 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
                         .setDescription(writer.toString())
                         .setFatal(true)
                         .build());
-        } else {
-            throwable.printStackTrace();
         }
     }
 }
