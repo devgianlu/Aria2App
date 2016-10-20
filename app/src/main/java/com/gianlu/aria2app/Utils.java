@@ -221,7 +221,7 @@ public class Utils {
             }
         }
 
-        return pieces.subList(0, numPieces / 4);
+        return pieces.subList(0, (numPieces / 4) - 1);
     }
 
     public static int mapAlpha(int val) {
