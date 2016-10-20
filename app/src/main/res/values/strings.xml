@@ -212,12 +212,16 @@
     <string name="disabledVersionCheck">No version check will be performed</string>
     <string name="versionCheckURL">https://api.github.com/repos/aria2/aria2/releases</string>
     <string name="dialogVersionCheck">Outdated version</string>
-    <string name="dialogVersionCheckMessage">Your version of aria2 is outdated. Please update it to the latest to avoid bugs or problems of any kind.\nYou can disable this feature in the preferences.</string>
+    <string name="dialogVersionCheckMessage">Your version of aria2 is outdated. Please update it to the latest to avoid bugs or problems of any kind.\nYou can disable this feature in the preferences.\n\nNewer version: %1$s\nYour version: %2$s</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
     <string name="enableProfileNotifications">Enable notifications for this profile</string>
     <string name="downloadFile">Download file</string>
     <string name="downloadIncomplete">Incomplete download</string>
     <string name="downloadIncompleteMessage">The current file is incomplete (aka not fully downloaded).\nWould you like to download it anyway?</string>
+    <string name="downloading_file">Downloading: %s</string>
+    <string name="notificationService">Notification service</string>
+    <string name="downloaded_file">Download completed: %s</string>
+    <string name="download_failed">Download failed: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

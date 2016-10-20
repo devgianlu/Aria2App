@@ -16,6 +16,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.github.mikephil.charting.charts.LineChart;
 
+// TODO: Should display loading ContentLoadingProgressBar
 public class InfoPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
     private UpdateUI.IDownloadObserver pendingObserver;

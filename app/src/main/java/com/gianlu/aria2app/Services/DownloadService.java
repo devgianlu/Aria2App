@@ -14,6 +14,7 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.Main.Profile.DirectDownload;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,17 +29,17 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicLong;
 
+// TODO: Custom notification view (and maybe ContentIntent and some dialogs to display progress and speed)
 public class DownloadService extends IntentService {
-    private final AtomicLong downloaded = new AtomicLong(0);
-    private final AtomicLong length = new AtomicLong(0);
-    private NotificationManagerCompat notificationManager;
+    private static NotificationManagerCompat notificationManager;
+    private Long downloaded = 0L;
+    private Long length = 0L;
     private int notificationId;
     private File file;
 
     public DownloadService() {
-        super("DownloadService");
+        super("Aria2App download service");
     }
 
     public static Intent createStartIntent(Context context, File file, String remotePath) {
@@ -63,45 +64,21 @@ public class DownloadService extends IntentService {
         startForeground(notificationId, new NotificationCompat.Builder(this)
                 .setShowWhen(true)
                 .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentTitle("Downloading " + file.getName())
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setProgress(100, 0, false)
-                .setCategory(Notification.CATEGORY_PROGRESS)
-                .setSmallIcon(R.drawable.ic_notification)
-                .addAction(new NotificationCompat.Action.Builder(
-                        R.drawable.ic_clear_black_48dp,
-                        getApplicationContext().getString(R.string.stopNotificationService),
-                        PendingIntent.getService(getApplicationContext(), 0,
-                                new Intent(getApplicationContext(), NotificationService.class)
-                                        .setAction("STOP"), 0)).build())
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
-
-        onHandleIntent(intent);
-        return START_STICKY;
-    }
-
-    private void updateNotification(Float percentage) {
-        notificationManager.notify(notificationId, new NotificationCompat.Builder(this)
-                .setShowWhen(false)
-                .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentTitle("Downloading: " + file.getName())
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setProgress(100, percentage.intValue(), false)
-                .setCategory(Notification.CATEGORY_PROGRESS)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
-    }
-
-    private void setIndeterminate() {
-        notificationManager.notify(notificationId, new NotificationCompat.Builder(this)
-                .setShowWhen(false)
-                .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentTitle("Downloading: " + file.getName())
+                .setContentTitle(getString(R.string.downloading_file, file.getName()))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setProgress(0, 0, true)
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent)).build());
+                .addAction(new NotificationCompat.Action.Builder(
+                        R.drawable.ic_clear_black_48dp, /* TODO: That button is horrible (as well as the icon) */
+                        getString(R.string.stopNotificationService),
+                        PendingIntent.getService(this, 0,
+                                new Intent(this, NotificationService.class)
+                                        .setAction("STOP"), 0)).build())
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent)).build());
+
+        onHandleIntent(intent);
+        return START_STICKY;
     }
 
     @Override
@@ -119,6 +96,8 @@ public class DownloadService extends IntentService {
             URI uri = new URI(base.getProtocol(), null, base.getHost(), base.getPort(), intent.getStringExtra("remotePath"), null, null);
             url = uri.toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
+            CommonUtils.logMe(this, ex);
+            NotificationGuy.setFailed(notificationId, DownloadService.this, file.getName());
             return;
         }
 
@@ -126,10 +105,10 @@ public class DownloadService extends IntentService {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (length.get() > 0) {
-                    updateNotification(downloaded.floatValue() / length.floatValue() * 100);
+                if (length > 0) {
+                    NotificationGuy.updateNotification(notificationId, DownloadService.this, file.getName(), downloaded.floatValue() / length.floatValue() * 100);
                 } else {
-                    setIndeterminate();
+                    NotificationGuy.setIndeterminate(notificationId, DownloadService.this, file.getName());
                 }
             }
         }, 0, 1000);
@@ -146,12 +125,12 @@ public class DownloadService extends IntentService {
                     }
 
                     conn.connect();
-                    downloaded.set(0);
+                    downloaded = 0L;
                     String sLength = conn.getHeaderField("Content-Length");
                     if (sLength == null)
-                        length.set(0);
+                        length = 0L;
                     else
-                        length.set(Long.parseLong(sLength));
+                        length = Long.parseLong(sLength);
 
                     InputStream in = conn.getInputStream();
                     FileOutputStream out = new FileOutputStream(file);
@@ -160,7 +139,7 @@ public class DownloadService extends IntentService {
                     int count;
                     while ((count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
-                        downloaded.getAndAdd(count);
+                        downloaded += count;
                     }
 
                     out.close();
@@ -168,12 +147,67 @@ public class DownloadService extends IntentService {
 
                     timer.cancel();
                     timer.purge();
+
+                    NotificationGuy.setCompleted(notificationId, DownloadService.this, file.getName());
                     stopSelf();
                 } catch (IOException ex) {
                     timer.cancel();
                     timer.purge();
+
+                    CommonUtils.logMe(DownloadService.this, ex);
+                    NotificationGuy.setFailed(notificationId, DownloadService.this, file.getName());
                 }
             }
         }).start();
+    }
+
+    private static class NotificationGuy {
+        private static void updateNotification(int id, Context context, String fileName, Float percentage) {
+            notificationManager.notify(id, new NotificationCompat.Builder(context)
+                    .setShowWhen(false)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setContentTitle(context.getString(R.string.downloading_file, fileName))
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setProgress(100, percentage.intValue(), false)
+                    .setCategory(Notification.CATEGORY_PROGRESS)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
+        }
+
+        private static void setIndeterminate(int id, Context context, String fileName) {
+            notificationManager.notify(id, new NotificationCompat.Builder(context)
+                    .setShowWhen(false)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setContentTitle(context.getString(R.string.downloading_file, fileName))
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setProgress(0, 0, true)
+                    .setCategory(Notification.CATEGORY_PROGRESS)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
+        }
+
+        private static void setCompleted(int id, Context context, String fileName) {
+            notificationManager.notify(id, new NotificationCompat.Builder(context)
+                    .setShowWhen(true)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setContentTitle(context.getString(R.string.downloaded_file, fileName))
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setProgress(0, 0, false)
+                    .setCategory(Notification.CATEGORY_EVENT)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
+        }
+
+        private static void setFailed(int id, Context context, String fileName) {
+            notificationManager.notify(id, new NotificationCompat.Builder(context)
+                    .setShowWhen(true)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setContentTitle(context.getString(R.string.download_failed, fileName))
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setProgress(0, 0, false)
+                    .setCategory(Notification.CATEGORY_EVENT)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
+        }
     }
 }

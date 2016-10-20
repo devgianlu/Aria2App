@@ -5,10 +5,12 @@ import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 
+import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.DownloadService;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.Objects;
 
@@ -68,6 +70,11 @@ class DownloadFileListener implements DialogInterface.OnClickListener {
             ioFile.renameTo(new java.io.File(ioFile.getParent(), newName));
             c++;
         }
+
+        if (Analytics.isTrackingAllowed(context))
+            Analytics.getDefaultTracker(context.getApplication()).send(new HitBuilders.EventBuilder()
+                    .setCategory(Analytics.CATEGORY_USER_INPUT)
+                    .setAction(Analytics.ACTION_DOWNLOAD_FILE).build());
 
         context.startService(DownloadService.createStartIntent(context, ioFile, file.getRelativePath(dDir)));
     }

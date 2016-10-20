@@ -77,13 +77,13 @@ public class NotificationService extends IntentService {
             startForeground(new Random().nextInt(10000), new NotificationCompat.Builder(this)
                     .setShowWhen(false)
                     .setPriority(Notification.PRIORITY_MIN)
-                    .setContentTitle("Notification service")
+                    .setContentTitle(getString(R.string.notificationService))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setContentText(expandProfileList(intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles")))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
                     .addAction(new NotificationCompat.Action.Builder(
-                            R.drawable.ic_clear_black_48dp,
+                            R.drawable.ic_clear_black_48dp, /* TODO: That button is horrible (as well as the icon) */
                             getApplicationContext().getString(R.string.stopNotificationService),
                             PendingIntent.getService(getApplicationContext(), 0,
                                     new Intent(getApplicationContext(), NotificationService.class)

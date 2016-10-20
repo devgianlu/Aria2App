@@ -45,6 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+// TODO: That's pretty horrid
 public class TerminalActivity extends AppCompatActivity {
     private final List<TerminalLine> lines = new ArrayList<>();
     private final Map<String, Long> latencyIDs = new ArrayMap<>();

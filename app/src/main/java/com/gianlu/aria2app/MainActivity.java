@@ -67,6 +67,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// TODO: Should replace all loading dialogs with ContentLoadingProgressBar
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -615,7 +616,7 @@ public class MainActivity extends AppCompatActivity {
                                     if (!Objects.equals(latest, version)) {
                                         CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                                                 .setTitle(R.string.dialogVersionCheck)
-                                                .setMessage(R.string.dialogVersionCheckMessage)
+                                                .setMessage(getString(R.string.dialogVersionCheckMessage, latest, version))
                                                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialogInterface, int i) {

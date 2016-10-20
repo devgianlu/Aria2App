@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+// TODO: This should be setup for each single profile (in multi)
 public class DirectDownload implements Parcelable {
     public static final Creator<DirectDownload> CREATOR = new Creator<DirectDownload>() {
         @Override
