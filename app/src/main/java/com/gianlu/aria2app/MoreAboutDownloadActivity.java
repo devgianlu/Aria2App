@@ -183,20 +183,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        adapter.stopAllUpdater();
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        adapter.stopAllUpdater();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
         adapter.stopAllUpdater();
     }
 }

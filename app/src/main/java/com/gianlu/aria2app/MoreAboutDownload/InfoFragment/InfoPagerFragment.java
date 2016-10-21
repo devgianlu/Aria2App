@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
@@ -16,7 +17,6 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.github.mikephil.charting.charts.LineChart;
 
-// TODO: Should display loading ContentLoadingProgressBar
 public class InfoPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
     private UpdateUI.IDownloadObserver pendingObserver;
@@ -89,6 +89,8 @@ public class InfoPagerFragment extends CommonFragment {
     public class ViewHolder {
         public final View rootView;
         public final TextView gid;
+        final ProgressBar loading;
+        final LinearLayout container;
         final ImageButton chartRefresh;
         final TextView totalLength;
         final TextView completedLength;
@@ -117,6 +119,8 @@ public class InfoPagerFragment extends CommonFragment {
             chart = (LineChart) rootView.findViewById(R.id.infoFragment_chart);
             chartRefresh = (ImageButton) rootView.findViewById(R.id.infoFragment_chartRefresh);
             gid = (TextView) rootView.findViewById(R.id.infoFragment_gid);
+            container = (LinearLayout) rootView.findViewById(R.id.infoFragment_container);
+            loading = (ProgressBar) rootView.findViewById(R.id.infoFragment_loading);
             totalLength = (TextView) rootView.findViewById(R.id.infoFragment_totalLength);
             completedLength = (TextView) rootView.findViewById(R.id.infoFragment_completedLength);
             uploadLength = (TextView) rootView.findViewById(R.id.infoFragment_uploadLength);

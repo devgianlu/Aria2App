@@ -10,7 +10,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -159,6 +158,9 @@ public class UpdateUI implements Runnable {
                         @SuppressWarnings("deprecation")
                         @Override
                         public void run() {
+                            holder.loading.setVisibility(View.GONE);
+                            holder.container.setVisibility(View.VISIBLE);
+
                             if (download.status == Download.STATUS.ACTIVE) {
                                 holder.chartRefresh.setEnabled(true);
 
@@ -175,11 +177,10 @@ public class UpdateUI implements Runnable {
                             }
 
                             if (bitfieldEnabled) {
-                                holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
-                                LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                bitParams.gravity = Gravity.CENTER_HORIZONTAL;
+                                LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                                 holder.bitfield.setLayoutParams(bitParams);
                                 holder.bitfield.removeAllViews();
+                                holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
 
                                 for (int piece : Utils.bitfieldProcessor(download.numPieces, download.bitfield)) {
                                     View view = new View(context);

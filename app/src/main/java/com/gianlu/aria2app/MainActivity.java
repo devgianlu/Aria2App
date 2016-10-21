@@ -67,7 +67,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-// TODO: Should replace all loading dialogs with ContentLoadingProgressBar
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -410,15 +409,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final AtomicBoolean shouldReport = new AtomicBoolean(true);
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.loading_downloads);
-        pd.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                shouldReport.set(false);
-                drawerManager.openProfiles(true);
-                dialog.dismiss();
-            }
-        });
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
@@ -427,26 +417,9 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (MainActivity.this.isFinishing()) return;
-
-                        pd.show();
-                        pd.getButton(DialogInterface.BUTTON_NEGATIVE).setVisibility(View.GONE);
+                        swipeLayout.setRefreshing(true);
                     }
                 });
-
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (!pd.isShowing()) return;
-
-                        MainActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                pd.getButton(DialogInterface.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
-                }, 2000);
             }
 
             @Override
@@ -577,12 +550,7 @@ public class MainActivity extends AppCompatActivity {
                         updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
                         new Thread(updateUI).start();
 
-                        try {
-                            pd.dismiss();
-                            swipeLayout.setRefreshing(false);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                        swipeLayout.setRefreshing(false);
 
                         if (getIntent().getBooleanExtra("fromNotification", false)) {
                             Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
@@ -660,12 +628,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                try {
-                    pd.dismiss();
-                    swipeLayout.setRefreshing(false);
-                } catch (Exception exx) {
-                    exx.printStackTrace();
-                }
+                swipeLayout.setRefreshing(false);
 
                 CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.noCommunication)
