@@ -9,9 +9,11 @@ public class TerminalItem {
     public Exception exception;
     public String text;
     public int type;
+    public long at;
     public boolean fromServer;
 
     private TerminalItem() {
+        at = System.currentTimeMillis();
     }
 
     public static TerminalItem createInfoItem(String text) {
@@ -26,6 +28,22 @@ public class TerminalItem {
         item.type = TYPE_INFO;
         item.exception = ex;
         item.text = ex.getMessage();
+        return item;
+    }
+
+    public static TerminalItem createConversationClientItem(String message) {
+        TerminalItem item = new TerminalItem();
+        item.type = TYPE_CONVERSATION;
+        item.fromServer = false;
+        item.text = message;
+        return item;
+    }
+
+    public static TerminalItem createConversationServerItem(String message) {
+        TerminalItem item = new TerminalItem();
+        item.type = TYPE_CONVERSATION;
+        item.fromServer = true;
+        item.text = message;
         return item;
     }
 

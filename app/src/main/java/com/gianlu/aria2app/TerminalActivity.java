@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Terminal.TerminalAdapter;
+import com.gianlu.aria2app.Terminal.TerminalItem;
 import com.gianlu.aria2app.Terminal.WebSocketRequester;
 import com.gianlu.commonutils.CommonUtils;
 
@@ -21,6 +23,9 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+// TODO: Advanced mode
+// TODO: Modify and resend
+// TODO: Method autocompletion
 public class TerminalActivity extends AppCompatActivity {
     private TerminalAdapter adapter;
 
@@ -30,6 +35,7 @@ public class TerminalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_terminal);
 
         RecyclerView list = (RecyclerView) findViewById(R.id.terminal_recyclerView);
+        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         final TextView noItems = (TextView) findViewById(R.id.terminal_noItems);
 
         adapter = new TerminalAdapter(this, new TerminalAdapter.IAdapter() {
@@ -94,11 +100,13 @@ public class TerminalActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
-                            WebSocketRequester.getInstance(TerminalActivity.this)
+                            String req = WebSocketRequester.getInstance(TerminalActivity.this)
                                     .request(id.getText().toString(),
                                             jsonrpc.getText().toString(),
                                             method.getText().toString(),
                                             params.getText().toString());
+
+                            adapter.add(TerminalItem.createConversationClientItem(req));
                         } catch (IOException | NoSuchAlgorithmException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                         } catch (JSONException ex) {

@@ -4,17 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.gianlu.aria2app.TerminalActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/terminal_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:stackFromBottom="true" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/terminal_noItems"
@@ -23,5 +18,5 @@
         android:layout_gravity="center"
         android:text="@string/noRecentRequests"
         android:textAlignment="center"
-        android:visibility="gone" />
+        android:visibility="visible" />
 </LinearLayout>

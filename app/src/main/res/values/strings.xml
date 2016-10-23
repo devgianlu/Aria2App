@@ -3,12 +3,8 @@
     <string name="title_activity_addProfile_new">New profile</string>
     <string name="title_activity_addProfile_edit">Edit profile</string>
     <string name="title_activity_terminal" translatable="false">Terminal</string>
-
-    <!-- Third part -->
     <string name="nv_websocket_client_license" translatable="false"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
     <string name="mpAndroidChart_details" translatable="false">Copyright 2016 Philipp Jahoda</string>
-
-    <!-- In-app text -->
     <string name="downloadStatus_waiting">Waiting in queue</string>
     <string name="downloadStatus_error">Error</string>
     <string name="downloadStatus_paused">Paused</string>
@@ -16,7 +12,6 @@
     <string name="downloadStatus_complete">Complete</string>
     <string name="downloadStatus_removed">Removed</string>
     <string name="downloadStatus_active">Active</string>
-
     <string name="completed_length"><![CDATA[<b>Completed length:</b>]]> %s</string>
     <string name="total_length"><![CDATA[<b>Total length:</b>]]> %s</string>
     <string name="uploaded_length"><![CDATA[<b>Uploaded length:</b>]]> %s</string>
@@ -36,19 +31,16 @@
     <string name="path" translatable="false"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
-
     <string name="selectFile">Select file</string>
     <string name="selectFileNotPaused">Select file (available only when download is paused)</string>
     <string name="selectFileNotTorrent">Select file (available only on BitTorrent downloads)</string>
     <string name="selectFileSingleFile">Select file (not available on single file downloads)</string>
-
     <string name="notificationComplete">Download completed!</string>
     <string name="notificationStarted">New download started!</string>
     <string name="notificationStopped">Download stopped!</string>
     <string name="notificationPaused">Download paused!</string>
     <string name="notificationError">Got error on download!</string>
     <string name="notificationBTComplete">BitTorrent download completed!</string>
-
     <string name="serverOffline">This server is actually offline. Would you like to use it anyway?</string>
     <string name="copiedClipboard">Copied to clipboard!</string>
     <string name="profile">Profile name:</string>
@@ -149,20 +141,15 @@
     <string name="directDownload_usernameHint" translatable="false">myusername</string>
     <string name="password" translatable="false">Password:</string>
     <string name="directDownload_passwordHint" translatable="false">mypassword</string>
-
     <string name="remove">Remove</string>
     <string name="pause">Pause</string>
     <string name="more">More</string>
     <string name="resume">Resume</string>
     <string name="restart">Restart</string>
-
-    <!-- Menus text -->
     <string name="menu_globalOptions">Global options</string>
     <string name="menu_downloadOptions">Download options</string>
     <string name="menu_refreshPage">Refresh page</string>
     <string name="menu_preferences">Preferences</string>
-
-    <!-- Preference text -->
     <string name="general">General</string>
     <string name="hideLinkedMetadata">Hide linked meta-data</string>
     <string name="visibleMetadata">Linked meta-data visible</string>
@@ -223,10 +210,11 @@
     <string name="downloaded_file">Download completed: %s</string>
     <string name="download_failed">Download failed: %s</string>
     <string name="noRecentRequests">There are no recent requests. Click the plus icon in the top corner to make one.</string>
-    <string name="create_request">create</string>
+    <string name="create_request">Create new request</string>
     <string name="create">Create</string>
     <string name="method_hint">aria2.* or system.*</string>
     <string name="connected">Connected!</string>
+    <string name="disconnected">Disconnected!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

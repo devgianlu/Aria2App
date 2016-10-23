@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.Terminal;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,19 +19,24 @@ import com.gianlu.commonutils.CommonUtils;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketFrame;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHolder> {
-    private Context context;
+    private Activity context;
     private IAdapter handler;
+    private SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSSS", Locale.getDefault());
     private List<TerminalItem> objs;
 
-    public TerminalAdapter(Context context, IAdapter handler) {
+    public TerminalAdapter(Activity context, IAdapter handler) {
         this.context = context;
         this.handler = handler;
         this.objs = new ArrayList<>();
@@ -102,7 +107,12 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
 
     public void add(TerminalItem item) {
         objs.add(item);
-        notifyDataSetChanged();
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -117,7 +127,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         } else {
             holder.getRootView().addView(CommonUtils.fastHorizontalLinearLayoutWeightDummy(context, 1), 0);
             holder.getRootView().addView(CommonUtils.fastHorizontalLinearLayoutWeightDummy(context, 1), 2);
-            holder.cardView.setAlpha(.5f);
+            holder.cardView.setAlpha(.3f);
         }
 
         return holder;
@@ -150,23 +160,25 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
 
         TerminalItem item = getItem(position);
         holder.text.setText(item.text);
+        holder.detailsAt.setText(timeFormatter.format(new Date(item.at)));
 
         if (item.type == TerminalItem.TYPE_INFO) {
             if (item.isException())
                 holder.text.setTextColor(Color.RED);
+            holder.detailsLength.setVisibility(View.GONE);
         } else {
-
+            holder.detailsLength.setText(CommonUtils.dimensionFormatter(item.text.length()));
         }
 
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CommonUtils.animateCollapsingArrowBellows(holder.expand, isExpanded(holder.more));
+                CommonUtils.animateCollapsingArrowBellows(holder.expand, isExpanded(holder.details));
 
-                if (isExpanded(holder.more))
-                    collapse(holder.more);
+                if (isExpanded(holder.details))
+                    collapse(holder.details);
                 else
-                    expand(holder.more);
+                    expand(holder.details);
             }
         });
     }
@@ -191,20 +203,50 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
             add(TerminalItem.createInfoItem(exception));
         }
+
+        @Override
+        public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+            long time = Long.parseLong(frame.getPayloadText());
+            add(TerminalItem.createInfoItem("Ping: " + (System.currentTimeMillis() - time) + " ms"));
+        }
+
+        @Override
+        public void onTextMessage(WebSocket websocket, String text) throws Exception {
+            add(TerminalItem.createConversationServerItem(text));
+        }
+
+        @Override
+        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+            add(TerminalItem.createInfoItem(context.getString(R.string.disconnected)));
+        }
+
+        @Override
+        public void onPingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+            onPongFrame(websocket, frame);
+        }
+
+        @Override
+        public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+            CommonUtils.logMe(context, cause);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public CardView cardView;
-        public ImageButton expand;
-        public LinearLayout more;
         public TextView text;
+        public ImageButton expand;
+        public LinearLayout details;
+        public TextView detailsAt;
+        public TextView detailsLength;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             cardView = (CardView) itemView.findViewById(R.id.terminalItem_card);
             expand = (ImageButton) itemView.findViewById(R.id.terminalItem_expand);
-            more = (LinearLayout) itemView.findViewById(R.id.terminalItem_more);
+            details = (LinearLayout) itemView.findViewById(R.id.terminalItem_details);
+            detailsAt = (TextView) itemView.findViewById(R.id.terminalItem_detailsAt);
+            detailsLength = (TextView) itemView.findViewById(R.id.terminalItem_detailsLength);
             text = (TextView) itemView.findViewById(R.id.terminalItem_text);
         }
 

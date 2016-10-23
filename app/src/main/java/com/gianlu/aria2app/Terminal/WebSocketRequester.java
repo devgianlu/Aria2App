@@ -41,21 +41,22 @@ public class WebSocketRequester {
         instance = null;
     }
 
-    public void request(JSONObject obj) {
+    public String request(JSONObject obj) {
         socket.sendText(obj.toString());
+        return obj.toString();
     }
 
     public void sendPing() {
         socket.sendPing(String.valueOf(System.currentTimeMillis()));
     }
 
-    public void request(String id, String jsonrpc, String method, String params) throws JSONException {
+    public String request(String id, String jsonrpc, String method, String params) throws JSONException {
         JSONObject obj = new JSONObject();
         obj.put("id", id)
                 .put("jsonrpc", jsonrpc)
                 .put("method", method)
                 .put("params", new JSONArray("[" + params + "]"));
 
-        request(obj);
+        return request(obj);
     }
 }
