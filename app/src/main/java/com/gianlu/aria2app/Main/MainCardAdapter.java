@@ -230,7 +230,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utils.animateCollapsingArrowBellows((ImageButton) view, isExpanded(holder.details));
+                CommonUtils.animateCollapsingArrowBellows((ImageButton) view, isExpanded(holder.details));
 
                 if (isExpanded(holder.details)) {
                     collapse(holder.details);

@@ -197,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
                                         } else {
                                             //noinspection deprecation
                                             box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
-
                                         }
 
                                         jta2.getSessionInfo(new ISession() {

@@ -266,7 +266,7 @@ public class FilesAdapter {
             subDir.viewHolder.toggle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.animateCollapsingArrowList((ImageButton) v, isExpanded(subView));
+                    CommonUtils.animateCollapsingArrowList((ImageButton) v, isExpanded(subView));
 
                     if (isExpanded(subView)) {
                         collapse(subView);

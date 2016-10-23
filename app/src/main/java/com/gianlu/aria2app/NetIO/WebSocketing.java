@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.NetIO;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.ArrayMap;
 import android.util.Pair;
 
@@ -30,7 +31,7 @@ public class WebSocketing extends WebSocketAdapter {
     private WebSocket socket;
     private boolean errorShown;
 
-    private WebSocketing(Activity context) throws IOException, NoSuchAlgorithmException {
+    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException {
         socket = Utils.readyWebSocket(context)
                 .addListener(this)
                 .connectAsynchronously();

@@ -105,7 +105,7 @@
     <string name="jsonrpc" translatable="false">JSONRPC:</string>
     <string name="jsonrpc_version" translatable="false">2.0</string>
     <string name="id" translatable="false">ID:</string>
-    <string name="id_hint">Empty for random</string>
+    <string name="id_hint">qwer</string>
     <string name="encryption">Enable TLS/SSL encryption</string>
     <string name="json" translatable="false">JSON:</string>
     <string name="json_hint" translatable="false">{\"id\": \"qwer\", \"jsonrpc\": \"2.0\", \"method\": \"aria2.getVersion\", \"params\": []}</string>
@@ -222,6 +222,11 @@
     <string name="notificationService">Notification service</string>
     <string name="downloaded_file">Download completed: %s</string>
     <string name="download_failed">Download failed: %s</string>
+    <string name="noRecentRequests">There are no recent requests. Click the plus icon in the top corner to make one.</string>
+    <string name="create_request">create</string>
+    <string name="create">Create</string>
+    <string name="method_hint">aria2.* or system.*</string>
+    <string name="connected">Connected!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
-import android.widget.ImageButton;
 
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
@@ -37,32 +36,6 @@ import javax.net.ssl.SSLContext;
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
-
-    public static void animateCollapsingArrowList(ImageButton view, boolean expanded) {
-        if (expanded)
-            view.animate()
-                    .rotation(0)
-                    .setDuration(200)
-                    .start();
-        else
-            view.animate()
-                    .rotation(90)
-                    .setDuration(200)
-                    .start();
-    }
-
-    public static void animateCollapsingArrowBellows(ImageButton view, boolean expanded) {
-        if (expanded)
-            view.animate()
-                    .rotation(0)
-                    .setDuration(200)
-                    .start();
-        else
-            view.animate()
-                    .rotation(180)
-                    .setDuration(200)
-                    .start();
-    }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     static void renameOldProfiles(Context context) {
@@ -320,6 +293,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file!", true);
         public static final CommonUtils.ToastMessage FAILED_CHECKING_VERSION = new CommonUtils.ToastMessage("Failed checking aria2 version!", true);
         public static final CommonUtils.ToastMessage LOGS_DELETED = new CommonUtils.ToastMessage("Logs deleted!", false);
+        public static final CommonUtils.ToastMessage INVALID_REQUEST = new CommonUtils.ToastMessage("Invalid request format! Please review your JSON.", false);
         public static final CommonUtils.ToastMessage INVALID_PROFILE_NAME = new CommonUtils.ToastMessage("Invalid profile name!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_IP = new CommonUtils.ToastMessage("Invalid server address!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_PORT = new CommonUtils.ToastMessage("Invalid server port, must be > 0 and < 65536!", false);
