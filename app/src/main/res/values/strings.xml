@@ -216,6 +216,7 @@
     <string name="connected">Connected!</string>
     <string name="disconnected">Disconnected!</string>
     <string name="create_advancedRequest">Create new advanced request</string>
+    <string name="invalidJSON">Invalid JSON: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

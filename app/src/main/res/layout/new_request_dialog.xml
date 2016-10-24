@@ -77,4 +77,11 @@
             android:hint="@string/params_hint"
             android:inputType="textVisiblePassword" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/createRequestDialog_json"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textStyle="bold" />
 </LinearLayout>

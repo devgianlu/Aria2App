@@ -223,6 +223,11 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         }
 
         @Override
+        public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+            add(TerminalItem.createInfoItem(cause));
+        }
+
+        @Override
         public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
             CommonUtils.logMe(context, cause);
         }

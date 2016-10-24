@@ -1,11 +1,14 @@
 package com.gianlu.aria2app;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,6 +99,38 @@ public class TerminalActivity extends AppCompatActivity {
         final EditText jsonrpc = (EditText) view.findViewById(R.id.createRequestDialog_jsonrpc);
         final EditText method = (EditText) view.findViewById(R.id.createRequestDialog_method);
         final EditText params = (EditText) view.findViewById(R.id.createRequestDialog_params);
+        final TextView json = (TextView) view.findViewById(R.id.createRequestDialog_json);
+
+        TextWatcher watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    json.setTextColor(Color.BLACK);
+                    json.setText(WebSocketRequester.formatRequest(id.getText().toString(),
+                            jsonrpc.getText().toString(),
+                            method.getText().toString(),
+                            params.getText().toString()).toString());
+                } catch (JSONException ex) {
+                    json.setTextColor(Color.RED);
+                    json.setText(getString(R.string.invalidJSON, ex.getMessage()));
+                }
+            }
+        };
+
+        id.addTextChangedListener(watcher);
+        jsonrpc.addTextChangedListener(watcher);
+        method.addTextChangedListener(watcher);
+        params.addTextChangedListener(watcher);
 
         return new AlertDialog.Builder(this)
                 .setTitle(R.string.create_request)

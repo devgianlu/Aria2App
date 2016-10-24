@@ -23,6 +23,13 @@ public class WebSocketRequester {
                 .connectAsynchronously();
     }
 
+    public static JSONObject formatRequest(String id, String jsonrpc, String method, String params) throws JSONException {
+        return new JSONObject().put("id", id)
+                .put("jsonrpc", jsonrpc)
+                .put("method", method)
+                .put("params", new JSONArray("[" + params + "]"));
+    }
+
     public static WebSocketRequester getInstance(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException {
         if (instance == null)
             instance = new WebSocketRequester(context, adapter);
@@ -51,12 +58,6 @@ public class WebSocketRequester {
     }
 
     public String request(String id, String jsonrpc, String method, String params) throws JSONException {
-        JSONObject obj = new JSONObject();
-        obj.put("id", id)
-                .put("jsonrpc", jsonrpc)
-                .put("method", method)
-                .put("params", new JSONArray("[" + params + "]"));
-
-        return request(obj);
+        return request(formatRequest(id, jsonrpc, method, params));
     }
 }
