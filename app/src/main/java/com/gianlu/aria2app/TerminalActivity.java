@@ -14,10 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.NetIO.JTA2.IMethod;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.Terminal.AutoCompletionAdapter;
 import com.gianlu.aria2app.Terminal.TerminalAdapter;
 import com.gianlu.aria2app.Terminal.TerminalItem;
 import com.gianlu.aria2app.Terminal.WebSocketRequester;
@@ -27,11 +31,14 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO: Modify and resend
 // TODO: Method autocompletion
 public class TerminalActivity extends AppCompatActivity {
     private TerminalAdapter adapter;
+    private List<String> methods = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,22 @@ public class TerminalActivity extends AppCompatActivity {
 
         try {
             WebSocketRequester.getInstance(this);
+        } catch (IOException | NoSuchAlgorithmException ex) {
+            CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
+        }
+
+        try {
+            JTA2.newInstance(this).listMethods(new IMethod() {
+                @Override
+                public void onMethods(List<String> methods) {
+                    TerminalActivity.this.methods.addAll(methods);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.FAILED_LOADING_AUTOCOMPLETION, ex);
+                }
+            });
         } catch (IOException | NoSuchAlgorithmException ex) {
             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
@@ -97,7 +120,8 @@ public class TerminalActivity extends AppCompatActivity {
         LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.new_request_dialog, null, false);
         final EditText id = (EditText) view.findViewById(R.id.createRequestDialog_id);
         final EditText jsonrpc = (EditText) view.findViewById(R.id.createRequestDialog_jsonrpc);
-        final EditText method = (EditText) view.findViewById(R.id.createRequestDialog_method);
+        final AutoCompleteTextView method = (AutoCompleteTextView) view.findViewById(R.id.createRequestDialog_method);
+        method.setAdapter(new AutoCompletionAdapter(this, methods));
         final EditText params = (EditText) view.findViewById(R.id.createRequestDialog_params);
         final TextView json = (TextView) view.findViewById(R.id.createRequestDialog_json);
 
