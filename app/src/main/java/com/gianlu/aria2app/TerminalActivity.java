@@ -1,8 +1,12 @@
 package com.gianlu.aria2app;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,15 +32,16 @@ import com.gianlu.aria2app.Terminal.TerminalItem;
 import com.gianlu.aria2app.Terminal.WebSocketRequester;
 import com.gianlu.commonutils.CommonUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-// TODO: Modify and resend
-// TODO: Method autocompletion
 public class TerminalActivity extends AppCompatActivity {
     private TerminalAdapter adapter;
     private List<String> methods = new ArrayList<>();
@@ -61,6 +67,39 @@ public class TerminalActivity extends AppCompatActivity {
                             noItems.setVisibility(View.VISIBLE);
                     }
                 });
+            }
+
+            @Override
+            public void onItemClick(TerminalItem item) {
+                ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("json", item.text));
+                CommonUtils.UIToast(TerminalActivity.this, CommonUtils.ToastMessage.COPIED_TO_CLIPBOARD, item.text);
+            }
+
+            @Override
+            public void onItemLongClick(final TerminalItem item) {
+                if (item.type == TerminalItem.TYPE_INFO)
+                    return;
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(TerminalActivity.this);
+                builder.setTitle(item.text)
+                        .setAdapter(new ArrayAdapter<>(TerminalActivity.this, android.R.layout.simple_list_item_1, Arrays.asList("Copy to clipboard", "Modify and resend", "Delete")), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                switch (i) {
+                                    case 0:
+                                        onItemClick(item);
+                                        break;
+                                    case 1:
+                                        CommonUtils.showDialog(TerminalActivity.this, createNewRequestDialog(item.text));
+                                        break;
+                                    case 2:
+                                        adapter.remove(item.at);
+                                        break;
+                                }
+                            }
+                        });
+
+                CommonUtils.showDialog(TerminalActivity.this, builder);
             }
         });
         list.setAdapter(adapter);
@@ -101,7 +140,7 @@ public class TerminalActivity extends AppCompatActivity {
                 adapter.clear();
                 break;
             case R.id.terminalMenu_newRequest:
-                CommonUtils.showDialog(this, createNewRequestDialog());
+                CommonUtils.showDialog(this, createNewRequestDialog(null));
                 break;
             case R.id.terminalMenu_newAdvancedRequest:
                 CommonUtils.showDialog(this, createNewAdvancedRequestDialog());
@@ -113,7 +152,7 @@ public class TerminalActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public AlertDialog.Builder createNewRequestDialog() {
+    public AlertDialog.Builder createNewRequestDialog(@Nullable String obj) {
         if (adapter == null)
             return null;
 
@@ -155,6 +194,24 @@ public class TerminalActivity extends AppCompatActivity {
         jsonrpc.addTextChangedListener(watcher);
         method.addTextChangedListener(watcher);
         params.addTextChangedListener(watcher);
+
+        if (obj != null) {
+            try {
+                JSONObject jObj = new JSONObject(obj);
+
+                id.setText(jObj.optString("id"));
+                jsonrpc.setText(jObj.optString("jsonrpc"));
+                method.setText(jObj.optString("method"));
+                JSONArray arr = jObj.optJSONArray("params");
+                if (arr != null) {
+                    String str = arr.toString();
+                    params.setText(str.substring(1, str.length() - 1));
+                }
+            } catch (JSONException ex) {
+                CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_EDIT_CONVERSATION_ITEM, ex);
+                return null;
+            }
+        }
 
         return new AlertDialog.Builder(this)
                 .setTitle(R.string.create_request)

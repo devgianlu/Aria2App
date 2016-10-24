@@ -305,6 +305,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING_AUTOCOMPLETION = new CommonUtils.ToastMessage("Unable to load method's suggestions!", true);
         public static final CommonUtils.ToastMessage FAILED_CLEARING_LOGS = new CommonUtils.ToastMessage("Failed clearing old logs!", true);
+        public static final CommonUtils.ToastMessage FAILED_EDIT_CONVERSATION_ITEM = new CommonUtils.ToastMessage("Failed editing that item!", true);
         public static final CommonUtils.ToastMessage NO_EMAIL_CLIENT = new CommonUtils.ToastMessage("There are no email clients installed.", true);
         public static final CommonUtils.ToastMessage INVALID_SSID = new CommonUtils.ToastMessage("Invalid SSID!", false);
         public static final CommonUtils.ToastMessage MUST_PICK_DEFAULT = new CommonUtils.ToastMessage("You must select one profile as default!", false);

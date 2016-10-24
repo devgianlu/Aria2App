@@ -158,7 +158,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         if (holder == null)
             return;
 
-        TerminalItem item = getItem(position);
+        final TerminalItem item = getItem(position);
         holder.text.setText(item.text);
         holder.detailsAt.setText(timeFormatter.format(new Date(item.at)));
 
@@ -181,16 +181,52 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
                     expand(holder.details);
             }
         });
+        holder.expand.setFocusable(false);
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (handler != null)
+                    handler.onItemClick(item);
+            }
+        });
+        holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (handler != null)
+                    handler.onItemLongClick(item);
+                return true;
+            }
+        });
+    }
+
+    public void remove(long at) {
+        for (TerminalItem item : new ArrayList<>(objs)) {
+            if (item.at == at)
+                objs.remove(item);
+        }
+
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        handler.onItemCountUpdated(objs.size());
+        if (handler != null)
+            handler.onItemCountUpdated(objs.size());
         return objs.size();
     }
 
     public interface IAdapter {
         void onItemCountUpdated(int count);
+
+        void onItemClick(TerminalItem item);
+
+        void onItemLongClick(TerminalItem item);
     }
 
     private class WebSocketHandler extends WebSocketAdapter {
