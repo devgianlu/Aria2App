@@ -43,8 +43,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TerminalActivity extends AppCompatActivity {
+    private final List<String> methods = new ArrayList<>();
     private TerminalAdapter adapter;
-    private List<String> methods = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +93,7 @@ public class TerminalActivity extends AppCompatActivity {
                                         CommonUtils.showDialog(TerminalActivity.this, createNewRequestDialog(item.text));
                                         break;
                                     case 2:
-                                        adapter.remove(item.at);
+                                        adapter.remove(item);
                                         break;
                                 }
                             }
@@ -152,7 +152,7 @@ public class TerminalActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public AlertDialog.Builder createNewRequestDialog(@Nullable String obj) {
+    private AlertDialog.Builder createNewRequestDialog(@Nullable String obj) {
         if (adapter == null)
             return null;
 
@@ -241,7 +241,7 @@ public class TerminalActivity extends AppCompatActivity {
                 });
     }
 
-    public AlertDialog.Builder createNewAdvancedRequestDialog() {
+    private AlertDialog.Builder createNewAdvancedRequestDialog() {
         if (adapter == null)
             return null;
 

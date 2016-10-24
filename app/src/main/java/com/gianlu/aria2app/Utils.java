@@ -266,8 +266,6 @@ public class Utils {
     }
 
     public static class ToastMessages {
-        public static final CommonUtils.ToastMessage WS_OPENED = new CommonUtils.ToastMessage("WebSocket connected!", false);
-        public static final CommonUtils.ToastMessage WS_CLOSED = new CommonUtils.ToastMessage("WebSocket has been closed!", true);
         public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
         public static final CommonUtils.ToastMessage FAILED_GATHERING_INFORMATION = new CommonUtils.ToastMessage("Failed on gathering information!", true);
         public static final CommonUtils.ToastMessage PAUSED = new CommonUtils.ToastMessage("Download paused.", false);
@@ -292,7 +290,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_CHANGE_POSITION = new CommonUtils.ToastMessage("Failed changing download's queue position!", true);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file!", true);
         public static final CommonUtils.ToastMessage FAILED_CHECKING_VERSION = new CommonUtils.ToastMessage("Failed checking aria2 version!", true);
-        public static final CommonUtils.ToastMessage LOGS_DELETED = new CommonUtils.ToastMessage("Logs deleted!", false);
         public static final CommonUtils.ToastMessage INVALID_REQUEST = new CommonUtils.ToastMessage("Invalid request format! Please review your JSON.", false);
         public static final CommonUtils.ToastMessage INVALID_PROFILE_NAME = new CommonUtils.ToastMessage("Invalid profile name!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_IP = new CommonUtils.ToastMessage("Invalid server address!", false);
@@ -304,7 +301,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
         public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING_AUTOCOMPLETION = new CommonUtils.ToastMessage("Unable to load method's suggestions!", true);
-        public static final CommonUtils.ToastMessage FAILED_CLEARING_LOGS = new CommonUtils.ToastMessage("Failed clearing old logs!", true);
         public static final CommonUtils.ToastMessage FAILED_EDIT_CONVERSATION_ITEM = new CommonUtils.ToastMessage("Failed editing that item!", true);
         public static final CommonUtils.ToastMessage NO_EMAIL_CLIENT = new CommonUtils.ToastMessage("There are no email clients installed.", true);
         public static final CommonUtils.ToastMessage INVALID_SSID = new CommonUtils.ToastMessage("Invalid SSID!", false);

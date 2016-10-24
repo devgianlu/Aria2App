@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 public class WebSocketRequester {
-    public static WebSocketRequester instance;
-    public WebSocket socket;
+    private static WebSocketRequester instance;
+    private WebSocket socket;
 
     private WebSocketRequester(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException {
         socket = Utils.readyWebSocket(context)
@@ -30,7 +30,7 @@ public class WebSocketRequester {
                 .put("params", new JSONArray("[" + params + "]"));
     }
 
-    public static WebSocketRequester getInstance(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException {
+    static WebSocketRequester getInstance(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException {
         if (instance == null)
             instance = new WebSocketRequester(context, adapter);
         return instance;
@@ -48,7 +48,7 @@ public class WebSocketRequester {
         instance = null;
     }
 
-    public String request(JSONObject obj) {
+    private String request(JSONObject obj) {
         return request(obj.toString());
     }
 

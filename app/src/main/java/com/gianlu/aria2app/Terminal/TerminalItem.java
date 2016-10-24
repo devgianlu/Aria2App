@@ -1,29 +1,28 @@
 package com.gianlu.aria2app.Terminal;
 
 public class TerminalItem {
-    public static final int FROM_SERVER = 1;
-    public static final int FROM_CLIENT = 2;
-    public static final int TYPE_CONVERSATION = 4;
     public static final int TYPE_INFO = 8;
-
-    public Exception exception;
+    static final int FROM_SERVER = 1;
+    static final int FROM_CLIENT = 2;
+    static final int TYPE_CONVERSATION = 4;
+    public final long at;
     public String text;
     public int type;
-    public long at;
-    public boolean fromServer;
+    boolean fromServer;
+    private Exception exception;
 
     private TerminalItem() {
         at = System.currentTimeMillis();
     }
 
-    public static TerminalItem createInfoItem(String text) {
+    static TerminalItem createInfoItem(String text) {
         TerminalItem item = new TerminalItem();
         item.type = TYPE_INFO;
         item.text = text;
         return item;
     }
 
-    public static TerminalItem createInfoItem(Exception ex) {
+    static TerminalItem createInfoItem(Exception ex) {
         TerminalItem item = new TerminalItem();
         item.type = TYPE_INFO;
         item.exception = ex;
@@ -39,7 +38,7 @@ public class TerminalItem {
         return item;
     }
 
-    public static TerminalItem createConversationServerItem(String message) {
+    static TerminalItem createConversationServerItem(String message) {
         TerminalItem item = new TerminalItem();
         item.type = TYPE_CONVERSATION;
         item.fromServer = true;

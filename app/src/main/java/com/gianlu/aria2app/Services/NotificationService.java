@@ -83,7 +83,7 @@ public class NotificationService extends IntentService {
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
                     .addAction(new NotificationCompat.Action.Builder(
-                            R.drawable.ic_clear_black_48dp, /* TODO: That button is horrible (as well as the icon) */
+                            R.drawable.ic_clear_black_48dp,
                             getApplicationContext().getString(R.string.stopNotificationService),
                             PendingIntent.getService(getApplicationContext(), 0,
                                     new Intent(getApplicationContext(), NotificationService.class)

@@ -2,7 +2,6 @@
     <string name="app_name" translatable="false">Aria2App</string>
     <string name="title_activity_addProfile_new">New profile</string>
     <string name="title_activity_addProfile_edit">Edit profile</string>
-    <string name="title_activity_terminal" translatable="false">Terminal</string>
     <string name="nv_websocket_client_license" translatable="false"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
     <string name="mpAndroidChart_details" translatable="false">Copyright 2016 Philipp Jahoda</string>
     <string name="downloadStatus_waiting">Waiting in queue</string>
@@ -52,7 +51,6 @@
     <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
     <string name="noServersMessage">No servers: %s</string>
     <string name="noPeersMessage">No peers: %s</string>
-    <string name="loading_downloads">Loading downloads. Please wait…</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
     <string name="showBitfield">Show bitfield</string>
     <string name="info">Info</string>
@@ -85,7 +83,6 @@
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
     <string name="authentication">Authentication</string>
-    <string name="send">Send</string>
     <string name="retry">Retry</string>
     <string name="exit">Exit</string>
     <string name="pickFromFile">Pick from file</string>
@@ -99,13 +96,9 @@
     <string name="id" translatable="false">ID:</string>
     <string name="id_hint">qwer</string>
     <string name="encryption">Enable TLS/SSL encryption</string>
-    <string name="json" translatable="false">JSON:</string>
-    <string name="json_hint" translatable="false">{\"id\": \"qwer\", \"jsonrpc\": \"2.0\", \"method\": \"aria2.getVersion\", \"params\": []}</string>
     <string name="params" translatable="false">Params:</string>
     <string name="params_hint">JSON formatted params</string>
     <string name="clear_history">Clear history</string>
-    <string name="adv_mode">Advanced mode</string>
-    <string name="basic_mode">Basic mode</string>
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
     <string name="uris" translatable="false">URIs</string>

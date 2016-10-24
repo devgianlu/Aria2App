@@ -16,7 +16,7 @@ import java.util.List;
 
 // Must use ArrayAdapter because it implements Filterable
 public class AutoCompletionAdapter extends ArrayAdapter<String> {
-    private View.OnClickListener helpClick = new View.OnClickListener() {
+    private final View.OnClickListener helpClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#" + view.getTag())));

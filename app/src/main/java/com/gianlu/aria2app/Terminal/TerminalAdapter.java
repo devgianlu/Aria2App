@@ -31,10 +31,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHolder> {
-    private Activity context;
-    private IAdapter handler;
-    private SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSSS", Locale.getDefault());
-    private List<TerminalItem> objs;
+    private final Activity context;
+    private final IAdapter handler;
+    private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSSS", Locale.getDefault());
+    private final List<TerminalItem> objs;
 
     public TerminalAdapter(Activity context, IAdapter handler) {
         this.context = context;
@@ -149,7 +149,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public TerminalItem getItem(int position) {
+    private TerminalItem getItem(int position) {
         return objs.get(position);
     }
 
@@ -200,12 +200,8 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         });
     }
 
-    public void remove(long at) {
-        for (TerminalItem item : new ArrayList<>(objs)) {
-            if (item.at == at)
-                objs.remove(item);
-        }
-
+    public void remove(TerminalItem item) {
+        objs.remove(item);
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -270,12 +266,12 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public CardView cardView;
-        public TextView text;
-        public ImageButton expand;
-        public LinearLayout details;
-        public TextView detailsAt;
-        public TextView detailsLength;
+        public final TextView text;
+        final CardView cardView;
+        final ImageButton expand;
+        final LinearLayout details;
+        final TextView detailsAt;
+        final TextView detailsLength;
 
         public ViewHolder(View itemView) {
             super(itemView);

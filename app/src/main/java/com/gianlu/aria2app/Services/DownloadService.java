@@ -68,9 +68,9 @@ public class DownloadService extends IntentService {
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setProgress(0, 0, true)
                 .setCategory(Notification.CATEGORY_PROGRESS)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification) /* TODO: (Animated) download icon */
                 .addAction(new NotificationCompat.Action.Builder(
-                        R.drawable.ic_clear_black_48dp, /* TODO: That button is horrible (as well as the icon) */
+                        R.drawable.ic_clear_black_48dp,
                         getString(R.string.stopNotificationService),
                         PendingIntent.getService(this, 0,
                                 new Intent(this, NotificationService.class)
