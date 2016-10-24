@@ -8,6 +8,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/terminalMenu_newAdvancedRequest"
+        android:title="@string/create_advancedRequest"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/terminalMenu_clearList"
         android:title="@string/clear_history"
         app:showAsAction="never" />

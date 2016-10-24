@@ -215,6 +215,7 @@
     <string name="method_hint">aria2.* or system.*</string>
     <string name="connected">Connected!</string>
     <string name="disconnected">Disconnected!</string>
+    <string name="create_advancedRequest">Create new advanced request</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

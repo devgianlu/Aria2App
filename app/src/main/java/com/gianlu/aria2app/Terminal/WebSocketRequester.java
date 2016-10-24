@@ -42,12 +42,12 @@ public class WebSocketRequester {
     }
 
     public String request(JSONObject obj) {
-        socket.sendText(obj.toString());
-        return obj.toString();
+        return request(obj.toString());
     }
 
-    public void sendPing() {
-        socket.sendPing(String.valueOf(System.currentTimeMillis()));
+    public String request(String req) {
+        socket.sendText(req);
+        return req;
     }
 
     public String request(String id, String jsonrpc, String method, String params) throws JSONException {

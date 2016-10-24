@@ -6,9 +6,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,7 +25,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-// TODO: Advanced mode
 // TODO: Modify and resend
 // TODO: Method autocompletion
 public class TerminalActivity extends AppCompatActivity {
@@ -55,7 +56,7 @@ public class TerminalActivity extends AppCompatActivity {
         list.setAdapter(adapter);
 
         try {
-            WebSocketRequester.getInstance(this).sendPing();
+            WebSocketRequester.getInstance(this);
         } catch (IOException | NoSuchAlgorithmException ex) {
             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
@@ -75,6 +76,9 @@ public class TerminalActivity extends AppCompatActivity {
                 break;
             case R.id.terminalMenu_newRequest:
                 CommonUtils.showDialog(this, createNewRequestDialog());
+                break;
+            case R.id.terminalMenu_newAdvancedRequest:
+                CommonUtils.showDialog(this, createNewAdvancedRequestDialog());
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -111,6 +115,39 @@ public class TerminalActivity extends AppCompatActivity {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                         } catch (JSONException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.INVALID_REQUEST, ex);
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+    }
+
+    public AlertDialog.Builder createNewAdvancedRequestDialog() {
+        if (adapter == null)
+            return null;
+
+        final EditText text = new EditText(this);
+        int pad = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, getResources().getDisplayMetrics());
+        text.setPadding(pad, pad, pad, pad);
+        text.setMinLines(5);
+        text.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.create_request)
+                .setView(text)
+                .setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            String req = WebSocketRequester.getInstance(TerminalActivity.this)
+                                    .request(text.getText().toString());
+
+                            adapter.add(TerminalItem.createConversationClientItem(req));
+                        } catch (IOException | NoSuchAlgorithmException ex) {
+                            CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                         }
                     }
                 })

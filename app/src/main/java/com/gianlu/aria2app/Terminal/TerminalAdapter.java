@@ -197,6 +197,8 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             add(TerminalItem.createInfoItem(context.getString(R.string.connected)));
+
+            websocket.sendPing(String.valueOf(System.currentTimeMillis()));
         }
 
         @Override
@@ -218,11 +220,6 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         @Override
         public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
             add(TerminalItem.createInfoItem(context.getString(R.string.disconnected)));
-        }
-
-        @Override
-        public void onPingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-            onPongFrame(websocket, frame);
         }
 
         @Override
