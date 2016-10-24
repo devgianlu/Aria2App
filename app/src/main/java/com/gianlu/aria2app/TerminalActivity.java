@@ -50,6 +50,7 @@ public class TerminalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terminal);
+        setTitle(R.string.title_activity_terminal);
 
         RecyclerView list = (RecyclerView) findViewById(R.id.terminal_recyclerView);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
