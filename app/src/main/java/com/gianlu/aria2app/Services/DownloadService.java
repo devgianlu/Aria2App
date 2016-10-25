@@ -25,17 +25,20 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: Custom notification view (and maybe ContentIntent and some dialogs to display progress and speed)
+// TODO: Some dialogs to display progress and speed
+// TODO: ProgressBar not working
+// TODO: Process not stopping
 public class DownloadService extends IntentService {
-    private static NotificationManagerCompat notificationManager;
+    private NotificationManagerCompat notificationManager;
     private Long downloaded = 0L;
     private Long length = 0L;
-    private int notificationId;
+    private int notificationId = new Random().nextInt(10000);
     private File file;
 
     public DownloadService() {
@@ -55,27 +58,37 @@ public class DownloadService extends IntentService {
                                 preferences.getString("dd_passwd", "")));
     }
 
-    @Override
-    public int onStartCommand(final Intent intent, int flags, int startId) {
-        notificationId = new Random().nextInt(10000);
-        file = (File) intent.getSerializableExtra("file");
-        notificationManager = NotificationManagerCompat.from(this);
-
-        startForeground(notificationId, new NotificationCompat.Builder(this)
-                .setShowWhen(true)
+    private NotificationCompat.Builder defaultBuilder() {
+        return new NotificationCompat.Builder(this)
                 .setPriority(Notification.PRIORITY_DEFAULT)
-                .setContentTitle(getString(R.string.downloading_file, file.getName()))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setProgress(0, 0, true)
-                .setCategory(Notification.CATEGORY_PROGRESS)
-                .setSmallIcon(R.drawable.ic_notification) /* TODO: (Animated) download icon */
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .addAction(new NotificationCompat.Action.Builder(
                         R.drawable.ic_clear_black_48dp,
-                        getString(R.string.stopNotificationService),
+                        getString(R.string.stopDownload),
                         PendingIntent.getService(this, 0,
-                                new Intent(this, NotificationService.class)
-                                        .setAction("STOP"), 0)).build())
-                .setColor(ContextCompat.getColor(this, R.color.colorAccent)).build());
+                                new Intent(this, DownloadService.class)
+                                        .setAction("STOP"), 0)).build());
+    }
+
+    @Override
+    public int onStartCommand(final Intent intent, int flags, int startId) {
+        notificationManager = NotificationManagerCompat.from(this);
+
+        if (intent == null || Objects.equals(intent.getAction(), "STOP")) {
+            stopSelf();
+        } else {
+            file = (File) intent.getSerializableExtra("file");
+
+            startForeground(notificationId, defaultBuilder()
+                    .setShowWhen(true)
+                    .setContentInfo(null)
+                    .setCategory(Notification.CATEGORY_PROGRESS)
+                    .setContentTitle(getString(R.string.downloading_file, file.getName()))
+                    .setProgress(0, 0, true)
+                    .build());
+        }
 
         onHandleIntent(intent);
         return START_STICKY;
@@ -97,7 +110,7 @@ public class DownloadService extends IntentService {
             url = uri.toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
             CommonUtils.logMe(this, ex);
-            NotificationGuy.setFailed(notificationId, DownloadService.this, file.getName());
+            setFailed();
             return;
         }
 
@@ -106,9 +119,9 @@ public class DownloadService extends IntentService {
             @Override
             public void run() {
                 if (length > 0) {
-                    NotificationGuy.updateNotification(notificationId, DownloadService.this, file.getName(), downloaded.floatValue() / length.floatValue() * 100);
+                    updateNotification(downloaded.floatValue() / length.floatValue() * 100);
                 } else {
-                    NotificationGuy.setIndeterminate(notificationId, DownloadService.this, file.getName());
+                    setIndeterminate();
                 }
             }
         }, 0, 1000);
@@ -148,66 +161,55 @@ public class DownloadService extends IntentService {
                     timer.cancel();
                     timer.purge();
 
-                    NotificationGuy.setCompleted(notificationId, DownloadService.this, file.getName());
+                    setCompleted();
                     stopSelf();
                 } catch (IOException ex) {
                     timer.cancel();
                     timer.purge();
 
                     CommonUtils.logMe(DownloadService.this, ex);
-                    NotificationGuy.setFailed(notificationId, DownloadService.this, file.getName());
+                    setFailed();
                 }
             }
         }).start();
     }
 
-    private static class NotificationGuy {
-        private static void updateNotification(int id, Context context, String fileName, Float percentage) {
-            notificationManager.notify(id, new NotificationCompat.Builder(context)
-                    .setShowWhen(false)
-                    .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setContentTitle(context.getString(R.string.downloading_file, fileName))
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setProgress(100, percentage.intValue(), false)
-                    .setCategory(Notification.CATEGORY_PROGRESS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
-        }
+    private void updateNotification(Float percentage) {
+        notificationManager.notify(notificationId, defaultBuilder()
+                .setShowWhen(false)
+                .setContentTitle(file.getName())
+                .setCategory(Notification.CATEGORY_PROGRESS)
+                .setContentInfo(String.format(Locale.getDefault(), "%.2f", percentage) + " %")
+                .setProgress(100, percentage.intValue(), false)
+                .build());
+    }
 
-        private static void setIndeterminate(int id, Context context, String fileName) {
-            notificationManager.notify(id, new NotificationCompat.Builder(context)
+    private void setIndeterminate() {
+        notificationManager.notify(notificationId, defaultBuilder()
                     .setShowWhen(false)
-                    .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setContentTitle(context.getString(R.string.downloading_file, fileName))
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentTitle(file.getName())
+                .setCategory(Notification.CATEGORY_PROGRESS)
+                .setContentInfo(null)
                     .setProgress(0, 0, true)
-                    .setCategory(Notification.CATEGORY_PROGRESS)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
-        }
+                .build());
+    }
 
-        private static void setCompleted(int id, Context context, String fileName) {
-            notificationManager.notify(id, new NotificationCompat.Builder(context)
+    private void setCompleted() {
+        notificationManager.notify(notificationId, defaultBuilder()
+                .setShowWhen(true)
+                .setContentInfo(null)
+                .setContentTitle(getString(R.string.downloaded_file, file.getName()))
+                .setProgress(0, 0, false)
+                .setCategory(Notification.CATEGORY_EVENT).build());
+    }
+
+    private void setFailed() {
+        notificationManager.notify(notificationId, defaultBuilder()
                     .setShowWhen(true)
-                    .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setContentTitle(context.getString(R.string.downloaded_file, fileName))
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentInfo(null)
+                .setContentTitle(getString(R.string.download_failed, file.getName()))
                     .setProgress(0, 0, false)
                     .setCategory(Notification.CATEGORY_EVENT)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
-        }
-
-        private static void setFailed(int id, Context context, String fileName) {
-            notificationManager.notify(id, new NotificationCompat.Builder(context)
-                    .setShowWhen(true)
-                    .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setContentTitle(context.getString(R.string.download_failed, fileName))
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setProgress(0, 0, false)
-                    .setCategory(Notification.CATEGORY_EVENT)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ContextCompat.getColor(context, R.color.colorAccent)).build());
-        }
+                .build());
     }
 }

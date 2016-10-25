@@ -50,24 +50,20 @@ class DownloadFileListener implements DialogInterface.OnClickListener {
     private void shouldStartDownload() {
         java.io.File ioFile = new java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), file.getName());
 
-        int c = 0;
+        int c = 1;
         while (ioFile.exists()) {
-            String[] split = file.getName().split(".");
-            split[split.length - 1] += "." + c;
+            String name = file.getName();
+            String[] split = name.split("\\.");
 
-            String newName = "";
-            boolean first = true;
-            for (String s : split) {
-                if (!first)
-                    newName += ".";
-                else
-                    first = false;
-
-                newName += s;
+            String newName;
+            if (split.length == 1) {
+                newName = name + "." + c;
+            } else {
+                String ext = split[split.length - 1];
+                newName = name.substring(0, name.length() - ext.length() - 1) + "." + c + "." + ext;
             }
 
-            //noinspection ResultOfMethodCallIgnored
-            ioFile.renameTo(new java.io.File(ioFile.getParent(), newName));
+            ioFile = new java.io.File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), newName);
             c++;
         }
 

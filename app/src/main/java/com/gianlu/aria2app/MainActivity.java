@@ -671,7 +671,10 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void stopped() {
                             loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
-                            new Thread(loadDownloads).start();
+                            try {
+                                new Thread(loadDownloads).start();
+                            } catch (InternalError ignored) {
+                            }
                         }
                     });
                 }

@@ -200,8 +200,8 @@
     <string name="downloadIncompleteMessage">The current file is incomplete (aka not fully downloaded).\nWould you like to download it anyway?</string>
     <string name="downloading_file">Downloading: %s</string>
     <string name="notificationService">Notification service</string>
-    <string name="downloaded_file">Download completed: %s</string>
-    <string name="download_failed">Download failed: %s</string>
+    <string name="downloaded_file">Completed: %s</string>
+    <string name="download_failed">Failed: %s</string>
     <string name="noRecentRequests">There are no recent requests. Click the plus icon in the top corner to make one.</string>
     <string name="create_request">Create new request</string>
     <string name="create">Create</string>
@@ -211,6 +211,7 @@
     <string name="create_advancedRequest">Create new advanced request</string>
     <string name="invalidJSON">Invalid JSON: %s</string>
     <string name="title_activity_terminal">Terminal</string>
+    <string name="stopDownload">Stop</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">
