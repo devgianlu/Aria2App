@@ -127,7 +127,7 @@
     <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a></string>
+    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a>. This will require the permission to write to the external storage.</string>
     <string name="directDownload_addrHint" translatable="false">http://127.0.0.1:6801/</string>
     <string name="directDownload_addrHelp">The address must be pointing to a directory listing of the aria2 download directory.</string>
     <string name="username" translatable="false">Username:</string>
@@ -212,6 +212,8 @@
     <string name="invalidJSON">Invalid JSON: %s</string>
     <string name="title_activity_terminal">Terminal</string>
     <string name="stopDownload">Stop</string>
+    <string name="writeExternalStorageRequest_title">External storage access required</string>
+    <string name="writeExternalStorageRequest_message">In order to save files to your devices Aria2App needs to access your external storage.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

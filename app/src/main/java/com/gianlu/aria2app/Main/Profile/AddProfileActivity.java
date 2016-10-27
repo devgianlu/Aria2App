@@ -1,13 +1,17 @@
 package com.gianlu.aria2app.Main.Profile;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -51,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AddProfileActivity extends AppCompatActivity {
+    private static final int WRITE_STORAGE_REQUEST_CODE = 1;
     private boolean isEditMode = true;
     private String oldFileName;
 
@@ -633,6 +638,10 @@ public class AddProfileActivity extends AppCompatActivity {
                             sViewHolder.directDownloadPassword.getText().toString().trim()));
         }
 
+        if (profile.isDirectDownloadEnabled()) {
+            requestWritePermission();
+        }
+
         try {
             if (oldFileName != null)
                 deleteFile(oldFileName);
@@ -645,7 +654,6 @@ public class AddProfileActivity extends AppCompatActivity {
             osw.close();
         } catch (IOException | JSONException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
-            ex.printStackTrace();
         }
 
         if (Analytics.isTrackingAllowed(this))
@@ -656,6 +664,24 @@ public class AddProfileActivity extends AppCompatActivity {
                     .build());
 
         onBackPressed();
+    }
+
+    private void requestWritePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+                        .setTitle(R.string.writeExternalStorageRequest_title)
+                        .setMessage(R.string.writeExternalStorageRequest_message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestWritePermission();
+                            }
+                        }));
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_REQUEST_CODE);
+            }
+        }
     }
 
     private void createMulti() {
@@ -688,8 +714,14 @@ public class AddProfileActivity extends AppCompatActivity {
                     .put("conditions", conditions);
         } catch (JSONException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
-            ex.printStackTrace();
             return;
+        }
+
+        for (SingleModeProfileItem _profile : mProfiles.values()) {
+            if (_profile.isDirectDownloadEnabled()) {
+                requestWritePermission();
+                break;
+            }
         }
 
         try {

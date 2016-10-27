@@ -1,14 +1,18 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.DownloadService;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -27,6 +31,11 @@ class DownloadFileListener implements DialogInterface.OnClickListener {
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            CommonUtils.UIToast(context, Utils.ToastMessages.WRITE_STORAGE_DENIED);
+            return;
+        }
+
         if (Objects.equals(file.completedLength, file.length)) {
             shouldStartDownload();
         } else {

@@ -33,12 +33,12 @@ import java.util.TimerTask;
 
 // TODO: Some dialogs to display progress and speed
 // TODO: ProgressBar not working
-// TODO: Process not stopping
 public class DownloadService extends IntentService {
     private NotificationManagerCompat notificationManager;
     private Long downloaded = 0L;
+    private boolean _shouldStop = false;
     private Long length = 0L;
-    private int notificationId = new Random().nextInt(10000);
+    private int notificationId = new Random().nextInt();
     private File file;
 
     public DownloadService() {
@@ -63,13 +63,7 @@ public class DownloadService extends IntentService {
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
-                .addAction(new NotificationCompat.Action.Builder(
-                        R.drawable.ic_clear_black_48dp,
-                        getString(R.string.stopDownload),
-                        PendingIntent.getService(this, 0,
-                                new Intent(this, DownloadService.class)
-                                        .setAction("STOP"), 0)).build());
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent));
     }
 
     @Override
@@ -96,8 +90,11 @@ public class DownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(final Intent intent) {
+        System.out.println("ACT: " + intent.getAction());
+
         if (Objects.equals(intent.getAction(), "STOP")) {
             stopSelf();
+            _shouldStop = true;
             return;
         }
 
@@ -150,7 +147,7 @@ public class DownloadService extends IntentService {
 
                     byte[] buffer = new byte[4096];
                     int count;
-                    while ((count = in.read(buffer)) != -1) {
+                    while ((count = in.read(buffer)) != -1 && !_shouldStop) {
                         out.write(buffer, 0, count);
                         downloaded += count;
                     }
@@ -161,7 +158,8 @@ public class DownloadService extends IntentService {
                     timer.cancel();
                     timer.purge();
 
-                    setCompleted();
+                    if (!_shouldStop)
+                        setCompleted();
                     stopSelf();
                 } catch (IOException ex) {
                     timer.cancel();
@@ -181,22 +179,35 @@ public class DownloadService extends IntentService {
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setContentInfo(String.format(Locale.getDefault(), "%.2f", percentage) + " %")
                 .setProgress(100, percentage.intValue(), false)
+                .addAction(new NotificationCompat.Action.Builder(
+                        R.drawable.ic_clear_black_48dp,
+                        getString(R.string.stopDownload),
+                        PendingIntent.getService(this, new Random().nextInt(),
+                                new Intent(this, DownloadService.class)
+                                        .setAction("STOP"), 0)).build())
                 .build());
     }
 
     private void setIndeterminate() {
         notificationManager.notify(notificationId, defaultBuilder()
-                    .setShowWhen(false)
+                .setShowWhen(false)
                 .setContentTitle(file.getName())
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setContentInfo(null)
-                    .setProgress(0, 0, true)
+                .setProgress(0, 0, true)
+                .addAction(new NotificationCompat.Action.Builder(
+                        R.drawable.ic_clear_black_48dp,
+                        getString(R.string.stopDownload),
+                        PendingIntent.getService(this, new Random().nextInt(),
+                                new Intent(this, DownloadService.class)
+                                        .setAction("STOP"), 0)).build())
                 .build());
     }
 
     private void setCompleted() {
         notificationManager.notify(notificationId, defaultBuilder()
                 .setShowWhen(true)
+                .setAutoCancel(true)
                 .setContentInfo(null)
                 .setContentTitle(getString(R.string.downloaded_file, file.getName()))
                 .setProgress(0, 0, false)
@@ -205,11 +216,12 @@ public class DownloadService extends IntentService {
 
     private void setFailed() {
         notificationManager.notify(notificationId, defaultBuilder()
-                    .setShowWhen(true)
+                .setShowWhen(true)
+                .setAutoCancel(true)
                 .setContentInfo(null)
                 .setContentTitle(getString(R.string.download_failed, file.getName()))
-                    .setProgress(0, 0, false)
-                    .setCategory(Notification.CATEGORY_EVENT)
+                .setProgress(0, 0, false)
+                .setCategory(Notification.CATEGORY_EVENT)
                 .build());
     }
 }
