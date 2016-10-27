@@ -52,9 +52,8 @@ public class TerminalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_terminal);
         setTitle(R.string.title_activity_terminal);
 
-        RecyclerView list = (RecyclerView) findViewById(R.id.terminal_recyclerView);
+        final RecyclerView list = (RecyclerView) findViewById(R.id.terminal_recyclerView);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        final TextView noItems = (TextView) findViewById(R.id.terminal_noItems);
 
         adapter = new TerminalAdapter(this, new TerminalAdapter.IAdapter() {
             @Override
@@ -62,10 +61,13 @@ public class TerminalActivity extends AppCompatActivity {
                 TerminalActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (count > 0)
-                            noItems.setVisibility(View.GONE);
-                        else
-                            noItems.setVisibility(View.VISIBLE);
+                        if (count > 0) {
+                            list.setVisibility(View.VISIBLE);
+                            findViewById(R.id.terminal_noItems).setVisibility(View.GONE);
+                        } else {
+                            list.setVisibility(View.GONE);
+                            findViewById(R.id.terminal_noItems).setVisibility(View.VISIBLE);
+                        }
                     }
                 });
             }

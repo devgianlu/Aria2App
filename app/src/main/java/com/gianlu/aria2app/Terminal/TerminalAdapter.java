@@ -147,6 +147,9 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
     public void clear() {
         objs.clear();
         notifyDataSetChanged();
+
+        if (handler != null)
+            handler.onItemCountUpdated(0);
     }
 
     private TerminalItem getItem(int position) {
