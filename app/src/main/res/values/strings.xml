@@ -214,6 +214,7 @@
     <string name="stopDownload">Stop</string>
     <string name="writeExternalStorageRequest_title">External storage access required</string>
     <string name="writeExternalStorageRequest_message">In order to save files to your devices Aria2App needs to access your external storage.</string>
+    <string name="mainList_noItems">There are no downloads running. You can add one by tapping on the plus icon in the bottom corner.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

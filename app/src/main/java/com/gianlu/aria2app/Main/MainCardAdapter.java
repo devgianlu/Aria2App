@@ -38,15 +38,13 @@ import java.util.Locale;
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final Activity context;
     private final List<Download> objs;
-    private final IActionMore actionMore;
-    private final IMenuSelected actionMenu;
+    private final IActions handler;
     private final List<Download.STATUS> filters;
 
-    public MainCardAdapter(Activity context, List<Download> objs, IActionMore actionMore, IMenuSelected actionMenu) {
+    public MainCardAdapter(Activity context, List<Download> objs, IActions handler) {
         this.context = context;
         this.objs = objs;
-        this.actionMore = actionMore;
-        this.actionMenu = actionMenu;
+        this.handler = handler;
         this.filters = new ArrayList<>();
     }
 
@@ -226,7 +224,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
             holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
         }
 
-
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -250,7 +247,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                actionMore.onClick(item);
+                handler.onMoreClick(item);
             }
         });
         holder.menu.setOnClickListener(new View.OnClickListener() {
@@ -307,22 +304,22 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.downloadCardViewMenu_remove:
-                                actionMenu.onItemSelected(item, DownloadAction.ACTION.REMOVE);
+                                handler.onMenuItemSelected(item, DownloadAction.ACTION.REMOVE);
                                 break;
                             case R.id.downloadCardViewMenu_restart:
-                                actionMenu.onItemSelected(item, DownloadAction.ACTION.RESTART);
+                                handler.onMenuItemSelected(item, DownloadAction.ACTION.RESTART);
                                 break;
                             case R.id.downloadCardViewMenu_resume:
-                                actionMenu.onItemSelected(item, DownloadAction.ACTION.RESUME);
+                                handler.onMenuItemSelected(item, DownloadAction.ACTION.RESUME);
                                 break;
                             case R.id.downloadCardViewMenu_pause:
-                                actionMenu.onItemSelected(item, DownloadAction.ACTION.PAUSE);
+                                handler.onMenuItemSelected(item, DownloadAction.ACTION.PAUSE);
                                 break;
                             case R.id.downloadCardViewMenu_moveDown:
-                                actionMenu.onItemSelected(item, DownloadAction.ACTION.MOVE_DOWN);
+                                handler.onMenuItemSelected(item, DownloadAction.ACTION.MOVE_DOWN);
                                 break;
                             case R.id.downloadCardViewMenu_moveUp:
-                                actionMenu.onItemSelected(item, DownloadAction.ACTION.MOVE_UP);
+                                handler.onMenuItemSelected(item, DownloadAction.ACTION.MOVE_UP);
                                 break;
                         }
                         return true;
@@ -343,6 +340,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
     @Override
     public int getItemCount() {
+        if (handler != null)
+            handler.onItemCountUpdated(objs.size());
         return objs.size();
     }
 
@@ -350,10 +349,11 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         return objs;
     }
 
-    public interface IActionMore {
-        void onClick(Download item);
-    }
-    public interface IMenuSelected {
-        void onItemSelected(Download download, DownloadAction.ACTION action);
+    public interface IActions {
+        void onMoreClick(Download item);
+
+        void onItemCountUpdated(int count);
+
+        void onMenuItemSelected(Download download, DownloadAction.ACTION action);
     }
 }

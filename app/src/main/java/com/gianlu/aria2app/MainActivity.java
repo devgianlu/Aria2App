@@ -426,20 +426,36 @@ public class MainActivity extends AppCompatActivity {
             public void onLoaded(JTA2 jta2, final List<Download> downloads) {
                 if (!shouldReport.get()) return;
 
-                adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActionMore() {
+                adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActions() {
                     @Override
-                    public void onClick(Download item) {
+                    public void onMoreClick(Download item) {
                         Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                                 .putExtra("gid", item.gid)
                                 .putExtra("name", item.getName())
                                 .putExtra("isTorrent", item.isBitTorrent)
                                 .putExtra("status", item.status.name());
-                        if (!(item.status.equals(Download.STATUS.UNKNOWN) || item.status.equals(Download.STATUS.ERROR)))
+                        if (!item.status.equals(Download.STATUS.UNKNOWN) && !item.status.equals(Download.STATUS.ERROR))
                             MainActivity.this.startActivity(launchActivity);
                     }
-                }, new MainCardAdapter.IMenuSelected() {
+
                     @Override
-                    public void onItemSelected(Download item, DownloadAction.ACTION action) {
+                    public void onItemCountUpdated(final int count) {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (count > 0) {
+                                    findViewById(R.id.main_noItems).setVisibility(View.GONE);
+                                    mainRecyclerView.setVisibility(View.VISIBLE);
+                                } else {
+                                    findViewById(R.id.main_noItems).setVisibility(View.VISIBLE);
+                                    mainRecyclerView.setVisibility(View.GONE);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onMenuItemSelected(Download item, DownloadAction.ACTION action) {
                         DownloadAction downloadAction;
                         try {
                             downloadAction = new DownloadAction(MainActivity.this);
