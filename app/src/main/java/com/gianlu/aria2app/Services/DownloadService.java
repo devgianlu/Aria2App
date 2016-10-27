@@ -32,7 +32,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 // TODO: Some dialogs to display progress and speed
-// TODO: ProgressBar not working
 public class DownloadService extends IntentService {
     private NotificationManagerCompat notificationManager;
     private Long downloaded = 0L;
@@ -158,8 +157,14 @@ public class DownloadService extends IntentService {
                     timer.cancel();
                     timer.purge();
 
-                    if (!_shouldStop)
+                    if (_shouldStop) {
+                        notificationManager.cancel(notificationId);
+                        //noinspection ResultOfMethodCallIgnored
+                        file.delete();
+                    } else {
                         setCompleted();
+                    }
+
                     stopSelf();
                 } catch (IOException ex) {
                     timer.cancel();

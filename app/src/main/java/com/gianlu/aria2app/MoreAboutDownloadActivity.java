@@ -99,6 +99,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                     case PAUSED:
                     case WAITING:
                         menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(true);
+                        menu.findItem(R.id.moreAboutDownloadMenu_quickOptions).setVisible(true);
                         break;
                     case REMOVED:
                     case ERROR:
@@ -106,6 +107,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                     case UNKNOWN:
                     default:
                         menu.findItem(R.id.moreAboutDownloadMenu_options).setVisible(false);
+                        menu.findItem(R.id.moreAboutDownloadMenu_quickOptions).setVisible(false);
                         break;
                 }
             }
