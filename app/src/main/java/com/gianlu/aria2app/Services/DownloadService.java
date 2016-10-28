@@ -5,13 +5,12 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
+import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.Main.Profile.DirectDownload;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
@@ -45,16 +44,10 @@ public class DownloadService extends IntentService {
     }
 
     public static Intent createStartIntent(Context context, File file, String remotePath) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return new Intent(context, DownloadService.class)
                 .putExtra("file", file)
                 .putExtra("remotePath", remotePath)
-                .putExtra("directDownload",
-                        new DirectDownload(
-                                preferences.getString("dd_addr", "http://127.0.0.1/"),
-                                preferences.getBoolean("dd_auth", false),
-                                preferences.getString("dd_user", ""),
-                                preferences.getString("dd_passwd", "")));
+                .putExtra("directDownload", CurrentProfile.getCurrentProfile(context).getDirectDownload());
     }
 
     private NotificationCompat.Builder defaultBuilder() {

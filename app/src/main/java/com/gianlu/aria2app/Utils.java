@@ -1,13 +1,14 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
+import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -228,35 +229,34 @@ public class Utils {
     }
 
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences.getBoolean("a2_serverSSL", false)) {
+        SingleModeProfileItem profile = CurrentProfile.getCurrentProfile(context);
+
+        if (profile.isServerSSL()) {
             WebSocketFactory factory = new WebSocketFactory()
                     .setSSLContext(SSLContext.getDefault())
                     .setConnectionTimeout(5000);
-            WebSocket socket = factory.createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "wss://"), 5000);
+            WebSocket socket = factory.createSocket(profile.getFullServerAddr().replace("http://", "ws://").replace("http://", "wss://"), 5000);
 
-            if (preferences.getString("a2_authMethod", "NONE").equals("HTTP"))
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((preferences.getString("a2_serverUsername", "username") + ":" + preferences.getString("a2_serverPassword", "password")).getBytes(), Base64.NO_WRAP));
+            if (profile.getAuthMethod() == JTA2.AUTH_METHOD.HTTP)
+                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.getServerUsername() + ":" + profile.getServerPassword()).getBytes(), Base64.NO_WRAP));
 
             return socket;
         } else {
             WebSocket socket = new WebSocketFactory()
                     .setConnectionTimeout(5000)
-                    .createSocket(preferences.getString("a2_serverIP", "http://127.0.0.1:6800/jsonrpc").replace("http://", "ws://"), 5000);
+                    .createSocket(profile.getFullServerAddr().replace("http://", "ws://"), 5000);
 
-            if (preferences.getString("a2_authMethod", "NONE").equals("HTTP"))
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((preferences.getString("a2_serverUsername", "username") + ":" + preferences.getString("a2_serverPassword", "password")).getBytes(), Base64.NO_WRAP));
+            if (profile.getAuthMethod() == JTA2.AUTH_METHOD.HTTP)
+                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.getServerUsername() + ":" + profile.getServerPassword()).getBytes(), Base64.NO_WRAP));
 
             return socket;
         }
     }
 
     public static JSONArray readyParams(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
         JSONArray array = new JSONArray();
-        if (preferences.getString("a2_authMethod", "NONE").equals("TOKEN"))
-            array.put("token:" + preferences.getString("a2_serverToken", "token"));
+        if (CurrentProfile.getCurrentProfile(context).getAuthMethod() == JTA2.AUTH_METHOD.TOKEN)
+            array.put("token:" + CurrentProfile.getCurrentProfile(context).getServerToken());
 
         return array;
     }

@@ -7,7 +7,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
@@ -24,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
@@ -238,7 +238,7 @@ public class FilesAdapter {
                             .setView(view)
                             .setTitle(file.file.getName());
 
-                    if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_directDownload", false) && dir != null) {
+                    if (CurrentProfile.getCurrentProfile(context).isDirectDownloadEnabled() && dir != null) {
                         builder.setNeutralButton(R.string.downloadFile, new DownloadFileListener(context, file.file, dir));
                     }
 

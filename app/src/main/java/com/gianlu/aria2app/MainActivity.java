@@ -323,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
                     .setGlobalProfileName("Local device"));
         }
 
+
         try {
             SingleModeProfileItem profile;
             if (getIntent().getBooleanExtra("external", false)) {
@@ -338,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
                         .putExtra("canGoBack", false)
                         .putExtra("edit", false));
             } else {
-                profile = defaultProfile();
+                profile = CurrentProfile.getCurrentProfile(this);
             }
 
             if (profile == null) {
@@ -733,20 +734,6 @@ public class MainActivity extends AppCompatActivity {
             drawerManager.syncTogglerState();
     }
 
-    @Nullable
-    private SingleModeProfileItem defaultProfile() throws IOException, JSONException {
-        String lastProfile = PreferenceManager.getDefaultSharedPreferences(this).getString("lastUsedProfile", null);
-
-        if (ProfileItem.exists(this, lastProfile)) {
-            if (ProfileItem.isSingleMode(this, lastProfile))
-                return SingleModeProfileItem.fromString(this, lastProfile);
-            else
-                return MultiModeProfileItem.fromString(this, lastProfile).getCurrentProfile(this);
-        } else {
-            return null;
-        }
-    }
-
     private void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
         try {
             deleteFile("Local device.profile");
@@ -766,24 +753,7 @@ public class MainActivity extends AppCompatActivity {
     private void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
         drawerManager.setCurrentProfile(profile);
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("lastUsedProfile", profile.getFileName())
-                .putString("a2_profileName", profile.getProfileName())
-                .putString("a2_serverIP", profile.getFullServerAddr())
-                .putString("a2_authMethod", profile.getAuthMethod().name())
-                .putString("a2_serverToken", profile.getServerToken())
-                .putString("a2_serverUsername", profile.getServerUsername())
-                .putString("a2_serverPassword", profile.getServerPassword())
-                .putBoolean("a2_serverSSL", profile.isServerSSL())
-                .putBoolean("a2_directDownload", profile.isDirectDownloadEnabled());
-
-        if (profile.isDirectDownloadEnabled()) {
-            editor.putString("dd_addr", profile.getDirectDownload().getAddress())
-                    .putBoolean("dd_auth", profile.getDirectDownload().isAuth())
-                    .putString("dd_user", profile.getDirectDownload().getUsername())
-                    .putString("dd_passwd", profile.getDirectDownload().getPassword());
-        }
-        editor.apply();
+        CurrentProfile.setCurrentProfile(profile);
 
         if (recreate) {
             WebSocketing.destroyInstance();

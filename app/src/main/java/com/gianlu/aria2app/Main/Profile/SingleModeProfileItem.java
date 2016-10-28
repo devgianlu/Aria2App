@@ -111,6 +111,10 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         directDownload = in.readParcelable(DirectDownload.class.getClassLoader());
     }
 
+    public static SingleModeProfileItem defaultEmpty() {
+        return new SingleModeProfileItem("Empty", "127.0.0.1", 6800, "/jsonrpc", false, false, false, null);
+    }
+
     public static SingleModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
         JSONObject jProfile = new JSONObject(json);
         SingleModeProfileItem item = new SingleModeProfileItem();
