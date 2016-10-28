@@ -18,8 +18,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        android:theme="@style/AppTheme">
 
         <!-- Add profile activity -->
         <activity
@@ -87,7 +86,6 @@
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
-
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
