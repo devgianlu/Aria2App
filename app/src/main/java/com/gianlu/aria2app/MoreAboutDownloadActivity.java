@@ -114,7 +114,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
             @Override
             public void onReportDownloadPieces(int numPieces) {
-                if (numPieces >= 4000 && menu.findItem(R.id.moreAboutDownloadMenu_bitfield).isChecked())
+                if (numPieces >= 2000 && menu.findItem(R.id.moreAboutDownloadMenu_bitfield).isChecked())
                     onOptionsItemSelected(menu.findItem(R.id.moreAboutDownloadMenu_bitfield));
             }
         }));
