@@ -645,8 +645,6 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                swipeLayout.setRefreshing(false);
-
                 CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.noCommunication)
                         .setCancelable(false)
@@ -673,6 +671,7 @@ public class MainActivity extends AppCompatActivity {
                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
                     @Override
                     public void run() {
+                        swipeLayout.setRefreshing(false);
                         drawerManager.updateBadge(-1);
                     }
                 });

@@ -232,19 +232,11 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             add(TerminalItem.createInfoItem(context.getString(R.string.connected)));
-
-            websocket.sendPing(String.valueOf(System.currentTimeMillis()));
         }
 
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
             add(TerminalItem.createInfoItem(exception));
-        }
-
-        @Override
-        public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-            long time = Long.parseLong(frame.getPayloadText());
-            add(TerminalItem.createInfoItem("Ping: " + (System.currentTimeMillis() - time) + " ms"));
         }
 
         @Override

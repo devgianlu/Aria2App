@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// TODO: Ping feature
 public class TerminalActivity extends AppCompatActivity {
     private final List<String> methods = new ArrayList<>();
     private TerminalAdapter adapter;
