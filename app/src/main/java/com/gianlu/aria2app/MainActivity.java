@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
+        System.out.println(getIntent());
+
         CommonUtils.DEBUG = BuildConfig.DEBUG;
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
@@ -311,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
 
-            saveExternalProfile(new SingleModeProfileItem("Local device",
+            saveExternalProfile(new SingleModeProfileItem(SingleModeProfileItem.DEFAULT_NAME,
                     "localhost",
                     getIntent().getIntExtra("port", 6800),
                     "/jsonrpc",
@@ -327,8 +329,12 @@ public class MainActivity extends AppCompatActivity {
         try {
             SingleModeProfileItem profile;
             if (getIntent().getBooleanExtra("external", false)) {
-                profile = SingleModeProfileItem.fromString(this, "Local device");
+                getIntent().removeExtra("external");
+
+                profile = SingleModeProfileItem.fromString(this, SingleModeProfileItem.DEFAULT_BASE64_NAME);
             } else if (getIntent().getBooleanExtra("fromNotification", false)) {
+                getIntent().removeExtra("fromNotification");
+
                 if (ProfileItem.isSingleMode(this, getIntent().getStringExtra("fileName")))
                     profile = SingleModeProfileItem.fromString(this, getIntent().getStringExtra("fileName"));
                 else
@@ -735,9 +741,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
         try {
-            deleteFile("Local device.profile");
+            deleteFile(SingleModeProfileItem.DEFAULT_BASE64_NAME + ".profile");
 
-            FileOutputStream fOut = openFileOutput("Local device.profile", Context.MODE_PRIVATE);
+            FileOutputStream fOut = openFileOutput(SingleModeProfileItem.DEFAULT_BASE64_NAME + ".profile", Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
             osw.write(profile.toJSON().toString());

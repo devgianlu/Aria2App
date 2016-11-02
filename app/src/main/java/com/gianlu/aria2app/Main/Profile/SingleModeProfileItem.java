@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
@@ -17,6 +18,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class SingleModeProfileItem extends ProfileItem implements Parcelable {
+    public static final String DEFAULT_NAME = "Local device";
+    public static final String DEFAULT_BASE64_NAME = Base64.encodeToString(DEFAULT_NAME.getBytes(), Base64.NO_WRAP);
+
     public static final Creator<SingleModeProfileItem> CREATOR = new Creator<SingleModeProfileItem>() {
         @Override
         public SingleModeProfileItem createFromParcel(Parcel in) {
@@ -156,6 +160,9 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
     }
 
     public static SingleModeProfileItem fromString(Context context, String base64name) throws IOException, JSONException {
+        if (!base64name.endsWith(".profile"))
+            base64name += ".profile";
+
         FileInputStream in = context.openFileInput(base64name);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder builder = new StringBuilder();
