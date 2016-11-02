@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-// TODO: Refresh button crashes everything (check button for every chart)
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final Activity context;
     private final List<Download> objs;
