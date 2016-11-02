@@ -28,9 +28,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -158,16 +156,20 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 holder.detailsChartRefresh.setEnabled(true);
 
                 LineData data = holder.detailsChart.getData();
-                if (data == null) holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
+                if (data == null) {
+                    holder.detailsChart = Utils.setupChart(holder.detailsChart, true);
+                    data = holder.detailsChart.getData();
+                }
 
                 if (data != null) {
-                    data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date()));
-                    data.addEntry(new Entry(item.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-                    data.addEntry(new Entry(item.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
-
+                    int pos = data.getEntryCount() / 2 + 1;
+                    data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(pos, 0), Utils.CHART_UPLOAD_SET);
+                    data.notifyDataChanged();
                     holder.detailsChart.notifyDataSetChanged();
+
                     holder.detailsChart.setVisibleXRangeMaximum(90);
-                    holder.detailsChart.moveViewToX(data.getXValCount() - 91);
+                    holder.detailsChart.moveViewToX(pos - 91);
                 }
             } else {
                 holder.detailsChartRefresh.setEnabled(false);

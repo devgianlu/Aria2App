@@ -8,8 +8,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 19
-        versionName "1.4.9"
+        versionCode 20
+        versionName "1.4.10"
     }
 
     buildTypes {
@@ -23,7 +23,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:support-v4:25.0.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     compile 'com.neovisionaries:nv-websocket-client:1.30'
     compile 'com.google.android.gms:play-services-analytics:9.8.0'
     compile 'com.android.support:design:25.0.0'

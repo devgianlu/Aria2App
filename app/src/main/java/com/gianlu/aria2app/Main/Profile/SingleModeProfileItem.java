@@ -201,7 +201,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         return this;
     }
 
-    public String getProfileName() {
+    String getProfileName() {
         if (profileName == null) return globalProfileName;
         return profileName;
     }

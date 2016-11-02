@@ -16,10 +16,8 @@ import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -100,12 +98,13 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.chart.setVisibility(View.VISIBLE);
 
             LineData data = holder.chart.getData();
-            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(server.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
+            int pos = data.getEntryCount() + 1;
+            data.addEntry(new Entry(pos, server.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+            data.notifyDataChanged();
 
             holder.chart.notifyDataSetChanged();
             holder.chart.setVisibleXRangeMaximum(60);
-            holder.chart.moveViewToX(data.getXValCount() - 61);
+            holder.chart.moveViewToX(pos - 61);
 
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);

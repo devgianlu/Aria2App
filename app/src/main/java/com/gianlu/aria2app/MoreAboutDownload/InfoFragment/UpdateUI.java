@@ -142,10 +142,11 @@ public class UpdateUI implements Runnable {
                         if (data == null) holder.chart = Utils.setupChart(holder.chart, false);
 
                         if (data != null) {
-                            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-                            data.addEntry(new Entry(download.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-                            data.addEntry(new Entry(download.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
-                            xPosition = data.getXValCount() - 91;
+                            int pos = data.getEntryCount() / 2 + 1;
+                            data.addEntry(new Entry(pos, download.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                            data.addEntry(new Entry(pos, download.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                            data.notifyDataChanged();
+                            xPosition = pos - 91;
                         } else {
                             xPosition = -1;
                         }

@@ -20,9 +20,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
     private final Context context;
@@ -128,13 +126,14 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
             holder.chart.setVisibility(View.VISIBLE);
 
             LineData data = holder.chart.getData();
-            data.addXValue(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new java.util.Date()));
-            data.addEntry(new Entry(peer.downloadSpeed, data.getDataSetByIndex(Utils.CHART_DOWNLOAD_SET).getEntryCount()), Utils.CHART_DOWNLOAD_SET);
-            data.addEntry(new Entry(peer.uploadSpeed, data.getDataSetByIndex(Utils.CHART_UPLOAD_SET).getEntryCount()), Utils.CHART_UPLOAD_SET);
+            int pos = data.getEntryCount() / 2 + 1;
+            data.addEntry(new Entry(pos, peer.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+            data.addEntry(new Entry(pos, peer.uploadSpeed), Utils.CHART_UPLOAD_SET);
+            data.notifyDataChanged();
 
             holder.chart.notifyDataSetChanged();
             holder.chart.setVisibleXRangeMaximum(60);
-            holder.chart.moveViewToX(data.getXValCount() - 61);
+            holder.chart.moveViewToX(pos - 61);
 
             holder.peerId.setText(peer.getPeerId());
             holder.fullAddr.setText(peer.getFullAddress());

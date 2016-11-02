@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
@@ -89,7 +88,7 @@ public class InfoPagerFragment extends CommonFragment {
     public class ViewHolder {
         public final View rootView;
         public final TextView gid;
-        final ProgressBar loading;
+        final LinearLayout loading;
         final LinearLayout container;
         final ImageButton chartRefresh;
         final TextView totalLength;
@@ -120,7 +119,7 @@ public class InfoPagerFragment extends CommonFragment {
             chartRefresh = (ImageButton) rootView.findViewById(R.id.infoFragment_chartRefresh);
             gid = (TextView) rootView.findViewById(R.id.infoFragment_gid);
             container = (LinearLayout) rootView.findViewById(R.id.infoFragment_container);
-            loading = (ProgressBar) rootView.findViewById(R.id.infoFragment_loading);
+            loading = (LinearLayout) rootView.findViewById(R.id.infoFragment_loading);
             totalLength = (TextView) rootView.findViewById(R.id.infoFragment_totalLength);
             completedLength = (TextView) rootView.findViewById(R.id.infoFragment_completedLength);
             uploadLength = (TextView) rootView.findViewById(R.id.infoFragment_uploadLength);

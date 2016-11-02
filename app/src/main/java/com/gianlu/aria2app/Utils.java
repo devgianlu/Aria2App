@@ -11,12 +11,11 @@ import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.YAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
@@ -60,15 +59,11 @@ public class Utils {
     public static LineChart setupChart(LineChart chart, boolean isCardView) {
         chart.clear();
 
-        chart.setDescription("");
+        chart.setDescription(null);
         chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.alpha(0));
         chart.setTouchEnabled(false);
-        Legend l = chart.getLegend();
-        l.setCustom(
-                new int[]{ContextCompat.getColor(chart.getContext(), R.color.downloadColor), ContextCompat.getColor(chart.getContext(), R.color.uploadColor)},
-                new String[]{chart.getContext().getString(R.string.downloadSpeed), chart.getContext().getString(R.string.uploadSpeed)});
-        l.setEnabled(true);
+        chart.getLegend().setEnabled(true);
 
         LineData data = new LineData();
         data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
@@ -78,20 +73,15 @@ public class Utils {
         ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
         ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
         ya.setTextSize(isCardView ? 8 : 9);
+        ya.setAxisMinimum(0);
         ya.setDrawAxisLine(false);
         ya.setLabelCount(isCardView ? 4 : 8, true);
         ya.setEnabled(true);
-        ya.setAxisMinValue(0f);
         ya.setDrawGridLines(true);
         ya.setValueFormatter(new CustomYAxisValueFormatter());
 
         chart.getAxisRight().setEnabled(false);
-        XAxis xa = chart.getXAxis();
-        xa.setEnabled(!isCardView);
-        if (!isCardView) {
-            xa.setDrawGridLines(false);
-            xa.setTextSize(9);
-        }
+        chart.getXAxis().setEnabled(false);
 
         data.addDataSet(initUploadSet(chart.getContext(), 2f));
         data.addDataSet(initDownloadSet(chart.getContext(), 2f));
@@ -102,32 +92,30 @@ public class Utils {
     public static LineChart setupPeerChart(LineChart chart) {
         chart.clear();
 
-        chart.setDescription("");
+        chart.setDescription(null);
         chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.alpha(0));
         chart.setTouchEnabled(false);
         chart.getLegend().setEnabled(false);
-
-        LineData data = new LineData();
-        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
-        chart.setData(data);
+        chart.setVisibleXRangeMaximum(60);
 
         YAxis ya = chart.getAxisLeft();
         ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.white));
         ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
         ya.setTextSize(8);
+        ya.setAxisMinimum(0);
         ya.setDrawAxisLine(false);
         ya.setLabelCount(3, true);
         ya.setEnabled(true);
-        ya.setAxisMinValue(0f);
         ya.setDrawGridLines(true);
         ya.setValueFormatter(new CustomYAxisValueFormatter());
 
         chart.getAxisRight().setEnabled(false);
         chart.getXAxis().setEnabled(false);
 
-        data.addDataSet(initUploadSet(chart.getContext(), 1f));
-        data.addDataSet(initDownloadSet(chart.getContext(), 1f));
+        LineData data = new LineData(initUploadSet(chart.getContext(), 1f), initDownloadSet(chart.getContext(), 1f));
+        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
+        chart.setData(data);
 
         return chart;
     }
@@ -313,10 +301,15 @@ public class Utils {
         public static final CommonUtils.ToastMessage SOURCE_REFRESHED = new CommonUtils.ToastMessage("Source file for options refreshed!", false);
     }
 
-    private static class CustomYAxisValueFormatter implements YAxisValueFormatter {
+    private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
         @Override
-        public String getFormattedValue(float v, YAxis yAxis) {
-            return CommonUtils.speedFormatter(v);
+        public String getFormattedValue(float value, AxisBase axis) {
+            return CommonUtils.speedFormatter(value);
+        }
+
+        @Override
+        public int getDecimalDigits() {
+            return 1;
         }
     }
 }
