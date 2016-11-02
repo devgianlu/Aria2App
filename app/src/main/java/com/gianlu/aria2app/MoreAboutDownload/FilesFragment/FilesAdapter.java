@@ -14,13 +14,10 @@ import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.CurrentProfile;
@@ -266,12 +263,12 @@ public class FilesAdapter {
             subDir.viewHolder.toggle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CommonUtils.animateCollapsingArrowList((ImageButton) v, isExpanded(subView));
+                    CommonUtils.animateCollapsingArrowList((ImageButton) v, CommonUtils.isExpanded(subView));
 
-                    if (isExpanded(subView)) {
-                        collapse(subView);
+                    if (CommonUtils.isExpanded(subView)) {
+                        CommonUtils.collapse(subView);
                     } else {
-                        expand(subView);
+                        CommonUtils.expand(subView);
                     }
                 }
             });
@@ -282,59 +279,6 @@ public class FilesAdapter {
         for (TreeFile file : parentNode.getFiles()) {
             parentView.addView(file.viewHolder.rootView);
         }
-    }
-
-    private static boolean isExpanded(View v) {
-        return v.getVisibility() == View.VISIBLE;
-    }
-
-    private static void expand(final View v) {
-        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? RelativeLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    private static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
     }
 
     @SuppressLint("InflateParams")

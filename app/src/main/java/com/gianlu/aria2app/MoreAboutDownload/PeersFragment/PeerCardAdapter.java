@@ -8,21 +8,17 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.RelativeLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 
 import java.util.List;
 
-class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
+class PeerCardAdapter extends RecyclerView.Adapter<PeerCardAdapter.ViewHolder> {
     private final Context context;
     private final List<Peer> objs;
     private final CardView noDataCardView;
@@ -33,62 +29,9 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
         this.noDataCardView = noDataCardView;
     }
 
-    private static boolean isExpanded(View v) {
-        return v.getVisibility() == View.VISIBLE;
-    }
-
-    private static void expand(final View v) {
-        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? RelativeLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    private static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
     @Override
-    public PeerCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new PeerCardViewHolder(LayoutInflater.from(context).inflate(R.layout.peer_cardview, parent, false));
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.peer_cardview, parent, false));
     }
 
     void clear() {
@@ -114,7 +57,7 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(PeerCardViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
             return;
@@ -122,18 +65,6 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
         if (payloads.get(0) instanceof Peer) {
             Peer peer = (Peer) payloads.get(0);
-
-            holder.chart.setVisibility(View.VISIBLE);
-
-            LineData data = holder.chart.getData();
-            int pos = data.getEntryCount() / 2 + 1;
-            data.addEntry(new Entry(pos, peer.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-            data.addEntry(new Entry(pos, peer.uploadSpeed), Utils.CHART_UPLOAD_SET);
-            data.notifyDataChanged();
-
-            holder.chart.notifyDataSetChanged();
-            holder.chart.setVisibleXRangeMaximum(60);
-            holder.chart.moveViewToX(pos - 61);
 
             holder.peerId.setText(peer.getPeerId());
             holder.fullAddr.setText(peer.getFullAddress());
@@ -154,7 +85,7 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(final PeerCardViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         if (objs.isEmpty())
             noDataCardView.setVisibility(View.VISIBLE);
         else
@@ -162,19 +93,20 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
         Peer peer = getItem(position);
 
-        holder.chart = Utils.setupPeerChart(holder.chart);
         holder.peerId.setText(peer.getPeerId());
         holder.fullAddr.setText(peer.getFullAddress());
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed));
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed));
 
-        holder.header.setOnClickListener(new View.OnClickListener() {
+        holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isExpanded(holder.details))
-                    collapse(holder.details);
+                CommonUtils.animateCollapsingArrowBellows(holder.expand, CommonUtils.isExpanded(holder.details));
+
+                if (CommonUtils.isExpanded(holder.details))
+                    CommonUtils.collapse(holder.details);
                 else
-                    expand(holder.details);
+                    CommonUtils.expand(holder.details);
             }
         });
 
@@ -196,5 +128,32 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardViewHolder> {
 
     private Peer getItem(int position) {
         return objs.get(position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final TextView downloadSpeed;
+        final TextView uploadSpeed;
+        final TextView peerId;
+        final TextView fullAddr;
+        final ImageButton expand;
+        final LinearLayout details;
+        final TextView detailsAmChoking;
+        final TextView detailsPeerChoking;
+        final TextView detailsSeeder;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+
+            peerId = (TextView) itemView.findViewById(R.id.peerCardView_peerId);
+            fullAddr = (TextView) itemView.findViewById(R.id.peerCardView_fullAddr);
+            downloadSpeed = (TextView) itemView.findViewById(R.id.peerCardView_downloadSpeed);
+            uploadSpeed = (TextView) itemView.findViewById(R.id.peerCardView_uploadSpeed);
+
+            expand = (ImageButton) itemView.findViewById(R.id.peerCardView_expand);
+            details = (LinearLayout) itemView.findViewById(R.id.peerCardView_details);
+            detailsAmChoking = (TextView) itemView.findViewById(R.id.peerCardView_detailsAmChoking);
+            detailsPeerChoking = (TextView) itemView.findViewById(R.id.peerCardView_detailsPeerChoking);
+            detailsSeeder = (TextView) itemView.findViewById(R.id.peerCardView_detailsSeeder);
+        }
     }
 }

@@ -93,7 +93,8 @@ class UpdateUI implements Runnable {
 
                 @Override
                 public void onNoPeerData(Exception exception) {
-                    adapter.onDisplayNoData(exception.getMessage());
+                    if (adapter != null)
+                        adapter.onDisplayNoData(exception.getMessage());
                 }
             });
 

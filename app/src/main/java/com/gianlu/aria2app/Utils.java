@@ -89,37 +89,6 @@ public class Utils {
         return chart;
     }
 
-    public static LineChart setupPeerChart(LineChart chart) {
-        chart.clear();
-
-        chart.setDescription(null);
-        chart.setDrawGridBackground(false);
-        chart.setBackgroundColor(Color.alpha(0));
-        chart.setTouchEnabled(false);
-        chart.getLegend().setEnabled(false);
-        chart.setVisibleXRangeMaximum(60);
-
-        YAxis ya = chart.getAxisLeft();
-        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.white));
-        ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
-        ya.setTextSize(8);
-        ya.setAxisMinimum(0);
-        ya.setDrawAxisLine(false);
-        ya.setLabelCount(3, true);
-        ya.setEnabled(true);
-        ya.setDrawGridLines(true);
-        ya.setValueFormatter(new CustomYAxisValueFormatter());
-
-        chart.getAxisRight().setEnabled(false);
-        chart.getXAxis().setEnabled(false);
-
-        LineData data = new LineData(initUploadSet(chart.getContext(), 1f), initDownloadSet(chart.getContext(), 1f));
-        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.white));
-        chart.setData(data);
-
-        return chart;
-    }
-
     private static LineDataSet initDownloadSet(Context context, float lineWidth) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);

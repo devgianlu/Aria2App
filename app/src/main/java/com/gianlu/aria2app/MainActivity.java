@@ -67,6 +67,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// TODO: Duplicated "Local device" profile
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;

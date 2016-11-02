@@ -11,10 +11,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,17 +92,6 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Server server = (Server) payloads.get(0);
             ServerCardViewHolder holder = (ServerCardViewHolder) cHolder;
 
-            holder.chart.setVisibility(View.VISIBLE);
-
-            LineData data = holder.chart.getData();
-            int pos = data.getEntryCount() + 1;
-            data.addEntry(new Entry(pos, server.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-            data.notifyDataChanged();
-
-            holder.chart.notifyDataSetChanged();
-            holder.chart.setVisibleXRangeMaximum(60);
-            holder.chart.moveViewToX(pos - 61);
-
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);
             holder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed));
@@ -132,7 +118,6 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.currentUri.setText(server.currentUri);
             holder.uri.setText(server.uri);
             holder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed));
-            holder.chart = Utils.setupPeerChart(holder.chart);
         }
     }
 

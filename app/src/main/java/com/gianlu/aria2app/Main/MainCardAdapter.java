@@ -7,18 +7,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadAction;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -32,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
+// TODO: Refresh button crashes everything (check button for every chart)
 public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     private final Activity context;
     private final List<Download> objs;
@@ -44,69 +39,6 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         this.objs = objs;
         this.handler = handler;
         this.filters = new ArrayList<>();
-    }
-
-    private static boolean isExpanded(View v) {
-        return v.getVisibility() == View.VISIBLE;
-    }
-
-    private static void expand(final View v) {
-        v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? RelativeLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    private static void expandTitle(TextView v) {
-        v.setSingleLine(false);
-        v.setEllipsize(null);
-    }
-
-    private static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    private static void collapseTitle(TextView v) {
-        v.setSingleLine(true);
-        v.setEllipsize(TextUtils.TruncateAt.MARQUEE);
     }
 
     public void addFilter(Download.STATUS status) {
@@ -229,14 +161,14 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CommonUtils.animateCollapsingArrowBellows((ImageButton) view, isExpanded(holder.details));
+                CommonUtils.animateCollapsingArrowBellows((ImageButton) view, CommonUtils.isExpanded(holder.details));
 
-                if (isExpanded(holder.details)) {
-                    collapse(holder.details);
-                    collapseTitle(holder.downloadName);
+                if (CommonUtils.isExpanded(holder.details)) {
+                    CommonUtils.collapse(holder.details);
+                    CommonUtils.collapseTitle(holder.downloadName);
                 } else {
-                    expand(holder.details);
-                    expandTitle(holder.downloadName);
+                    CommonUtils.expand(holder.details);
+                    CommonUtils.expandTitle(holder.downloadName);
                 }
             }
         });

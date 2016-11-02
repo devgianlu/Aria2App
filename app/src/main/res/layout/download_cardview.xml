@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -13,10 +12,10 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
+            android:orientation="horizontal"
             android:padding="8dp"
             android:theme="@style/CardViewTopSection">
 
@@ -24,94 +23,89 @@
                 android:id="@+id/downloadCardView_donutProgress"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginEnd="8dp"
                 app:donut_finished_color="@color/white"
                 app:donut_text_color="@color/white"
                 app:donut_text_size="13sp"
                 app:donut_unfinished_color="#1affffff" />
 
-            <TextView
-                android:id="@+id/downloadCardView_status"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/downloadCardView_donutProgress"
-                android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/downloadCardView_donutProgress"
-                android:textSize="13sp" />
+                android:orientation="vertical"
+                android:paddingBottom="4dp">
 
-            <TextView
-                android:id="@+id/downloadCardView_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/downloadCardView_status"
-                android:layout_marginBottom="4dp"
-                android:layout_toEndOf="@+id/downloadCardView_donutProgress"
-                android:ellipsize="marquee"
-                android:lines="1"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/downloadCardView_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="13sp" />
 
-            <ImageView
-                android:id="@+id/downloadCardView_downloadSpeedImage"
-                android:layout_width="16sp"
-                android:layout_height="16sp"
-                android:layout_below="@+id/downloadCardView_name"
-                android:layout_marginEnd="2dp"
-                android:layout_marginTop="1dp"
-                android:layout_toEndOf="@+id/downloadCardView_donutProgress"
-                android:src="@drawable/ic_file_download_white_48dp" />
+                <TextView
+                    android:id="@+id/downloadCardView_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:lines="1"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/downloadCardView_downloadSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/downloadCardView_name"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/downloadCardView_downloadSpeedImage"
-                android:textSize="14sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/downloadCardView_missingTimeImage"
-                android:layout_width="16sp"
-                android:layout_height="16sp"
-                android:layout_below="@+id/downloadCardView_name"
-                android:layout_marginEnd="2dp"
-                android:layout_marginTop="1dp"
-                android:layout_toEndOf="@+id/downloadCardView_downloadSpeed"
-                android:src="@drawable/ic_access_time_white_48dp" />
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginEnd="2dp"
+                        android:src="@drawable/ic_file_download_white_48dp" />
 
-            <TextView
-                android:id="@+id/downloadCardView_missingTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/downloadCardView_name"
-                android:layout_marginEnd="4dp"
-                android:layout_toEndOf="@+id/downloadCardView_missingTimeImage"
-                android:layout_toStartOf="@+id/downloadCardView_expand"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/downloadCardView_downloadSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="13sp" />
 
-            <ImageButton
-                android:id="@+id/downloadCardView_expand"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/downloadCardView_name"
-                android:layout_gravity="bottom|end"
-                android:background="@drawable/ripple_effect_light"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
-        </RelativeLayout>
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginEnd="2dp"
+                        android:src="@drawable/ic_access_time_white_48dp" />
+
+                    <TextView
+                        android:id="@+id/downloadCardView_missingTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:textSize="13sp" />
+
+                    <ImageButton
+                        android:id="@+id/downloadCardView_expand"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/ripple_effect_light"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/downloadCardView_details"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:padding="8dp"
             android:visibility="gone">
 
             <RelativeLayout
@@ -157,33 +151,32 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
             android:orientation="horizontal"
             android:padding="8dp">
 
             <Button
                 android:id="@+id/downloadCardView_actionMore"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ripple_effect_dark"
-                android:text="@string/more"
-                tools:ignore="RelativeOverlap" />
+                android:layout_gravity="center_vertical"
+                android:text="@string/more" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
             <ImageButton
                 android:id="@+id/downloadCardView_actionMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
                 android:background="@drawable/ripple_effect_dark"
                 android:src="@drawable/ic_menu_moreoverflow_material_dark" />
-        </RelativeLayout>
-
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

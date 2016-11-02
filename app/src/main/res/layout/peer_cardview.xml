@@ -12,10 +12,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/peerCardView_header"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="8dp"
             android:theme="@style/CardViewTopSection">
 
@@ -23,75 +23,68 @@
                 android:id="@+id/peerCardView_peerId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/peerCardView_chart"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/peerCardView_fullAddr"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/peerCardView_peerId"
-                android:layout_toStartOf="@+id/peerCardView_chart"
-                android:textSize="13sp" />
+                android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/peerCardView_downloadSpeedImage"
-                android:layout_width="16sp"
-                android:layout_height="16sp"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/peerCardView_fullAddr"
-                android:layout_marginEnd="2dp"
-                android:layout_marginTop="1dp"
-                android:src="@drawable/ic_file_download_white_48dp" />
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="2dp"
+                    android:src="@drawable/ic_file_download_white_48dp" />
 
-            <TextView
-                android:id="@+id/peerCardView_downloadSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/peerCardView_fullAddr"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/peerCardView_downloadSpeedImage"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/peerCardView_downloadSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="8dp" />
 
-            <ImageView
-                android:id="@+id/peerCardView_uploadSpeedImage"
-                android:layout_width="16sp"
-                android:layout_height="16sp"
-                android:layout_below="@+id/peerCardView_fullAddr"
-                android:layout_marginEnd="2dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="1dp"
-                android:layout_toEndOf="@+id/peerCardView_downloadSpeed"
-                android:src="@drawable/ic_file_upload_white_48dp" />
+                <ImageView
+                    android:layout_width="16sp"
+                    android:layout_height="16sp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="2dp"
+                    android:src="@drawable/ic_file_upload_white_48dp" />
 
-            <TextView
-                android:id="@+id/peerCardView_uploadSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/peerCardView_fullAddr"
-                android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/peerCardView_uploadSpeedImage"
-                android:layout_toStartOf="@+id/peerCardView_chart"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/peerCardView_uploadSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/peerCardView_chart"
-                android:layout_width="120dp"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/peerCardView_uploadSpeed"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true" />
-        </RelativeLayout>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/peerCardView_expand"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/ripple_effect_light"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/peerCardView_details"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:padding="8dp"
             android:visibility="gone">
 
             <TextView
@@ -109,6 +102,5 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
     </LinearLayout>
 </android.support.v7.widget.CardView>
