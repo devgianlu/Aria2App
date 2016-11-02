@@ -59,6 +59,7 @@ public class TerminalActivity extends AppCompatActivity {
         adapter = new TerminalAdapter(this, new TerminalAdapter.IAdapter() {
             @Override
             public void onItemCountUpdated(final int count) {
+
                 TerminalActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
