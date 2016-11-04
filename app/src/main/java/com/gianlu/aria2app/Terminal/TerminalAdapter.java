@@ -50,6 +50,7 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
     }
 
     public void add(TerminalItem item) {
+        System.out.println("ADD: " + item.text);
         objs.add(item);
         context.runOnUiThread(new Runnable() {
             @Override
@@ -176,11 +177,18 @@ public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHo
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             add(TerminalItem.createInfoItem(context.getString(R.string.connected)));
+
+            websocket.sendPing();
         }
 
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
             add(TerminalItem.createInfoItem(exception));
+        }
+
+        @Override
+        public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+            System.out.println("PONG");
         }
 
         @Override

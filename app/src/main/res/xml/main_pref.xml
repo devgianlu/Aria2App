@@ -102,6 +102,10 @@
             android:summaryOn="@string/trackingOn"
             android:title="@string/tracking" />
         <Preference
+            android:key="donate"
+            android:summary="@string/donateSummary"
+            android:title="@string/donate" />
+        <Preference
             android:key="app_version"
             android:title="@string/app_version" />
         <Preference

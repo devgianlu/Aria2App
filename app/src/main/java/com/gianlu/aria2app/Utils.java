@@ -230,6 +230,8 @@ public class Utils {
         public static final CommonUtils.ToastMessage WRITE_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot download. You denied the write permission!", false);
         public static final CommonUtils.ToastMessage REMOVED_RESULT = new CommonUtils.ToastMessage("Download result removed.", false);
         public static final CommonUtils.ToastMessage MOVED = new CommonUtils.ToastMessage("Download moved.", false);
+        public static final CommonUtils.ToastMessage FAILED_CONNECTION_BILLING_SERVICE = new CommonUtils.ToastMessage("Failed to connect to the billing service!", true);
+        public static final CommonUtils.ToastMessage FAILED_BUYING_ITEM = new CommonUtils.ToastMessage("Failed to buy this item! Please contact me.", true);
         public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed.", false);
         public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted.", false);
         public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("File selected/deselected.", false);
@@ -268,6 +270,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage CANT_REFRESH_SOURCE = new CommonUtils.ToastMessage("Can't refresh source file for options. Retry later...", true);
         public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
         public static final CommonUtils.ToastMessage SOURCE_REFRESHED = new CommonUtils.ToastMessage("Source file for options refreshed!", false);
+        public static final CommonUtils.ToastMessage PURCHASING_CANCELED = new CommonUtils.ToastMessage("The purchase has been canceled.", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
