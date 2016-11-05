@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Google;
+package com.gianlu.aria2app.Google.Billing;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,7 +11,9 @@ import com.android.vending.billing.IInAppBillingService;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Billing {
     public static final int RESULT_OK = 0;
@@ -23,6 +25,31 @@ public class Billing {
     public static final int RESULT_ITEM_ALREADY_OWNED = 7;
     public static final int RESULT_ITEM_NOT_OWNED = 8;
 
+    public static final ArrayList<String> donationProducts = new ArrayList<>(Arrays.asList(
+            "donation.lemonade",
+            "donation.coffee",
+            "donation.hamburger",
+            "donation.pizza",
+            "donation.sushi",
+            "donation.champagne"
+    ));
+
+    @NonNull
+    private static String generateRandomString() {
+        StringBuilder builder = new StringBuilder();
+        String letters = "abcdefghijklmnopqrstuvwxyz";
+
+        for (int i = 0; i <= 30; i++) {
+            if (new Random().nextBoolean()) {
+                builder.append(String.valueOf(new Random().nextInt(10)));
+            } else {
+                builder.append(letters.charAt(new Random().nextInt(26)));
+            }
+        }
+
+        return builder.toString();
+    }
+
     public static void requestProductsDetails(final Context context, final IInAppBillingService service, @NonNull ArrayList<String> products, @NonNull final IRequestProductDetails handler) {
         if (service == null) {
             handler.onFailed(new NullPointerException("IInAppBillingService is null"));
@@ -30,7 +57,7 @@ public class Billing {
         }
 
         if (products.isEmpty()) {
-            handler.onReceivedDetails(new ArrayList<Product>());
+            handler.onReceivedDetails(handler, new ArrayList<Product>());
             return;
         }
 
@@ -48,7 +75,8 @@ public class Billing {
                     return;
                 }
 
-                if (response.getInt("RESPONSE_CODE") == RESULT_OK) {
+                int respCode = response.getInt("RESPONSE_CODE");
+                if (respCode == RESULT_OK) {
                     List<String> jResponse = response.getStringArrayList("DETAILS_LIST");
 
                     if (jResponse == null) {
@@ -64,9 +92,11 @@ public class Billing {
                         }
                     }
 
-                    handler.onReceivedDetails(products);
+                    handler.onReceivedDetails(handler, products);
+                } else if (respCode == RESULT_USER_CANCELED) {
+                    handler.onUserCancelled();
                 } else {
-                    // TODO: Handle all possible error codes
+                    handler.onAPIException(respCode);
                 }
             }
         }).start();
@@ -78,12 +108,14 @@ public class Billing {
             return;
         }
 
+        final String developerString = generateRandomString();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Bundle response;
                 try {
-                    response = service.getBuyIntent(3, context.getApplicationContext().getPackageName(), product.productId, product.type, "bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ"); // TODO: Developer string
+                    response = service.getBuyIntent(3, context.getApplicationContext().getPackageName(), product.productId, product.type, developerString);
                 } catch (RemoteException ex) {
                     handler.onFailed(ex);
                     return;
@@ -94,23 +126,34 @@ public class Billing {
                     return;
                 }
 
-                if (response.getInt("RESPONSE_CODE") == RESULT_OK) {
-                    handler.onGotIntent((PendingIntent) response.getParcelable("BUY_INTENT"));
+                int respCode = response.getInt("RESPONSE_CODE");
+                if (respCode == RESULT_OK) {
+                    handler.onGotIntent((PendingIntent) response.getParcelable("BUY_INTENT"), developerString);
+                } else if (respCode == RESULT_USER_CANCELED) {
+                    handler.onUserCancelled();
                 } else {
-                    // TODO: Handle all possible error codes
+                    handler.onAPIException(respCode);
                 }
             }
         }).start();
     }
 
     public interface IRequestProductDetails {
-        void onReceivedDetails(List<Product> products);
+        void onReceivedDetails(IRequestProductDetails handler, List<Product> products);
+
+        void onAPIException(int code);
+
+        void onUserCancelled();
 
         void onFailed(Exception ex);
     }
 
     public interface IBuyProduct {
-        void onGotIntent(PendingIntent intent);
+        void onGotIntent(PendingIntent intent, String developerString);
+
+        void onAPIException(int code);
+
+        void onUserCancelled();
 
         void onFailed(Exception ex);
     }

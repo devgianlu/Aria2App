@@ -16,33 +16,24 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 
 import com.android.vending.billing.IInAppBillingService;
-import com.gianlu.aria2app.Google.Billing;
-import com.gianlu.aria2app.Google.Product;
-import com.gianlu.aria2app.Google.PurchasedProduct;
+import com.gianlu.aria2app.Google.Billing.Billing;
+import com.gianlu.aria2app.Google.Billing.Product;
+import com.gianlu.aria2app.Google.Billing.ProductAdapter;
+import com.gianlu.aria2app.Google.Billing.PurchasedProduct;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.LogsActivity;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class PreferencesActivity extends PreferenceActivity {
     private IInAppBillingService billingService;
     private int requestCode;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            billingService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            billingService = IInAppBillingService.Stub.asInterface(service);
-        }
-    };
+    private String devString;
+    private ServiceConnection serviceConnection;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -50,8 +41,20 @@ public class PreferencesActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.main_pref);
 
-        bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND")
-                .setPackage("com.android.vending"), serviceConnection, Context.BIND_AUTO_CREATE);
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                billingService = null;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                billingService = IInAppBillingService.Stub.asInterface(service);
+
+                bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND")
+                        .setPackage("com.android.vending"), serviceConnection, Context.BIND_AUTO_CREATE);
+            }
+        };
 
         findPreference("email").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -128,27 +131,62 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void donate() {
-        Billing.requestProductsDetails(this, billingService, new ArrayList<>(Arrays.asList("", "")), new Billing.IRequestProductDetails() {
+        Billing.requestProductsDetails(this, billingService, Billing.donationProducts, new Billing.IRequestProductDetails() {
             @Override
-            public void onReceivedDetails(List<Product> products) {
-                // TODO: Dialog to choose the product
+            public void onReceivedDetails(final Billing.IRequestProductDetails handler, final List<Product> products) {
+                CommonUtils.showDialog(PreferencesActivity.this, new AlertDialog.Builder(PreferencesActivity.this)
+                        .setTitle(getString(R.string.donate))
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .setAdapter(new ProductAdapter(PreferencesActivity.this, products, new ProductAdapter.IAdapter() {
+                            @Override
+                            public void onItemSelected(Product product) {
+                                Billing.buyProduct(PreferencesActivity.this, billingService, product, new Billing.IBuyProduct() {
+                                    @Override
+                                    public void onGotIntent(PendingIntent intent, String developerString) {
+                                        devString = developerString;
+                                        requestCode = new Random().nextInt();
 
-                Billing.buyProduct(PreferencesActivity.this, billingService, products.get(0), new Billing.IBuyProduct() {
-                    @Override
-                    public void onGotIntent(PendingIntent intent) {
-                        try {
-                            requestCode = new Random().nextInt();
-                            PreferencesActivity.this.startIntentSenderForResult(intent.getIntentSender(), requestCode, new Intent(), 0, 0, 0);
-                        } catch (IntentSender.SendIntentException ex) {
-                            CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
-                        }
-                    }
+                                        try {
+                                            PreferencesActivity.this.startIntentSenderForResult(intent.getIntentSender(), requestCode, new Intent(), 0, 0, 0);
+                                        } catch (IntentSender.SendIntentException ex) {
+                                            CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                                        }
+                                    }
 
-                    @Override
-                    public void onFailed(Exception ex) {
-                        CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
-                    }
-                });
+                                    @Override
+                                    public void onAPIException(int code) {
+                                        handler.onAPIException(code);
+                                    }
+
+                                    @Override
+                                    public void onUserCancelled() {
+                                        handler.onUserCancelled();
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception ex) {
+                                        CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                                    }
+                                });
+                            }
+                        }), null));
+            }
+
+            @Override
+            public void onAPIException(int code) {
+                if (code == Billing.RESULT_BILLING_UNAVAILABLE)
+                    CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, "Code: " + code);
+                else
+                    CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_BUYING_ITEM, "Code: " + code);
+            }
+
+            @Override
+            public void onUserCancelled() {
+                CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.BILLING_USER_CANCELLED);
             }
 
             @Override
@@ -169,18 +207,16 @@ public class PreferencesActivity extends PreferenceActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == this.requestCode) {
             if (data.getIntExtra("RESPONSE_CODE", RESULT_CANCELED) == RESULT_OK) {
-                String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE"); // TODO: Do I need this?
-
                 try {
                     PurchasedProduct purchasedProduct = new PurchasedProduct(data.getStringExtra("INAPP_PURCHASE_DATA"));
-                    if (purchasedProduct.purchaseState == PurchasedProduct.PURCHASED) {
-                        switch (purchasedProduct.productId) {
-                            // TODO
+                    if (Objects.equals(purchasedProduct.developerPayload, devString)) {
+                        if (purchasedProduct.purchaseState == PurchasedProduct.PURCHASED) {
+                            CommonUtils.UIToast(this, Utils.ToastMessages.THANK_YOU, "Purchased " + purchasedProduct.productId + " with order ID " + purchasedProduct.orderId);
+                        } else if (purchasedProduct.purchaseState == PurchasedProduct.CANCELED) {
+                            CommonUtils.UIToast(this, Utils.ToastMessages.PURCHASING_CANCELED);
                         }
-
-                        CommonUtils.logMe(this, "Purchased " + purchasedProduct.productId + " with order ID " + purchasedProduct.orderId, false);
-                    } else if (purchasedProduct.purchaseState == PurchasedProduct.CANCELED) {
-                        CommonUtils.UIToast(this, Utils.ToastMessages.PURCHASING_CANCELED);
+                    } else {
+                        CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_BUYING_ITEM, new Exception("Payloads mismatch!"));
                     }
                 } catch (JSONException ex) {
                     CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_BUYING_ITEM, ex);

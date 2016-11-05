@@ -271,6 +271,8 @@ public class Utils {
         public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
         public static final CommonUtils.ToastMessage SOURCE_REFRESHED = new CommonUtils.ToastMessage("Source file for options refreshed!", false);
         public static final CommonUtils.ToastMessage PURCHASING_CANCELED = new CommonUtils.ToastMessage("The purchase has been canceled.", false);
+        public static final CommonUtils.ToastMessage BILLING_USER_CANCELLED = new CommonUtils.ToastMessage("You cancelled the operation.", false);
+        public static final CommonUtils.ToastMessage THANK_YOU = new CommonUtils.ToastMessage("Thank you!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
