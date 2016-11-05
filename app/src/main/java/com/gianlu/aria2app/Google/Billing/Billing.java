@@ -16,15 +16,12 @@ import java.util.List;
 import java.util.Random;
 
 public class Billing {
-    public static final int RESULT_OK = 0;
-    public static final int RESULT_USER_CANCELED = 1;
     public static final int RESULT_BILLING_UNAVAILABLE = 3;
     public static final int RESULT_ITEM_UNAVAILABLE = 4;
     public static final int RESULT_DEVELOPER_ERROR = 5;
     public static final int RESULT_ERROR = 6;
     public static final int RESULT_ITEM_ALREADY_OWNED = 7;
     public static final int RESULT_ITEM_NOT_OWNED = 8;
-
     public static final ArrayList<String> donationProducts = new ArrayList<>(Arrays.asList(
             "donation.lemonade",
             "donation.coffee",
@@ -33,6 +30,8 @@ public class Billing {
             "donation.sushi",
             "donation.champagne"
     ));
+    private static final int RESULT_OK = 0;
+    private static final int RESULT_USER_CANCELED = 1;
 
     @NonNull
     private static String generateRandomString() {

@@ -1,6 +1,7 @@
 package com.gianlu.aria2app;
 
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,12 +17,14 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.Billing.Billing;
 import com.gianlu.aria2app.Google.Billing.Product;
 import com.gianlu.aria2app.Google.Billing.ProductAdapter;
 import com.gianlu.aria2app.Google.Billing.PurchasedProduct;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.LogsActivity;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
@@ -31,30 +34,42 @@ import java.util.Random;
 
 public class PreferencesActivity extends PreferenceActivity {
     private IInAppBillingService billingService;
+    private ProgressDialog pd;
     private int requestCode;
     private String devString;
     private ServiceConnection serviceConnection;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (billingService == null) {
+            serviceConnection = new ServiceConnection() {
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    billingService = null;
+                }
+
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    billingService = IInAppBillingService.Stub.asInterface(service);
+                    if (pd != null && pd.isShowing()) {
+                        donate();
+                    }
+                }
+            };
+
+            bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND").setPackage("com.android.vending"),
+                    serviceConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
 
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.main_pref);
-
-        serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                billingService = null;
-            }
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                billingService = IInAppBillingService.Stub.asInterface(service);
-
-                bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND")
-                        .setPackage("com.android.vending"), serviceConnection, Context.BIND_AUTO_CREATE);
-            }
-        };
+        pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.connectingBillingService);
 
         findPreference("email").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -131,9 +146,44 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void donate() {
+        if (billingService == null) {
+            CommonUtils.showDialog(this, pd);
+            return;
+        }
+
         Billing.requestProductsDetails(this, billingService, Billing.donationProducts, new Billing.IRequestProductDetails() {
             @Override
             public void onReceivedDetails(final Billing.IRequestProductDetails handler, final List<Product> products) {
+                final Billing.IBuyProduct buyHandler = new Billing.IBuyProduct() {
+                    @Override
+                    public void onGotIntent(PendingIntent intent, String developerString) {
+                        devString = developerString;
+                        requestCode = new Random().nextInt();
+
+                        try {
+                            PreferencesActivity.this.startIntentSenderForResult(intent.getIntentSender(), requestCode, new Intent(), 0, 0, 0);
+                        } catch (IntentSender.SendIntentException ex) {
+                            CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                        }
+                    }
+
+                    @Override
+                    public void onAPIException(int code) {
+                        handler.onAPIException(code);
+                    }
+
+                    @Override
+                    public void onUserCancelled() {
+                        handler.onUserCancelled();
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                    }
+                };
+                pd.dismiss();
+
                 CommonUtils.showDialog(PreferencesActivity.this, new AlertDialog.Builder(PreferencesActivity.this)
                         .setTitle(getString(R.string.donate))
                         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -144,36 +194,20 @@ public class PreferencesActivity extends PreferenceActivity {
                         .setAdapter(new ProductAdapter(PreferencesActivity.this, products, new ProductAdapter.IAdapter() {
                             @Override
                             public void onItemSelected(Product product) {
-                                Billing.buyProduct(PreferencesActivity.this, billingService, product, new Billing.IBuyProduct() {
-                                    @Override
-                                    public void onGotIntent(PendingIntent intent, String developerString) {
-                                        devString = developerString;
-                                        requestCode = new Random().nextInt();
-
-                                        try {
-                                            PreferencesActivity.this.startIntentSenderForResult(intent.getIntentSender(), requestCode, new Intent(), 0, 0, 0);
-                                        } catch (IntentSender.SendIntentException ex) {
-                                            CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onAPIException(int code) {
-                                        handler.onAPIException(code);
-                                    }
-
-                                    @Override
-                                    public void onUserCancelled() {
-                                        handler.onUserCancelled();
-                                    }
-
-                                    @Override
-                                    public void onFailed(Exception ex) {
-                                        CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
-                                    }
-                                });
+                                Billing.buyProduct(PreferencesActivity.this, billingService, product, buyHandler);
                             }
-                        }), null));
+                        }), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Billing.buyProduct(PreferencesActivity.this, billingService, products.get(i), buyHandler);
+                            }
+                        }));
+
+                if (Analytics.isTrackingAllowed(PreferencesActivity.this))
+                    Analytics.getDefaultTracker(PreferencesActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
+                            .setCategory(Analytics.CATEGORY_USER_INPUT)
+                            .setAction(Analytics.ACTION_DONATE_OPEN)
+                            .build());
             }
 
             @Override
@@ -221,6 +255,8 @@ public class PreferencesActivity extends PreferenceActivity {
                 } catch (JSONException ex) {
                     CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_BUYING_ITEM, ex);
                 }
+            } else {
+                CommonUtils.UIToast(this, Utils.ToastMessages.PURCHASING_CANCELED);
             }
         }
 

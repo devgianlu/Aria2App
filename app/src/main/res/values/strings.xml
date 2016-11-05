@@ -216,7 +216,8 @@
     <string name="writeExternalStorageRequest_message">In order to save files to your devices Aria2App needs to access your external storage.</string>
     <string name="mainList_noItems">There are no downloads running. You can add one by tapping on the plus icon in the bottom corner.</string>
     <string name="donate">Donate</string>
-    <string name="donateSummary">Send me a small amout of money to support me</string>
+    <string name="donateSummary">Send me a small amount of money to support me</string>
+    <string name="connectingBillingService">Connecting to the billing service. Please wait…</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

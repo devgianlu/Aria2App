@@ -15,9 +15,9 @@ import com.gianlu.aria2app.R;
 import java.util.List;
 
 public class ProductAdapter extends BaseAdapter {
-    private List<Product> products;
-    private Context context;
-    private IAdapter handler;
+    private final List<Product> products;
+    private final Context context;
+    private final IAdapter handler;
 
     public ProductAdapter(Context context, List<Product> products, IAdapter handler) {
         this.products = products;
@@ -67,6 +67,7 @@ public class ProductAdapter extends BaseAdapter {
         }
 
         holder.title.setText(item.title);
+        holder.description.setText(item.description);
         holder.buy.setText(item.price);
         holder.buy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,16 +85,18 @@ public class ProductAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        public LinearLayout rootView;
-        public ImageView icon;
-        public TextView title;
-        public Button buy;
+        public final LinearLayout rootView;
+        public final ImageView icon;
+        public final TextView title;
+        final TextView description;
+        final Button buy;
 
         public ViewHolder(View rootView) {
             this.rootView = (LinearLayout) rootView;
 
             icon = (ImageView) rootView.findViewById(R.id.productItem_icon);
             title = (TextView) rootView.findViewById(R.id.productItem_title);
+            description = (TextView) rootView.findViewById(R.id.productItem_description);
             buy = (Button) rootView.findViewById(R.id.productItem_buy);
             buy.setFocusable(false);
         }

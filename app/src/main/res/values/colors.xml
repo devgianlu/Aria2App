@@ -20,5 +20,4 @@
 
     <color name="white">#ffffff</color>
     <color name="text_default_material_dark">#b3ffffff</color>
-    <color name="notification_background">#ffe0e0e0</color>
 </resources>

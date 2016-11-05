@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.NetIO.JTA2.IMethod;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Terminal.AutoCompletionAdapter;
@@ -31,6 +32,7 @@ import com.gianlu.aria2app.Terminal.TerminalAdapter;
 import com.gianlu.aria2app.Terminal.TerminalItem;
 import com.gianlu.aria2app.Terminal.WebSocketRequester;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -236,6 +238,12 @@ public class TerminalActivity extends AppCompatActivity {
                         } catch (JSONException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.INVALID_REQUEST, ex);
                         }
+
+                        if (Analytics.isTrackingAllowed(TerminalActivity.this))
+                            Analytics.getDefaultTracker(TerminalActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
+                                    .setCategory(Analytics.CATEGORY_USER_INPUT)
+                                    .setAction(Analytics.ACTION_TERMINAL_BASIC)
+                                    .build());
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -269,6 +277,12 @@ public class TerminalActivity extends AppCompatActivity {
                         } catch (IOException | NoSuchAlgorithmException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                         }
+
+                        if (Analytics.isTrackingAllowed(TerminalActivity.this))
+                            Analytics.getDefaultTracker(TerminalActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
+                                    .setCategory(Analytics.CATEGORY_USER_INPUT)
+                                    .setAction(Analytics.ACTION_TERMINAL_ADV)
+                                    .build());
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

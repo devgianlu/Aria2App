@@ -32,11 +32,11 @@ import java.util.TimerTask;
 
 // TODO: Some dialogs to display progress and speed
 public class DownloadService extends IntentService {
+    private final int notificationId = new Random().nextInt();
     private NotificationManagerCompat notificationManager;
     private Long downloaded = 0L;
     private boolean _shouldStop = false;
     private Long length = 0L;
-    private int notificationId = new Random().nextInt();
     private File file;
 
     public DownloadService() {
