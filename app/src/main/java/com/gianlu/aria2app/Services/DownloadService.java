@@ -82,8 +82,6 @@ public class DownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(final Intent intent) {
-        System.out.println("ACT: " + intent.getAction());
-
         if (Objects.equals(intent.getAction(), "STOP")) {
             stopSelf();
             _shouldStop = true;

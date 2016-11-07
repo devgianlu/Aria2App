@@ -152,7 +152,11 @@ public class Utils {
             }
         }
 
-        return pieces.subList(0, (numPieces / 4) - 1);
+        try {
+            return pieces.subList(0, (numPieces / 4) - 1);
+        } catch (IllegalArgumentException ex) {
+            return pieces;
+        }
     }
 
     public static int mapAlpha(int val) {
