@@ -287,7 +287,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         final SingleModeViewHolder holder = new SingleModeViewHolder(view.findViewById(R.id.newConditionDialog_include));
 
-        MultiOnTextChangedListener listener = new MultiOnTextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint);
+        MultiOnTextChangedListener listener = new MultiOnTextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
         holder.addr.addTextChangedListener(listener);
         holder.port.addTextChangedListener(listener);
         holder.endpoint.addTextChangedListener(listener);
@@ -878,7 +878,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            sViewHolder.completeURL.setText(String.format("http://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
+            sViewHolder.completeURL.setText(String.format(sViewHolder.SSL.isChecked() ? "wss" : "ws" + "://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
         }
     }
 
@@ -887,12 +887,14 @@ public class AddProfileActivity extends AppCompatActivity {
         private final EditText addr;
         private final EditText port;
         private final EditText endpoint;
+        private CheckBox ssl;
 
-        MultiOnTextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint) {
+        MultiOnTextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint, CheckBox ssl) {
             this.completeURL = completeURL;
             this.addr = addr;
             this.port = port;
             this.endpoint = endpoint;
+            this.ssl = ssl;
         }
 
         @Override
@@ -907,7 +909,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            completeURL.setText(String.format("http://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
+            completeURL.setText(String.format(ssl.isChecked() ? "wss" : "ws" + "://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
         }
     }
 }
