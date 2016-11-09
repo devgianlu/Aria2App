@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         Utils.renameOldProfiles(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        assert toolbar != null;
         setSupportActionBar(toolbar);
 
         drawerManager = new DrawerManager(this, (DrawerLayout) findViewById(R.id.main_drawer));

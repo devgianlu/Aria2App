@@ -214,7 +214,7 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         return serverPort;
     }
 
-    String getServerEndpoint() {
+    public String getServerEndpoint() {
         return serverEndpoint;
     }
 
@@ -226,8 +226,8 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         return serverToken;
     }
 
-    public String getFullServerAddr() {
-        return "http://" + serverAddr + ":" + serverPort + serverEndpoint;
+    public String getFullServerAddress() {
+        return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
     }
 
     public JTA2.AUTH_METHOD getAuthMethod() {

@@ -100,14 +100,8 @@ public class DrawerManager {
         firstAccount.setVisibility(first == null ? View.GONE : View.VISIBLE);
         secondAccount.setVisibility(second == null ? View.GONE : View.VISIBLE);
 
-        firstAccount.setProfileName(first, ProfileItem.getProfileName(first))
-                .setTextColor(R.color.white)
-                .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
-                .build();
-        secondAccount.setProfileName(second, ProfileItem.getProfileName(second))
-                .setTextColor(R.color.white)
-                .setShapeColor(R.color.colorPrimary, R.color.colorPrimary_shadow)
-                .build();
+        firstAccount.setProfileName(first, ProfileItem.getProfileName(first));
+        secondAccount.setProfileName(second, ProfileItem.getProfileName(second));
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -151,15 +145,9 @@ public class DrawerManager {
                     .apply();
         }
 
-        currentAccount.setProfileName(profile.getGlobalProfileName())
-                .setProfileAddress(profile.getServerAddr())
-                .setProfilePort(profile.getServerPort())
-                .setBigTextColor(R.color.colorAccent)
-                .setSmallTextColor(R.color.colorPrimary)
-                .setShapeColor(R.color.white, R.color.colorPrimary_shadow)
-                .build();
+        currentAccount.setInfo(profile.getGlobalProfileName(), profile.getServerAddr(), profile.getServerPort());
         ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileName)).setText(profile.getGlobalProfileName());
-        ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileAddr)).setText(profile.getFullServerAddr());
+        ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileAddr)).setText(profile.getFullServerAddress());
 
         lastProfile = profile.getFileName();
 

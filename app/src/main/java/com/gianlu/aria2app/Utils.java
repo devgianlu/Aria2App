@@ -83,16 +83,16 @@ public class Utils {
         chart.getAxisRight().setEnabled(false);
         chart.getXAxis().setEnabled(false);
 
-        data.addDataSet(initUploadSet(chart.getContext(), 2f));
-        data.addDataSet(initDownloadSet(chart.getContext(), 2f));
+        data.addDataSet(initUploadSet(chart.getContext()));
+        data.addDataSet(initDownloadSet(chart.getContext()));
 
         return chart;
     }
 
-    private static LineDataSet initDownloadSet(Context context, float lineWidth) {
+    private static LineDataSet initDownloadSet(Context context) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setLineWidth(lineWidth);
+        set.setLineWidth(2f);
         set.setColor(ContextCompat.getColor(context, R.color.downloadColor));
         set.setDrawCircles(false);
         set.setDrawValues(false);
@@ -101,10 +101,10 @@ public class Utils {
         return set;
     }
 
-    private static LineDataSet initUploadSet(Context context, float lineWidth) {
+    private static LineDataSet initUploadSet(Context context) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.uploadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setLineWidth(lineWidth);
+        set.setLineWidth(2f);
         set.setColor(ContextCompat.getColor(context, R.color.uploadColor));
         set.setDrawCircles(false);
         set.setDrawValues(false);
@@ -154,7 +154,7 @@ public class Utils {
 
         try {
             return pieces.subList(0, (numPieces / 4) - 1);
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
             return pieces;
         }
     }
@@ -168,10 +168,10 @@ public class Utils {
             WebSocketFactory factory = new WebSocketFactory();
             factory.setSSLContext(SSLContext.getDefault());
 
-            return factory.createSocket(url.replace("http://", "wss://"), 5000)
+            return factory.createSocket(url.replace("ws://", "wss://"), 5000)
                     .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         } else {
-            return new WebSocketFactory().createSocket(url.replace("http://", "ws://"), 5000)
+            return new WebSocketFactory().createSocket(url, 5000)
                     .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
         }
     }
@@ -181,11 +181,11 @@ public class Utils {
             return new WebSocketFactory()
                     .setSSLContext(SSLContext.getDefault())
                     .setConnectionTimeout(5000)
-                    .createSocket(url.replace("http://", "wss://"), 5000);
+                    .createSocket(url.replace("ws://", "wss://"), 5000);
         } else {
             return new WebSocketFactory()
                     .setConnectionTimeout(5000)
-                    .createSocket(url.replace("http://", "ws://"), 5000);
+                    .createSocket(url, 5000);
         }
     }
 
@@ -196,7 +196,7 @@ public class Utils {
             WebSocketFactory factory = new WebSocketFactory()
                     .setSSLContext(SSLContext.getDefault())
                     .setConnectionTimeout(5000);
-            WebSocket socket = factory.createSocket(profile.getFullServerAddr().replace("http://", "ws://").replace("http://", "wss://"), 5000);
+            WebSocket socket = factory.createSocket("wss://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint(), 5000);
 
             if (profile.getAuthMethod() == JTA2.AUTH_METHOD.HTTP)
                 socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.getServerUsername() + ":" + profile.getServerPassword()).getBytes(), Base64.NO_WRAP));
@@ -205,10 +205,12 @@ public class Utils {
         } else {
             WebSocket socket = new WebSocketFactory()
                     .setConnectionTimeout(5000)
-                    .createSocket(profile.getFullServerAddr().replace("http://", "ws://"), 5000);
+                    .createSocket("ws://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint(), 5000);
 
             if (profile.getAuthMethod() == JTA2.AUTH_METHOD.HTTP)
                 socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.getServerUsername() + ":" + profile.getServerPassword()).getBytes(), Base64.NO_WRAP));
+
+            System.out.println(socket.getURI());
 
             return socket;
         }

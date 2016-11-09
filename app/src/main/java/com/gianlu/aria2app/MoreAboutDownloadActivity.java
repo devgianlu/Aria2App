@@ -75,7 +75,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         gid = getIntent().getStringExtra("gid");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
-        assert toolbar != null;
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -83,10 +82,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
-        assert pager != null;
-
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
-        assert tabLayout != null;
 
         final List<CommonFragment> fragments = new ArrayList<>();
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {

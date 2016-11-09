@@ -55,7 +55,7 @@ class ConditionsCustomAdapter extends BaseAdapter {
     public View getView(final int i, View view, ViewGroup viewGroup) {
         view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.condition_custom_item, null);
         ((TextView) view.findViewById(R.id.conditionCustomItem_condition)).setText(getItem(i).getFormalName());
-        ((TextView) view.findViewById(R.id.conditionCustomItem_url)).setText(getProfileItem(getItem(i)).getFullServerAddr());
+        ((TextView) view.findViewById(R.id.conditionCustomItem_url)).setText(getProfileItem(getItem(i)).getFullServerAddress());
         view.findViewById(R.id.conditionCustomItem_edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

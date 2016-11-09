@@ -5,14 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
 public class LetterIconSmall extends View {
-    private final Context context;
     private final Rect lettersBounds = new Rect();
     private String letters;
     private String profileFileName;
@@ -21,19 +19,31 @@ public class LetterIconSmall extends View {
 
     public LetterIconSmall(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
+
+        letterPaint = new Paint();
+        letterPaint.setColor(ContextCompat.getColor(context, R.color.white));
+        letterPaint.setAntiAlias(true);
+        letterPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf"));
+        letterPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20, context.getResources().getDisplayMetrics()));
+
+        shapePaint = new Paint();
+        shapePaint.setAntiAlias(true);
+        shapePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        shapePaint.setShadowLayer(4, 0, 4, ContextCompat.getColor(context, R.color.colorPrimary_shadow));
+        setLayerType(LAYER_TYPE_SOFTWARE, shapePaint);
     }
 
     public String getProfileFileName() {
         return profileFileName;
     }
 
-    public LetterIconSmall setProfileName(String fileName, String name) {
+    public void setProfileName(String fileName, String name) {
         profileFileName = fileName;
 
         if (name == null) {
             setVisibility(GONE);
-            return this;
+            invalidate();
+            return;
         }
 
         if (name.length() <= 2)
@@ -41,27 +51,7 @@ public class LetterIconSmall extends View {
         else
             letters = name.substring(0, 2);
 
-        return this;
-    }
-
-    public LetterIconSmall setTextColor(@ColorRes int colorRes) {
-        letterPaint = new Paint();
-        letterPaint.setColor(ContextCompat.getColor(context, colorRes));
-        letterPaint.setAntiAlias(true);
-        letterPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf"));
-        letterPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 20, context.getResources().getDisplayMetrics()));
-
-        return this;
-    }
-
-    public LetterIconSmall setShapeColor(@ColorRes int colorRes, @ColorRes int shadowColor) {
-        shapePaint = new Paint();
-        shapePaint.setAntiAlias(true);
-        shapePaint.setColor(ContextCompat.getColor(context, colorRes));
-        shapePaint.setShadowLayer(4, 0, 4, ContextCompat.getColor(context, shadowColor));
-        setLayerType(LAYER_TYPE_SOFTWARE, shapePaint);
-
-        return this;
+        invalidate();
     }
 
     @Override
@@ -80,9 +70,5 @@ public class LetterIconSmall extends View {
         letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
 
         canvas.drawText(letters, viewWidthHalf - lettersBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY(), letterPaint);
-    }
-
-    public void build() {
-        invalidate();
     }
 }

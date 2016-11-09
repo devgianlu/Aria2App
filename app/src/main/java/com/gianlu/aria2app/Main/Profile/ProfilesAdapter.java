@@ -106,7 +106,7 @@ public class ProfilesAdapter extends BaseAdapter {
         }
 
         holder.name.setText(profile.getProfileName());
-        holder.address.setText(profile.getFullServerAddr());
+        holder.address.setText(profile.getFullServerAddress());
 
         if (profile.getLatency() != -1) {
             holder.ping.setVisibility(View.VISIBLE);
@@ -153,9 +153,9 @@ public class ProfilesAdapter extends BaseAdapter {
         try {
             WebSocket webSocket;
             if (profile.getAuthMethod().equals(JTA2.AUTH_METHOD.HTTP))
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddr(), profile.getServerUsername(), profile.getServerPassword());
+                webSocket = Utils.readyWebSocket(profile.isServerSSL(), "ws://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint(), profile.getServerUsername(), profile.getServerPassword());
             else
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddr());
+                webSocket = Utils.readyWebSocket(profile.isServerSSL(), "ws://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint());
 
             webSocket.addListener(new StatusWebSocketHandler(profile, handler))
                     .connectAsynchronously();

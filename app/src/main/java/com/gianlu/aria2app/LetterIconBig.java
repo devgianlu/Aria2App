@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -26,20 +25,30 @@ public class LetterIconBig extends View {
     public LetterIconBig(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+
+        letterPaint = new Paint();
+        letterPaint.setColor(ContextCompat.getColor(context, R.color.colorAccent));
+        letterPaint.setAntiAlias(true);
+        letterPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf"));
+        letterPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 26, context.getResources().getDisplayMetrics()));
+
+        textPaint = new Paint();
+        textPaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        textPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf"));
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, context.getResources().getDisplayMetrics()));
+
+        shapePaint = new Paint();
+        shapePaint.setAntiAlias(true);
+        shapePaint.setColor(ContextCompat.getColor(context, R.color.white));
+        shapePaint.setShadowLayer(4, 0, 4, ContextCompat.getColor(context, R.color.colorPrimary_shadow));
+        setLayerType(LAYER_TYPE_SOFTWARE, shapePaint);
     }
 
-    public LetterIconBig setProfileAddress(String address) {
+    public void setInfo(String name, String address, int port) {
+        this.port = String.valueOf(port);
         addr = address;
 
-        return this;
-    }
-
-    public LetterIconBig setProfilePort(int port) {
-        this.port = String.valueOf(port);
-        return this;
-    }
-
-    public LetterIconBig setProfileName(String name) {
         if (name == null)
             name = "Unknown";
 
@@ -48,37 +57,7 @@ public class LetterIconBig extends View {
         else
             letters = name.substring(0, 2);
 
-        return this;
-    }
-
-    public LetterIconBig setBigTextColor(@ColorRes int colorRes) {
-        letterPaint = new Paint();
-        letterPaint.setColor(ContextCompat.getColor(context, colorRes));
-        letterPaint.setAntiAlias(true);
-        letterPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf"));
-        letterPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 26, context.getResources().getDisplayMetrics()));
-
-        return this;
-    }
-
-    public LetterIconBig setSmallTextColor(@ColorRes int colorRes) {
-        textPaint = new Paint();
-        textPaint.setColor(ContextCompat.getColor(context, colorRes));
-        textPaint.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf"));
-        textPaint.setAntiAlias(true);
-        textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, context.getResources().getDisplayMetrics()));
-
-        return this;
-    }
-
-    public LetterIconBig setShapeColor(@ColorRes int colorRes, @ColorRes int shadowColor) {
-        shapePaint = new Paint();
-        shapePaint.setAntiAlias(true);
-        shapePaint.setColor(ContextCompat.getColor(context, colorRes));
-        shapePaint.setShadowLayer(4, 0, 4, ContextCompat.getColor(context, shadowColor));
-        setLayerType(LAYER_TYPE_SOFTWARE, shapePaint);
-
-        return this;
+        invalidate();
     }
 
     @Override
@@ -116,9 +95,5 @@ public class LetterIconBig extends View {
         canvas.drawText(letters, viewWidthHalf - lettersBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() - textBounds.height() - 2, letterPaint);
         canvas.drawText(cAddr, viewWidthHalf - textBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() + 8, textPaint);
         canvas.drawText(port, viewWidthHalf - portBounds.exactCenterX(), viewHeightHalf + lettersBounds.height() + 12, textPaint);
-    }
-
-    public void build() {
-        invalidate();
     }
 }

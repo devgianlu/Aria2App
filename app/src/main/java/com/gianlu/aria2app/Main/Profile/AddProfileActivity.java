@@ -287,10 +287,16 @@ public class AddProfileActivity extends AppCompatActivity {
 
         final SingleModeViewHolder holder = new SingleModeViewHolder(view.findViewById(R.id.newConditionDialog_include));
 
-        MultiOnTextChangedListener listener = new MultiOnTextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
+        final MultiOnTextChangedListener listener = new MultiOnTextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
         holder.addr.addTextChangedListener(listener);
         holder.port.addTextChangedListener(listener);
         holder.endpoint.addTextChangedListener(listener);
+        holder.SSL.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                listener.afterTextChanged(null);
+            }
+        });
 
         builder.setPositiveButton(edit != null ? R.string.save : R.string.add, null)
                 .setTitle(type.getFormal())
@@ -323,7 +329,7 @@ public class AddProfileActivity extends AppCompatActivity {
             holder.addr.setText(edit.second.getServerAddr());
             holder.port.setText(String.valueOf(edit.second.getServerPort()));
             holder.endpoint.setText(edit.second.getServerEndpoint());
-            holder.completeURL.setText(edit.second.getFullServerAddr());
+            holder.completeURL.setText(edit.second.getFullServerAddress());
             switch (edit.second.getAuthMethod()) {
                 case NONE:
                     sViewHolder.authMethodNone.setChecked(true);
@@ -796,10 +802,16 @@ public class AddProfileActivity extends AppCompatActivity {
             directDownloadPassword = (EditText) rootView.findViewById(R.id.addProfile_directDownload_passwd);
 
             //Setup
-            SingleOnTextChangedListener listener = new SingleOnTextChangedListener();
+            final SingleOnTextChangedListener listener = new SingleOnTextChangedListener();
             addr.addTextChangedListener(listener);
             port.addTextChangedListener(listener);
             endpoint.addTextChangedListener(listener);
+            SSL.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    listener.afterTextChanged(null);
+                }
+            });
 
             directDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -878,7 +890,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            sViewHolder.completeURL.setText(String.format(sViewHolder.SSL.isChecked() ? "wss" : "ws" + "://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
+            sViewHolder.completeURL.setText(String.format((sViewHolder.SSL.isChecked() ? "wss" : "ws") + "://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
         }
     }
 
@@ -887,7 +899,7 @@ public class AddProfileActivity extends AppCompatActivity {
         private final EditText addr;
         private final EditText port;
         private final EditText endpoint;
-        private CheckBox ssl;
+        private final CheckBox ssl;
 
         MultiOnTextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint, CheckBox ssl) {
             this.completeURL = completeURL;
@@ -909,7 +921,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            completeURL.setText(String.format(ssl.isChecked() ? "wss" : "ws" + "://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
+            completeURL.setText(String.format((ssl.isChecked() ? "wss" : "ws") + "://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
         }
     }
 }

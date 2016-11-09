@@ -107,7 +107,7 @@ public class NotificationService extends IntentService {
         for (SingleModeProfileItem profile : intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles")) {
             WebSocket webSocket;
             try {
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddr());
+                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddress());
             } catch (IOException | NoSuchAlgorithmException ex) {
                 stopSelf();
                 return;
