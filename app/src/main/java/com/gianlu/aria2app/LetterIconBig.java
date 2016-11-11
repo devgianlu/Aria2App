@@ -15,7 +15,7 @@ public class LetterIconBig extends View {
     private final Rect lettersBounds = new Rect();
     private final Rect textBounds = new Rect();
     private final Rect portBounds = new Rect();
-    private String letters;
+    private String name;
     private String addr;
     private String port;
     private Paint shapePaint;
@@ -47,15 +47,8 @@ public class LetterIconBig extends View {
 
     public void setInfo(String name, String address, int port) {
         this.port = String.valueOf(port);
-        addr = address;
-
-        if (name == null)
-            name = "Unknown";
-
-        if (name.length() <= 2)
-            letters = name;
-        else
-            letters = name.substring(0, 2);
+        this.addr = address;
+        this.name = name;
 
         invalidate();
     }
@@ -74,6 +67,16 @@ public class LetterIconBig extends View {
             radius = viewWidthHalf - 4;
 
         canvas.drawCircle(viewWidthHalf, viewHeightHalf, radius, shapePaint);
+
+        String letters;
+        if (name == null) {
+            letters = "??";
+        } else {
+            if (name.length() <= 2)
+                letters = name;
+            else
+                letters = name.substring(0, 2);
+        }
 
         letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
         boolean isTextBoundOK = false;
