@@ -176,14 +176,37 @@
             android:id="@+id/addProfile_serverSSL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:text="@string/encryption" />
+
+        <LinearLayout
+            android:id="@+id/addProfile_serverSSLContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:paddingStart="36dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/certificate" />
+
+            <EditText
+                android:id="@+id/addProfile_serverSSLCertificate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/certificate_hint"
+                android:inputType="textUri" />
+        </LinearLayout>
 
         <CheckBox
             android:id="@+id/addProfile_directDownload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
             android:checked="true"
             android:text="@string/enableDirectDownload" />
 

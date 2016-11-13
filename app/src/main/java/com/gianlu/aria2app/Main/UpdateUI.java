@@ -12,7 +12,10 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 public class UpdateUI implements Runnable {
     private final MainCardAdapter adapter;
@@ -32,7 +35,7 @@ public class UpdateUI implements Runnable {
 
         try {
             jta2 = JTA2.newInstance(context);
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
             CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
             stop();
         }

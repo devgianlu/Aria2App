@@ -12,7 +12,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +31,7 @@ public class JTA2 {
         this.webSocketing = webSocketing;
     }
 
-    public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
+    public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         return new JTA2(WebSocketing.newInstance(context)).setContext(context);
     }
 

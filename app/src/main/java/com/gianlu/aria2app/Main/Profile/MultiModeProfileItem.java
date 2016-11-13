@@ -3,8 +3,6 @@ package com.gianlu.aria2app.Main.Profile;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.ArrayMap;
@@ -17,29 +15,15 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.Map;
 
-public class MultiModeProfileItem extends ProfileItem implements Parcelable {
-    public static final Creator<MultiModeProfileItem> CREATOR = new Creator<MultiModeProfileItem>() {
-        @Override
-        public MultiModeProfileItem createFromParcel(Parcel in) {
-            return new MultiModeProfileItem(in);
-        }
-
-        @Override
-        public MultiModeProfileItem[] newArray(int size) {
-            return new MultiModeProfileItem[size];
-        }
-    };
+public class MultiModeProfileItem extends ProfileItem implements Serializable {
     private final Map<ConnectivityCondition, SingleModeProfileItem> profiles = new ArrayMap<>();
 
     private MultiModeProfileItem() {
         this.singleMode = false;
         this.status = ProfileItem.STATUS.UNKNOWN;
-    }
-
-    private MultiModeProfileItem(Parcel in) {
-        super(in);
     }
 
     private static MultiModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
@@ -88,11 +72,6 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         return fromJSON(base64name, builder.toString());
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     private void addProfile(ConnectivityCondition condition, SingleModeProfileItem profile) {
         profiles.put(condition, profile);
     }
@@ -100,7 +79,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
     @NonNull
     private SingleModeProfileItem getDefaultProfile() {
         for (ConnectivityCondition cond : profiles.keySet()) {
-            if (profiles.get(cond).isDefault()) return profiles.get(cond);
+            if (profiles.get(cond).isDefault) return profiles.get(cond);
         }
         return profiles.values().toArray(new SingleModeProfileItem[profiles.size()])[0];
     }
@@ -146,7 +125,7 @@ public class MultiModeProfileItem extends ProfileItem implements Parcelable {
         return globalProfileName;
     }
 
-    Map<ConnectivityCondition, SingleModeProfileItem> getProfiles() {
+    public Map<ConnectivityCondition, SingleModeProfileItem> getProfiles() {
         return profiles;
     }
 

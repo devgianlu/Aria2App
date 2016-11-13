@@ -1,10 +1,9 @@
 package com.gianlu.aria2app.Main.Profile;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.util.Base64;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
@@ -15,108 +14,96 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URL;
 
-public class SingleModeProfileItem extends ProfileItem implements Parcelable {
-    public static final String DEFAULT_NAME = "Local device";
-    public static final String DEFAULT_BASE64_NAME = Base64.encodeToString(DEFAULT_NAME.getBytes(), Base64.NO_WRAP);
+public class SingleModeProfileItem extends ProfileItem implements Serializable {
+    public static final String EXTERNAL_DEFAULT_NAME = "Local device";
+    public static final String EXTERNAL_DEFAULT_BASE64_NAME = Base64.encodeToString(EXTERNAL_DEFAULT_NAME.getBytes(), Base64.NO_WRAP);
 
-    public static final Creator<SingleModeProfileItem> CREATOR = new Creator<SingleModeProfileItem>() {
-        @Override
-        public SingleModeProfileItem createFromParcel(Parcel in) {
-            return new SingleModeProfileItem(in);
-        }
-
-        @Override
-        public SingleModeProfileItem[] newArray(int size) {
-            return new SingleModeProfileItem[size];
-        }
-    };
-    private String profileName;
-    private String serverAddr;
-    private int serverPort;
-    private String serverEndpoint;
-    private JTA2.AUTH_METHOD authMethod;
-    private boolean serverSSL;
-    private String serverUsername;
-    private String serverPassword;
-    private String serverToken;
-    private boolean directDownloadEnabled;
-    private DirectDownload directDownload;
+    public String profileName;
+    public String serverAddr;
+    public int serverPort;
+    public String serverEndpoint;
+    public JTA2.AUTH_METHOD authMethod;
+    public boolean serverSSL;
+    public String certificatePath;
+    public String serverUsername;
+    public String serverPassword;
+    public String serverToken;
+    public boolean directDownloadEnabled;
+    public DirectDownload directDownload;
 
     private SingleModeProfileItem() {
         this.singleMode = true;
-        this.status = STATUS.UNKNOWN;
+        this.status = ProfileItem.STATUS.UNKNOWN;
     }
 
-    SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
-        this.authMethod = JTA2.AUTH_METHOD.NONE;
-        this.serverUsername = null;
-        this.serverPassword = null;
-        this.status = STATUS.UNKNOWN;
-        this.serverToken = null;
-        this.profileName = profileName;
-        this.notificationsEnabled = notificationsEnabled;
-        this.singleMode = true;
-        this.serverAddr = serverAddr;
-        this.serverPort = serverPort;
-        this.serverEndpoint = serverEndpoint;
-        this.serverSSL = serverSSL;
-        this.directDownloadEnabled = directDownloadEnabled;
-        this.directDownload = directDownload;
+    public static SingleModeProfileItem externalDefault(int port, String token) {
+        SingleModeProfileItem profile = new SingleModeProfileItem();
+        profile.profileName = EXTERNAL_DEFAULT_NAME;
+        profile.globalProfileName = EXTERNAL_DEFAULT_NAME;
+        profile.serverAddr = "localhost";
+        profile.serverPort = port;
+        profile.serverEndpoint = "/jsonrpc";
+        profile.authMethod = JTA2.AUTH_METHOD.TOKEN;
+        profile.serverToken = token;
+        profile.serverSSL = false;
+        profile.notificationsEnabled = false;
+        profile.directDownloadEnabled = false;
+
+        return profile;
     }
 
-    public SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, String serverToken, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
-        this.authMethod = JTA2.AUTH_METHOD.TOKEN;
-        this.profileName = profileName;
-        this.notificationsEnabled = notificationsEnabled;
-        this.serverUsername = null;
-        this.serverPassword = null;
-        this.singleMode = true;
-        this.status = STATUS.UNKNOWN;
-        this.serverAddr = serverAddr;
-        this.serverPort = serverPort;
-        this.serverEndpoint = serverEndpoint;
-        this.serverSSL = serverSSL;
-        this.serverToken = serverToken;
-        this.directDownloadEnabled = directDownloadEnabled;
-        this.directDownload = directDownload;
+    public static SingleModeProfileItem defaultProfile() {
+        SingleModeProfileItem profile = new SingleModeProfileItem();
+        profile.profileName = "Empty";
+        profile.globalProfileName = "Empty";
+        profile.serverAddr = "localhost";
+        profile.serverPort = 6800;
+        profile.serverEndpoint = "/jsonrpc";
+        profile.authMethod = JTA2.AUTH_METHOD.NONE;
+        profile.serverSSL = false;
+        profile.notificationsEnabled = false;
+        profile.directDownloadEnabled = false;
+
+        return profile;
     }
 
-    SingleModeProfileItem(String profileName, String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL, boolean notificationsEnabled, String serverUsername, String serverPassword, boolean directDownloadEnabled, @Nullable DirectDownload directDownload) {
-        this.authMethod = JTA2.AUTH_METHOD.HTTP;
-        this.notificationsEnabled = notificationsEnabled;
-        this.serverUsername = serverUsername;
-        this.serverPassword = serverPassword;
-        this.serverToken = null;
-        this.profileName = profileName;
-        this.singleMode = true;
-        this.status = STATUS.UNKNOWN;
-        this.serverAddr = serverAddr;
-        this.serverPort = serverPort;
-        this.serverEndpoint = serverEndpoint;
-        this.serverSSL = serverSSL;
-        this.directDownloadEnabled = directDownloadEnabled;
-        this.directDownload = directDownload;
+    public static SingleModeProfileItem fromFields(String profileName, CheckBox enableNotifications, AddProfileActivity.SingleModeViewHolder sViewHolder) {
+        SingleModeProfileItem profile = new SingleModeProfileItem();
+
+        profile.profileName = profileName;
+        profile.serverAddr = sViewHolder.addr.getText().toString().trim();
+        profile.serverPort = Integer.parseInt(sViewHolder.port.getText().toString().trim());
+        profile.serverEndpoint = sViewHolder.endpoint.getText().toString().trim();
+        profile.serverSSL = sViewHolder.SSL.isChecked();
+        profile.notificationsEnabled = enableNotifications.isChecked();
+        profile.directDownloadEnabled = sViewHolder.directDownload.isChecked();
+        profile.directDownload = DirectDownload.fromFields(sViewHolder);
+
+        if (sViewHolder.authMethodNone.isChecked()) {
+            profile.authMethod = JTA2.AUTH_METHOD.NONE;
+        } else if (sViewHolder.authMethodToken.isChecked()) {
+            profile.authMethod = JTA2.AUTH_METHOD.TOKEN;
+            profile.serverToken = sViewHolder.authMethodTokenToken.getText().toString().trim();
+        } else if (sViewHolder.authMethodHTTP.isChecked()) {
+            profile.authMethod = JTA2.AUTH_METHOD.HTTP;
+            profile.serverUsername = sViewHolder.authMethodHTTPUsername.getText().toString().trim();
+            profile.serverPassword = sViewHolder.authMethodHTTPPassword.getText().toString().trim();
+        } else {
+            profile.authMethod = JTA2.AUTH_METHOD.NONE;
+        }
+
+        if (profile.serverSSL) {
+            profile.certificatePath = sViewHolder.SSLCertificate.getText().toString().trim();
+        }
+
+        return profile;
     }
 
-    private SingleModeProfileItem(Parcel in) {
-        super(in);
-        profileName = in.readString();
-        serverAddr = in.readString();
-        serverPort = in.readInt();
-        serverEndpoint = in.readString();
-        authMethod = JTA2.AUTH_METHOD.valueOf(in.readString());
-        serverSSL = in.readByte() != 0;
-        serverUsername = in.readString();
-        serverPassword = in.readString();
-        serverToken = in.readString();
-        directDownloadEnabled = in.readByte() != 0;
-        directDownload = in.readParcelable(DirectDownload.class.getClassLoader());
-    }
-
-    public static SingleModeProfileItem defaultEmpty() {
-        return new SingleModeProfileItem("Empty", "127.0.0.1", 6800, "/jsonrpc", false, false, false, null);
+    public static SingleModeProfileItem fromFields(EditText profileName, CheckBox enableNotifications, AddProfileActivity.SingleModeViewHolder sViewHolder) {
+        return fromFields(profileName.getText().toString().trim(), enableNotifications, sViewHolder);
     }
 
     public static SingleModeProfileItem fromJSON(String fileName, String json) throws JSONException, IOException {
@@ -149,6 +136,8 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
             item.serverEndpoint = jProfile.optString("serverEndpoint");
         }
 
+        item.certificatePath = jProfile.optString("certificatePath");
+
         if (!jProfile.isNull("directDownload")) {
             item.directDownloadEnabled = true;
             item.directDownload = DirectDownload.fromJSON(jProfile.getJSONObject("directDownload").toString());
@@ -175,79 +164,18 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
         return fromJSON(base64name, builder.toString());
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeString(profileName);
-        dest.writeString(serverAddr);
-        dest.writeInt(serverPort);
-        dest.writeString(serverEndpoint);
-        dest.writeString(authMethod.name());
-        dest.writeByte((byte) (serverSSL ? 1 : 0));
-        dest.writeString(serverUsername);
-        dest.writeString(serverPassword);
-        dest.writeString(serverToken);
-        dest.writeByte((byte) (directDownloadEnabled ? 1 : 0));
-        dest.writeParcelable(directDownload, flags);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     public SingleModeProfileItem setGlobalProfileName(String globalProfileName) {
         this.globalProfileName = globalProfileName;
         return this;
     }
 
-    String getProfileName() {
+    public String getProfileName() {
         if (profileName == null) return globalProfileName;
         return profileName;
     }
 
-    public String getServerAddr() {
-        return serverAddr;
-    }
-
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public String getServerEndpoint() {
-        return serverEndpoint;
-    }
-
-    public boolean isServerSSL() {
-        return serverSSL;
-    }
-
-    public String getServerToken() {
-        return serverToken;
-    }
-
     public String getFullServerAddress() {
         return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
-    }
-
-    public JTA2.AUTH_METHOD getAuthMethod() {
-        return authMethod;
-    }
-
-    public String getServerUsername() {
-        return serverUsername;
-    }
-
-    public String getServerPassword() {
-        return serverPassword;
-    }
-
-    public boolean isDirectDownloadEnabled() {
-        return directDownloadEnabled;
-    }
-
-    public DirectDownload getDirectDownload() {
-        return directDownload;
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -262,7 +190,8 @@ public class SingleModeProfileItem extends ProfileItem implements Parcelable {
                 .put("serverUsername", serverUsername)
                 .put("serverPassword", serverPassword)
                 .put("default", isDefault)
-                .put("serverSSL", serverSSL);
+                .put("serverSSL", serverSSL)
+                .put("certificatePath", certificatePath);
 
         if (directDownloadEnabled) {
             profile.put("directDownload", directDownload.toJSON());

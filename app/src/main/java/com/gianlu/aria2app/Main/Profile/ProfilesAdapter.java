@@ -23,7 +23,10 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -72,7 +75,7 @@ public class ProfilesAdapter extends BaseAdapter {
     }
 
     private boolean isItemSingleMode(int position) {
-        return profiles.get(position).isSingleMode();
+        return profiles.get(position).singleMode;
     }
 
     @Override
@@ -83,7 +86,7 @@ public class ProfilesAdapter extends BaseAdapter {
     public List<String> getItemsName() {
         List<String> names = new ArrayList<>();
         for (ProfileItem item : profiles) {
-            names.add(item.getGlobalProfileName());
+            names.add(item.globalProfileName);
         }
         return names;
     }
@@ -102,29 +105,29 @@ public class ProfilesAdapter extends BaseAdapter {
             holder.globalName.setVisibility(View.VISIBLE);
             holder.name.setPadding(18, 0, 0, 0);
             holder.address.setPadding(18, 0, 0, 0);
-            holder.globalName.setText(profile.getGlobalProfileName());
+            holder.globalName.setText(profile.globalProfileName);
         }
 
         holder.name.setText(profile.getProfileName());
         holder.address.setText(profile.getFullServerAddress());
 
-        if (profile.getLatency() != -1) {
+        if (profile.latency != -1) {
             holder.ping.setVisibility(View.VISIBLE);
-            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", profile.getLatency()));
+            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", profile.latency));
         } else {
             holder.ping.setVisibility(View.GONE);
         }
 
-        if (profile.getStatus() == ProfileItem.STATUS.UNKNOWN) {
+        if (profile.status == ProfileItem.STATUS.UNKNOWN) {
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.status.setVisibility(View.GONE);
         } else {
             holder.progressBar.setVisibility(View.GONE);
             holder.status.setVisibility(View.VISIBLE);
             holder.status.setOnClickListener(statusClick);
-            holder.status.setTag(profile.getStatusMessage());
+            holder.status.setTag(profile.statusMessage);
 
-            switch (profile.getStatus()) {
+            switch (profile.status) {
                 case ONLINE:
                     holder.status.setImageResource(R.drawable.ic_done_black_48dp);
                     break;
@@ -152,14 +155,14 @@ public class ProfilesAdapter extends BaseAdapter {
 
         try {
             WebSocket webSocket;
-            if (profile.getAuthMethod().equals(JTA2.AUTH_METHOD.HTTP))
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), "ws://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint(), profile.getServerUsername(), profile.getServerPassword());
+            if (profile.authMethod.equals(JTA2.AUTH_METHOD.HTTP))
+                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(profile));
             else
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), "ws://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint());
+                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(profile));
 
             webSocket.addListener(new StatusWebSocketHandler(profile, handler))
                     .connectAsynchronously();
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
             profile.setStatus(ProfileItem.STATUS.ERROR);
             profile.setStatusMessage(ex.getMessage());
 

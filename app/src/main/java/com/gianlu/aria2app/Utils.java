@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
@@ -24,14 +25,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
@@ -163,10 +173,40 @@ public class Utils {
         return 255 / 4 * val;
     }
 
-    public static WebSocket readyWebSocket(boolean isSSL, String url, @NonNull String username, @NonNull String password) throws IOException, NoSuchAlgorithmException {
-        if (isSSL) {
+    public static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+        String keyStoreType = KeyStore.getDefaultType();
+        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", ca);
+
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
+
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, tmf.getTrustManagers(), null);
+
+        return context;
+    }
+
+    @Nullable
+    public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
+        return readyCertificate(CurrentProfile.getCurrentProfile(context));
+    }
+
+    @Nullable
+    public static Certificate readyCertificate(SingleModeProfileItem profile) throws CertificateException, FileNotFoundException {
+        if (!profile.serverSSL || profile.certificatePath == null || profile.certificatePath.isEmpty())
+            return null;
+
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        return factory.generateCertificate(new FileInputStream(profile.certificatePath));
+    }
+
+    public static WebSocket readyWebSocket(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+        if (ca != null) {
             WebSocketFactory factory = new WebSocketFactory();
-            factory.setSSLContext(SSLContext.getDefault());
+            factory.setSSLContext(readySSLContext(ca));
 
             return factory.createSocket(url.replace("ws://", "wss://"), 5000)
                     .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
@@ -176,10 +216,10 @@ public class Utils {
         }
     }
 
-    public static WebSocket readyWebSocket(boolean isSSL, String url) throws NoSuchAlgorithmException, IOException {
-        if (isSSL) {
+    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException {
+        if (ca != null) {
             return new WebSocketFactory()
-                    .setSSLContext(SSLContext.getDefault())
+                    .setSSLContext(readySSLContext(ca))
                     .setConnectionTimeout(5000)
                     .createSocket(url.replace("ws://", "wss://"), 5000);
         } else {
@@ -189,26 +229,26 @@ public class Utils {
         }
     }
 
-    public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException {
+    public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         SingleModeProfileItem profile = CurrentProfile.getCurrentProfile(context);
 
-        if (profile.isServerSSL()) {
+        if (profile.serverSSL) {
             WebSocketFactory factory = new WebSocketFactory()
-                    .setSSLContext(SSLContext.getDefault())
+                    .setSSLContext(readySSLContext(readyCertificate(context)))
                     .setConnectionTimeout(5000);
-            WebSocket socket = factory.createSocket("wss://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint(), 5000);
+            WebSocket socket = factory.createSocket("wss://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, 5000);
 
-            if (profile.getAuthMethod() == JTA2.AUTH_METHOD.HTTP)
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.getServerUsername() + ":" + profile.getServerPassword()).getBytes(), Base64.NO_WRAP));
+            if (profile.authMethod == JTA2.AUTH_METHOD.HTTP)
+                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
 
             return socket;
         } else {
             WebSocket socket = new WebSocketFactory()
                     .setConnectionTimeout(5000)
-                    .createSocket("ws://" + profile.getServerAddr() + ":" + profile.getServerPort() + profile.getServerEndpoint(), 5000);
+                    .createSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, 5000);
 
-            if (profile.getAuthMethod() == JTA2.AUTH_METHOD.HTTP)
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.getServerUsername() + ":" + profile.getServerPassword()).getBytes(), Base64.NO_WRAP));
+            if (profile.authMethod == JTA2.AUTH_METHOD.HTTP)
+                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
 
             System.out.println(socket.getURI());
 
@@ -218,8 +258,8 @@ public class Utils {
 
     public static JSONArray readyParams(Context context) {
         JSONArray array = new JSONArray();
-        if (CurrentProfile.getCurrentProfile(context).getAuthMethod() == JTA2.AUTH_METHOD.TOKEN)
-            array.put("token:" + CurrentProfile.getCurrentProfile(context).getServerToken());
+        if (CurrentProfile.getCurrentProfile(context).authMethod == JTA2.AUTH_METHOD.TOKEN)
+            array.put("token:" + CurrentProfile.getCurrentProfile(context).serverToken);
 
         return array;
     }
@@ -279,6 +319,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage PURCHASING_CANCELED = new CommonUtils.ToastMessage("The purchase has been canceled.", false);
         public static final CommonUtils.ToastMessage BILLING_USER_CANCELLED = new CommonUtils.ToastMessage("You cancelled the operation.", false);
         public static final CommonUtils.ToastMessage THANK_YOU = new CommonUtils.ToastMessage("Thank you!", false);
+        public static final CommonUtils.ToastMessage INVALID_CERTIFICATE_FILE = new CommonUtils.ToastMessage("Invalid certificate file!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

@@ -27,10 +27,10 @@ public class CurrentProfile {
                         profile = MultiModeProfileItem.fromString(context, lastProfile).getCurrentProfile(context);
                 } catch (JSONException | IOException ex) {
                     CommonUtils.logMe(context, ex);
-                    profile = SingleModeProfileItem.defaultEmpty();
+                    profile = SingleModeProfileItem.defaultProfile();
                 }
             } else {
-                profile = SingleModeProfileItem.defaultEmpty();
+                profile = SingleModeProfileItem.defaultProfile();
             }
         }
 

@@ -24,7 +24,10 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,9 +45,9 @@ public class NotificationService extends IntentService {
 
         ArrayList<SingleModeProfileItem> profiles = new ArrayList<>();
         for (ProfileItem profile : ProfileItem.getProfiles(context)) {
-            if (!profile.areNotificationsEnabled()) continue;
+            if (!profile.notificationsEnabled) continue;
 
-            if (profile.isSingleMode())
+            if (profile.singleMode)
                 profiles.add((SingleModeProfileItem) profile);
             else
                 profiles.add(((MultiModeProfileItem) profile).getCurrentProfile(context));
@@ -64,7 +67,7 @@ public class NotificationService extends IntentService {
                 expanded += ", ";
             }
 
-            expanded += profile.getGlobalProfileName();
+            expanded += profile.globalProfileName;
             first = false;
         }
 
@@ -79,7 +82,7 @@ public class NotificationService extends IntentService {
                     .setPriority(Notification.PRIORITY_MIN)
                     .setContentTitle(getString(R.string.notificationService))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setContentText(expandProfileList(intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles")))
+                    .setContentText(expandProfileList((List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
                     .addAction(new NotificationCompat.Action.Builder(
@@ -99,16 +102,16 @@ public class NotificationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (Objects.equals(intent.getAction(), "STOP") || intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles").size() == 0) {
+        if (Objects.equals(intent.getAction(), "STOP") || ((List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")).size() == 0) {
             stopSelf();
             return;
         }
 
-        for (SingleModeProfileItem profile : intent.<SingleModeProfileItem>getParcelableArrayListExtra("profiles")) {
+        for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
             WebSocket webSocket;
             try {
-                webSocket = Utils.readyWebSocket(profile.isServerSSL(), profile.getFullServerAddress());
-            } catch (IOException | NoSuchAlgorithmException ex) {
+                webSocket = Utils.readyWebSocket(profile.getFullServerAddress(), null); // TODO: SSL
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;
             }
@@ -171,9 +174,9 @@ public class NotificationService extends IntentService {
                     .setContentIntent(
                             PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, MainActivity.class)
                                     .putExtra("fromNotification", true)
-                                    .putExtra("fileName", profile.getFileName())
+                                    .putExtra("fileName", profile.fileName)
                                     .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setContentText(profile.getGlobalProfileName())
+                    .setContentText(profile.globalProfileName)
                     .setContentInfo("GID#" + gid)
                     .setGroup(gid)
                     .setSmallIcon(R.drawable.ic_notification)

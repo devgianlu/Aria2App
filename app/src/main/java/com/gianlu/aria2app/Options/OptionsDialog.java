@@ -22,7 +22,10 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +63,7 @@ public class OptionsDialog extends AlertDialog.Builder {
 
         try {
             jta2 = JTA2.newInstance(context);
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
             CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
     }

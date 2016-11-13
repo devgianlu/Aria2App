@@ -17,7 +17,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +34,7 @@ public class WebSocketing extends WebSocketAdapter {
     private WebSocket socket;
     private boolean errorShown;
 
-    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException {
+    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         socket = Utils.readyWebSocket(context)
                 .addListener(this)
                 .connectAsynchronously();
@@ -45,7 +48,7 @@ public class WebSocketing extends WebSocketAdapter {
         }
     }
 
-    public static WebSocketing newInstance(Activity context) throws IOException, NoSuchAlgorithmException {
+    public static WebSocketing newInstance(Activity context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         if (webSocketing == null)
             webSocketing = new WebSocketing(context);
         return webSocketing;
@@ -61,7 +64,7 @@ public class WebSocketing extends WebSocketAdapter {
         WebSocketing.handler = handler;
     }
 
-    public static void enableEventManager(final MainActivity mainActivity) throws IOException, NoSuchAlgorithmException {
+    public static void enableEventManager(final MainActivity mainActivity) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         if (mainActivity == null) return;
 
         newInstance(mainActivity).socket.addListener(new WebSocketAdapter() {

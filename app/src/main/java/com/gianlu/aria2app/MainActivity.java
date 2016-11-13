@@ -60,7 +60,10 @@ import org.json.JSONException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -68,6 +71,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// TODO: Better error message (dialog one)
+// TODO: Must not keep the certificate on the external storage
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -159,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                                 final JTA2 jta2;
                                 try {
                                     jta2 = JTA2.newInstance(MainActivity.this);
-                                } catch (IOException | NoSuchAlgorithmException ex) {
+                                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                                     CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
                                     return true;
                                 }
@@ -258,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onProfileItemSelected(final SingleModeProfileItem profile, boolean fromRecent) {
-                        if (!fromRecent && profile.getStatus() != ProfileItem.STATUS.ONLINE) {
+                        if (!fromRecent && profile.status != ProfileItem.STATUS.ONLINE) {
                             CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
@@ -311,25 +316,15 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
 
-            saveExternalProfile(new SingleModeProfileItem(SingleModeProfileItem.DEFAULT_NAME,
-                    "localhost",
-                    getIntent().getIntExtra("port", 6800),
-                    "/jsonrpc",
-                    false,
-                    false,
-                    getIntent().getStringExtra("token"),
-                    false,
-                    null)
-                    .setGlobalProfileName("Local device"));
+            saveExternalProfile(SingleModeProfileItem.externalDefault(getIntent().getIntExtra("port", 6800), getIntent().getStringExtra("token")));
         }
-
 
         try {
             SingleModeProfileItem profile;
             if (getIntent().getBooleanExtra("external", false)) {
                 getIntent().removeExtra("external");
 
-                profile = SingleModeProfileItem.fromString(this, SingleModeProfileItem.DEFAULT_BASE64_NAME);
+                profile = SingleModeProfileItem.fromString(this, SingleModeProfileItem.EXTERNAL_DEFAULT_BASE64_NAME);
             } else if (getIntent().getBooleanExtra("fromNotification", false)) {
                 getIntent().removeExtra("fromNotification");
 
@@ -351,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            setTitle(getString(R.string.app_name) + " - " + profile.getGlobalProfileName());
+            setTitle(getString(R.string.app_name) + " - " + profile.globalProfileName);
 
             startWithProfile(profile, false);
         } catch (IOException | JSONException ex) {
@@ -464,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
                         DownloadAction downloadAction;
                         try {
                             downloadAction = new DownloadAction(MainActivity.this);
-                        } catch (IOException | NoSuchAlgorithmException ex) {
+                        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                             CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                             return;
                         }
@@ -707,8 +702,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             WebSocketing.enableEventManager(this);
-        } catch (IOException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            CommonUtils.logMe(this, ex);
         }
 
         if (sharedPreferences.getBoolean("a2_enableNotifications", true)) {
@@ -771,9 +766,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
         try {
-            deleteFile(SingleModeProfileItem.DEFAULT_BASE64_NAME + ".profile");
+            deleteFile(SingleModeProfileItem.EXTERNAL_DEFAULT_BASE64_NAME + ".profile");
 
-            FileOutputStream fOut = openFileOutput(SingleModeProfileItem.DEFAULT_BASE64_NAME + ".profile", Context.MODE_PRIVATE);
+            FileOutputStream fOut = openFileOutput(SingleModeProfileItem.EXTERNAL_DEFAULT_BASE64_NAME + ".profile", Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
             osw.write(profile.toJSON().toString());

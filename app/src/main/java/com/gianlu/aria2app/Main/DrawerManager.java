@@ -17,6 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -138,18 +139,18 @@ public class DrawerManager {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String oldFirst = preferences.getString("recentProfiles_first", null);
 
-        if (!Objects.equals(oldFirst, profile.getFileName())) {
+        if (!Objects.equals(oldFirst, profile.fileName)) {
             preferences.edit()
                     .putString("recentProfiles_second", oldFirst)
                     .putString("recentProfiles_first", lastProfile)
                     .apply();
         }
 
-        currentAccount.setInfo(profile.getGlobalProfileName(), profile.getServerAddr(), profile.getServerPort());
-        ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileName)).setText(profile.getGlobalProfileName());
+        currentAccount.setInfo(profile.globalProfileName, profile.serverAddr, profile.serverPort);
+        ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileName)).setText(profile.globalProfileName);
         ((TextView) drawerLayout.findViewById(R.id.mainDrawerHeader_profileAddr)).setText(profile.getFullServerAddress());
 
-        lastProfile = profile.getFileName();
+        lastProfile = profile.fileName;
 
         reloadRecentProfiles();
     }
@@ -467,11 +468,11 @@ public class DrawerManager {
                                 try {
                                     context.startActivity(new Intent(context, AddProfileActivity.class)
                                             .putExtra("edit", true)
-                                            .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).getFileName()))
-                                            .putExtra("base64name", profilesAdapter.getItem(i).getFileName()));
+                                            .putExtra("isSingleMode", ProfileItem.isSingleMode(context, profilesAdapter.getItem(i).fileName))
+                                            .putExtra("base64name", profilesAdapter.getItem(i).fileName));
                                 } catch (JSONException | IOException ex) {
                                     CommonUtils.UIToast(context, Utils.ToastMessages.CANNOT_EDIT_PROFILE, ex);
-                                    context.deleteFile(profilesAdapter.getItem(i).getGlobalProfileName() + ".profile");
+                                    context.deleteFile(Base64.encodeToString(profilesAdapter.getItem(i).globalProfileName.getBytes(), Base64.NO_WRAP) + ".profile");
                                 }
                             }
                         }));

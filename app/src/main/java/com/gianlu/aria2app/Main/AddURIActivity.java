@@ -27,7 +27,10 @@ import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +124,7 @@ public class AddURIActivity extends AppCompatActivity {
                 JTA2 jta2;
                 try {
                     jta2 = JTA2.newInstance(this);
-                } catch (IOException | NoSuchAlgorithmException ex) {
+                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                     CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);
                     return true;
                 }

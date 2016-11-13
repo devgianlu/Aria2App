@@ -8,7 +8,10 @@ import com.gianlu.aria2app.NetIO.JTA2.IDownloadList;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class LoadDownloads implements Runnable {
 
         try {
             jta2 = JTA2.newInstance(context);
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
             handler.onException(false, ex);
             jta2 = null;
         }

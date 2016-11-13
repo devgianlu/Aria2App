@@ -36,7 +36,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +148,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                 JTA2 jta2;
                 try {
                     jta2 = JTA2.newInstance(this);
-                } catch (IOException | NoSuchAlgorithmException ex) {
+                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                     CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);
                     return true;
                 }

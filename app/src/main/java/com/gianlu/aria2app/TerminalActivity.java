@@ -39,7 +39,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -112,7 +115,7 @@ public class TerminalActivity extends AppCompatActivity {
 
         try {
             WebSocketRequester.getInstance(this);
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
 
@@ -128,7 +131,7 @@ public class TerminalActivity extends AppCompatActivity {
                     CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.FAILED_LOADING_AUTOCOMPLETION, ex);
                 }
             });
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
         }
     }
@@ -233,7 +236,7 @@ public class TerminalActivity extends AppCompatActivity {
                                             params.getText().toString());
 
                             adapter.add(TerminalItem.createConversationClientItem(req));
-                        } catch (IOException | NoSuchAlgorithmException ex) {
+                        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                         } catch (JSONException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.INVALID_REQUEST, ex);
@@ -274,7 +277,7 @@ public class TerminalActivity extends AppCompatActivity {
                                     .request(text.getText().toString());
 
                             adapter.add(TerminalItem.createConversationClientItem(req));
-                        } catch (IOException | NoSuchAlgorithmException ex) {
+                        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
                         }
 

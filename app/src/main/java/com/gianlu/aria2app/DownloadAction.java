@@ -13,14 +13,17 @@ import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.Map;
 
 public class DownloadAction {
     private JTA2 jta2;
 
-    DownloadAction(Activity context) throws IOException, NoSuchAlgorithmException {
+    DownloadAction(Activity context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         jta2 = JTA2.newInstance(context);
     }
 

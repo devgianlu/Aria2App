@@ -47,7 +47,7 @@ public class DownloadService extends IntentService {
         return new Intent(context, DownloadService.class)
                 .putExtra("file", file)
                 .putExtra("remotePath", remotePath)
-                .putExtra("directDownload", CurrentProfile.getCurrentProfile(context).getDirectDownload());
+                .putExtra("directDownload", CurrentProfile.getCurrentProfile(context).directDownload);
     }
 
     private NotificationCompat.Builder defaultBuilder() {
@@ -120,8 +120,8 @@ public class DownloadService extends IntentService {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
 
-                    if (dd.isAuth()) {
-                        conn.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((dd.getUsername() + ":" + dd.getPassword()).getBytes(), Base64.NO_WRAP));
+                    if (dd.auth) {
+                        conn.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
                     }
 
                     conn.connect();

@@ -32,7 +32,10 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +126,7 @@ public class FilesAdapter {
                             final JTA2 jta2;
                             try {
                                 jta2 = JTA2.newInstance(context);
-                            } catch (IOException | NoSuchAlgorithmException ex) {
+                            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                                 CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
                                 return;
                             }
@@ -235,7 +238,7 @@ public class FilesAdapter {
                             .setView(view)
                             .setTitle(file.file.getName());
 
-                    if (CurrentProfile.getCurrentProfile(context).isDirectDownloadEnabled() && dir != null) {
+                    if (CurrentProfile.getCurrentProfile(context).directDownloadEnabled && dir != null) {
                         builder.setNeutralButton(R.string.downloadFile, new DownloadFileListener(context, file.file, dir));
                     }
 

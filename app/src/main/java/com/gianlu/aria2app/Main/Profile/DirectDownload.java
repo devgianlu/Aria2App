@@ -1,46 +1,29 @@
 package com.gianlu.aria2app.Main.Profile;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DirectDownload implements Parcelable {
-    public static final Creator<DirectDownload> CREATOR = new Creator<DirectDownload>() {
-        @Override
-        public DirectDownload createFromParcel(Parcel in) {
-            return new DirectDownload(in);
-        }
-
-        @Override
-        public DirectDownload[] newArray(int size) {
-            return new DirectDownload[size];
-        }
-    };
-    private String address;
-    private boolean auth;
-    private String username;
-    private String password;
+public class DirectDownload implements Serializable {
+    public String address;
+    public boolean auth;
+    public String username;
+    public String password;
 
     private DirectDownload() {
     }
 
-    public DirectDownload(String address, boolean auth, String username, String password) {
-        this.address = address;
-        this.auth = auth;
-        this.username = username;
-        this.password = password;
-    }
+    public static DirectDownload fromFields(AddProfileActivity.SingleModeViewHolder sViewHolder) {
+        DirectDownload dd = new DirectDownload();
+        dd.address = sViewHolder.directDownloadAddr.getText().toString().trim();
+        dd.auth = sViewHolder.directDownloadAuth.isChecked();
+        dd.username = sViewHolder.directDownloadUsername.getText().toString().trim();
+        dd.password = sViewHolder.directDownloadPassword.getText().toString().trim();
 
-    private DirectDownload(Parcel in) {
-        address = in.readString();
-        auth = in.readByte() != 0;
-        username = in.readString();
-        password = in.readString();
+        return dd;
     }
 
     public static DirectDownload fromJSON(String json) throws JSONException {
@@ -55,24 +38,8 @@ public class DirectDownload implements Parcelable {
         return item;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public URL getURLAddress() throws MalformedURLException {
         return new URL(address);
-    }
-
-    public boolean isAuth() {
-        return auth;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     JSONObject toJSON() throws JSONException {
@@ -82,18 +49,5 @@ public class DirectDownload implements Parcelable {
                 .put("username", username)
                 .put("password", password);
         return jDirectDownload;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(address);
-        parcel.writeByte((byte) (auth ? 1 : 0));
-        parcel.writeString(username);
-        parcel.writeString(password);
     }
 }

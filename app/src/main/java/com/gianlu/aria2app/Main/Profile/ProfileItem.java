@@ -1,8 +1,6 @@
 package com.gianlu.aria2app.Main.Profile;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Base64;
 
 import org.json.JSONException;
@@ -15,42 +13,21 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileItem implements Parcelable {
-    public static final Creator<ProfileItem> CREATOR = new Creator<ProfileItem>() {
-        @Override
-        public ProfileItem createFromParcel(Parcel in) {
-            return new ProfileItem(in);
-        }
+public class ProfileItem implements Serializable {
+    public String fileName;
+    public String globalProfileName;
+    public boolean singleMode;
+    public boolean notificationsEnabled;
+    public STATUS status;
+    public boolean isDefault;
+    public String statusMessage;
+    public Long latency = -1L;
 
-        @Override
-        public ProfileItem[] newArray(int size) {
-            return new ProfileItem[size];
-        }
-    };
-    String fileName;
-    String globalProfileName;
-    boolean singleMode;
-    boolean notificationsEnabled;
-    STATUS status;
-    boolean isDefault;
-    private String statusMessage;
-    private Long latency = -1L;
-
-    ProfileItem(Parcel in) {
-        fileName = in.readString();
-        globalProfileName = in.readString();
-        singleMode = in.readByte() != 0;
-        notificationsEnabled = in.readByte() != 0;
-        status = STATUS.valueOf(in.readString());
-        statusMessage = in.readString();
-        isDefault = in.readByte() != 0;
-        latency = in.readLong();
-    }
-
-    ProfileItem() {
+    public ProfileItem() {
     }
 
     public static boolean exists(Context context, String base64name) {
@@ -108,69 +85,20 @@ public class ProfileItem implements Parcelable {
         return new String(Base64.decode(fileName.replace(".profile", "").getBytes(), Base64.DEFAULT));
     }
 
-    public boolean areNotificationsEnabled() {
-        return notificationsEnabled;
-    }
-
-    public STATUS getStatus() {
-        return status;
-    }
-
     public void setStatus(STATUS status) {
         this.status = status;
-    }
-
-    public String getGlobalProfileName() {
-        return globalProfileName;
-    }
-
-    public boolean isSingleMode() {
-        return singleMode;
-    }
-
-    boolean isDefault() {
-        return isDefault;
     }
 
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
     }
 
-    Long getLatency() {
-        return latency;
-    }
-
     void setLatency(Long latency) {
         this.latency = latency;
     }
 
-    String getStatusMessage() {
-        return statusMessage;
-    }
-
     void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(fileName);
-        parcel.writeString(globalProfileName);
-        parcel.writeByte((byte) (singleMode ? 1 : 0));
-        parcel.writeByte((byte) (notificationsEnabled ? 1 : 0));
-        parcel.writeString(status.name());
-        parcel.writeString(statusMessage);
-        parcel.writeByte((byte) (isDefault ? 1 : 0));
-        parcel.writeLong(latency);
     }
 
     public enum STATUS {

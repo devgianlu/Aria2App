@@ -11,13 +11,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 public class WebSocketRequester {
     private static WebSocketRequester instance;
     private WebSocket socket;
 
-    private WebSocketRequester(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException {
+    private WebSocketRequester(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         socket = Utils.readyWebSocket(context)
                 .addListener(adapter)
                 .connectAsynchronously();
@@ -30,13 +33,13 @@ public class WebSocketRequester {
                 .put("params", new JSONArray("[" + params + "]"));
     }
 
-    static WebSocketRequester getInstance(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException {
+    static WebSocketRequester getInstance(Context context, WebSocketAdapter adapter) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         if (instance == null)
             instance = new WebSocketRequester(context, adapter);
         return instance;
     }
 
-    public static WebSocketRequester getInstance(Context context) throws IOException, NoSuchAlgorithmException {
+    public static WebSocketRequester getInstance(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         return getInstance(context, null);
     }
 
