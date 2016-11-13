@@ -88,7 +88,7 @@
     <string name="pickFromFile">Pick from file</string>
     <string name="magnetURI_help">If you want to add a magnet link go to URI section.</string>
     <string name="noCommunication">No communication</string>
-    <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me from.</string>
+    <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me.</string>
     <string name="filters">Filters</string>
     <string name="method" translatable="false">Method:</string>
     <string name="jsonrpc" translatable="false">JSONRPC:</string>
@@ -218,8 +218,8 @@
     <string name="donate">Donate</string>
     <string name="donateSummary">Send me a small amount of money to support me</string>
     <string name="connectingBillingService">Connecting to the billing service. Please wait…</string>
-    <string name="voteApp">Vote this app</string>
-    <string name="voteApp_message">It\'s been more than 3 days since you installed this app. What do you think about it?\nPlease leave a comment or contact me, this would mean a lot for me. (Donations are also appreciated :D)</string>
+    <string name="voteApp">Rate this app</string>
+    <string name="voteApp_message">It\'s been some days since you installed this app. What do you think about it?\nPlease leave a comment or contact me, this would mean a lot to me. (Donations are also appreciated :D)</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">
