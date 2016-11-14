@@ -73,7 +73,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 // TODO: Better error message (dialog one) or add a "See log" button
 // TODO: Must not keep the certificate on the external storage (add disclaimer)
-// TODO: Review AddProfileActivity
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -749,13 +748,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerManager.onTogglerConfigurationChanged(newConfig);
+        if (drawerManager != null)
+            drawerManager.onTogglerConfigurationChanged(newConfig);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerManager.syncTogglerState();
+        if (drawerManager != null)
+            drawerManager.syncTogglerState();
     }
 
     @Override

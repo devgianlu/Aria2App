@@ -18,10 +18,8 @@ import java.io.Serializable;
 import java.net.URL;
 
 public class SingleModeProfileItem extends ProfileItem implements Serializable {
-    public static final String EXTERNAL_DEFAULT_NAME = "Local device";
+    private static final String EXTERNAL_DEFAULT_NAME = "Local device";
     public static final String EXTERNAL_DEFAULT_BASE64_NAME = Base64.encodeToString(EXTERNAL_DEFAULT_NAME.getBytes(), Base64.NO_WRAP);
-
-    public String profileName;
     public String serverAddr;
     public int serverPort;
     public String serverEndpoint;
@@ -33,6 +31,7 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
     public String serverToken;
     public boolean directDownloadEnabled;
     public DirectDownload directDownload;
+    private String profileName;
 
     private SingleModeProfileItem() {
         this.singleMode = true;
@@ -164,9 +163,8 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         return fromJSON(base64name, builder.toString());
     }
 
-    public SingleModeProfileItem setGlobalProfileName(String globalProfileName) {
+    public void setGlobalProfileName(String globalProfileName) {
         this.globalProfileName = globalProfileName;
-        return this;
     }
 
     public String getProfileName() {

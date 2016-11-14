@@ -15,12 +15,12 @@ public class LetterIconBig extends View {
     private final Rect lettersBounds = new Rect();
     private final Rect textBounds = new Rect();
     private final Rect portBounds = new Rect();
+    private final Paint shapePaint;
+    private final Paint letterPaint;
+    private final Paint textPaint;
     private String name;
     private String addr;
     private String port;
-    private Paint shapePaint;
-    private Paint letterPaint;
-    private Paint textPaint;
 
     public LetterIconBig(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -77,6 +77,9 @@ public class LetterIconBig extends View {
             else
                 letters = name.substring(0, 2);
         }
+
+        if (letters == null)
+            return;
 
         letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
         boolean isTextBoundOK = false;

@@ -23,11 +23,11 @@ public class ProfileItem implements Serializable {
     public boolean singleMode;
     public boolean notificationsEnabled;
     public STATUS status;
-    public boolean isDefault;
     public String statusMessage;
     public Long latency = -1L;
+    boolean isDefault;
 
-    public ProfileItem() {
+    ProfileItem() {
     }
 
     public static boolean exists(Context context, String base64name) {

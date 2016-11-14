@@ -12,10 +12,10 @@ import android.view.View;
 
 public class LetterIconSmall extends View {
     private final Rect lettersBounds = new Rect();
+    private final Paint shapePaint;
+    private final Paint letterPaint;
     private String letters;
     private String profileFileName;
-    private Paint shapePaint;
-    private Paint letterPaint;
 
     public LetterIconSmall(Context context, AttributeSet attrs) {
         super(context, attrs);

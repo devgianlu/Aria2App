@@ -74,6 +74,7 @@ public class NotificationService extends IntentService {
         return expanded;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && !Objects.equals(intent.getAction(), "STOP") && intent.getBooleanExtra("foreground", true)) {
@@ -100,6 +101,7 @@ public class NotificationService extends IntentService {
         return START_STICKY;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onHandleIntent(Intent intent) {
         if (Objects.equals(intent.getAction(), "STOP") || ((List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")).size() == 0) {
@@ -110,7 +112,7 @@ public class NotificationService extends IntentService {
         for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
             WebSocket webSocket;
             try {
-                webSocket = Utils.readyWebSocket(profile.getFullServerAddress(), null); // TODO: SSL
+                webSocket = Utils.readyWebSocket(profile.getFullServerAddress(), Utils.readyCertificate(profile));
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;

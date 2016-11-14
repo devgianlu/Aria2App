@@ -257,7 +257,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
     private void createNewCondition(final ConnectivityCondition.TYPE type, final Pair<ConnectivityCondition, SingleModeProfileItem> edit) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        @SuppressLint("InflateParams") final LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null);
+        @SuppressLint("InflateParams") final LinearLayout view = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null, false);
 
         AutoCompleteTextView ssid = null;
         switch (type) {
@@ -289,21 +289,10 @@ public class AddProfileActivity extends AppCompatActivity {
 
         final SingleModeViewHolder holder = new SingleModeViewHolder(view.findViewById(R.id.newConditionDialog_include));
 
-        final MultiOnTextChangedListener listener = new MultiOnTextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
+        final TextChangedListener listener = new TextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
         holder.addr.addTextChangedListener(listener);
         holder.port.addTextChangedListener(listener);
         holder.endpoint.addTextChangedListener(listener);
-        holder.SSL.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                listener.afterTextChanged(null);
-
-                if (b)
-                    holder.SSLContainer.setVisibility(View.VISIBLE);
-                else
-                    holder.SSLContainer.setVisibility(View.GONE);
-            }
-        });
 
         builder.setPositiveButton(edit != null ? R.string.save : R.string.add, null)
                 .setTitle(type.getFormal())
@@ -339,36 +328,36 @@ public class AddProfileActivity extends AppCompatActivity {
             holder.completeURL.setText(edit.second.getFullServerAddress());
             switch (edit.second.authMethod) {
                 case NONE:
-                    sViewHolder.authMethodNone.setChecked(true);
-                    sViewHolder.authMethodToken.setChecked(false);
-                    sViewHolder.authMethodHTTP.setChecked(false);
+                    holder.authMethodNone.setChecked(true);
+                    holder.authMethodToken.setChecked(false);
+                    holder.authMethodHTTP.setChecked(false);
 
-                    sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
-                    sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
-                    sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
+                    holder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                    holder.authMethodHTTPUserContainer.setVisibility(View.GONE);
+                    holder.authMethodTokenToken.setVisibility(View.GONE);
                     break;
                 case TOKEN:
-                    sViewHolder.authMethodNone.setChecked(false);
-                    sViewHolder.authMethodToken.setChecked(true);
-                    sViewHolder.authMethodHTTP.setChecked(false);
+                    holder.authMethodNone.setChecked(false);
+                    holder.authMethodToken.setChecked(true);
+                    holder.authMethodHTTP.setChecked(false);
 
-                    sViewHolder.authMethodTokenToken.setText(edit.second.serverToken);
+                    holder.authMethodTokenToken.setText(edit.second.serverToken);
 
-                    sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
-                    sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
-                    sViewHolder.authMethodTokenToken.setVisibility(View.VISIBLE);
+                    holder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
+                    holder.authMethodHTTPUserContainer.setVisibility(View.GONE);
+                    holder.authMethodTokenToken.setVisibility(View.VISIBLE);
                     break;
                 case HTTP:
-                    sViewHolder.authMethodNone.setChecked(false);
-                    sViewHolder.authMethodToken.setChecked(false);
-                    sViewHolder.authMethodHTTP.setChecked(true);
+                    holder.authMethodNone.setChecked(false);
+                    holder.authMethodToken.setChecked(false);
+                    holder.authMethodHTTP.setChecked(true);
 
-                    sViewHolder.authMethodHTTPUsername.setText(edit.second.serverUsername);
-                    sViewHolder.authMethodHTTPPassword.setText(edit.second.serverPassword);
+                    holder.authMethodHTTPUsername.setText(edit.second.serverUsername);
+                    holder.authMethodHTTPPassword.setText(edit.second.serverPassword);
 
-                    sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
-                    sViewHolder.authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
-                    sViewHolder.authMethodTokenToken.setVisibility(View.GONE);
+                    holder.authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
+                    holder.authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
+                    holder.authMethodTokenToken.setVisibility(View.GONE);
                     break;
             }
             holder.SSL.setChecked(edit.second.serverSSL);
@@ -444,6 +433,15 @@ public class AddProfileActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (holder.SSL.isChecked()) {
+                    File certTest = new File(holder.SSLCertificate.getText().toString().trim());
+
+                    if (!certTest.exists() || !certTest.canRead()) {
+                        CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_CERTIFICATE_FILE);
+                        return;
+                    }
+                }
+
                 if (holder.directDownload.isChecked() && holder.directDownloadAddr.getText().toString().trim().isEmpty()) {
                     CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_DIRECTDOWNLOAD_ADDR);
                     return;
@@ -460,7 +458,8 @@ public class AddProfileActivity extends AppCompatActivity {
 
                 SingleModeProfileItem profile = SingleModeProfileItem.fromFields(condition.getFormalName(), enableNotifications, holder);
 
-                if (edit != null && edit.first != null) mProfiles.remove(edit.first);
+                if (edit != null && edit.first != null)
+                    mProfiles.remove(edit.first);
                 mProfiles.put(condition, profile);
                 mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
                     @Override
@@ -719,7 +718,7 @@ public class AddProfileActivity extends AppCompatActivity {
             directDownloadPassword = (EditText) rootView.findViewById(R.id.addProfile_directDownload_passwd);
 
             //Setup
-            final SingleOnTextChangedListener listener = new SingleOnTextChangedListener();
+            final TextChangedListener listener = new TextChangedListener(completeURL, addr, port, endpoint, SSL);
             addr.addTextChangedListener(listener);
             port.addTextChangedListener(listener);
             endpoint.addTextChangedListener(listener);
@@ -799,31 +798,14 @@ public class AddProfileActivity extends AppCompatActivity {
         }
     }
 
-    private class SingleOnTextChangedListener implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            sViewHolder.completeURL.setText(String.format((sViewHolder.SSL.isChecked() ? "wss" : "ws") + "://%s:%s%s", sViewHolder.addr.getText().toString(), sViewHolder.port.getText().toString(), sViewHolder.endpoint.getText().toString()));
-        }
-    }
-
-    private class MultiOnTextChangedListener implements TextWatcher {
+    private class TextChangedListener implements TextWatcher {
         private final TextView completeURL;
         private final EditText addr;
         private final EditText port;
         private final EditText endpoint;
         private final CheckBox ssl;
 
-        MultiOnTextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint, CheckBox ssl) {
+        TextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint, CheckBox ssl) {
             this.completeURL = completeURL;
             this.addr = addr;
             this.port = port;

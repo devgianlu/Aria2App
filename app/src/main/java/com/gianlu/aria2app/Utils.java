@@ -173,7 +173,7 @@ public class Utils {
         return 255 / 4 * val;
     }
 
-    public static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+    private static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         String keyStoreType = KeyStore.getDefaultType();
         KeyStore keyStore = KeyStore.getInstance(keyStoreType);
         keyStore.load(null, null);
@@ -190,7 +190,7 @@ public class Utils {
     }
 
     @Nullable
-    public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
+    private static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
         return readyCertificate(CurrentProfile.getCurrentProfile(context));
     }
 
