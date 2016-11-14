@@ -11,7 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
 import com.gianlu.aria2app.CurrentProfile;
-import com.gianlu.aria2app.Main.Profile.DirectDownload;
+import com.gianlu.aria2app.Profile.DirectDownload;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 
@@ -88,7 +88,7 @@ public class DownloadService extends IntentService {
             return;
         }
 
-        final DirectDownload dd = intent.getParcelableExtra("directDownload");
+        final DirectDownload dd = (DirectDownload) intent.getSerializableExtra("directDownload");
 
         final URL url;
         try {

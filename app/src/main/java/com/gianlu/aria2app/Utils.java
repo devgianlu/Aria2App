@@ -10,8 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
-import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;

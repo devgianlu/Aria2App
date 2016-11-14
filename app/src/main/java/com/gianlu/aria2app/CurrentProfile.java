@@ -3,9 +3,9 @@ package com.gianlu.aria2app;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
-import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
-import com.gianlu.aria2app.Main.Profile.ProfileItem;
-import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.Profile.MultiModeProfileItem;
+import com.gianlu.aria2app.Profile.ProfileItem;
+import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONException;

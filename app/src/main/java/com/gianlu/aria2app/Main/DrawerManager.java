@@ -28,11 +28,11 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.LetterIconBig;
 import com.gianlu.aria2app.LetterIconSmall;
-import com.gianlu.aria2app.Main.Profile.AddProfileActivity;
-import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
-import com.gianlu.aria2app.Main.Profile.ProfileItem;
-import com.gianlu.aria2app.Main.Profile.ProfilesAdapter;
-import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.Profile.AddProfileActivity;
+import com.gianlu.aria2app.Profile.MultiModeProfileItem;
+import com.gianlu.aria2app.Profile.ProfileItem;
+import com.gianlu.aria2app.Profile.ProfilesAdapter;
+import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;

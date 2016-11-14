@@ -12,10 +12,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.gianlu.aria2app.Main.Profile.MultiModeProfileItem;
-import com.gianlu.aria2app.Main.Profile.ProfileItem;
-import com.gianlu.aria2app.Main.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.Profile.MultiModeProfileItem;
+import com.gianlu.aria2app.Profile.ProfileItem;
+import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.neovisionaries.ws.client.WebSocket;

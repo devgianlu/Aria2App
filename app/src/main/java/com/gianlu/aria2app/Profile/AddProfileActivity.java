@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Main.Profile;
+package com.gianlu.aria2app.Profile;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

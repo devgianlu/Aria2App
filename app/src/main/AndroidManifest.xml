@@ -26,7 +26,7 @@
 
         <!-- Add profile activity -->
         <activity
-            android:name=".Main.Profile.AddProfileActivity"
+            android:name=".Profile.AddProfileActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden" />
 
