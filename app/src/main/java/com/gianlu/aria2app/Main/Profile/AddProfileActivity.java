@@ -139,7 +139,6 @@ public class AddProfileActivity extends AppCompatActivity {
                 onBackPressed();
             } catch (IOException | JSONException ex) {
                 CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
-                ex.printStackTrace();
                 onBackPressed();
             }
         } else {
@@ -654,7 +653,6 @@ public class AddProfileActivity extends AppCompatActivity {
             osw.close();
         } catch (IOException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
-            ex.printStackTrace();
         }
 
         if (Analytics.isTrackingAllowed(this))

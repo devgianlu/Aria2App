@@ -778,7 +778,6 @@ public class MainActivity extends AppCompatActivity {
             osw.close();
         } catch (IOException | JSONException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
-            ex.printStackTrace();
         }
     }
 

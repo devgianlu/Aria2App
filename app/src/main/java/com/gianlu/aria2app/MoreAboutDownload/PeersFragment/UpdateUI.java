@@ -40,8 +40,8 @@ class UpdateUI implements Runnable {
 
         try {
             jta2 = JTA2.newInstance(context);
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException e) {
-            e.printStackTrace();
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            CommonUtils.logMe(context, ex);
         }
     }
 
