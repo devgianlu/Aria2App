@@ -1,6 +1,8 @@
 package com.gianlu.aria2app;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -191,12 +193,15 @@ public class Utils {
 
     @Nullable
     private static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
-        return readyCertificate(CurrentProfile.getCurrentProfile(context));
+        return readyCertificate(context, CurrentProfile.getCurrentProfile(context));
     }
 
     @Nullable
-    public static Certificate readyCertificate(SingleModeProfileItem profile) throws CertificateException, FileNotFoundException {
+    public static Certificate readyCertificate(Context context, SingleModeProfileItem profile) throws CertificateException, FileNotFoundException {
         if (!profile.serverSSL || profile.certificatePath == null || profile.certificatePath.isEmpty())
+            return null;
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
             return null;
 
         CertificateFactory factory = CertificateFactory.getInstance("X.509");

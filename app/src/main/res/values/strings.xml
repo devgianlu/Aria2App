@@ -212,8 +212,10 @@
     <string name="invalidJSON">Invalid JSON: %s</string>
     <string name="title_activity_terminal">Terminal</string>
     <string name="stopDownload">Stop</string>
-    <string name="writeExternalStorageRequest_title">External storage access required</string>
-    <string name="writeExternalStorageRequest_message">In order to save files to your devices Aria2App needs to access your external storage.</string>
+    <string name="writeExternalStorageRequest_title">Write permission required</string>
+    <string name="writeExternalStorageRequest_message">In order to save files to your devices, Aria2App needs to write to your external storage.</string>
+    <string name="readExternalStorageRequest_title">Read permission required</string>
+    <string name="readExternalStorageRequest_message">In order to load the certificate, Aria2App needs to read from your external storage.</string>
     <string name="mainList_noItems">There are no downloads running. You can add one by tapping on the plus icon in the bottom corner.</string>
     <string name="donate">Donate</string>
     <string name="donateSummary">Send me a small amount of money to support me</string>

@@ -57,6 +57,7 @@ import java.util.Map;
 
 public class AddProfileActivity extends AppCompatActivity {
     private static final int WRITE_STORAGE_REQUEST_CODE = 1;
+    private static final int READ_STORAGE_REQUEST_CODE = 2;
     private boolean isEditMode = true;
     private String oldFileName;
 
@@ -558,6 +559,9 @@ public class AddProfileActivity extends AppCompatActivity {
         if (profile.directDownloadEnabled) {
             requestWritePermission();
         }
+        if (profile.serverSSL) {
+            requestReadPermission();
+        }
 
         try {
             if (oldFileName != null)
@@ -601,6 +605,24 @@ public class AddProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void requestReadPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+                        .setTitle(R.string.readExternalStorageRequest_title)
+                        .setMessage(R.string.readExternalStorageRequest_message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestReadPermission();
+                            }
+                        }));
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_REQUEST_CODE);
+            }
+        }
+    }
+
     private void createMulti() {
         if (profileName.getText().toString().trim().isEmpty()) {
             CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_PROFILE_NAME);
@@ -635,10 +657,11 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         for (SingleModeProfileItem _profile : mProfiles.values()) {
-            if (_profile.directDownloadEnabled) {
+            if (_profile.directDownloadEnabled)
                 requestWritePermission();
-                break;
-            }
+
+            if (_profile.serverSSL)
+                requestReadPermission();
         }
 
         try {

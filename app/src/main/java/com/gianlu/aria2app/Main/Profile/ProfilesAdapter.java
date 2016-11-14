@@ -156,9 +156,9 @@ public class ProfilesAdapter extends BaseAdapter {
         try {
             WebSocket webSocket;
             if (profile.authMethod.equals(JTA2.AUTH_METHOD.HTTP))
-                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(profile));
+                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
             else
-                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(profile));
+                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
 
             webSocket.addListener(new StatusWebSocketHandler(profile, handler))
                     .connectAsynchronously();

@@ -112,7 +112,7 @@ public class NotificationService extends IntentService {
         for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
             WebSocket webSocket;
             try {
-                webSocket = Utils.readyWebSocket(profile.getFullServerAddress(), Utils.readyCertificate(profile));
+                webSocket = Utils.readyWebSocket(profile.getFullServerAddress(), Utils.readyCertificate(getApplicationContext(), profile));
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;
