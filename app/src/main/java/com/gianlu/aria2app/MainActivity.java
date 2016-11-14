@@ -73,6 +73,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 // TODO: Better error message (dialog one) or add a "See log" button
 // TODO: Must not keep the certificate on the external storage (add disclaimer)
+// TODO: Review AddProfileActivity
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;

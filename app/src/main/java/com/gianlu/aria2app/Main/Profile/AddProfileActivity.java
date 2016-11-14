@@ -229,6 +229,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 break;
         }
         sViewHolder.SSL.setChecked(item.serverSSL);
+        sViewHolder.SSLCertificate.setText(item.certificatePath);
 
         sViewHolder.directDownload.setChecked(item.directDownloadEnabled);
         if (item.directDownloadEnabled) {
@@ -296,6 +297,11 @@ public class AddProfileActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 listener.afterTextChanged(null);
+
+                if (b)
+                    holder.SSLContainer.setVisibility(View.VISIBLE);
+                else
+                    holder.SSLContainer.setVisibility(View.GONE);
             }
         });
 
@@ -346,8 +352,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.authMethodToken.setChecked(true);
                     sViewHolder.authMethodHTTP.setChecked(false);
 
-                    sViewHolder.authMethodHTTPUsername.setText(edit.second.serverUsername);
-                    sViewHolder.authMethodHTTPPassword.setText(edit.second.serverPassword);
+                    sViewHolder.authMethodTokenToken.setText(edit.second.serverToken);
 
                     sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.GONE);
                     sViewHolder.authMethodHTTPUserContainer.setVisibility(View.GONE);
@@ -358,7 +363,8 @@ public class AddProfileActivity extends AppCompatActivity {
                     sViewHolder.authMethodToken.setChecked(false);
                     sViewHolder.authMethodHTTP.setChecked(true);
 
-                    sViewHolder.authMethodTokenToken.setText(edit.second.serverToken);
+                    sViewHolder.authMethodHTTPUsername.setText(edit.second.serverUsername);
+                    sViewHolder.authMethodHTTPPassword.setText(edit.second.serverPassword);
 
                     sViewHolder.authMethodHTTPPasswdContainer.setVisibility(View.VISIBLE);
                     sViewHolder.authMethodHTTPUserContainer.setVisibility(View.VISIBLE);
@@ -366,6 +372,8 @@ public class AddProfileActivity extends AppCompatActivity {
                     break;
             }
             holder.SSL.setChecked(edit.second.serverSSL);
+            holder.SSLCertificate.setText(edit.second.certificatePath);
+
             holder.directDownload.setChecked(edit.second.directDownloadEnabled);
             if (edit.second.directDownloadEnabled) {
                 holder.directDownloadAddr.setText(edit.second.directDownload.address);
