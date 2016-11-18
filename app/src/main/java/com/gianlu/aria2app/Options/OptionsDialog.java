@@ -7,13 +7,18 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -38,7 +43,7 @@ public class OptionsDialog extends AlertDialog.Builder {
     private final int allowedOptions;
     private final boolean quickOptionsFilter;
     private final IDialog handler;
-    private final FrameLayout view;
+    private final LinearLayout layout;
     private JTA2 jta2;
     private boolean hideHearts;
 
@@ -53,7 +58,8 @@ public class OptionsDialog extends AlertDialog.Builder {
         else
             setTitle(R.string.options);
         this.handler = handler;
-        view = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null);
+
+        layout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null, false);
 
         setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
@@ -160,8 +166,37 @@ public class OptionsDialog extends AlertDialog.Builder {
 
                 pd.dismiss();
 
-                ((ExpandableListView) view.findViewById(R.id.optionsDialog_list)).setAdapter(new OptionAdapter(context, headers, children, quickOptionsFilter, hideHearts));
-                setView(view);
+                ExpandableListView list = (ExpandableListView) layout.findViewById(R.id.optionsDialog_list);
+                final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
+                final ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
+
+                final OptionAdapter adapter = new OptionAdapter(context, headers, children, quickOptionsFilter, hideHearts);
+                list.setAdapter(adapter);
+
+                search.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        adapter.getFilter().filter(query.getText().toString().trim());
+                    }
+                });
+
+                query.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        search.callOnClick();
+                    }
+                });
+                setView(layout);
 
                 setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
@@ -187,12 +222,12 @@ public class OptionsDialog extends AlertDialog.Builder {
                         if (window != null)
                             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
-                        ViewTreeObserver vto = view.getViewTreeObserver();
+                        ViewTreeObserver vto = layout.getViewTreeObserver();
                         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                             @Override
                             public void onGlobalLayout() {
                                 dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
-                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             }
                         });
                     }

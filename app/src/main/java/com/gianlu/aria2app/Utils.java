@@ -255,8 +255,6 @@ public class Utils {
             if (profile.authMethod == JTA2.AUTH_METHOD.HTTP)
                 socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
 
-            System.out.println(socket.getURI());
-
             return socket;
         }
     }

@@ -78,10 +78,7 @@ public class LetterIconBig extends View {
                 letters = name.substring(0, 2);
         }
 
-        if (letters == null)
-            return;
-
-        letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
+        letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds); // WTF?!?!?!
         boolean isTextBoundOK = false;
         int textSize = 16;
         String cAddr = addr;

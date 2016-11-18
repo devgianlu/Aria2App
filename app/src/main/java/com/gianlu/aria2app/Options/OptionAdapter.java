@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,12 +25,13 @@ import android.widget.ToggleButton;
 
 import com.gianlu.aria2app.R;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class OptionAdapter extends BaseExpandableListAdapter {
+class OptionAdapter extends BaseExpandableListAdapter implements Filterable {
     private final Context context;
     private final View.OnClickListener helpClick = new View.OnClickListener() {
         @Override
@@ -36,17 +39,21 @@ class OptionAdapter extends BaseExpandableListAdapter {
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption--" + view.getTag())));
         }
     };
-    private final List<OptionHeader> headers;
+    private final List<OptionHeader> originalHeaders;
     private final Map<OptionHeader, OptionChild> children;
     private final boolean quickOptionsFilter;
     private final boolean hideHearts;
+    private final OptionFilter filter;
+    private List<OptionHeader> headers;
 
     OptionAdapter(Context context, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children, boolean quickOptionsFilter, boolean hideHearts) {
         this.context = context;
+        this.originalHeaders = headers;
         this.headers = headers;
         this.children = children;
         this.quickOptionsFilter = quickOptionsFilter;
         this.hideHearts = hideHearts;
+        this.filter = new OptionFilter();
     }
 
     @Override
@@ -205,6 +212,11 @@ class OptionAdapter extends BaseExpandableListAdapter {
         return holder.rootView;
     }
 
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
     private class GroupViewHolder {
         final ImageButton toggleQuick;
         final TextView optionLong;
@@ -234,6 +246,42 @@ class OptionAdapter extends BaseExpandableListAdapter {
             optionToggle = (ToggleButton) rootView.findViewById(R.id.optionChild_toggle);
             optionEditText = (EditText) rootView.findViewById(R.id.optionChild_editText);
             help = (ImageButton) rootView.findViewById(R.id.optionChild_help);
+        }
+    }
+
+    private class OptionFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults results = new FilterResults();
+            if (constraint == null || constraint.length() == 0) {
+                results.values = originalHeaders;
+                results.count = originalHeaders.size();
+            } else {
+                List<OptionHeader> filtered = new ArrayList<>();
+
+                for (OptionHeader _header : originalHeaders) {
+                    if (_header.getOptionLong().toLowerCase().contains(constraint.toString().toLowerCase()) ||
+                            _header.getOptionShort().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        filtered.add(_header);
+                    }
+                }
+
+                results.values = filtered;
+                results.count = filtered.size();
+
+            }
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            if (filterResults.count == 0)
+                notifyDataSetInvalidated();
+            else {
+                headers = (List<OptionHeader>) filterResults.values;
+                notifyDataSetChanged();
+            }
         }
     }
 }
