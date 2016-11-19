@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-// TODO: Network performance improvements
 public class JTA2 {
     private final WebSocketing webSocketing;
     private Activity context;

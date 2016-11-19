@@ -18,7 +18,7 @@ public class Download {
     public boolean isBitTorrent;
     public Long completedLength;
     public Long length;
-    public Long uploadedLength;
+    public Long uploadLength;
     public String dir;
     public Integer connections;
     public String gid;
@@ -77,7 +77,7 @@ public class Download {
         download.status = statusFromString(jResult.optString("status"));
         download.length = parseLong(jResult.optString("totalLength"));
         download.completedLength = parseLong(jResult.optString("completedLength"));
-        download.uploadedLength = parseLong(jResult.optString("uploadLength"));
+        download.uploadLength = parseLong(jResult.optString("uploadLength"));
         download.bitfield = jResult.optString("bitfield");
         download.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
         download.uploadSpeed = parseInt(jResult.optString("uploadSpeed"));

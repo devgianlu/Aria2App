@@ -6,7 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
@@ -201,76 +200,39 @@ public class UpdateUI implements Runnable {
                                 }
                             }
 
+                            holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
+                            holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(download.completedLength))));
+                            holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(download.length))));
+                            holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(download.uploadLength))));
+                            holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength))));
+                            holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces)));
+                            holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections)));
+                            holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir)));
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid), Html.FROM_HTML_MODE_COMPACT));
-                                holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(download.completedLength)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(download.length)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(download.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength)), Html.FROM_HTML_MODE_COMPACT));
-                                holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces), Html.FROM_HTML_MODE_COMPACT));
-                                holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections), Html.FROM_HTML_MODE_COMPACT));
-                                holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir), Html.FROM_HTML_MODE_COMPACT));
-                            } else {
-                                holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
-                                holder.completedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(download.completedLength))));
-                                holder.totalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(download.length))));
-                                holder.uploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(download.uploadedLength))));
-                                holder.pieceLength.setText(Html.fromHtml(context.getString(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength))));
-                                holder.numPieces.setText(Html.fromHtml(context.getString(R.string.pieces, download.numPieces)));
-                                holder.connections.setText(Html.fromHtml(context.getString(R.string.connections, download.connections)));
-                                holder.directory.setText(Html.fromHtml(context.getString(R.string.directory, download.dir)));
-                            }
-
-
-                            if (download.status == Download.STATUS.WAITING) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    holder.verifyIntegrityPending.setText(Html.fromHtml(context.getString(R.string.verifyIntegrityPending, String.valueOf(download.verifyIntegrityPending)), Html.FROM_HTML_MODE_COMPACT));
-                                } else {
-                                    holder.verifyIntegrityPending.setText(Html.fromHtml(context.getString(R.string.verifyIntegrityPending, String.valueOf(download.verifyIntegrityPending))));
-                                }
-                            } else
+                            if (download.status == Download.STATUS.WAITING)
+                                holder.verifyIntegrityPending.setText(Html.fromHtml(context.getString(R.string.verifyIntegrityPending, String.valueOf(download.verifyIntegrityPending))));
+                            else
                                 holder.verifyIntegrityPending.setVisibility(View.GONE);
 
                             if (download.verifiedLength != null) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength)), Html.FROM_HTML_MODE_COMPACT));
-                                } else {
-                                    holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength))));
-
-                                }
+                                holder.verifiedLength.setText(Html.fromHtml(context.getString(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength))));
                             } else
                                 holder.verifiedLength.setVisibility(View.GONE);
 
 
                             if (download.isBitTorrent) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    holder.btMode.setText(Html.fromHtml(context.getString(R.string.mode, download.bitTorrent.mode.toString()), Html.FROM_HTML_MODE_COMPACT));
-                                    holder.btSeeders.setText(Html.fromHtml(context.getString(R.string.numSeeder, download.numSeeders), Html.FROM_HTML_MODE_COMPACT));
-                                    holder.btSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(download.seeder)), Html.FROM_HTML_MODE_COMPACT));
-                                } else {
-                                    holder.btMode.setText(Html.fromHtml(context.getString(R.string.mode, download.bitTorrent.mode.toString())));
-                                    holder.btSeeders.setText(Html.fromHtml(context.getString(R.string.numSeeder, download.numSeeders)));
-                                    holder.btSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(download.seeder))));
-                                }
+                                holder.btMode.setText(Html.fromHtml(context.getString(R.string.mode, download.bitTorrent.mode.toString())));
+                                holder.btSeeders.setText(Html.fromHtml(context.getString(R.string.numSeeder, download.numSeeders)));
+                                holder.btSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(download.seeder))));
 
-
-                                if (download.bitTorrent.comment != null && (!download.bitTorrent.comment.isEmpty())) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        holder.btComment.setText(Html.fromHtml(context.getString(R.string.comment, download.bitTorrent.comment), Html.FROM_HTML_MODE_COMPACT));
-                                    } else {
-                                        holder.btComment.setText(Html.fromHtml(context.getString(R.string.comment, download.bitTorrent.comment)));
-                                    }
-                                } else
+                                if (download.bitTorrent.comment != null && (!download.bitTorrent.comment.isEmpty()))
+                                    holder.btComment.setText(Html.fromHtml(context.getString(R.string.comment, download.bitTorrent.comment)));
+                                else
                                     holder.btComment.setVisibility(View.GONE);
 
-                                if (download.bitTorrent.creationDate != null) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        holder.btCreationDate.setText(Html.fromHtml(context.getString(R.string.creation_date, new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(new Date(download.bitTorrent.creationDate))), Html.FROM_HTML_MODE_COMPACT));
-                                    } else {
-                                        holder.btCreationDate.setText(Html.fromHtml(context.getString(R.string.creation_date, new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(new Date(download.bitTorrent.creationDate)))));
-                                    }
-                                } else
+                                if (download.bitTorrent.creationDate != null)
+                                    holder.btCreationDate.setText(Html.fromHtml(context.getString(R.string.creation_date, new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(new Date(download.bitTorrent.creationDate)))));
+                                else
                                     holder.btCreationDate.setVisibility(View.GONE);
 
 

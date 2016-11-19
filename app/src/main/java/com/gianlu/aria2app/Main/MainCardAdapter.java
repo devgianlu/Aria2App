@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Main;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +12,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.DownloadAction;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.github.lzyzsd.circleprogress.DonutProgress;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
@@ -27,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
+public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHolder> {
     private final Activity context;
     private final List<Download> objs;
     private final IActions handler;
@@ -71,13 +75,13 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
     }
 
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new CardViewHolder(LayoutInflater.from(context).inflate(R.layout.download_cardview, parent, false));
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.download_cardview, parent, false));
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(CardViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
@@ -95,7 +99,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
                 if (data != null) {
                     int pos = data.getEntryCount() / 2 + 1;
                     data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                    data.addEntry(new Entry(pos, 0), Utils.CHART_UPLOAD_SET);
+                    data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
                     data.notifyDataChanged();
                     holder.detailsChart.notifyDataSetChanged();
 
@@ -118,14 +122,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
             holder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed));
             holder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength)), Html.FROM_HTML_MODE_COMPACT));
-                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadedLength)), Html.FROM_HTML_MODE_COMPACT));
-            } else {
-                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength))));
-                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadedLength))));
-            }
-
+            holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength))));
+            holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength))));
 
             if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
                 holder.more.setVisibility(View.INVISIBLE);
@@ -134,7 +132,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(final CardViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Download item = getItem(position);
 
         // Static
@@ -148,14 +146,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
         holder.donutProgress.setFinishedStrokeColor(color);
         holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid), Html.FROM_HTML_MODE_COMPACT));
-            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length)), Html.FROM_HTML_MODE_COMPACT));
-        } else {
-            holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
-            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
-        }
+        holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
+        holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
 
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,4 +281,44 @@ public class MainCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
 
         void onMenuItemSelected(Download download, DownloadAction.ACTION action);
     }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        final DonutProgress donutProgress;
+        final TextView downloadName;
+        final TextView downloadStatus;
+        final TextView downloadSpeed;
+        final TextView downloadMissingTime;
+        final LinearLayout details;
+        final ImageButton detailsChartRefresh;
+        final TextView detailsGid;
+        final TextView detailsTotalLength;
+        final TextView detailsCompletedLength;
+        final TextView detailsUploadLength;
+        final ImageButton expand;
+        final Button more;
+        final ImageButton menu;
+        LineChart detailsChart;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+
+            donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCardView_donutProgress);
+            downloadName = (TextView) itemView.findViewById(R.id.downloadCardView_name);
+            downloadStatus = (TextView) itemView.findViewById(R.id.downloadCardView_status);
+            downloadSpeed = (TextView) itemView.findViewById(R.id.downloadCardView_downloadSpeed);
+            downloadMissingTime = (TextView) itemView.findViewById(R.id.downloadCardView_missingTime);
+            details = (LinearLayout) itemView.findViewById(R.id.downloadCardView_details);
+            expand = (ImageButton) itemView.findViewById(R.id.downloadCardView_expand);
+            more = (Button) itemView.findViewById(R.id.downloadCardView_actionMore);
+            menu = (ImageButton) itemView.findViewById(R.id.downloadCardView_actionMenu);
+
+            detailsChart = (LineChart) itemView.findViewById(R.id.downloadCardViewDetails_chart);
+            detailsChartRefresh = (ImageButton) itemView.findViewById(R.id.downloadCardViewDetails_chartRefresh);
+            detailsGid = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_gid);
+            detailsTotalLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_totalLength);
+            detailsCompletedLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_completedLength);
+            detailsUploadLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_uploadLength);
+        }
+    }
+
 }

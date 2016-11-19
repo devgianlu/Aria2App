@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
@@ -94,17 +93,10 @@ public class FilesAdapter {
                 @Override
                 public void onClick(View v) {
                     final LinearLayout view = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.file_about_dialog, null);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index), Html.FROM_HTML_MODE_COMPACT));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_path)).setText(Html.fromHtml(context.getString(R.string.path, file.file.path), Html.FROM_HTML_MODE_COMPACT));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(file.file.length)), Html.FROM_HTML_MODE_COMPACT));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength)), Html.FROM_HTML_MODE_COMPACT));
-                    } else {
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index)));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_path)).setText(Html.fromHtml(context.getString(R.string.path, file.file.path)));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(file.file.length))));
-                        ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength))));
-                    }
+                    ((TextView) view.findViewById(R.id.fileAboutDialog_index)).setText(Html.fromHtml(context.getString(R.string.index, file.file.index)));
+                    ((TextView) view.findViewById(R.id.fileAboutDialog_path)).setText(Html.fromHtml(context.getString(R.string.path, file.file.path)));
+                    ((TextView) view.findViewById(R.id.fileAboutDialog_length)).setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(file.file.length))));
+                    ((TextView) view.findViewById(R.id.fileAboutDialog_completedLength)).setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength))));
 
                     CheckBox selected = (CheckBox) view.findViewById(R.id.fileAboutDialog_selected);
                     selected.setChecked(file.file.selected);
@@ -218,12 +210,7 @@ public class FilesAdapter {
                         view.findViewById(R.id.fileAboutDialog_urisLabel).setVisibility(View.VISIBLE);
 
                         for (Map.Entry<File.URI_STATUS, String> uri : file.file.uris.entrySet()) {
-                            TextView _uri;
-                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                                _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)", Html.FROM_HTML_MODE_COMPACT));
-                            } else {
-                                _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
-                            }
+                            TextView _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
                             _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                             _uri.setPadding(50, 10, 0, 10);
                             _uri.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));

@@ -80,7 +80,8 @@ public class UpdateUI implements Runnable {
                         CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
 
                         errorCounter++;
-                        if (errorCounter >= 2) _shouldStop = true;
+                        if (errorCounter >= 2)
+                            _shouldStop = true;
                     }
                 });
             }

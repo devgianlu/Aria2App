@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Main;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,10 +41,9 @@ class URIAdapter extends BaseAdapter {
         return i;
     }
 
-    @SuppressLint({"InflateParams", "ViewHolder"})
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
-        view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.uri_custom_item, null);
+        view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.uri_custom_item, viewGroup, false);
 
         ((TextView) view.findViewById(R.id.uriCustomItem_uri)).setText(getItem(i));
         view.findViewById(R.id.uriCustomItem_edit).setOnClickListener(new View.OnClickListener() {
@@ -69,11 +67,11 @@ class URIAdapter extends BaseAdapter {
                         }));
             }
         });
+
         view.findViewById(R.id.uriCustomItem_remove).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 objs.remove(i);
-
                 notifyDataSetChanged();
             }
         });

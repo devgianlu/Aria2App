@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.MoreAboutDownload.PeersFragment;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -71,15 +70,9 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardAdapter.ViewHolder> {
             holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed));
             holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking)), Html.FROM_HTML_MODE_COMPACT));
-                holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking)), Html.FROM_HTML_MODE_COMPACT));
-                holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder)), Html.FROM_HTML_MODE_COMPACT));
-            } else {
-                holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
-                holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
-                holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
-            }
+            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
+            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
+            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
         }
     }
 
@@ -110,15 +103,9 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardAdapter.ViewHolder> {
             }
         });
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking)), Html.FROM_HTML_MODE_COMPACT));
-            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking)), Html.FROM_HTML_MODE_COMPACT));
-            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder)), Html.FROM_HTML_MODE_COMPACT));
-        } else {
-            holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
-            holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
-            holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
-        }
+        holder.detailsAmChoking.setText(Html.fromHtml(context.getString(R.string.amChoking, String.valueOf(peer.amChoking))));
+        holder.detailsPeerChoking.setText(Html.fromHtml(context.getString(R.string.peerChoking, String.valueOf(peer.peerChoking))));
+        holder.detailsSeeder.setText(Html.fromHtml(context.getString(R.string.seeder, String.valueOf(peer.seeder))));
     }
 
     @Override

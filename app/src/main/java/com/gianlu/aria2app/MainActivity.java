@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -177,13 +176,8 @@ public class MainActivity extends AppCompatActivity {
                                         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
                                         box.setPadding(padding, padding, padding, padding);
 
-
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version), Html.FROM_HTML_MODE_COMPACT)));
-                                        } else {
-                                            //noinspection deprecation
-                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
-                                        }
+                                        //noinspection deprecation
+                                        box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
 
                                         String extendedList = "";
                                         boolean first = true;
@@ -196,22 +190,14 @@ public class MainActivity extends AppCompatActivity {
                                             extendedList += _feature;
                                         }
 
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList), Html.FROM_HTML_MODE_COMPACT)));
-                                        } else {
-                                            //noinspection deprecation
-                                            box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
-                                        }
+                                        //noinspection deprecation
+                                        box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
 
                                         jta2.getSessionInfo(new ISession() {
                                             @Override
                                             public void onSessionInfo(String sessionID) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                                    box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID), Html.FROM_HTML_MODE_COMPACT)));
-                                                } else {
-                                                    //noinspection deprecation
-                                                    box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
-                                                }
+                                                //noinspection deprecation
+                                                box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
 
                                                 pd.dismiss();
                                                 CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
