@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
@@ -328,7 +327,7 @@ public class Utils {
                 });
 
         final LinearLayout layout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null, false);
-        IOption optionHandler = new IOption() {
+        JTA2.IOption optionHandler = new JTA2.IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
                 final List<Option> optionsList = new ArrayList<>();

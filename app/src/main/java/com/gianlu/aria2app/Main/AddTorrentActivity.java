@@ -27,8 +27,6 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
-import com.gianlu.aria2app.NetIO.JTA2.IGID;
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
@@ -138,7 +136,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);
 
-        jta2.getGlobalOption(new IOption() {
+        jta2.getGlobalOption(new JTA2.IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
                 final List<Option> optionsList = new ArrayList<>();
@@ -270,7 +268,7 @@ public class AddTorrentActivity extends AppCompatActivity {
             }
         }
 
-        IGID handler = new IGID() {
+        JTA2.IGID handler = new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
                 pd.dismiss();

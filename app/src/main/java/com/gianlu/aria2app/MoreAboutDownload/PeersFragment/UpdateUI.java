@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
-import com.gianlu.aria2app.NetIO.JTA2.IPeers;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.Utils;
@@ -71,7 +70,7 @@ class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
         while ((!_shouldStop) && jta2 != null) {
-            jta2.getPeers(gid, new IPeers() {
+            jta2.getPeers(gid, new JTA2.IPeers() {
                 @Override
                 public void onPeers(final List<Peer> peers) {
                     errorCounter = 0;

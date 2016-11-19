@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.IDownload;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -65,7 +64,7 @@ public class UpdateUI implements Runnable {
 
         while ((!_shouldStop) && jta2 != null) {
             for (final Download d : adapter.getItems()) {
-                jta2.tellStatus(d.gid, new IDownload() {
+                jta2.tellStatus(d.gid, new JTA2.IDownload() {
                     @Override
                     public void onDownload(Download download) {
                         errorCounter = 0;

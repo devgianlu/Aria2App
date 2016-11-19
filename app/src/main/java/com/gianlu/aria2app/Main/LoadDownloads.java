@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.IDownloadList;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class LoadDownloads implements Runnable {
         final List<Download> downloadsList = new ArrayList<>();
 
         //Active
-        jta2.tellActive(new IDownloadList() {
+        jta2.tellActive(new JTA2.IDownloadList() {
             @Override
             public void onDownloads(List<Download> downloads) {
                 for (Download download : downloads) {
@@ -52,7 +51,7 @@ public class LoadDownloads implements Runnable {
                 }
 
                 //Waiting
-                jta2.tellWaiting(new IDownloadList() {
+                jta2.tellWaiting(new JTA2.IDownloadList() {
                     @Override
                     public void onDownloads(List<Download> downloads) {
                         for (Download download : downloads) {
@@ -62,7 +61,7 @@ public class LoadDownloads implements Runnable {
                         }
 
                         //Stopped
-                        jta2.tellStopped(new IDownloadList() {
+                        jta2.tellStopped(new JTA2.IDownloadList() {
                             @Override
                             public void onDownloads(List<Download> downloads) {
                                 for (Download download : downloads) {

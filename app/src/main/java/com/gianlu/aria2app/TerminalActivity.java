@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.Analytics;
-import com.gianlu.aria2app.NetIO.JTA2.IMethod;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Terminal.AutoCompletionAdapter;
 import com.gianlu.aria2app.Terminal.TerminalAdapter;
@@ -120,7 +119,7 @@ public class TerminalActivity extends AppCompatActivity {
         }
 
         try {
-            JTA2.newInstance(this).listMethods(new IMethod() {
+            JTA2.newInstance(this).listMethods(new JTA2.IMethod() {
                 @Override
                 public void onMethods(List<String> methods) {
                     TerminalActivity.this.methods.addAll(methods);

@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
-import com.gianlu.aria2app.NetIO.JTA2.IPeers;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
@@ -47,7 +46,7 @@ public class PeersPagerFragment extends CommonFragment {
         UpdateUI.stop(updateUI);
 
         try {
-            JTA2.newInstance(getActivity()).getPeers(getArguments().getString("gid"), new IPeers() {
+            JTA2.newInstance(getActivity()).getPeers(getArguments().getString("gid"), new JTA2.IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers, (CardView) view.findViewById(R.id.peersFragment_noData));

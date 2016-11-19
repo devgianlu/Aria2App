@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
-import com.gianlu.aria2app.NetIO.JTA2.IServers;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.Utils;
@@ -71,7 +70,7 @@ class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
         while ((!_shouldStop) && jta2 != null) {
-            jta2.getServers(gid, new IServers() {
+            jta2.getServers(gid, new JTA2.IServers() {
                 @Override
                 public void onServers(final Map<Integer, List<Server>> servers) {
                     errorCounter = 0;

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class JTA2 {
     private final WebSocketing webSocketing;
     private Activity context;
@@ -66,6 +67,7 @@ public class JTA2 {
 
         return options;
     }
+
     private List<String> fromMethods(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -77,6 +79,7 @@ public class JTA2 {
 
         return methods;
     }
+
     private List<Peer> fromPeers(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -88,6 +91,7 @@ public class JTA2 {
 
         return peers;
     }
+
     private List<File> fromFiles(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -99,6 +103,7 @@ public class JTA2 {
 
         return files;
     }
+
     private Map<Integer, List<Server>> fromServers(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
@@ -187,6 +192,7 @@ public class JTA2 {
             }
         });
     }
+
     //aria2.getSessionInfo
     public void getSessionInfo(final ISession handler) {
         JSONObject request;
@@ -217,6 +223,7 @@ public class JTA2 {
             }
         });
     }
+
     //aria2.addUri
     public void addUri(List<String> uris, @Nullable Integer position, @Nullable Map<String, String> options, final IGID handler) {
         JSONObject request;
@@ -1047,5 +1054,81 @@ public class JTA2 {
         NONE,
         HTTP,
         TOKEN
+    }
+
+    public interface IDownload {
+        void onDownload(Download download);
+
+        void onException(Exception exception);
+    }
+
+    public interface IDownloadList {
+        void onDownloads(List<Download> downloads);
+
+        void onException(boolean queuing, Exception exception);
+    }
+
+    public interface IFiles {
+        void onFiles(List<File> files);
+
+        void onException(Exception exception);
+    }
+
+    public interface IGID {
+        void onGID(String gid);
+
+        void onException(Exception ex);
+    }
+
+    public interface IMethod {
+        void onMethods(List<String> methods);
+
+        void onException(Exception ex);
+    }
+
+    public interface IOption {
+        void onOptions(Map<String, String> options);
+
+        void onException(Exception exception);
+    }
+
+    public interface IPeers {
+        void onPeers(List<Peer> peers);
+
+        void onException(Exception exception);
+
+        void onNoPeerData(Exception exception);
+    }
+
+    public interface ISession {
+        void onSessionInfo(String sessionID);
+
+        void onException(Exception exception);
+    }
+
+    public interface IServers {
+        void onServers(Map<Integer, List<Server>> servers);
+
+        void onException(Exception exception);
+
+        void onDownloadNotActive(Exception exception);
+    }
+
+    interface IStats {
+        void onStats(GlobalStats stats);
+
+        void onException(Exception exception);
+    }
+
+    public interface ISuccess {
+        void onSuccess();
+
+        void onException(Exception exception);
+    }
+
+    public interface IVersion {
+        void onVersion(List<String> rawFeatures, String version);
+
+        void onException(Exception exception);
     }
 }

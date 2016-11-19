@@ -6,10 +6,6 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
-import com.gianlu.aria2app.NetIO.JTA2.IDownload;
-import com.gianlu.aria2app.NetIO.JTA2.IGID;
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
-import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
 import java.io.IOException;
@@ -28,7 +24,7 @@ public class DownloadAction {
     }
 
     void pause(final Context context, final String gid, final IPause handler) {
-        jta2.pause(gid, new IGID() {
+        jta2.pause(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
                 handler.onPaused(gid);
@@ -46,7 +42,7 @@ public class DownloadAction {
     }
 
     private void forcePause(String gid, final IPause handler) {
-        jta2.forcePause(gid, new IGID() {
+        jta2.forcePause(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
                 handler.onPaused(gid);
@@ -60,7 +56,7 @@ public class DownloadAction {
     }
 
     void moveUp(final String gid, final IMove handler) {
-        jta2.changePosition(gid, -1, new ISuccess() {
+        jta2.changePosition(gid, -1, new JTA2.ISuccess() {
             @Override
             public void onSuccess() {
                 handler.onMoved(gid);
@@ -74,7 +70,7 @@ public class DownloadAction {
     }
 
     void moveDown(final String gid, final IMove handler) {
-        jta2.changePosition(gid, 1, new ISuccess() {
+        jta2.changePosition(gid, 1, new JTA2.ISuccess() {
             @Override
             public void onSuccess() {
                 handler.onMoved(gid);
@@ -88,7 +84,7 @@ public class DownloadAction {
     }
 
     void unpause(String gid, final IUnpause handler) {
-        jta2.unpause(gid, new IGID() {
+        jta2.unpause(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
                 handler.onUnpaused(gid);
@@ -103,7 +99,7 @@ public class DownloadAction {
 
     void remove(final Context context, final String gid, Download.STATUS status, final IRemove handler) {
         if (status == Download.STATUS.COMPLETE || status == Download.STATUS.ERROR || status == Download.STATUS.REMOVED) {
-            jta2.removeDownloadResult(gid, new IGID() {
+            jta2.removeDownloadResult(gid, new JTA2.IGID() {
                 @Override
                 public void onGID(String gid) {
                     handler.onRemovedResult(gid);
@@ -115,7 +111,7 @@ public class DownloadAction {
                 }
             });
         } else {
-            jta2.remove(gid, new IGID() {
+            jta2.remove(gid, new JTA2.IGID() {
                 @Override
                 public void onGID(String gid) {
                     handler.onRemoved(gid);
@@ -135,7 +131,7 @@ public class DownloadAction {
     }
 
     private void forceRemove(String gid, final IRemove handler) {
-        jta2.forceRemove(gid, new IGID() {
+        jta2.forceRemove(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
                 handler.onRemoved(gid);
@@ -149,18 +145,18 @@ public class DownloadAction {
     }
 
     void restart(final String gid, final IRestart handler) {
-        jta2.tellStatus(gid, new IDownload() {
+        jta2.tellStatus(gid, new JTA2.IDownload() {
             @Override
             public void onDownload(final Download download) {
-                jta2.getOption(gid, new IOption() {
+                jta2.getOption(gid, new JTA2.IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
                         String url = download.files.get(0).uris.get(File.URI_STATUS.USED);
 
-                        jta2.addUri(Collections.singletonList(url), null, options, new IGID() {
+                        jta2.addUri(Collections.singletonList(url), null, options, new JTA2.IGID() {
                             @Override
                             public void onGID(final String newGid) {
-                                jta2.removeDownloadResult(gid, new IGID() {
+                                jta2.removeDownloadResult(gid, new JTA2.IGID() {
                                     @Override
                                     public void onGID(String gid) {
                                         handler.onRestarted();

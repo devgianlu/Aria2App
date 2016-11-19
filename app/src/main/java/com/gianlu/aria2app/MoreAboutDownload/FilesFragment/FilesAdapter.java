@@ -23,8 +23,6 @@ import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
-import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -126,7 +124,7 @@ public class FilesAdapter {
                             final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
                             CommonUtils.showDialog(context, pd);
 
-                            jta2.getOption(gid, new IOption() {
+                            jta2.getOption(gid, new JTA2.IOption() {
                                 @Override
                                 public void onOptions(Map<String, String> options) {
                                     String selected = options.get("select-file");
@@ -168,7 +166,7 @@ public class FilesAdapter {
                                     }
                                     newOptions.put("select-file", newSelected);
 
-                                    jta2.changeOption(gid, newOptions, new ISuccess() {
+                                    jta2.changeOption(gid, newOptions, new JTA2.ISuccess() {
                                         @Override
                                         public void onSuccess() {
                                             pd.dismiss();

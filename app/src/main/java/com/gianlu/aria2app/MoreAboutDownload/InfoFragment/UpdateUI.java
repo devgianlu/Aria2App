@@ -19,7 +19,6 @@ import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.FilesAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.IDownload;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -103,7 +102,7 @@ public class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
         while ((!_shouldStop) && jta2 != null) {
-            jta2.tellStatus(gid, new IDownload() {
+            jta2.tellStatus(gid, new JTA2.IDownload() {
                 @Override
                 public void onDownload(final Download download) {
                     errorCounter = 0;

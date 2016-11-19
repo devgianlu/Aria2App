@@ -39,9 +39,6 @@ import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.AsyncRequest;
 import com.gianlu.aria2app.NetIO.IResponse;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.ISession;
-import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
-import com.gianlu.aria2app.NetIO.JTA2.IVersion;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Profile.AddProfileActivity;
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                                                     .setAction(Analytics.ACTION_CHANGED_GLOBAL_OPTIONS)
                                                     .build());
 
-                                        jta2.changeGlobalOption(options, new ISuccess() {
+                                        jta2.changeGlobalOption(options, new JTA2.ISuccess() {
                                             @Override
                                             public void onSuccess() {
                                                 pd.dismiss();
@@ -168,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
                                 CommonUtils.showDialog(MainActivity.this, pd);
-                                jta2.getVersion(new IVersion() {
+                                jta2.getVersion(new JTA2.IVersion() {
                                     @Override
                                     public void onVersion(List<String> rawFeatures, String version) {
                                         final LinearLayout box = new LinearLayout(MainActivity.this);
@@ -193,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                                         //noinspection deprecation
                                         box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
 
-                                        jta2.getSessionInfo(new ISession() {
+                                        jta2.getSessionInfo(new JTA2.ISession() {
                                             @Override
                                             public void onSessionInfo(String sessionID) {
                                                 //noinspection deprecation
@@ -205,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                                                         .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
                                                             @Override
                                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                                jta2.saveSession(new ISuccess() {
+                                                                jta2.saveSession(new JTA2.ISuccess() {
                                                                     @Override
                                                                     public void onSuccess() {
                                                                         CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
@@ -566,7 +563,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 if (sharedPreferences.getBoolean("a2_runVersionCheckAtStartup", true)) {
-                    jta2.getVersion(new IVersion() {
+                    jta2.getVersion(new JTA2.IVersion() {
                         @Override
                         public void onVersion(List<String> rawFeatures, final String version) {
                             new Thread(new AsyncRequest(getString(R.string.versionCheckURL), new IResponse() {

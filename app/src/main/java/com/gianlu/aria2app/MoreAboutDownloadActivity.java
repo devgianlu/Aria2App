@@ -21,7 +21,6 @@ import com.gianlu.aria2app.MoreAboutDownload.PagerAdapter;
 import com.gianlu.aria2app.MoreAboutDownload.PeersFragment.PeersPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.ServersFragment.ServersPagerFragment;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
@@ -47,7 +46,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                         .setAction(Analytics.ACTION_CHANGED_DOWNLOAD_OPTIONS)
                         .build());
 
-            jta2.changeOption(gid, options, new ISuccess() {
+            jta2.changeOption(gid, options, new JTA2.ISuccess() {
                 @Override
                 public void onSuccess() {
                     pd.dismiss();

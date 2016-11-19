@@ -19,8 +19,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.gianlu.aria2app.MainActivity;
-import com.gianlu.aria2app.NetIO.JTA2.IGID;
-import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
@@ -109,7 +107,7 @@ public class AddURIActivity extends AppCompatActivity {
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);
 
-        jta2.getGlobalOption(new IOption() {
+        jta2.getGlobalOption(new JTA2.IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
                 final List<Option> optionsList = new ArrayList<>();
@@ -210,7 +208,7 @@ public class AddURIActivity extends AppCompatActivity {
             }
         }
 
-        jta2.addUri(urisAdapter.getURIs(), position, options, new IGID() {
+        jta2.addUri(urisAdapter.getURIs(), position, options, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
                 pd.dismiss();
