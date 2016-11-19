@@ -247,7 +247,6 @@ public class FilesAdapter {
             subView.setPadding(6 + 36 * paddingMultiplier, 6, 6, 6);
             parentView.addView(subView);
 
-            subDir.subView = subView;
             subDir.viewHolder.toggle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

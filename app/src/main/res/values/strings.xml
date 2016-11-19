@@ -122,7 +122,6 @@
     <string name="addNew">Add new</string>
     <string name="ssid" translatable="false">SSID:</string>
     <string name="ssid_hint" translatable="false">My-WiFi</string>
-    <string name="noDefault">No default</string>
     <string name="delete">Delete</string>
     <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
@@ -185,7 +184,6 @@
     <string name="warningTag">WARNING: </string>
     <string name="errorTag">ERROR: </string>
     <string name="editProfile">Select the profile to edit</string>
-    <string name="downloading_source">Download options\' source file</string>
     <string name="stopNotificationService">Stop service</string>
     <string name="versionCheck">Check aria2 version at startup</string>
     <string name="enabledVersionCheck">Version will be checked and you\'ll be notified if your version it\'s outdated</string>

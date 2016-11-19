@@ -66,7 +66,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     @Nullable
-    public Option getRealItem(String name) {
+    private Option getRealItem(String name) {
         for (Option option : originalObjs) {
             if (Objects.equals(option.longName, name))
                 return option;
@@ -75,7 +75,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         return null;
     }
 
-    public Option getItem(int pos) {
+    private Option getItem(int pos) {
         return objs.get(pos);
     }
 
@@ -159,13 +159,13 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView longName;
-        TextView currValue;
-        ImageButton expand;
-        EditText newValue;
-        LinearLayout edit;
-        ImageButton toggleQuick;
-        ImageButton help;
+        final TextView longName;
+        final TextView currValue;
+        final ImageButton expand;
+        final EditText newValue;
+        final LinearLayout edit;
+        final ImageButton toggleQuick;
+        final ImageButton help;
 
         ViewHolder(View rootView) {
             super(rootView);

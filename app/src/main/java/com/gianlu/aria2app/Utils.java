@@ -294,8 +294,8 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
-    public static void showOptionsDialog(@NonNull final Activity context, @ArrayRes int allowedOptions, boolean quickOptionsFilter, boolean showHearts, IOptionsDialog handler) {
-        showOptionsDialog(context, null, allowedOptions, quickOptionsFilter, showHearts, handler);
+    public static void showOptionsDialog(@NonNull final Activity context, IOptionsDialog handler) {
+        showOptionsDialog(context, null, R.array.globalOptions, false, false, handler);
     }
 
     static void showOptionsDialog(@NonNull final Activity context, String gid, @ArrayRes final int allowedOptions, final boolean quickOptionsFilter, final boolean showHearts, final IOptionsDialog handler) {

@@ -20,15 +20,6 @@ public class File {
     public Integer index;
     public Map<URI_STATUS, String> uris;
 
-    public File(Integer index, String path, Long completedLength, Long length, boolean selected, Map<URI_STATUS, String> uris) {
-        this.path = path;
-        this.index = index;
-        this.completedLength = completedLength;
-        this.length = length;
-        this.selected = selected;
-        this.uris = uris;
-    }
-
     private File() {
     }
 

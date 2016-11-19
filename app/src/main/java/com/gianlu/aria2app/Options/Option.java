@@ -3,8 +3,8 @@ package com.gianlu.aria2app.Options;
 import java.util.Objects;
 
 public class Option {
-    public String longName;
-    public String value;
+    public final String longName;
+    public final String value;
 
     public String newValue;
     public boolean isQuick;
@@ -16,10 +16,6 @@ public class Option {
     }
 
     public boolean isChanged() {
-        if (newValue == null) {
-            return false;
-        } else {
-            return !Objects.equals(value, newValue);
-        }
+        return newValue != null && !Objects.equals(value, newValue);
     }
 }

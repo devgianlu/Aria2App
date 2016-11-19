@@ -11,10 +11,6 @@ class HeaderItem extends Item {
         return "Index " + index;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
     @Override
     public int getItemType() {
         return Item.HEADER;

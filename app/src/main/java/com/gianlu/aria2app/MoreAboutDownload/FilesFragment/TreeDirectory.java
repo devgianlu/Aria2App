@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
 import android.annotation.SuppressLint;
-import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.NetIO.JTA2.File;
 
@@ -17,7 +16,6 @@ class TreeDirectory {
     private final List<TreeFile> files;
     private final String name;
     DirectoryViewHolder viewHolder;
-    LinearLayout subView;
 
     private TreeDirectory(String name, String incrementalPath) {
         children = new ArrayList<>();

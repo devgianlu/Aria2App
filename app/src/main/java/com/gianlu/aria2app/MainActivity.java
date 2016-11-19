@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
                                 return false;
                             case GLOBAL_OPTIONS:
-                                Utils.showOptionsDialog(MainActivity.this, R.array.globalOptions, false, false, new Utils.IOptionsDialog() {
+                                Utils.showOptionsDialog(MainActivity.this, new Utils.IOptionsDialog() {
                                     @Override
                                     public void onApply(JTA2 jta2, Map<String, String> options) {
                                         if (options.entrySet().size() == 0) return;

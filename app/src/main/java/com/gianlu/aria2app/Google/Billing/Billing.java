@@ -22,7 +22,7 @@ public class Billing {
     public static final int RESULT_ERROR = 6;
     public static final int RESULT_ITEM_ALREADY_OWNED = 7;
     public static final int RESULT_ITEM_NOT_OWNED = 8;
-    public static final ArrayList<String> donationProducts = new ArrayList<>(Arrays.asList(
+    private static final ArrayList<String> donationProducts = new ArrayList<>(Arrays.asList(
             "donation.lemonade",
             "donation.coffee",
             "donation.hamburger",
@@ -49,19 +49,14 @@ public class Billing {
         return builder.toString();
     }
 
-    public static void requestProductsDetails(final Context context, final IInAppBillingService service, @NonNull ArrayList<String> products, @NonNull final IRequestProductDetails handler) {
+    public static void requestProductsDetails(final Context context, final IInAppBillingService service, @NonNull final IRequestProductDetails handler) {
         if (service == null) {
             handler.onFailed(new NullPointerException("IInAppBillingService is null"));
             return;
         }
 
-        if (products.isEmpty()) {
-            handler.onReceivedDetails(handler, new ArrayList<Product>());
-            return;
-        }
-
         final Bundle bundle = new Bundle();
-        bundle.putStringArrayList("ITEM_ID_LIST", products);
+        bundle.putStringArrayList("ITEM_ID_LIST", Billing.donationProducts);
 
         new Thread(new Runnable() {
             @Override

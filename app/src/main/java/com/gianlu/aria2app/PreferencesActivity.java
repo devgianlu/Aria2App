@@ -151,7 +151,7 @@ public class PreferencesActivity extends PreferenceActivity {
             return;
         }
 
-        Billing.requestProductsDetails(this, billingService, Billing.donationProducts, new Billing.IRequestProductDetails() {
+        Billing.requestProductsDetails(this, billingService, new Billing.IRequestProductDetails() {
             @Override
             public void onReceivedDetails(final Billing.IRequestProductDetails handler, final List<Product> products) {
                 final Billing.IBuyProduct buyHandler = new Billing.IBuyProduct() {
