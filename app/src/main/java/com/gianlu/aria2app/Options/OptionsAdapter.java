@@ -39,15 +39,17 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final List<Option> originalObjs;
     private final boolean quickOptionsFilter;
     private final boolean hideHearts;
+    private final boolean hideUseMe;
     private final OptionFilter filter;
     private List<Option> objs;
 
-    public OptionsAdapter(Context context, List<Option> objs, boolean quickOptionsFilter, boolean hideHearts) {
+    public OptionsAdapter(Context context, List<Option> objs, boolean quickOptionsFilter, boolean hideHearts, boolean hideUseMe) {
         this.context = context;
         this.originalObjs = objs;
         this.objs = objs;
         this.quickOptionsFilter = quickOptionsFilter;
         this.hideHearts = hideHearts;
+        this.hideUseMe = hideUseMe;
         this.filter = new OptionFilter();
     }
 
@@ -151,6 +153,30 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             else
                 holder.toggleQuick.setImageResource(R.drawable.ic_favorite_border_black_48dp);
         }
+
+        if (hideUseMe) {
+            holder.toggleUse.setVisibility(View.GONE);
+        } else {
+            holder.toggleUse.setVisibility(View.VISIBLE);
+            holder.toggleUse.setFocusable(false);
+
+            holder.toggleUse.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    item.useMe = !item.useMe;
+                    if (item.useMe) {
+                        holder.toggleUse.setImageResource(R.drawable.ic_label_black_48dp);
+                    } else {
+                        holder.toggleUse.setImageResource(R.drawable.ic_label_outline_black_48dp);
+                    }
+                }
+            });
+
+            if (item.useMe)
+                holder.toggleUse.setImageResource(R.drawable.ic_label_black_48dp);
+            else
+                holder.toggleUse.setImageResource(R.drawable.ic_label_outline_black_48dp);
+        }
     }
 
     @Override
@@ -164,6 +190,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         final ImageButton expand;
         final EditText newValue;
         final LinearLayout edit;
+        final ImageButton toggleUse;
         final ImageButton toggleQuick;
         final ImageButton help;
 
@@ -176,6 +203,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             newValue = (EditText) rootView.findViewById(R.id.optionItem_newValue);
             edit = (LinearLayout) rootView.findViewById(R.id.optionItem_edit);
             toggleQuick = (ImageButton) rootView.findViewById(R.id.optionItem_toggleQuick);
+            toggleUse = (ImageButton) rootView.findViewById(R.id.optionItem_toggleUse);
             help = (ImageButton) rootView.findViewById(R.id.optionItem_help);
         }
     }

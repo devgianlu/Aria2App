@@ -332,10 +332,10 @@ public class Utils {
     }
 
     static void showOptionsDialog(@NonNull final Activity context, IOptionsDialog handler) {
-        showOptionsDialog(context, null, R.array.globalOptions, false, false, handler);
+        showOptionsDialog(context, null, R.array.globalOptions, false, false, false, handler);
     }
 
-    static void showOptionsDialog(@NonNull final Activity context, String gid, @ArrayRes final int allowedOptions, final boolean quickOptionsFilter, final boolean showHearts, final IOptionsDialog handler) {
+    static void showOptionsDialog(@NonNull final Activity context, String gid, @ArrayRes final int allowedOptions, final boolean quickOptionsFilter, final boolean showHearts, final boolean showUseMe, final IOptionsDialog handler) {
         final JTA2 jta2;
         try {
             jta2 = JTA2.newInstance(context);
@@ -388,7 +388,7 @@ public class Utils {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, quickOptionsFilter, !showHearts);
+                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, quickOptionsFilter, !showHearts, !showUseMe);
                         list.setAdapter(adapter);
 
                         search.setOnClickListener(new View.OnClickListener() {

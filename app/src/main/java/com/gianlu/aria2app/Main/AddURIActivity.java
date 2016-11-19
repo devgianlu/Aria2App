@@ -153,7 +153,7 @@ public class AddURIActivity extends AppCompatActivity {
                 AddURIActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        optionsAdapter = new OptionsAdapter(AddURIActivity.this, optionsList, false, true);
+                        optionsAdapter = new OptionsAdapter(AddURIActivity.this, optionsList, false, true, false);
                         list.setAdapter(optionsAdapter);
 
                         search.setOnClickListener(new View.OnClickListener() {
@@ -230,14 +230,13 @@ public class AddURIActivity extends AppCompatActivity {
         }
 
         Map<String, String> options = new HashMap<>();
-        /* FIXME: 19/11/2016
+
         if (optionsAdapter != null) {
             for (Option item : optionsAdapter.getOptions()) {
-                if (item.isChanged())
+                if (item.useMe)
                     options.put(item.longName, item.newValue);
             }
         }
-        */
 
         if (filePath != null) {
             if (options.containsKey("out"))

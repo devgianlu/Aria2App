@@ -106,6 +106,13 @@
             android:layout_marginBottom="2dp"
             android:text="@string/options" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="@string/options_help"
+            android:textAlignment="center" />
+
         <include
             layout="@layout/options_dialog"
             android:layout_width="match_parent"
