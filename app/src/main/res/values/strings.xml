@@ -86,7 +86,7 @@
     <string name="retry">Retry</string>
     <string name="exit">Exit</string>
     <string name="pickFromFile">Pick from file</string>
-    <string name="magnetURI_help">If you want to add a magnet link go to URI section.</string>
+    <string name="magnetURI_help">If you want to add a magnet link go to the URI section.</string>
     <string name="noCommunication">No communication</string>
     <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me.</string>
     <string name="filters">Filters</string>
@@ -225,6 +225,8 @@
     <string name="certificate">CA certificate:</string>
     <string name="certificate_hint">/path/to/server/certificate</string>
     <string name="search">Search</string>
+    <string name="certificateDisclaimer">The certificate must not be deleted or moved.</string>
+    <string name="addUri">Add URI</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

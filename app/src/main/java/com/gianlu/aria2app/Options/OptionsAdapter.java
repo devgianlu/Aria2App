@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,9 +25,10 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder> implements Filterable {
+public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder> implements Filterable {
     private final Context context;
     private final View.OnClickListener helpClick = new View.OnClickListener() {
         @Override
@@ -40,13 +42,17 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder
     private final OptionFilter filter;
     private List<Option> objs;
 
-    public OptionAdapter(Context context, List<Option> objs, boolean quickOptionsFilter, boolean hideHearts) {
+    public OptionsAdapter(Context context, List<Option> objs, boolean quickOptionsFilter, boolean hideHearts) {
         this.context = context;
         this.originalObjs = objs;
         this.objs = objs;
         this.quickOptionsFilter = quickOptionsFilter;
         this.hideHearts = hideHearts;
         this.filter = new OptionFilter();
+    }
+
+    public List<Option> getOptions() {
+        return originalObjs;
     }
 
     @Override
@@ -59,13 +65,26 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder
         return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.option_item, parent, false));
     }
 
+    @Nullable
+    public Option getRealItem(String name) {
+        for (Option option : originalObjs) {
+            if (Objects.equals(option.longName, name))
+                return option;
+        }
+
+        return null;
+    }
+
     public Option getItem(int pos) {
         return objs.get(pos);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Option item = getItem(position);
+        final Option item = getRealItem(getItem(position).longName);
+        if (item == null)
+            return;
+
         holder.help.setTag(item.longName);
         holder.help.setOnClickListener(helpClick);
 

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="42dp"
+    android:orientation="horizontal"
     android:padding="6dp">
 
     <ImageButton
         android:id="@+id/directoryItem_toggle"
         android:layout_width="18dp"
         android:layout_height="18dp"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:background="@drawable/ripple_effect_dark"
         android:scaleType="fitCenter"
@@ -19,17 +20,14 @@
         android:id="@+id/directoryItem_type"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
-        android:layout_toEndOf="@+id/directoryItem_toggle"
+        android:layout_gravity="center_vertical"
         android:src="@drawable/ic_folder_black_48dp" />
 
     <TextView
         android:id="@+id/directoryItem_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/directoryItem_type"
+        android:layout_gravity="center_vertical"
         android:ellipsize="end"
-        android:lines="1" />
-</RelativeLayout>
+        android:maxLines="2" />
+</LinearLayout>

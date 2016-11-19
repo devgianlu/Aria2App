@@ -30,7 +30,7 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
-import com.gianlu.aria2app.Options.OptionAdapter;
+import com.gianlu.aria2app.Options.OptionsAdapter;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
@@ -352,7 +352,7 @@ public class Utils {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        final OptionAdapter adapter = new OptionAdapter(context, optionsList, quickOptionsFilter, !showHearts);
+                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, quickOptionsFilter, !showHearts);
                         list.setAdapter(adapter);
 
                         search.setOnClickListener(new View.OnClickListener() {
@@ -451,6 +451,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_BUYING_ITEM = new CommonUtils.ToastMessage("Failed to buy this item! Please contact me.", true);
         public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed.", false);
         public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted.", false);
+        public static final CommonUtils.ToastMessage DOWNLOAD_ADDED = new CommonUtils.ToastMessage("Download added.", false);
         public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("File selected/deselected.", false);
         public static final CommonUtils.ToastMessage SESSION_SAVED = new CommonUtils.ToastMessage("Session saved correctly.", false);
         public static final CommonUtils.ToastMessage FAILED_SAVE_SESSION = new CommonUtils.ToastMessage("Failed saving current session!", true);
@@ -461,6 +462,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_REMOVE = new CommonUtils.ToastMessage("Failed to remove download!", true);
         public static final CommonUtils.ToastMessage FAILED_UNPAUSE = new CommonUtils.ToastMessage("Failed to resume download!", true);
         public static final CommonUtils.ToastMessage FAILED_REMOVE_RESULT = new CommonUtils.ToastMessage("Failed to remove download's result!", true);
+        public static final CommonUtils.ToastMessage NO_URIS = new CommonUtils.ToastMessage("Insert at least one URI!", false);
         public static final CommonUtils.ToastMessage FAILED_ADD_DOWNLOAD = new CommonUtils.ToastMessage("Failed to add new download!", true);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_OPTIONS = new CommonUtils.ToastMessage("Failed to change options for download!", true);
         public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
@@ -484,13 +486,12 @@ public class Utils {
         public static final CommonUtils.ToastMessage MUST_PICK_DEFAULT = new CommonUtils.ToastMessage("You must select one profile as default!", false);
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_ADDR = new CommonUtils.ToastMessage("Invalid DirectDownload's server address!", false);
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_USERORPASSWD = new CommonUtils.ToastMessage("Invalid DirectDownload's username or password!", false);
-        public static final CommonUtils.ToastMessage CANT_REFRESH_SOURCE = new CommonUtils.ToastMessage("Can't refresh source file for options. Retry later...", true);
         public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
-        public static final CommonUtils.ToastMessage SOURCE_REFRESHED = new CommonUtils.ToastMessage("Source file for options refreshed!", false);
         public static final CommonUtils.ToastMessage PURCHASING_CANCELED = new CommonUtils.ToastMessage("The purchase has been canceled.", false);
         public static final CommonUtils.ToastMessage BILLING_USER_CANCELLED = new CommonUtils.ToastMessage("You cancelled the operation.", false);
         public static final CommonUtils.ToastMessage THANK_YOU = new CommonUtils.ToastMessage("Thank you!", false);
         public static final CommonUtils.ToastMessage INVALID_CERTIFICATE_FILE = new CommonUtils.ToastMessage("Invalid certificate file!", false);
+        public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

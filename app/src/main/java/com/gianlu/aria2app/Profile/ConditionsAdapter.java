@@ -1,14 +1,14 @@
 package com.gianlu.aria2app.Profile;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
@@ -18,13 +18,13 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.Map;
 import java.util.Set;
 
-class ConditionsCustomAdapter extends BaseAdapter {
+class ConditionsAdapter extends BaseAdapter {
     private static int currDefault = 0;
     private final Map<ConnectivityCondition, SingleModeProfileItem> objs;
     private final Activity context;
     private final OnClickListener edit;
 
-    ConditionsCustomAdapter(Activity context, Map<ConnectivityCondition, SingleModeProfileItem> objs, OnClickListener edit) {
+    ConditionsAdapter(Activity context, Map<ConnectivityCondition, SingleModeProfileItem> objs, OnClickListener edit) {
         this.context = context;
         this.objs = objs;
         this.edit = edit;
@@ -50,24 +50,23 @@ class ConditionsCustomAdapter extends BaseAdapter {
         return i;
     }
 
-    @SuppressLint({"InflateParams", "ViewHolder"})
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
-        view = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.condition_custom_item, null);
-        ((TextView) view.findViewById(R.id.conditionCustomItem_condition)).setText(getItem(i).getFormalName());
-        ((TextView) view.findViewById(R.id.conditionCustomItem_url)).setText(getProfileItem(getItem(i)).getFullServerAddress());
-        view.findViewById(R.id.conditionCustomItem_edit).setOnClickListener(new View.OnClickListener() {
+        ViewHolder holder = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.condition_item, viewGroup, false));
+
+        holder.condition.setText(getItem(i).getFormalName());
+        holder.url.setText(getProfileItem(getItem(i)).getFullServerAddress());
+        holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 edit.onClick(getProfileItem(getItem(i)), getItem(i));
             }
         });
-        CheckBox _default = (CheckBox) view.findViewById(R.id.conditionCustomItem_default);
 
-        _default.setChecked(i == currDefault);
+        holder.isDefault.setChecked(i == currDefault);
         getProfileItem(getItem(i)).setDefault(i == currDefault);
 
-        _default.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.isDefault.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b)
@@ -78,10 +77,26 @@ class ConditionsCustomAdapter extends BaseAdapter {
             }
         });
 
-        return view;
+        return holder.rootView;
     }
 
     public interface OnClickListener {
         void onClick(SingleModeProfileItem item, ConnectivityCondition condition);
+    }
+
+    public class ViewHolder {
+        public final LinearLayout rootView;
+        public final TextView condition;
+        public final TextView url;
+        public final ImageButton edit;
+        public final CheckBox isDefault;
+
+        ViewHolder(View rootView) {
+            this.rootView = (LinearLayout) rootView;
+            condition = (TextView) rootView.findViewById(R.id.conditionItem_condition);
+            url = (TextView) rootView.findViewById(R.id.conditionItem_url);
+            edit = (ImageButton) rootView.findViewById(R.id.conditionItem_edit);
+            isDefault = (CheckBox) rootView.findViewById(R.id.conditionItem_default);
+        }
     }
 }

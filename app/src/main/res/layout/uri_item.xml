@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="2dp">
+
+    <TextView
+        android:id="@+id/uriItem_uri"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:ellipsize="middle"
+        android:maxLines="3" />
+
+    <ImageButton
+        android:id="@+id/uriItem_edit"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="4dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/ripple_effect_dark"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_edit_black_48dp" />
+
+    <ImageButton
+        android:id="@+id/uriItem_remove"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:background="@drawable/ripple_effect_dark"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_delete_black_48dp" />
+</LinearLayout>

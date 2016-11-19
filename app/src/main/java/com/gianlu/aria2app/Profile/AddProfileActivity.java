@@ -246,7 +246,7 @@ public class AddProfileActivity extends AppCompatActivity {
         profileName.setText(item.getGlobalProfileName());
         enableNotifications.setChecked(item.notificationsEnabled);
         mProfiles = item.getProfiles();
-        mListView.setAdapter(new ConditionsCustomAdapter(this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
+        mListView.setAdapter(new ConditionsAdapter(this, mProfiles, new ConditionsAdapter.OnClickListener() {
             @Override
             public void onClick(SingleModeProfileItem item, ConnectivityCondition condition) {
                 createNewCondition(condition.getType(), new Pair<>(condition, item));
@@ -309,7 +309,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mProfiles.remove(edit.first);
 
-                    mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
+                    mListView.setAdapter(new ConditionsAdapter(AddProfileActivity.this, mProfiles, new ConditionsAdapter.OnClickListener() {
                         @Override
                         public void onClick(SingleModeProfileItem item, ConnectivityCondition condition) {
                             createNewCondition(condition.getType(), new Pair<>(condition, item));
@@ -461,7 +461,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 if (edit != null && edit.first != null)
                     mProfiles.remove(edit.first);
                 mProfiles.put(condition, profile);
-                mListView.setAdapter(new ConditionsCustomAdapter(AddProfileActivity.this, mProfiles, new ConditionsCustomAdapter.OnClickListener() {
+                mListView.setAdapter(new ConditionsAdapter(AddProfileActivity.this, mProfiles, new ConditionsAdapter.OnClickListener() {
                     @Override
                     public void onClick(SingleModeProfileItem item, ConnectivityCondition condition) {
                         createNewCondition(condition.getType(), new Pair<>(condition, item));
