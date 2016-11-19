@@ -64,7 +64,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         setTitle(getIntent().getBooleanExtra("torrentMode", true) ? R.string.torrent : R.string.metalink);
 
 
-        urisAdapter = new URIsAdapter(this, new ArrayList<String>());
+        urisAdapter = new URIsAdapter(this, new ArrayList<String>(), null);
         ListView uris = (ListView) findViewById(R.id.addTorrent_urisList);
         uris.setAdapter(urisAdapter);
 

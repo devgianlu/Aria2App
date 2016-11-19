@@ -14,6 +14,8 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -50,7 +52,43 @@ public class AddURIActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_uri);
         setTitle(R.string.uri);
 
-        urisAdapter = new URIsAdapter(this, new ArrayList<String>());
+        final AutoCompleteTextView fileName = (AutoCompleteTextView) findViewById(R.id.addURI_fileName);
+        fileName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String path = editable.toString();
+                if (path.isEmpty())
+                    filePath = null;
+                else
+                    filePath = path;
+            }
+        });
+
+        urisAdapter = new URIsAdapter(this, new ArrayList<String>(), new URIsAdapter.IAdapter() {
+            @Override
+            public void onListChanged(List<String> uris) {
+                List<String> uriNames = new ArrayList<>();
+
+                for (String uri : uris) {
+                    String[] split = uri.split("/");
+                    if (split.length <= 1)
+                        continue;
+                    uriNames.add(split[split.length - 1]);
+                }
+
+                fileName.setAdapter(new ArrayAdapter<>(AddURIActivity.this, android.R.layout.simple_list_item_1, uriNames));
+            }
+        });
         ListView uris = (ListView) findViewById(R.id.addURI_urisList);
         uris.setAdapter(urisAdapter);
 
@@ -96,27 +134,6 @@ public class AddURIActivity extends AppCompatActivity {
                 } catch (Exception ex) {
                     position = 0;
                 }
-            }
-        });
-        final EditText fileName = (EditText) findViewById(R.id.addURI_fileName);
-        fileName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String path = editable.toString();
-                if (path.isEmpty())
-                    filePath = null;
-                else
-                    filePath = path;
             }
         });
 

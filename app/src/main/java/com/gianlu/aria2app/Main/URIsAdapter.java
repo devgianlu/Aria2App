@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Main;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -21,10 +22,12 @@ import java.util.List;
 class URIsAdapter extends BaseAdapter {
     private final Activity context;
     private final List<String> objs;
+    private final IAdapter handler;
 
-    URIsAdapter(Activity context, List<String> objs) {
+    URIsAdapter(Activity context, List<String> objs, @Nullable IAdapter handler) {
         this.context = context;
         this.objs = objs;
+        this.handler = handler;
     }
 
     public List<String> getURIs() {
@@ -46,6 +49,9 @@ class URIsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        if (handler != null)
+            handler.onListChanged(objs);
+
         return objs.size();
     }
 
@@ -101,6 +107,10 @@ class URIsAdapter extends BaseAdapter {
         });
 
         return holder.rootView;
+    }
+
+    public interface IAdapter {
+        void onListChanged(List<String> uris);
     }
 
     public class ViewHolder {
