@@ -441,18 +441,25 @@ public class Utils {
                         final AlertDialog dialog = builder.create();
 
                         CommonUtils.showDialog(context, dialog);
-                        Window window = dialog.getWindow();
-                        if (window != null)
+
+                        final Window window = dialog.getWindow();
+                        if (window != null) {
                             window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
-                        ViewTreeObserver vto = layout.getViewTreeObserver();
-                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
-                                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            }
-                        });
+                            ViewTreeObserver vto = layout.getViewTreeObserver();
+                            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+                                    params.copyFrom(window.getAttributes());
+                                    params.width = dialog.getWindow().getDecorView().getWidth();
+                                    params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                    dialog.getWindow().setAttributes(params);
+
+                                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                }
+                            });
+                        }
                     }
                 });
             }
