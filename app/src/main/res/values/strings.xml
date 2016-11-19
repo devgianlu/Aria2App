@@ -224,6 +224,7 @@
     <string name="voteApp_message">It\'s been some days since you installed this app. What do you think about it?\nPlease leave a comment or contact me, this would mean a lot to me. (Donations are also appreciated :D)</string>
     <string name="certificate">CA certificate:</string>
     <string name="certificate_hint">/path/to/server/certificate</string>
+    <string name="search">Search</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">
@@ -375,7 +376,6 @@
         <item>use-head</item>
         <item>user-agent</item>
     </string-array>
-
     <string-array name="globalOptions">
         <item>all-proxy</item>
         <item>all-proxy-passwd</item>

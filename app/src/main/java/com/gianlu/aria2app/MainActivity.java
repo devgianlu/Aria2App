@@ -45,7 +45,6 @@ import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.IVersion;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.Profile.AddProfileActivity;
 import com.gianlu.aria2app.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Profile.ProfileItem;
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
                                 return false;
                             case GLOBAL_OPTIONS:
-                                new OptionsDialog(MainActivity.this, R.array.globalOptions, false, new OptionsDialog.IDialog() {
+                                Utils.showOptionsDialog(MainActivity.this, R.array.globalOptions, false, false, new Utils.IOptionsDialog() {
                                     @Override
                                     public void onApply(JTA2 jta2, Map<String, String> options) {
                                         if (options.entrySet().size() == 0) return;
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         });
                                     }
-                                }).hideHearts().showDialog();
+                                });
                                 return true;
                             case PREFERENCES:
                                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));

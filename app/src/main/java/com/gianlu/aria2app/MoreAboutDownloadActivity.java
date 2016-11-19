@@ -23,7 +23,6 @@ import com.gianlu.aria2app.MoreAboutDownload.ServersFragment.ServersPagerFragmen
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.ISuccess;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -34,7 +33,7 @@ import java.util.Map;
 public class MoreAboutDownloadActivity extends AppCompatActivity {
     private PagerAdapter adapter;
     private String gid;
-    private final OptionsDialog.IDialog optionsChanged = new OptionsDialog.IDialog() {
+    private final Utils.IOptionsDialog optionsChanged = new Utils.IOptionsDialog() {
         @Override
         public void onApply(JTA2 jta2, Map<String, String> options) {
             if (options.entrySet().size() == 0) return;
@@ -159,10 +158,10 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.moreAboutDownloadMenu_options:
-                new OptionsDialog(this, R.array.downloadOptions, false, optionsChanged).showDialog(gid);
+                Utils.showOptionsDialog(this, gid, R.array.downloadOptions, false, true, optionsChanged);
                 break;
             case R.id.moreAboutDownloadMenu_quickOptions:
-                new OptionsDialog(this, R.array.downloadOptions, true, optionsChanged).showDialog(gid);
+                Utils.showOptionsDialog(this, gid, R.array.downloadOptions, true, true, optionsChanged);
                 break;
             case R.id.moreAboutDownloadMenu_bitfield:
                 item.setChecked(!item.isChecked());

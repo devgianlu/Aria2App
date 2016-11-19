@@ -26,7 +26,6 @@ import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.IGID;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -103,12 +102,12 @@ public class AddTorrentActivity extends AppCompatActivity {
         options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new OptionsDialog(AddTorrentActivity.this, R.array.downloadOptions, false, new OptionsDialog.IDialog() {
+                Utils.showOptionsDialog(AddTorrentActivity.this, R.array.downloadOptions, false, false, new Utils.IOptionsDialog() {
                     @Override
                     public void onApply(JTA2 jta2, Map<String, String> options) {
                         AddTorrentActivity.this.options = options;
                     }
-                }).hideHearts().showDialog();
+                });
             }
         });
     }

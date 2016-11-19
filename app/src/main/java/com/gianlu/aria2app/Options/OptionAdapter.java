@@ -5,33 +5,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-class OptionAdapter extends BaseExpandableListAdapter implements Filterable {
+public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder> implements Filterable {
     private final Context context;
     private final View.OnClickListener helpClick = new View.OnClickListener() {
         @Override
@@ -39,144 +34,73 @@ class OptionAdapter extends BaseExpandableListAdapter implements Filterable {
             context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption--" + view.getTag())));
         }
     };
-    private final List<OptionHeader> originalHeaders;
-    private final Map<OptionHeader, OptionChild> children;
+    private final List<Option> originalObjs;
     private final boolean quickOptionsFilter;
     private final boolean hideHearts;
     private final OptionFilter filter;
-    private List<OptionHeader> headers;
+    private List<Option> objs;
 
-    OptionAdapter(Context context, List<OptionHeader> headers, Map<OptionHeader, OptionChild> children, boolean quickOptionsFilter, boolean hideHearts) {
+    public OptionAdapter(Context context, List<Option> objs, boolean quickOptionsFilter, boolean hideHearts) {
         this.context = context;
-        this.originalHeaders = headers;
-        this.headers = headers;
-        this.children = children;
+        this.originalObjs = objs;
+        this.objs = objs;
         this.quickOptionsFilter = quickOptionsFilter;
         this.hideHearts = hideHearts;
         this.filter = new OptionFilter();
     }
 
     @Override
-    public boolean isChildSelectable(int i, int i1) {
-        return true;
+    public Filter getFilter() {
+        return filter;
     }
 
     @Override
-    public int getGroupCount() {
-        return headers.size();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.option_item, parent, false));
+    }
+
+    public Option getItem(int pos) {
+        return objs.get(pos);
     }
 
     @Override
-    public int getChildrenCount(int groupPosition) {
-        return 1;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public OptionChild getChild(int groupPosition, int childPosition) {
-        return children.get(headers.get(groupPosition));
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
-    @Override
-    public OptionHeader getGroup(int groupPosition) {
-        return headers.get(groupPosition);
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup viewGroup) {
-        ChildViewHolder holder = new ChildViewHolder(LayoutInflater.from(context).inflate(R.layout.option_child, null));
-        final OptionChild item = getChild(groupPosition, childPosition);
-
-        holder.help.setTag(getGroup(groupPosition).getOptionLong());
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final Option item = getItem(position);
+        holder.help.setTag(item.longName);
         holder.help.setOnClickListener(helpClick);
 
-        switch (item.getType()) {
-            case BOOLEAN:
-                holder.optionEditText.setVisibility(View.GONE);
-                holder.optionSpinner.setVisibility(View.GONE);
-                holder.optionToggle.setVisibility(View.VISIBLE);
+        holder.longName.setText(item.longName);
+        holder.currValue.setText(item.value);
 
-                holder.optionToggle.setChecked(Boolean.parseBoolean(item.getValue()));
-                holder.optionToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        item.setCurrentValue(String.valueOf(b));
-                    }
-                });
-                break;
-            case PATH_DIR:
-            case PATH_FILE:
-                holder.optionEditText.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-            case STRING:
-                holder.optionEditText.setVisibility(View.VISIBLE);
-                holder.optionSpinner.setVisibility(View.GONE);
-                holder.optionToggle.setVisibility(View.GONE);
+        holder.newValue.setText(item.value);
+        holder.newValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                holder.optionEditText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
-                    }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
 
-                    }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                item.newValue = editable.toString();
+            }
+        });
 
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        item.setCurrentValue(editable.toString());
-                    }
-                });
-                holder.optionEditText.setText(item.getValue());
-                holder.optionEditText.setHint(item.getDefaultValue().isEmpty() ? context.getString(R.string.noDefault) : context.getString(R.string._default) + ": " + item.getDefaultValue());
-                break;
-            case MULTICHOICHE:
-                holder.optionEditText.setVisibility(View.GONE);
-                holder.optionSpinner.setVisibility(View.VISIBLE);
-                holder.optionToggle.setVisibility(View.GONE);
+        holder.expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CommonUtils.animateCollapsingArrowBellows(holder.expand, CommonUtils.isExpanded(holder.edit));
 
-                holder.optionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        item.setCurrentValue(adapterView.getItemAtPosition(i).toString());
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> adapterView) {
-                        item.setCurrentValue(null);
-                    }
-                });
-                if (item.getValues() != null)
-                    holder.optionSpinner.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, item.getValues()));
-                break;
-        }
-
-        return holder.rootView;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup viewGroup) {
-        final GroupViewHolder holder = new GroupViewHolder(LayoutInflater.from(context).inflate(R.layout.option_header, null));
-        final OptionHeader item = getGroup(groupPosition);
-
-        holder.optionLong.setText(String.format("%s: ", item.getOptionLong()));
-        holder.optionValue.setText(item.getOptionValue());
-        holder.optionShort.setText(item.getOptionShort());
+                if (CommonUtils.isExpanded(holder.edit))
+                    CommonUtils.collapse(holder.edit);
+                else
+                    CommonUtils.expand(holder.edit);
+            }
+        });
 
         if (quickOptionsFilter || hideHearts) {
             holder.toggleQuick.setVisibility(View.GONE);
@@ -190,62 +114,50 @@ class OptionAdapter extends BaseExpandableListAdapter implements Filterable {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
                     Set<String> quickOptions = preferences.getStringSet("a2_quickOptions", new HashSet<String>());
 
-                    item.setQuick(!item.isQuick());
-                    if (item.isQuick()) {
+                    item.isQuick = !item.isQuick;
+                    if (item.isQuick) {
                         holder.toggleQuick.setImageResource(R.drawable.ic_favorite_black_48dp);
-                        quickOptions.add(item.getOptionLong());
+                        quickOptions.add(item.longName);
                     } else {
                         holder.toggleQuick.setImageResource(R.drawable.ic_favorite_border_black_48dp);
-                        quickOptions.remove(item.getOptionLong());
+                        quickOptions.remove(item.longName);
                     }
 
                     preferences.edit().putStringSet("a2_quickOptions", quickOptions).apply();
                 }
             });
 
-            if (item.isQuick())
+            if (item.isQuick)
                 holder.toggleQuick.setImageResource(R.drawable.ic_favorite_black_48dp);
             else
                 holder.toggleQuick.setImageResource(R.drawable.ic_favorite_border_black_48dp);
         }
-
-        return holder.rootView;
     }
 
     @Override
-    public Filter getFilter() {
-        return filter;
+    public int getItemCount() {
+        return objs.size();
     }
 
-    private class GroupViewHolder {
-        final ImageButton toggleQuick;
-        final TextView optionLong;
-        final TextView optionShort;
-        final TextView optionValue;
-        private final View rootView;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView longName;
+        TextView currValue;
+        ImageButton expand;
+        EditText newValue;
+        LinearLayout edit;
+        ImageButton toggleQuick;
+        ImageButton help;
 
-        GroupViewHolder(View rootView) {
-            this.rootView = rootView;
-            toggleQuick = (ImageButton) rootView.findViewById(R.id.optionHeader_toggleQuick);
-            optionLong = (TextView) rootView.findViewById(R.id.optionHeader_optionLong);
-            optionShort = (TextView) rootView.findViewById(R.id.optionHeader_optionShort);
-            optionValue = (TextView) rootView.findViewById(R.id.optionHeader_optionValue);
-        }
-    }
+        ViewHolder(View rootView) {
+            super(rootView);
 
-    private class ChildViewHolder {
-        final ToggleButton optionToggle;
-        final Spinner optionSpinner;
-        final EditText optionEditText;
-        final ImageButton help;
-        private final View rootView;
-
-        ChildViewHolder(View rootView) {
-            this.rootView = rootView;
-            optionSpinner = (Spinner) rootView.findViewById(R.id.optionChild_spinner);
-            optionToggle = (ToggleButton) rootView.findViewById(R.id.optionChild_toggle);
-            optionEditText = (EditText) rootView.findViewById(R.id.optionChild_editText);
-            help = (ImageButton) rootView.findViewById(R.id.optionChild_help);
+            longName = (TextView) rootView.findViewById(R.id.optionItem_longName);
+            currValue = (TextView) rootView.findViewById(R.id.optionItem_value);
+            expand = (ImageButton) rootView.findViewById(R.id.optionItem_expand);
+            newValue = (EditText) rootView.findViewById(R.id.optionItem_newValue);
+            edit = (LinearLayout) rootView.findViewById(R.id.optionItem_edit);
+            toggleQuick = (ImageButton) rootView.findViewById(R.id.optionItem_toggleQuick);
+            help = (ImageButton) rootView.findViewById(R.id.optionItem_help);
         }
     }
 
@@ -254,21 +166,25 @@ class OptionAdapter extends BaseExpandableListAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                results.values = originalHeaders;
-                results.count = originalHeaders.size();
+                results.values = originalObjs;
+                results.count = originalObjs.size();
             } else {
-                List<OptionHeader> filtered = new ArrayList<>();
+                List<Option> filtered = new ArrayList<>();
 
-                for (OptionHeader _header : originalHeaders) {
-                    if (_header.getOptionLong().toLowerCase().contains(constraint.toString().toLowerCase()) ||
-                            _header.getOptionShort().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filtered.add(_header);
+                for (Option option : originalObjs) {
+                    if (option.longName.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                        filtered.add(option);
+                    }
+                }
+
+                for (Option option : originalObjs) {
+                    if (!filtered.contains(option) && option.longName.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        filtered.add(option);
                     }
                 }
 
                 results.values = filtered;
                 results.count = filtered.size();
-
             }
             return results;
         }
@@ -276,10 +192,11 @@ class OptionAdapter extends BaseExpandableListAdapter implements Filterable {
         @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            if (filterResults.count == 0)
-                notifyDataSetInvalidated();
-            else {
-                headers = (List<OptionHeader>) filterResults.values;
+            if (filterResults.count == 0) {
+                objs.clear();
+                notifyDataSetChanged();
+            } else {
+                objs = (List<Option>) filterResults.values;
                 notifyDataSetChanged();
             }
         }

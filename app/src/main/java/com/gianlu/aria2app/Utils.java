@@ -1,16 +1,36 @@
 package com.gianlu.aria2app;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
+import com.gianlu.aria2app.NetIO.JTA2.IOption;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.Options.Option;
+import com.gianlu.aria2app.Options.OptionAdapter;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
@@ -39,8 +59,12 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -125,7 +149,7 @@ public class Utils {
         return set;
     }
 
-    public static String formatConnectionError(int code, String message) {
+    static String formatConnectionError(int code, String message) {
         return "#" + code + ": " + message;
     }
 
@@ -269,6 +293,150 @@ public class Utils {
 
     public static JSONObject readyRequest() throws JSONException {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
+    }
+
+    public static void showOptionsDialog(@NonNull final Activity context, @ArrayRes int allowedOptions, boolean quickOptionsFilter, boolean showHearts, IOptionsDialog handler) {
+        showOptionsDialog(context, null, allowedOptions, quickOptionsFilter, showHearts, handler);
+    }
+
+    static void showOptionsDialog(@NonNull final Activity context, String gid, @ArrayRes final int allowedOptions, final boolean quickOptionsFilter, final boolean showHearts, final IOptionsDialog handler) {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.newInstance(context);
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
+            return;
+        }
+
+        final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
+        if (quickOptionsFilter) {
+            if (quickOptions.size() <= 0) {
+                CommonUtils.UIToast(context, Utils.ToastMessages.ADD_QUICK_OPTIONS);
+                return;
+            }
+        }
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
+        CommonUtils.showDialog(context, pd);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(quickOptionsFilter ? R.string.menu_downloadQuickOptions : R.string.options)
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+
+        final LinearLayout layout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null, false);
+        IOption optionHandler = new IOption() {
+            @Override
+            public void onOptions(Map<String, String> options) {
+                final List<Option> optionsList = new ArrayList<>();
+
+                for (String resLongOption : context.getResources().getStringArray(allowedOptions)) {
+                    if (quickOptionsFilter && !quickOptions.contains(resLongOption)) continue;
+
+                    String optionVal = options.get(resLongOption);
+                    if (optionVal != null) {
+                        optionsList.add(new Option(resLongOption, optionVal, quickOptions.contains(resLongOption)));
+                    }
+                }
+
+                pd.dismiss();
+
+                final RecyclerView list = (RecyclerView) layout.findViewById(R.id.optionsDialog_list);
+                list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+                final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
+                final ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
+
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final OptionAdapter adapter = new OptionAdapter(context, optionsList, quickOptionsFilter, !showHearts);
+                        list.setAdapter(adapter);
+
+                        search.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                list.scrollToPosition(0);
+                                adapter.getFilter().filter(query.getText().toString().trim());
+                            }
+                        });
+                    }
+                });
+
+
+                query.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        search.callOnClick();
+                    }
+                });
+                builder.setView(layout);
+
+                builder.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Map<String, String> map = new HashMap<>();
+
+                        for (Option item : optionsList) {
+                            if (item.isChanged()) {
+                                map.put(item.longName, item.newValue);
+                            }
+                        }
+
+                        handler.onApply(jta2, map);
+                    }
+                });
+
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final AlertDialog dialog = builder.create();
+
+                        CommonUtils.showDialog(context, dialog);
+                        Window window = dialog.getWindow();
+                        if (window != null)
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                        ViewTreeObserver vto = layout.getViewTreeObserver();
+                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            @Override
+                            public void onGlobalLayout() {
+                                dialog.getWindow().setLayout(dialog.getWindow().getDecorView().getWidth(), dialog.getWindow().getDecorView().getHeight());
+                                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onException(Exception exception) {
+                pd.dismiss();
+                CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
+            }
+        };
+
+        if (gid == null) {
+            jta2.getGlobalOption(optionHandler);
+        } else {
+            jta2.getOption(gid, optionHandler);
+        }
+    }
+
+    public interface IOptionsDialog {
+        void onApply(JTA2 jta2, Map<String, String> options);
     }
 
     public static class ToastMessages {
