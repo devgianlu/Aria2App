@@ -2,11 +2,13 @@ package com.gianlu.aria2app.Main;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+@Keep
 @SuppressLint("unused")
 public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior {
     public FloatingActionsMenuBehavior(Context context, AttributeSet attrs) {

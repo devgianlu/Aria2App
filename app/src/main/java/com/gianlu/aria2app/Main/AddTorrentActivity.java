@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AddTorrentActivity extends AppCompatActivity {
+    private static final int READ_STORAGE_REQUEST_CODE = 1;
     private URIsAdapter urisAdapter;
     private int position;
     private Uri fileUri;
@@ -213,6 +214,8 @@ public class AddTorrentActivity extends AppCompatActivity {
             CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE);
             return;
         }
+
+        Utils.requestReadPermission(this, READ_STORAGE_REQUEST_CODE);
 
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);

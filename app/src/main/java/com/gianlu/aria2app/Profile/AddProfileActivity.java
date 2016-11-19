@@ -1,16 +1,12 @@
 package com.gianlu.aria2app.Profile;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -557,10 +553,10 @@ public class AddProfileActivity extends AppCompatActivity {
         SingleModeProfileItem profile = SingleModeProfileItem.fromFields(profileName, enableNotifications, sViewHolder);
 
         if (profile.directDownloadEnabled) {
-            requestWritePermission();
+            Utils.requestWritePermission(this, WRITE_STORAGE_REQUEST_CODE);
         }
         if (profile.serverSSL) {
-            requestReadPermission();
+            Utils.requestReadPermission(this, READ_STORAGE_REQUEST_CODE);
         }
 
         try {
@@ -585,42 +581,6 @@ public class AddProfileActivity extends AppCompatActivity {
                     .build());
 
         onBackPressed();
-    }
-
-    private void requestWritePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
-                        .setTitle(R.string.writeExternalStorageRequest_title)
-                        .setMessage(R.string.writeExternalStorageRequest_message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                requestWritePermission();
-                            }
-                        }));
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_REQUEST_CODE);
-            }
-        }
-    }
-
-    private void requestReadPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
-                        .setTitle(R.string.readExternalStorageRequest_title)
-                        .setMessage(R.string.readExternalStorageRequest_message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                requestReadPermission();
-                            }
-                        }));
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_STORAGE_REQUEST_CODE);
-            }
-        }
     }
 
     private void createMulti() {
@@ -658,10 +618,10 @@ public class AddProfileActivity extends AppCompatActivity {
 
         for (SingleModeProfileItem _profile : mProfiles.values()) {
             if (_profile.directDownloadEnabled)
-                requestWritePermission();
+                Utils.requestWritePermission(this, WRITE_STORAGE_REQUEST_CODE);
 
             if (_profile.serverSSL)
-                requestReadPermission();
+                Utils.requestReadPermission(this, READ_STORAGE_REQUEST_CODE);
         }
 
         try {

@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -288,6 +289,42 @@ public class Utils {
             array.put("token:" + CurrentProfile.getCurrentProfile(context).serverToken);
 
         return array;
+    }
+
+    public static void requestWritePermission(final Activity activity, final int code) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
+                        .setTitle(R.string.writeExternalStorageRequest_title)
+                        .setMessage(R.string.writeExternalStorageRequest_message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestWritePermission(activity, code);
+                            }
+                        }));
+            } else {
+                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, code);
+            }
+        }
+    }
+
+    public static void requestReadPermission(final Activity activity, final int code) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
+                        .setTitle(R.string.readExternalStorageRequest_title)
+                        .setMessage(R.string.readExternalStorageRequest_message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestReadPermission(activity, code);
+                            }
+                        }));
+            } else {
+                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, code);
+            }
+        }
     }
 
     public static JSONObject readyRequest() throws JSONException {

@@ -5,10 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.annotation.Keep;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+
+import com.gianlu.commonutils.CommonUtils;
 
 public class LetterIconBig extends View {
     private final Context context;
@@ -22,6 +25,7 @@ public class LetterIconBig extends View {
     private String addr;
     private String port;
 
+    @Keep
     public LetterIconBig(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
@@ -78,7 +82,13 @@ public class LetterIconBig extends View {
                 letters = name.substring(0, 2);
         }
 
-        letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds); // WTF?!?!?!
+        try {
+            letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
+        } catch (Exception ex) {
+            CommonUtils.logMe(context, ex);
+            return;
+        }
+
         boolean isTextBoundOK = false;
         int textSize = 16;
         String cAddr = addr;
