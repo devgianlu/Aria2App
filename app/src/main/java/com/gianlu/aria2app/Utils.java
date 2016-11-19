@@ -331,7 +331,7 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
-    public static void showOptionsDialog(@NonNull final Activity context, IOptionsDialog handler) {
+    static void showOptionsDialog(@NonNull final Activity context, IOptionsDialog handler) {
         showOptionsDialog(context, null, R.array.globalOptions, false, false, handler);
     }
 
@@ -478,7 +478,7 @@ public class Utils {
         }
     }
 
-    public interface IOptionsDialog {
+    interface IOptionsDialog {
         void onApply(JTA2 jta2, Map<String, String> options);
     }
 

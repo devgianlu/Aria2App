@@ -225,6 +225,8 @@
     <string name="search">Search</string>
     <string name="certificateDisclaimer">The certificate must not be deleted or moved.</string>
     <string name="addUri">Add URI</string>
+    <string name="fileName">File name:</string>
+    <string name="fileName_help">The following path is added to the path of the --dir option. Leave empty to let aria2 choose.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

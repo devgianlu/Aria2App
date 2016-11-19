@@ -41,6 +41,7 @@ import java.util.Map;
 public class AddURIActivity extends AppCompatActivity {
     private URIsAdapter urisAdapter;
     private int position;
+    private String filePath;
     private OptionsAdapter optionsAdapter;
 
     @Override
@@ -95,6 +96,27 @@ public class AddURIActivity extends AppCompatActivity {
                 } catch (Exception ex) {
                     position = 0;
                 }
+            }
+        });
+        final EditText fileName = (EditText) findViewById(R.id.addURI_fileName);
+        fileName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String path = editable.toString();
+                if (path.isEmpty())
+                    filePath = null;
+                else
+                    filePath = path;
             }
         });
 
@@ -208,11 +230,23 @@ public class AddURIActivity extends AppCompatActivity {
         }
 
         Map<String, String> options = new HashMap<>();
+        /* FIXME: 19/11/2016
         if (optionsAdapter != null) {
             for (Option item : optionsAdapter.getOptions()) {
                 if (item.isChanged())
                     options.put(item.longName, item.newValue);
             }
+        }
+        */
+
+        if (filePath != null) {
+            if (options.containsKey("out"))
+                options.remove("out");
+
+            if (filePath.startsWith("/") || filePath.startsWith("\\"))
+                filePath = filePath.substring(1, filePath.length());
+
+            options.put("out", filePath);
         }
 
         jta2.addUri(urisAdapter.getURIs(), position, options, new JTA2.IGID() {
