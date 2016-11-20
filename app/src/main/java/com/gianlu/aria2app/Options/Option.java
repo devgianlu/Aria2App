@@ -17,6 +17,7 @@ public class Option {
     }
 
     public boolean isChanged() {
+        // FIXME: Not working as it should
         return newValue != null && !Objects.equals(value, newValue);
     }
 }

@@ -1,10 +1,12 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-class Aria2Exception extends Exception {
-    private final int code;
+public class Aria2Exception extends Exception {
+    public final int code;
+    public final String reason;
 
-    Aria2Exception(String detailMessage, int code) {
+    public Aria2Exception(String detailMessage, int code) {
         super(detailMessage);
+        this.reason = detailMessage;
         this.code = code;
     }
 

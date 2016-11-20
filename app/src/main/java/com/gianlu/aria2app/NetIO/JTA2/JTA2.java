@@ -151,11 +151,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -185,11 +180,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -215,11 +205,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -262,11 +247,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -313,11 +293,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -363,11 +338,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -395,11 +365,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -424,11 +389,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -461,11 +421,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(q, ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(false, new Aria2Exception(reason, code));
             }
         });
     }
@@ -502,11 +457,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(q, ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(false, new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -542,11 +492,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(q, ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(false, new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -573,11 +518,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -606,11 +546,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -637,11 +572,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -670,11 +600,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -701,11 +626,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -734,11 +654,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -766,11 +681,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -795,11 +705,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -836,11 +741,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -872,11 +772,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }
@@ -912,11 +807,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -941,16 +831,15 @@ public class JTA2 {
 
             @Override
             public void onException(boolean q, Exception ex) {
-                handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                if (code == 1 && reason.startsWith("No active download")) {
-                    handler.onDownloadNotActive(new Aria2Exception(reason, code));
-                } else {
-                    handler.onException(new Aria2Exception(reason, code));
+                if (ex instanceof Aria2Exception) {
+                    Aria2Exception exx = (Aria2Exception) ex;
+                    if (exx.code == 1 && exx.reason.startsWith("No active download")) {
+                        handler.onDownloadNotActive(ex);
+                        return;
+                    }
                 }
+
+                handler.onException(ex);
             }
         });
     }
@@ -976,16 +865,15 @@ public class JTA2 {
 
             @Override
             public void onException(boolean q, Exception ex) {
-                handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                if (code == 1 && reason.startsWith("No peer data")) {
-                    handler.onNoPeerData(new Aria2Exception(reason, code));
-                } else {
-                    handler.onException(new Aria2Exception(reason, code));
+                if (ex instanceof Aria2Exception) {
+                    Aria2Exception exx = (Aria2Exception) ex;
+                    if (exx.code == 1 && exx.reason.startsWith("No peer data")) {
+                        handler.onNoPeerData(ex);
+                        return;
+                    }
                 }
+
+                handler.onException(ex);
             }
         });
     }
@@ -1013,11 +901,6 @@ public class JTA2 {
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
             }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
-            }
         });
     }
 
@@ -1041,11 +924,6 @@ public class JTA2 {
             @Override
             public void onException(boolean q, Exception ex) {
                 handler.onException(ex);
-            }
-
-            @Override
-            public void onException(int code, String reason) {
-                handler.onException(new Aria2Exception(reason, code));
             }
         });
     }

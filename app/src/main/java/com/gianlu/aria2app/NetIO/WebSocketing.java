@@ -6,6 +6,7 @@ import android.util.ArrayMap;
 import android.util.Pair;
 
 import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.gianlu.aria2app.Utils;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -121,7 +122,7 @@ public class WebSocketing extends WebSocketAdapter {
         if (response.isNull("error")) {
             handler.onResponse(response);
         } else {
-            handler.onException(response.getJSONObject("error").getInt("code"), response.getJSONObject("error").getString("message"));
+            handler.onException(false, new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
         }
     }
 
@@ -181,8 +182,6 @@ public class WebSocketing extends WebSocketAdapter {
         void onResponse(JSONObject response) throws JSONException;
 
         void onException(boolean queuing, Exception ex);
-
-        void onException(int code, String reason);
     }
 
     public interface IConnecting {

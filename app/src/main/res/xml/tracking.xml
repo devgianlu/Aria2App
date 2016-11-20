@@ -8,12 +8,11 @@
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
     <screenName name="com.gianlu.aria2app.MainActivity">Screen~Main</screenName>
-    <screenName name="com.gianlu.aria2app.LogsActivity">Screen~Logs</screenName>
+    <screenName name="com.gianlu.commonutils.LogsActivity">Screen~Logs</screenName>
     <screenName name="com.gianlu.aria2app.MoreAboutDownloadActivity">Screen~MoreAboutDownload
     </screenName>
     <screenName name="com.gianlu.aria2app.TerminalActivity">Screen~Terminal</screenName>
-    <screenName name="com.gianlu.aria2app.Profile.AddProfileActivity">Screen~AddProfile
-    </screenName>
+    <screenName name="com.gianlu.aria2app.Profile.AddProfileActivity">Screen~AddProfile</screenName>
     <screenName name="com.gianlu.aria2app.Main.AddURIActivity">Screen~AddURI</screenName>
     <screenName name="com.gianlu.aria2app.Main.AddTorrentActivity">Screen~AddTorrent</screenName>
     <screenName name="com.gianlu.aria2app.PreferencesActivity">Screen~Settings</screenName>
