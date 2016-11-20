@@ -153,12 +153,18 @@ public class ProfilesAdapter extends BaseAdapter {
     private void runTest(int pos, @Nullable IFinished handler) {
         SingleModeProfileItem profile = getItem(pos);
 
+        String scheme;
+        if (profile.serverSSL)
+            scheme = "wss://";
+        else
+            scheme = "ws://";
+
         try {
             WebSocket webSocket;
             if (profile.authMethod.equals(JTA2.AUTH_METHOD.HTTP))
-                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
+                webSocket = Utils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
             else
-                webSocket = Utils.readyWebSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
+                webSocket = Utils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
 
             webSocket.addListener(new StatusWebSocketHandler(profile, handler))
                     .connectAsynchronously();

@@ -183,7 +183,7 @@
     <string name="infoTag">INFO: </string>
     <string name="warningTag">WARNING: </string>
     <string name="errorTag">ERROR: </string>
-    <string name="editProfile">Select the profile to edit</string>
+    <string name="editProfile">Edit or delete profile</string>
     <string name="stopNotificationService">Stop service</string>
     <string name="versionCheck">Check aria2 version at startup</string>
     <string name="enabledVersionCheck">Version will be checked and you\'ll be notified if your version it\'s outdated</string>

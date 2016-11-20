@@ -535,6 +535,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage THANK_YOU = new CommonUtils.ToastMessage("Thank you!", false);
         public static final CommonUtils.ToastMessage INVALID_CERTIFICATE_FILE = new CommonUtils.ToastMessage("Invalid certificate file!", false);
         public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
+        public static final CommonUtils.ToastMessage READ_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot access the certificate file. You denied the read permission!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

@@ -224,9 +224,11 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
                     }
                 }
 
-                for (Option option : originalObjs) {
-                    if (!filtered.contains(option) && option.longName.toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filtered.add(option);
+                if (constraint.length() >= 1) {
+                    for (Option option : originalObjs) {
+                        if (!filtered.contains(option) && option.longName.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                            filtered.add(option);
+                        }
                     }
                 }
 

@@ -17,7 +17,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -122,9 +121,9 @@ public class DrawerManager {
 
                 try {
                     if (ProfileItem.isSingleMode(context, name))
-                        listener.onProfileItemSelected(SingleModeProfileItem.fromString(context, name), true);
+                        listener.onProfileItemSelected(SingleModeProfileItem.fromName(context, name), true);
                     else
-                        listener.onProfileItemSelected(MultiModeProfileItem.fromString(context, name).getCurrentProfile(context), true);
+                        listener.onProfileItemSelected(MultiModeProfileItem.fromName(context, name).getCurrentProfile(context), true);
                 } catch (JSONException | IOException ex) {
                     CommonUtils.UIToast(context, Utils.ToastMessages.FATAL_EXCEPTION, ex);
                 }
@@ -472,7 +471,7 @@ public class DrawerManager {
                                             .putExtra("base64name", profilesAdapter.getItem(i).fileName));
                                 } catch (JSONException | IOException ex) {
                                     CommonUtils.UIToast(context, Utils.ToastMessages.CANNOT_EDIT_PROFILE, ex);
-                                    context.deleteFile(Base64.encodeToString(profilesAdapter.getItem(i).globalProfileName.getBytes(), Base64.NO_WRAP) + ".profile");
+                                    context.deleteFile(profilesAdapter.getItem(i).fileName);
                                 }
                             }
                         }));

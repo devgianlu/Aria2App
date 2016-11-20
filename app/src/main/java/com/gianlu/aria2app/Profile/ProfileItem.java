@@ -30,21 +30,21 @@ public class ProfileItem implements Serializable {
     ProfileItem() {
     }
 
-    public static boolean exists(Context context, String base64name) {
-        if (base64name == null) return false;
+    public static boolean exists(Context context, String fileName) {
+        if (fileName == null) return false;
 
         try {
-            context.openFileInput(base64name);
+            context.openFileInput(fileName);
             return true;
         } catch (FileNotFoundException ex) {
             return false;
         }
     }
 
-    public static boolean isSingleMode(Context context, String base64name) throws JSONException, IOException {
-        if (base64name == null) return false;
+    public static boolean isSingleMode(Context context, String fileName) throws JSONException, IOException {
+        if (fileName == null) return false;
 
-        FileInputStream in = context.openFileInput(base64name);
+        FileInputStream in = context.openFileInput(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder builder = new StringBuilder();
 
@@ -68,9 +68,9 @@ public class ProfileItem implements Serializable {
         for (File profile : files) {
             try {
                 if (ProfileItem.isSingleMode(context, profile.getName())) {
-                    profiles.add(SingleModeProfileItem.fromString(context, profile.getName()));
+                    profiles.add(SingleModeProfileItem.fromName(context, profile.getName()));
                 } else {
-                    profiles.add(MultiModeProfileItem.fromString(context, profile.getName()));
+                    profiles.add(MultiModeProfileItem.fromName(context, profile.getName()));
                 }
             } catch (Exception ignored) {
             }

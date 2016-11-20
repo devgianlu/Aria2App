@@ -19,7 +19,7 @@ import java.net.URL;
 
 public class SingleModeProfileItem extends ProfileItem implements Serializable {
     private static final String EXTERNAL_DEFAULT_NAME = "Local device";
-    public static final String EXTERNAL_DEFAULT_BASE64_NAME = Base64.encodeToString(EXTERNAL_DEFAULT_NAME.getBytes(), Base64.NO_WRAP);
+    public static final String EXTERNAL_DEFAULT_FILE_NAME = Base64.encodeToString(EXTERNAL_DEFAULT_NAME.getBytes(), Base64.NO_WRAP) + ".profile";
     public String serverAddr;
     public int serverPort;
     public String serverEndpoint;
@@ -147,11 +147,8 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         return item;
     }
 
-    public static SingleModeProfileItem fromString(Context context, String base64name) throws IOException, JSONException {
-        if (!base64name.endsWith(".profile"))
-            base64name += ".profile";
-
-        FileInputStream in = context.openFileInput(base64name);
+    public static SingleModeProfileItem fromName(Context context, String fileName) throws IOException, JSONException {
+        FileInputStream in = context.openFileInput(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder builder = new StringBuilder();
 
@@ -160,7 +157,7 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
             builder.append(line);
         }
 
-        return fromJSON(base64name, builder.toString());
+        return fromJSON(fileName, builder.toString());
     }
 
     public void setGlobalProfileName(String globalProfileName) {

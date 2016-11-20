@@ -273,15 +273,11 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerView);
-        assert mainRecyclerView != null;
-
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mainRecyclerView.setLayoutManager(llm);
 
         final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipeLayout);
-        assert swipeLayout != null;
-
         swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -293,7 +289,6 @@ public class MainActivity extends AppCompatActivity {
         UpdateUI.stop(updateUI);
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
 
@@ -305,14 +300,14 @@ public class MainActivity extends AppCompatActivity {
             if (getIntent().getBooleanExtra("external", false)) {
                 getIntent().removeExtra("external");
 
-                profile = SingleModeProfileItem.fromString(this, SingleModeProfileItem.EXTERNAL_DEFAULT_BASE64_NAME);
+                profile = SingleModeProfileItem.fromName(this, SingleModeProfileItem.EXTERNAL_DEFAULT_FILE_NAME);
             } else if (getIntent().getBooleanExtra("fromNotification", false)) {
                 getIntent().removeExtra("fromNotification");
 
                 if (ProfileItem.isSingleMode(this, getIntent().getStringExtra("fileName")))
-                    profile = SingleModeProfileItem.fromString(this, getIntent().getStringExtra("fileName"));
+                    profile = SingleModeProfileItem.fromName(this, getIntent().getStringExtra("fileName"));
                 else
-                    profile = MultiModeProfileItem.fromString(this, getIntent().getStringExtra("fileName")).getCurrentProfile(this);
+                    profile = MultiModeProfileItem.fromName(this, getIntent().getStringExtra("fileName")).getCurrentProfile(this);
             } else if (!drawerManager.hasProfiles()) {
                 profile = null;
                 startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
@@ -749,9 +744,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
         try {
-            deleteFile(SingleModeProfileItem.EXTERNAL_DEFAULT_BASE64_NAME + ".profile");
+            deleteFile(SingleModeProfileItem.EXTERNAL_DEFAULT_FILE_NAME);
 
-            FileOutputStream fOut = openFileOutput(SingleModeProfileItem.EXTERNAL_DEFAULT_BASE64_NAME + ".profile", Context.MODE_PRIVATE);
+            FileOutputStream fOut = openFileOutput(SingleModeProfileItem.EXTERNAL_DEFAULT_FILE_NAME, Context.MODE_PRIVATE);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
             osw.write(profile.toJSON().toString());
@@ -765,7 +760,7 @@ public class MainActivity extends AppCompatActivity {
     private void startWithProfile(@NonNull SingleModeProfileItem profile, boolean recreate) {
         drawerManager.setCurrentProfile(profile);
 
-        CurrentProfile.setCurrentProfile(profile);
+        CurrentProfile.setCurrentProfile(this, profile);
 
         if (recreate) {
             WebSocketing.destroyInstance();

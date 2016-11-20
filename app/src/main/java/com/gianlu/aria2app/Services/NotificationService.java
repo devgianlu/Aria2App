@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Profile.ProfileItem;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
@@ -110,9 +111,18 @@ public class NotificationService extends IntentService {
         }
 
         for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
+            String scheme;
+            if (profile.serverSSL)
+                scheme = "wss://";
+            else
+                scheme = "ws://";
+
             WebSocket webSocket;
             try {
-                webSocket = Utils.readyWebSocket(profile.getFullServerAddress(), Utils.readyCertificate(getApplicationContext(), profile));
+                if (profile.authMethod.equals(JTA2.AUTH_METHOD.HTTP))
+                    webSocket = Utils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(getApplicationContext(), profile));
+                else
+                    webSocket = Utils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(getApplicationContext(), profile));
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;

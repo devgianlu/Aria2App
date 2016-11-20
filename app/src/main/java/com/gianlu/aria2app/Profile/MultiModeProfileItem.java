@@ -59,8 +59,8 @@ public class MultiModeProfileItem extends ProfileItem implements Serializable {
         return item;
     }
 
-    public static MultiModeProfileItem fromString(Context context, String base64name) throws IOException, JSONException {
-        FileInputStream in = context.openFileInput(base64name);
+    public static MultiModeProfileItem fromName(Context context, String fileName) throws IOException, JSONException {
+        FileInputStream in = context.openFileInput(fileName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder builder = new StringBuilder();
 
@@ -69,7 +69,7 @@ public class MultiModeProfileItem extends ProfileItem implements Serializable {
             builder.append(line);
         }
 
-        return fromJSON(base64name, builder.toString());
+        return fromJSON(fileName, builder.toString());
     }
 
     private void addProfile(ConnectivityCondition condition, SingleModeProfileItem profile) {

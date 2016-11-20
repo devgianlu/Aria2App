@@ -30,7 +30,7 @@ class URIsAdapter extends BaseAdapter {
         this.handler = handler;
     }
 
-    public List<String> getURIs() {
+    List<String> getURIs() {
         return objs;
     }
 
@@ -109,7 +109,7 @@ class URIsAdapter extends BaseAdapter {
         return holder.rootView;
     }
 
-    public interface IAdapter {
+    interface IAdapter {
         void onListChanged(List<String> uris);
     }
 

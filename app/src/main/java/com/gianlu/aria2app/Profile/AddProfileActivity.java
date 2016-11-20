@@ -1,12 +1,15 @@
 package com.gianlu.aria2app.Profile;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -182,7 +185,7 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     private void loadSingle(String name) throws IOException, JSONException {
-        SingleModeProfileItem item = SingleModeProfileItem.fromString(this, name);
+        SingleModeProfileItem item = SingleModeProfileItem.fromName(this, name);
 
         profileName.setText(item.getProfileName());
         enableNotifications.setChecked(item.notificationsEnabled);
@@ -237,7 +240,7 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     private void loadMulti(String name) throws IOException, JSONException {
-        MultiModeProfileItem item = MultiModeProfileItem.fromString(this, name);
+        MultiModeProfileItem item = MultiModeProfileItem.fromName(this, name);
 
         profileName.setText(item.getGlobalProfileName());
         enableNotifications.setChecked(item.notificationsEnabled);
@@ -430,10 +433,15 @@ public class AddProfileActivity extends AppCompatActivity {
                 }
 
                 if (holder.SSL.isChecked()) {
-                    File certTest = new File(holder.SSLCertificate.getText().toString().trim());
+                    if (ContextCompat.checkSelfPermission(AddProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        File certTest = new File(holder.SSLCertificate.getText().toString().trim());
 
-                    if (!certTest.exists() || !certTest.canRead()) {
-                        CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_CERTIFICATE_FILE);
+                        if (!certTest.exists() || !certTest.canRead()) {
+                            CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_CERTIFICATE_FILE);
+                            return;
+                        }
+                    } else {
+                        CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.READ_STORAGE_DENIED);
                         return;
                     }
                 }
@@ -528,10 +536,15 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         if (sViewHolder.SSL.isChecked()) {
-            File certTest = new File(sViewHolder.SSLCertificate.getText().toString().trim());
+            if (ContextCompat.checkSelfPermission(AddProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                File certTest = new File(sViewHolder.SSLCertificate.getText().toString().trim());
 
-            if (!certTest.exists() || !certTest.canRead()) {
-                CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_CERTIFICATE_FILE);
+                if (!certTest.exists() || !certTest.canRead()) {
+                    CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_CERTIFICATE_FILE);
+                    return;
+                }
+            } else {
+                CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.READ_STORAGE_DENIED);
                 return;
             }
         }
@@ -708,10 +721,12 @@ public class AddProfileActivity extends AppCompatActivity {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     listener.afterTextChanged(null);
 
-                    if (b)
+                    if (b) {
+                        Utils.requestReadPermission(AddProfileActivity.this, READ_STORAGE_REQUEST_CODE);
                         SSLContainer.setVisibility(View.VISIBLE);
-                    else
+                    } else {
                         SSLContainer.setVisibility(View.GONE);
+                    }
                 }
             });
 

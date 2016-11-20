@@ -22,9 +22,9 @@ public class CurrentProfile {
             if (ProfileItem.exists(context, lastProfile)) {
                 try {
                     if (ProfileItem.isSingleMode(context, lastProfile))
-                        profile = SingleModeProfileItem.fromString(context, lastProfile);
+                        profile = SingleModeProfileItem.fromName(context, lastProfile);
                     else
-                        profile = MultiModeProfileItem.fromString(context, lastProfile).getCurrentProfile(context);
+                        profile = MultiModeProfileItem.fromName(context, lastProfile).getCurrentProfile(context);
                 } catch (JSONException | IOException ex) {
                     CommonUtils.logMe(context, ex);
                     profile = SingleModeProfileItem.defaultProfile();
@@ -37,7 +37,11 @@ public class CurrentProfile {
         return profile;
     }
 
-    public static void setCurrentProfile(SingleModeProfileItem profile) {
+    public static void setCurrentProfile(Context context, SingleModeProfileItem profile) {
         CurrentProfile.profile = profile;
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString("lastUsedProfile", profile.fileName)
+                .apply();
     }
 }
