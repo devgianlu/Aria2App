@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
         WebSocketing.setGlobalHandler(new WebSocketing.IListener() {
             @Override
             public void onException(Throwable ex) {
-                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, new Runnable() {
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, ex, new Runnable() {
                     @Override
                     public void run() {
                         swipeLayout.setRefreshing(false);
