@@ -105,11 +105,8 @@ public class AddProfileActivity extends AppCompatActivity {
 
         // Multi mode
         mListView = (ListView) findViewById(R.id.addProfile_multiModeListView);
-        assert mListView != null;
         mSpinner = (Spinner) findViewById(R.id.addProfile_multiModeSpinner);
-        assert mSpinner != null;
         Button mAdd = (Button) findViewById(R.id.addProfile_multiModeAdd);
-        assert mAdd != null;
 
         reloadSpinner();
         mAdd.setOnClickListener(new View.OnClickListener() {

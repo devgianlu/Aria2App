@@ -76,8 +76,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);

@@ -28,11 +28,11 @@ import java.util.Map;
 public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
     private static IConnecting handler;
+    private static IListener globalHandler;
     private static boolean isDestroying;
     private final Map<Integer, IReceived> requests = new ArrayMap<>();
     private final List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
     private WebSocket socket;
-    private boolean errorShown;
 
     private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         socket = Utils.readyWebSocket(context)
@@ -52,6 +52,10 @@ public class WebSocketing extends WebSocketAdapter {
         if (webSocketing == null)
             webSocketing = new WebSocketing(context);
         return webSocketing;
+    }
+
+    public static void setGlobalHandler(IListener globalHandler) {
+        WebSocketing.globalHandler = globalHandler;
     }
 
     public static void notifyConnection(IConnecting handler) {
@@ -84,13 +88,9 @@ public class WebSocketing extends WebSocketAdapter {
 
         if (socket.getState() == WebSocketState.CONNECTING || socket.getState() == WebSocketState.CREATED) {
             connectionQueue.add(new Pair<>(request, handler));
-            handler.onException(true, new Exception("WebSocket is connecting! Requests queued."));
+            handler.onException(true, null);
             return;
         } else if (socket.getState() != WebSocketState.OPEN) {
-            if (!errorShown) {
-                handler.onException(false, new Exception("WebSocket not open! State: " + socket.getState().name()));
-                errorShown = true;
-            }
             return;
         }
 
@@ -138,6 +138,9 @@ public class WebSocketing extends WebSocketAdapter {
 
     @Override
     public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+        if (globalHandler != null)
+            globalHandler.onException(cause);
+
         if (handler != null)
             handler.onDone();
     }
@@ -147,12 +150,18 @@ public class WebSocketing extends WebSocketAdapter {
         if (cause instanceof ArrayIndexOutOfBoundsException)
             return;
 
+        if (globalHandler != null)
+            globalHandler.onException(cause);
+
         if (handler != null)
             handler.onDone();
     }
 
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+        if (globalHandler != null && closedByServer)
+            globalHandler.onDisconnected();
+
         if (isDestroying) {
             isDestroying = false;
             return;
@@ -162,10 +171,17 @@ public class WebSocketing extends WebSocketAdapter {
             handler.onDone();
     }
 
+    public interface IListener {
+        void onException(Throwable ex);
+
+        void onDisconnected();
+    }
+
     public interface IReceived {
         void onResponse(JSONObject response) throws JSONException;
 
         void onException(boolean queuing, Exception ex);
+
         void onException(int code, String reason);
     }
 

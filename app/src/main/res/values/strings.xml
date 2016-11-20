@@ -87,8 +87,8 @@
     <string name="exit">Exit</string>
     <string name="pickFromFile">Pick from file</string>
     <string name="magnetURI_help">If you want to add a magnet link go to the URI section.</string>
-    <string name="noCommunication">No communication</string>
-    <string name="noCommunication_message">Aria2App is unable to communicate with the server due to: %s.\nPlease check your configuration or contact me.</string>
+    <string name="noCommunication">Cannot connect</string>
+    <string name="noCommunication_message">%s.\nPlease check your configuration or contact me.</string>
     <string name="filters">Filters</string>
     <string name="method" translatable="false">Method:</string>
     <string name="jsonrpc" translatable="false">JSONRPC:</string>

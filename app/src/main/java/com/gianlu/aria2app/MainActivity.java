@@ -64,10 +64,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-// TODO: Remove "getSystemService(LAYOUT_INFLATER_MANAGER)"
-// TODO: Better error message (dialog one) or add a "See log" button
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -328,15 +325,14 @@ public class MainActivity extends AppCompatActivity {
             startWithProfile(profile, false);
         } catch (IOException | JSONException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
+            return;
         }
 
         fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
-        assert fabMenu != null;
         fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
                 final View mask = findViewById(R.id.main_mask);
-                assert mask != null;
                 mask.setVisibility(View.VISIBLE);
                 mask.setClickable(true);
                 mask.setOnClickListener(new View.OnClickListener() {
@@ -350,14 +346,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMenuCollapsed() {
                 final View mask = findViewById(R.id.main_mask);
-                assert mask != null;
                 mask.setVisibility(View.GONE);
                 mask.setClickable(false);
             }
         });
 
         FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFab_addURI);
-        assert fabAddURI != null;
         fabAddURI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -365,7 +359,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
-        assert fabAddTorrent != null;
         fabAddTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -373,7 +366,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
-        assert fabAddMetalink != null;
         fabAddMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -385,12 +377,59 @@ public class MainActivity extends AppCompatActivity {
             drawerManager.buildProfiles().openProfiles(false);
         }
 
-        final AtomicBoolean shouldReport = new AtomicBoolean(true);
+        WebSocketing.setGlobalHandler(new WebSocketing.IListener() {
+            @Override
+            public void onException(Throwable ex) {
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeLayout.setRefreshing(false);
+                        drawerManager.updateBadge(-1);
+                    }
+                });
+
+                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.noCommunication)
+                        .setCancelable(false)
+                        .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))
+                        .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                recreate();
+                            }
+                        })
+                        .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                finish();
+                            }
+                        })
+                        .setNeutralButton(R.string.changeProfile, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                drawerManager.openProfiles(true);
+                            }
+                        }));
+            }
+
+            @Override
+            public void onDisconnected() {
+                UpdateUI.stop(updateUI);
+
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeLayout.setRefreshing(false);
+                        drawerManager.openProfiles(true);
+                        drawerManager.updateBadge(-1);
+                    }
+                });
+            }
+        });
+
         loadingHandler = new LoadDownloads.ILoading() {
             @Override
             public void onStarted() {
-                if (!shouldReport.get()) return;
-
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -401,8 +440,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLoaded(JTA2 jta2, final List<Download> downloads) {
-                if (!shouldReport.get()) return;
-
                 adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActions() {
                     @Override
                     public void onMoreClick(Download item) {
@@ -608,8 +645,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onException(boolean queuing, final Exception ex) {
-                if (!shouldReport.get()) return;
-
                 if (queuing) {
                     WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
                         @Override
@@ -620,29 +655,6 @@ public class MainActivity extends AppCompatActivity {
                     });
                     return;
                 }
-
-                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.noCommunication)
-                        .setCancelable(false)
-                        .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))
-                        .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                recreate();
-                            }
-                        })
-                        .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                System.exit(0);
-                            }
-                        })
-                        .setNeutralButton(R.string.changeProfile, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                drawerManager.openProfiles(true);
-                            }
-                        }));
 
                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
                     @Override

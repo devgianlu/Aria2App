@@ -483,6 +483,7 @@ public class Utils {
     }
 
     public static class ToastMessages {
+        public static final CommonUtils.ToastMessage WS_DISCONNECTED = new CommonUtils.ToastMessage("WebSocket disconnected!", true);
         public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
         public static final CommonUtils.ToastMessage FAILED_GATHERING_INFORMATION = new CommonUtils.ToastMessage("Failed on gathering information!", true);
         public static final CommonUtils.ToastMessage PAUSED = new CommonUtils.ToastMessage("Download paused.", false);
