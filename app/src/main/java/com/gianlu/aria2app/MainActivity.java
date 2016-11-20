@@ -66,6 +66,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+// TODO: Remove "getSystemService(LAYOUT_INFLATER_MANAGER)"
 // TODO: Better error message (dialog one) or add a "See log" button
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mainRecyclerView;

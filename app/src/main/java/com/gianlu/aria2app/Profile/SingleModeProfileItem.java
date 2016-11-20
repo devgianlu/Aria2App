@@ -69,7 +69,7 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         return profile;
     }
 
-    public static SingleModeProfileItem fromFields(String profileName, CheckBox enableNotifications, AddProfileActivity.SingleModeViewHolder sViewHolder) {
+    static SingleModeProfileItem fromFields(String profileName, CheckBox enableNotifications, AddProfileActivity.SingleModeViewHolder sViewHolder) {
         SingleModeProfileItem profile = new SingleModeProfileItem();
 
         profile.profileName = profileName;
@@ -101,7 +101,7 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         return profile;
     }
 
-    public static SingleModeProfileItem fromFields(EditText profileName, CheckBox enableNotifications, AddProfileActivity.SingleModeViewHolder sViewHolder) {
+    static SingleModeProfileItem fromFields(EditText profileName, CheckBox enableNotifications, AddProfileActivity.SingleModeViewHolder sViewHolder) {
         return fromFields(profileName.getText().toString().trim(), enableNotifications, sViewHolder);
     }
 
@@ -160,11 +160,11 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         return fromJSON(fileName, builder.toString());
     }
 
-    public void setGlobalProfileName(String globalProfileName) {
+    void setGlobalProfileName(String globalProfileName) {
         this.globalProfileName = globalProfileName;
     }
 
-    public String getProfileName() {
+    String getProfileName() {
         if (profileName == null) return globalProfileName;
         return profileName;
     }
