@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
@@ -475,6 +476,31 @@ public class Utils {
             jta2.getGlobalOption(optionHandler);
         } else {
             jta2.getOption(gid, optionHandler);
+        }
+    }
+
+    public static void sendEmail(Activity activity) {
+        String version;
+        try {
+            version = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException ex) {
+            version = activity.getString(R.string.unknown);
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SEND)
+                .setType("message/rfc822")
+                .putExtra(Intent.EXTRA_EMAIL, new String[]{activity.getString(R.string.email)})
+                .putExtra(Intent.EXTRA_SUBJECT, "Aria2App")
+                .putExtra(Intent.EXTRA_TEXT, "OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")" +
+                        "\nOS API Level: " + android.os.Build.VERSION.SDK_INT +
+                        "\nDevice: " + android.os.Build.DEVICE +
+                        "\nModel (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")" +
+                        "\nApplication version: " + version);
+
+        try {
+            activity.startActivity(Intent.createChooser(intent, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            CommonUtils.UIToast(activity, Utils.ToastMessages.NO_EMAIL_CLIENT);
         }
     }
 

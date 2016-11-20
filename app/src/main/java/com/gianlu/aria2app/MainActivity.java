@@ -138,19 +138,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                                 return false;
                             case SUPPORT:
-                                Intent i = new Intent(Intent.ACTION_SEND);
-                                i.setType("message/rfc822");
-                                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email)});
-                                i.putExtra(Intent.EXTRA_SUBJECT, "Aria2App");
-                                i.putExtra(Intent.EXTRA_TEXT, "OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")" +
-                                        "\nOS API Level: " + android.os.Build.VERSION.SDK_INT +
-                                        "\nDevice: " + android.os.Build.DEVICE +
-                                        "\nModel (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")");
-                                try {
-                                    startActivity(Intent.createChooser(i, "Send mail to the developer..."));
-                                } catch (android.content.ActivityNotFoundException ex) {
-                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.NO_EMAIL_CLIENT);
-                                }
+                                Utils.sendEmail(MainActivity.this);
                                 return true;
                             case ABOUT_ARIA2:
                                 final JTA2 jta2;

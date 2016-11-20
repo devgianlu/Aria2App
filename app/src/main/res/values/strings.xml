@@ -88,7 +88,7 @@
     <string name="pickFromFile">Pick from file</string>
     <string name="magnetURI_help">If you want to add a magnet link go to the URI section.</string>
     <string name="noCommunication">Cannot connect</string>
-    <string name="noCommunication_message">%s.\nPlease check your configuration or contact me.</string>
+    <string name="noCommunication_message">%s.\nPlease check your configuration or contact me at altomanigianluca@gmail.com</string>
     <string name="filters">Filters</string>
     <string name="method" translatable="false">Method:</string>
     <string name="jsonrpc" translatable="false">JSONRPC:</string>

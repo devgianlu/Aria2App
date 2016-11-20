@@ -74,19 +74,7 @@ public class PreferencesActivity extends PreferenceActivity {
         findPreference("email").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email)});
-                i.putExtra(Intent.EXTRA_SUBJECT, "Aria2App");
-                i.putExtra(Intent.EXTRA_TEXT, "OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")" +
-                        "\nOS API Level: " + android.os.Build.VERSION.SDK_INT +
-                        "\nDevice: " + android.os.Build.DEVICE +
-                        "\nModel (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")");
-                try {
-                    startActivity(Intent.createChooser(i, "Send mail to the developer..."));
-                } catch (android.content.ActivityNotFoundException ex) {
-                    CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.NO_EMAIL_CLIENT);
-                }
+                Utils.sendEmail(PreferencesActivity.this);
                 return true;
             }
         });
