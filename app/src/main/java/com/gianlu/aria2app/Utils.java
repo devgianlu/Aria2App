@@ -479,7 +479,7 @@ public class Utils {
         }
     }
 
-    public static void sendEmail(Activity activity) {
+    static void sendEmail(Activity activity) {
         String version;
         try {
             version = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
