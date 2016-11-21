@@ -7,8 +7,8 @@ public class Option {
     public final String value;
 
     public String newValue;
-    public boolean isQuick;
     public boolean useMe;
+    boolean isQuick;
 
     public Option(String longName, String value, boolean isQuick) {
         this.longName = longName;

@@ -186,29 +186,6 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         return objs.size();
     }
 
-    private class CustomTextWatcher implements TextWatcher {
-        private final String longName;
-
-        public CustomTextWatcher(String longName) {
-            this.longName = longName;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-
-        }
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         final TextView longName;
         final TextView currValue;
