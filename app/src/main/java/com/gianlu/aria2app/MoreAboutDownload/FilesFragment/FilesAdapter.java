@@ -295,7 +295,7 @@ public class FilesAdapter {
         final BaseDownloadTask downloadTask = FileDownloader.getImpl().create(remoteURL.toString());
         downloadTask.setPath(localPath.getAbsolutePath())
                 .setCallbackProgressMinInterval(1000)
-                .setListener(new FileDownloadListener(context));
+                .setListener(new FileDownloadListener(context, file, downloadTask));
 
         if (dd.auth)
             downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
@@ -336,7 +336,7 @@ public class FilesAdapter {
         }
     }
 
-    public void onUpdate(final List<File> files) {
+    void onUpdate(final List<File> files) {
         if (files == null) return;
 
         for (File _file : files) {

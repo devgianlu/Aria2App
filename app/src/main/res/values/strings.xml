@@ -30,6 +30,8 @@
     <string name="path" translatable="false"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
+    <string name="localPath"><![CDATA[<b>Local path:</b>]]> %s</string>
+    <string name="url"><![CDATA[<b>URL:</b>]]> %s</string>
     <string name="selectFile">Select file</string>
     <string name="selectFileNotPaused">Select file (available only when download is paused)</string>
     <string name="selectFileNotTorrent">Select file (available only on BitTorrent downloads)</string>
@@ -228,6 +230,10 @@
     <string name="fileName">File name:</string>
     <string name="fileName_help">The following path is added to the path of the \'dir\' option. Leave empty to let aria2 choose.</string>
     <string name="options_help">Only selected options are going to be included. To select an option click on the label icon.</string>
+    <string name="background">Background</string>
+    <string name="starting">Starting</string>
+    <string name="connecting">Connecting</string>
+    <string name="downloading">Downloading</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">
