@@ -116,6 +116,7 @@ public class TerminalActivity extends AppCompatActivity {
             WebSocketRequester.getInstance(this);
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
             CommonUtils.UIToast(TerminalActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
+            return;
         }
 
         try {
@@ -138,7 +139,7 @@ public class TerminalActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.terminal, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -157,7 +158,7 @@ public class TerminalActivity extends AppCompatActivity {
                 onBackPressed();
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private AlertDialog.Builder createNewRequestDialog(@Nullable String obj) {
@@ -197,7 +198,6 @@ public class TerminalActivity extends AppCompatActivity {
                 }
             }
         };
-
         id.addTextChangedListener(watcher);
         jsonrpc.addTextChangedListener(watcher);
         method.addTextChangedListener(watcher);

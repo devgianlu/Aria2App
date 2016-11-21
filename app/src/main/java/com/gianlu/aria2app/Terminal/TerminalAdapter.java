@@ -31,9 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public class TerminalAdapter extends RecyclerView.Adapter<TerminalAdapter.ViewHolder> {
+    private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSSS", Locale.getDefault());
     private final Activity context;
     private final IAdapter handler;
-    private final SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss.SSSS", Locale.getDefault());
     private final List<TerminalItem> objs;
 
     public TerminalAdapter(Activity context, IAdapter handler) {

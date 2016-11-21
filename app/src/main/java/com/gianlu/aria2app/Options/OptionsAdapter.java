@@ -83,7 +83,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Option item = getRealItem(getItem(position).longName);
+        final Option item = getRealItem(getItem(holder.getAdapterPosition()).longName);
         if (item == null)
             return;
 
@@ -108,6 +108,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             @Override
             public void afterTextChanged(Editable editable) {
                 item.newValue = editable.toString();
+
+                System.out.println(item);
             }
         });
 
@@ -184,6 +186,29 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         return objs.size();
     }
 
+    private class CustomTextWatcher implements TextWatcher {
+        private final String longName;
+
+        public CustomTextWatcher(String longName) {
+            this.longName = longName;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         final TextView longName;
         final TextView currValue;
@@ -197,6 +222,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         ViewHolder(View rootView) {
             super(rootView);
 
+            setIsRecyclable(false);
             longName = (TextView) rootView.findViewById(R.id.optionItem_longName);
             currValue = (TextView) rootView.findViewById(R.id.optionItem_value);
             expand = (ImageButton) rootView.findViewById(R.id.optionItem_expand);
