@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
+import com.gianlu.aria2app.Profile.DirectDownload;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
@@ -52,6 +53,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -496,12 +501,50 @@ public class Utils {
                         "\nDevice: " + android.os.Build.DEVICE +
                         "\nModel (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")" +
                         "\nApplication version: " + version);
-
         try {
             activity.startActivity(Intent.createChooser(intent, "Send mail..."));
         } catch (android.content.ActivityNotFoundException ex) {
             CommonUtils.UIToast(activity, Utils.ToastMessages.NO_EMAIL_CLIENT);
         }
+    }
+
+    @Nullable
+    public static URL createDownloadRemoteURL(Context context, String downloadDir, com.gianlu.aria2app.NetIO.JTA2.File file) {
+        final DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
+
+        final URL url;
+        try {
+            URL base = dd.getURLAddress();
+            URI uri = new URI(base.getProtocol(), null, base.getHost(), base.getPort(), file.getRelativePath(downloadDir), null, null);
+            url = uri.toURL();
+        } catch (MalformedURLException | URISyntaxException ex) {
+            CommonUtils.logMe(context, ex);
+            return null;
+        }
+
+        return url;
+    }
+
+    public static File createDownloadLocalPath(File parent, String filename) {
+        File ioFile = new File(parent, filename);
+
+        int c = 1;
+        while (ioFile.exists()) {
+            String[] split = filename.split("\\.");
+
+            String newName;
+            if (split.length == 1) {
+                newName = filename + "." + c;
+            } else {
+                String ext = split[split.length - 1];
+                newName = filename.substring(0, filename.length() - ext.length() - 1) + "." + c + "." + ext;
+            }
+
+            ioFile = new File(parent, newName);
+            c++;
+        }
+
+        return ioFile;
     }
 
     interface IOptionsDialog {
@@ -517,6 +560,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage WRITE_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot download. You denied the write permission!", false);
         public static final CommonUtils.ToastMessage REMOVED_RESULT = new CommonUtils.ToastMessage("Download result removed.", false);
         public static final CommonUtils.ToastMessage MOVED = new CommonUtils.ToastMessage("Download moved.", false);
+        public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_FILE = new CommonUtils.ToastMessage("Failed downloading file!", true);
         public static final CommonUtils.ToastMessage FAILED_CONNECTION_BILLING_SERVICE = new CommonUtils.ToastMessage("Failed to connect to the billing service!", true);
         public static final CommonUtils.ToastMessage FAILED_BUYING_ITEM = new CommonUtils.ToastMessage("Failed to buy this item! Please contact me.", true);
         public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed.", false);

@@ -33,9 +33,9 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
@@ -168,11 +168,10 @@ public class AddProfileActivity extends AppCompatActivity {
                     createMulti();
                 break;
             case R.id.addProfileMenu_delete:
-                if (Analytics.isTrackingAllowed(this))
-                    Analytics.getDefaultTracker(getApplication()).send(new HitBuilders.EventBuilder()
-                            .setCategory(Analytics.CATEGORY_USER_INPUT)
-                            .setAction(Analytics.ACTION_DELETE_PROFILE)
-                            .build());
+                ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                        .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                        .setAction(ThisApplication.ACTION_DELETE_PROFILE)
+                        .build());
 
                 deleteFile(oldFileName);
                 onBackPressed();
@@ -583,12 +582,11 @@ public class AddProfileActivity extends AppCompatActivity {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
         }
 
-        if (Analytics.isTrackingAllowed(this))
-            Analytics.getDefaultTracker(this.getApplication()).send(new HitBuilders.EventBuilder()
-                    .setCategory(Analytics.CATEGORY_USER_INPUT)
-                    .setAction(Analytics.ACTION_NEW_PROFILE)
-                    .setLabel("Single profile")
-                    .build());
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_NEW_PROFILE)
+                .setLabel("Single profile")
+                .build());
 
         onBackPressed();
     }
@@ -648,13 +646,12 @@ public class AddProfileActivity extends AppCompatActivity {
             CommonUtils.UIToast(this, Utils.ToastMessages.FATAL_EXCEPTION, ex);
         }
 
-        if (Analytics.isTrackingAllowed(this))
-            Analytics.getDefaultTracker(this.getApplication()).send(new HitBuilders.EventBuilder()
-                    .setCategory(Analytics.CATEGORY_USER_INPUT)
-                    .setAction(Analytics.ACTION_NEW_PROFILE)
-                    .setLabel("Multi profile")
-                    .setValue(mProfiles.size())
-                    .build());
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_NEW_PROFILE)
+                .setLabel("Multi profile")
+                .setValue(mProfiles.size())
+                .build());
 
         onBackPressed();
     }

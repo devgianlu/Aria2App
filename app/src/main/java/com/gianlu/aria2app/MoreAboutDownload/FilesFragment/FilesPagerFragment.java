@@ -49,7 +49,7 @@ public class FilesPagerFragment extends CommonFragment {
                 public void onFiles(final List<File> files) {
                     FilesAdapter.setupAsync(getActivity(), getArguments().getString("gid"), Tree.newTree().addElements(files), new FilesAdapter.IAsync() {
                         @Override
-                        public void onSetup(final Tree tree, final LinearLayout view) {
+                        public void onSetup(final FilesAdapter adapter, final LinearLayout view) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -57,7 +57,7 @@ public class FilesPagerFragment extends CommonFragment {
                                     scrollView.removeAllViews();
                                     scrollView.addView(view);
 
-                                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), new FilesAdapter(tree, view));
+                                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), adapter);
                                     new Thread(updateUI).start();
                                 }
                             });

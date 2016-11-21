@@ -20,12 +20,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
@@ -232,10 +232,9 @@ public class AddURIActivity extends AppCompatActivity {
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);
 
-        if (Analytics.isTrackingAllowed(this))
-            Analytics.getDefaultTracker(this.getApplication()).send(new HitBuilders.EventBuilder()
-                    .setCategory(Analytics.CATEGORY_USER_INPUT)
-                    .setAction(Analytics.ACTION_NEW_URI).build());
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_NEW_URI).build());
 
         final JTA2 jta2;
         try {

@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
@@ -112,10 +111,9 @@ public class MainActivity extends AppCompatActivity {
                                         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
                                         CommonUtils.showDialog(MainActivity.this, pd);
 
-                                        if (Analytics.isTrackingAllowed(MainActivity.this))
-                                            Analytics.getDefaultTracker(getApplication()).send(new HitBuilders.EventBuilder()
-                                                    .setCategory(Analytics.CATEGORY_USER_INPUT)
-                                                    .setAction(Analytics.ACTION_CHANGED_GLOBAL_OPTIONS)
+                                        ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
+                                                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                                                .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
                                                     .build());
 
                                         jta2.changeGlobalOption(options, new JTA2.ISuccess() {

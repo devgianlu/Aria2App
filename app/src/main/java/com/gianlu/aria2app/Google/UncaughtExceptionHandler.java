@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Google;
 
 import com.gianlu.aria2app.BuildConfig;
+import com.gianlu.aria2app.ThisApplication;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -13,11 +14,10 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         if (BuildConfig.DEBUG) {
             throwable.printStackTrace();
         } else {
-            Tracker tracker = Analytics.getTracker();
-
             StringWriter writer = new StringWriter();
             throwable.printStackTrace(new PrintWriter(writer));
 
+            Tracker tracker = ThisApplication.tracker;
             if (tracker != null)
                 tracker.send(new HitBuilders.ExceptionBuilder()
                         .setDescription(writer.toString())

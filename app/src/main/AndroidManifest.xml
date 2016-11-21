@@ -17,6 +17,7 @@
     <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
+        android:name=".ThisApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -74,11 +75,6 @@
         <!-- Notification service -->
         <service
             android:name=".Services.NotificationService"
-            android:exported="false" />
-
-        <!-- Download service -->
-        <service
-            android:name=".Services.DownloadService"
             android:exported="false" />
 
         <!-- Google Analytics -->

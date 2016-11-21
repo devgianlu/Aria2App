@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.FilesPagerFragment;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.InfoPagerFragment;
@@ -40,10 +39,9 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MoreAboutDownloadActivity.this, R.string.gathering_information);
             CommonUtils.showDialog(MoreAboutDownloadActivity.this, pd);
 
-            if (Analytics.isTrackingAllowed(MoreAboutDownloadActivity.this))
-                Analytics.getDefaultTracker(MoreAboutDownloadActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
-                        .setCategory(Analytics.CATEGORY_USER_INPUT)
-                        .setAction(Analytics.ACTION_CHANGED_DOWNLOAD_OPTIONS)
+            ThisApplication.sendAnalytics(MoreAboutDownloadActivity.this, new HitBuilders.EventBuilder()
+                    .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                    .setAction(ThisApplication.ACTION_CHANGED_DOWNLOAD_OPTIONS)
                         .build());
 
             jta2.changeOption(gid, options, new JTA2.ISuccess() {

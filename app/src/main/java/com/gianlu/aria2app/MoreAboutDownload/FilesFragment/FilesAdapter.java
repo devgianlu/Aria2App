@@ -1,15 +1,19 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
-import android.annotation.SuppressLint;
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.ArrayMap;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +28,17 @@ import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.Profile.DirectDownload;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.gms.analytics.HitBuilders;
+import com.liulishuo.filedownloader.BaseDownloadTask;
+import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -36,13 +46,16 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class FilesAdapter {
     public static String dir;
+    private final Activity context;
     private final Tree tree;
     private final LinearLayout view;
 
-    FilesAdapter(final Tree tree, final LinearLayout view) {
+    private FilesAdapter(Activity context, final Tree tree, final LinearLayout view) {
+        this.context = context;
         this.tree = tree;
         this.view = view;
     }
@@ -54,16 +67,16 @@ public class FilesAdapter {
                 LinearLayout view = new LinearLayout(context);
                 view.setOrientation(LinearLayout.VERTICAL);
 
-                setupViews(context, gid, tree.getCommonRoot());
-                populateDirectory(view, tree.getCommonRoot(), 1);
+                FilesAdapter adapter = new FilesAdapter(context, tree, view);
+                adapter.setupViews(gid, tree.getCommonRoot());
+                adapter.populateDirectory(view, tree.getCommonRoot(), 1);
 
-                handler.onSetup(tree, view);
+                handler.onSetup(adapter, view);
             }
         }).start();
     }
 
-    @SuppressLint("InflateParams")
-    private static void setupViews(final Activity context, final String gid, TreeDirectory parent) {
+    private void setupViews(final String gid, TreeDirectory parent) {
         if (parent == null) return;
 
         for (TreeDirectory child : parent.getChildren()) {
@@ -71,7 +84,7 @@ public class FilesAdapter {
             holder.name.setText(child.getName());
             child.viewHolder = holder;
 
-            setupViews(context, gid, child);
+            setupViews(gid, child);
         }
 
         for (final TreeFile file : parent.getFiles()) {
@@ -224,7 +237,34 @@ public class FilesAdapter {
                             .setTitle(file.file.getName());
 
                     if (CurrentProfile.getCurrentProfile(context).directDownloadEnabled && dir != null) {
-                        builder.setNeutralButton(R.string.downloadFile, new DownloadFileListener(context, file.file, dir));
+                        builder.setNeutralButton(R.string.downloadFile, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    CommonUtils.UIToast(context, Utils.ToastMessages.WRITE_STORAGE_DENIED);
+                                    return;
+                                }
+
+                                if (Objects.equals(file.file.completedLength, file.file.length)) {
+                                    startDownload(file.file);
+                                } else {
+                                    CommonUtils.showDialog(context, new AlertDialog.Builder(context)
+                                            .setTitle(R.string.downloadIncomplete)
+                                            .setMessage(R.string.downloadIncompleteMessage)
+                                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            })
+                                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    startDownload(file.file);
+                                                }
+                                            }));
+                                }
+                            }
+                        });
                     }
 
                     CommonUtils.showDialog(context, builder);
@@ -235,7 +275,35 @@ public class FilesAdapter {
         }
     }
 
-    private static void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
+    private void startDownload(File file) {
+        ThisApplication.sendAnalytics(context, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
+                .build());
+
+        // TODO: Custom download path
+        java.io.File localPath = Utils.createDownloadLocalPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), file.getName());
+        URL remoteURL = Utils.createDownloadRemoteURL(context, dir, file);
+
+        if (remoteURL == null) {
+            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_DOWNLOAD_FILE, new NullPointerException("Null remote URL"));
+            return;
+        }
+
+        DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
+
+        final BaseDownloadTask downloadTask = FileDownloader.getImpl().create(remoteURL.toString());
+        downloadTask.setPath(localPath.getAbsolutePath())
+                .setCallbackProgressMinInterval(1000)
+                .setListener(new FileDownloadListener(context));
+
+        if (dd.auth)
+            downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+
+        downloadTask.start();
+    }
+
+    private void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
         if (parentNode == null) return;
 
         for (final TreeDirectory subDir : parentNode.getChildren()) {
@@ -268,7 +336,6 @@ public class FilesAdapter {
         }
     }
 
-    @SuppressLint("InflateParams")
     public void onUpdate(final List<File> files) {
         if (files == null) return;
 
@@ -298,6 +365,6 @@ public class FilesAdapter {
     }
 
     interface IAsync {
-        void onSetup(Tree tree, LinearLayout view);
+        void onSetup(FilesAdapter adapter, LinearLayout view);
     }
 }

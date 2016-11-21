@@ -1,16 +1,18 @@
-package com.gianlu.aria2app.Google;
+package com.gianlu.aria2app;
 
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.BuildConfig;
-import com.gianlu.aria2app.R;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.liulishuo.filedownloader.FileDownloader;
 
-public class Analytics {
+import java.util.Map;
+
+public class ThisApplication extends Application {
     public static final String CATEGORY_USER_INPUT = "User input";
     public static final String ACTION_DOWNLOAD_FILE = "Download file";
     public static final String ACTION_NEW_PROFILE = "New profile";
@@ -23,9 +25,10 @@ public class Analytics {
     public static final String ACTION_DONATE_OPEN = "Opened donation dialog";
     public static final String ACTION_TERMINAL_BASIC = "Sent command in basic mode";
     public static final String ACTION_TERMINAL_ADV = "Sent command in advanced mode";
-    private static Tracker tracker;
+    public static Tracker tracker;
 
-    public static Tracker getDefaultTracker(Application application) {
+    @NonNull
+    public static Tracker getTracker(Application application) {
         if (tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(application.getApplicationContext());
             analytics.enableAutoActivityReports(application);
@@ -37,12 +40,17 @@ public class Analytics {
         return tracker;
     }
 
-    @Nullable
-    static Tracker getTracker() {
-        return tracker;
+    public static void sendAnalytics(Context context, @Nullable Map<String, String> map) {
+        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false) && !BuildConfig.DEBUG)
+            if (tracker != null)
+                tracker.send(map);
     }
 
-    public static boolean isTrackingAllowed(Context context) {
-        return !PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false) && !BuildConfig.DEBUG;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        FileDownloader.init(getApplicationContext());
+        tracker = getTracker(this);
     }
 }

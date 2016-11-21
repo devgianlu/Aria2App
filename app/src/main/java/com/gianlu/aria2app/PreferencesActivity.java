@@ -17,7 +17,6 @@ import android.preference.PreferenceActivity;
 import android.support.v7.app.AlertDialog;
 
 import com.android.vending.billing.IInAppBillingService;
-import com.gianlu.aria2app.Google.Analytics;
 import com.gianlu.aria2app.Google.Billing.Billing;
 import com.gianlu.aria2app.Google.Billing.Product;
 import com.gianlu.aria2app.Google.Billing.ProductAdapter;
@@ -190,10 +189,9 @@ public class PreferencesActivity extends PreferenceActivity {
                             }
                         }));
 
-                if (Analytics.isTrackingAllowed(PreferencesActivity.this))
-                    Analytics.getDefaultTracker(PreferencesActivity.this.getApplication()).send(new HitBuilders.EventBuilder()
-                            .setCategory(Analytics.CATEGORY_USER_INPUT)
-                            .setAction(Analytics.ACTION_DONATE_OPEN)
+                ThisApplication.sendAnalytics(PreferencesActivity.this, new HitBuilders.EventBuilder()
+                        .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                        .setAction(ThisApplication.ACTION_DONATE_OPEN)
                             .build());
             }
 
