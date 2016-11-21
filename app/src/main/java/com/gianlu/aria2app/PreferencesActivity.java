@@ -134,10 +134,9 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void donate() {
-        if (billingService == null) {
-            CommonUtils.showDialog(this, pd);
+        CommonUtils.showDialog(this, pd);
+        if (billingService == null)
             return;
-        }
 
         Billing.requestProductsDetails(this, billingService, new Billing.IRequestProductDetails() {
             @Override
