@@ -228,6 +228,8 @@
     <string name="apacheLicense">Licensed under Apache License 2.0</string>
     <string name="fileDownloader_details">Copyright 2015 LingoChamp Inc.</string>
     <string name="quickGlobalOptions">Quick global options</string>
+    <string name="dd_downloadPath">Download path</string>
+    <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

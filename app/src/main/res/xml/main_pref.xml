@@ -66,6 +66,13 @@
             android:title="@string/enablePersistent" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/directDownload">
+        <EditTextPreference
+            android:key="dd_downloadPath"
+            android:summary="@string/dd_downloadPath_summary"
+            android:title="@string/dd_downloadPath" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/others">
         <CheckBoxPreference
             android:defaultValue="true"

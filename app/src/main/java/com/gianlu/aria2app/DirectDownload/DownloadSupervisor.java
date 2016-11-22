@@ -39,4 +39,12 @@ public class DownloadSupervisor {
         downloadTask.start();
         ids.add(downloadTask.getId());
     }
+
+    public List<Integer> getDownloads() {
+        return ids;
+    }
+
+    public void remove(int id) {
+        ids.remove(id);
+    }
 }

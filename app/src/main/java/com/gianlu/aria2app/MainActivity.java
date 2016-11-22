@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
 
         CommonUtils.DEBUG = BuildConfig.DEBUG;
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (sharedPreferences.getString("dd_downloadPath", null) == null) {
+            sharedPreferences.edit()
+                    .putString("dd_downloadPath", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())
+                    .apply();
+        }
 
         CommonUtils.logCleaner(this);
         Utils.renameOldProfiles(this);
@@ -280,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
 
         UpdateUI.stop(updateUI);
 
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
 

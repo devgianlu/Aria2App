@@ -562,7 +562,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed.", false);
         public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted.", false);
         public static final CommonUtils.ToastMessage DOWNLOAD_ADDED = new CommonUtils.ToastMessage("Download added.", false);
-        public static final CommonUtils.ToastMessage DO_NOT_CLOSE_APP = new CommonUtils.ToastMessage("Do not remove the application from the recent tasks or the download will stop.", false);
         public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("AFile selected/deselected.", false);
         public static final CommonUtils.ToastMessage SESSION_SAVED = new CommonUtils.ToastMessage("Session saved correctly.", false);
         public static final CommonUtils.ToastMessage FAILED_SAVE_SESSION = new CommonUtils.ToastMessage("Failed saving current session!", true);
@@ -575,7 +574,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_REMOVE_RESULT = new CommonUtils.ToastMessage("Failed to remove download's result!", true);
         public static final CommonUtils.ToastMessage NO_URIS = new CommonUtils.ToastMessage("Insert at least one URI!", false);
         public static final CommonUtils.ToastMessage FAILED_ADD_DOWNLOAD = new CommonUtils.ToastMessage("Failed to add new download!", true);
-        public static final CommonUtils.ToastMessage CANNOT_DELETE_FILE = new CommonUtils.ToastMessage("Cannot delete partial file!", false);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_OPTIONS = new CommonUtils.ToastMessage("Failed to change options for download!", true);
         public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_POSITION = new CommonUtils.ToastMessage("Failed changing download's queue position!", true);
@@ -599,6 +597,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_ADDR = new CommonUtils.ToastMessage("Invalid DirectDownload's server address!", false);
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_USERORPASSWD = new CommonUtils.ToastMessage("Invalid DirectDownload's username or password!", false);
         public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
+        public static final CommonUtils.ToastMessage INVALID_DOWNLOAD_PATH = new CommonUtils.ToastMessage("Invalid download path.", false);
         public static final CommonUtils.ToastMessage PURCHASING_CANCELED = new CommonUtils.ToastMessage("The purchase has been canceled.", false);
         public static final CommonUtils.ToastMessage BILLING_USER_CANCELLED = new CommonUtils.ToastMessage("You cancelled the operation.", false);
         public static final CommonUtils.ToastMessage THANK_YOU = new CommonUtils.ToastMessage("Thank you!", false);

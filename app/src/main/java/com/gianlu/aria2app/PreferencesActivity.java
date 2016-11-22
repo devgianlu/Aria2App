@@ -27,6 +27,7 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -113,6 +114,18 @@ public class PreferencesActivity extends PreferenceActivity {
                         .setTitle("MPAndroidChart")
                         .setMessage(R.string.mpAndroidChart_details));
                 return true;
+            }
+        });
+
+        findPreference("dd_downloadPath").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                File path = new File((String) o);
+                if (!path.exists() || !path.isDirectory()) {
+                    CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.INVALID_DOWNLOAD_PATH, (String) o);
+                }
+
+                return false;
             }
         });
 

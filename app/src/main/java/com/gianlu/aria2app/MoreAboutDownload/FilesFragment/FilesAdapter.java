@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
@@ -279,12 +280,23 @@ public class FilesAdapter {
                 .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
                 .build());
 
-        // TODO: Custom download path
-        File localPath = Utils.createDownloadLocalPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), file.getName());
-        URL remoteURL = Utils.createDownloadRemoteURL(context, dir, file);
+        String downloadPath = PreferenceManager.getDefaultSharedPreferences(context).getString("dd_downloadPath", null);
+        File localPath;
+        if (downloadPath == null) {
+            localPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        } else {
+            File path = new File(downloadPath);
+            if (path.exists() && path.isDirectory()) {
+                localPath = Utils.createDownloadLocalPath(path, file.getName());
+            } else {
+                CommonUtils.UIToast(context, Utils.ToastMessages.INVALID_DOWNLOAD_PATH, path.getAbsolutePath());
+                return;
+            }
+        }
 
+        URL remoteURL = Utils.createDownloadRemoteURL(context, dir, file);
         if (remoteURL == null) {
-            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_DOWNLOAD_FILE, new NullPointerException("Null remote URL"));
+            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_DOWNLOAD_FILE, new NullPointerException("Remote URL is null"));
             return;
         }
 
