@@ -211,8 +211,18 @@ public class DrawerManager {
         return view;
     }
 
-    public void updateBadge(int num) {
-        View view = drawerList.getChildAt(0);
+    public void updateBadge(DrawerListItems item, int num) {
+        View view;
+        switch (item) {
+            case HOME:
+                view = drawerList.getChildAt(0);
+                break;
+            case DIRECT_DOWNLOAD:
+                view = drawerList.getChildAt(5);
+                break;
+            default:
+                return;
+        }
 
         if (num == -1) {
             view.findViewById(R.id.materialDrawer_itemBadgeContainer).setVisibility(View.GONE);
@@ -243,7 +253,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.TERMINAL));
             }
         });
-        drawerList.addView(terminal);
+        drawerList.addView(terminal, 1);
 
         View globalOptions = newItem(R.drawable.ic_list_black_48dp, context.getString(R.string.menu_globalOptions), true);
         globalOptions.setOnClickListener(new View.OnClickListener() {
@@ -253,7 +263,17 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.GLOBAL_OPTIONS));
             }
         });
-        drawerList.addView(globalOptions);
+        drawerList.addView(globalOptions, 2);
+
+        View quickOptions = newItem(R.drawable.ic_list_favourite_white_48px, context.getString(R.string.menu_downloadQuickOptions), true); // TODO: Icon color
+        quickOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null)
+                    setDrawerState(false, listener.onListItemSelected(DrawerListItems.QUICK_OPTIONS));
+            }
+        });
+        drawerList.addView(quickOptions, 3);
 
         View aboutAria2 = newItem(R.drawable.ic_cloud_black_48dp, context.getString(R.string.about_aria2), true);
         aboutAria2.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +283,17 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.ABOUT_ARIA2));
             }
         });
-        drawerList.addView(aboutAria2);
+        drawerList.addView(aboutAria2, 4);
+
+        View directDownload = newItem(R.drawable.ic_cloud_download_black_48dp, context.getString(R.string.directDownload), true, 0, -1, -1);
+        directDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null)
+                    setDrawerState(false, listener.onListItemSelected(DrawerListItems.DIRECT_DOWNLOAD));
+            }
+        });
+        drawerList.addView(directDownload, 5);
 
         // Footer group
         drawerFooterList.removeAllViews();
@@ -527,7 +557,8 @@ public class DrawerManager {
         GLOBAL_OPTIONS,
         ABOUT_ARIA2,
         PREFERENCES,
-        SUPPORT
+        DIRECT_DOWNLOAD,
+        QUICK_OPTIONS, SUPPORT
     }
 
     public interface IDrawerListener {

@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
+package com.gianlu.aria2app.DirectDownload;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -19,14 +19,14 @@ import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 
 import java.util.Locale;
 
-class FileDownloadListener extends FileDownloadLargeFileListener {
+public class FileDownloadListener extends FileDownloadLargeFileListener {
     private final Activity context;
     private final ViewHolder holder;
     private long lastProgressTime = System.currentTimeMillis() / 1000;
     private long lastProgressSoFarBytes = 0;
 
     @SuppressWarnings("deprecation")
-    FileDownloadListener(final Activity context, File file, final BaseDownloadTask task) {
+    public FileDownloadListener(final Activity context, File file, final BaseDownloadTask task) {
         this.context = context;
         this.holder = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.downloading_dialog, null, false));
 
@@ -42,7 +42,7 @@ class FileDownloadListener extends FileDownloadLargeFileListener {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         CommonUtils.UIToast(context, Utils.ToastMessages.DO_NOT_CLOSE_APP);
-                        // TODO
+                        // TODO: Background
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

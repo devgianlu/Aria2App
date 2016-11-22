@@ -99,9 +99,15 @@ public class MainActivity extends AppCompatActivity {
                             case HOME:
                                 reloadPage();
                                 return true;
+                            case DIRECT_DOWNLOAD:
+                                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
+                                return false;
                             case TERMINAL:
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
                                 return false;
+                            case QUICK_OPTIONS:
+                                // TODO: Global quick options
+                                return true;
                             case GLOBAL_OPTIONS:
                                 Utils.showOptionsDialog(MainActivity.this, new Utils.IOptionsDialog() {
                                     @Override
@@ -370,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         swipeLayout.setRefreshing(false);
-                        drawerManager.updateBadge(-1);
+                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
                     }
                 });
 
@@ -407,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         swipeLayout.setRefreshing(false);
                         drawerManager.openProfiles(true);
-                        drawerManager.updateBadge(-1);
+                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
                     }
                 });
             }
@@ -561,7 +567,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mainRecyclerView.setAdapter(adapter);
-                        drawerManager.updateBadge(downloads.size());
+                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, downloads.size());
 
                         updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
                         new Thread(updateUI).start();
@@ -646,7 +652,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         swipeLayout.setRefreshing(false);
-                        drawerManager.updateBadge(-1);
+                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
                     }
                 });
             }

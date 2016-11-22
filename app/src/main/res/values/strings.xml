@@ -234,6 +234,7 @@
     <string name="starting">Starting</string>
     <string name="connecting">Connecting</string>
     <string name="downloading">Downloading</string>
+    <string name="directDownload">DirectDownload</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

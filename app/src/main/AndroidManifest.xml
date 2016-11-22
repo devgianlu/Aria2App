@@ -42,6 +42,12 @@
             </intent-filter>
         </activity>
 
+        <!-- DirectDownload activity -->
+        <activity
+            android:name=".DirectDownloadActivity"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden" />
+
         <!-- Add download activities -->
         <activity
             android:name=".Main.AddTorrentActivity"
@@ -86,9 +92,11 @@
                 <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
+
         <service
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
             android:exported="false" />
     </application>
+
 </manifest>
