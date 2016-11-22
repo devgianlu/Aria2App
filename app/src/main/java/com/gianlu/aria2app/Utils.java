@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
@@ -337,11 +337,7 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
-    static void showOptionsDialog(@NonNull final Activity context, IOptionsDialog handler) {
-        showOptionsDialog(context, null, R.array.globalOptions, false, false, handler);
-    }
-
-    static void showOptionsDialog(@NonNull final Activity context, String gid, @ArrayRes final int allowedOptions, final boolean quickOptionsFilter, final boolean showHearts, final IOptionsDialog handler) {
+    static void showOptionsDialog(@NonNull final Activity context, String gid, final boolean global, final boolean isQuick, final IOptionsDialog handler) {
         final JTA2 jta2;
         try {
             jta2 = JTA2.newInstance(context);
@@ -350,8 +346,8 @@ public class Utils {
             return;
         }
 
-        final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet("a2_quickOptions", new HashSet<String>());
-        if (quickOptionsFilter) {
+        final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet(global ? "a2_globalQuickOptions" : "a2_quickOptions", new HashSet<String>());
+        if (isQuick) {
             if (quickOptions.size() <= 0) {
                 CommonUtils.UIToast(context, Utils.ToastMessages.ADD_QUICK_OPTIONS);
                 return;
@@ -362,7 +358,7 @@ public class Utils {
         CommonUtils.showDialog(context, pd);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(quickOptionsFilter ? R.string.menu_downloadQuickOptions : R.string.options)
+                .setTitle(isQuick ? R.string.menu_downloadQuickOptions : R.string.options)
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -375,8 +371,8 @@ public class Utils {
             public void onOptions(Map<String, String> options) {
                 final List<Option> optionsList = new ArrayList<>();
 
-                for (String resLongOption : context.getResources().getStringArray(allowedOptions)) {
-                    if (quickOptionsFilter && !quickOptions.contains(resLongOption)) continue;
+                for (String resLongOption : context.getResources().getStringArray(global ? R.array.globalOptions : R.array.downloadOptions)) {
+                    if (isQuick && !quickOptions.contains(resLongOption)) continue;
 
                     String optionVal = options.get(resLongOption);
                     if (optionVal != null) {
@@ -394,7 +390,7 @@ public class Utils {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, quickOptionsFilter, !showHearts, true);
+                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, isQuick, false, global);
                         list.setAdapter(adapter);
 
                         search.setOnClickListener(new View.OnClickListener() {
@@ -509,7 +505,7 @@ public class Utils {
     }
 
     @Nullable
-    public static URL createDownloadRemoteURL(Context context, String downloadDir, com.gianlu.aria2app.NetIO.JTA2.File file) {
+    public static URL createDownloadRemoteURL(Context context, String downloadDir, AFile file) {
         final DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
 
         final URL url;
@@ -567,7 +563,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted.", false);
         public static final CommonUtils.ToastMessage DOWNLOAD_ADDED = new CommonUtils.ToastMessage("Download added.", false);
         public static final CommonUtils.ToastMessage DO_NOT_CLOSE_APP = new CommonUtils.ToastMessage("Do not remove the application from the recent tasks or the download will stop.", false);
-        public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("File selected/deselected.", false);
+        public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("AFile selected/deselected.", false);
         public static final CommonUtils.ToastMessage SESSION_SAVED = new CommonUtils.ToastMessage("Session saved correctly.", false);
         public static final CommonUtils.ToastMessage FAILED_SAVE_SESSION = new CommonUtils.ToastMessage("Failed saving current session!", true);
         public static final CommonUtils.ToastMessage FAILED_PAUSE = new CommonUtils.ToastMessage("Failed to pause download!", true);
@@ -593,7 +589,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage INVALID_SERVER_TOKEN = new CommonUtils.ToastMessage("Invalid server token!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_USER_OR_PASSWD = new CommonUtils.ToastMessage("Invalid username or password!", false);
         public static final CommonUtils.ToastMessage INVALID_CONDITIONS_NUMBER = new CommonUtils.ToastMessage("Multi profile should contains more than one condition", false);
-        public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
+        public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("AFile not found!", true);
         public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING_AUTOCOMPLETION = new CommonUtils.ToastMessage("Unable to load method's suggestions!", true);
         public static final CommonUtils.ToastMessage FAILED_EDIT_CONVERSATION_ITEM = new CommonUtils.ToastMessage("Failed editing that item!", true);

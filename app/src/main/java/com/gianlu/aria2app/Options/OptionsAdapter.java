@@ -37,19 +37,19 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         }
     };
     private final List<Option> originalObjs;
-    private final boolean quickOptionsFilter;
-    private final boolean hideHearts;
-    private final boolean hideUseMe;
+    private final boolean showUseMe;
+    private final boolean global;
+    private final boolean isQuick;
     private final OptionFilter filter;
     private List<Option> objs;
 
-    public OptionsAdapter(Context context, List<Option> objs, boolean quickOptionsFilter, boolean hideHearts, boolean hideUseMe) {
+    public OptionsAdapter(Context context, List<Option> objs, boolean isQuick, boolean showUseMe, boolean global) {
         this.context = context;
         this.originalObjs = objs;
         this.objs = objs;
-        this.quickOptionsFilter = quickOptionsFilter;
-        this.hideHearts = hideHearts;
-        this.hideUseMe = hideUseMe;
+        this.isQuick = isQuick;
+        this.showUseMe = showUseMe;
+        this.global = global;
         this.filter = new OptionFilter();
     }
 
@@ -125,7 +125,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             }
         });
 
-        if (quickOptionsFilter || hideHearts) {
+        if (isQuick) {
             holder.toggleQuick.setVisibility(View.GONE);
         } else {
             holder.toggleQuick.setVisibility(View.VISIBLE);
@@ -134,8 +134,9 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             holder.toggleQuick.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String set = global ? "a2_globalQuickOptions" : "a2_quickOptions";
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-                    Set<String> quickOptions = preferences.getStringSet("a2_quickOptions", new HashSet<String>());
+                    Set<String> quickOptions = preferences.getStringSet(set, new HashSet<String>());
 
                     item.isQuick = !item.isQuick;
                     if (item.isQuick) {
@@ -146,7 +147,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
                         quickOptions.remove(item.longName);
                     }
 
-                    preferences.edit().putStringSet("a2_quickOptions", quickOptions).apply();
+                    preferences.edit().putStringSet(set, quickOptions).apply();
                 }
             });
 
@@ -156,9 +157,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
                 holder.toggleQuick.setImageResource(R.drawable.ic_favorite_border_black_48dp);
         }
 
-        if (hideUseMe) {
-            holder.toggleUse.setVisibility(View.GONE);
-        } else {
+        if (showUseMe) {
             holder.toggleUse.setVisibility(View.VISIBLE);
             holder.toggleUse.setFocusable(false);
 
@@ -178,6 +177,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
                 holder.toggleUse.setImageResource(R.drawable.ic_label_black_48dp);
             else
                 holder.toggleUse.setImageResource(R.drawable.ic_label_outline_black_48dp);
+        } else {
+            holder.toggleUse.setVisibility(View.GONE);
         }
     }
 

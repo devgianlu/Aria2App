@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-public class File {
+public class AFile {
     // Global
     public Long completedLength;
     public Long length;
@@ -20,7 +20,7 @@ public class File {
     public Integer index;
     public Map<URI_STATUS, String> uris;
 
-    private File() {
+    private AFile() {
     }
 
     @Nullable
@@ -63,10 +63,10 @@ public class File {
         }
     }
 
-    public static File fromJSON(JSONObject obj) {
+    public static AFile fromJSON(JSONObject obj) {
         if (obj == null) return null;
 
-        File file = new File();
+        AFile file = new AFile();
         file.index = parseInt(obj.optString("index"));
         file.path = obj.optString("path");
         file.length = parseLong(obj.optString("length"));

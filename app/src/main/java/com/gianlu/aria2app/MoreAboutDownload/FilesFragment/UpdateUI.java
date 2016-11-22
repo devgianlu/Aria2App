@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
-import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -71,7 +71,7 @@ class UpdateUI implements Runnable {
         while ((!_shouldStop) && jta2 != null) {
             jta2.getFiles(gid, new JTA2.IFiles() {
                 @Override
-                public void onFiles(final List<File> files) {
+                public void onFiles(final List<AFile> files) {
                     errorCounter = 0;
 
                     context.runOnUiThread(new Runnable() {

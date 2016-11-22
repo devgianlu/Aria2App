@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.ArrayMap;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,20 +23,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.CurrentProfile;
-import com.gianlu.aria2app.DirectDownload.FileDownloadListener;
+import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Profile.DirectDownload;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
-import com.liulishuo.filedownloader.BaseDownloadTask;
-import com.liulishuo.filedownloader.FileDownloader;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -221,7 +218,7 @@ public class FilesAdapter {
                     } else {
                         view.findViewById(R.id.fileAboutDialog_urisLabel).setVisibility(View.VISIBLE);
 
-                        for (Map.Entry<File.URI_STATUS, String> uri : file.file.uris.entrySet()) {
+                        for (Map.Entry<AFile.URI_STATUS, String> uri : file.file.uris.entrySet()) {
                             TextView _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
                             _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                             _uri.setPadding(50, 10, 0, 10);
@@ -276,14 +273,14 @@ public class FilesAdapter {
         }
     }
 
-    private void startDownload(File file) {
+    private void startDownload(AFile file) {
         ThisApplication.sendAnalytics(context, new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
                 .build());
 
         // TODO: Custom download path
-        java.io.File localPath = Utils.createDownloadLocalPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), file.getName());
+        File localPath = Utils.createDownloadLocalPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), file.getName());
         URL remoteURL = Utils.createDownloadRemoteURL(context, dir, file);
 
         if (remoteURL == null) {
@@ -291,17 +288,7 @@ public class FilesAdapter {
             return;
         }
 
-        DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
-
-        final BaseDownloadTask downloadTask = FileDownloader.getImpl().create(remoteURL.toString());
-        downloadTask.setPath(localPath.getAbsolutePath())
-                .setCallbackProgressMinInterval(1000)
-                .setListener(new FileDownloadListener(context, file, downloadTask));
-
-        if (dd.auth)
-            downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
-
-        downloadTask.start();
+        DownloadSupervisor.getInstance().start(CurrentProfile.getCurrentProfile(context).directDownload, localPath, remoteURL, file);
     }
 
     private void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
@@ -337,10 +324,10 @@ public class FilesAdapter {
         }
     }
 
-    void onUpdate(final List<File> files) {
+    void onUpdate(final List<AFile> files) {
         if (files == null) return;
 
-        for (File _file : files) {
+        for (AFile _file : files) {
             final TreeFile found = tree.findFile(_file.path);
 
             if (found != null) {

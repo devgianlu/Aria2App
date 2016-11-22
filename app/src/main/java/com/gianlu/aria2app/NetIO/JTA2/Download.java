@@ -27,7 +27,7 @@ public class Download {
     public STATUS status;
     public Integer downloadSpeed;
     public Integer uploadSpeed;
-    public List<File> files;
+    public List<AFile> files;
     public Integer errorCode;
     public String errorMessage;
     public String followedBy;
@@ -96,7 +96,7 @@ public class Download {
             JSONArray array = jResult.optJSONArray("files");
 
             for (int i = 0; i < array.length(); i++)
-                download.files.add(File.fromJSON(array.optJSONObject(i)));
+                download.files.add(AFile.fromJSON(array.optJSONObject(i)));
         }
 
         download.isBitTorrent = !jResult.isNull("bittorrent");
@@ -147,10 +147,10 @@ public class Download {
             } else {
                 String[] splitted = files.get(0).path.split("/");
                 if (splitted.length == 1) {
-                    if (files.get(0).uris.get(File.URI_STATUS.USED) != null) {
-                        return files.get(0).uris.get(File.URI_STATUS.USED);
-                    } else if (files.get(0).uris.get(File.URI_STATUS.WAITING) != null) {
-                        return files.get(0).uris.get(File.URI_STATUS.WAITING);
+                    if (files.get(0).uris.get(AFile.URI_STATUS.USED) != null) {
+                        return files.get(0).uris.get(AFile.URI_STATUS.USED);
+                    } else if (files.get(0).uris.get(AFile.URI_STATUS.WAITING) != null) {
+                        return files.get(0).uris.get(AFile.URI_STATUS.WAITING);
                     } else {
                         return "Unknown";
                     }

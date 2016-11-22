@@ -2,7 +2,7 @@ package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
 import android.annotation.SuppressLint;
 
-import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +67,7 @@ class TreeDirectory {
         return completedLength;
     }
 
-    void addElement(String currentPath, String[] list, File file) {
+    void addElement(String currentPath, String[] list, AFile file) {
         if (list.length == 0) return;
 
         while (list[0] == null || list[0].isEmpty()) {

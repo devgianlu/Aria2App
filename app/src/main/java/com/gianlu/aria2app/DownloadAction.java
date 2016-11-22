@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.File;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 
 import java.io.IOException;
@@ -151,7 +151,7 @@ public class DownloadAction {
                 jta2.getOption(gid, new JTA2.IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
-                        String url = download.files.get(0).uris.get(File.URI_STATUS.USED);
+                        String url = download.files.get(0).uris.get(AFile.URI_STATUS.USED);
 
                         jta2.addUri(Collections.singletonList(url), null, options, new JTA2.IGID() {
                             @Override

@@ -95,6 +95,35 @@ public class MainActivity extends AppCompatActivity {
                 .setDrawerListener(new DrawerManager.IDrawerListener() {
                     @Override
                     public boolean onListItemSelected(DrawerManager.DrawerListItems which) {
+                        Utils.IOptionsDialog handler = new Utils.IOptionsDialog() {
+                            @Override
+                            public void onApply(JTA2 jta2, Map<String, String> options) {
+                                if (options.entrySet().size() == 0) return;
+
+                                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+                                CommonUtils.showDialog(MainActivity.this, pd);
+
+                                ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
+                                        .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                                        .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
+                                        .build());
+
+                                jta2.changeGlobalOption(options, new JTA2.ISuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        pd.dismiss();
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
+                                    }
+
+                                    @Override
+                                    public void onException(Exception exception) {
+                                        pd.dismiss();
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
+                                    }
+                                });
+                            }
+                        };
+
                         switch (which) {
                             case HOME:
                                 reloadPage();
@@ -106,37 +135,10 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, TerminalActivity.class));
                                 return false;
                             case QUICK_OPTIONS:
-                                // TODO: Global quick options
+                                Utils.showOptionsDialog(MainActivity.this, null, true, true, handler);
                                 return true;
                             case GLOBAL_OPTIONS:
-                                Utils.showOptionsDialog(MainActivity.this, new Utils.IOptionsDialog() {
-                                    @Override
-                                    public void onApply(JTA2 jta2, Map<String, String> options) {
-                                        if (options.entrySet().size() == 0) return;
-
-                                        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                                        CommonUtils.showDialog(MainActivity.this, pd);
-
-                                        ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
-                                                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                                                .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
-                                                    .build());
-
-                                        jta2.changeGlobalOption(options, new JTA2.ISuccess() {
-                                            @Override
-                                            public void onSuccess() {
-                                                pd.dismiss();
-                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
-                                            }
-
-                                            @Override
-                                            public void onException(Exception exception) {
-                                                pd.dismiss();
-                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
-                                            }
-                                        });
-                                    }
-                                });
+                                Utils.showOptionsDialog(MainActivity.this, null, true, false, handler);
                                 return true;
                             case PREFERENCES:
                                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));

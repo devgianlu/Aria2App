@@ -92,13 +92,13 @@ public class JTA2 {
         return peers;
     }
 
-    private List<File> fromFiles(JSONArray jResult) throws JSONException {
+    private List<AFile> fromFiles(JSONArray jResult) throws JSONException {
         if (jResult == null) return null;
 
-        List<File> files = new ArrayList<>();
+        List<AFile> files = new ArrayList<>();
 
         for (int i = 0; i < jResult.length(); i++) {
-            files.add(File.fromJSON(jResult.getJSONObject(i)));
+            files.add(AFile.fromJSON(jResult.getJSONObject(i)));
         }
 
         return files;
@@ -947,7 +947,7 @@ public class JTA2 {
     }
 
     public interface IFiles {
-        void onFiles(List<File> files);
+        void onFiles(List<AFile> files);
 
         void onException(Exception exception);
     }

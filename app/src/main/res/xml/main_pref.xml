@@ -83,12 +83,16 @@
     <PreferenceCategory android:title="@string/third_part">
         <Preference
             android:key="nv-websocket-client"
-            android:summary="Licensed under Apache License 2.0"
+            android:summary="@string/apacheLicense"
             android:title="nv-websocket-client" />
         <Preference
             android:key="mpAndroidChart"
-            android:summary="Licensed under Apache License 2.0"
+            android:summary="@string/apacheLicense"
             android:title="MPAndroidChart" />
+        <Preference
+            android:key="fileDownloader"
+            android:summary="@string/apacheLicense"
+            android:title="FileDownloader" />
         <Preference
             android:key="apacheLicense"
             android:title="Apache License 2.0" />

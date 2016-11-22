@@ -1,12 +1,12 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
-import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 class TreeFile {
-    public File file;
+    public AFile file;
     FileViewHolder viewHolder;
 
-    TreeFile(File file) {
+    TreeFile(AFile file) {
         this.file = file;
     }
 }

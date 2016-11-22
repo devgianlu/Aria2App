@@ -245,6 +245,16 @@ public class DrawerManager {
         });
         drawerList.addView(home, 0);
 
+        View directDownload = newItem(R.drawable.ic_cloud_download_black_48dp, context.getString(R.string.directDownload), true, 0, -1, -1);
+        directDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null)
+                    setDrawerState(false, listener.onListItemSelected(DrawerListItems.DIRECT_DOWNLOAD));
+            }
+        });
+        drawerList.addView(directDownload, 1);
+
         View terminal = newItem(R.drawable.ic_developer_board_black_48dp, context.getString(R.string.terminal), true);
         terminal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,7 +263,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.TERMINAL));
             }
         });
-        drawerList.addView(terminal, 1);
+        drawerList.addView(terminal, 2);
 
         View globalOptions = newItem(R.drawable.ic_list_black_48dp, context.getString(R.string.menu_globalOptions), true);
         globalOptions.setOnClickListener(new View.OnClickListener() {
@@ -263,9 +273,9 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.GLOBAL_OPTIONS));
             }
         });
-        drawerList.addView(globalOptions, 2);
+        drawerList.addView(globalOptions, 3);
 
-        View quickOptions = newItem(R.drawable.ic_list_favourite_white_48px, context.getString(R.string.menu_downloadQuickOptions), true); // TODO: Icon color
+        View quickOptions = newItem(R.drawable.ic_favorite_black_48dp, context.getString(R.string.quickGlobalOptions), true);
         quickOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -273,7 +283,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.QUICK_OPTIONS));
             }
         });
-        drawerList.addView(quickOptions, 3);
+        drawerList.addView(quickOptions, 4);
 
         View aboutAria2 = newItem(R.drawable.ic_cloud_black_48dp, context.getString(R.string.about_aria2), true);
         aboutAria2.setOnClickListener(new View.OnClickListener() {
@@ -283,17 +293,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.ABOUT_ARIA2));
             }
         });
-        drawerList.addView(aboutAria2, 4);
-
-        View directDownload = newItem(R.drawable.ic_cloud_download_black_48dp, context.getString(R.string.directDownload), true, 0, -1, -1);
-        directDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null)
-                    setDrawerState(false, listener.onListItemSelected(DrawerListItems.DIRECT_DOWNLOAD));
-            }
-        });
-        drawerList.addView(directDownload, 5);
+        drawerList.addView(aboutAria2, 5);
 
         // Footer group
         drawerFooterList.removeAllViews();
@@ -311,7 +311,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.PREFERENCES));
             }
         });
-        drawerFooterList.addView(preferences);
+        drawerFooterList.addView(preferences, 1);
 
         View support = newItem(R.drawable.ic_report_problem_black_48dp, context.getString(R.string.support), false);
         support.setOnClickListener(new View.OnClickListener() {
@@ -321,7 +321,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.SUPPORT));
             }
         });
-        drawerFooterList.addView(support);
+        drawerFooterList.addView(support, 2);
 
         final ImageView dropdownToggle = (ImageView) drawerLayout.findViewById(R.id.mainDrawerHeader_dropdown);
 

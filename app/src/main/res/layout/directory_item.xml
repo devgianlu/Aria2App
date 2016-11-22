@@ -17,7 +17,6 @@
         android:src="@drawable/ic_keyboard_arrow_right_black_48dp" />
 
     <ImageView
-        android:id="@+id/directoryItem_type"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"

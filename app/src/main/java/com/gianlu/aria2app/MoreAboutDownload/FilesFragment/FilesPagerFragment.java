@@ -11,7 +11,7 @@ import android.widget.ScrollView;
 
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.MoreAboutDownload.CommonFragment;
-import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -46,7 +46,7 @@ public class FilesPagerFragment extends CommonFragment {
         try {
             JTA2.newInstance(getActivity()).getFiles(getArguments().getString("gid"), new JTA2.IFiles() {
                 @Override
-                public void onFiles(final List<File> files) {
+                public void onFiles(final List<AFile> files) {
                     FilesAdapter.setupAsync(getActivity(), getArguments().getString("gid"), Tree.newTree().addElements(files), new FilesAdapter.IAsync() {
                         @Override
                         public void onSetup(final FilesAdapter adapter, final LinearLayout view) {

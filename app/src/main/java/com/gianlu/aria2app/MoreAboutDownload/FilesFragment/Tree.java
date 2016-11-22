@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
-import com.gianlu.aria2app.NetIO.JTA2.File;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 import java.util.List;
 
@@ -19,15 +19,15 @@ class Tree {
         return new Tree(TreeDirectory.root());
     }
 
-    private void addElement(File element) {
+    private void addElement(AFile element) {
         String[] list = element.path.split(Tree.separator);
         root.addElement(root.getIncrementalPath(), list, element);
     }
 
-    Tree addElements(List<File> elements) {
+    Tree addElements(List<AFile> elements) {
         if (elements.isEmpty()) return this;
 
-        for (File e : elements) {
+        for (AFile e : elements) {
             addElement(e);
         }
 
