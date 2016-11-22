@@ -9,11 +9,15 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
 
+import java.util.List;
+
 public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.ViewHolder> {
     private final Context context;
+    private final List<DDDownload> objs;
 
-    public DownloadsAdapter(Context context) {
+    public DownloadsAdapter(Context context, List<DDDownload> objs) {
         this.context = context;
+        this.objs = objs;
     }
 
     @Override
@@ -23,12 +27,19 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        DDDownload item = getItem(position);
 
+        holder.name.setText(item.name);
+        holder.id.setText(String.valueOf(item.id));
+    }
+
+    public DDDownload getItem(int pos) {
+        return objs.get(pos);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return objs.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

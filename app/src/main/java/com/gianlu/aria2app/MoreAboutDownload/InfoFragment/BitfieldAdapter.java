@@ -11,11 +11,11 @@ import com.gianlu.aria2app.Utils;
 
 import java.util.List;
 
-public class BitfieldAdapter extends RecyclerView.Adapter<BitfieldAdapter.ViewHolder> {
+class BitfieldAdapter extends RecyclerView.Adapter<BitfieldAdapter.ViewHolder> {
     private final Context context;
     private final List<Integer> pieces;
 
-    public BitfieldAdapter(Context context, List<Integer> pieces) {
+    BitfieldAdapter(Context context, List<Integer> pieces) {
         this.context = context;
         this.pieces = pieces;
     }
@@ -25,7 +25,7 @@ public class BitfieldAdapter extends RecyclerView.Adapter<BitfieldAdapter.ViewHo
         return new ViewHolder(new View(context));
     }
 
-    public void update(List<Integer> pieces) {
+    void update(List<Integer> pieces) {
         this.pieces.clear();
         this.pieces.addAll(pieces);
         notifyDataSetChanged();

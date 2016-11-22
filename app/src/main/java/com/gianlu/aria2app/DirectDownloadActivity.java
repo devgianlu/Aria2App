@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
+import com.gianlu.aria2app.DirectDownload.DownloadsAdapter;
+
 public class DirectDownloadActivity extends AppCompatActivity {
 
     @Override
@@ -17,5 +20,6 @@ public class DirectDownloadActivity extends AppCompatActivity {
         SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.directDownload_swipeLayout);
         RecyclerView list = (RecyclerView) findViewById(R.id.directDownload_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        list.setAdapter(new DownloadsAdapter(this, DownloadSupervisor.getInstance().getDownloads()));
     }
 }
