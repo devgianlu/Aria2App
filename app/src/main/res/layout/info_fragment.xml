@@ -168,7 +168,7 @@
                 android:text="@string/bitfield"
                 android:textStyle="bold" />
 
-            <!-- Replace with RecyclerView with GridLayoutManager -->
+            <!-- TODO: Replace with RecyclerView with GridLayoutManager -->
             <GridLayout
                 android:id="@+id/infoFragment_bitfield"
                 android:layout_width="match_parent"
