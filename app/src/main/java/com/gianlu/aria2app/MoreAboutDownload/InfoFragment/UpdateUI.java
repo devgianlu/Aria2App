@@ -46,6 +46,7 @@ public class UpdateUI implements Runnable {
     private boolean first = true;
     private IDownloadObserver observer = null;
     private Download.STATUS lastStatus = null;
+    private BitfieldAdapter bitfieldAdapter;
     private JTA2 jta2;
     private boolean _shouldStop;
     private int errorCounter = 0;
@@ -112,6 +113,9 @@ public class UpdateUI implements Runnable {
                     if (first) {
                         FilesAdapter.dir = download.dir;
 
+                        bitfieldAdapter = new BitfieldAdapter(context, Utils.bitfieldProcessor(download.numPieces, download.bitfield));
+                        holder.bitfield.setAdapter(bitfieldAdapter);
+
                         if (observer != null) {
                             context.runOnUiThread(new Runnable() {
                                 @Override
@@ -177,8 +181,12 @@ public class UpdateUI implements Runnable {
                             }
 
                             if (bitfieldEnabled) {
-                                // FIXME: That's not the proper way
-                                holder.bitfield.setAdapter(new BitfieldAdapter(context, Utils.bitfieldProcessor(download.numPieces, download.bitfield)));
+                                context.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        bitfieldAdapter.update(Utils.bitfieldProcessor(download.numPieces, download.bitfield));
+                                    }
+                                });
                             }
 
                             holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));

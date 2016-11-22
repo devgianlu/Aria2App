@@ -25,6 +25,12 @@ public class BitfieldAdapter extends RecyclerView.Adapter<BitfieldAdapter.ViewHo
         return new ViewHolder(new View(context));
     }
 
+    public void update(List<Integer> pieces) {
+        this.pieces.clear();
+        this.pieces.addAll(pieces);
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.itemView.setBackgroundColor(Color.argb(Utils.mapAlpha(pieces.get(position)), 255, 87, 34));
