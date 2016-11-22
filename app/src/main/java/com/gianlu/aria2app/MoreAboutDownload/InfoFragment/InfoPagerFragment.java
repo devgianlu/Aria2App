@@ -1,12 +1,15 @@
 package com.gianlu.aria2app.MoreAboutDownload.InfoFragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +33,10 @@ public class InfoPagerFragment extends CommonFragment {
 
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private static int columnsNumber(Context context) {
+        return context.getResources().getDisplayMetrics().widthPixels / 40;
     }
 
     public InfoPagerFragment setObserver(UpdateUI.IDownloadObserver observer) {
@@ -109,7 +116,7 @@ public class InfoPagerFragment extends CommonFragment {
         final TextView btInfoHash;
         final LinearLayout btAnnounceList;
         final TextView bitfieldLabel;
-        final GridLayout bitfield;
+        final RecyclerView bitfield;
         LineChart chart;
 
         public ViewHolder(View rootView) {
@@ -139,7 +146,8 @@ public class InfoPagerFragment extends CommonFragment {
             btInfoHash = (TextView) rootView.findViewById(R.id.infoFragment_btInfoHash);
             btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
 
-            bitfield = (GridLayout) rootView.findViewById(R.id.infoFragment_bitfield);
+            bitfield = (RecyclerView) rootView.findViewById(R.id.infoFragment_bitfield);
+            bitfield.setLayoutManager(new GridLayoutManager(getContext(), columnsNumber(getContext()), LinearLayoutManager.VERTICAL, false));
             bitfieldLabel = (TextView) rootView.findViewById(R.id.infoFragment_bitfieldLabel);
         }
     }

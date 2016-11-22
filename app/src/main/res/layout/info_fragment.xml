@@ -168,13 +168,11 @@
                 android:text="@string/bitfield"
                 android:textStyle="bold" />
 
-            <!-- TODO: Replace with RecyclerView with GridLayoutManager -->
-            <GridLayout
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/infoFragment_bitfield"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal" />
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
     </FrameLayout>
 </ScrollView>

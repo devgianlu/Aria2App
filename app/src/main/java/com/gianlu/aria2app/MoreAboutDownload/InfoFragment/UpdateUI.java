@@ -5,13 +5,11 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -179,24 +177,8 @@ public class UpdateUI implements Runnable {
                             }
 
                             if (bitfieldEnabled) {
-                                LinearLayout.LayoutParams bitParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                holder.bitfield.setLayoutParams(bitParams);
-                                holder.bitfield.removeAllViews();
-                                holder.bitfield.setColumnCount(holder.bitfield.getWidth() / 40);
-
-                                for (int piece : Utils.bitfieldProcessor(download.numPieces, download.bitfield)) {
-                                    View view = new View(context);
-                                    view.setBackgroundColor(Color.argb(Utils.mapAlpha(piece), 255, 87, 34));
-                                    GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                                    params.setMargins(4, 4, 4, 4);
-                                    params.height = 32;
-                                    params.width = 32;
-                                    view.setLayoutParams(params);
-                                    try {
-                                        holder.bitfield.addView(view);
-                                    } catch (IllegalArgumentException ignored) {
-                                    }
-                                }
+                                // FIXME: That's not the proper way
+                                holder.bitfield.setAdapter(new BitfieldAdapter(context, Utils.bitfieldProcessor(download.numPieces, download.bitfield)));
                             }
 
                             holder.gid.setText(Html.fromHtml(context.getString(R.string.gid, download.gid)));
