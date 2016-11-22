@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">Aria2App</string>
+    <string name="app_name">Aria2App</string>
     <string name="title_activity_addProfile_new">New profile</string>
     <string name="title_activity_addProfile_edit">Edit profile</string>
-    <string name="nv_websocket_client_license" translatable="false"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
-    <string name="mpAndroidChart_details" translatable="false">Copyright 2016 Philipp Jahoda</string>
+    <string name="nv_websocket_client_license"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
+    <string name="mpAndroidChart_details">Copyright 2016 Philipp Jahoda</string>
     <string name="downloadStatus_waiting">Waiting in queue</string>
     <string name="downloadStatus_error">Error</string>
     <string name="downloadStatus_paused">Paused</string>
@@ -19,15 +19,15 @@
     <string name="connections"><![CDATA[<b>Connections:</b>]]> %d</string>
     <string name="verifyIntegrityPending"><![CDATA[<b>Integrity verification pending:</b>]]> %s</string>
     <string name="verifiedLength"><![CDATA[<b>Verified length:</b>]]> %s</string>
-    <string name="gid" translatable="false"><![CDATA[<b>GID:</b>]]> %s</string>
+    <string name="gid"><![CDATA[<b>GID:</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>Destination directory:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>Seeder:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Seeders number:</b>]]> %d</string>
     <string name="creation_date"><![CDATA[<b>Creation date:</b>]]> %s</string>
     <string name="mode"><![CDATA[<b>Mode:</b>]]> %s</string>
     <string name="comment"><![CDATA[<b>Comment:</b>]]> %s</string>
-    <string name="index" translatable="false"><![CDATA[<b>Index:</b>]]> %d</string>
-    <string name="path" translatable="false"><![CDATA[<b>Path:</b>]]> %s</string>
+    <string name="index"><![CDATA[<b>Index:</b>]]> %d</string>
+    <string name="path"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
     <string name="selectFile">Select file</string>
@@ -40,7 +40,7 @@
     <string name="notificationPaused">Download paused!</string>
     <string name="notificationError">Got error on download!</string>
     <string name="notificationBTComplete">BitTorrent download completed!</string>
-    <string name="serverOffline">This server is actually offline. Would you like to use it anyway?</string>
+    <string name="serverOffline">This server is actually offline. Would you like to connect to it anyway?</string>
     <string name="copiedClipboard">Copied to clipboard!</string>
     <string name="profile">Profile name:</string>
     <string name="unknown">Unknown</string>
@@ -69,17 +69,17 @@
     <string name="manageProfiles">Manage profiles</string>
     <string name="home">Home</string>
     <string name="announceList"><b>Announce list:</b></string>
-    <string name="address_hint" translatable="false">127.0.0.1</string>
+    <string name="address_hint">127.0.0.1</string>
     <string name="port">Port:</string>
     <string name="move_up">Move up in queue</string>
     <string name="move_down">Move down in queue</string>
-    <string name="port_hint" translatable="false">6800</string>
-    <string name="endpoint" translatable="false">RPC endpoint:</string>
-    <string name="endpoint_default" translatable="false">/jsonrpc</string>
-    <string name="completeURL_default" translatable="false">ws://127.0.0.1:6800/jsonrpc</string>
+    <string name="port_hint">6800</string>
+    <string name="endpoint">RPC endpoint:</string>
+    <string name="endpoint_default">/jsonrpc</string>
+    <string name="completeURL_default">ws://127.0.0.1:6800/jsonrpc</string>
     <string name="authenticationMethod">Authentication method:</string>
-    <string name="token" translatable="false">Token</string>
-    <string name="token_hint" translatable="false">token</string>
+    <string name="token">Token</string>
+    <string name="token_hint">token</string>
     <string name="username_hint">username</string>
     <string name="password_hint">password</string>
     <string name="authentication">Authentication</string>
@@ -90,19 +90,19 @@
     <string name="noCommunication">Cannot connect</string>
     <string name="noCommunication_message">%s.\nPlease check your configuration or contact me at altomanigianluca@gmail.com</string>
     <string name="filters">Filters</string>
-    <string name="method" translatable="false">Method:</string>
-    <string name="jsonrpc" translatable="false">JSONRPC:</string>
-    <string name="jsonrpc_version" translatable="false">2.0</string>
-    <string name="id" translatable="false">ID:</string>
+    <string name="method">Method:</string>
+    <string name="jsonrpc">JSONRPC:</string>
+    <string name="jsonrpc_version">2.0</string>
+    <string name="id">ID:</string>
     <string name="id_hint">qwer</string>
     <string name="encryption">Enable TLS/SSL encryption</string>
-    <string name="params" translatable="false">Params:</string>
+    <string name="params">Params:</string>
     <string name="params_hint">JSON formatted params</string>
     <string name="clear_history">Clear history</string>
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
-    <string name="uris" translatable="false">URIs</string>
-    <string name="_default" translatable="false">Default</string>
+    <string name="uris">URIs</string>
+    <string name="_default">Default</string>
     <string name="save">Save</string>
     <string name="support">Support</string>
     <string name="changeProfile">Change profile</string>
@@ -113,26 +113,26 @@
     <string name="pickMetalink">Pick a Metalink file</string>
     <string name="addURIs_help">All URIs must point to the same resource otherwise the download may fail or be corrupted without aria2 complaining.</string>
     <string name="addURIs_torrentHelp">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
-    <string name="zero" translatable="false">0</string>
-    <string name="uri" translatable="false">URI</string>
-    <string name="torrent" translatable="false">Torrent</string>
-    <string name="metalink" translatable="false">Metalink</string>
+    <string name="zero">0</string>
+    <string name="uri">URI</string>
+    <string name="torrent">Torrent</string>
+    <string name="metalink">Metalink</string>
     <string name="downloadSpeed">Download speed</string>
     <string name="uploadSpeed">Upload speed</string>
     <string name="addNew">Add new</string>
-    <string name="ssid" translatable="false">SSID:</string>
-    <string name="ssid_hint" translatable="false">My-WiFi</string>
+    <string name="ssid">SSID:</string>
+    <string name="ssid_hint">My-WiFi</string>
     <string name="delete">Delete</string>
     <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
     <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a>. This will require the permission to write to the external storage.</string>
-    <string name="directDownload_addrHint" translatable="false">http://127.0.0.1:6801/</string>
+    <string name="directDownload_addrHint">http://127.0.0.1:6801/</string>
     <string name="directDownload_addrHelp">The address must be pointing to a directory listing of the aria2 download directory.</string>
-    <string name="username" translatable="false">Username:</string>
-    <string name="directDownload_usernameHint" translatable="false">myusername</string>
-    <string name="password" translatable="false">Password:</string>
-    <string name="directDownload_passwordHint" translatable="false">mypassword</string>
+    <string name="username">Username:</string>
+    <string name="directDownload_usernameHint">myusername</string>
+    <string name="password">Password:</string>
+    <string name="directDownload_passwordHint">mypassword</string>
     <string name="remove">Remove</string>
     <string name="pause">Pause</string>
     <string name="more">More</string>
@@ -175,7 +175,7 @@
     <string name="trackingOff">Statistics about the application behavior will be sent to the developer. (No personal data will be sent)</string>
     <string name="app_version">Application version</string>
     <string name="developer">Developer: Gianlu (Report bugs or any suggestion)</string>
-    <string name="email" translatable="false">altomanigianluca@gmail.com</string>
+    <string name="email">altomanigianluca@gmail.com</string>
     <string name="openDrawer">Open drawer</string>
     <string name="closeDrawer">Close drawer</string>
     <string name="about_aria2">About aria2</string>
