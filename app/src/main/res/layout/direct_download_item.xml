@@ -3,16 +3,41 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="6dp">
+    android:paddingBottom="6dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="6dp">
 
     <TextView
-        android:id="@+id/directDownloadItem_name"
+        android:id="@+id/directDownloadItem_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/directDownloadItem_id"
+        android:id="@+id/directDownloadItem_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/directDownloadItem_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:indeterminateOnly="false" />
+
+        <TextView
+            android:id="@+id/directDownloadItem_progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
 </LinearLayout>

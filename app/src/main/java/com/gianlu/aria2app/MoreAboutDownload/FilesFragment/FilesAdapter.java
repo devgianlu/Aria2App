@@ -287,7 +287,7 @@ public class FilesAdapter {
         } else {
             File path = new File(downloadPath);
             if (path.exists() && path.isDirectory()) {
-                localPath = Utils.createDownloadLocalPath(path, file.getName());
+                localPath = Utils.createDownloadLocalPath(path, file.getName()); // TODO: Ask if to continue or start new one (if file already exists)
             } else {
                 CommonUtils.UIToast(context, Utils.ToastMessages.INVALID_DOWNLOAD_PATH, path.getAbsolutePath());
                 return;

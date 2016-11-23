@@ -230,6 +230,15 @@
     <string name="quickGlobalOptions">Quick global options</string>
     <string name="dd_downloadPath">Download path</string>
     <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
+    <string name="started">Started</string>
+    <string name="connecting">Connecting…</string>
+    <string name="downloading">Downloading</string>
+    <string name="completed">Completed</string>
+    <string name="paused">Paused</string>
+    <string name="pending">Pending</string>
+    <string name="directDownload_noItems">There no download running currently. You can add a download, from the \"Files\" tab, selecting a file. If you haven\'t set up DirectDownload you can do it by editing your profile.</string>
+    <string name="error">Error (See logs for more)</string>
+    <string name="error_details">Error: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

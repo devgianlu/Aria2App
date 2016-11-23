@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
 import com.gianlu.aria2app.LetterIconBig;
 import com.gianlu.aria2app.LetterIconSmall;
 import com.gianlu.aria2app.Profile.AddProfileActivity;
@@ -59,7 +60,7 @@ public class DrawerManager {
     private boolean isProfilesLockedUntilSelected;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
-    public DrawerManager(Activity context, DrawerLayout drawerLayout) {
+    public DrawerManager(final Activity context, DrawerLayout drawerLayout) {
         this.context = context;
         this.drawerLayout = drawerLayout;
         this.drawerList = (LinearLayout) drawerLayout.findViewById(R.id.mainDrawer_list);
@@ -218,11 +219,14 @@ public class DrawerManager {
                 view = drawerList.getChildAt(0);
                 break;
             case DIRECT_DOWNLOAD:
-                view = drawerList.getChildAt(5);
+                view = drawerList.getChildAt(1);
                 break;
             default:
                 return;
         }
+
+        if (view == null)
+            return;
 
         if (num == -1) {
             view.findViewById(R.id.materialDrawer_itemBadgeContainer).setVisibility(View.GONE);
@@ -450,6 +454,18 @@ public class DrawerManager {
                             })
                             .start();
                 }
+            }
+        });
+
+        DownloadSupervisor.getInstance().setDownloadsCountListener(new DownloadSupervisor.IUpdateCount() {
+            @Override
+            public void onUpdateDownloadsCount(final int count) {
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateBadge(DrawerListItems.DIRECT_DOWNLOAD, count);
+                    }
+                });
             }
         });
 
