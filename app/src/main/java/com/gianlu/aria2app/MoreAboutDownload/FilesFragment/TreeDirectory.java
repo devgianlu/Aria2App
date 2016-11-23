@@ -1,21 +1,18 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
-import android.annotation.SuppressLint;
-
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
-class TreeDirectory {
-    private final String incrementalPath;
-    private final List<TreeDirectory> children;
-    private final List<TreeFile> files;
-    private final String name;
-    DirectoryViewHolder viewHolder;
+public class TreeDirectory {
+    public final String incrementalPath;
+    public final List<TreeDirectory> children;
+    public final List<TreeFile> files;
+    public final String name;
+    public DirectoryViewHolder viewHolder;
 
     private TreeDirectory(String name, String incrementalPath) {
         children = new ArrayList<>();
@@ -105,36 +102,11 @@ class TreeDirectory {
         return null;
     }
 
-    String getIncrementalPath() {
-        return incrementalPath;
-    }
-
-    List<TreeDirectory> getChildren() {
-        return children;
-    }
-
-    public List<TreeFile> getFiles() {
-        return files;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    private Long getLength() {
+    public Long getLength() {
         return doLengthSum(this);
     }
 
-    private Long getCompletedLength() {
+    public Long getCompletedLength() {
         return doCompletedLengthSum(this);
-    }
-
-    private Float getProgress() {
-        return getCompletedLength().floatValue() / getLength().floatValue() * 100;
-    }
-
-    @SuppressLint("unused")
-    public String getPercentage() {
-        return String.format(Locale.getDefault(), "%.2f", getProgress()) + " %";
     }
 }

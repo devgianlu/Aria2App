@@ -25,6 +25,7 @@ public class ThisApplication extends Application {
     public static final String ACTION_DONATE_OPEN = "Opened donation dialog";
     public static final String ACTION_TERMINAL_BASIC = "Sent command in basic mode";
     public static final String ACTION_TERMINAL_ADV = "Sent command in advanced mode";
+    public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
     public static Tracker tracker;
 
     @NonNull

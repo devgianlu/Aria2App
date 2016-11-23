@@ -53,12 +53,12 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
                 holder.status.setText(R.string.connecting);
                 break;
             case FileDownloadStatus.error:
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") Throwable throwable = item.getErrorCause();
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") String message = item.getErrorCause().getMessage();
 
-                if (throwable == null)
+                if (message == null)
                     holder.status.setText(R.string.error);
                 else
-                    holder.status.setText(context.getString(R.string.error_details, throwable.getMessage()));
+                    holder.status.setText(context.getString(R.string.error_details, message));
                 break;
         }
 
@@ -88,8 +88,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView status;
         public TextView name;
-        public ProgressBar progressBar;
-        public TextView progressText;
+        ProgressBar progressBar;
+        TextView progressText;
 
         public ViewHolder(View itemView) {
             super(itemView);

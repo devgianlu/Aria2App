@@ -21,7 +21,7 @@ class Tree {
 
     private void addElement(AFile element) {
         String[] list = element.path.split(Tree.separator);
-        root.addElement(root.getIncrementalPath(), list, element);
+        root.addElement(root.incrementalPath, list, element);
     }
 
     Tree addElements(List<AFile> elements) {
@@ -40,9 +40,9 @@ class Tree {
         } else {
             TreeDirectory curr = root;
 
-            while (curr.getFiles().size() <= 0) {
-                if (curr.getChildren().size() == 0) return null;
-                curr = curr.getChildren().get(0);
+            while (curr.files.size() <= 0) {
+                if (curr.children.size() == 0) return null;
+                curr = curr.children.get(0);
             }
 
             commonRoot = curr;

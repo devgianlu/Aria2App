@@ -1,14 +1,23 @@
 package com.gianlu.aria2app.DirectDownload;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
+import com.gianlu.aria2app.CurrentProfile;
+import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.TreeDirectory;
+import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.TreeFile;
+import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.Profile.DirectDownload;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
+import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.File;
@@ -31,6 +40,41 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             supervisor = new DownloadSupervisor();
 
         return supervisor;
+    }
+
+    @Nullable
+    private static BaseDownloadTask createTask(Activity context, AFile file, FileDownloadLargeFileListener listener) {
+        DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
+
+        String downloadPath = PreferenceManager.getDefaultSharedPreferences(context).getString("dd_downloadPath", null);
+        File localPath;
+        if (downloadPath == null) {
+            localPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        } else {
+            File path = new File(downloadPath);
+            if (path.exists() && path.isDirectory()) {
+                localPath = Utils.createDownloadLocalPath(path, file.getName());
+            } else {
+                CommonUtils.UIToast(context, Utils.ToastMessages.INVALID_DOWNLOAD_PATH, path.getAbsolutePath());
+                return null;
+            }
+        }
+
+        URL remoteURL = Utils.createDownloadRemoteURL(context, UpdateUI.dir, file);
+        if (remoteURL == null) {
+            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_DOWNLOAD_FILE, new NullPointerException("Remote URL is null"));
+            return null;
+        }
+
+        BaseDownloadTask downloadTask = FileDownloader.getImpl().create(remoteURL.toString());
+        downloadTask.setPath(localPath.getAbsolutePath())
+                .setCallbackProgressMinInterval(1000)
+                .setListener(listener);
+
+        if (dd.auth)
+            downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+
+        return downloadTask;
     }
 
     public void setDownloadsCountListener(IUpdateCount listener) {
@@ -104,20 +148,42 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             listener.onUpdateAdapter(downloads.size());
     }
 
-    public void start(DirectDownload dd, File localPath, URL remoteURL, AFile file) {
-        BaseDownloadTask downloadTask = FileDownloader.getImpl().create(remoteURL.toString());
-        downloadTask.setPath(localPath.getAbsolutePath())
-                .setCallbackProgressMinInterval(1000)
-                .setListener(this);
+    private List<BaseDownloadTask> createTasks(Activity context, TreeDirectory parent) {
+        List<BaseDownloadTask> list = new ArrayList<>();
 
-        if (dd.auth)
-            downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+        for (TreeDirectory child : parent.children) {
+            list.addAll(createTasks(context, child));
+        }
 
-        downloadTask.start();
-        downloads.add(downloadTask);
+        for (TreeFile file : parent.files) {
+            BaseDownloadTask task = createTask(context, file.file, this);
+            if (task != null)
+                list.add(task);
+        }
+
+        return list;
+    }
+
+    public void start(Activity context, AFile file) {
+        BaseDownloadTask downloadTask = createTask(context, file, this);
+        if (downloadTask != null) {
+            downloadTask.start();
+            downloads.add(downloadTask);
+        }
 
         if (countListener != null)
             countListener.onUpdateDownloadsCount(downloads.size());
+    }
+
+    // FIXME: Not listed (!!)
+    public void start(Activity context, TreeDirectory parent) {
+        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(this);
+        final List<BaseDownloadTask> tasks = createTasks(context, parent);
+
+        queueSet.downloadSequentially(tasks);
+        // queueSet.downloadTogether(tasks);
+
+        queueSet.start();
     }
 
     public List<BaseDownloadTask> getDownloads() {

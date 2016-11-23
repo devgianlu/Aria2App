@@ -239,6 +239,10 @@
     <string name="directDownload_noItems">There no download running currently. You can add a download, from the \"Files\" tab, selecting a file. If you haven\'t set up DirectDownload you can do it by editing your profile.</string>
     <string name="error">Error (See logs for more)</string>
     <string name="error_details">Error: %s</string>
+    <string name="indexes">Indexes: %s</string>
+    <string name="downloadDirectory">Download directory</string>
+    <string name="downloadDirecory">Download directory</string>
+    <string name="downloadDirectoryMessage">Are you sure you want to download all files contained in this directory and its subdirectories?</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

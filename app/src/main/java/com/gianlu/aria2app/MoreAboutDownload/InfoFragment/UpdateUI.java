@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
-import com.gianlu.aria2app.MoreAboutDownload.FilesFragment.FilesAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
@@ -36,6 +35,7 @@ import java.util.Objects;
 
 public class UpdateUI implements Runnable {
     public static boolean isTorrent = false;
+    public static String dir;
     public static Download.STATUS status = Download.STATUS.UNKNOWN;
     public static int fileNum = 0;
     private static boolean bitfieldEnabled = true;
@@ -111,7 +111,7 @@ public class UpdateUI implements Runnable {
                     fileNum = download.files.size();
 
                     if (first) {
-                        FilesAdapter.dir = download.dir;
+                        dir = download.dir;
 
                         bitfieldAdapter = new BitfieldAdapter(context, Utils.bitfieldProcessor(download.numPieces, download.bitfield));
                         holder.bitfield.setAdapter(bitfieldAdapter);
