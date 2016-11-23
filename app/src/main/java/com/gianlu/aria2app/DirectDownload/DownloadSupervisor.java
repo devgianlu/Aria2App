@@ -17,7 +17,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
-import com.liulishuo.filedownloader.FileDownloadQueueSet;
 import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.File;
@@ -75,6 +74,22 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
 
         return downloadTask;
+    }
+
+    private static List<BaseDownloadTask> createTasks(Activity context, FileDownloadLargeFileListener listener, TreeDirectory parent) {
+        List<BaseDownloadTask> list = new ArrayList<>();
+
+        for (TreeDirectory child : parent.children) {
+            list.addAll(createTasks(context, listener, child));
+        }
+
+        for (TreeFile file : parent.files) {
+            BaseDownloadTask task = createTask(context, file.file, listener);
+            if (task != null)
+                list.add(task);
+        }
+
+        return list;
     }
 
     public void setDownloadsCountListener(IUpdateCount listener) {
@@ -148,22 +163,6 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             listener.onUpdateAdapter(downloads.size());
     }
 
-    private List<BaseDownloadTask> createTasks(Activity context, TreeDirectory parent) {
-        List<BaseDownloadTask> list = new ArrayList<>();
-
-        for (TreeDirectory child : parent.children) {
-            list.addAll(createTasks(context, child));
-        }
-
-        for (TreeFile file : parent.files) {
-            BaseDownloadTask task = createTask(context, file.file, this);
-            if (task != null)
-                list.add(task);
-        }
-
-        return list;
-    }
-
     public void start(Activity context, AFile file) {
         BaseDownloadTask downloadTask = createTask(context, file, this);
         if (downloadTask != null) {
@@ -175,15 +174,15 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             countListener.onUpdateDownloadsCount(downloads.size());
     }
 
-    // FIXME: Not listed (!!)
     public void start(Activity context, TreeDirectory parent) {
-        final FileDownloadQueueSet queueSet = new FileDownloadQueueSet(this);
-        final List<BaseDownloadTask> tasks = createTasks(context, parent);
+        final List<BaseDownloadTask> tasks = createTasks(context, this, parent);
+        for (BaseDownloadTask task : tasks) {
+            task.start();
+            downloads.add(task);
+        }
 
-        queueSet.downloadSequentially(tasks);
-        // queueSet.downloadTogether(tasks);
-
-        queueSet.start();
+        if (countListener != null)
+            countListener.onUpdateDownloadsCount(downloads.size());
     }
 
     public List<BaseDownloadTask> getDownloads() {

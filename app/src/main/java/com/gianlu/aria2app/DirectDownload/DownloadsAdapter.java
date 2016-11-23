@@ -71,7 +71,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: OnClick
+                // TODO: DirectDownload item OnClickListener
             }
         });
     }
