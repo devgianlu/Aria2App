@@ -52,6 +52,8 @@ public class ThisApplication extends Application {
         super.onCreate();
 
         FileDownloader.init(getApplicationContext());
+        FileDownloader.getImpl().setMaxNetworkThreadCount(3);
+
         tracker = getTracker(this);
     }
 }

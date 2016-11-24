@@ -40,4 +40,42 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="6dp" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/ic_file_download_black_48dp" />
+
+        <TextView
+            android:id="@+id/directDownloadItem_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="8dp"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/ic_access_time_black_48dp" />
+
+        <TextView
+            android:id="@+id/directDownloadItem_missingTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="13sp" />
+    </LinearLayout>
 </LinearLayout>

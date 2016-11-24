@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 
@@ -67,6 +68,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
         float progress = (float) item.getLargeFileSoFarBytes() / (float) item.getLargeFileTotalBytes() * 100;
         holder.progressBar.setProgress((int) progress);
         holder.progressText.setText(String.format("%s %%", String.format(Locale.getDefault(), "%.2f", progress)));
+        holder.speed.setText(CommonUtils.speedFormatter(item.getSpeed() * 1000));
+        holder.missingTime.setText(CommonUtils.timeFormatter((item.getLargeFileTotalBytes() - item.getLargeFileSoFarBytes()) / (item.getSpeed() * 1000)));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +93,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
         public TextView name;
         ProgressBar progressBar;
         TextView progressText;
+        TextView speed;
+        TextView missingTime;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -99,6 +104,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
             progressBar = (ProgressBar) itemView.findViewById(R.id.directDownloadItem_progressBar);
             progressBar.setMax(100);
             progressText = (TextView) itemView.findViewById(R.id.directDownloadItem_progressText);
+            speed = (TextView) itemView.findViewById(R.id.directDownloadItem_speed);
+            missingTime = (TextView) itemView.findViewById(R.id.directDownloadItem_missingTime);
         }
     }
 }
