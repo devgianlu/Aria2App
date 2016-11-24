@@ -48,6 +48,7 @@ import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
+import com.liulishuo.filedownloader.FileDownloader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -592,6 +593,16 @@ public class MainActivity extends AppCompatActivity {
                                     .putExtra("isTorrent", item.isBitTorrent)
                                     .putExtra("status", item.status.name())
                                     .putExtra("name", item.getName()));
+                        } else if (getIntent().getBooleanExtra("fromDirectDownload", false)) {
+                            Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                            if (item == null || item.status == Download.STATUS.UNKNOWN) return;
+
+                            startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                                    .putExtra("fileIndex", getIntent().getIntExtra("index", -1))
+                                    .putExtra("gid", item.gid)
+                                    .putExtra("isTorrent", item.isBitTorrent)
+                                    .putExtra("status", item.status.name())
+                                    .putExtra("name", item.getName()));
                         }
                     }
                 });
@@ -733,6 +744,13 @@ public class MainActivity extends AppCompatActivity {
                         .apply();
             }
         }
+
+        FileDownloader.getImpl().bindService(new Runnable() {
+            @Override
+            public void run() {
+                FileDownloader.getImpl().setMaxNetworkThreadCount(3);
+            }
+        });
     }
 
     @Override

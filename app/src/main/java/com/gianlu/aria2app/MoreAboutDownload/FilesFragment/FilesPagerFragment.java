@@ -27,6 +27,8 @@ import java.util.List;
 
 public class FilesPagerFragment extends CommonFragment {
     private UpdateUI updateUI;
+    private FilesAdapter adapter;
+    private int gotoIndex = -1;
 
     public static FilesPagerFragment newInstance(String title, String gid) {
         FilesPagerFragment fragment = new FilesPagerFragment();
@@ -39,26 +41,45 @@ public class FilesPagerFragment extends CommonFragment {
         return fragment;
     }
 
+    public void gotoIndex(int index) {
+        this.gotoIndex = index;
+
+        if (adapter != null)
+            realGoto();
+    }
+
+    private void realGoto() {
+        if (gotoIndex == -1)
+            return;
+
+        adapter.gotoIndex(gotoIndex);
+    }
+
     @Override
     public void onViewCreated(final View mainView, @Nullable Bundle savedInstanceState) {
         UpdateUI.stop(updateUI);
+        final String gid = getArguments().getString("gid");
 
         try {
-            JTA2.newInstance(getActivity()).getFiles(getArguments().getString("gid"), new JTA2.IFiles() {
+            JTA2.newInstance(getActivity()).getFiles(gid, new JTA2.IFiles() {
                 @Override
                 public void onFiles(final List<AFile> files) {
-                    FilesAdapter.setupAsync(getActivity(), getArguments().getString("gid"), Tree.newTree().addElements(files), new FilesAdapter.IAsync() {
+                    FilesAdapter.setupAsync(getActivity(), gid, Tree.newTree().addElements(files), new FilesAdapter.IAsync() {
                         @Override
                         public void onSetup(final FilesAdapter adapter, final LinearLayout view) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    FilesPagerFragment.this.adapter = adapter;
+
                                     ScrollView scrollView = (ScrollView) mainView.findViewById(R.id.filesFragment_scrollView);
                                     scrollView.removeAllViews();
                                     scrollView.addView(view);
 
-                                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), adapter);
+                                    updateUI = new UpdateUI(getActivity(), gid, adapter);
                                     new Thread(updateUI).start();
+
+                                    realGoto();
                                 }
                             });
                         }

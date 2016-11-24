@@ -81,7 +81,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
 
         final List<CommonFragment> fragments = new ArrayList<>();
-        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {
+        fragments.add(0, InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {
             @Override
             public void onDownloadStatusChanged(Download.STATUS newStatus) {
                 if (menu == null) return;
@@ -112,11 +112,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         }));
 
         if (getIntent().getBooleanExtra("isTorrent", false))
-            fragments.add(PeersPagerFragment.newInstance(getString(R.string.peers), gid));
+            fragments.add(1, PeersPagerFragment.newInstance(getString(R.string.peers), gid));
         else
-            fragments.add(ServersPagerFragment.newInstance(getString(R.string.servers), gid));
+            fragments.add(1, ServersPagerFragment.newInstance(getString(R.string.servers), gid));
 
-        fragments.add(FilesPagerFragment.newInstance(getString(R.string.files), gid));
+        fragments.add(2, FilesPagerFragment.newInstance(getString(R.string.files), gid));
 
         adapter = new PagerAdapter(getSupportFragmentManager(), fragments);
         pager.setAdapter(adapter);
@@ -138,6 +138,12 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
             }
         });
+
+        int index = getIntent().getIntExtra("fileIndex", -1);
+        if (index != -1) {
+            pager.setCurrentItem(2, true);
+            ((FilesPagerFragment) fragments.get(2)).gotoIndex(index);
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
+import android.support.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 import java.util.ArrayList;
@@ -88,14 +90,32 @@ public class TreeDirectory {
         }
     }
 
-    @SuppressWarnings("LoopStatementThatDoesntLoop")
+    @Nullable
     TreeFile findFile(String path) {
         for (TreeDirectory dir : children) {
-            return dir.findFile(path);
+            TreeFile file = dir.findFile(path);
+            if (file != null)
+                return file;
         }
 
         for (TreeFile file : files) {
             if (Objects.equals(file.file.path, path))
+                return file;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    TreeFile findFile(int index) {
+        for (TreeDirectory dir : children) {
+            TreeFile file = dir.findFile(index);
+            if (file != null)
+                return file;
+        }
+
+        for (TreeFile file : files) {
+            if (file.file.index == index)
                 return file;
         }
 

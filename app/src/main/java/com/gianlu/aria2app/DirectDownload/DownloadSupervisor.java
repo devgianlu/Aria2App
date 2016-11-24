@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadSupervisor extends FileDownloadLargeFileListener {
+    public static final int TAG_GID = 1;
+    public static final int TAG_INDEX = 2;
     private static DownloadSupervisor supervisor;
     private final List<BaseDownloadTask> downloads;
     private IUpdateCount countListener;
@@ -42,7 +44,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
     }
 
     @Nullable
-    private static BaseDownloadTask createTask(Activity context, AFile file, FileDownloadLargeFileListener listener) {
+    private static BaseDownloadTask createTask(Activity context, String gid, AFile file, FileDownloadLargeFileListener listener) {
         DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
 
         String downloadPath = PreferenceManager.getDefaultSharedPreferences(context).getString("dd_downloadPath", null);
@@ -73,18 +75,21 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
         if (dd.auth)
             downloadTask.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
 
+        downloadTask.setTag(TAG_GID, gid);
+        downloadTask.setTag(TAG_INDEX, file.index);
+
         return downloadTask;
     }
 
-    private static List<BaseDownloadTask> createTasks(Activity context, FileDownloadLargeFileListener listener, TreeDirectory parent) {
+    private static List<BaseDownloadTask> createTasks(Activity context, String gid, FileDownloadLargeFileListener listener, TreeDirectory parent) {
         List<BaseDownloadTask> list = new ArrayList<>();
 
         for (TreeDirectory child : parent.children) {
-            list.addAll(createTasks(context, listener, child));
+            list.addAll(createTasks(context, gid, listener, child));
         }
 
         for (TreeFile file : parent.files) {
-            BaseDownloadTask task = createTask(context, file.file, listener);
+            BaseDownloadTask task = createTask(context, gid, file.file, listener);
             if (task != null)
                 list.add(task);
         }
@@ -163,19 +168,19 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             listener.onUpdateAdapter(downloads.size());
     }
 
-    public void start(Activity context, AFile file) {
-        BaseDownloadTask downloadTask = createTask(context, file, this);
-        if (downloadTask != null) {
-            downloadTask.start();
-            downloads.add(downloadTask);
+    public void start(Activity context, String gid, AFile file) {
+        BaseDownloadTask task = createTask(context, gid, file, this);
+        if (task != null) {
+            task.start();
+            downloads.add(task);
         }
 
         if (countListener != null)
             countListener.onUpdateDownloadsCount(downloads.size());
     }
 
-    public void start(Activity context, TreeDirectory parent) {
-        final List<BaseDownloadTask> tasks = createTasks(context, this, parent);
+    public void start(Activity context, String gid, TreeDirectory parent) {
+        final List<BaseDownloadTask> tasks = createTasks(context, gid, this, parent);
         for (BaseDownloadTask task : tasks) {
             task.start();
             downloads.add(task);

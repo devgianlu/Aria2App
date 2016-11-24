@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.DirectDownload;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.liulishuo.filedownloader.BaseDownloadTask;
@@ -32,7 +34,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        BaseDownloadTask item = getItem(position);
+        final BaseDownloadTask item = getItem(position);
 
         switch (item.getStatus()) {
             case FileDownloadStatus.connected:
@@ -69,12 +71,25 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
         holder.progressBar.setProgress((int) progress);
         holder.progressText.setText(String.format("%s %%", String.format(Locale.getDefault(), "%.2f", progress)));
         holder.speed.setText(CommonUtils.speedFormatter(item.getSpeed() * 1000));
-        holder.missingTime.setText(CommonUtils.timeFormatter((item.getLargeFileTotalBytes() - item.getLargeFileSoFarBytes()) / (item.getSpeed() * 1000)));
+        int speed = item.getSpeed() * 1000;
+        if (speed != 0)
+            holder.missingTime.setText(CommonUtils.timeFormatter((item.getLargeFileTotalBytes() - item.getLargeFileSoFarBytes()) / speed));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: DirectDownload item OnClickListener
+                context.startActivity(new Intent(context, MainActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        .putExtra("fromDirectDownload", true)
+                        .putExtra("gid", (String) item.getTag(DownloadSupervisor.TAG_GID))
+                        .putExtra("index", (int) item.getTag(DownloadSupervisor.TAG_INDEX)));
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return false;
             }
         });
     }

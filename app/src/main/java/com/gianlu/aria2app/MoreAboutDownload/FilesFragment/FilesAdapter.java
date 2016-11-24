@@ -89,6 +89,19 @@ class FilesAdapter {
         return str;
     }
 
+    public void gotoIndex(int index) {
+        final TreeFile file = tree.findFile(index);
+
+        if (file != null) {
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    new FileClick(file).onClick(null);
+                }
+            });
+        }
+    }
+
     private void setupViews(TreeDirectory parent) {
         if (parent == null) return;
 
@@ -126,7 +139,7 @@ class FilesAdapter {
                 .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
                 .build());
 
-        DownloadSupervisor.getInstance().start(context, file);
+        DownloadSupervisor.getInstance().start(context, gid, file);
     }
 
     private void startDownload(TreeDirectory parent) {
@@ -135,7 +148,7 @@ class FilesAdapter {
                 .setAction(ThisApplication.ACTION_DOWNLOAD_DIRECTORY)
                 .build());
 
-        DownloadSupervisor.getInstance().start(context, parent);
+        DownloadSupervisor.getInstance().start(context, gid, parent);
     }
 
     private void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {

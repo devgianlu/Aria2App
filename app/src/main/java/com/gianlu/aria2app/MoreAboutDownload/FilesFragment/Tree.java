@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
+import android.support.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 import java.util.List;
@@ -50,8 +52,15 @@ class Tree {
         }
     }
 
+    @Nullable
     TreeFile findFile(String path) {
         if (getCommonRoot() == null) return null;
         return getCommonRoot().findFile(path);
+    }
+
+    @Nullable
+    TreeFile findFile(int index) {
+        if (getCommonRoot() == null) return null;
+        return getCommonRoot().findFile(index);
     }
 }
