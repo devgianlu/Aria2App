@@ -203,10 +203,23 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
         return null;
     }
 
-    public void remove(int id) {
-        for (BaseDownloadTask obj : new ArrayList<>(downloads))
-            if (obj.getId() == id)
-                downloads.remove(obj);
+    public void remove(BaseDownloadTask task) {
+        task.pause();
+        downloads.remove(task);
+
+        if (countListener != null)
+            countListener.onUpdateDownloadsCount(downloads.size());
+
+        if (listener != null)
+            listener.onUpdateAdapter(downloads.size());
+    }
+
+    public void pause(BaseDownloadTask task) {
+        task.pause();
+    }
+
+    public void resume(BaseDownloadTask task) {
+        task.start();
     }
 
     public interface IListener {

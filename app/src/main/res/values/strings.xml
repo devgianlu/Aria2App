@@ -30,7 +30,6 @@
     <string name="path"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
-    <string name="selectFile">Select file</string>
     <string name="selectFileNotPaused">Select file (available only when download is paused)</string>
     <string name="selectFileNotTorrent">Select file (available only on BitTorrent downloads)</string>
     <string name="selectFileSingleFile">Select file (not available on single file downloads)</string>
@@ -230,7 +229,6 @@
     <string name="quickGlobalOptions">Quick global options</string>
     <string name="dd_downloadPath">Download path</string>
     <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
-    <string name="started">Started</string>
     <string name="connecting">Connecting…</string>
     <string name="downloading">Downloading</string>
     <string name="completed">Completed</string>
@@ -241,7 +239,6 @@
     <string name="error_details">Error: %s</string>
     <string name="indexes"><![CDATA[<b>Indexes:</b>]]> %s</string>
     <string name="downloadDirectory">Download directory</string>
-    <string name="downloadDirecory">Download directory</string>
     <string name="downloadDirectoryMessage">Are you sure you want to download all files contained in this directory and its subdirectories?</string>
 
     <!-- String-arrays -->

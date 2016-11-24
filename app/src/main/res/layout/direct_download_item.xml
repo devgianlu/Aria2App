@@ -77,5 +77,15 @@
             android:ellipsize="end"
             android:lines="1"
             android:textSize="13sp" />
+
+        <ImageButton
+            android:id="@+id/directDownloadItem_menu"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ripple_effect_dark"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_menu_moreoverflow_material_dark" />
     </LinearLayout>
 </LinearLayout>

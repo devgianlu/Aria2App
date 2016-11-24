@@ -89,7 +89,7 @@ class FilesAdapter {
         return str;
     }
 
-    public void gotoIndex(int index) {
+    void gotoIndex(int index) {
         final TreeFile file = tree.findFile(index);
 
         if (file != null) {

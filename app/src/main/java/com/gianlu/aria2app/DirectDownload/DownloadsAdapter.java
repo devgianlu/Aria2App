@@ -2,10 +2,15 @@ package com.gianlu.aria2app.DirectDownload;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,37 +38,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final BaseDownloadTask item = getItem(position);
-
-        switch (item.getStatus()) {
-            case FileDownloadStatus.connected:
-                holder.status.setText(R.string.downloading);
-                break;
-            case FileDownloadStatus.completed:
-                holder.status.setText(R.string.completed);
-                break;
-            case FileDownloadStatus.paused:
-                holder.status.setText(R.string.paused);
-                break;
-            case FileDownloadStatus.pending:
-                holder.status.setText(R.string.pending);
-                break;
-            case FileDownloadStatus.progress:
-                holder.status.setText(R.string.downloading);
-                break;
-            case FileDownloadStatus.started:
-                holder.status.setText(R.string.connecting);
-                break;
-            case FileDownloadStatus.error:
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") String message = item.getErrorCause().getMessage();
-
-                if (message == null)
-                    holder.status.setText(R.string.error);
-                else
-                    holder.status.setText(context.getString(R.string.error_details, message));
-                break;
-        }
 
         holder.name.setText(item.getFilename());
 
@@ -74,6 +50,39 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
         int speed = item.getSpeed() * 1000;
         if (speed != 0)
             holder.missingTime.setText(CommonUtils.timeFormatter((item.getLargeFileTotalBytes() - item.getLargeFileSoFarBytes()) / speed));
+
+        switch (item.getStatus()) {
+            case FileDownloadStatus.connected:
+                holder.status.setText(R.string.downloading);
+                break;
+            case FileDownloadStatus.completed:
+                holder.status.setText(R.string.completed);
+                holder.speed.setText(CommonUtils.speedFormatter(0));
+                break;
+            case FileDownloadStatus.paused:
+                holder.status.setText(R.string.paused);
+                holder.speed.setText(CommonUtils.speedFormatter(0));
+                break;
+            case FileDownloadStatus.pending:
+                holder.status.setText(R.string.pending);
+                holder.speed.setText(CommonUtils.speedFormatter(0));
+                break;
+            case FileDownloadStatus.progress:
+                holder.status.setText(R.string.downloading);
+                break;
+            case FileDownloadStatus.started:
+                holder.status.setText(R.string.connecting);
+                holder.speed.setText(CommonUtils.speedFormatter(0));
+                break;
+            case FileDownloadStatus.error:
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") String message = item.getErrorCause().getMessage();
+
+                if (message == null)
+                    holder.status.setText(R.string.error);
+                else
+                    holder.status.setText(context.getString(R.string.error_details, message));
+                break;
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,10 +95,69 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
             }
         });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.menu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
-                return false;
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
+                popupMenu.inflate(R.menu.download_cardview);
+                Menu menu = popupMenu.getMenu();
+
+                switch (item.getStatus()) {
+                    case FileDownloadStatus.progress:
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case FileDownloadStatus.pending:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case FileDownloadStatus.paused:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case FileDownloadStatus.completed:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case FileDownloadStatus.error:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                }
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.downloadCardViewMenu_remove:
+                                DownloadSupervisor.getInstance().remove(item);
+                                break;
+                            case R.id.downloadCardViewMenu_resume:
+                                DownloadSupervisor.getInstance().resume(item);
+                                break;
+                            case R.id.downloadCardViewMenu_pause:
+                                DownloadSupervisor.getInstance().pause(item);
+                                break;
+                        }
+
+                        notifyDataSetChanged();
+                        return true;
+                    }
+                });
+                popupMenu.show();
             }
         });
     }
@@ -104,12 +172,13 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView status;
-        public TextView name;
-        ProgressBar progressBar;
-        TextView progressText;
-        TextView speed;
-        TextView missingTime;
+        public final TextView status;
+        public final TextView name;
+        final ProgressBar progressBar;
+        final TextView progressText;
+        final TextView speed;
+        final TextView missingTime;
+        final ImageButton menu;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -121,6 +190,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
             progressText = (TextView) itemView.findViewById(R.id.directDownloadItem_progressText);
             speed = (TextView) itemView.findViewById(R.id.directDownloadItem_speed);
             missingTime = (TextView) itemView.findViewById(R.id.directDownloadItem_missingTime);
+            menu = (ImageButton) itemView.findViewById(R.id.directDownloadItem_menu);
         }
     }
 }

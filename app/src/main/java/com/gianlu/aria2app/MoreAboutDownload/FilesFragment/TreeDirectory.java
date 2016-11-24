@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class TreeDirectory {
-    public final String incrementalPath;
     public final List<TreeDirectory> children;
     public final List<TreeFile> files;
     public final String name;
-    public DirectoryViewHolder viewHolder;
+    final String incrementalPath;
+    DirectoryViewHolder viewHolder;
 
     private TreeDirectory(String name, String incrementalPath) {
         children = new ArrayList<>();
@@ -126,7 +126,7 @@ public class TreeDirectory {
         return doLengthSum(this);
     }
 
-    public Long getCompletedLength() {
+    Long getCompletedLength() {
         return doCompletedLengthSum(this);
     }
 }
