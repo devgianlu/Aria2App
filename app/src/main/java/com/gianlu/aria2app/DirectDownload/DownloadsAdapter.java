@@ -162,7 +162,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
         });
     }
 
-    public BaseDownloadTask getItem(int pos) {
+    private BaseDownloadTask getItem(int pos) {
         return objs.get(pos);
     }
 

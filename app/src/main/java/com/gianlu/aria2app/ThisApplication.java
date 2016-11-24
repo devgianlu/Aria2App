@@ -29,7 +29,7 @@ public class ThisApplication extends Application {
     public static Tracker tracker;
 
     @NonNull
-    public static Tracker getTracker(Application application) {
+    private static Tracker getTracker(Application application) {
         if (tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(application.getApplicationContext());
             analytics.enableAutoActivityReports(application);

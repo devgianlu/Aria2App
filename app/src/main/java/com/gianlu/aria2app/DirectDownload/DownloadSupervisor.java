@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadSupervisor extends FileDownloadLargeFileListener {
-    public static final int TAG_GID = 1;
-    public static final int TAG_INDEX = 2;
+    static final int TAG_GID = 1;
+    static final int TAG_INDEX = 2;
     private static DownloadSupervisor supervisor;
     private final List<BaseDownloadTask> downloads;
     private IUpdateCount countListener;
