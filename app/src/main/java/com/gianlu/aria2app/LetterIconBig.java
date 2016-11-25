@@ -11,8 +11,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.gianlu.commonutils.CommonUtils;
-
 public class LetterIconBig extends View {
     private final Context context;
     private final Rect lettersBounds = new Rect();
@@ -61,52 +59,50 @@ public class LetterIconBig extends View {
     protected void onDraw(Canvas canvas) {
         if (shapePaint == null || letterPaint == null || textPaint == null) return;
 
-        int viewWidthHalf = this.getMeasuredWidth() / 2;
-        int viewHeightHalf = this.getMeasuredHeight() / 2;
-
-        int radius;
-        if (viewWidthHalf > viewHeightHalf)
-            radius = viewHeightHalf - 4;
-        else
-            radius = viewWidthHalf - 4;
-
-        canvas.drawCircle(viewWidthHalf, viewHeightHalf, radius, shapePaint);
-
-        String letters;
-        if (name == null) {
-            letters = "??";
-        } else {
-            if (name.length() <= 2)
-                letters = name;
-            else
-                letters = name.substring(0, 2);
-        }
-
         try {
-            letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
-        } catch (Exception ex) {
-            CommonUtils.logMe(context, ex);
-            return;
-        }
+            int viewWidthHalf = this.getMeasuredWidth() / 2;
+            int viewHeightHalf = this.getMeasuredHeight() / 2;
 
-        boolean isTextBoundOK = false;
-        int textSize = 16;
-        String cAddr = addr;
-        while (!isTextBoundOK) {
-            textPaint.getTextBounds(cAddr, 0, cAddr.length(), textBounds);
+            int radius;
+            if (viewWidthHalf > viewHeightHalf)
+                radius = viewHeightHalf - 4;
+            else
+                radius = viewWidthHalf - 4;
 
-            if (textBounds.width() <= getMeasuredWidth() - 24) {
-                isTextBoundOK = true;
-            } else if (textSize <= 8) {
-                cAddr = cAddr.substring(0, cAddr.length() - 1);
+            canvas.drawCircle(viewWidthHalf, viewHeightHalf, radius, shapePaint);
+
+            String letters;
+            if (name == null) {
+                letters = "??";
             } else {
-                textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize--, context.getResources().getDisplayMetrics()));
+                if (name.length() <= 2)
+                    letters = name;
+                else
+                    letters = name.substring(0, 2);
             }
-        }
-        textPaint.getTextBounds(port, 0, port.length(), portBounds);
 
-        canvas.drawText(letters, viewWidthHalf - lettersBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() - textBounds.height() - 2, letterPaint);
-        canvas.drawText(cAddr, viewWidthHalf - textBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() + 8, textPaint);
-        canvas.drawText(port, viewWidthHalf - portBounds.exactCenterX(), viewHeightHalf + lettersBounds.height() + 12, textPaint);
+            letterPaint.getTextBounds(letters, 0, letters.length(), lettersBounds);
+
+            boolean isTextBoundOK = false;
+            int textSize = 16;
+            String cAddr = addr;
+            while (!isTextBoundOK) {
+                textPaint.getTextBounds(cAddr, 0, cAddr.length(), textBounds);
+
+                if (textBounds.width() <= getMeasuredWidth() - 24) {
+                    isTextBoundOK = true;
+                } else if (textSize <= 8) {
+                    cAddr = cAddr.substring(0, cAddr.length() - 1);
+                } else {
+                    textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize--, context.getResources().getDisplayMetrics()));
+                }
+            }
+            textPaint.getTextBounds(port, 0, port.length(), portBounds);
+
+            canvas.drawText(letters, viewWidthHalf - lettersBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() - textBounds.height() - 2, letterPaint);
+            canvas.drawText(cAddr, viewWidthHalf - textBounds.exactCenterX(), viewHeightHalf - lettersBounds.exactCenterY() + 8, textPaint);
+            canvas.drawText(port, viewWidthHalf - portBounds.exactCenterX(), viewHeightHalf + lettersBounds.height() + 12, textPaint);
+        } catch (Exception ignored) {
+        }
     }
 }
