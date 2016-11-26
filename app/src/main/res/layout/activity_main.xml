@@ -249,12 +249,17 @@
                     android:orientation="vertical"
                     android:paddingTop="15dp">
 
-                    <LinearLayout
-                        android:id="@+id/mainDrawer_list"
+                    <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical" />
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:id="@+id/mainDrawer_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+                    </ScrollView>
 
                     <LinearLayout
                         android:id="@+id/mainDrawer_footerList"
