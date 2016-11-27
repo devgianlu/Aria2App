@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                                 return false;
                             case SUPPORT:
-                                Utils.sendEmail(MainActivity.this);
+                                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name));
                                 return true;
                             case ABOUT_ARIA2:
                                 final JTA2 jta2;

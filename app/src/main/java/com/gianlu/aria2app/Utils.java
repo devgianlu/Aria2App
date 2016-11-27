@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
@@ -480,30 +479,6 @@ public class Utils {
         }
     }
 
-    static void sendEmail(Activity activity) {
-        String version;
-        try {
-            version = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException ex) {
-            version = activity.getString(R.string.unknown);
-        }
-
-        Intent intent = new Intent(Intent.ACTION_SEND)
-                .setType("message/rfc822")
-                .putExtra(Intent.EXTRA_EMAIL, new String[]{activity.getString(R.string.email)})
-                .putExtra(Intent.EXTRA_SUBJECT, "Aria2App")
-                .putExtra(Intent.EXTRA_TEXT, "OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")" +
-                        "\nOS API Level: " + android.os.Build.VERSION.SDK_INT +
-                        "\nDevice: " + android.os.Build.DEVICE +
-                        "\nModel (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")" +
-                        "\nApplication version: " + version);
-        try {
-            activity.startActivity(Intent.createChooser(intent, "Send mail..."));
-        } catch (android.content.ActivityNotFoundException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.NO_EMAIL_CLIENT);
-        }
-    }
-
     @Nullable
     public static URL createDownloadRemoteURL(Context context, String downloadDir, AFile file) {
         final DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
@@ -591,7 +566,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING_AUTOCOMPLETION = new CommonUtils.ToastMessage("Unable to load method's suggestions!", true);
         public static final CommonUtils.ToastMessage FAILED_EDIT_CONVERSATION_ITEM = new CommonUtils.ToastMessage("Failed editing that item!", true);
-        public static final CommonUtils.ToastMessage NO_EMAIL_CLIENT = new CommonUtils.ToastMessage("There are no email clients installed.", true);
         public static final CommonUtils.ToastMessage INVALID_SSID = new CommonUtils.ToastMessage("Invalid SSID!", false);
         public static final CommonUtils.ToastMessage MUST_PICK_DEFAULT = new CommonUtils.ToastMessage("You must select one profile as default!", false);
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_ADDR = new CommonUtils.ToastMessage("Invalid DirectDownload's server address!", false);

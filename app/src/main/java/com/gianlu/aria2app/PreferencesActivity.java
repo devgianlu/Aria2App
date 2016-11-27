@@ -74,7 +74,7 @@ public class PreferencesActivity extends PreferenceActivity {
         findPreference("email").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Utils.sendEmail(PreferencesActivity.this);
+                CommonUtils.sendEmail(PreferencesActivity.this, getString(R.string.app_name));
                 return true;
             }
         });
