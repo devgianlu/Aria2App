@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.Map;
@@ -53,6 +54,7 @@ public class ThisApplication extends Application {
 
         FileDownloader.init(getApplicationContext());
 
+        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         tracker = getTracker(this);
     }
 }
