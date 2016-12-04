@@ -54,6 +54,7 @@
             android:id="@+id/materialDrawer_profileGlobalName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center_vertical|start"
             android:lines="1"
             android:textStyle="bold"
@@ -63,6 +64,7 @@
             android:id="@+id/materialDrawer_profileName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center_vertical|start"
             android:lines="1"
             android:textStyle="bold" />
@@ -71,8 +73,9 @@
             android:id="@+id/materialDrawer_profileAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:gravity="center_vertical|start"
-            android:lines="1"
+            android:maxLines="2"
             android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>
