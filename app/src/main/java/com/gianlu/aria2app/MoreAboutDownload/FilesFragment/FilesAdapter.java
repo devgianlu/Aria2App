@@ -57,6 +57,9 @@ class FilesAdapter {
     }
 
     static void setupAsync(final Activity context, final String gid, final Tree tree, final IAsync handler) {
+        if (context == null)
+            return;
+
         new Thread(new Runnable() {
             @Override
             public void run() {

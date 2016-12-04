@@ -110,6 +110,9 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
+        if (objs == null)
+            return 0;
+
         return objs.size();
     }
 

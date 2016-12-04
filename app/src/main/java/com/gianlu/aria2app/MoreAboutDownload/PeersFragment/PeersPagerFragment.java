@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.MoreAboutDownload.PeersFragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -45,12 +46,16 @@ public class PeersPagerFragment extends CommonFragment {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         UpdateUI.stop(updateUI);
 
+        final Activity activity = getActivity();
+        if (activity == null)
+            return;
+
         try {
-            JTA2.newInstance(getActivity()).getPeers(getArguments().getString("gid"), new JTA2.IPeers() {
+            JTA2.newInstance(activity).getPeers(getArguments().getString("gid"), new JTA2.IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers, (CardView) view.findViewById(R.id.peersFragment_noData));
-                    getActivity().runOnUiThread(new Runnable() {
+                    activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             view.findViewById(R.id.peersFragment_noData).setVisibility(View.GONE);
@@ -58,18 +63,18 @@ public class PeersPagerFragment extends CommonFragment {
                         }
                     });
 
-                    updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), adapter);
+                    updateUI = new UpdateUI(activity, getArguments().getString("gid"), adapter);
                     new Thread(updateUI).start();
                 }
 
                 @Override
                 public void onException(Exception exception) {
-                    CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
+                    CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                 }
 
                 @Override
                 public void onNoPeerData(final Exception exception) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             PeerCardAdapter adapter = ((PeerCardAdapter) ((RecyclerView) view.findViewById(R.id.peersFragment_recyclerView)).getAdapter());
@@ -82,7 +87,7 @@ public class PeersPagerFragment extends CommonFragment {
                 }
             });
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
         }
     }
 
@@ -100,12 +105,16 @@ public class PeersPagerFragment extends CommonFragment {
                     @Override
                     public void stopped() {
                         onViewCreated(rootView, savedInstanceState);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeLayout.setRefreshing(false);
-                            }
-                        });
+
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeLayout.setRefreshing(false);
+                                }
+                            });
+                        }
                     }
                 });
             }
