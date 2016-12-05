@@ -92,7 +92,7 @@ public class LetterIconBig extends View {
                 if (textBounds.width() <= getMeasuredWidth() - 24) {
                     isTextBoundOK = true;
                 } else if (textSize <= 8) {
-                    cAddr = cAddr.substring(0, cAddr.length() - 1); // TODO: Add ...
+                    cAddr = cAddr.substring(0, cAddr.length() - 1);
                 } else {
                     textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize--, context.getResources().getDisplayMetrics()));
                 }
