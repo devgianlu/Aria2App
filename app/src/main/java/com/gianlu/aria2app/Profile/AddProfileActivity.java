@@ -496,7 +496,7 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     private void createSingle() {
-        if (profileName.getText().toString().trim().isEmpty()) {
+        if (profileName.getText().toString().trim().isEmpty() || profileName.getText().toString().contains("/")) {
             CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_PROFILE_NAME);
             return;
         }
@@ -592,7 +592,7 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     private void createMulti() {
-        if (profileName.getText().toString().trim().isEmpty()) {
+        if (profileName.getText().toString().trim().isEmpty() || profileName.getText().toString().contains("/")) {
             CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_PROFILE_NAME);
             return;
         }
