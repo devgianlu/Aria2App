@@ -20,6 +20,8 @@
     <color name="downloadColor">#ffc107</color>
     <color name="uploadColor">#009688</color>
 
+    <color name="green">#4caf50</color>
+    <color name="red">#f44336</color>
     <color name="white">#ffffff</color>
     <color name="text_default_material_dark">#b3ffffff</color>
 </resources>

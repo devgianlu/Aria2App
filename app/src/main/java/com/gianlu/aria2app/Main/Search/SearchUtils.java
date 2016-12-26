@@ -1,74 +1,56 @@
 package com.gianlu.aria2app.Main.Search;
 
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
-
-import com.caverock.androidsvg.SVG;
-import com.caverock.androidsvg.SVGParseException;
-import com.gianlu.aria2app.NetIO.StatusCodeException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SearchUtils {
-    public static void retrieveWebsiteLogo(final ILogo handler) {
+    public static void search(final String query, final int page, final ISearch handler) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL("http://1337x.to").openConnection();
+                    HttpURLConnection conn = (HttpURLConnection) new URL("http://1337x.to/search/" + query + "/" + page + "/").openConnection();
                     conn.connect();
-
-                    if (conn.getResponseCode() != 200) {
-                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
-                        return;
-                    }
 
                     String html = "";
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                     String line;
-                    while ((line = reader.readLine()) != null) {
+                    while ((line = reader.readLine()) != null)
                         html += line;
-                    }
 
                     reader.close();
-                    Matcher matcher = Pattern.compile("<div\\sclass=\"logo\"><a\\s.*?><img\\s.*?src=\"(.*)\"></a></div>").matcher(html);
+                    conn.disconnect();
 
+                    Matcher matcher = Pattern.compile("<table\\s.*?><thead>.*?</thead><tbody>(.*?)</tbody></table>").matcher(html);
+                    List<SearchResult> results = new ArrayList<>();
                     if (matcher.find()) {
-                        conn.disconnect();
+                        Matcher resultMatcher = Pattern.compile("<tr>(.*?)</tr>").matcher(matcher.group(1));
 
-                        HttpURLConnection logoConn = (HttpURLConnection) new URL("http://1337x.to/" + matcher.group(1)).openConnection();
-                        logoConn.connect();
-
-                        if (logoConn.getResponseCode() != 200) {
-                            handler.onException(new StatusCodeException(logoConn.getResponseCode(), logoConn.getResponseMessage()));
-                            return;
+                        while (resultMatcher.find()) {
+                            SearchResult result = SearchResult.fromHTML(resultMatcher.group(1));
+                            if (result != null)
+                                results.add(result);
                         }
-
-                        // FIXME: Not rendering well
-                        SVG logo = SVG.getFromInputStream(logoConn.getInputStream());
-                        logoConn.disconnect();
-
-                        handler.onLogo(new PictureDrawable(logo.renderToPicture()));
-                    } else {
-                        handler.onException(new NullPointerException("<div> tag not found!"));
                     }
-                } catch (IOException | SVGParseException ex) {
+
+                    handler.onResults(results);
+                } catch (IOException ex) {
                     handler.onException(ex);
                 }
             }
         }).start();
     }
 
-    public interface ILogo {
-        void onLogo(Drawable logo);
-
+    public interface ISearch {
+        void onResults(List<SearchResult> results);
         void onException(Exception ex);
     }
 }
