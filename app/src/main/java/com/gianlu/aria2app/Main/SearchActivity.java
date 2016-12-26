@@ -41,7 +41,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         list = (RecyclerView) findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         noData = (TextView) findViewById(R.id.search_noData);
-
     }
 
     @Override
@@ -60,6 +59,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     public boolean onQueryTextSubmit(String query) {
         loading.setVisibility(View.VISIBLE);
+        list.setVisibility(View.GONE);
+        noData.setVisibility(View.GONE);
         banner.setVisibility(View.GONE);
 
         SearchUtils.search(query, 1, new SearchUtils.ISearch() {
@@ -77,7 +78,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                             noData.setVisibility(View.GONE);
                             list.setVisibility(View.VISIBLE);
 
-                            list.setAdapter(new SearchResultAdapter(SearchActivity.this, results));
+                            list.setAdapter(new SearchResultAdapter(SearchActivity.this, results, new SearchResultAdapter.IAdapter() {
+                                @Override
+                                public void onItemClick(SearchResult which) {
+                                    // TODO: Item selected
+                                }
+                            }));
                         }
                     }
                 });
@@ -100,7 +106,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        System.out.println("QUERY: " + newText);
         return true;
     }
 }
