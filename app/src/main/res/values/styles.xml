@@ -46,5 +46,4 @@
         <item name="android:background">@drawable/fab_label_layout</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-
 </resources>

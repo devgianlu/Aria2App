@@ -240,6 +240,8 @@
     <string name="indexes"><![CDATA[<b>Indexes:</b>]]> %s</string>
     <string name="downloadDirectory">Download directory</string>
     <string name="downloadDirectoryMessage">Are you sure you want to download all files contained in this directory and its subdirectories?</string>
+    <string name="searchTorrent">Search for Torrents</string>
+    <string name="nothingFound">Nothing found!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

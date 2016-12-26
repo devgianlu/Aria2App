@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.MoreAboutDownload.ServersFragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -51,12 +52,15 @@ public class ServersPagerFragment extends CommonFragment {
                 @Override
                 public void onServers(Map<Integer, List<Server>> servers) {
                     final ServerCardAdapter adapter = new ServerCardAdapter(getContext(), servers, (CardView) view.findViewById(R.id.serversFragment_noData));
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).setAdapter(adapter);
-                        }
-                    });
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).setAdapter(adapter);
+                            }
+                        });
+                    }
 
                     updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), adapter);
                     new Thread(updateUI).start();
@@ -69,16 +73,19 @@ public class ServersPagerFragment extends CommonFragment {
 
                 @Override
                 public void onDownloadNotActive(final Exception exception) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ServerCardAdapter adapter = ((ServerCardAdapter) ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).getAdapter());
-                            if (adapter != null)
-                                adapter.clear();
-                            view.findViewById(R.id.serversFragment_noData).setVisibility(View.VISIBLE);
-                            ((TextView) view.findViewById(R.id.serversFragment_noDataLabel)).setText(getString(R.string.noServersMessage, exception.getMessage()));
-                        }
-                    });
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ServerCardAdapter adapter = ((ServerCardAdapter) ((RecyclerView) view.findViewById(R.id.serversFragment_recyclerView)).getAdapter());
+                                if (adapter != null)
+                                    adapter.clear();
+                                view.findViewById(R.id.serversFragment_noData).setVisibility(View.VISIBLE);
+                                ((TextView) view.findViewById(R.id.serversFragment_noDataLabel)).setText(getString(R.string.noServersMessage, exception.getMessage()));
+                            }
+                        });
+                    }
                 }
             });
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
@@ -100,12 +107,16 @@ public class ServersPagerFragment extends CommonFragment {
                     @Override
                     public void stopped() {
                         onViewCreated(rootView, savedInstanceState);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeLayout.setRefreshing(false);
-                            }
-                        });
+
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeLayout.setRefreshing(false);
+                                }
+                            });
+                        }
                     }
                 });
             }

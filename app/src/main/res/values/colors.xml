@@ -8,6 +8,8 @@
     <color name="colorAccent">#ff5722</color>
     <color name="colorAccent_pressed">#cc451b</color>
 
+    <color name="colorSearch">#795548</color>
+    <color name="colorSearch_pressed">#4e342e</color>
     <color name="colorTorrent">#66bb6a</color>
     <color name="colorTorrent_pressed">#2e7d32</color>
     <color name="colorMetalink">#5e35b1</color>

@@ -2,7 +2,6 @@ package com.gianlu.aria2app.NetIO;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.ArrayMap;
 import android.util.Pair;
 
 import com.gianlu.aria2app.MainActivity;
@@ -25,13 +24,14 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketing extends WebSocketAdapter {
     private static WebSocketing webSocketing;
     private static IConnecting handler;
     private static IListener globalHandler;
     private static boolean isDestroying;
-    private final Map<Integer, IReceived> requests = new ArrayMap<>();
+    private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
     private final List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
     private WebSocket socket;
 
@@ -82,8 +82,12 @@ public class WebSocketing extends WebSocketAdapter {
     }
 
     public void send(JSONObject request, IReceived handler) {
-        if (requests.size() > 10)
-            requests.clear();
+        if (requests.size() > 10) {
+            synchronized (requests) {
+                requests.clear();
+            }
+        }
+
         if (connectionQueue.size() > 10)
             connectionQueue.clear();
 

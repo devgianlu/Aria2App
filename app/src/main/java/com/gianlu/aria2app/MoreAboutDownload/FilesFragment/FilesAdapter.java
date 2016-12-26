@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -299,7 +299,7 @@ class FilesAdapter {
                                 selected_files.remove(file.file.index);
                             }
 
-                            Map<String, String> newOptions = new ArrayMap<>();
+                            Map<String, String> newOptions = new HashMap<>();
                             String newSelected = "";
                             boolean firstItem = true;
                             for (Integer i : selected_files) {

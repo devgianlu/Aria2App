@@ -78,6 +78,16 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden" />
 
+        <!-- Search Torrent activity -->
+        <activity
+            android:name=".Main.SearchActivity"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
         <!-- Notification service -->
         <service
             android:name=".Services.NotificationService"

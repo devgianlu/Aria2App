@@ -14,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Pair;
 import android.view.Menu;
@@ -51,6 +50,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +67,7 @@ public class AddProfileActivity extends AppCompatActivity {
     // Single mode
     private SingleModeViewHolder sViewHolder;
     // Multi mode
-    private Map<ConnectivityCondition, SingleModeProfileItem> mProfiles = new ArrayMap<>();
+    private Map<ConnectivityCondition, SingleModeProfileItem> mProfiles = new HashMap<>();
     private ListView mListView;
     private Spinner mSpinner;
 

@@ -35,6 +35,7 @@ import com.gianlu.aria2app.Main.DrawerManager;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
+import com.gianlu.aria2app.Main.SearchActivity;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.AsyncRequest;
 import com.gianlu.aria2app.NetIO.IResponse;
@@ -353,6 +354,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.mainFab_search);
+        fabSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+            }
+        });
         FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFab_addURI);
         fabAddURI.setOnClickListener(new View.OnClickListener() {
             @Override

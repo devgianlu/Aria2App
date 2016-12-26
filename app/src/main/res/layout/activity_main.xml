@@ -93,6 +93,16 @@
                 fab:fab_labelStyle="@style/menu_labels_style">
 
                 <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorSearch"
+                    fab:fab_colorPressed="@color/colorSearch_pressed"
+                    fab:fab_icon="@drawable/ic_search_white_48dp"
+                    fab:fab_size="mini"
+                    fab:fab_title="Search" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
                     android:id="@+id/mainFab_addMetalink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
