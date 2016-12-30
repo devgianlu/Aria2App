@@ -17,11 +17,6 @@ import java.util.Random;
 
 public class Billing {
     public static final int RESULT_BILLING_UNAVAILABLE = 3;
-    public static final int RESULT_ITEM_UNAVAILABLE = 4;
-    public static final int RESULT_DEVELOPER_ERROR = 5;
-    public static final int RESULT_ERROR = 6;
-    public static final int RESULT_ITEM_ALREADY_OWNED = 7;
-    public static final int RESULT_ITEM_NOT_OWNED = 8;
     private static final ArrayList<String> donationProducts = new ArrayList<>(Arrays.asList(
             "donation.lemonade",
             "donation.coffee",

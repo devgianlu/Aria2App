@@ -243,6 +243,18 @@
     <string name="searchTorrent">Search for torrents</string>
     <string name="nothingFound">Nothing found!</string>
     <string name="site_description">1337x.to\nA torrent search engine</string>
+    <string name="fetching_information">Fetching information. Please wait…</string>
+    <string name="openInBrowser">Open in browser</string>
+    <string name="download">Download</string>
+    <string name="size"><![CDATA[<b>Size:</b>]]> %s</string>
+    <string name="uploader"><![CDATA[<b>Uploader:</b>]]> %s</string>
+    <string name="uploaderType"><![CDATA[<b>Uploader type:</b>]]> %s</string>
+    <string name="administrator">Administrator</string>
+    <string name="moderator">Moderator</string>
+    <string name="vip">VIP</string>
+    <string name="trial_uploader">Trial uploader</string>
+    <string name="user">User</string>
+    <string name="normal_uploader">Uploader</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

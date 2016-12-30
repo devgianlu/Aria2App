@@ -219,6 +219,9 @@ public class JTA2 {
 
             JSONArray jUris = new JSONArray();
             for (String uri : uris) {
+                if (uri == null)
+                    continue;
+
                 jUris.put(uri);
             }
             params.put(jUris);

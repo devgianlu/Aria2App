@@ -647,11 +647,6 @@ public class MainActivity extends AppCompatActivity {
                                 public void onException(Exception exception) {
                                     CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
                                 }
-
-                                @Override
-                                public void onFailed(int code, String message) {
-                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, Utils.formatConnectionError(code, message));
-                                }
                             })).start();
                         }
 
