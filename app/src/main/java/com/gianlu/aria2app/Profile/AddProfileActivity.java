@@ -291,11 +291,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         builder.setPositiveButton(edit != null ? R.string.save : R.string.add, null)
                 .setTitle(type.getFormal())
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                })
+                .setNegativeButton(R.string.cancel, null)
                 .setView(view);
 
         if (edit != null) {

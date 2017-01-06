@@ -385,11 +385,7 @@ class FilesAdapter {
                             CommonUtils.showDialog(context, new AlertDialog.Builder(context)
                                     .setTitle(R.string.downloadIncomplete)
                                     .setMessage(R.string.downloadIncompleteMessage)
-                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
+                                    .setNegativeButton(android.R.string.no, null)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -442,11 +438,7 @@ class FilesAdapter {
                         CommonUtils.showDialog(context, new AlertDialog.Builder(context)
                                 .setTitle(R.string.downloadDirectory)
                                 .setMessage(R.string.downloadDirectoryMessage)
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                })
+                                .setNegativeButton(android.R.string.no, null)
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {

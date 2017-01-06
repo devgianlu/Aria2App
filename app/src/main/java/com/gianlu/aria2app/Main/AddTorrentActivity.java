@@ -91,11 +91,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                 CommonUtils.showDialog(AddTorrentActivity.this, new AlertDialog.Builder(AddTorrentActivity.this)
                         .setTitle(R.string.addUri)
                         .setView(newUri)
-                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        })
+                        .setNegativeButton(android.R.string.cancel, null)
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

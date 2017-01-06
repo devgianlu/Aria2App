@@ -195,11 +195,7 @@ public class PreferencesActivity extends PreferenceActivity {
 
                 CommonUtils.showDialog(PreferencesActivity.this, new AlertDialog.Builder(PreferencesActivity.this)
                         .setTitle(getString(R.string.donate))
-                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        })
+                        .setNegativeButton(android.R.string.cancel, null)
                         .setAdapter(new ProductAdapter(PreferencesActivity.this, products, new ProductAdapter.IAdapter() {
                             @Override
                             public void onItemSelected(Product product) {

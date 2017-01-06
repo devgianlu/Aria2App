@@ -246,11 +246,7 @@ public class TerminalActivity extends AppCompatActivity {
                                     .build());
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
+                .setNegativeButton(android.R.string.cancel, null);
     }
 
     private AlertDialog.Builder createNewAdvancedRequestDialog() {
@@ -284,11 +280,7 @@ public class TerminalActivity extends AppCompatActivity {
                                     .build());
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
+                .setNegativeButton(android.R.string.cancel, null);
     }
 
     @Override

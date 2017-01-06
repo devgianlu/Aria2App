@@ -358,11 +358,7 @@ public class Utils {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(isQuick ? R.string.menu_downloadQuickOptions : R.string.options)
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
+                .setNegativeButton(android.R.string.cancel, null);
 
         final LinearLayout layout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null, false);
         JTA2.IOption optionHandler = new JTA2.IOption() {

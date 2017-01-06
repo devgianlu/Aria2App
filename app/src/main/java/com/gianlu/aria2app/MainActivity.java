@@ -523,6 +523,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onRemovedResult(String gid) {
+                                        // TODO: Removed card from list (that's a workaround)
                                         CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED_RESULT, gid);
                                     }
 
@@ -736,11 +737,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        }));
+                        .setNegativeButton(android.R.string.no, null));
 
                 sharedPreferences.edit()
                         .putLong("firstStart", -2)
