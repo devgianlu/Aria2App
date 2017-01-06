@@ -99,9 +99,9 @@ public class DownloadAction {
 
     void remove(final Context context, final String gid, Download.STATUS status, final IRemove handler) {
         if (status == Download.STATUS.COMPLETE || status == Download.STATUS.ERROR || status == Download.STATUS.REMOVED) {
-            jta2.removeDownloadResult(gid, new JTA2.IGID() {
+            jta2.removeDownloadResult(gid, new JTA2.ISuccess() {
                 @Override
-                public void onGID(String gid) {
+                public void onSuccess() {
                     handler.onRemovedResult(gid);
                 }
 
@@ -156,9 +156,9 @@ public class DownloadAction {
                         jta2.addUri(Collections.singletonList(url), null, options, new JTA2.IGID() {
                             @Override
                             public void onGID(final String newGid) {
-                                jta2.removeDownloadResult(gid, new JTA2.IGID() {
+                                jta2.removeDownloadResult(gid, new JTA2.ISuccess() {
                                     @Override
-                                    public void onGID(String gid) {
+                                    public void onSuccess() {
                                         handler.onRestarted();
                                     }
 

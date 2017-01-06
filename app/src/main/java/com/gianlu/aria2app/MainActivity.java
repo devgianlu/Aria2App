@@ -68,6 +68,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
+    private static boolean versionChecked = false;
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -522,9 +523,13 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     @Override
-                                    public void onRemovedResult(String gid) {
-                                        // TODO: Removed card from list (that's a workaround)
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED_RESULT, gid);
+                                    public void onRemovedResult(final String gid) {
+                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED_RESULT, gid, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                adapter.removeItem(gid);
+                                            }
+                                        });
                                     }
 
                                     @Override
@@ -616,7 +621,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                if (sharedPreferences.getBoolean("a2_runVersionCheckAtStartup", true)) {
+                if (sharedPreferences.getBoolean("a2_runVersionCheckAtStartup", true) && !versionChecked) {
                     jta2.getVersion(new JTA2.IVersion() {
                         @Override
                         public void onVersion(List<String> rawFeatures, final String version) {
@@ -636,16 +641,15 @@ public class MainActivity extends AppCompatActivity {
                                         CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
                                                 .setTitle(R.string.dialogVersionCheck)
                                                 .setMessage(getString(R.string.dialogVersionCheckMessage, latest, version))
-                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                    }
-                                                }));
+                                                .setPositiveButton(android.R.string.ok, null));
                                     }
+
+                                    versionChecked = true;
                                 }
 
                                 @Override
                                 public void onException(Exception exception) {
+                                    versionChecked = false;
                                     CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
                                 }
                             })).start();

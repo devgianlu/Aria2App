@@ -67,11 +67,18 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
         return objs.get(position);
     }
     public Download getItem(String gid) {
-        for (Download download : objs) {
-            if (download.gid.equals(gid)) return download;
-        }
-
+        for (Download download : objs)
+            if (download.gid.equals(gid))
+                return download;
         return null;
+    }
+
+    public void removeItem(String gid) {
+        int index = objs.indexOf(getItem(gid));
+        if (index != -1) {
+            objs.remove(index);
+            notifyDataSetChanged();
+        }
     }
 
     @Override

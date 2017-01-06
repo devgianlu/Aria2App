@@ -580,7 +580,7 @@ public class JTA2 {
     }
 
     //aria2.removeDownloadResult
-    public void removeDownloadResult(String gid, final IGID handler) {
+    public void removeDownloadResult(String gid, final ISuccess handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -596,7 +596,10 @@ public class JTA2 {
         webSocketing.send(request, new WebSocketing.IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                if (Objects.equals(response.optString("result"), "OK"))
+                    handler.onSuccess();
+                else
+                    handler.onException(new Aria2Exception(response.toString(), -1));
             }
 
             @Override
