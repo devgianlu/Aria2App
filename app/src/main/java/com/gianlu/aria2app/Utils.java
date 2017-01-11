@@ -154,10 +154,6 @@ public class Utils {
         return set;
     }
 
-    static String formatConnectionError(int code, String message) {
-        return "#" + code + ": " + message;
-    }
-
     @NonNull
     public static List<Integer> bitfieldProcessor(int numPieces, String bitfield) {
         List<Integer> pieces = new ArrayList<>();
@@ -250,7 +246,7 @@ public class Utils {
         }
     }
 
-    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException {
+    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException, IllegalArgumentException {
         if (ca != null) {
             return new WebSocketFactory()
                     .setSSLContext(readySSLContext(ca))
@@ -518,6 +514,7 @@ public class Utils {
         void onApply(JTA2 jta2, Map<String, String> options);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class ToastMessages {
         public static final CommonUtils.ToastMessage WS_DISCONNECTED = new CommonUtils.ToastMessage("WebSocket disconnected!", true);
         public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
