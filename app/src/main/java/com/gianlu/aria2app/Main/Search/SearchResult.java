@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SearchResult {
-    private static final Pattern pattern = Pattern.compile("<td\\sclass=\".*\\sname\"><a\\s.*?</a><a\\shref=\"(.*?)\">(.*?)</a>(?:<span.*>.*?</span>|)</td><td\\sclass=\".*\\sseeds\">(.*?)</td><td\\sclass=\".*\\sleeches\">(.*?)</td><td\\sclass=\"coll-date\">.*?</td><td\\sclass=\".*\\smob-.*?\">(.*?)<span.*>.*</span></td><td\\sclass=\"coll-5\\s(.*?)\"><a\\s.*?>(.*?)</a></td>");
+    private static final Pattern pattern = Pattern.compile("<td\\sclass=\".*\\sname\">(?:<div\\s.*?</div>|<a\\s.*?</a>)<a\\shref=\"(.*?)\">(.*?)</a>(?:<span.*>.*?</span>|)(?:\\s|)</td><td\\sclass=\".*\\sseeds\">(.*?)</td><td\\sclass=\".*\\sleeches\">(.*?)</td><td\\sclass=\"coll-date\">.*?</td><td\\sclass=\".*\\smob-.*?\">(.*?)<span.*>.*</span></td><td\\sclass=\"coll-5\\s(.*?)\"><a\\s.*?>(.*?)</a></td>");
     public String name;
     public String href;
     public String size;

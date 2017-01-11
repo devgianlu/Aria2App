@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,12 +36,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
     private TextView noData;
     private RecyclerView list;
-    private LinearLayout banner;
     private ProgressBar loading;
+    private LinearLayout searchContainer;
+    private TextView label;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +51,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         setContentView(R.layout.activity_search);
         setTitle(R.string.searchTorrent);
 
-        TextView siteDescription = (TextView) findViewById(R.id.search_siteDescription);
-        siteDescription.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf"));
-        banner = (LinearLayout) findViewById(R.id.search_siteBanner);
         loading = (ProgressBar) findViewById(R.id.search_loading);
         list = (RecyclerView) findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        label = (TextView) findViewById(R.id.search_label);
         noData = (TextView) findViewById(R.id.search_noData);
+        searchContainer = (LinearLayout) findViewById(R.id.search_container);
+
+        onQueryTextSubmit(SearchUtils.TRENDING_WEEK);
     }
 
     @Override
@@ -67,19 +69,19 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
+        searchView.setOnCloseListener(this);
         searchView.setOnQueryTextListener(this);
 
         return true;
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
+    public boolean onQueryTextSubmit(final String query) {
         loading.setVisibility(View.VISIBLE);
-        list.setVisibility(View.GONE);
+        searchContainer.setVisibility(View.GONE);
         noData.setVisibility(View.GONE);
-        banner.setVisibility(View.GONE);
 
-        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+        ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_SEARCH)
                 .build());
@@ -94,10 +96,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
                         if (results.isEmpty()) {
                             noData.setVisibility(View.VISIBLE);
-                            list.setVisibility(View.GONE);
+                            searchContainer.setVisibility(View.GONE);
                         } else {
                             noData.setVisibility(View.GONE);
-                            list.setVisibility(View.VISIBLE);
+                            searchContainer.setVisibility(View.VISIBLE);
+                            if (Objects.equals(query, SearchUtils.TRENDING_WEEK))
+                                label.setText(R.string.trendingWeek);
+                            else
+                                label.setText(getString(R.string.searchFor, query));
 
                             final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(SearchActivity.this, R.string.fetching_information);
                             final ProgressDialog pdd = CommonUtils.fastIndeterminateProgressDialog(SearchActivity.this, R.string.gathering_information);
@@ -183,7 +189,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                     public void run() {
                         loading.setVisibility(View.GONE);
                         noData.setVisibility(View.VISIBLE);
-                        list.setVisibility(View.GONE);
+                        searchContainer.setVisibility(View.GONE);
                     }
                 });
             }
@@ -193,6 +199,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        if (newText.length() >= 3)
+            onQueryTextSubmit(newText);
         return true;
+    }
+
+    @Override
+    public boolean onClose() {
+        onQueryTextSubmit(SearchUtils.TRENDING_WEEK);
+        return false;
     }
 }

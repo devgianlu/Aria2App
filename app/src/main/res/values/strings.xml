@@ -242,7 +242,6 @@
     <string name="downloadDirectoryMessage">Are you sure you want to download all files contained in this directory and its subdirectories?</string>
     <string name="searchTorrent">Search for torrents</string>
     <string name="nothingFound">Nothing found!</string>
-    <string name="site_description">1337x.to\nA torrent search engine</string>
     <string name="fetching_information">Fetching information. Please wait…</string>
     <string name="openInBrowser">Open in browser</string>
     <string name="download">Download</string>
@@ -255,6 +254,8 @@
     <string name="trial_uploader">Trial uploader</string>
     <string name="user">User</string>
     <string name="normal_uploader">Uploader</string>
+    <string name="searchFor">Search results for: %s</string>
+    <string name="trendingWeek">Trending this week</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

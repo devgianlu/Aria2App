@@ -11,16 +11,67 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SearchUtils {
+    public static final String TRENDING_WEEK = "trending-week";
+
     public static void search(final String query, final ISearch handler) {
+        if (Objects.equals(query, TRENDING_WEEK)) {
+            fetchTrendingThisWeek(handler);
+            return;
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     HttpURLConnection conn = (HttpURLConnection) new URL("http://1337x.to/search/" + query + "/1/").openConnection();
+                    conn.connect();
+
+                    if (conn.getResponseCode() != 200) {
+                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
+                        return;
+                    }
+
+                    String html = "";
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    String line;
+                    while ((line = reader.readLine()) != null)
+                        html += line;
+
+                    reader.close();
+                    conn.disconnect();
+
+                    Matcher matcher = Pattern.compile("<table\\s.*?><thead>.*?</thead><tbody>(.*?)</tbody></table>").matcher(html);
+                    List<SearchResult> results = new ArrayList<>();
+                    if (matcher.find()) {
+                        Matcher resultMatcher = Pattern.compile("<tr>(.*?)</tr>").matcher(matcher.group(1));
+
+                        while (resultMatcher.find()) {
+                            SearchResult result = SearchResult.fromHTML(resultMatcher.group(1));
+                            if (result != null)
+                                results.add(result);
+                        }
+                    }
+
+                    handler.onResults(results);
+                } catch (IOException ex) {
+                    handler.onException(ex);
+                }
+            }
+        }).start();
+    }
+
+    private static void fetchTrendingThisWeek(final ISearch handler) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HttpURLConnection conn = (HttpURLConnection) new URL("http://1337x.to/trending-week").openConnection();
                     conn.connect();
 
                     if (conn.getResponseCode() != 200) {
