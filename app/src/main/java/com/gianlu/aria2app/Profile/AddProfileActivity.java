@@ -48,6 +48,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -397,6 +398,14 @@ public class AddProfileActivity extends AppCompatActivity {
                 if (holder.addr.getText().toString().trim().isEmpty()) {
                     CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_IP);
                     return;
+                } else {
+                    try {
+                        //noinspection ResultOfMethodCallIgnored
+                        URI.create(holder.addr.getText().toString());
+                    } catch (Exception ex) {
+                        CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_IP);
+                        return;
+                    }
                 }
 
                 if (!holder.port.getText().toString().trim().isEmpty()) {
@@ -500,6 +509,14 @@ public class AddProfileActivity extends AppCompatActivity {
         if (sViewHolder.addr.getText().toString().trim().isEmpty()) {
             CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_IP);
             return;
+        } else {
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                URI.create(sViewHolder.addr.getText().toString());
+            } catch (Exception ex) {
+                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_IP);
+                return;
+            }
         }
 
         if (!sViewHolder.port.getText().toString().trim().isEmpty()) {
