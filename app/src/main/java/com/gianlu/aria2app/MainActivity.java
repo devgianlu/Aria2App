@@ -475,6 +475,9 @@ public class MainActivity extends AppCompatActivity {
                                     findViewById(R.id.main_noItems).setVisibility(View.VISIBLE);
                                     mainRecyclerView.setVisibility(View.GONE);
                                 }
+
+                                if (drawerManager != null)
+                                    drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, count);
                             }
                         });
                     }
