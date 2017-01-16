@@ -79,6 +79,9 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
             objs.remove(index);
             notifyDataSetChanged();
         }
+
+        if (handler != null)
+            handler.onItemCountUpdated(objs.size());
     }
 
     @Override
