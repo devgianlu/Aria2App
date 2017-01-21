@@ -86,10 +86,14 @@ public class WebSocketing extends WebSocketAdapter {
             synchronized (requests) {
                 requests.clear();
             }
+
+            System.gc();
         }
 
-        if (connectionQueue.size() > 10)
+        if (connectionQueue.size() > 10) {
             connectionQueue.clear();
+            System.gc();
+        }
 
         if (socket.getState() == WebSocketState.CONNECTING || socket.getState() == WebSocketState.CREATED) {
             connectionQueue.add(new Pair<>(request, handler));
@@ -105,6 +109,7 @@ public class WebSocketing extends WebSocketAdapter {
         } catch (JSONException ex) {
             handler.onException(false, ex);
         } catch (Exception ignored) {
+            System.gc();
         }
     }
 
