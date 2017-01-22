@@ -67,13 +67,13 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading {
     private static boolean versionChecked = false;
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
     private FloatingActionsMenu fabMenu;
-    private LoadDownloads.ILoading loadingHandler;
     private UpdateUI updateUI;
+    private SwipeRefreshLayout swipeLayout;
     private LoadDownloads loadDownloads;
     private MainCardAdapter adapter;
 
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mainRecyclerView.setLayoutManager(llm);
 
-        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipeLayout);
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipeLayout);
         swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -333,27 +333,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
-        fabMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                final View mask = findViewById(R.id.main_mask);
-                mask.setVisibility(View.VISIBLE);
-                mask.setClickable(true);
-                mask.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        fabMenu.collapse();
-                    }
-                });
-            }
-
-            @Override
-            public void onMenuCollapsed() {
-                final View mask = findViewById(R.id.main_mask);
-                mask.setVisibility(View.GONE);
-                mask.setClickable(false);
-            }
-        });
+        fabMenu.setOnFloatingActionsMenuUpdateListener(this);
 
         FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.mainFab_search);
         fabSearch.setOnClickListener(new View.OnClickListener() {
@@ -438,257 +418,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        loadingHandler = new LoadDownloads.ILoading() {
-            @Override
-            public void onStarted() {
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeLayout.setRefreshing(true);
-                    }
-                });
-            }
-
-            @Override
-            public void onLoaded(JTA2 jta2, final List<Download> downloads) {
-                adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActions() {
-                    @Override
-                    public void onMoreClick(Download item) {
-                        Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                .putExtra("gid", item.gid)
-                                .putExtra("name", item.getName())
-                                .putExtra("isTorrent", item.isBitTorrent)
-                                .putExtra("status", item.status.name());
-                        if (!item.status.equals(Download.STATUS.UNKNOWN) && !item.status.equals(Download.STATUS.ERROR))
-                            MainActivity.this.startActivity(launchActivity);
-                    }
-
-                    @Override
-                    public void onItemCountUpdated(final int count) {
-                        MainActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (count > 0) {
-                                    findViewById(R.id.main_noItems).setVisibility(View.GONE);
-                                    mainRecyclerView.setVisibility(View.VISIBLE);
-                                } else {
-                                    findViewById(R.id.main_noItems).setVisibility(View.VISIBLE);
-                                    mainRecyclerView.setVisibility(View.GONE);
-                                }
-
-                                if (drawerManager != null)
-                                    drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, count);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onMenuItemSelected(Download item, DownloadAction.ACTION action) {
-                        DownloadAction downloadAction;
-                        try {
-                            downloadAction = new DownloadAction(MainActivity.this);
-                        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
-                            return;
-                        }
-
-                        DownloadAction.IMove iMove = new DownloadAction.IMove() {
-                            @Override
-                            public void onMoved(String gid) {
-                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.MOVED, gid);
-                            }
-
-                            @Override
-                            public void onException(Exception ex) {
-                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_POSITION, ex);
-                            }
-                        };
-
-                        switch (action) {
-                            case PAUSE:
-                                downloadAction.pause(MainActivity.this, item.gid, new DownloadAction.IPause() {
-                                    @Override
-                                    public void onPaused(String gid) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.PAUSED, gid);
-                                    }
-
-                                    @Override
-                                    public void onException(Exception ex) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_PAUSE, ex);
-                                    }
-                                });
-                                break;
-                            case REMOVE:
-                                downloadAction.remove(MainActivity.this, item.gid, item.status, new DownloadAction.IRemove() {
-                                    @Override
-                                    public void onRemoved(String gid) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED, gid);
-                                    }
-
-                                    @Override
-                                    public void onRemovedResult(final String gid) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED_RESULT, gid, new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                adapter.removeItem(gid);
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onException(boolean b, Exception ex) {
-                                        if (b)
-                                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE, ex);
-                                        else
-                                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE_RESULT, ex);
-                                    }
-                                });
-                                break;
-                            case RESTART:
-                                downloadAction.restart(item.gid, new DownloadAction.IRestart() {
-                                    @Override
-                                    public void onRestarted() {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESTARTED);
-                                    }
-
-                                    @Override
-                                    public void onException(Exception ex) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
-                                    }
-
-                                    @Override
-                                    public void onRemoveResultException(Exception ex) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE_RESULT, ex);
-                                    }
-
-                                    @Override
-                                    public void onGatheringInformationException(Exception ex) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
-                                    }
-                                });
-                                break;
-                            case RESUME:
-                                downloadAction.unpause(item.gid, new DownloadAction.IUnpause() {
-                                    @Override
-                                    public void onUnpaused(String gid) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESUMED, gid);
-                                    }
-
-                                    @Override
-                                    public void onException(Exception ex) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_UNPAUSE, ex);
-                                    }
-                                });
-                                break;
-                            case MOVE_DOWN:
-                                downloadAction.moveDown(item.gid, iMove);
-                                break;
-                            case MOVE_UP:
-                                downloadAction.moveUp(item.gid, iMove);
-                                break;
-                        }
-                    }
-                });
-
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mainRecyclerView.setAdapter(adapter);
-                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, downloads.size());
-
-                        updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
-                        new Thread(updateUI).start();
-
-                        swipeLayout.setRefreshing(false);
-
-                        if (getIntent().getBooleanExtra("fromNotification", false)) {
-                            Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
-                            if (item == null || item.status == Download.STATUS.UNKNOWN) return;
-
-                            startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                    .putExtra("gid", item.gid)
-                                    .putExtra("isTorrent", item.isBitTorrent)
-                                    .putExtra("status", item.status.name())
-                                    .putExtra("name", item.getName()));
-                        } else if (getIntent().getBooleanExtra("fromDirectDownload", false)) {
-                            Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
-                            if (item == null || item.status == Download.STATUS.UNKNOWN) return;
-
-                            startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
-                                    .putExtra("fileIndex", getIntent().getIntExtra("index", -1))
-                                    .putExtra("gid", item.gid)
-                                    .putExtra("isTorrent", item.isBitTorrent)
-                                    .putExtra("status", item.status.name())
-                                    .putExtra("name", item.getName()));
-                        }
-                    }
-                });
-
-                if (sharedPreferences.getBoolean("a2_runVersionCheckAtStartup", true) && !versionChecked) {
-                    jta2.getVersion(new JTA2.IVersion() {
-                        @Override
-                        public void onVersion(List<String> rawFeatures, final String version) {
-                            new Thread(new AsyncRequest(getString(R.string.versionCheckURL), new IResponse() {
-                                @Override
-                                public void onResponse(String response) {
-                                    String latest;
-                                    try {
-                                        latest = new JSONArray(response).getJSONObject(0).getString("name");
-                                        latest = latest.replace("aria2 ", "");
-                                    } catch (JSONException ex) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, ex);
-                                        return;
-                                    }
-
-                                    if (!Objects.equals(latest, version)) {
-                                        CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
-                                                .setTitle(R.string.dialogVersionCheck)
-                                                .setMessage(getString(R.string.dialogVersionCheckMessage, latest, version))
-                                                .setPositiveButton(android.R.string.ok, null));
-                                    }
-
-                                    versionChecked = true;
-                                }
-
-                                @Override
-                                public void onException(Exception exception) {
-                                    versionChecked = false;
-                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
-                                }
-                            })).start();
-                        }
-
-                        @Override
-                        public void onException(Exception exception) {
-                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onException(boolean queuing, final Exception ex) {
-                if (queuing) {
-                    WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
-                        @Override
-                        public void onDone() {
-                            loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
-                            new Thread(loadDownloads).start();
-                        }
-                    });
-                    return;
-                }
-
-                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeLayout.setRefreshing(false);
-                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
-                    }
-                });
-            }
-        };
-
         int autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         if (autoReloadDownloadsListRate != 0) {
             Timer reloadDownloadsListTimer = new Timer(false);
@@ -698,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
                     UpdateUI.stop(updateUI, new IThread() {
                         @Override
                         public void stopped() {
-                            loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
+                            loadDownloads = new LoadDownloads(MainActivity.this, MainActivity.this);
                             try {
                                 new Thread(loadDownloads).start();
                             } catch (InternalError ignored) {
@@ -708,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 0, autoReloadDownloadsListRate);
         } else {
-            loadDownloads = new LoadDownloads(this, loadingHandler);
+            loadDownloads = new LoadDownloads(this, this);
             new Thread(loadDownloads).start();
         }
 
@@ -818,7 +547,7 @@ public class MainActivity extends AppCompatActivity {
         UpdateUI.stop(updateUI, new IThread() {
             @Override
             public void stopped() {
-                loadDownloads = new LoadDownloads(MainActivity.this, loadingHandler);
+                loadDownloads = new LoadDownloads(MainActivity.this, MainActivity.this);
                 new Thread(loadDownloads).start();
             }
         });
@@ -846,6 +575,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             // Filters
             case R.id.a2menu_active:
+                if (adapter == null)
+                    break;
+
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
@@ -854,6 +586,9 @@ public class MainActivity extends AppCompatActivity {
                     adapter.addFilter(Download.STATUS.ACTIVE);
                 break;
             case R.id.a2menu_paused:
+                if (adapter == null)
+                    break;
+
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
@@ -862,6 +597,9 @@ public class MainActivity extends AppCompatActivity {
                     adapter.addFilter(Download.STATUS.PAUSED);
                 break;
             case R.id.a2menu_error:
+                if (adapter == null)
+                    break;
+
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
@@ -870,6 +608,9 @@ public class MainActivity extends AppCompatActivity {
                     adapter.addFilter(Download.STATUS.ERROR);
                 break;
             case R.id.a2menu_waiting:
+                if (adapter == null)
+                    break;
+
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
@@ -878,6 +619,9 @@ public class MainActivity extends AppCompatActivity {
                     adapter.addFilter(Download.STATUS.WAITING);
                 break;
             case R.id.a2menu_complete:
+                if (adapter == null)
+                    break;
+
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
@@ -886,6 +630,9 @@ public class MainActivity extends AppCompatActivity {
                     adapter.addFilter(Download.STATUS.COMPLETE);
                 break;
             case R.id.a2menu_removed:
+                if (adapter == null)
+                    break;
+
                 item.setChecked(!item.isChecked());
 
                 if (item.isChecked())
@@ -894,6 +641,276 @@ public class MainActivity extends AppCompatActivity {
                     adapter.addFilter(Download.STATUS.REMOVED);
                 break;
         }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMenuExpanded() {
+        final View mask = findViewById(R.id.main_mask);
+        mask.setVisibility(View.VISIBLE);
+        mask.setClickable(true);
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fabMenu.collapse();
+            }
+        });
+    }
+
+    @Override
+    public void onMenuCollapsed() {
+        final View mask = findViewById(R.id.main_mask);
+        mask.setVisibility(View.GONE);
+        mask.setClickable(false);
+    }
+
+    @Override
+    public void onStarted() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(true);
+            }
+        });
+    }
+
+    @Override
+    public void onLoaded(JTA2 jta2, final List<Download> downloads) {
+        adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActions() {
+            @Override
+            public void onMoreClick(Download item) {
+                Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                        .putExtra("gid", item.gid)
+                        .putExtra("name", item.getName())
+                        .putExtra("isTorrent", item.isBitTorrent)
+                        .putExtra("status", item.status.name());
+                if (!item.status.equals(Download.STATUS.UNKNOWN) && !item.status.equals(Download.STATUS.ERROR))
+                    MainActivity.this.startActivity(launchActivity);
+            }
+
+            @Override
+            public void onItemCountUpdated(final int count) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (count > 0) {
+                            findViewById(R.id.main_noItems).setVisibility(View.GONE);
+                            mainRecyclerView.setVisibility(View.VISIBLE);
+                        } else {
+                            findViewById(R.id.main_noItems).setVisibility(View.VISIBLE);
+                            mainRecyclerView.setVisibility(View.GONE);
+                        }
+
+                        if (drawerManager != null)
+                            drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, count);
+                    }
+                });
+            }
+
+            @Override
+            public void onMenuItemSelected(Download item, DownloadAction.ACTION action) {
+                DownloadAction downloadAction;
+                try {
+                    downloadAction = new DownloadAction(MainActivity.this);
+                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
+                    return;
+                }
+
+                DownloadAction.IMove iMove = new DownloadAction.IMove() {
+                    @Override
+                    public void onMoved(String gid) {
+                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.MOVED, gid);
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_POSITION, ex);
+                    }
+                };
+
+                switch (action) {
+                    case PAUSE:
+                        downloadAction.pause(MainActivity.this, item.gid, new DownloadAction.IPause() {
+                            @Override
+                            public void onPaused(String gid) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.PAUSED, gid);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_PAUSE, ex);
+                            }
+                        });
+                        break;
+                    case REMOVE:
+                        downloadAction.remove(MainActivity.this, item.gid, item.status, new DownloadAction.IRemove() {
+                            @Override
+                            public void onRemoved(String gid) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED, gid);
+                            }
+
+                            @Override
+                            public void onRemovedResult(final String gid) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED_RESULT, gid, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.removeItem(gid);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onException(boolean b, Exception ex) {
+                                if (b)
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE, ex);
+                                else
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE_RESULT, ex);
+                            }
+                        });
+                        break;
+                    case RESTART:
+                        downloadAction.restart(item.gid, new DownloadAction.IRestart() {
+                            @Override
+                            public void onRestarted() {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESTARTED);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+                            }
+
+                            @Override
+                            public void onRemoveResultException(Exception ex) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_REMOVE_RESULT, ex);
+                            }
+
+                            @Override
+                            public void onGatheringInformationException(Exception ex) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                            }
+                        });
+                        break;
+                    case RESUME:
+                        downloadAction.unpause(item.gid, new DownloadAction.IUnpause() {
+                            @Override
+                            public void onUnpaused(String gid) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESUMED, gid);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_UNPAUSE, ex);
+                            }
+                        });
+                        break;
+                    case MOVE_DOWN:
+                        downloadAction.moveDown(item.gid, iMove);
+                        break;
+                    case MOVE_UP:
+                        downloadAction.moveUp(item.gid, iMove);
+                        break;
+                }
+            }
+        });
+
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mainRecyclerView.setAdapter(adapter);
+                drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, downloads.size());
+
+                updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
+                new Thread(updateUI).start();
+
+                swipeLayout.setRefreshing(false);
+
+                if (getIntent().getBooleanExtra("fromNotification", false)) {
+                    Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                    if (item == null || item.status == Download.STATUS.UNKNOWN) return;
+
+                    startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                            .putExtra("gid", item.gid)
+                            .putExtra("isTorrent", item.isBitTorrent)
+                            .putExtra("status", item.status.name())
+                            .putExtra("name", item.getName()));
+                } else if (getIntent().getBooleanExtra("fromDirectDownload", false)) {
+                    Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                    if (item == null || item.status == Download.STATUS.UNKNOWN) return;
+
+                    startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                            .putExtra("fileIndex", getIntent().getIntExtra("index", -1))
+                            .putExtra("gid", item.gid)
+                            .putExtra("isTorrent", item.isBitTorrent)
+                            .putExtra("status", item.status.name())
+                            .putExtra("name", item.getName()));
+                }
+            }
+        });
+
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("a2_runVersionCheckAtStartup", true) && !versionChecked) {
+            jta2.getVersion(new JTA2.IVersion() {
+                @Override
+                public void onVersion(List<String> rawFeatures, final String version) {
+                    new Thread(new AsyncRequest(getString(R.string.versionCheckURL), new IResponse() {
+                        @Override
+                        public void onResponse(String response) {
+                            String latest;
+                            try {
+                                latest = new JSONArray(response).getJSONObject(0).getString("name");
+                                latest = latest.replace("aria2 ", "");
+                            } catch (JSONException ex) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, ex);
+                                return;
+                            }
+
+                            if (!Objects.equals(latest, version)) {
+                                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle(R.string.dialogVersionCheck)
+                                        .setMessage(getString(R.string.dialogVersionCheckMessage, latest, version))
+                                        .setPositiveButton(android.R.string.ok, null));
+                            }
+
+                            versionChecked = true;
+                        }
+
+                        @Override
+                        public void onException(Exception exception) {
+                            versionChecked = false;
+                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
+                        }
+                    })).start();
+                }
+
+                @Override
+                public void onException(Exception exception) {
+                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHECKING_VERSION, exception);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onException(boolean queuing, final Exception ex) {
+        if (queuing) {
+            WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
+                @Override
+                public void onDone() {
+                    loadDownloads = new LoadDownloads(MainActivity.this, MainActivity.this);
+                    new Thread(loadDownloads).start();
+                }
+            });
+            return;
+        }
+
+        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(false);
+                drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
+            }
+        });
     }
 }
