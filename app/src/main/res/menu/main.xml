@@ -9,6 +9,13 @@
     </item>
 
     <item
+        android:id="@+id/a2menu_sorting"
+        android:title="@string/sorting"
+        app:showAsAction="never">
+        <menu><!-- SubMenu placeholder --></menu>
+    </item>
+
+    <item
         android:id="@+id/a2menu_refreshPage"
         android:title="@string/menu_refreshPage"
         app:showAsAction="never" />

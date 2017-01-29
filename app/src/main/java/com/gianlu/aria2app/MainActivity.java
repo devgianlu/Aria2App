@@ -67,6 +67,9 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// TODO: Total DL/UL speed
+// TODO: External intent
+// FIXME: "when the server is offline and I open the app, it hangs sometimes. Also when I try to add a torrent when the server is offline , the app should prompt me that the aria2 server is offline instead of just simply executing the RPC call repeatedly and not allowing the user to cancel the activity, forcing to restart the app."
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading {
     private static boolean versionChecked = false;
     private RecyclerView mainRecyclerView;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private SwipeRefreshLayout swipeLayout;
     private LoadDownloads loadDownloads;
     private MainCardAdapter adapter;
+    private Menu sortingSubMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -540,6 +544,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         getMenuInflater().inflate(R.menu.main_filters, menu.findItem(R.id.a2menu_filtering).getSubMenu());
+        getMenuInflater().inflate(R.menu.main_sorting, menu.findItem(R.id.a2menu_sorting).getSubMenu());
+        sortingSubMenu = menu.findItem(R.id.a2menu_sorting).getSubMenu();
+        sortingSubMenu.setGroupCheckable(0, true, true);
         return true;
     }
 
@@ -640,9 +647,39 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 else
                     adapter.addFilter(Download.STATUS.REMOVED);
                 break;
+            // Sorting
+            default:
+                handleSorting(item);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handleSorting(MenuItem clicked) {
+        if (sortingSubMenu == null || adapter == null)
+            return;
+
+        clicked.setChecked(true);
+        switch (clicked.getItemId()) {
+            case R.id.a2menu_sortStatus:
+                adapter.sortBy(MainCardAdapter.SortBy.STATUS);
+                break;
+            case R.id.a2menu_sortProgress:
+                adapter.sortBy(MainCardAdapter.SortBy.PROGRESS);
+                break;
+            case R.id.a2menu_sortDownloadSpeed:
+                adapter.sortBy(MainCardAdapter.SortBy.DOWNLOAD_SPEED);
+                break;
+            case R.id.a2menu_sortUploadSpeed:
+                adapter.sortBy(MainCardAdapter.SortBy.UPLOAD_SPEED);
+                break;
+            case R.id.a2menu_sortLength:
+                adapter.sortBy(MainCardAdapter.SortBy.LENGTH);
+                break;
+            case R.id.a2menu_sortCompletedLength:
+                adapter.sortBy(MainCardAdapter.SortBy.COMPLETED_LENGTH);
+                break;
+        }
     }
 
     @Override

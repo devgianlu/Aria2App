@@ -163,10 +163,11 @@ public class Download {
         }
     }
 
-    public Float getProgress() {
+    public float getProgress() {
         return completedLength.floatValue() / length.floatValue() * 100;
     }
 
+    @Nullable
     public Long getMissingTime() {
         if (downloadSpeed == 0) return null;
         return (length - completedLength) / downloadSpeed;
@@ -175,9 +176,9 @@ public class Download {
     public enum STATUS {
         ACTIVE,
         PAUSED,
-        REMOVED,
         WAITING,
         ERROR,
+        REMOVED,
         COMPLETE,
         UNKNOWN;
 

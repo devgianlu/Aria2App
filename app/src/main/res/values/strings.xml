@@ -256,6 +256,11 @@
     <string name="normal_uploader">Uploader</string>
     <string name="searchFor">Search results for: %s</string>
     <string name="trendingWeek">Trending this week</string>
+    <string name="sorting">Sort by</string>
+    <string name="status">Status</string>
+    <string name="totalLengthMenu">Total length</string>
+    <string name="completedLengthMenu">Completed length</string>
+    <string name="progress">Progress</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

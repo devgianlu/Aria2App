@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/a2menu_sortStatus"
+        android:checked="true"
+        android:title="@string/status" />
+
+    <item
+        android:id="@+id/a2menu_sortProgress"
+        android:title="@string/progress" />
+
+    <item
+        android:id="@+id/a2menu_sortDownloadSpeed"
+        android:title="@string/downloadSpeed" />
+
+    <item
+        android:id="@+id/a2menu_sortUploadSpeed"
+        android:title="@string/uploadSpeed" />
+
+    <item
+        android:id="@+id/a2menu_sortLength"
+        android:title="@string/totalLengthMenu" />
+
+    <item
+        android:id="@+id/a2menu_sortCompletedLength"
+        android:title="@string/completedLengthMenu" />
+</menu>
