@@ -73,12 +73,6 @@
             android:name="com.gianlu.commonutils.LogsActivity"
             android:parentActivityName=".PreferencesActivity" />
 
-        <!-- aria2 terminal activity -->
-        <activity
-            android:name=".TerminalActivity"
-            android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden" />
-
         <!-- Search Torrent activity -->
         <activity
             android:name=".Main.SearchActivity"

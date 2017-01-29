@@ -259,16 +259,6 @@ public class DrawerManager {
         });
         drawerList.addView(directDownload, 1);
 
-        View terminal = newItem(R.drawable.ic_developer_board_black_48dp, context.getString(R.string.terminal), true);
-        terminal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null)
-                    setDrawerState(false, listener.onListItemSelected(DrawerListItems.TERMINAL));
-            }
-        });
-        drawerList.addView(terminal, 2);
-
         View globalOptions = newItem(R.drawable.ic_list_black_48dp, context.getString(R.string.menu_globalOptions), true);
         globalOptions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,7 +267,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.GLOBAL_OPTIONS));
             }
         });
-        drawerList.addView(globalOptions, 3);
+        drawerList.addView(globalOptions, 2);
 
         View quickOptions = newItem(R.drawable.ic_favorite_black_48dp, context.getString(R.string.quickGlobalOptions), true);
         quickOptions.setOnClickListener(new View.OnClickListener() {
@@ -287,7 +277,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.QUICK_OPTIONS));
             }
         });
-        drawerList.addView(quickOptions, 4);
+        drawerList.addView(quickOptions, 3);
 
         View aboutAria2 = newItem(R.drawable.ic_cloud_black_48dp, context.getString(R.string.about_aria2), true);
         aboutAria2.setOnClickListener(new View.OnClickListener() {
@@ -297,7 +287,7 @@ public class DrawerManager {
                     setDrawerState(false, listener.onListItemSelected(DrawerListItems.ABOUT_ARIA2));
             }
         });
-        drawerList.addView(aboutAria2, 5);
+        drawerList.addView(aboutAria2, 4);
 
         // Footer group
         drawerFooterList.removeAllViews();
@@ -569,7 +559,6 @@ public class DrawerManager {
 
     public enum DrawerListItems {
         HOME,
-        TERMINAL,
         GLOBAL_OPTIONS,
         ABOUT_ARIA2,
         PREFERENCES,

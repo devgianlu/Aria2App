@@ -442,5 +442,4 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
             detailsUploadLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_uploadLength);
         }
     }
-
 }

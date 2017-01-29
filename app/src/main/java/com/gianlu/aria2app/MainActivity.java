@@ -146,9 +146,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                             case DIRECT_DOWNLOAD:
                                 startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
                                 return false;
-                            case TERMINAL:
-                                startActivity(new Intent(MainActivity.this, TerminalActivity.class));
-                                return false;
                             case QUICK_OPTIONS:
                                 Utils.showOptionsDialog(MainActivity.this, null, true, true, handler);
                                 return true;
