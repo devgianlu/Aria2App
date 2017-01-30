@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- TODO: White icons when needed-->
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -36,8 +36,7 @@
             android:adjustViewBounds="true"
             android:alpha="0.7"
             android:background="@drawable/ripple_effect_dark"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_favorite_border_black_48dp" />
+            android:scaleType="fitCenter" />
 
         <ImageButton
             android:id="@+id/optionItem_toggleUse"
@@ -48,8 +47,7 @@
             android:adjustViewBounds="true"
             android:alpha="0.7"
             android:background="@drawable/ripple_effect_dark"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_label_outline_black_48dp" />
+            android:scaleType="fitCenter" />
 
         <ImageButton
             android:id="@+id/optionItem_expand"
@@ -57,8 +55,7 @@
             android:layout_height="24dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/ripple_effect_dark"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_keyboard_arrow_down_black_48dp" />
+            android:scaleType="fitCenter" />
     </LinearLayout>
 
     <LinearLayout
@@ -86,7 +83,6 @@
             android:layout_gravity="center_vertical"
             android:adjustViewBounds="true"
             android:background="@drawable/ripple_effect_dark"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_help_black_48dp" />
+            android:scaleType="fitCenter" />
     </LinearLayout>
 </LinearLayout>

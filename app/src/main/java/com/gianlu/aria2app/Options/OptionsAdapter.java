@@ -39,17 +39,19 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final List<Option> originalObjs;
     private final boolean showUseMe;
     private final boolean global;
+    private final boolean useBlack;
     private final boolean isQuick;
     private final OptionFilter filter;
     private List<Option> objs;
 
-    public OptionsAdapter(Context context, List<Option> objs, boolean isQuick, boolean showUseMe, boolean global) {
+    public OptionsAdapter(Context context, List<Option> objs, boolean isQuick, boolean showUseMe, boolean global, boolean useBlack) {
         this.context = context;
         this.originalObjs = objs;
         this.objs = objs;
         this.isQuick = isQuick;
         this.showUseMe = showUseMe;
         this.global = global;
+        this.useBlack = useBlack;
         this.filter = new OptionFilter();
     }
 
@@ -87,6 +89,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         if (item == null)
             return;
 
+        holder.help.setImageResource(useBlack ? R.drawable.ic_help_black_48dp : R.drawable.ic_help_white_48dp);
         holder.help.setTag(item.longName);
         holder.help.setOnClickListener(helpClick);
 
@@ -113,6 +116,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             }
         });
 
+        holder.expand.setImageResource(useBlack ? R.drawable.ic_keyboard_arrow_down_black_48dp : R.drawable.ic_keyboard_arrow_down_white_48dp);
         holder.expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,10 +144,10 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                     item.isQuick = !item.isQuick;
                     if (item.isQuick) {
-                        holder.toggleQuick.setImageResource(R.drawable.ic_favorite_black_48dp);
+                        holder.toggleQuick.setImageResource(useBlack ? R.drawable.ic_favorite_black_48dp : R.drawable.ic_favorite_white_48dp);
                         quickOptions.add(item.longName);
                     } else {
-                        holder.toggleQuick.setImageResource(R.drawable.ic_favorite_border_black_48dp);
+                        holder.toggleQuick.setImageResource(useBlack ? R.drawable.ic_favorite_border_black_48dp : R.drawable.ic_favorite_border_white_48dp);
                         quickOptions.remove(item.longName);
                     }
 
@@ -152,9 +156,9 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             });
 
             if (item.isQuick)
-                holder.toggleQuick.setImageResource(R.drawable.ic_favorite_black_48dp);
+                holder.toggleQuick.setImageResource(useBlack ? R.drawable.ic_favorite_black_48dp : R.drawable.ic_favorite_white_48dp);
             else
-                holder.toggleQuick.setImageResource(R.drawable.ic_favorite_border_black_48dp);
+                holder.toggleQuick.setImageResource(useBlack ? R.drawable.ic_favorite_border_black_48dp : R.drawable.ic_favorite_border_white_48dp);
         }
 
         if (showUseMe) {
@@ -166,17 +170,17 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
                 public void onClick(View v) {
                     item.useMe = !item.useMe;
                     if (item.useMe) {
-                        holder.toggleUse.setImageResource(R.drawable.ic_label_black_48dp);
+                        holder.toggleUse.setImageResource(useBlack ? R.drawable.ic_label_black_48dp : R.drawable.ic_label_white_48dp);
                     } else {
-                        holder.toggleUse.setImageResource(R.drawable.ic_label_outline_black_48dp);
+                        holder.toggleUse.setImageResource(useBlack ? R.drawable.ic_label_outline_black_48dp : R.drawable.ic_label_outline_white_48dp);
                     }
                 }
             });
 
             if (item.useMe)
-                holder.toggleUse.setImageResource(R.drawable.ic_label_black_48dp);
+                holder.toggleUse.setImageResource(useBlack ? R.drawable.ic_label_black_48dp : R.drawable.ic_label_white_48dp);
             else
-                holder.toggleUse.setImageResource(R.drawable.ic_label_outline_black_48dp);
+                holder.toggleUse.setImageResource(useBlack ? R.drawable.ic_label_outline_black_48dp : R.drawable.ic_label_outline_white_48dp);
         } else {
             holder.toggleUse.setVisibility(View.GONE);
         }

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="2dp">
+    android:padding="6dp">
 
     <TextView
         android:id="@+id/uriItem_uri"
@@ -16,26 +16,24 @@
 
     <ImageButton
         android:id="@+id/uriItem_edit"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="4dp"
         android:adjustViewBounds="true"
         android:background="@drawable/ripple_effect_dark"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_edit_black_48dp" />
+        android:scaleType="fitCenter" />
 
     <ImageButton
         android:id="@+id/uriItem_remove"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:background="@drawable/ripple_effect_dark"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_delete_black_48dp" />
+        android:scaleType="fitCenter" />
 </LinearLayout>

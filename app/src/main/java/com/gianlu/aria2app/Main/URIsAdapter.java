@@ -22,11 +22,13 @@ import java.util.List;
 class URIsAdapter extends BaseAdapter {
     private final Activity context;
     private final List<String> objs;
+    private final boolean useBlack;
     private final IAdapter handler;
 
-    URIsAdapter(Activity context, List<String> objs, @Nullable IAdapter handler) {
+    URIsAdapter(Activity context, List<String> objs, boolean useBlack, @Nullable IAdapter handler) {
         this.context = context;
         this.objs = objs;
+        this.useBlack = useBlack;
         this.handler = handler;
     }
 
@@ -70,6 +72,7 @@ class URIsAdapter extends BaseAdapter {
         ViewHolder holder = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.uri_item, viewGroup, false));
 
         holder.uri.setText(getItem(i));
+        holder.edit.setImageResource(useBlack ? R.drawable.ic_edit_black_48dp : R.drawable.ic_edit_white_48dp);
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,6 +97,7 @@ class URIsAdapter extends BaseAdapter {
             }
         });
 
+        holder.remove.setImageResource(useBlack ? R.drawable.ic_delete_black_48dp : R.drawable.ic_delete_white_48dp);
         holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

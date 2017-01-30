@@ -65,7 +65,7 @@ public class AddTorrentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_torrent);
         setTitle(getIntent().getBooleanExtra("torrentMode", true) ? R.string.torrent : R.string.metalink);
 
-        urisAdapter = new URIsAdapter(this, new ArrayList<String>(), null);
+        urisAdapter = new URIsAdapter(this, new ArrayList<String>(), false, null);
         ListView uris = (ListView) findViewById(R.id.addTorrent_urisList);
         uris.setAdapter(urisAdapter);
 
@@ -159,7 +159,7 @@ public class AddTorrentActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                optionsAdapter = new OptionsAdapter(AddTorrentActivity.this, optionsList, false, true, false);
+                                optionsAdapter = new OptionsAdapter(AddTorrentActivity.this, optionsList, false, true, false, false);
                                 list.setAdapter(optionsAdapter);
 
                                 search.setOnClickListener(new View.OnClickListener() {

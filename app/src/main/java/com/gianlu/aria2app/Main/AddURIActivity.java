@@ -75,7 +75,7 @@ public class AddURIActivity extends AppCompatActivity {
             }
         });
 
-        urisAdapter = new URIsAdapter(this, new ArrayList<String>(), new URIsAdapter.IAdapter() {
+        urisAdapter = new URIsAdapter(this, new ArrayList<String>(), true, new URIsAdapter.IAdapter() {
             @Override
             public void onListChanged(List<String> uris) {
                 List<String> uriNames = new ArrayList<>();
@@ -170,7 +170,7 @@ public class AddURIActivity extends AppCompatActivity {
                         AddURIActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                optionsAdapter = new OptionsAdapter(AddURIActivity.this, optionsList, false, true, false);
+                                optionsAdapter = new OptionsAdapter(AddURIActivity.this, optionsList, false, true, false, true);
                                 list.setAdapter(optionsAdapter);
 
                                 search.setOnClickListener(new View.OnClickListener() {

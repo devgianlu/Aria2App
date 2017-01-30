@@ -381,7 +381,7 @@ public class Utils {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, isQuick, false, global);
+                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, isQuick, false, global, true);
                         list.setAdapter(adapter);
 
                         search.setOnClickListener(new View.OnClickListener() {
