@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
 import com.gianlu.aria2app.R;
@@ -36,6 +37,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,7 +64,6 @@ public class AddTorrentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_torrent);
         setTitle(getIntent().getBooleanExtra("torrentMode", true) ? R.string.torrent : R.string.metalink);
-
 
         urisAdapter = new URIsAdapter(this, new ArrayList<String>(), null);
         ListView uris = (ListView) findViewById(R.id.addTorrent_urisList);
@@ -133,65 +134,76 @@ public class AddTorrentActivity extends AppCompatActivity {
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);
 
-        jta2.getGlobalOption(new JTA2.IOption() {
+        WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
             @Override
-            public void onOptions(Map<String, String> options) {
-                final List<Option> optionsList = new ArrayList<>();
-
-                for (String resLongOption : getResources().getStringArray(R.array.globalOptions)) {
-                    String optionVal = options.get(resLongOption);
-                    if (optionVal != null) {
-                        optionsList.add(new Option(resLongOption, optionVal, false));
-                    }
-                }
-
-                pd.dismiss();
-
-                final RecyclerView list = (RecyclerView) findViewById(R.id.optionsDialog_list);
-                list.setLayoutManager(new LinearLayoutManager(AddTorrentActivity.this, LinearLayoutManager.VERTICAL, false));
-                final EditText query = (EditText) findViewById(R.id.optionsDialog_query);
-                final ImageButton search = (ImageButton) findViewById(R.id.optionsDialog_search);
-
-                AddTorrentActivity.this.runOnUiThread(new Runnable() {
+            public void onDone() {
+                jta2.getGlobalOption(new JTA2.IOption() {
                     @Override
-                    public void run() {
-                        optionsAdapter = new OptionsAdapter(AddTorrentActivity.this, optionsList, false, true, false);
-                        list.setAdapter(optionsAdapter);
+                    public void onOptions(Map<String, String> options) {
+                        final List<Option> optionsList = new ArrayList<>();
 
-                        search.setOnClickListener(new View.OnClickListener() {
+                        for (String resLongOption : getResources().getStringArray(R.array.globalOptions)) {
+                            String optionVal = options.get(resLongOption);
+                            if (optionVal != null) {
+                                optionsList.add(new Option(resLongOption, optionVal, false));
+                            }
+                        }
+
+                        pd.dismiss();
+
+                        final RecyclerView list = (RecyclerView) findViewById(R.id.optionsDialog_list);
+                        list.setLayoutManager(new LinearLayoutManager(AddTorrentActivity.this, LinearLayoutManager.VERTICAL, false));
+                        final EditText query = (EditText) findViewById(R.id.optionsDialog_query);
+                        final ImageButton search = (ImageButton) findViewById(R.id.optionsDialog_search);
+
+                        runOnUiThread(new Runnable() {
                             @Override
-                            public void onClick(View view) {
-                                list.scrollToPosition(0);
-                                optionsAdapter.getFilter().filter(query.getText().toString().trim());
+                            public void run() {
+                                optionsAdapter = new OptionsAdapter(AddTorrentActivity.this, optionsList, false, true, false);
+                                list.setAdapter(optionsAdapter);
+
+                                search.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        list.scrollToPosition(0);
+                                        optionsAdapter.getFilter().filter(query.getText().toString().trim());
+                                    }
+                                });
+                            }
+                        });
+
+                        query.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable editable) {
+                                search.callOnClick();
                             }
                         });
                     }
-                });
-
-                query.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
 
                     @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        search.callOnClick();
+                    public void onException(Exception exception) {
+                        pd.dismiss();
+                        CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                     }
                 });
-            }
-
-            @Override
-            public void onException(Exception exception) {
-                pd.dismiss();
-                CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
             }
         });
+
+        File share_file = (File) getIntent().getSerializableExtra("share_file");
+        if (share_file != null) {
+            fileUri = Uri.fromFile(share_file);
+            filePath.setText(share_file.getName());
+        }
     }
 
     @Override

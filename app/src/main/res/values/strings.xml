@@ -261,6 +261,8 @@
     <string name="totalLengthMenu">Total length</string>
     <string name="completedLengthMenu">Completed length</string>
     <string name="progress">Progress</string>
+    <string name="pickServer">Pick the server you want to start the download on:</string>
+    <string name="startDownload">Start download</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

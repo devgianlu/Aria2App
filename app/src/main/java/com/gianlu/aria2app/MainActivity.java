@@ -67,8 +67,8 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// TODO: Simplify connecting handler
 // TODO: Total DL/UL speed
-// TODO: External intent
 // FIXME: "when the server is offline and I open the app, it hangs sometimes. Also when I try to add a torrent when the server is offline , the app should prompt me that the aria2 server is offline instead of just simply executing the RPC call repeatedly and not allowing the user to cancel the activity, forcing to restart the app."
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading {
     private static boolean versionChecked = false;
@@ -294,7 +294,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         if (getIntent().getBooleanExtra("external", false)) {
             setTitle(getString(R.string.app_name) + " - Local device");
-
             saveExternalProfile(SingleModeProfileItem.externalDefault(getIntent().getIntExtra("port", 6800), getIntent().getStringExtra("token")));
         }
 
@@ -365,9 +364,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
         });
 
-        if (getIntent().getBooleanExtra("backFromAddProfile", false)) {
+        if (getIntent().getBooleanExtra("backFromAddProfile", false))
             drawerManager.buildProfiles().openProfiles(false);
-        }
 
         WebSocketing.setGlobalHandler(new WebSocketing.IListener() {
             @Override
@@ -701,7 +699,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onStarted() {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 swipeLayout.setRefreshing(true);
@@ -725,7 +723,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
             @Override
             public void onItemCountUpdated(final int count) {
-                MainActivity.this.runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (count > 0) {
@@ -850,7 +848,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
         });
 
-        MainActivity.this.runOnUiThread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mainRecyclerView.setAdapter(adapter);

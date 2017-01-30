@@ -38,7 +38,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -73,6 +72,28 @@
             android:name="com.gianlu.commonutils.LogsActivity"
             android:parentActivityName=".PreferencesActivity" />
 
+        <!-- Share activity -->
+        <activity android:name=".ShareActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="application/x-bittorrent" />
+                <data android:mimeType="application/metalink+xml" />
+                <data android:mimeType="application/metalink4+xml" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="magnet" />
+            </intent-filter>
+        </activity>
+
         <!-- Search Torrent activity -->
         <activity
             android:name=".Main.SearchActivity"
@@ -103,4 +124,5 @@
             android:enabled="true"
             android:exported="false" />
     </application>
+
 </manifest>

@@ -572,6 +572,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
         public static final CommonUtils.ToastMessage READ_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot access the certificate file. You denied the read permission!", false);
         public static final CommonUtils.ToastMessage SEARCH_FAILED = new CommonUtils.ToastMessage("Search failed!", true);
+        public static final CommonUtils.ToastMessage NOT_ONLINE = new CommonUtils.ToastMessage("This server isn't online. If it should try swiping down to refresh.", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
