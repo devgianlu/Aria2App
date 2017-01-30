@@ -97,7 +97,7 @@ public class Utils {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("oldProfiles", false).apply();
     }
 
-    public static LineChart setupChart(LineChart chart, boolean isCardView) {
+    public static void setupChart(LineChart chart, boolean isCardView) {
         chart.clear();
 
         chart.setDescription(null);
@@ -127,7 +127,7 @@ public class Utils {
         data.addDataSet(initUploadSet(chart.getContext()));
         data.addDataSet(initDownloadSet(chart.getContext()));
 
-        return chart;
+        chart.invalidate();
     }
 
     private static LineDataSet initDownloadSet(Context context) {

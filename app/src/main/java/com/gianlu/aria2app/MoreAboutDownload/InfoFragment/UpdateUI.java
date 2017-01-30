@@ -142,7 +142,8 @@ public class UpdateUI implements Runnable {
                     int xPosition;
                     if (download.status == Download.STATUS.ACTIVE) {
                         LineData data = holder.chart.getData();
-                        if (data == null) holder.chart = Utils.setupChart(holder.chart, false);
+                        if (data == null)
+                            Utils.setupChart(holder.chart, false);
 
                         if (data != null) {
                             int pos = data.getEntryCount() / 2 + 1;

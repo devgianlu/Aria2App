@@ -78,12 +78,11 @@ public class InfoPagerFragment extends CommonFragment {
         holder.chartRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.chart = Utils.setupChart(holder.chart, false);
+                Utils.setupChart(holder.chart, false);
             }
         });
 
-        holder.chart = Utils.setupChart(holder.chart, false);
-
+        Utils.setupChart(holder.chart, false);
         return holder.rootView;
     }
 

@@ -254,6 +254,7 @@ class FilesAdapter {
                 selected.setText(R.string.selectFileNotPaused);
             } else {
                 selected.setEnabled(true);
+                selected.setText(R.string.selectFile);
             }
 
             selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

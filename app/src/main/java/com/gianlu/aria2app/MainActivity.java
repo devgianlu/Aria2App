@@ -67,7 +67,6 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-// TODO: Total DL/UL speed
 // FIXME: "when the server is offline and I open the app, it hangs sometimes. Also when I try to add a torrent when the server is offline , the app should prompt me that the aria2 server is offline instead of just simply executing the RPC call repeatedly and not allowing the user to cancel the activity, forcing to restart the app."
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading {
     private static boolean versionChecked = false;

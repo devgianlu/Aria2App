@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -63,13 +64,29 @@ public class UpdateUI implements Runnable {
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 
         while ((!_shouldStop) && jta2 != null) {
+            jta2.getGlobalStat(new JTA2.IStats() {
+                @Override
+                public void onStats(GlobalStats stats) {
+                    errorCounter = 0;
+                    adapter.updateSummary(stats);
+                }
+
+                @Override
+                public void onException(Exception exception) {
+                    CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
+
+                    errorCounter++;
+                    if (errorCounter >= 2)
+                        _shouldStop = true;
+                }
+            });
+
             for (final Download d : adapter.getItems()) {
                 jta2.tellStatus(d.gid, new JTA2.IDownload() {
                     @Override
                     public void onDownload(Download download) {
                         errorCounter = 0;
-
-                        adapter.updateItem(adapter.getItems().indexOf(d), download);
+                        adapter.updateItem(adapter.getItems().indexOf(d) + 1, download);
                     }
 
                     @Override

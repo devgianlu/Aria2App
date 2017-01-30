@@ -108,27 +108,26 @@
             android:padding="8dp"
             android:visibility="gone">
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/downloadCardViewDetails_chart"
+                    android:id="@+id/cardViewDetails_chart"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginBottom="16dp" />
 
                 <ImageButton
-                    android:id="@+id/downloadCardViewDetails_chartRefresh"
+                    android:id="@+id/cardViewDetails_chartRefresh"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
-                    android:layout_alignBottom="@+id/downloadCardViewDetails_chart"
-                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="end|bottom"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ripple_effect_dark"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_refresh_black_48dp" />
-            </RelativeLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/downloadCardViewDetails_gid"

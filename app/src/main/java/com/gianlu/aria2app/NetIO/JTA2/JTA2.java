@@ -998,7 +998,7 @@ public class JTA2 {
         void onDownloadNotActive(Exception exception);
     }
 
-    interface IStats {
+    public interface IStats {
         void onStats(GlobalStats stats);
 
         void onException(Exception exception);
