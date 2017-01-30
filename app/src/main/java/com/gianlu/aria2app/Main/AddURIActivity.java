@@ -22,6 +22,7 @@ import android.widget.ListView;
 
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
 import com.gianlu.aria2app.R;
@@ -144,68 +145,78 @@ public class AddURIActivity extends AppCompatActivity {
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);
 
-        jta2.getGlobalOption(new JTA2.IOption() {
+        WebSocketing.notifyConnection(new WebSocketing.IConnecting() {
             @Override
-            public void onOptions(Map<String, String> options) {
-                final List<Option> optionsList = new ArrayList<>();
-
-                for (String resLongOption : getResources().getStringArray(R.array.globalOptions)) {
-                    String optionVal = options.get(resLongOption);
-                    if (optionVal != null) {
-                        optionsList.add(new Option(resLongOption, optionVal, false));
-                    }
-                }
-
-                pd.dismiss();
-
-                final RecyclerView list = (RecyclerView) findViewById(R.id.optionsDialog_list);
-                list.setLayoutManager(new LinearLayoutManager(AddURIActivity.this, LinearLayoutManager.VERTICAL, false));
-                final EditText query = (EditText) findViewById(R.id.optionsDialog_query);
-                final ImageButton search = (ImageButton) findViewById(R.id.optionsDialog_search);
-
-                AddURIActivity.this.runOnUiThread(new Runnable() {
+            public void onDone() {
+                jta2.getGlobalOption(new JTA2.IOption() {
                     @Override
-                    public void run() {
-                        optionsAdapter = new OptionsAdapter(AddURIActivity.this, optionsList, false, true, false);
-                        list.setAdapter(optionsAdapter);
+                    public void onOptions(Map<String, String> options) {
+                        final List<Option> optionsList = new ArrayList<>();
 
-                        search.setOnClickListener(new View.OnClickListener() {
+                        for (String resLongOption : getResources().getStringArray(R.array.globalOptions)) {
+                            String optionVal = options.get(resLongOption);
+                            if (optionVal != null) {
+                                optionsList.add(new Option(resLongOption, optionVal, false));
+                            }
+                        }
+
+                        pd.dismiss();
+
+                        final RecyclerView list = (RecyclerView) findViewById(R.id.optionsDialog_list);
+                        list.setLayoutManager(new LinearLayoutManager(AddURIActivity.this, LinearLayoutManager.VERTICAL, false));
+                        final EditText query = (EditText) findViewById(R.id.optionsDialog_query);
+                        final ImageButton search = (ImageButton) findViewById(R.id.optionsDialog_search);
+
+                        AddURIActivity.this.runOnUiThread(new Runnable() {
                             @Override
-                            public void onClick(View view) {
-                                list.scrollToPosition(0);
-                                optionsAdapter.getFilter().filter(query.getText().toString().trim());
+                            public void run() {
+                                optionsAdapter = new OptionsAdapter(AddURIActivity.this, optionsList, false, true, false);
+                                list.setAdapter(optionsAdapter);
+
+                                search.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        list.scrollToPosition(0);
+                                        optionsAdapter.getFilter().filter(query.getText().toString().trim());
+                                    }
+                                });
+                            }
+                        });
+
+
+                        query.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable editable) {
+                                search.callOnClick();
                             }
                         });
                     }
-                });
-
-
-                query.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
 
                     @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        search.callOnClick();
+                    public void onException(Exception exception) {
+                        pd.dismiss();
+                        CommonUtils.UIToast(AddURIActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
                     }
                 });
-            }
-
-            @Override
-            public void onException(Exception exception) {
-                pd.dismiss();
-                CommonUtils.UIToast(AddURIActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
             }
         });
 
-        addUri.performClick();
+        String share_uri = getIntent().getStringExtra("share_uri");
+        if (share_uri != null) {
+            urisAdapter.add(share_uri);
+        } else {
+            addUri.performClick();
+        }
     }
 
     @Override

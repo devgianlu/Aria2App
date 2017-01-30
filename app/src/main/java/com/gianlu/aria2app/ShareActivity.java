@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
 import com.gianlu.aria2app.Main.AddTorrentActivity;
+import com.gianlu.aria2app.Main.AddURIActivity;
 import com.gianlu.aria2app.Profile.ProfileItem;
 import com.gianlu.aria2app.Profile.ProfilesAdapter;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
@@ -80,7 +81,8 @@ public class ShareActivity extends AppCompatActivity {
                 finish();
             }
         } else {
-            // TODO: Handle URI
+            startActivity(new Intent(this, AddURIActivity.class)
+                    .putExtra("share_uri", data.toString()));
         }
     }
 }
