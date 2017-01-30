@@ -26,6 +26,13 @@
 
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="a2_summaryCard"
+            android:summaryOff="@string/showSummaryOff"
+            android:summaryOn="@string/showSummaryOn"
+            android:title="@string/showSummary" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="a2_forceAction"
             android:summaryOff="@string/forceActionOff"
             android:summaryOn="@string/forceActionOn"

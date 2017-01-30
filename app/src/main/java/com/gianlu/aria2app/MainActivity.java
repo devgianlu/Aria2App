@@ -707,7 +707,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onLoaded(JTA2 jta2, final List<Download> downloads) {
-        adapter = new MainCardAdapter(MainActivity.this, downloads, new MainCardAdapter.IActions() {
+        adapter = new MainCardAdapter(MainActivity.this, downloads, PreferenceManager.getDefaultSharedPreferences(this).getBoolean("a2_summaryCard", true), new MainCardAdapter.IActions() {
             @Override
             public void onMoreClick(Download item) {
                 Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)

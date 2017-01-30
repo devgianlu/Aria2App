@@ -35,19 +35,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-// TODO: Hide summary card
 public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_CARD = 0;
     private static final int TYPE_SUMMARY = 1;
+    public final boolean hasSummary;
     private final Activity context;
     private final List<Download> objs;
     private final IActions handler;
     private final List<Download.STATUS> filters;
     private final LayoutInflater inflater;
 
-    public MainCardAdapter(Activity context, List<Download> objs, IActions handler) {
+    public MainCardAdapter(Activity context, List<Download> objs, boolean hasSummary, IActions handler) {
         this.context = context;
         this.objs = objs;
+        this.hasSummary = hasSummary;
         this.handler = handler;
         this.filters = new ArrayList<>();
         inflater = LayoutInflater.from(context);
@@ -94,7 +95,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                notifyItemChanged(position, update);
+                notifyItemChanged(position + (hasSummary ? 1 : 0), update);
             }
         });
     }
@@ -119,7 +120,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0)
+        if (position == 0 && hasSummary)
             return TYPE_SUMMARY;
         else
             return TYPE_CARD;
@@ -139,7 +140,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
-            if (position == 0) {
+            if (position == 0 && hasSummary) {
                 SummaryViewHolder castHolder = (SummaryViewHolder) holder;
                 GlobalStats stats = (GlobalStats) payloads.get(0);
 
@@ -210,7 +211,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (position == 0) {
+        if (position == 0 && hasSummary) {
             final SummaryViewHolder castHolder = (SummaryViewHolder) holder;
             Utils.setupChart(castHolder.chart, true);
             castHolder.chartRefresh.setOnClickListener(new View.OnClickListener() {
@@ -221,7 +222,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
         } else {
             final DownloadViewHolder castHolder = (DownloadViewHolder) holder;
-            final Download item = objs.get(position - 1);
+            final Download item = objs.get(position - (hasSummary ? 1 : 0));
 
             // Static
             final int color;
@@ -356,7 +357,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         if (handler != null)
             handler.onItemCountUpdated(objs.size());
-        return objs.size() + 1;
+        return objs.size() + (hasSummary ? 1 : 0);
     }
 
     List<Download> getItems() {
