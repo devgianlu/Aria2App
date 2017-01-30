@@ -113,13 +113,13 @@
                 android:layout_height="wrap_content">
 
                 <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/cardViewDetails_chart"
+                    android:id="@+id/downloadCardViewDetails_chart"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginBottom="16dp" />
 
                 <ImageButton
-                    android:id="@+id/cardViewDetails_chartRefresh"
+                    android:id="@+id/downloadCardViewDetails_chartRefresh"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:layout_gravity="end|bottom"

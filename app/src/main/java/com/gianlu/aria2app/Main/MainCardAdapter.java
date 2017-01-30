@@ -36,7 +36,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 // TODO: Hide summary card
-public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHolder> {
+public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_CARD = 0;
     private static final int TYPE_SUMMARY = 1;
     private final Activity context;
@@ -126,26 +126,27 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_SUMMARY)
-            return new ViewHolder(inflater.inflate(R.layout.summary_cardview, parent, false));
+            return new SummaryViewHolder(inflater.inflate(R.layout.summary_cardview, parent, false));
         else
-            return new ViewHolder(inflater.inflate(R.layout.download_cardview, parent, false));
+            return new DownloadViewHolder(inflater.inflate(R.layout.download_cardview, parent, false));
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
             if (position == 0) {
+                SummaryViewHolder castHolder = (SummaryViewHolder) holder;
                 GlobalStats stats = (GlobalStats) payloads.get(0);
 
-                LineData data = holder.detailsChart.getData();
+                LineData data = castHolder.chart.getData();
                 if (data == null) {
-                    Utils.setupChart(holder.detailsChart, true);
-                    data = holder.detailsChart.getData();
+                    Utils.setupChart(castHolder.chart, true);
+                    data = castHolder.chart.getData();
                 }
 
                 if (data != null) {
@@ -153,21 +154,22 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
                     data.addEntry(new Entry(pos, stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
                     data.addEntry(new Entry(pos, stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
                     data.notifyDataChanged();
-                    holder.detailsChart.notifyDataSetChanged();
+                    castHolder.chart.notifyDataSetChanged();
 
-                    holder.detailsChart.setVisibleXRangeMaximum(90);
-                    holder.detailsChart.moveViewToX(pos - 91);
+                    castHolder.chart.setVisibleXRangeMaximum(90);
+                    castHolder.chart.moveViewToX(pos - 91);
                 }
             } else {
+                DownloadViewHolder castHolder = (DownloadViewHolder) holder;
                 Download item = (Download) payloads.get(0);
 
                 if (item.status == Download.STATUS.ACTIVE) {
-                    holder.detailsChartRefresh.setEnabled(true);
+                    castHolder.detailsChartRefresh.setEnabled(true);
 
-                    LineData data = holder.detailsChart.getData();
+                    LineData data = castHolder.detailsChart.getData();
                     if (data == null) {
-                        Utils.setupChart(holder.detailsChart, true);
-                        data = holder.detailsChart.getData();
+                        Utils.setupChart(castHolder.detailsChart, true);
+                        data = castHolder.detailsChart.getData();
                     }
 
                     if (data != null) {
@@ -175,48 +177,50 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
                         data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
                         data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
                         data.notifyDataChanged();
-                        holder.detailsChart.notifyDataSetChanged();
+                        castHolder.detailsChart.notifyDataSetChanged();
 
-                        holder.detailsChart.setVisibleXRangeMaximum(90);
-                        holder.detailsChart.moveViewToX(pos - 91);
+                        castHolder.detailsChart.setVisibleXRangeMaximum(90);
+                        castHolder.detailsChart.moveViewToX(pos - 91);
                     }
                 } else {
-                    holder.detailsChartRefresh.setEnabled(false);
+                    castHolder.detailsChartRefresh.setEnabled(false);
 
-                    holder.detailsChart.clear();
-                    holder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
+                    castHolder.detailsChart.clear();
+                    castHolder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
                 }
 
-                holder.donutProgress.setProgress((int) item.getProgress());
-                holder.downloadName.setText(item.getName());
+                castHolder.donutProgress.setProgress((int) item.getProgress());
+                castHolder.downloadName.setText(item.getName());
                 if (item.status == Download.STATUS.ERROR)
-                    holder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
+                    castHolder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
                 else
-                    holder.downloadStatus.setText(item.status.getFormal(context, true));
-                holder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed));
-                holder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
+                    castHolder.downloadStatus.setText(item.status.getFormal(context, true));
+                castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed));
+                castHolder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
 
-                holder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength))));
-                holder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength))));
+                castHolder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength))));
+                castHolder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength))));
 
                 if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
-                    holder.more.setVisibility(View.INVISIBLE);
+                    castHolder.more.setVisibility(View.INVISIBLE);
             }
         }
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (position == 0) {
-            Utils.setupChart(holder.detailsChart, true);
-            holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
+            final SummaryViewHolder castHolder = (SummaryViewHolder) holder;
+            Utils.setupChart(castHolder.chart, true);
+            castHolder.chartRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Utils.setupChart(holder.detailsChart, true);
+                    Utils.setupChart(castHolder.chart, true);
                 }
             });
         } else {
+            final DownloadViewHolder castHolder = (DownloadViewHolder) holder;
             final Download item = objs.get(position - 1);
 
             // Static
@@ -226,43 +230,43 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
             else
                 color = ContextCompat.getColor(context, R.color.colorAccent);
 
-            Utils.setupChart(holder.detailsChart, true);
-            holder.donutProgress.setFinishedStrokeColor(color);
-            holder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
+            Utils.setupChart(castHolder.detailsChart, true);
+            castHolder.donutProgress.setFinishedStrokeColor(color);
+            castHolder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
 
-            holder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
-            holder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
+            castHolder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
+            castHolder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
 
-            holder.expand.setOnClickListener(new View.OnClickListener() {
+            castHolder.expand.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CommonUtils.animateCollapsingArrowBellows((ImageButton) view, CommonUtils.isExpanded(holder.details));
+                    CommonUtils.animateCollapsingArrowBellows((ImageButton) view, CommonUtils.isExpanded(castHolder.details));
 
-                    if (CommonUtils.isExpanded(holder.details)) {
-                        CommonUtils.collapse(holder.details);
-                        CommonUtils.collapseTitle(holder.downloadName);
+                    if (CommonUtils.isExpanded(castHolder.details)) {
+                        CommonUtils.collapse(castHolder.details);
+                        CommonUtils.collapseTitle(castHolder.downloadName);
                     } else {
-                        CommonUtils.expand(holder.details);
-                        CommonUtils.expandTitle(holder.downloadName);
+                        CommonUtils.expand(castHolder.details);
+                        CommonUtils.expandTitle(castHolder.downloadName);
                     }
                 }
             });
-            holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
+            castHolder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Utils.setupChart(holder.detailsChart, true);
+                    Utils.setupChart(castHolder.detailsChart, true);
                 }
             });
-            holder.more.setOnClickListener(new View.OnClickListener() {
+            castHolder.more.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     handler.onMoreClick(item);
                 }
             });
-            holder.menu.setOnClickListener(new View.OnClickListener() {
+            castHolder.menu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
+                    PopupMenu popupMenu = new PopupMenu(context, castHolder.menu, Gravity.BOTTOM);
                     popupMenu.inflate(R.menu.download_cardview);
                     Menu menu = popupMenu.getMenu();
 
@@ -339,12 +343,12 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
             });
 
             if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
-                holder.more.setVisibility(View.INVISIBLE);
+                castHolder.more.setVisibility(View.INVISIBLE);
 
             if (filters.contains(item.status))
-                holder.itemView.setVisibility(View.GONE);
+                castHolder.itemView.setVisibility(View.GONE);
             else
-                holder.itemView.setVisibility(View.VISIBLE);
+                castHolder.itemView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -359,7 +363,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
         return objs;
     }
 
-    public void updateSummary(final GlobalStats stats) {
+    void updateSummary(final GlobalStats stats) {
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -457,7 +461,19 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    private class SummaryViewHolder extends RecyclerView.ViewHolder {
+        final LineChart chart;
+        final ImageButton chartRefresh;
+
+        SummaryViewHolder(View itemView) {
+            super(itemView);
+
+            chart = (LineChart) itemView.findViewById(R.id.summaryCardViewDetails_chart);
+            chartRefresh = (ImageButton) itemView.findViewById(R.id.summaryCardViewDetails_chartRefresh);
+        }
+    }
+
+    private class DownloadViewHolder extends RecyclerView.ViewHolder {
         final DonutProgress donutProgress;
         final TextView downloadName;
         final TextView downloadStatus;
@@ -474,7 +490,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
         final ImageButton menu;
         final LineChart detailsChart;
 
-        ViewHolder(View itemView) {
+        DownloadViewHolder(View itemView) {
             super(itemView);
 
             donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCardView_donutProgress);
@@ -487,8 +503,8 @@ public class MainCardAdapter extends RecyclerView.Adapter<MainCardAdapter.ViewHo
             more = (Button) itemView.findViewById(R.id.downloadCardView_actionMore);
             menu = (ImageButton) itemView.findViewById(R.id.downloadCardView_actionMenu);
 
-            detailsChart = (LineChart) itemView.findViewById(R.id.cardViewDetails_chart);
-            detailsChartRefresh = (ImageButton) itemView.findViewById(R.id.cardViewDetails_chartRefresh);
+            detailsChart = (LineChart) itemView.findViewById(R.id.downloadCardViewDetails_chart);
+            detailsChartRefresh = (ImageButton) itemView.findViewById(R.id.downloadCardViewDetails_chartRefresh);
             detailsGid = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_gid);
             detailsTotalLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_totalLength);
             detailsCompletedLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_completedLength);

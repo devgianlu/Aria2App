@@ -53,7 +53,6 @@ public class UpdateUI implements Runnable {
     private void stop() {
         _shouldStop = true;
     }
-    @SuppressWarnings("StatementWithEmptyBody")
     private void stop(IThread handler) {
         this.handler = handler;
         _shouldStop = true;

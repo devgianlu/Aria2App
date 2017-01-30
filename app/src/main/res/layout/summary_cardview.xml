@@ -13,12 +13,12 @@
         android:padding="8dp">
 
         <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/cardViewDetails_chart"
+            android:id="@+id/summaryCardViewDetails_chart"
             android:layout_width="match_parent"
             android:layout_height="150dp" />
 
         <ImageButton
-            android:id="@+id/cardViewDetails_chartRefresh"
+            android:id="@+id/summaryCardViewDetails_chartRefresh"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_gravity="end|bottom"
