@@ -84,14 +84,6 @@
                 <data android:mimeType="application/metalink+xml" />
                 <data android:mimeType="application/metalink4+xml" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="magnet" />
-            </intent-filter>
         </activity>
 
         <!-- Search Torrent activity -->
