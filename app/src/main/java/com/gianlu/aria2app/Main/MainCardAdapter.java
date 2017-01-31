@@ -39,7 +39,7 @@ import java.util.Objects;
 public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_CARD = 0;
     private static final int TYPE_SUMMARY = 1;
-    public final boolean hasSummary;
+    final boolean hasSummary;
     private final Activity context;
     private final List<Download> objs;
     private final IActions handler;
@@ -150,6 +150,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(stats.downloadSpeed));
                 castHolder.uploadSpeed.setText(CommonUtils.speedFormatter(stats.uploadSpeed));
 
+                castHolder.active.setText(Html.fromHtml(context.getString(R.string.summaryActive, stats.numActive)));
+                castHolder.waiting.setText(Html.fromHtml(context.getString(R.string.summaryWaiting, stats.numWaiting)));
+                castHolder.stopped.setText(Html.fromHtml(context.getString(R.string.summaryStopped, stats.numStoppedTotal, stats.numStopped)));
+
                 LineData data = castHolder.chart.getData();
                 if (data == null) {
                     Utils.setupChart(castHolder.chart, true);
@@ -231,6 +235,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(0));
             castHolder.uploadSpeed.setTypeface(roboto);
             castHolder.uploadSpeed.setText(CommonUtils.speedFormatter(0));
+
+            castHolder.active.setText(Html.fromHtml(context.getString(R.string.summaryActive, 0)));
+            castHolder.waiting.setText(Html.fromHtml(context.getString(R.string.summaryWaiting, 0)));
+            castHolder.stopped.setText(Html.fromHtml(context.getString(R.string.summaryStopped, 0, 0)));
         } else {
             final DownloadViewHolder castHolder = (DownloadViewHolder) holder;
             final Download item = objs.get(position - (hasSummary ? 1 : 0));
@@ -478,6 +486,9 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final ImageButton chartRefresh;
         final TextView downloadSpeed;
         final TextView uploadSpeed;
+        final TextView active;
+        final TextView waiting;
+        final TextView stopped;
 
         SummaryViewHolder(View itemView) {
             super(itemView);
@@ -486,6 +497,9 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             chartRefresh = (ImageButton) itemView.findViewById(R.id.summaryCardViewDetails_chartRefresh);
             downloadSpeed = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_downloadSpeed);
             uploadSpeed = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_uploadSpeed);
+            active = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_active);
+            waiting = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_waiting);
+            stopped = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_stopped);
         }
     }
 

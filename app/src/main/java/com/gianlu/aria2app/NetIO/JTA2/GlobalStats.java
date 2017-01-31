@@ -8,10 +8,10 @@ import org.json.JSONObject;
 public class GlobalStats {
     public Integer downloadSpeed;
     public Integer uploadSpeed;
-    private Integer numActive;
-    private Integer numWaiting;
-    private Integer numStopped;
-    private Integer numStoppedTotal;
+    public Integer numActive;
+    public Integer numWaiting;
+    public Integer numStopped;
+    public Integer numStoppedTotal;
 
     private GlobalStats() {
     }

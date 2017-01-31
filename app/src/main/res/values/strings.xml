@@ -267,6 +267,9 @@
     <string name="showSummary">Show summary</string>
     <string name="showSummaryOn">A summary card will be displayed on the top of the downloads list</string>
     <string name="showSummaryOff">No summary card will be displayed</string>
+    <string name="summaryActive"><![CDATA[<b>Active:</b>]]> %d</string>
+    <string name="summaryWaiting"><![CDATA[<b>Waiting:</b>]]> %d</string>
+    <string name="summaryStopped"><![CDATA[<b>Stopped:</b>]]> %1$d (%2$d)</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">
