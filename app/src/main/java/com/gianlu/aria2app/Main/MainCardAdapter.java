@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Main;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +45,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final IActions handler;
     private final List<Download.STATUS> filters;
     private final LayoutInflater inflater;
+    private final Typeface roboto;
 
     public MainCardAdapter(Activity context, List<Download> objs, boolean hasSummary, IActions handler) {
         this.context = context;
@@ -53,6 +55,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.filters = new ArrayList<>();
         inflater = LayoutInflater.from(context);
 
+        roboto = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
         Collections.sort(this.objs, new StatusComparator());
     }
 
@@ -144,6 +147,9 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 SummaryViewHolder castHolder = (SummaryViewHolder) holder;
                 GlobalStats stats = (GlobalStats) payloads.get(0);
 
+                castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(stats.downloadSpeed));
+                castHolder.uploadSpeed.setText(CommonUtils.speedFormatter(stats.uploadSpeed));
+
                 LineData data = castHolder.chart.getData();
                 if (data == null) {
                     Utils.setupChart(castHolder.chart, true);
@@ -220,6 +226,11 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     Utils.setupChart(castHolder.chart, true);
                 }
             });
+
+            castHolder.downloadSpeed.setTypeface(roboto);
+            castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(0));
+            castHolder.uploadSpeed.setTypeface(roboto);
+            castHolder.uploadSpeed.setText(CommonUtils.speedFormatter(0));
         } else {
             final DownloadViewHolder castHolder = (DownloadViewHolder) holder;
             final Download item = objs.get(position - (hasSummary ? 1 : 0));
@@ -465,12 +476,16 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private class SummaryViewHolder extends RecyclerView.ViewHolder {
         final LineChart chart;
         final ImageButton chartRefresh;
+        final TextView downloadSpeed;
+        final TextView uploadSpeed;
 
         SummaryViewHolder(View itemView) {
             super(itemView);
 
             chart = (LineChart) itemView.findViewById(R.id.summaryCardViewDetails_chart);
             chartRefresh = (ImageButton) itemView.findViewById(R.id.summaryCardViewDetails_chartRefresh);
+            downloadSpeed = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_downloadSpeed);
+            uploadSpeed = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_uploadSpeed);
         }
     }
 
