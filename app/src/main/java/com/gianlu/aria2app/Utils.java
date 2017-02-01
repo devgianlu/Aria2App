@@ -557,8 +557,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage INVALID_CONDITIONS_NUMBER = new CommonUtils.ToastMessage("Multi profile should contains more than one condition", false);
         public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("AFile not found!", true);
         public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
-        public static final CommonUtils.ToastMessage FAILED_LOADING_AUTOCOMPLETION = new CommonUtils.ToastMessage("Unable to load method's suggestions!", true);
-        public static final CommonUtils.ToastMessage FAILED_EDIT_CONVERSATION_ITEM = new CommonUtils.ToastMessage("Failed editing that item!", true);
         public static final CommonUtils.ToastMessage INVALID_SSID = new CommonUtils.ToastMessage("Invalid SSID!", false);
         public static final CommonUtils.ToastMessage MUST_PICK_DEFAULT = new CommonUtils.ToastMessage("You must select one profile as default!", false);
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_ADDR = new CommonUtils.ToastMessage("Invalid DirectDownload's server address!", false);
@@ -573,6 +571,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage READ_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot access the certificate file. You denied the read permission!", false);
         public static final CommonUtils.ToastMessage SEARCH_FAILED = new CommonUtils.ToastMessage("Search failed!", true);
         public static final CommonUtils.ToastMessage NOT_ONLINE = new CommonUtils.ToastMessage("This server isn't online. If it should try swiping down to refresh.", false);
+        public static final CommonUtils.ToastMessage SERVER_OFFLINE = new CommonUtils.ToastMessage("This server isn't online. If it should try reconnecting to it.", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
