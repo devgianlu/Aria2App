@@ -15,9 +15,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -53,8 +55,8 @@ public class HTTPing extends AbstractClient {
                     "/jsonrpc?method="
                             + request.getString("method")
                             + "&id=" + request.getString("id")
-                            + "&params=" + request.get("params").toString());
-        } catch (JSONException | MalformedURLException ex) {
+                            + "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8"));
+        } catch (JSONException | MalformedURLException | UnsupportedEncodingException ex) {
             handler.onException(false, ex);
             return;
         }
