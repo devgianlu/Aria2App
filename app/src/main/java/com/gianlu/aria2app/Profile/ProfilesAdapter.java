@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -161,10 +162,10 @@ public class ProfilesAdapter extends BaseAdapter {
 
         try {
             WebSocket webSocket;
-            if (profile.authMethod.equals(JTA2.AUTH_METHOD.HTTP))
-                webSocket = Utils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
+            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
+                webSocket = WebSocketing.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
             else
-                webSocket = Utils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
+                webSocket = WebSocketing.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
 
             webSocket.addListener(new StatusWebSocketHandler(profile, handler))
                     .connectAsynchronously();

@@ -4,7 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.CurrentProfile;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.HTTPing;
+import com.gianlu.aria2app.NetIO.IReceived;
 import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Utils;
 
 import org.json.JSONArray;
@@ -23,22 +28,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class JTA2 {
-    private final WebSocketing webSocketing;
-    private Activity context;
+    private final AbstractClient client;
+    private final Activity context;
 
-    private JTA2(WebSocketing webSocketing) {
-        this.webSocketing = webSocketing;
+    private JTA2(Activity context, WebSocketing client) {
+        this.context = context;
+        this.client = client;
+    }
+
+    private JTA2(Activity context, HTTPing client) {
+        this.context = context;
+        this.client = client;
     }
 
     public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        return new JTA2(WebSocketing.newInstance(context)).setContext(context);
-    }
-
-    private JTA2 setContext(Activity context) {
-        this.context = context;
-        return this;
+        if (CurrentProfile.getCurrentProfile(context).connectionMethod == SingleModeProfileItem.ConnectionMethod.WEBSOCKET) {
+            return new JTA2(context, WebSocketing.newInstance(context));
+        } else {
+            return new JTA2(context, HTTPing.newInstance(context));
+        }
     }
 
     // Caster
@@ -141,7 +150,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onVersion(fromFeaturesRaw(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
@@ -167,7 +176,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 if (Objects.equals(response.optString("result"), "OK"))
@@ -196,7 +205,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onSessionInfo(response.getJSONObject("result").optString("sessionId"));
@@ -241,7 +250,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -286,7 +295,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -331,7 +340,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -358,7 +367,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onDownload(Download.fromJSON(response.getJSONObject("result")));
@@ -383,7 +392,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onStats(GlobalStats.fromJSON(response.getJSONObject("result")));
@@ -408,7 +417,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 List<Download> downloads = new ArrayList<>();
@@ -443,7 +452,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 List<Download> downloads = new ArrayList<>();
@@ -478,7 +487,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 List<Download> downloads = new ArrayList<>();
@@ -512,7 +521,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -539,7 +548,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -566,7 +575,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -593,7 +602,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 if (Objects.equals(response.optString("result"), "OK"))
@@ -623,7 +632,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -650,7 +659,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onGID(response.getString("result"));
@@ -677,7 +686,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onOptions(fromOptions(response.getJSONObject("result")));
@@ -702,7 +711,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onOptions(fromOptions(response.getJSONObject("result")));
@@ -734,7 +743,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 if (Objects.equals(response.optString("result"), "OK"))
@@ -766,7 +775,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 if (Objects.equals(response.optString("result"), "OK"))
@@ -800,7 +809,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 if (Objects.equals(response.optString("result"), "OK"))
@@ -829,7 +838,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onServers(fromServers(response.optJSONArray("result")));
@@ -863,7 +872,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onPeers(fromPeers(response.optJSONArray("result")));
@@ -897,7 +906,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onFiles(fromFiles(response.optJSONArray("result")));
@@ -921,7 +930,7 @@ public class JTA2 {
             return;
         }
 
-        webSocketing.send(request, new WebSocketing.IReceived() {
+        client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
                 handler.onMethods(fromMethods(response.getJSONArray("result")));
@@ -934,7 +943,7 @@ public class JTA2 {
         });
     }
 
-    public enum AUTH_METHOD {
+    public enum AuthMethod {
         NONE,
         HTTP,
         TOKEN

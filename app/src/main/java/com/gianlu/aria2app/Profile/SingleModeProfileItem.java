@@ -23,7 +23,7 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
     public String serverAddr;
     public int serverPort;
     public String serverEndpoint;
-    public JTA2.AUTH_METHOD authMethod;
+    public JTA2.AuthMethod authMethod;
     public boolean serverSSL;
     public String certificatePath;
     public String serverUsername;
@@ -31,6 +31,7 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
     public String serverToken;
     public boolean directDownloadEnabled;
     public DirectDownload directDownload;
+    public ConnectionMethod connectionMethod;
     private String profileName;
 
     private SingleModeProfileItem() {
@@ -45,11 +46,12 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         profile.serverAddr = "localhost";
         profile.serverPort = port;
         profile.serverEndpoint = "/jsonrpc";
-        profile.authMethod = JTA2.AUTH_METHOD.TOKEN;
+        profile.authMethod = JTA2.AuthMethod.TOKEN;
         profile.serverToken = token;
         profile.serverSSL = false;
         profile.notificationsEnabled = false;
         profile.directDownloadEnabled = false;
+        profile.connectionMethod = ConnectionMethod.WEBSOCKET;
 
         return profile;
     }
@@ -61,10 +63,11 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         profile.serverAddr = "localhost";
         profile.serverPort = 6800;
         profile.serverEndpoint = "/jsonrpc";
-        profile.authMethod = JTA2.AUTH_METHOD.NONE;
+        profile.authMethod = JTA2.AuthMethod.NONE;
         profile.serverSSL = false;
         profile.notificationsEnabled = false;
         profile.directDownloadEnabled = false;
+        profile.connectionMethod = ConnectionMethod.WEBSOCKET;
 
         return profile;
     }
@@ -82,21 +85,22 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         profile.directDownload = DirectDownload.fromFields(sViewHolder);
 
         if (sViewHolder.authMethodNone.isChecked()) {
-            profile.authMethod = JTA2.AUTH_METHOD.NONE;
+            profile.authMethod = JTA2.AuthMethod.NONE;
         } else if (sViewHolder.authMethodToken.isChecked()) {
-            profile.authMethod = JTA2.AUTH_METHOD.TOKEN;
+            profile.authMethod = JTA2.AuthMethod.TOKEN;
             profile.serverToken = sViewHolder.authMethodTokenToken.getText().toString().trim();
         } else if (sViewHolder.authMethodHTTP.isChecked()) {
-            profile.authMethod = JTA2.AUTH_METHOD.HTTP;
+            profile.authMethod = JTA2.AuthMethod.HTTP;
             profile.serverUsername = sViewHolder.authMethodHTTPUsername.getText().toString().trim();
             profile.serverPassword = sViewHolder.authMethodHTTPPassword.getText().toString().trim();
         } else {
-            profile.authMethod = JTA2.AUTH_METHOD.NONE;
+            profile.authMethod = JTA2.AuthMethod.NONE;
         }
 
-        if (profile.serverSSL) {
+        if (profile.serverSSL)
             profile.certificatePath = sViewHolder.SSLCertificate.getText().toString().trim();
-        }
+
+        // TODO: !! Create profile setup for ConnectionMethod.HTTP !!
 
         return profile;
     }
@@ -114,10 +118,10 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         item.notificationsEnabled = jProfile.optBoolean("notificationsEnabled", true);
         item.globalProfileName = item.profileName;
         if (!jProfile.isNull("serverAuth")) {
-            item.authMethod = JTA2.AUTH_METHOD.TOKEN;
+            item.authMethod = JTA2.AuthMethod.TOKEN;
         } else {
             String authMethod = jProfile.optString("authMethod");
-            item.authMethod = JTA2.AUTH_METHOD.valueOf(authMethod == null ? "NONE" : authMethod);
+            item.authMethod = JTA2.AuthMethod.valueOf(authMethod == null ? "NONE" : authMethod);
         }
         item.serverUsername = jProfile.optString("serverUsername");
         item.serverPassword = jProfile.optString("serverPassword");
@@ -143,6 +147,8 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         } else {
             item.directDownloadEnabled = false;
         }
+
+        item.connectionMethod = ConnectionMethod.valueOf(jProfile.optString("connectionMethod", ConnectionMethod.WEBSOCKET.name()));
 
         return item;
     }
@@ -193,5 +199,10 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         }
 
         return profile;
+    }
+
+    public enum ConnectionMethod {
+        HTTP,
+        WEBSOCKET
     }
 }

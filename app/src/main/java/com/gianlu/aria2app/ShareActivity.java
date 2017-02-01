@@ -13,6 +13,7 @@ import com.gianlu.aria2app.Profile.ProfileItem;
 import com.gianlu.aria2app.Profile.ProfilesAdapter;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.File;
 import java.util.Objects;
@@ -58,6 +59,11 @@ public class ShareActivity extends AppCompatActivity {
                 });
             }
         });
+
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_SHARE)
+                .build());
     }
 
     private void handleStartDownload() {

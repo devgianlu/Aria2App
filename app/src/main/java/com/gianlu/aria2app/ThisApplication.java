@@ -25,8 +25,7 @@ public class ThisApplication extends Application {
     public static final String ACTION_NEW_URI = "New URI download";
     public static final String ACTION_NEW_URI_SEARCH = "New URI download with torrent search";
     public static final String ACTION_DONATE_OPEN = "Opened donation dialog";
-    public static final String ACTION_TERMINAL_BASIC = "Sent command in basic mode";
-    public static final String ACTION_TERMINAL_ADV = "Sent command in advanced mode";
+    public static final String ACTION_SHARE = "Shared something with the app";
     public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
     public static final String ACTION_SEARCH = "Search torrent";
     public static Tracker tracker;

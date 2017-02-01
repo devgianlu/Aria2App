@@ -40,8 +40,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -200,7 +198,7 @@ public class Utils {
         return 255 / 4 * val;
     }
 
-    private static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+    public static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         String keyStoreType = KeyStore.getDefaultType();
         KeyStore keyStore = KeyStore.getInstance(keyStoreType);
         keyStore.load(null, null);
@@ -217,7 +215,7 @@ public class Utils {
     }
 
     @Nullable
-    private static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
+    public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
         return readyCertificate(context, CurrentProfile.getCurrentProfile(context));
     }
 
@@ -233,60 +231,9 @@ public class Utils {
         return factory.generateCertificate(new FileInputStream(profile.certificatePath));
     }
 
-    public static WebSocket readyWebSocket(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (ca != null) {
-            WebSocketFactory factory = new WebSocketFactory();
-            factory.setSSLContext(readySSLContext(ca));
-
-            return factory.createSocket(url.replace("ws://", "wss://"), 5000)
-                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-        } else {
-            return new WebSocketFactory().createSocket(url, 5000)
-                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-        }
-    }
-
-    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException, IllegalArgumentException {
-        if (ca != null) {
-            return new WebSocketFactory()
-                    .setSSLContext(readySSLContext(ca))
-                    .setConnectionTimeout(5000)
-                    .createSocket(url.replace("ws://", "wss://"), 5000);
-        } else {
-            return new WebSocketFactory()
-                    .setConnectionTimeout(5000)
-                    .createSocket(url, 5000);
-        }
-    }
-
-    public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        SingleModeProfileItem profile = CurrentProfile.getCurrentProfile(context);
-
-        if (profile.serverSSL) {
-            WebSocketFactory factory = new WebSocketFactory()
-                    .setSSLContext(readySSLContext(readyCertificate(context)))
-                    .setConnectionTimeout(5000);
-            WebSocket socket = factory.createSocket("wss://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, 5000);
-
-            if (profile.authMethod == JTA2.AUTH_METHOD.HTTP)
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
-
-            return socket;
-        } else {
-            WebSocket socket = new WebSocketFactory()
-                    .setConnectionTimeout(5000)
-                    .createSocket("ws://" + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, 5000);
-
-            if (profile.authMethod == JTA2.AUTH_METHOD.HTTP)
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
-
-            return socket;
-        }
-    }
-
     public static JSONArray readyParams(Context context) {
         JSONArray array = new JSONArray();
-        if (CurrentProfile.getCurrentProfile(context).authMethod == JTA2.AUTH_METHOD.TOKEN)
+        if (CurrentProfile.getCurrentProfile(context).authMethod == JTA2.AuthMethod.TOKEN)
             array.put("token:" + CurrentProfile.getCurrentProfile(context).serverToken);
 
         return array;
