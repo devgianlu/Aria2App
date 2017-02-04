@@ -252,6 +252,9 @@
     <string name="summaryActive"><![CDATA[<b>Active:</b>]]> %d</string>
     <string name="summaryWaiting"><![CDATA[<b>Waiting:</b>]]> %d</string>
     <string name="summaryStopped"><![CDATA[<b>Stopped:</b>]]> %1$d (%2$d)</string>
+    <string name="connectionMethodWebSocket">WebSocket</string>
+    <string name="connectionMethodHTTP">HTTP-GET</string>
+    <string name="connectionMethod">Connection method:</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

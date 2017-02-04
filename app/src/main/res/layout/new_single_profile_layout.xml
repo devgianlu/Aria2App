@@ -9,6 +9,27 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connectionMethod" />
+
+        <RadioButton
+            android:id="@+id/addProfile_connMethodWebSocket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:checked="true"
+            android:text="@string/connectionMethodWebSocket" />
+
+        <RadioButton
+            android:id="@+id/addProfile_connMethodHTTP"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="36dp"
+            android:text="@string/connectionMethodHTTP" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

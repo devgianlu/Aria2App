@@ -190,6 +190,17 @@ public class AddProfileActivity extends AppCompatActivity {
         sViewHolder.port.setText(String.valueOf(item.serverPort));
         sViewHolder.endpoint.setText(item.serverEndpoint);
 
+        switch (item.connectionMethod) {
+            case HTTP:
+                sViewHolder.connMethodWebSocket.setChecked(false);
+                sViewHolder.connMethodHTTP.setChecked(true);
+                break;
+            case WEBSOCKET:
+                sViewHolder.connMethodWebSocket.setChecked(true);
+                sViewHolder.connMethodHTTP.setChecked(false);
+                break;
+        }
+
         switch (item.authMethod) {
             case NONE:
                 sViewHolder.authMethodNone.setChecked(true);
@@ -313,6 +324,17 @@ public class AddProfileActivity extends AppCompatActivity {
                     dialogInterface.dismiss();
                 }
             });
+
+            switch (edit.second.connectionMethod) {
+                case HTTP:
+                    sViewHolder.connMethodWebSocket.setChecked(false);
+                    sViewHolder.connMethodHTTP.setChecked(true);
+                    break;
+                case WEBSOCKET:
+                    sViewHolder.connMethodWebSocket.setChecked(true);
+                    sViewHolder.connMethodHTTP.setChecked(false);
+                    break;
+            }
 
             holder.addr.setText(edit.second.serverAddr);
             holder.port.setText(String.valueOf(edit.second.serverPort));
@@ -574,12 +596,11 @@ public class AddProfileActivity extends AppCompatActivity {
 
         SingleModeProfileItem profile = SingleModeProfileItem.fromFields(profileName, enableNotifications, sViewHolder);
 
-        if (profile.directDownloadEnabled) {
+        if (profile.directDownloadEnabled)
             Utils.requestWritePermission(this, WRITE_STORAGE_REQUEST_CODE);
-        }
-        if (profile.serverSSL) {
+
+        if (profile.serverSSL)
             Utils.requestReadPermission(this, READ_STORAGE_REQUEST_CODE);
-        }
 
         try {
             if (oldFileName != null)
@@ -670,6 +691,8 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     public class SingleModeViewHolder {
+        final RadioButton connMethodWebSocket;
+        final RadioButton connMethodHTTP;
         final EditText addr;
         final EditText port;
         final EditText endpoint;
@@ -694,6 +717,8 @@ public class AddProfileActivity extends AppCompatActivity {
         final EditText directDownloadPassword;
 
         SingleModeViewHolder(View rootView) {
+            connMethodWebSocket = (RadioButton) rootView.findViewById(R.id.addProfile_connMethodWebSocket);
+            connMethodHTTP = (RadioButton) rootView.findViewById(R.id.addProfile_connMethodHTTP);
             addr = (EditText) rootView.findViewById(R.id.addProfile_serverAddr);
             port = (EditText) rootView.findViewById(R.id.addProfile_serverPort);
             endpoint = (EditText) rootView.findViewById(R.id.addProfile_serverEndpoint);
@@ -719,6 +744,25 @@ public class AddProfileActivity extends AppCompatActivity {
             directDownloadPassword = (EditText) rootView.findViewById(R.id.addProfile_directDownload_passwd);
 
             //Setup
+            connMethodWebSocket.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean b) {
+                    if (!b) return;
+
+                    connMethodHTTP.setChecked(false);
+                    connMethodWebSocket.setChecked(true);
+                }
+            });
+            connMethodHTTP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean b) {
+                    if (!b) return;
+
+                    connMethodHTTP.setChecked(true);
+                    connMethodWebSocket.setChecked(false);
+                }
+            });
+
             final TextChangedListener listener = new TextChangedListener(completeURL, addr, port, endpoint, SSL);
             addr.addTextChangedListener(listener);
             port.addTextChangedListener(listener);

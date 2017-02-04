@@ -100,7 +100,10 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         if (profile.serverSSL)
             profile.certificatePath = sViewHolder.SSLCertificate.getText().toString().trim();
 
-        // TODO: !! Create profile setup for ConnectionMethod.HTTP !!
+        if (sViewHolder.connMethodWebSocket.isChecked())
+            profile.connectionMethod = ConnectionMethod.WEBSOCKET;
+        else
+            profile.connectionMethod = ConnectionMethod.HTTP;
 
         return profile;
     }
@@ -192,11 +195,11 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
                 .put("serverPassword", serverPassword)
                 .put("default", isDefault)
                 .put("serverSSL", serverSSL)
+                .put("connectionMethod", connectionMethod.name())
                 .put("certificatePath", certificatePath);
 
-        if (directDownloadEnabled) {
+        if (directDownloadEnabled)
             profile.put("directDownload", directDownload.toJSON());
-        }
 
         return profile;
     }
