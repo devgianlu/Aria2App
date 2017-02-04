@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Features disclaimer for HTTP-GET mode
 public class AddProfileActivity extends AppCompatActivity {
     private static final int WRITE_STORAGE_REQUEST_CODE = 1;
     private static final int READ_STORAGE_REQUEST_CODE = 2;

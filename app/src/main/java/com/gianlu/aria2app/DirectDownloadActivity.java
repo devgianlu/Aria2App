@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
 import com.gianlu.aria2app.DirectDownload.DownloadsAdapter;
 
+// FIXME: Downloading to SDCard fails
 public class DirectDownloadActivity extends AppCompatActivity {
 
     @Override

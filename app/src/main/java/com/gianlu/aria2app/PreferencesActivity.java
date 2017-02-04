@@ -123,9 +123,10 @@ public class PreferencesActivity extends PreferenceActivity {
                 File path = new File((String) o);
                 if (!path.exists() || !path.isDirectory()) {
                     CommonUtils.UIToast(PreferencesActivity.this, Utils.ToastMessages.INVALID_DOWNLOAD_PATH, (String) o);
+                    return false;
                 }
 
-                return false;
+                return true;
             }
         });
 
