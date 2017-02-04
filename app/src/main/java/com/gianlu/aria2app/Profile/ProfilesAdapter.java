@@ -170,12 +170,10 @@ public class ProfilesAdapter extends BaseAdapter {
                                 conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
                             }
 
-                            System.out.println(conn.getURL()); // FIXME: Need to find a URL which connects
-
                             long start = System.currentTimeMillis();
                             conn.connect();
 
-                            if (conn.getResponseCode() == 200) {
+                            if (conn.getResponseCode() == 400) {
                                 profile.setStatus(ProfileItem.STATUS.ONLINE);
                                 profile.setStatusMessage("Online");
                                 profile.setLatency(System.currentTimeMillis() - start);
