@@ -52,7 +52,9 @@ public class HTTPing extends AbstractClient {
             url = new URL(
                     profile.serverSSL ? "https" : "http",
                     profile.serverAddr,
-                    "/jsonrpc?method="
+                    profile.serverPort,
+                    profile.serverEndpoint +
+                            "?method="
                             + request.getString("method")
                             + "&id=" + request.getString("id")
                             + "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8"));

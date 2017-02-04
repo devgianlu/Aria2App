@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -296,7 +297,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
         final SingleModeViewHolder holder = new SingleModeViewHolder(view.findViewById(R.id.newConditionDialog_include));
 
-        final TextChangedListener listener = new TextChangedListener(holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
+        final TextChangedListener listener = new TextChangedListener(holder.connMethodWebSocket, holder.completeURL, holder.addr, holder.port, holder.endpoint, holder.SSL);
         holder.addr.addTextChangedListener(listener);
         holder.port.addTextChangedListener(listener);
         holder.endpoint.addTextChangedListener(listener);
@@ -744,6 +745,7 @@ public class AddProfileActivity extends AppCompatActivity {
             directDownloadPassword = (EditText) rootView.findViewById(R.id.addProfile_directDownload_passwd);
 
             //Setup
+            final TextChangedListener listener = new TextChangedListener(connMethodWebSocket, completeURL, addr, port, endpoint, SSL);
             connMethodWebSocket.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean b) {
@@ -751,6 +753,8 @@ public class AddProfileActivity extends AppCompatActivity {
 
                     connMethodHTTP.setChecked(false);
                     connMethodWebSocket.setChecked(true);
+
+                    listener.afterTextChanged(null);
                 }
             });
             connMethodHTTP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -760,10 +764,11 @@ public class AddProfileActivity extends AppCompatActivity {
 
                     connMethodHTTP.setChecked(true);
                     connMethodWebSocket.setChecked(false);
+
+                    listener.afterTextChanged(null);
                 }
             });
 
-            final TextChangedListener listener = new TextChangedListener(completeURL, addr, port, endpoint, SSL);
             addr.addTextChangedListener(listener);
             port.addTextChangedListener(listener);
             endpoint.addTextChangedListener(listener);
@@ -846,13 +851,15 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     private class TextChangedListener implements TextWatcher {
+        private final RadioButton connMethodWebSocket;
         private final TextView completeURL;
         private final EditText addr;
         private final EditText port;
         private final EditText endpoint;
         private final CheckBox ssl;
 
-        TextChangedListener(TextView completeURL, EditText addr, EditText port, EditText endpoint, CheckBox ssl) {
+        TextChangedListener(RadioButton connMethodWebSocket, TextView completeURL, EditText addr, EditText port, EditText endpoint, CheckBox ssl) {
+            this.connMethodWebSocket = connMethodWebSocket;
             this.completeURL = completeURL;
             this.addr = addr;
             this.port = port;
@@ -871,8 +878,11 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         @Override
-        public void afterTextChanged(Editable editable) {
-            completeURL.setText(String.format((ssl.isChecked() ? "wss" : "ws") + "://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
+        public void afterTextChanged(@Nullable Editable editable) {
+            if (connMethodWebSocket.isChecked())
+                completeURL.setText(String.format((ssl.isChecked() ? "wss" : "ws") + "://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
+            else
+                completeURL.setText(String.format((ssl.isChecked() ? "https" : "http") + "://%s:%s%s", addr.getText().toString(), port.getText().toString(), endpoint.getText().toString()));
         }
     }
 }

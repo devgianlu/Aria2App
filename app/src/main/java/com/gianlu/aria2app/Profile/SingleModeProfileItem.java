@@ -179,7 +179,13 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
     }
 
     public String getFullServerAddress() {
-        return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+        switch (connectionMethod) {
+            case HTTP:
+                return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+            default:
+            case WEBSOCKET:
+                return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+        }
     }
 
     public JSONObject toJSON() throws JSONException {
