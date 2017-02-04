@@ -11,7 +11,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -23,6 +25,7 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -151,31 +154,97 @@ public class ProfilesAdapter extends BaseAdapter {
         return holder.rootView;
     }
 
-    private void runTest(int pos, @Nullable IFinished handler) {
-        SingleModeProfileItem profile = getItem(pos);
+    private void runTest(int pos, @Nullable final IFinished handler) {
+        final SingleModeProfileItem profile = getItem(pos);
 
-        String scheme;
-        if (profile.serverSSL)
-            scheme = "wss://";
-        else
-            scheme = "ws://";
+        switch (profile.connectionMethod) {
+            case HTTP:
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            HttpURLConnection conn;
+                            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP)) {
+                                conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
+                            } else {
+                                conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
+                            }
 
-        try {
-            WebSocket webSocket;
-            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
-                webSocket = WebSocketing.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
-            else
-                webSocket = WebSocketing.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
+                            System.out.println(conn.getURL()); // FIXME: Need to find a URL which connects
 
-            webSocket.addListener(new StatusWebSocketHandler(profile, handler))
-                    .connectAsynchronously();
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
-            profile.setStatus(ProfileItem.STATUS.ERROR);
-            profile.setStatusMessage(ex.getMessage());
+                            long start = System.currentTimeMillis();
+                            conn.connect();
 
-            notifyDataSetChanged();
-            if (handler != null)
-                handler.onFinished();
+                            if (conn.getResponseCode() == 200) {
+                                profile.setStatus(ProfileItem.STATUS.ONLINE);
+                                profile.setStatusMessage("Online");
+                                profile.setLatency(System.currentTimeMillis() - start);
+
+                                context.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        notifyDataSetChanged();
+                                    }
+                                });
+                                if (handler != null)
+                                    handler.onFinished();
+                            } else {
+                                profile.setStatus(ProfileItem.STATUS.OFFLINE);
+                                profile.setStatusMessage(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()).getMessage());
+
+                                context.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        notifyDataSetChanged();
+                                    }
+                                });
+                                if (handler != null)
+                                    handler.onFinished();
+                            }
+                        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
+                            profile.setStatus(ProfileItem.STATUS.ERROR);
+                            profile.setStatusMessage(ex.getMessage());
+
+                            notifyDataSetChanged();
+                            if (handler != null)
+                                handler.onFinished();
+
+                            CommonUtils.logMe(context, ex);
+                        }
+                    }
+                }).start();
+                break;
+            case WEBSOCKET:
+                try {
+                    WebSocket webSocket;
+                    if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
+                        webSocket = WebSocketing.readyWebSocket((profile.serverSSL ? "wss://" : "ws://")
+                                        + profile.serverAddr
+                                        + ":" + profile.serverPort
+                                        + profile.serverEndpoint,
+                                profile.serverUsername,
+                                profile.serverPassword,
+                                Utils.readyCertificate(context, profile));
+                    else
+                        webSocket = WebSocketing.readyWebSocket((profile.serverSSL ? "wss://" : "ws://")
+                                        + profile.serverAddr
+                                        + ":" + profile.serverPort
+                                        + profile.serverEndpoint,
+                                Utils.readyCertificate(context, profile));
+
+                    webSocket.addListener(new StatusWebSocketHandler(profile, handler))
+                            .connectAsynchronously();
+                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
+                    profile.setStatus(ProfileItem.STATUS.ERROR);
+                    profile.setStatusMessage(ex.getMessage());
+
+                    notifyDataSetChanged();
+                    if (handler != null)
+                        handler.onFinished();
+
+                    CommonUtils.logMe(context, ex);
+                }
+                break;
         }
     }
 

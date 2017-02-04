@@ -1,6 +1,9 @@
 package com.gianlu.aria2app.NetIO;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.CurrentProfile;
@@ -23,10 +26,13 @@ import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 
 public class HTTPing extends AbstractClient {
     private static HTTPing httping;
@@ -43,6 +49,49 @@ public class HTTPing extends AbstractClient {
             httping = new HTTPing(context);
 
         return httping;
+    }
+
+    @SuppressLint("BadHostnameVerifier")
+    public static HttpURLConnection readyHttpConnection(String url, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+        if (ca != null) {
+            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+            conn.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            conn.setSSLSocketFactory(Utils.readySSLContext(ca).getSocketFactory());
+            conn.setConnectTimeout(5000);
+            return conn;
+        } else {
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setConnectTimeout(5000);
+            return conn;
+        }
+    }
+
+    @SuppressLint("BadHostnameVerifier")
+    public static HttpURLConnection readyHttpConnection(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+        if (ca != null) {
+            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+            conn.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            conn.setSSLSocketFactory(Utils.readySSLContext(ca).getSocketFactory());
+            conn.setConnectTimeout(5000);
+            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+            return conn;
+        } else {
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setConnectTimeout(5000);
+            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+
+            return conn;
+        }
     }
 
     @Override
@@ -89,9 +138,16 @@ public class HTTPing extends AbstractClient {
         }
     }
 
+    @SuppressLint("BadHostnameVerifier")
     public HttpURLConnection readyHttpConnection(URL url) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         if (profile.serverSSL) {
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            conn.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
             conn.setConnectTimeout(5000);
 
