@@ -95,47 +95,52 @@ public class HTTPing extends AbstractClient {
     }
 
     @Override
-    public void send(JSONObject request, IReceived handler) {
-        URL url;
-        try {
-            url = new URL(
-                    profile.serverSSL ? "https" : "http",
-                    profile.serverAddr,
-                    profile.serverPort,
-                    profile.serverEndpoint +
-                            "?method="
-                            + request.getString("method")
-                            + "&id=" + request.getString("id")
-                            + "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8"));
-        } catch (JSONException | MalformedURLException | UnsupportedEncodingException ex) {
-            handler.onException(false, ex);
-            return;
-        }
-
-        try {
-            HttpURLConnection conn = readyHttpConnection(url);
-            conn.connect();
-
-            if (conn.getResponseCode() == 200) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String rawResponse = reader.readLine();
-
-                if (rawResponse == null) {
-                    handler.onException(false, new NullPointerException("Empty response"));
-                } else {
-                    JSONObject response = new JSONObject(rawResponse);
-                    if (response.isNull("error")) {
-                        handler.onResponse(response);
-                    } else {
-                        handler.onException(false, new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
-                    }
+    public void send(final JSONObject request, final IReceived handler) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                URL url;
+                try {
+                    url = new URL(
+                            profile.serverSSL ? "https" : "http",
+                            profile.serverAddr,
+                            profile.serverPort,
+                            profile.serverEndpoint +
+                                    "?method="
+                                    + request.getString("method")
+                                    + "&id=" + request.getString("id")
+                                    + "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8"));
+                } catch (JSONException | MalformedURLException | UnsupportedEncodingException ex) {
+                    handler.onException(false, ex);
+                    return;
                 }
-            } else {
-                handler.onException(false, new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
+
+                try {
+                    HttpURLConnection conn = readyHttpConnection(url);
+                    conn.connect();
+
+                    if (conn.getResponseCode() == 200) {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        String rawResponse = reader.readLine();
+
+                        if (rawResponse == null) {
+                            handler.onException(false, new NullPointerException("Empty response"));
+                        } else {
+                            JSONObject response = new JSONObject(rawResponse);
+                            if (response.isNull("error")) {
+                                handler.onResponse(response);
+                            } else {
+                                handler.onException(false, new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
+                            }
+                        }
+                    } else {
+                        handler.onException(false, new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
+                    }
+                } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                    handler.onException(false, ex);
+                }
             }
-        } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-            handler.onException(false, ex);
-        }
+        }).start();
     }
 
     @SuppressLint("BadHostnameVerifier")

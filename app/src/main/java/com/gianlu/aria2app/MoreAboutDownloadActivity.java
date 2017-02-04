@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// FIXME: "Failed on gathering information" showed on Activity start
 public class MoreAboutDownloadActivity extends AppCompatActivity {
     private PagerAdapter adapter;
     private String gid;

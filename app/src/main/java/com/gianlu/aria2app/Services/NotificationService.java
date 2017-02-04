@@ -112,6 +112,9 @@ public class NotificationService extends IntentService {
         }
 
         for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
+            if (profile.connectionMethod == SingleModeProfileItem.ConnectionMethod.HTTP)
+                continue;
+
             String scheme;
             if (profile.serverSSL)
                 scheme = "wss://";

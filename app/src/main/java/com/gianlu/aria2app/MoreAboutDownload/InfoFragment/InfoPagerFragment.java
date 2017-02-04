@@ -116,7 +116,7 @@ public class InfoPagerFragment extends CommonFragment {
         final LinearLayout btAnnounceList;
         final TextView bitfieldLabel;
         final RecyclerView bitfield;
-        LineChart chart;
+        final LineChart chart;
 
         public ViewHolder(View rootView) {
             this.rootView = rootView;

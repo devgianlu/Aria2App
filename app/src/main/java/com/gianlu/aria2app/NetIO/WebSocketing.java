@@ -75,7 +75,7 @@ public class WebSocketing extends AbstractClient {
         }
     }
 
-    public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+    private static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         SingleModeProfileItem profile = CurrentProfile.getCurrentProfile(context);
 
         if (profile.serverSSL) {

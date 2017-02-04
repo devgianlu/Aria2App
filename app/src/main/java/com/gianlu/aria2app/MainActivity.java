@@ -364,55 +364,63 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (getIntent().getBooleanExtra("backFromAddProfile", false))
             drawerManager.buildProfiles().openProfiles(false);
 
-        WebSocketing.setGlobalHandler(new WebSocketing.IListener() {
-            @Override
-            public void onException(Throwable ex) {
-                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, ex, new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeLayout.setRefreshing(false);
-                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
-                    }
-                });
+        if (CurrentProfile.getCurrentProfile(this).connectionMethod == SingleModeProfileItem.ConnectionMethod.WEBSOCKET) {
+            WebSocketing.setGlobalHandler(new WebSocketing.IListener() {
+                @Override
+                public void onException(Throwable ex) {
+                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, ex, new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeLayout.setRefreshing(false);
+                            drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
+                        }
+                    });
 
-                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.noCommunication)
-                        .setCancelable(false)
-                        .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))
-                        .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                recreate();
-                            }
-                        })
-                        .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finish();
-                            }
-                        })
-                        .setNeutralButton(R.string.changeProfile, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                drawerManager.openProfiles(true);
-                            }
-                        }));
+                    CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(R.string.noCommunication)
+                            .setCancelable(false)
+                            .setMessage(getString(R.string.noCommunication_message, ex.getMessage()))
+                            .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    recreate();
+                                }
+                            })
+                            .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    finish();
+                                }
+                            })
+                            .setNeutralButton(R.string.changeProfile, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    drawerManager.openProfiles(true);
+                                }
+                            }));
+                }
+
+                @Override
+                public void onDisconnected() {
+                    UpdateUI.stop(updateUI);
+
+                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeLayout.setRefreshing(false);
+                            drawerManager.openProfiles(true);
+                            drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
+                        }
+                    });
+                }
+            });
+
+            try {
+                WebSocketing.enableEventManager(this);
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                CommonUtils.logMe(this, ex);
             }
-
-            @Override
-            public void onDisconnected() {
-                UpdateUI.stop(updateUI);
-
-                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeLayout.setRefreshing(false);
-                        drawerManager.openProfiles(true);
-                        drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
-                    }
-                });
-            }
-        });
+        }
 
         int autoReloadDownloadsListRate = Integer.parseInt(sharedPreferences.getString("a2_downloadListRate", "0")) * 1000;
         if (autoReloadDownloadsListRate != 0) {
@@ -435,12 +443,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         } else {
             loadDownloads = new LoadDownloads(this, this);
             new Thread(loadDownloads).start();
-        }
-
-        try {
-            WebSocketing.enableEventManager(this);
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-            CommonUtils.logMe(this, ex);
         }
 
         if (sharedPreferences.getBoolean("a2_enableNotifications", true)) {
