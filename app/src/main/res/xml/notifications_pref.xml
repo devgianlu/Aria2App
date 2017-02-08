@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="a2_enableNotifications"
+        android:summaryOff="@string/notificationsOff"
+        android:summaryOn="@string/notificationsOn"
+        android:title="@string/enableNotifications" />
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/selectedNotificationsValue"
+        android:dependency="a2_enableNotifications"
+        android:entries="@array/selectedNotifications"
+        android:entryValues="@array/selectedNotificationsValue"
+        android:key="a2_selectedNotifications"
+        android:summary="@string/notificationTypeSummary"
+        android:title="@string/notificationType" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="a2_enableNotifications"
+        android:key="a2_enableSound"
+        android:summaryOff="@string/soundOff"
+        android:summaryOn="@string/soundOn"
+        android:title="@string/enableSound" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="a2_enableNotifications"
+        android:key="a2_enablePersistent"
+        android:summaryOff="@string/persistentOff"
+        android:summaryOn="@string/persistentOn"
+        android:title="@string/enablePersistent" />
+</PreferenceScreen>

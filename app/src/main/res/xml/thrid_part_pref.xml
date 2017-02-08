@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="mpAndroidChart"
+        android:summary="@string/apacheLicense"
+        android:title="MPAndroidChart" />
+
+    <Preference
+        android:key="nv-websocket-client"
+        android:summary="@string/apacheLicense"
+        android:title="nv-websocket-client" />
+
+    <Preference
+        android:key="fileDownloader"
+        android:summary="@string/apacheLicense"
+        android:title="FileDownloader" />
+
+    <Preference
+        android:key="apacheLicense"
+        android:title="Apache License 2.0" />
+</PreferenceScreen>

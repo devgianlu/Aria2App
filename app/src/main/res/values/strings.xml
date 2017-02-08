@@ -155,9 +155,7 @@
     <string name="enablePersistent">Enable persistent notification service</string>
     <string name="persistentOn">Notification service will never go off</string>
     <string name="persistentOff">Notification service may not be live or may go off</string>
-    <string name="others">Others</string>
     <string name="logs">Log files</string>
-    <string name="logsSummary">All application\'s log files</string>
     <string name="third_part">Third-part projects</string>
     <string name="about_app">About this application</string>
     <string name="tracking">Disable anonymous statistics</string>
@@ -255,6 +253,7 @@
     <string name="connectionMethodWebSocket">WebSocket</string>
     <string name="connectionMethodHTTP">HTTP-GET</string>
     <string name="connectionMethod">Connection method:</string>
+    <string name="connMethodHTTPDisclaimer">Some features may not work when using HTTP-GET.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

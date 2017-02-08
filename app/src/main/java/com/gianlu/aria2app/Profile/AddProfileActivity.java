@@ -56,7 +56,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Features disclaimer for HTTP-GET mode
 public class AddProfileActivity extends AppCompatActivity {
     private static final int WRITE_STORAGE_REQUEST_CODE = 1;
     private static final int READ_STORAGE_REQUEST_CODE = 2;
@@ -695,6 +694,7 @@ public class AddProfileActivity extends AppCompatActivity {
     public class SingleModeViewHolder {
         final RadioButton connMethodWebSocket;
         final RadioButton connMethodHTTP;
+        final TextView connMethodHTTPDisclaimer;
         final EditText addr;
         final EditText port;
         final EditText endpoint;
@@ -721,6 +721,7 @@ public class AddProfileActivity extends AppCompatActivity {
         SingleModeViewHolder(View rootView) {
             connMethodWebSocket = (RadioButton) rootView.findViewById(R.id.addProfile_connMethodWebSocket);
             connMethodHTTP = (RadioButton) rootView.findViewById(R.id.addProfile_connMethodHTTP);
+            connMethodHTTPDisclaimer = (TextView) rootView.findViewById(R.id.addProfile_connMethodHTTPDisclaimer);
             addr = (EditText) rootView.findViewById(R.id.addProfile_serverAddr);
             port = (EditText) rootView.findViewById(R.id.addProfile_serverPort);
             endpoint = (EditText) rootView.findViewById(R.id.addProfile_serverEndpoint);
@@ -754,6 +755,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
                     connMethodHTTP.setChecked(false);
                     connMethodWebSocket.setChecked(true);
+                    connMethodHTTPDisclaimer.setVisibility(View.GONE);
 
                     listener.afterTextChanged(null);
                 }
@@ -765,6 +767,7 @@ public class AddProfileActivity extends AppCompatActivity {
 
                     connMethodHTTP.setChecked(true);
                     connMethodWebSocket.setChecked(false);
+                    connMethodHTTPDisclaimer.setVisibility(View.VISIBLE);
 
                     listener.afterTextChanged(null);
                 }
