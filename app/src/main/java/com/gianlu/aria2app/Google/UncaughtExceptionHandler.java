@@ -1,14 +1,23 @@
 package com.gianlu.aria2app.Google;
 
+import android.content.Context;
+
 import com.gianlu.aria2app.BuildConfig;
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.commonutils.UncaughtExceptionActivity;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+    private final Context context;
+
+    public UncaughtExceptionHandler(Context context) {
+        this.context = context;
+    }
+
     @Override
     public void uncaughtException(final Thread thread, final Throwable throwable) {
         if (BuildConfig.DEBUG) {
@@ -17,12 +26,12 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
             StringWriter writer = new StringWriter();
             throwable.printStackTrace(new PrintWriter(writer));
 
-            Tracker tracker = ThisApplication.tracker;
-            if (tracker != null)
-                tracker.send(new HitBuilders.ExceptionBuilder()
-                        .setDescription(writer.toString())
-                        .setFatal(true)
-                        .build());
+            ThisApplication.sendAnalytics(context, new HitBuilders.ExceptionBuilder()
+                    .setDescription(writer.toString())
+                    .setFatal(true)
+                    .build());
+
+            UncaughtExceptionActivity.startActivity(context, context.getString(R.string.app_name));
         }
     }
 }

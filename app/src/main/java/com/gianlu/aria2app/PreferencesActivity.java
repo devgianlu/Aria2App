@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+// TODO: Use newer version
 public class PreferencesActivity extends PreferenceActivity {
     private IInAppBillingService billingService;
     private ProgressDialog pd;

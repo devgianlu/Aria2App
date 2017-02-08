@@ -60,7 +60,7 @@ public class UpdateUI implements Runnable {
 
     @Override
     public void run() {
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(context));
 
         while ((!_shouldStop) && jta2 != null) {
             if (adapter.hasSummary) {

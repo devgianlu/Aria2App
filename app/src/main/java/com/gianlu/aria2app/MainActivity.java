@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         setTitle(R.string.app_name);
 
         CommonUtils.DEBUG = BuildConfig.DEBUG;
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences.getString("dd_downloadPath", null) == null) {
