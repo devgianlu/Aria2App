@@ -203,7 +203,13 @@ public class ProfilesAdapter extends BaseAdapter {
                             profile.setStatus(ProfileItem.STATUS.ERROR);
                             profile.setStatusMessage(ex.getMessage());
 
-                            notifyDataSetChanged();
+                            context.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    notifyDataSetChanged();
+                                }
+                            });
+
                             if (handler != null)
                                 handler.onFinished();
 
@@ -236,7 +242,13 @@ public class ProfilesAdapter extends BaseAdapter {
                     profile.setStatus(ProfileItem.STATUS.ERROR);
                     profile.setStatusMessage(ex.getMessage());
 
-                    notifyDataSetChanged();
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+
                     if (handler != null)
                         handler.onFinished();
 
