@@ -316,9 +316,10 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             menu.removeItem(R.id.downloadCardViewMenu_moveDown);
                             break;
                         case ERROR:
+                            if (item.isBitTorrent)
+                                menu.removeItem(R.id.downloadCardViewMenu_restart);
                             menu.removeItem(R.id.downloadCardViewMenu_pause);
                             menu.removeItem(R.id.downloadCardViewMenu_resume);
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
                             menu.removeItem(R.id.downloadCardViewMenu_moveUp);
                             menu.removeItem(R.id.downloadCardViewMenu_moveDown);
                             break;
