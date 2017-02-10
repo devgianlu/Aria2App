@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
+        android:gravity="center"
         android:text="@string/nothingFound"
         android:textAlignment="center"
         android:visibility="gone" />
@@ -31,6 +32,7 @@
             android:id="@+id/search_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textAlignment="center"
             android:textSize="20sp"
             android:textStyle="bold" />

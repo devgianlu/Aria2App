@@ -19,6 +19,7 @@
             android:id="@+id/peersFragment_noDataLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:padding="8dp"
             android:text="@string/noPeers"
             android:textAlignment="center"
