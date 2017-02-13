@@ -129,6 +129,16 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                         return false;
                     }
 
+                    // TODO: Detects it's readable when it's not
+                    if (!path.canWrite()) {
+                        if (CommonUtils.isOnSecondaryStorage(path)) {
+                            // TODO: Grant access to secondary storage
+                        } else {
+                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_DOWNLOAD_PATH, (String) o);
+                            return false;
+                        }
+                    }
+
                     return true;
                 }
             });
