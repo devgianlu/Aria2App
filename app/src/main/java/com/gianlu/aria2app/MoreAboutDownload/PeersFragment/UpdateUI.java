@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
+import com.gianlu.aria2app.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 

@@ -1,10 +1,7 @@
-package com.gianlu.aria2app.Google;
+package com.gianlu.aria2app;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.BuildConfig;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.UncaughtExceptionActivity;
 import com.google.android.gms.analytics.HitBuilders;
 

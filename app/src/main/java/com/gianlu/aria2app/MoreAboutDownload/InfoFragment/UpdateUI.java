@@ -13,11 +13,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.data.Entry;

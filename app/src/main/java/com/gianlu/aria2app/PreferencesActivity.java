@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
@@ -19,13 +18,15 @@ import android.preference.PreferenceFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
 import com.android.vending.billing.IInAppBillingService;
-import com.gianlu.aria2app.Google.Billing.Billing;
-import com.gianlu.aria2app.Google.Billing.Product;
-import com.gianlu.aria2app.Google.Billing.ProductAdapter;
-import com.gianlu.aria2app.Google.Billing.PurchasedProduct;
+import com.gianlu.commonutils.Billing.Billing;
+import com.gianlu.commonutils.Billing.Product;
+import com.gianlu.commonutils.Billing.ProductAdapter;
+import com.gianlu.commonutils.Billing.PurchasedProduct;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.LogsActivity;
 import com.google.android.gms.analytics.HitBuilders;
@@ -349,20 +350,19 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                     };
                     pd.dismiss();
 
+                    RecyclerView list = new RecyclerView(getActivity());
+                    list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    list.setAdapter(new ProductAdapter(getActivity(), products, new ProductAdapter.IAdapter() {
+                        @Override
+                        public void onItemSelected(Product product) {
+                            Billing.buyProduct(getActivity(), billingService, product, buyHandler);
+                        }
+                    }));
+
                     CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getActivity())
                             .setTitle(getString(R.string.donate))
                             .setNegativeButton(android.R.string.cancel, null)
-                            .setAdapter(new ProductAdapter(getActivity(), products, new ProductAdapter.IAdapter() {
-                                @Override
-                                public void onItemSelected(Product product) {
-                                    Billing.buyProduct(getActivity(), billingService, product, buyHandler);
-                                }
-                            }), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Billing.buyProduct(getActivity(), billingService, products.get(i), buyHandler);
-                                }
-                            }));
+                            .setView(list));
 
                     ThisApplication.sendAnalytics(getActivity(), new HitBuilders.EventBuilder()
                             .setCategory(ThisApplication.CATEGORY_USER_INPUT)

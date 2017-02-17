@@ -28,7 +28,6 @@ import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.gianlu.aria2app.Google.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
 import com.gianlu.aria2app.Main.DrawerManager;
