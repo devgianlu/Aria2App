@@ -34,7 +34,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
-            android:alpha="0.7"
+            android:alpha="0.54"
             android:background="@drawable/ripple_effect_dark"
             android:scaleType="fitCenter" />
 
@@ -45,7 +45,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
-            android:alpha="0.7"
+            android:alpha="0.54"
             android:background="@drawable/ripple_effect_dark"
             android:scaleType="fitCenter" />
 
@@ -54,6 +54,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center_vertical"
+            android:alpha="0.54"
             android:background="@drawable/ripple_effect_dark"
             android:scaleType="fitCenter" />
     </LinearLayout>
