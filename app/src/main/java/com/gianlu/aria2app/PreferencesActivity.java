@@ -265,18 +265,18 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                         PurchasedProduct purchasedProduct = new PurchasedProduct(data.getStringExtra("INAPP_PURCHASE_DATA"));
                         if (Objects.equals(purchasedProduct.developerPayload, devString)) {
                             if (purchasedProduct.purchaseState == PurchasedProduct.PURCHASED) {
-                                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.THANK_YOU, "Purchased " + purchasedProduct.productId + " with order ID " + purchasedProduct.orderId);
+                                CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.THANK_YOU, "Purchased " + purchasedProduct.productId + " with order ID " + purchasedProduct.orderId);
                             } else if (purchasedProduct.purchaseState == PurchasedProduct.CANCELED) {
-                                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.PURCHASING_CANCELED);
+                                CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.PURCHASING_CANCELED);
                             }
                         } else {
-                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_BUYING_ITEM, new Exception("Payloads mismatch!"));
+                            CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_BUYING_ITEM, new Exception("Payloads mismatch!"));
                         }
                     } catch (JSONException ex) {
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_BUYING_ITEM, ex);
+                        CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_BUYING_ITEM, ex);
                     }
                 } else {
-                    CommonUtils.UIToast(getActivity(), Utils.ToastMessages.PURCHASING_CANCELED);
+                    CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.PURCHASING_CANCELED);
                 }
             }
         }
@@ -329,7 +329,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                             try {
                                 getActivity().startIntentSenderForResult(intent.getIntentSender(), requestCode, new Intent(), 0, 0, 0);
                             } catch (IntentSender.SendIntentException ex) {
-                                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                                CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_CONNECTION_BILLING_SERVICE, ex);
                             }
                         }
 
@@ -345,7 +345,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
 
                         @Override
                         public void onFailed(Exception ex) {
-                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                            CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_CONNECTION_BILLING_SERVICE, ex);
                         }
                     };
                     pd.dismiss();
@@ -373,19 +373,19 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 @Override
                 public void onAPIException(int code) {
                     if (code == Billing.RESULT_BILLING_UNAVAILABLE)
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, "Code: " + code);
+                        CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_CONNECTION_BILLING_SERVICE, "Code: " + code);
                     else
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_BUYING_ITEM, "Code: " + code);
+                        CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_BUYING_ITEM, "Code: " + code);
                 }
 
                 @Override
                 public void onUserCancelled() {
-                    CommonUtils.UIToast(getActivity(), Utils.ToastMessages.BILLING_USER_CANCELLED);
+                    CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.BILLING_USER_CANCELLED);
                 }
 
                 @Override
                 public void onFailed(Exception ex) {
-                    CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CONNECTION_BILLING_SERVICE, ex);
+                    CommonUtils.UIToast(getActivity(), CommonUtils.ToastMessage.FAILED_CONNECTION_BILLING_SERVICE, ex);
                 }
             });
         }

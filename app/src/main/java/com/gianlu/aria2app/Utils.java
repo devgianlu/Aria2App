@@ -472,8 +472,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage REMOVED_RESULT = new CommonUtils.ToastMessage("Download result removed.", false);
         public static final CommonUtils.ToastMessage MOVED = new CommonUtils.ToastMessage("Download moved.", false);
         public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_FILE = new CommonUtils.ToastMessage("Failed downloading file!", true);
-        public static final CommonUtils.ToastMessage FAILED_CONNECTION_BILLING_SERVICE = new CommonUtils.ToastMessage("Failed to connect to the billing service!", true);
-        public static final CommonUtils.ToastMessage FAILED_BUYING_ITEM = new CommonUtils.ToastMessage("Failed to buy this item! Please contact me.", true);
         public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed.", false);
         public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted.", false);
         public static final CommonUtils.ToastMessage DOWNLOAD_ADDED = new CommonUtils.ToastMessage("Download added.", false);
@@ -494,7 +492,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_CHANGE_POSITION = new CommonUtils.ToastMessage("Failed changing download's queue position!", true);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file!", true);
         public static final CommonUtils.ToastMessage FAILED_CHECKING_VERSION = new CommonUtils.ToastMessage("Failed checking aria2 version!", true);
-        public static final CommonUtils.ToastMessage INVALID_REQUEST = new CommonUtils.ToastMessage("Invalid request format! Please review your JSON.", false);
         public static final CommonUtils.ToastMessage INVALID_PROFILE_NAME = new CommonUtils.ToastMessage("Invalid profile name!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_IP = new CommonUtils.ToastMessage("Invalid server address!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_PORT = new CommonUtils.ToastMessage("Invalid server port, must be > 0 and < 65536!", false);
@@ -510,9 +507,6 @@ public class Utils {
         public static final CommonUtils.ToastMessage INVALID_DIRECTDOWNLOAD_USERORPASSWD = new CommonUtils.ToastMessage("Invalid DirectDownload's username or password!", false);
         public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
         public static final CommonUtils.ToastMessage INVALID_DOWNLOAD_PATH = new CommonUtils.ToastMessage("Invalid download path.", false);
-        public static final CommonUtils.ToastMessage PURCHASING_CANCELED = new CommonUtils.ToastMessage("The purchase has been canceled.", false);
-        public static final CommonUtils.ToastMessage BILLING_USER_CANCELLED = new CommonUtils.ToastMessage("You cancelled the operation.", false);
-        public static final CommonUtils.ToastMessage THANK_YOU = new CommonUtils.ToastMessage("Thank you!", false);
         public static final CommonUtils.ToastMessage INVALID_CERTIFICATE_FILE = new CommonUtils.ToastMessage("Invalid certificate file!", false);
         public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
         public static final CommonUtils.ToastMessage READ_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot access the certificate file. You denied the read permission!", false);
