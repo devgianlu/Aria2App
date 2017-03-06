@@ -93,7 +93,8 @@ public class UpdateUI implements Runnable {
                     @Override
                     public void onException(Exception exception) {
                         if (exception == null) return;
-                        if (exception.getMessage().endsWith("is not found")) return;
+                        if (exception.getMessage() != null && exception.getMessage().endsWith("is not found"))
+                            return;
 
                         CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
 
