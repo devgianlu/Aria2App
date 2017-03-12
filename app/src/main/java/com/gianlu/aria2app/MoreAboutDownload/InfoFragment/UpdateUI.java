@@ -114,7 +114,12 @@ public class UpdateUI implements Runnable {
                         dir = download.dir;
 
                         bitfieldAdapter = new BitfieldAdapter(context, Utils.bitfieldProcessor(download.numPieces, download.bitfield));
-                        holder.bitfield.setAdapter(bitfieldAdapter);
+                        context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.bitfield.setAdapter(bitfieldAdapter);
+                            }
+                        });
 
                         if (observer != null) {
                             context.runOnUiThread(new Runnable() {

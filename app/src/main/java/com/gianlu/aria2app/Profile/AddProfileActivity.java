@@ -274,7 +274,7 @@ public class AddProfileActivity extends AppCompatActivity {
                 ssid = (AutoCompleteTextView) view.findViewById(R.id.newConditionDialog_containerWiFi).findViewById(R.id.newConditionDialog_ssid);
 
                 List<String> configuredSSIDs = new ArrayList<>();
-                List<WifiConfiguration> configured_wifis = ((WifiManager) getSystemService(WIFI_SERVICE)).getConfiguredNetworks();
+                List<WifiConfiguration> configured_wifis = ((WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE)).getConfiguredNetworks();
                 if (configured_wifis == null) break;
                 for (WifiConfiguration net : configured_wifis) {
                     String _ssid = net.SSID;
@@ -691,7 +691,7 @@ public class AddProfileActivity extends AppCompatActivity {
         onBackPressed();
     }
 
-    public class SingleModeViewHolder {
+    class SingleModeViewHolder {
         final RadioButton connMethodWebSocket;
         final RadioButton connMethodHTTP;
         final TextView connMethodHTTPDisclaimer;
