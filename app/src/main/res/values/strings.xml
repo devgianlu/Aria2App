@@ -193,8 +193,6 @@
     <string name="donate">Donate</string>
     <string name="donateSummary">Send me a small amount of money to support me</string>
     <string name="connectingBillingService">Connecting to the billing service. Please wait…</string>
-    <string name="voteApp">Rate this app</string>
-    <string name="voteApp_message">It\'s been some days since you installed this app. What do you think about it?\nPlease leave a comment or contact me, this would mean a lot to me. (Donations are also appreciated :D)</string>
     <string name="certificate">CA certificate:</string>
     <string name="certificate_hint">/path/to/server/certificate</string>
     <string name="search">Search</string>

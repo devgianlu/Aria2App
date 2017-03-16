@@ -136,7 +136,7 @@ public class MultiModeProfileItem extends ProfileItem implements Serializable {
         switch (manager.getActiveNetworkInfo().getType()) {
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_WIFI:
-                item = getWiFiProfile(((WifiManager) context.getSystemService(Context.WIFI_SERVICE)).getConnectionInfo().getSSID());
+                item = getWiFiProfile(((WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE)).getConnectionInfo().getSSID());
                 break;
             case ConnectivityManager.TYPE_MOBILE_DUN:
             case ConnectivityManager.TYPE_MOBILE:

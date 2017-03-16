@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -382,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                             .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    recreate();
+                                    startWithProfile(CurrentProfile.getCurrentProfile(MainActivity.this), true);
                                 }
                             })
                             .setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
@@ -448,34 +447,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             startService(NotificationService.createStartIntent(this));
         } else {
             stopService(new Intent(this, NotificationService.class).setAction("STOP"));
-        }
-
-        long firstStart = sharedPreferences.getLong("firstStart", -1);
-        if (firstStart == -1) {
-            sharedPreferences.edit()
-                    .putLong("firstStart", System.currentTimeMillis())
-                    .apply();
-        } else if (firstStart > 0) {
-            if (System.currentTimeMillis() - sharedPreferences.getLong("firstStart", -1) >= 259200000) {
-                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
-                        .setTitle(R.string.voteApp)
-                        .setMessage(R.string.voteApp_message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                try {
-                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getApplicationContext().getPackageName())));
-                                } catch (android.content.ActivityNotFoundException ex) {
-                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
-                                }
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null));
-
-                sharedPreferences.edit()
-                        .putLong("firstStart", -2)
-                        .apply();
-            }
         }
 
         FileDownloader.getImpl().bindService(new Runnable() {
