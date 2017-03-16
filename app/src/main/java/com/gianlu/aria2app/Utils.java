@@ -519,10 +519,5 @@ public class Utils {
         public String getFormattedValue(float value, AxisBase axis) {
             return CommonUtils.speedFormatter(value);
         }
-
-        @Override
-        public int getDecimalDigits() {
-            return 1;
-        }
     }
 }
