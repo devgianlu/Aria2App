@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
+import com.gianlu.aria2app.DirectDownloadActivity;
 import com.gianlu.aria2app.MoreAboutDownload.InfoFragment.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -143,6 +145,7 @@ class FilesAdapter {
                 .build());
 
         DownloadSupervisor.getInstance().start(context, gid, file);
+        context.startActivity(new Intent(context, DirectDownloadActivity.class));
     }
 
     private void startDownload(TreeDirectory parent) {
@@ -152,6 +155,7 @@ class FilesAdapter {
                 .build());
 
         DownloadSupervisor.getInstance().start(context, gid, parent);
+        context.startActivity(new Intent(context, DirectDownloadActivity.class));
     }
 
     private void populateDirectory(LinearLayout parentView, TreeDirectory parentNode, int paddingMultiplier) {
