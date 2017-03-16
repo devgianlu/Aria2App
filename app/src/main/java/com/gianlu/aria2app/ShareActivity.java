@@ -71,27 +71,26 @@ public class ShareActivity extends AppCompatActivity {
         String strData = intent.getStringExtra(Intent.EXTRA_TEXT);
         Uri data = intent.getData();
 
-        if ((!Objects.equals(intent.getAction(), Intent.ACTION_VIEW) && !Objects.equals(intent.getAction(), Intent.ACTION_SEND)) || (data == null && strData == null)) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, "Wrong action or missing data.");
-            finish();
-            return;
-        }
-
-        if (data != null && Objects.equals(data.getScheme(), "file")) {
-            File file = new File(data.getPath());
-            if (file.exists() && file.canRead()) {
-                startActivity(new Intent(this, AddTorrentActivity.class)
-                        .putExtra("share_file", file)
-                        .putExtra("torrentMode", Objects.equals(intent.getType(), "application/x-bittorrent")));
+        if (data != null) {
+            if (Objects.equals(data.getScheme(), "file")) {
+                File file = new File(data.getPath());
+                if (file.exists() && file.canRead()) {
+                    startActivity(new Intent(this, AddTorrentActivity.class)
+                            .putExtra("share_file", file)
+                            .putExtra("torrentMode", Objects.equals(intent.getType(), "application/x-bittorrent")));
+                } else {
+                    CommonUtils.UIToast(this, Utils.ToastMessages.FILE_NOT_FOUND, file.getPath());
+                    finish();
+                }
             } else {
-                CommonUtils.UIToast(this, Utils.ToastMessages.FILE_NOT_FOUND, file.getPath());
-                finish();
+                startActivity(new Intent(this, AddURIActivity.class)
+                        .putExtra("share_uri", data.toString()));
             }
         } else if (strData != null) {
             startActivity(new Intent(this, AddURIActivity.class)
                     .putExtra("share_uri", strData));
         } else {
-            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, "Invalid data received.");
+            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, "Invalid or missing data.");
             finish();
         }
     }

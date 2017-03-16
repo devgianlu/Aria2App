@@ -499,7 +499,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage INVALID_SERVER_TOKEN = new CommonUtils.ToastMessage("Invalid server token!", false);
         public static final CommonUtils.ToastMessage INVALID_SERVER_USER_OR_PASSWD = new CommonUtils.ToastMessage("Invalid username or password!", false);
         public static final CommonUtils.ToastMessage INVALID_CONDITIONS_NUMBER = new CommonUtils.ToastMessage("Multi profile should contains more than one condition", false);
-        public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("AFile not found!", true);
+        public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
         public static final CommonUtils.ToastMessage FATAL_EXCEPTION = new CommonUtils.ToastMessage("Fatal exception!", true);
         public static final CommonUtils.ToastMessage INVALID_SSID = new CommonUtils.ToastMessage("Invalid SSID!", false);
         public static final CommonUtils.ToastMessage MUST_PICK_DEFAULT = new CommonUtils.ToastMessage("You must select one profile as default!", false);
