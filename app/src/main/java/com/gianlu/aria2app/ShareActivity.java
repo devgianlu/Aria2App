@@ -80,7 +80,6 @@ public class ShareActivity extends AppCompatActivity {
                             .putExtra("torrentMode", Objects.equals(intent.getType(), "application/x-bittorrent")));
                 } else {
                     CommonUtils.UIToast(this, Utils.ToastMessages.FILE_NOT_FOUND, file.getPath());
-                    finish();
                 }
             } else {
                 startActivity(new Intent(this, AddURIActivity.class)
@@ -91,7 +90,8 @@ public class ShareActivity extends AppCompatActivity {
                     .putExtra("share_uri", strData));
         } else {
             CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, "Invalid or missing data.");
-            finish();
         }
+
+        finish();
     }
 }

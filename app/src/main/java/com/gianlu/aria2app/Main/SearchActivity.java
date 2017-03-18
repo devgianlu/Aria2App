@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.View;
@@ -42,7 +44,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     private TextView noData;
     private RecyclerView list;
     private ProgressBar loading;
-    private LinearLayout searchContainer;
     private TextView label;
 
     @Override
@@ -51,12 +52,17 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         setContentView(R.layout.activity_search);
         setTitle(R.string.searchTorrent);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.search_toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
         loading = (ProgressBar) findViewById(R.id.search_loading);
         list = (RecyclerView) findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         label = (TextView) findViewById(R.id.search_label);
         noData = (TextView) findViewById(R.id.search_noData);
-        searchContainer = (LinearLayout) findViewById(R.id.search_container);
 
         onQueryTextSubmit(SearchUtils.TRENDING_WEEK);
     }
@@ -78,7 +84,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     public boolean onQueryTextSubmit(final String query) {
         loading.setVisibility(View.VISIBLE);
-        searchContainer.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
         noData.setVisibility(View.GONE);
 
         ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
@@ -96,10 +102,10 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
                         if (results.isEmpty()) {
                             noData.setVisibility(View.VISIBLE);
-                            searchContainer.setVisibility(View.GONE);
+                            list.setVisibility(View.GONE);
                         } else {
                             noData.setVisibility(View.GONE);
-                            searchContainer.setVisibility(View.VISIBLE);
+                            list.setVisibility(View.VISIBLE);
                             if (Objects.equals(query, SearchUtils.TRENDING_WEEK))
                                 label.setText(R.string.trendingWeek);
                             else
@@ -189,7 +195,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                     public void run() {
                         loading.setVisibility(View.GONE);
                         noData.setVisibility(View.VISIBLE);
-                        searchContainer.setVisibility(View.GONE);
+                        list.setVisibility(View.GONE);
                     }
                 });
             }

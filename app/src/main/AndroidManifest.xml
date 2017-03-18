@@ -1125,6 +1125,7 @@
         <activity
             android:name=".Main.SearchActivity"
             android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.app.searchable"
