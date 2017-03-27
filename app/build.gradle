@@ -24,17 +24,17 @@ android {
 
 dependencies {
     compile project(':CommonUtils')
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:support-v4:25.2.0'
-    compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:support-v4:25.3.0'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     compile 'com.neovisionaries:nv-websocket-client:1.30'
-    compile 'com.google.android.gms:play-services-analytics:10.2.0'
-    compile 'com.android.support:design:25.2.0'
+    compile 'com.google.android.gms:play-services-analytics:10.2.1'
+    compile 'com.android.support:design:25.3.0'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.liulishuo.filedownloader:library:1.4.2'
-    compile 'com.android.support:cardview-v7:25.2.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'com.github.lzyzsd:circleprogress:1.1.0'
+    compile 'com.android.support:cardview-v7:25.3.0'
+    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile 'com.github.lzyzsd:circleprogress:1.2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
