@@ -112,7 +112,7 @@
     <orderEntry type="library" exported="" name="support-core-utils-25.3.0" level="project" />
     <orderEntry type="library" exported="" name="support-fragment-25.3.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-impl-10.2.1" level="project" />
-    <orderEntry type="library" exported="" name="MPAndroidChart-v3.0.2" level="project" />
+    <orderEntry type="library" exported="" name="MPAndroidChart-v3.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-impl-10.2.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-common-10.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-compat-25.3.0" level="project" />
