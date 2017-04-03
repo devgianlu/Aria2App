@@ -5,8 +5,7 @@
     android:background="@drawable/ripple_effect_dark"
     android:minHeight="42dp"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:paddingStart="24dp">
+    android:padding="8dp">
 
     <ImageView
         android:layout_width="28dp"
@@ -24,7 +23,9 @@
         <TextView
             android:id="@+id/fileItem_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1" />
 
         <LinearLayout
             android:layout_width="match_parent"

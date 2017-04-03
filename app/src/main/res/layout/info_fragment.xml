@@ -40,7 +40,7 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             android:visibility="gone">
 
-            <RelativeLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -54,13 +54,13 @@
                     android:id="@+id/infoFragment_chartRefresh"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
-                    android:layout_alignBottom="@+id/infoFragment_chart"
-                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginBottom="16dp"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ripple_effect_dark"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_refresh_black_48dp" />
-            </RelativeLayout>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/infoFragment_gid"

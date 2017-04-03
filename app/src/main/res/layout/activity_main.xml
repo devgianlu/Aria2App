@@ -7,9 +7,10 @@
     android:elevation="7dp"
     android:fitsSystemWindows="true">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_toolbar"
@@ -19,122 +20,126 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <View
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_below="@+id/main_toolbar"
-            android:background="@drawable/material_drawer_shadow_bottom" />
-
-        <android.support.design.widget.CoordinatorLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/main_toolbar"
-            android:fitsSystemWindows="false">
-
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/main_swipeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/main_recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </android.support.v4.widget.SwipeRefreshLayout>
-
-            <LinearLayout
-                android:id="@+id/main_noItems"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingEnd="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/mainList_noItems"
-                    android:textAlignment="center" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
+            android:layout_height="match_parent">
 
             <View
-                android:id="@+id/main_mask"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_gravity="top"
+                android:background="@drawable/material_drawer_shadow_bottom" />
+
+            <android.support.design.widget.CoordinatorLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:visibility="gone" />
+                android:fitsSystemWindows="false">
 
-            <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/main_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
-                fab:fab_addButtonColorNormal="@color/colorAccent"
-                fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
-                fab:fab_addButtonPlusIconColor="@android:color/white"
-                fab:fab_labelStyle="@style/menu_labels_style">
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/main_swipeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/mainFab_search"
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/main_recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </android.support.v4.widget.SwipeRefreshLayout>
+
+                <LinearLayout
+                    android:id="@+id/main_noItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingEnd="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/mainList_noItems"
+                        android:textAlignment="center" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+
+                <View
+                    android:id="@+id/main_mask"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:visibility="gone" />
+
+                <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/main_fab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/colorSearch"
-                    fab:fab_colorPressed="@color/colorSearch_pressed"
-                    fab:fab_icon="@drawable/ic_search_white_48dp"
-                    fab:fab_size="mini"
-                    fab:fab_title="Search" />
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
+                    fab:fab_addButtonColorNormal="@color/colorAccent"
+                    fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
+                    fab:fab_addButtonPlusIconColor="@android:color/white"
+                    fab:fab_labelStyle="@style/menu_labels_style">
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/mainFab_addMetalink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/colorMetalink"
-                    fab:fab_colorPressed="@color/colorMetalink_pressed"
-                    fab:fab_icon="@drawable/ic_metalink"
-                    fab:fab_size="mini"
-                    fab:fab_title="Add Metalink" />
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/mainFab_search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        fab:fab_colorNormal="@color/colorSearch"
+                        fab:fab_colorPressed="@color/colorSearch_pressed"
+                        fab:fab_icon="@drawable/ic_search_white_48dp"
+                        fab:fab_size="mini"
+                        fab:fab_title="Search" />
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/mainFab_addTorrent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/colorTorrent"
-                    fab:fab_colorPressed="@color/colorTorrent_pressed"
-                    fab:fab_icon="@drawable/ic_bit_torrent"
-                    fab:fab_size="mini"
-                    fab:fab_title="Add Torrent" />
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/mainFab_addMetalink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        fab:fab_colorNormal="@color/colorMetalink"
+                        fab:fab_colorPressed="@color/colorMetalink_pressed"
+                        fab:fab_icon="@drawable/ic_metalink"
+                        fab:fab_size="mini"
+                        fab:fab_title="Add Metalink" />
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/mainFab_addURI"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/colorURI"
-                    fab:fab_colorPressed="@color/colorURI_pressed"
-                    fab:fab_icon="@drawable/ic_file_download_white_48dp"
-                    fab:fab_size="mini"
-                    fab:fab_title="Add URI" />
-            </com.getbase.floatingactionbutton.FloatingActionsMenu>
-        </android.support.design.widget.CoordinatorLayout>
-    </RelativeLayout>
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/mainFab_addTorrent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        fab:fab_colorNormal="@color/colorTorrent"
+                        fab:fab_colorPressed="@color/colorTorrent_pressed"
+                        fab:fab_icon="@drawable/ic_bit_torrent"
+                        fab:fab_size="mini"
+                        fab:fab_title="Add Torrent" />
+
+                    <com.getbase.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/mainFab_addURI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        fab:fab_colorNormal="@color/colorURI"
+                        fab:fab_colorPressed="@color/colorURI_pressed"
+                        fab:fab_icon="@drawable/ic_file_download_white_48dp"
+                        fab:fab_size="mini"
+                        fab:fab_title="Add URI" />
+                </com.getbase.floatingactionbutton.FloatingActionsMenu>
+            </android.support.design.widget.CoordinatorLayout>
+        </FrameLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -235,7 +240,6 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_arrow_drop_down_white_48dp" />
-
         </RelativeLayout>
 
         <LinearLayout
