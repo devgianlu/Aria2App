@@ -167,7 +167,7 @@ class FilesAdapter {
             final LinearLayout subView = new LinearLayout(parentView.getContext());
             subView.setOrientation(LinearLayout.VERTICAL);
             subView.setVisibility(View.GONE);
-            subView.setPadding(6 + 36 * paddingMultiplier, 6, 6, 6); // FIXME: Directories go out of screen (too deep)
+            subView.setPadding(6 + 36 * paddingMultiplier, 6, 6, 6);
             parentView.addView(subView);
 
             subDir.viewHolder.toggle.setOnClickListener(new View.OnClickListener() {
