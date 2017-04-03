@@ -23,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
 import com.android.vending.billing.IInAppBillingService;
+import com.gianlu.commonutils.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.Billing.Billing;
 import com.gianlu.commonutils.Billing.Product;
 import com.gianlu.commonutils.Billing.ProductAdapter;
@@ -198,6 +199,26 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 }
             });
 
+            findPreference("fileDownloader").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    CommonUtils.showDialog(getActivity(), builder
+                            .setTitle("FileDownloader")
+                            .setMessage(R.string.fileDownloader_details));
+                    return true;
+                }
+            });
+
+            findPreference("jsoup").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    CommonUtils.showDialog(getActivity(), builder
+                            .setTitle("jsoup")
+                            .setMessage(R.string.jsoup_details));
+                    return true;
+                }
+            });
+
             findPreference("apacheLicense").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.apache.org/licenses/LICENSE-2.0")));
@@ -205,12 +226,9 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            findPreference("fileDownloader").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
+            findPreference("mitLicense").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    CommonUtils.showDialog(getActivity(), builder
-                            .setTitle("FileDownloader")
-                            .setMessage(R.string.fileDownloader_details));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://opensource.org/licenses/MIT")));
                     return true;
                 }
             });

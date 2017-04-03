@@ -16,6 +16,15 @@
         android:title="FileDownloader" />
 
     <Preference
+        android:key="jsoup"
+        android:summary="@string/mitLicense"
+        android:title="jsoup" />
+
+    <Preference
         android:key="apacheLicense"
         android:title="Apache License 2.0" />
+
+    <Preference
+        android:key="mitLicense"
+        android:title="MIT license" />
 </PreferenceScreen>
