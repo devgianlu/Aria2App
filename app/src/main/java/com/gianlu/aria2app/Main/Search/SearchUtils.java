@@ -1,22 +1,27 @@
 package com.gianlu.aria2app.Main.Search;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SearchUtils {
     public static final String TRENDING_WEEK = "trending-week";
+    public static final String BASE_URL = "http://1337x.to";
 
     public static void search(final String query, final ISearch handler) {
         if (Objects.equals(query, TRENDING_WEEK)) {
@@ -28,7 +33,7 @@ public class SearchUtils {
             @Override
             public void run() {
                 try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL("http://1337x.to/search/" + query + "/1/").openConnection();
+                    HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + "/search/" + query + "/1/").openConnection();
                     conn.connect();
 
                     if (conn.getResponseCode() != 200) {
@@ -36,27 +41,15 @@ public class SearchUtils {
                         return;
                     }
 
-                    String html = "";
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    String line;
-                    while ((line = reader.readLine()) != null)
-                        html += line;
-
-                    reader.close();
+                    String html = read(conn.getInputStream());
                     conn.disconnect();
 
-                    Matcher matcher = Pattern.compile("<table\\s.*?><thead>.*?</thead><tbody>(.*?)</tbody></table>").matcher(html);
-                    List<SearchResult> results = new ArrayList<>();
-                    if (matcher.find()) {
-                        Matcher resultMatcher = Pattern.compile("<tr>(.*?)</tr>").matcher(matcher.group(1));
+                    Document doc = Jsoup.parse(html);
+                    Elements items = doc.select("div.box-info-detail table.table-list tbody").first().children();
 
-                        while (resultMatcher.find()) {
-                            SearchResult result = SearchResult.fromHTML(resultMatcher.group(1));
-                            if (result != null)
-                                results.add(result);
-                        }
-                    }
+                    List<SearchResult> results = new ArrayList<>();
+                    for (int i = 0; i < items.size(); i++)
+                        results.add(new SearchResult(items.get(i)));
 
                     handler.onResults(results);
                 } catch (IOException ex) {
@@ -66,12 +59,25 @@ public class SearchUtils {
         }).start();
     }
 
+    @NonNull
+    private static String read(InputStream in) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+        String line;
+        while ((line = reader.readLine()) != null)
+            builder.append(line);
+
+        reader.close();
+        return builder.toString();
+    }
+
     private static void fetchTrendingThisWeek(final ISearch handler) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL("http://1337x.to/trending-week").openConnection();
+                    HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + "/trending-week").openConnection();
                     conn.connect();
 
                     if (conn.getResponseCode() != 200) {
@@ -79,27 +85,15 @@ public class SearchUtils {
                         return;
                     }
 
-                    String html = "";
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    String line;
-                    while ((line = reader.readLine()) != null)
-                        html += line;
-
-                    reader.close();
+                    String html = SearchUtils.read(conn.getInputStream());
                     conn.disconnect();
 
-                    Matcher matcher = Pattern.compile("<table\\s.*?><thead>.*?</thead><tbody>(.*?)</tbody></table>").matcher(html);
-                    List<SearchResult> results = new ArrayList<>();
-                    if (matcher.find()) {
-                        Matcher resultMatcher = Pattern.compile("<tr>(.*?)</tr>").matcher(matcher.group(1));
+                    Document doc = Jsoup.parse(html);
+                    Elements items = doc.select("div.trending-torrent table.table-list tbody").first().children();
 
-                        while (resultMatcher.find()) {
-                            SearchResult result = SearchResult.fromHTML(resultMatcher.group(1));
-                            if (result != null)
-                                results.add(result);
-                        }
-                    }
+                    List<SearchResult> results = new ArrayList<>();
+                    for (int i = 0; i < items.size(); i++)
+                        results.add(new SearchResult(items.get(i)));
 
                     handler.onResults(results);
                 } catch (IOException ex) {
@@ -122,21 +116,16 @@ public class SearchUtils {
                         return;
                     }
 
-                    String html = "";
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    String line;
-                    while ((line = reader.readLine()) != null)
-                        html += line;
-
-                    reader.close();
+                    String html = read(conn.getInputStream());
                     conn.disconnect();
 
-                    Matcher matcher = Pattern.compile("<a\\sclass=\".*?btn-magnet\"\\shref=\"(.*?)\".*?</a>").matcher(html);
-                    if (matcher.find()) {
-                        handler.onMagnetLink(matcher.group(1));
-                    } else {
+                    Document doc = Jsoup.parse(html);
+                    Elements magnet = doc.select("a.btn.btn-magnet[href]");
+
+                    if (magnet.isEmpty()) {
                         handler.onMagnetLink(null);
+                    } else {
+                        handler.onMagnetLink(magnet.first().attr("href"));
                     }
                 } catch (IOException ex) {
                     handler.onException(ex);

@@ -1,45 +1,36 @@
 package com.gianlu.aria2app.Main.Search;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.text.Html;
 
 import com.gianlu.aria2app.R;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jsoup.nodes.Element;
 
 public class SearchResult {
-    private static final Pattern pattern = Pattern.compile("<td\\sclass=\".*\\sname\">(?:<div\\s.*?</div>|<a\\s.*?</a>)<a\\shref=\"(.*?)\">(.*?)</a>(?:<span.*>.*?</span>|)(?:\\s|)</td><td\\sclass=\".*\\sseeds\">(.*?)</td><td\\sclass=\".*\\sleeches\">(.*?)</td><td\\sclass=\"coll-date\">.*?</td><td\\sclass=\".*\\smob-.*?\">(.*?)<span.*>.*</span></td><td\\sclass=\"coll-5\\s(.*?)\"><a\\s.*?>(.*?)</a></td>");
-    public String name;
-    public String href;
-    public String size;
-    public UploaderType uploaderType;
-    public String uploader;
-    int seeders;
-    int leeches;
+    public final String name;
+    public final String href;
+    public final String size;
+    public final UploaderType uploaderType;
+    public final String uploader;
+    final int seeders;
+    final int leeches;
 
-    private SearchResult() {
-    }
+    SearchResult(Element html) {
+        Element link = html.select("td.name a:not(:has(i))").first();
+        name = Html.fromHtml(link.text()).toString();
+        href = SearchUtils.BASE_URL + link.attr("href");
 
-    @SuppressWarnings("deprecation")
-    @Nullable
-    static SearchResult fromHTML(String html) {
-        Matcher matcher = pattern.matcher(html);
-        if (matcher.find()) {
-            SearchResult result = new SearchResult();
-            result.href = "http://1337x.to" + matcher.group(1);
-            result.name = Html.fromHtml(matcher.group(2)).toString();
-            result.seeders = Integer.parseInt(matcher.group(3));
-            result.leeches = Integer.parseInt(matcher.group(4));
-            result.size = matcher.group(5);
-            result.uploaderType = UploaderType.parse(matcher.group(6));
-            result.uploader = matcher.group(7);
+        Element size_col = html.select("td.size").first();
+        String _uploaderType = UploaderType.extractUploaderString(size_col);
+        uploaderType = UploaderType.parse(_uploaderType);
+        size = size_col.textNodes().get(0).text();
 
-            return result;
-        }
+        seeders = Integer.parseInt(html.select("td.seeds").first().text());
+        leeches = Integer.parseInt(html.select("td.leeches").first().text());
 
-        return null;
+        uploader = html.select("td." + _uploaderType + " > a").first().html();
     }
 
     public enum UploaderType {
@@ -49,6 +40,15 @@ public class SearchResult {
         UPLOADER,
         TRIAL_UPLOADER,
         USER;
+
+        @NonNull
+        public static String extractUploaderString(Element col) {
+            for (String _class : col.classNames())
+                if (_class.startsWith("mob-"))
+                    return _class.substring(4);
+
+            return "user";
+        }
 
         public static UploaderType parse(String val) {
             switch (val) {
