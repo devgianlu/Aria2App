@@ -254,6 +254,8 @@
     <string name="connMethodHTTPDisclaimer">Some features may not work when using HTTP-GET.</string>
     <string name="mitLicense">Licensed under MIT license</string>
     <string name="jsoup_details">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
+    <string name="addMetalink">Add Metalink</string>
+    <string name="addTorrent">Add Torrent</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue">

@@ -105,7 +105,7 @@
                         fab:fab_colorPressed="@color/colorSearch_pressed"
                         fab:fab_icon="@drawable/ic_search_white_48dp"
                         fab:fab_size="mini"
-                        fab:fab_title="Search" />
+                        fab:fab_title="@string/search" />
 
                     <com.getbase.floatingactionbutton.FloatingActionButton
                         android:id="@+id/mainFab_addMetalink"
@@ -115,7 +115,7 @@
                         fab:fab_colorPressed="@color/colorMetalink_pressed"
                         fab:fab_icon="@drawable/ic_metalink"
                         fab:fab_size="mini"
-                        fab:fab_title="Add Metalink" />
+                        fab:fab_title="@string/addMetalink" />
 
                     <com.getbase.floatingactionbutton.FloatingActionButton
                         android:id="@+id/mainFab_addTorrent"
@@ -125,7 +125,7 @@
                         fab:fab_colorPressed="@color/colorTorrent_pressed"
                         fab:fab_icon="@drawable/ic_bit_torrent"
                         fab:fab_size="mini"
-                        fab:fab_title="Add Torrent" />
+                        fab:fab_title="@string/addTorrent" />
 
                     <com.getbase.floatingactionbutton.FloatingActionButton
                         android:id="@+id/mainFab_addURI"
@@ -135,7 +135,7 @@
                         fab:fab_colorPressed="@color/colorURI_pressed"
                         fab:fab_icon="@drawable/ic_file_download_white_48dp"
                         fab:fab_size="mini"
-                        fab:fab_title="Add URI" />
+                        fab:fab_title="@string/addUri" />
                 </com.getbase.floatingactionbutton.FloatingActionsMenu>
             </android.support.design.widget.CoordinatorLayout>
         </FrameLayout>

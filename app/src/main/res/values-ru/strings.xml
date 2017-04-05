@@ -522,4 +522,6 @@
         <item>use-head</item>
         <item>user-agent</item>
     </string-array>
+    <string name="addMetalink">"Добавить Metalink "</string>
+    <string name="addTorrent">Добавить Torrent</string>
 </resources>
