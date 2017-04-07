@@ -7,6 +7,7 @@ import com.gianlu.aria2app.NetIO.StatusCodeException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ import java.util.Objects;
 
 public class SearchUtils {
     public static final String TRENDING_WEEK = "trending-week";
-    public static final String BASE_URL = "http://1337x.to";
+    private static final String BASE_URL = "http://1337x.to";
 
     public static void search(final String query, final ISearch handler) {
         if (Objects.equals(query, TRENDING_WEEK)) {
@@ -45,13 +46,17 @@ public class SearchUtils {
                     conn.disconnect();
 
                     Document doc = Jsoup.parse(html);
-                    Elements items = doc.select("div.box-info-detail table.table-list tbody").first().children();
+                    Element table = doc.select("div.box-info-detail table.table-list tbody").first();
+                    if (table == null) {
+                        handler.onResults(new ArrayList<SearchResult>());
+                    } else {
+                        Elements items = table.children();
+                        List<SearchResult> results = new ArrayList<>();
+                        for (int i = 0; i < items.size(); i++)
+                            results.add(new SearchResult(items.get(i)));
 
-                    List<SearchResult> results = new ArrayList<>();
-                    for (int i = 0; i < items.size(); i++)
-                        results.add(new SearchResult(items.get(i)));
-
-                    handler.onResults(results);
+                        handler.onResults(results);
+                    }
                 } catch (IOException ex) {
                     handler.onException(ex);
                 }
@@ -142,6 +147,7 @@ public class SearchUtils {
 
     public interface ISearch {
         void onResults(List<SearchResult> results);
+
         void onException(Exception ex);
     }
 }
