@@ -4,24 +4,24 @@
     <string name="title_activity_addProfile_edit">Редактировать профиль</string>
     <string name="nv_websocket_client_license"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
     <string name="mpAndroidChart_details">Авторские права 2016 Philipp Jahoda</string>
-    <string name="downloadStatus_waiting">Ожидание в очереди</string>
+    <string name="downloadStatus_waiting">Ожидает в очереди</string>
     <string name="downloadStatus_error">Ошибка</string>
     <string name="downloadStatus_paused">Приостановлено</string>
     <string name="downloadStatus_unknown">Неизвестно</string>
     <string name="downloadStatus_complete">Завершено</string>
     <string name="downloadStatus_removed">Удалено</string>
     <string name="downloadStatus_active">Загружается</string>
-    <string name="completed_length"><![CDATA[<b>Завершенный размер:</b>]]> %s</string>
+    <string name="completed_length"><![CDATA[<b>Загруженный размер:</b>]]> %s</string>
     <string name="total_length"><![CDATA[<b>Общий размер:</b>]]> %s</string>
-    <string name="uploaded_length"><![CDATA[<b>Загруженный размер:</b>]]> %s</string>
-    <string name="pieces"><![CDATA[<b>Фрагменты:</b>]]> %d</string>
-    <string name="pieces_length"><![CDATA[<b>Размер фрагмента:</b>]]> %s</string>
-    <string name="connections"><![CDATA[<b>Соединения:</b>]]> %d</string>
+    <string name="uploaded_length"><![CDATA[<b>Отданный размер:</b>]]> %s</string>
+    <string name="pieces"><![CDATA[<b>Количество частей:</b>]]> %d</string>
+    <string name="pieces_length"><![CDATA[<b>Размер частей:</b>]]> %s</string>
+    <string name="connections"><![CDATA[<b>Соединений:</b>]]> %d</string>
     <string name="verifyIntegrityPending"><![CDATA[<b>Ожидается проверка целостности:</b>]]> %s</string>
-    <string name="verifiedLength"><![CDATA[<b>Проверить длину:</b>]]> %s</string>
+    <string name="verifiedLength"><![CDATA[<b>Проверка размера:</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID:</b>]]> %s</string>
-    <string name="directory"><![CDATA[<b>Каталог назначения:</b>]]> %s</string>
-    <string name="seeder"><![CDATA[<b>Сидеры:</b>]]> %s</string>
+    <string name="directory"><![CDATA[<b>Путь загрузки:</b>]]> %s</string>
+    <string name="seeder"><![CDATA[<b>Сидирование:</b>]]> %s</string>
     <string name="numSeeder"><![CDATA[<b>Число сидеров:</b>]]> %d</string>
     <string name="creation_date"><![CDATA[<b>Дата создания:</b>]]> %s</string>
     <string name="mode"><![CDATA[<b>Режим:</b>]]> %s</string>
@@ -51,10 +51,10 @@
     <string name="noServersMessage">Нет серверов: %s</string>
     <string name="noPeersMessage">Нет пиров: %s</string>
     <string name="gathering_information">Сбор информации. Подождите…</string>
-    <string name="showBitfield">Показать bitfield</string>
+    <string name="showBitfield">Показать части</string>
     <string name="info">Информация</string>
     <string name="files">Файлы</string>
-    <string name="bitfield">Bitfield</string>
+    <string name="bitfield">Карта частей</string>
     <string name="profile_help">Aria2App использует aria2 JSON-RPC интерфейс! Смотри больше на <a>https://aria2.github.io/manual/ru/html/aria2c.html#rpc-interface</a></string>
     <string name="profile_hint">Мой профиль</string>
     <string name="mode_single">Одиночный режим (используйте один и тот же адрес для каждого соединения)</string>
@@ -66,7 +66,7 @@
     <string name="addProfile">Добавить профиль</string>
     <string name="manageProfiles">Управление профилями</string>
     <string name="home">Главная</string>
-    <string name="announceList"><b>Список анонсов:</b></string>
+    <string name="announceList"><b>Список трекеров:</b></string>
     <string name="address_hint">127.0.0.1</string>
     <string name="port">Порт:</string>
     <string name="move_up">Переместить вверх в очереди</string>
@@ -97,7 +97,7 @@
     <string name="support">Поддержка</string>
     <string name="changeProfile">Изменить профиль</string>
     <string name="add">Добавить</string>
-    <string name="options">Параметры</string>
+    <string name="options">Дополнительные параметры:</string>
     <string name="position">Позиция в очереди:</string>
     <string name="pickTorrent">Выберите файл торрента</string>
     <string name="pickMetalink">Выберите файл Metalink</string>
@@ -120,9 +120,9 @@
     <string name="directDownload_addrHint">http://127.0.0.1:6801/</string>
     <string name="directDownload_addrHelp">Адрес должен указывать на список каталогов в каталог загрузки aria2.</string>
     <string name="username">Имя пользователя:</string>
-    <string name="directDownload_usernameHint">мое-имя</string>
+    <string name="directDownload_usernameHint">имя пользоваетля</string>
     <string name="password">Пароль:</string>
-    <string name="directDownload_passwordHint">мой-пароль</string>
+    <string name="directDownload_passwordHint">пароль</string>
     <string name="remove">Удалить</string>
     <string name="pause">Пауза</string>
     <string name="more">Еще</string>
@@ -130,15 +130,15 @@
     <string name="restart">Перезапуск</string>
     <string name="menu_globalOptions">Глобальные настройки</string>
     <string name="menu_downloadOptions">Настройки загрузки</string>
-    <string name="menu_refreshPage">Обновить страницу</string>
+    <string name="menu_refreshPage">Обновить список</string>
     <string name="menu_preferences">Настройки</string>
     <string name="general">Общие</string>
     <string name="hideLinkedMetadata">Скрыть связанные метаданные</string>
     <string name="visibleMetadata">Показать связанные метаданные</string>
     <string name="hiddenMetadata">Скрытые метаданные</string>
-    <string name="updateRate">Частота обновления</string>
-    <string name="updateRateSummary">Обновление времени ожидания в секундах</string>
-    <string name="reloadList">Частота обновления списка</string>
+    <string name="updateRate">Интервал обновления скачивания</string>
+    <string name="updateRateSummary">Обновление информации скачивания в секундах</string>
+    <string name="reloadList">Интервал обновления списка</string>
     <string name="reloadListSummary">Обновление списка закачек в секундах</string>
     <string name="forceAction">Принудительное действие при сбое</string>
     <string name="forceActionOn">Если действие при загрузке не удастся, мы попробуем запустить его</string>
@@ -147,16 +147,16 @@
     <string name="enableNotifications">Включить службу уведомлений</string>
     <string name="notificationsOn">Уведомления включены</string>
     <string name="notificationsOff">Уведомления отключены</string>
-    <string name="notificationType">Тип уведомления</string>
-    <string name="notificationTypeSummary">Выберите тип уведомлений для получения</string>
+    <string name="notificationType">Тип уведомлений</string>
+    <string name="notificationTypeSummary">Выберите какие уведомления получать</string>
     <string name="enableSound">Включить звук</string>
     <string name="soundOn">Звук включен</string>
     <string name="soundOff">Звук отключен</string>
     <string name="enablePersistent">Включить службу постоянных уведомлений</string>
     <string name="persistentOn">Служба уведомлений работает всегда</string>
     <string name="persistentOff">Служба уведомлений может выключится со временем</string>
-    <string name="logs">Файлы журналов</string>
-    <string name="third_part">Третья часть проектов</string>
+    <string name="logs">Файлы логов</string>
+    <string name="third_part">Третья стороны проекта</string>
     <string name="about_app">Об этом приложении</string>
     <string name="tracking">Отключить анонимную статистику</string>
     <string name="trackingOn">Статистика не будет отправляться разработчику.</string>
@@ -174,7 +174,7 @@
     <string name="editProfile">Редактировать или удалить профиль</string>
     <string name="stopNotificationService">Остановить службу</string>
     <string name="versionCheck">Проверять версию aria2 при запуске</string>
-    <string name="enabledVersionCheck">ерсия будет проверяться и вы будете уведомлены, если ваша версия устарела</string>
+    <string name="enabledVersionCheck">Версия будет проверяться и вы будете уведомлены, если ваша версия устарела</string>
     <string name="disabledVersionCheck">Проверка версии не будет выполняться</string>
     <string name="versionCheckURL">https://api.github.com/repos/aria2/aria2/releases</string>
     <string name="dialogVersionCheck">Устаревшая версия</string>
@@ -199,10 +199,10 @@
     <string name="certificateDisclaimer">Сертификат не должен быть удален или перемещен.</string>
     <string name="addUri">Добавить URI</string>
     <string name="fileName">Имя файла:</string>
-    <string name="fileName_help">Следующий путь добавляется в пути параметра \'dir\'. Оставьте поле пустым, чтобы выбрать aria2.</string>
+    <string name="fileName_help">Следующий путь добавляется в пути параметра \'каталог\'. Оставьте поле пустым, чтобы выбрать aria2.</string>
     <string name="options_help">Будут включены только выбранные опции. Чтобы выбрать параметр, щелкните значок ярлыка.</string>
-    <string name="directDownload">\"Прямая загрузка\"</string>
-    <string name="apacheLicense">Лицензия под Apache License 2.0</string>
+    <string name="directDownload">Прямая загрузка</string>
+    <string name="apacheLicense">Лицензия от Apache License 2.0</string>
     <string name="fileDownloader_details">Авторские права 2015 LingoChamp Inc.</string>
     <string name="quickGlobalOptions">Быстрые глобальные настройки</string>
     <string name="dd_downloadPath">Путь к загрузке</string>
@@ -222,7 +222,7 @@
     <string name="nothingFound">Ничего не найдено!</string>
     <string name="fetching_information">Извлечение информации. Подождите…</string>
     <string name="openInBrowser">Открыть в браузере</string>
-    <string name="download">Скачать</string>
+    <string name="download">Скачивание</string>
     <string name="size"><![CDATA[<b>Размер:</b>]]> %s</string>
     <string name="uploader"><![CDATA[<b>Разместил:</b>]]> %s</string>
     <string name="uploaderType"><![CDATA[<b>Тип загрузки:</b>]]> %s</string>
@@ -233,18 +233,18 @@
     <string name="user">Пользователь</string>
     <string name="normal_uploader">Раздача</string>
     <string name="searchFor">Результаты поиска для: %s</string>
-    <string name="trendingWeek">На этой неделе: тенденции</string>
+    <string name="trendingWeek">Популярное на этой неделе</string>
     <string name="sorting">Сортировать по</string>
     <string name="status">Статус</string>
     <string name="totalLengthMenu">Общий размер</string>
-    <string name="completedLengthMenu">Завершенный размер</string>
+    <string name="completedLengthMenu">Загруженный размер</string>
     <string name="progress">Прогресс</string>
     <string name="pickServer">Выберите сервер, с которого вы хотите начать загрузку:</string>
     <string name="startDownload">Начать загрузку</string>
     <string name="selectFile">Выберите файл</string>
-    <string name="showSummary">Показать сводку</string>
-    <string name="showSummaryOn">Сводная карта будет отображаться в верхней части списка загрузок.</string>
-    <string name="showSummaryOff">Сводная карточка не будет отображаться</string>
+    <string name="showSummary">Показать график скорости</string>
+    <string name="showSummaryOn">График скорости будет отображаться в верхней части списка загрузок.</string>
+    <string name="showSummaryOff">График скорости не будет отображаться</string>
     <string name="summaryActive"><![CDATA[<b>Активный:</b>]]> %d</string>
     <string name="summaryWaiting"><![CDATA[<b>Ожидание:</b>]]> %d</string>
     <string name="summaryStopped"><![CDATA[<b>Остановлен:</b>]]> %1$d (%2$d)</string>
@@ -252,276 +252,32 @@
     <string name="connectionMethodHTTP">HTTP-GET</string>
     <string name="connectionMethod">Способ подключения:</string>
     <string name="connMethodHTTPDisclaimer">Некоторые функции могут не работать при использовании HTTP-GET.</string>
-    <string name="mitLicense">Распространяется под лицензией MIT</string>
+    <string name="mitLicense">Лицензия от MIT</string>
     <string name="jsoup_details">Авторские права © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
+    <string name="deleteAllLogs">Удалить все логи</string>
+    <string name="log_activity_title">Логи</string>
 
     <!-- String-arrays -->
-    <string-array name="updateRateValue">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
     <string-array name="updateRate">
-        <item>1 сек.</item>
-        <item>2 сек.</item>
-        <item>3 сек</item>
-        <item>4 сек.</item>
-        <item>5 сек.</item>
-    </string-array>
-    <string-array name="downloadListUpdateRateValue">
-        <item>0</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>60</item>
+        <item>1 секунда</item>
+        <item>2 секунды</item>
+        <item>3 секунды</item>
+        <item>4 секунды</item>
+        <item>5 секунд</item>
     </string-array>
     <string-array name="downloadListUpdateRate">
         <item>Не обновлять</item>
-        <item>10 сек.</item>
-        <item>20 сек.</item>
-        <item>30 сек.</item>
-        <item>60 сек.</item>
-    </string-array>
-    <string-array name="selectedNotificationsValue">
-        <item>СТАРТ</item>
-        <item>ПАУЗА</item>
-        <item>СТОП</item>
-        <item>ЗАВЕРШЕНО</item>
-        <item>BTЗАВЕРШЕНО</item>
-        <item>ОШИБКА</item>
+        <item>10 секунд</item>
+        <item>20 секунд</item>
+        <item>30 секунд</item>
+        <item>60 секунд</item>
     </string-array>
     <string-array name="selectedNotifications">
         <item>Старт</item>
-        <item>Паузна</item>
+        <item>Пауза</item>
         <item>Стоп</item>
         <item>Завершено</item>
         <item>BitTorrent завершено</item>
         <item>Ошибка</item>
     </string-array>
-
-    <string-array name="downloadOptions">
-        <item>bt-max-peers</item>
-        <item>bt-request-peer-speed-limit</item>
-        <item>bt-remove-unselected-file</item>
-        <item>force-save</item>
-        <item>max-download-limit</item>
-        <item>max-upload-limit</item>
-        <item>all-proxy</item>
-        <item>all-proxy-passwd</item>
-        <item>all-proxy-user</item>
-        <item>allow-overwrite</item>
-        <item>allow-piece-length-change</item>
-        <item>always-resume</item>
-        <item>async-dns</item>
-        <item>auto-file-renaming</item>
-        <item>bt-enable-hook-after-hash-check</item>
-        <item>bt-enable-lpd</item>
-        <item>bt-exclude-tracker</item>
-        <item>bt-external-ip</item>
-        <item>bt-force-encryption</item>
-        <item>bt-hash-check-seed</item>
-        <item>bt-metadata-only</item>
-        <item>bt-min-crypto-level</item>
-        <item>bt-prioritize-piece</item>
-        <item>bt-require-crypto</item>
-        <item>bt-save-metadata</item>
-        <item>bt-seed-unverified</item>
-        <item>bt-stop-timeout</item>
-        <item>bt-tracker</item>
-        <item>bt-tracker-connect-timeout</item>
-        <item>bt-tracker-interval</item>
-        <item>bt-tracker-timeout</item>
-        <item>check-integrity</item>
-        <item>checksum</item>
-        <item>conditional-get</item>
-        <item>connect-timeout</item>
-        <item>continue</item>
-        <item>dir</item>
-        <item>enable-http-keep-alive</item>
-        <item>enable-http-pipelining</item>
-        <item>enable-mmap</item>
-        <item>enable-peer-exchange</item>
-        <item>file-allocation</item>
-        <item>follow-metalink</item>
-        <item>follow-torrent</item>
-        <item>ftp-passwd</item>
-        <item>ftp-pasv</item>
-        <item>ftp-proxy</item>
-        <item>ftp-proxy-passwd</item>
-        <item>ftp-proxy-user</item>
-        <item>ftp-reuse-connection</item>
-        <item>ftp-type</item>
-        <item>ftp-user</item>
-        <item>gid</item>
-        <item>hash-check-only</item>
-        <item>header</item>
-        <item>http-accept-gzip</item>
-        <item>http-auth-challenge</item>
-        <item>http-no-cache</item>
-        <item>http-passwd</item>
-        <item>http-proxy</item>
-        <item>http-proxy-passwd</item>
-        <item>http-proxy-user</item>
-        <item>http-user</item>
-        <item>https-proxy</item>
-        <item>https-proxy-passwd</item>
-        <item>https-proxy-user</item>
-        <item>index-out</item>
-        <item>lowest-speed-limit</item>
-        <item>max-connection-per-server</item>
-        <item>max-file-not-found</item>
-        <item>max-mmap-limit</item>
-        <item>max-resume-failure-tries</item>
-        <item>max-tries</item>
-        <item>metalink-enable-unique-protocol</item>
-        <item>metalink-language</item>
-        <item>metalink-location</item>
-        <item>metalink-os</item>
-        <item>metalink-preferred-protocol</item>
-        <item>metalink-version</item>
-        <item>min-split-size</item>
-        <item>no-file-allocation-limit</item>
-        <item>no-netrc</item>
-        <item>no-proxy</item>
-        <item>out</item>
-        <item>pause-metadata</item>
-        <item>proxy-method</item>
-        <item>realtime-chunk-checksum</item>
-        <item>referer</item>
-        <item>remote-time</item>
-        <item>remove-control-file</item>
-        <item>retry-wait</item>
-        <item>reuse-uri</item>
-        <item>seed-ratio</item>
-        <item>seed-time</item>
-        <item>select-file</item>
-        <item>split</item>
-        <item>ssh-host-key-md</item>
-        <item>stream-piece-selector</item>
-        <item>timeout</item>
-        <item>uri-selector</item>
-        <item>use-head</item>
-        <item>user-agent</item>
-    </string-array>
-    <string-array name="globalOptions">
-        <item>all-proxy</item>
-        <item>all-proxy-passwd</item>
-        <item>all-proxy-user</item>
-        <item>allow-overwrite</item>
-        <item>allow-piece-length-change</item>
-        <item>always-resume</item>
-        <item>async-dns</item>
-        <item>auto-file-renaming</item>
-        <item>bt-enable-hook-after-hash-check</item>
-        <item>bt-enable-lpd</item>
-        <item>bt-exclude-tracker</item>
-        <item>bt-external-ip</item>
-        <item>bt-force-encryption</item>
-        <item>bt-hash-check-seed</item>
-        <item>bt-metadata-only</item>
-        <item>bt-min-crypto-level</item>
-        <item>bt-max-peers</item>
-        <item>bt-max-open-files</item>
-        <item>bt-prioritize-piece</item>
-        <item>bt-remove-unselected-file</item>
-        <item>bt-request-peer-speed-limit</item>
-        <item>bt-require-crypto</item>
-        <item>bt-save-metadata</item>
-        <item>bt-seed-unverified</item>
-        <item>bt-stop-timeout</item>
-        <item>bt-tracker</item>
-        <item>bt-tracker-connect-timeout</item>
-        <item>bt-tracker-interval</item>
-        <item>bt-tracker-timeout</item>
-        <item>check-integrity</item>
-        <item>conditional-get</item>
-        <item>connect-timeout</item>
-        <item>continue</item>
-        <item>dir</item>
-        <item>download-result</item>
-        <item>dry-run</item>
-        <item>enable-http-keep-alive</item>
-        <item>enable-http-pipelining</item>
-        <item>enable-mmap</item>
-        <item>enable-peer-exchange</item>
-        <item>file-allocation</item>
-        <item>follow-metalink</item>
-        <item>follow-torrent</item>
-        <item>force-save</item>
-        <item>ftp-passwd</item>
-        <item>ftp-pasv</item>
-        <item>ftp-proxy</item>
-        <item>ftp-proxy-passwd</item>
-        <item>ftp-proxy-user</item>
-        <item>ftp-reuse-connection</item>
-        <item>ftp-type</item>
-        <item>ftp-user</item>
-        <item>gid</item>
-        <item>hash-check-only</item>
-        <item>header</item>
-        <item>http-accept-gzip</item>
-        <item>http-auth-challenge</item>
-        <item>http-no-cache</item>
-        <item>http-passwd</item>
-        <item>http-proxy</item>
-        <item>http-proxy-passwd</item>
-        <item>http-proxy-user</item>
-        <item>http-user</item>
-        <item>https-proxy</item>
-        <item>https-proxy-passwd</item>
-        <item>https-proxy-user</item>
-        <item>log</item>
-        <item>log-level</item>
-        <item>lowest-speed-limit</item>
-        <item>max-connection-per-server</item>
-        <item>max-concurrent-downloads</item>
-        <item>max-download-limit</item>
-        <item>max-download-result</item>
-        <item>max-file-not-found</item>
-        <item>max-mmap-limit</item>
-        <item>max-overall-download-limit</item>
-        <item>max-overall-upload-limit</item>
-        <item>max-resume-failure-tries</item>
-        <item>max-tries</item>
-        <item>max-upload-limit</item>
-        <item>metalink-base-uri</item>
-        <item>metalink-enable-unique-protocol</item>
-        <item>metalink-language</item>
-        <item>metalink-location</item>
-        <item>metalink-os</item>
-        <item>metalink-preferred-protocol</item>
-        <item>metalink-version</item>
-        <item>min-split-size</item>
-        <item>no-file-allocation-limit</item>
-        <item>no-netrc</item>
-        <item>no-proxy</item>
-        <item>optimize-concurrent-downloads</item>
-        <item>parameterized-uri</item>
-        <item>pause-metadata</item>
-        <item>piece-length</item>
-        <item>proxy-method</item>
-        <item>realtime-chunk-checksum</item>
-        <item>referer</item>
-        <item>remote-time</item>
-        <item>remove-control-file</item>
-        <item>retry-wait</item>
-        <item>reuse-uri</item>
-        <item>rpc-save-upload-metadata</item>
-        <item>save-cookies</item>
-        <item>save-session</item>
-        <item>seed-ratio</item>
-        <item>seed-time</item>
-        <item>server-stat-of</item>
-        <item>split</item>
-        <item>ssh-host-key-md</item>
-        <item>stream-piece-selector</item>
-        <item>timeout</item>
-        <item>uri-selector</item>
-        <item>use-head</item>
-        <item>user-agent</item>
-    </string-array>
-    <string name="addMetalink">"Добавить Metalink "</string>
-    <string name="addTorrent">Добавить Torrent</string>
 </resources>

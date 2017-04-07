@@ -258,7 +258,7 @@
     <string name="addTorrent">Add Torrent</string>
 
     <!-- String-arrays -->
-    <string-array name="updateRateValue">
+    <string-array name="updateRateValue" translatable="false">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -272,7 +272,7 @@
         <item>4 sec</item>
         <item>5 sec</item>
     </string-array>
-    <string-array name="downloadListUpdateRateValue">
+    <string-array name="downloadListUpdateRateValue" translatable="false">
         <item>0</item>
         <item>10</item>
         <item>20</item>
@@ -286,7 +286,7 @@
         <item>30 sec</item>
         <item>60 sec</item>
     </string-array>
-    <string-array name="selectedNotificationsValue">
+    <string-array name="selectedNotificationsValue" translatable="false">
         <item>START</item>
         <item>PAUSE</item>
         <item>STOP</item>
@@ -303,7 +303,7 @@
         <item>Error</item>
     </string-array>
 
-    <string-array name="downloadOptions">
+    <string-array name="downloadOptions" translatable="false">
         <item>bt-max-peers</item>
         <item>bt-request-peer-speed-limit</item>
         <item>bt-remove-unselected-file</item>
@@ -407,7 +407,7 @@
         <item>use-head</item>
         <item>user-agent</item>
     </string-array>
-    <string-array name="globalOptions">
+    <string-array name="globalOptions" translatable="false">
         <item>all-proxy</item>
         <item>all-proxy-passwd</item>
         <item>all-proxy-user</item>

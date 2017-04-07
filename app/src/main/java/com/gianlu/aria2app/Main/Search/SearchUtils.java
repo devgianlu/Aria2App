@@ -22,7 +22,7 @@ import java.util.Objects;
 
 public class SearchUtils {
     public static final String TRENDING_WEEK = "trending-week";
-    private static final String BASE_URL = "http://1337x.to";
+    static final String BASE_URL = "http://1337x.to";
 
     public static void search(final String query, final ISearch handler) {
         if (Objects.equals(query, TRENDING_WEEK)) {

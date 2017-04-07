@@ -17,6 +17,7 @@ public class SearchResult {
     final int seeders;
     final int leeches;
 
+    @SuppressWarnings("deprecation")
     SearchResult(Element html) {
         Element link = html.select("td.name a:not(:has(i))").first();
         name = Html.fromHtml(link.text()).toString();

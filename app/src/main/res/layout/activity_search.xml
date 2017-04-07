@@ -32,7 +32,6 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:lines="1"
-                android:text="Trending this week"
                 android:textAlignment="center"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/white"
