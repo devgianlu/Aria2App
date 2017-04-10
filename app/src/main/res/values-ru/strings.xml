@@ -28,8 +28,8 @@
     <string name="comment"><![CDATA[<b>Комментарий:</b>]]> %s</string>
     <string name="index"><![CDATA[<b>Индекс:</b>]]> %d</string>
     <string name="path"><![CDATA[<b>Путь:</b>]]> %s</string>
-    <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
-    <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
+    <string name="amChoking"><![CDATA[<b>Моя блокировка:</b>]]> %s</string>
+    <string name="peerChoking"><![CDATA[<b>Блокировка пира:</b>]]> %s</string>
     <string name="selectFileNotPaused">Выберите файл (доступно только, когда загрузка приостановлена)</string>
     <string name="selectFileNotTorrent">Выберите файл (доступно только на BitTorrent-загрузках)</string>
     <string name="selectFileSingleFile">Выберите файл (недоступно на одном файле загрузки)</string>
@@ -60,7 +60,7 @@
     <string name="mode_single">Одиночный режим (используйте один и тот же адрес для каждого соединения)</string>
     <string name="mode_multi">Многорежимный режим (используйте разные адреса для разных ситуаций подключения)</string>
     <string name="address">Адрес:</string>
-    <string name="downloadIs">Скачать %s</string>
+    <string name="downloadIs">Скачивание %s</string>
     <string name="peers">Пиры</string>
     <string name="servers">Серверы</string>
     <string name="addProfile">Добавить профиль</string>
@@ -156,7 +156,7 @@
     <string name="persistentOn">Служба уведомлений работает всегда</string>
     <string name="persistentOff">Служба уведомлений может выключится со временем</string>
     <string name="logs">Файлы логов</string>
-    <string name="third_part">Третья стороны проекта</string>
+    <string name="third_part">Третьи стороны проекта</string>
     <string name="about_app">Об этом приложении</string>
     <string name="tracking">Отключить анонимную статистику</string>
     <string name="trackingOn">Статистика не будет отправляться разработчику.</string>
@@ -256,6 +256,13 @@
     <string name="jsoup_details">Авторские права © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
     <string name="deleteAllLogs">Удалить все логи</string>
     <string name="log_activity_title">Логи</string>
+    <string name="addMetalink">Добавить Metalink</string>
+    <string name="addTorrent">Добавить Torrent</string>
+    <string name="emailMe">Если вы хотите добавить свое мнение о случившемся, напишите мне по адресу altomanigianluca@gmail.com, нажав кнопку ниже.</string>
+    <string name="emptyLogs">Нету логов.</string>
+    <string name="send_email">Отправить письмо</string>
+    <string name="somethingWentWrong">Что-то пошло не так! Отчет уже отправлен разработчику.</string>
+    <string name="ooops">Упс!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

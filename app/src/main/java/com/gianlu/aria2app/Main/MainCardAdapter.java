@@ -200,7 +200,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     castHolder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
                 }
 
-                castHolder.donutProgress.setProgress((int) item.getProgress());
+                castHolder.donutProgress.setProgress(item.getProgress());
                 castHolder.downloadName.setText(item.getName());
                 if (item.status == Download.STATUS.ERROR)
                     castHolder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
