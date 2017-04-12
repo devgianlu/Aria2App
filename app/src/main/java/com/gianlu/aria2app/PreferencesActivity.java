@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -57,8 +56,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             if (!super.onMenuItemSelected(featureId, item))
                 NavUtils.navigateUpFromSameTask(this);
             return true;
@@ -107,7 +105,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == android.R.id.home) {
-                startActivity(new Intent(getActivity(), PreferencesActivity.class));
+                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
+                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -144,7 +143,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == android.R.id.home) {
-                startActivity(new Intent(getActivity(), PreferencesActivity.class));
+                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
+                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -163,7 +163,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == android.R.id.home) {
-                startActivity(new Intent(getActivity(), PreferencesActivity.class));
+                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
+                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -237,7 +238,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == android.R.id.home) {
-                startActivity(new Intent(getActivity(), PreferencesActivity.class));
+                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
+                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -418,7 +420,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == android.R.id.home) {
-                startActivity(new Intent(getActivity(), PreferencesActivity.class));
+                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
+                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);

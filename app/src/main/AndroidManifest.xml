@@ -28,11 +28,13 @@
         <activity
             android:name=".Profile.AddProfileActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,36 +47,44 @@
         <activity
             android:name=".DirectDownloadActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- Add download activities -->
         <activity
             android:name=".Main.AddTorrentActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Main.AddURIActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- More about download activity -->
         <activity
             android:name=".MoreAboutDownloadActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
         <activity
             android:name=".PreferencesActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Logs activity -->
         <activity
             android:name="com.gianlu.commonutils.LogsActivity"
-            android:parentActivityName=".PreferencesActivity" />
+            android:parentActivityName=".PreferencesActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Share activity -->
-        <activity android:name=".ShareActivity">
+        <activity
+            android:name=".ShareActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
@@ -1125,6 +1135,7 @@
         <activity
             android:name=".Main.SearchActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
