@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Main;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
@@ -18,13 +17,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.DownloadAction;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -252,7 +251,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             Utils.setupChart(castHolder.detailsChart, true);
             castHolder.donutProgress.setFinishedStrokeColor(color);
-            castHolder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
+            // castHolder.donutProgress.setUnfinishedStrokeColor(Color.argb(26, Color.red(color), Color.green(color), Color.blue(color)));
 
             castHolder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
             castHolder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));

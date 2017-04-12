@@ -19,15 +19,11 @@
             android:padding="8dp"
             android:theme="@style/CardViewTopSection">
 
-            <com.github.lzyzsd.circleprogress.DonutProgress
+            <com.gianlu.aria2app.DonutProgress
                 android:id="@+id/downloadCardView_donutProgress"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:layout_marginEnd="8dp"
-                app:donut_finished_color="@color/white"
-                app:donut_text_color="@color/white"
-                app:donut_text_size="13sp"
-                app:donut_unfinished_color="#1affffff" />
+                android:layout_marginEnd="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
