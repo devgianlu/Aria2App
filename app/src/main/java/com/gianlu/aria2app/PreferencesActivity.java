@@ -8,12 +8,10 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -23,6 +21,7 @@ import android.view.MenuItem;
 
 import com.android.vending.billing.IInAppBillingService;
 import com.gianlu.commonutils.AppCompatPreferenceActivity;
+import com.gianlu.commonutils.AppCompatPreferenceFragment;
 import com.gianlu.commonutils.Billing.Billing;
 import com.gianlu.commonutils.Billing.Product;
 import com.gianlu.commonutils.Billing.ProductAdapter;
@@ -39,11 +38,6 @@ import java.util.Objects;
 import java.util.Random;
 
 public class PreferencesActivity extends AppCompatPreferenceActivity {
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +79,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
     }
 
     protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
+        return AppCompatPreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralFragment.class.getName().equals(fragmentName)
                 || DirectDownloadFragment.class.getName().equals(fragmentName)
                 || NotificationsFragment.class.getName().equals(fragmentName)
@@ -93,7 +87,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 || AboutFragment.class.getName().equals(fragmentName);
     }
 
-    public static class GeneralFragment extends PreferenceFragment {
+    public static class GeneralFragment extends AppCompatPreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -103,17 +97,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getItemId() == android.R.id.home) {
-                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
-                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        protected Class getParent() {
+            return PreferencesActivity.class;
         }
     }
 
-    public static class DirectDownloadFragment extends PreferenceFragment {
+    public static class DirectDownloadFragment extends AppCompatPreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -141,17 +130,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getItemId() == android.R.id.home) {
-                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
-                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        protected Class getParent() {
+            return PreferencesActivity.class;
         }
     }
 
-    public static class NotificationsFragment extends PreferenceFragment {
+    public static class NotificationsFragment extends AppCompatPreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -161,17 +145,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getItemId() == android.R.id.home) {
-                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
-                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        protected Class getParent() {
+            return PreferencesActivity.class;
         }
     }
 
-    public static class ThirdPartFragment extends PreferenceFragment {
+    public static class ThirdPartFragment extends AppCompatPreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -236,17 +215,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getItemId() == android.R.id.home) {
-                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
-                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        protected Class getParent() {
+            return PreferencesActivity.class;
         }
     }
 
-    public static class AboutFragment extends PreferenceFragment {
+    public static class AboutFragment extends AppCompatPreferenceFragment {
         private int requestCode;
         private String devString;
         private ProgressDialog pd;
@@ -418,13 +392,8 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getItemId() == android.R.id.home) {
-                if (isXLargeTablet(getActivity())) getActivity().onBackPressed();
-                else startActivity(new Intent(getActivity(), PreferencesActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        protected Class getParent() {
+            return PreferencesActivity.class;
         }
     }
 }
