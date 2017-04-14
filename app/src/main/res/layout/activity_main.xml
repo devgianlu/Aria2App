@@ -76,7 +76,6 @@
                         android:layout_weight="1" />
                 </LinearLayout>
 
-
                 <View
                     android:id="@+id/main_mask"
                     android:layout_width="match_parent"

@@ -57,7 +57,7 @@ public class SearchUtils {
 
                         handler.onResults(results);
                     }
-                } catch (IOException ex) {
+                } catch (IOException | NullPointerException ex) {
                     handler.onException(ex);
                 }
             }
@@ -101,7 +101,7 @@ public class SearchUtils {
                         results.add(new SearchResult(items.get(i)));
 
                     handler.onResults(results);
-                } catch (IOException ex) {
+                } catch (IOException | NullPointerException ex) {
                     handler.onException(ex);
                 }
             }
@@ -132,7 +132,7 @@ public class SearchUtils {
                     } else {
                         handler.onMagnetLink(magnet.first().attr("href"));
                     }
-                } catch (IOException ex) {
+                } catch (IOException | NullPointerException ex) {
                     handler.onException(ex);
                 }
             }
