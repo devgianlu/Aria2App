@@ -26,8 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
-import com.gianlu.aria2app.LetterIconBig;
-import com.gianlu.aria2app.LetterIconSmall;
 import com.gianlu.aria2app.Profile.AddProfileActivity;
 import com.gianlu.aria2app.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Profile.ProfileItem;
@@ -36,6 +34,8 @@ import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.LetterIconBig;
+import com.gianlu.commonutils.LetterIconSmall;
 
 import org.json.JSONException;
 
@@ -69,8 +69,11 @@ public class DrawerManager {
         this.drawerProfilesFooter = (LinearLayout) drawerLayout.findViewById(R.id.mainDrawer_profilesFooter);
 
         this.currentAccount = (LetterIconBig) drawerLayout.findViewById(R.id.mainDrawerHeader_currentAccount);
+        this.currentAccount.setColorScheme(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimary_shadow);
         this.firstAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_firstAccount);
+        this.firstAccount.setColorScheme(R.color.colorPrimary, R.color.colorPrimary_shadow);
         this.secondAccount = (LetterIconSmall) drawerLayout.findViewById(R.id.mainDrawerHeader_secondAccount);
+        this.secondAccount.setColorScheme(R.color.colorPrimary, R.color.colorPrimary_shadow);
 
         context.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         context.getWindow().setStatusBarColor(Color.TRANSPARENT);

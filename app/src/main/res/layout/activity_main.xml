@@ -158,7 +158,7 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/drawer_background" />
 
-            <com.gianlu.aria2app.LetterIconBig
+            <com.gianlu.commonutils.LetterIconBig
                 android:id="@+id/mainDrawerHeader_currentAccount"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
@@ -177,7 +177,7 @@
                 android:layout_alignTop="@+id/mainDrawerHeader_currentAccount"
                 android:gravity="end">
 
-                <com.gianlu.aria2app.LetterIconSmall
+                <com.gianlu.commonutils.LetterIconSmall
                     android:id="@+id/mainDrawerHeader_firstAccount"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
@@ -186,7 +186,7 @@
                     android:elevation="2dp"
                     android:visibility="gone" />
 
-                <com.gianlu.aria2app.LetterIconSmall
+                <com.gianlu.commonutils.LetterIconSmall
                     android:id="@+id/mainDrawerHeader_secondAccount"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
