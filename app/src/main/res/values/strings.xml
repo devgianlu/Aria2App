@@ -64,7 +64,6 @@
     <string name="peers">Peers</string>
     <string name="servers">Servers</string>
     <string name="addProfile">Add profile</string>
-    <string name="manageProfiles">Manage profiles</string>
     <string name="home">Home</string>
     <string name="announceList"><b>Announce list:</b></string>
     <string name="address_hint">127.0.0.1</string>

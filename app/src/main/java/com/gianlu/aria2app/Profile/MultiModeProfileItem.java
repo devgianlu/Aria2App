@@ -154,4 +154,24 @@ public class MultiModeProfileItem extends ProfileItem implements Serializable {
 
         return item;
     }
+
+    @Override
+    public String getGlobalName() {
+        return globalProfileName;
+    }
+
+    @Override
+    public String getName() {
+        return "DUNNO NAME";
+    }
+
+    @Override
+    public String getAddress() {
+        return "DUNNO ADDR";
+    }
+
+    @Override
+    public int getPort() {
+        return -345345;
+    }
 }

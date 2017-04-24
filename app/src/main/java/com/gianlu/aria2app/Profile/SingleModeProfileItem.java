@@ -210,6 +210,26 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         return profile;
     }
 
+    @Override
+    public String getGlobalName() {
+        return globalProfileName;
+    }
+
+    @Override
+    public String getName() {
+        return profileName;
+    }
+
+    @Override
+    public String getAddress() {
+        return serverAddr;
+    }
+
+    @Override
+    public int getPort() {
+        return serverPort;
+    }
+
     public enum ConnectionMethod {
         HTTP,
         WEBSOCKET

@@ -64,7 +64,6 @@
     <string name="peers">Пиры</string>
     <string name="servers">Серверы</string>
     <string name="addProfile">Добавить профиль</string>
-    <string name="manageProfiles">Управление профилями</string>
     <string name="home">Главная</string>
     <string name="announceList"><b>Список трекеров:</b></string>
     <string name="address_hint">127.0.0.1</string>

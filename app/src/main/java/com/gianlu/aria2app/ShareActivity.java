@@ -5,14 +5,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
+import com.gianlu.aria2app.Profile.CustomProfilesAdapter;
+import com.gianlu.aria2app.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Profile.ProfileItem;
-import com.gianlu.aria2app.Profile.ProfilesAdapter;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.File;
@@ -26,10 +30,17 @@ public class ShareActivity extends AppCompatActivity {
         setContentView(R.layout.activity_share);
         setTitle(R.string.startDownload);
 
-        ListView list = (ListView) findViewById(R.id.share_list);
-        final ProfilesAdapter adapter = new ProfilesAdapter(this, ProfileItem.getProfiles(this), new ProfilesAdapter.IProfile() {
+        RecyclerView list = (RecyclerView) findViewById(R.id.share_list);
+        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        final CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, ProfileItem.getBaseProfiles(this), R.drawable.ripple_effect_dark, new ProfilesAdapter.IAdapter() {
             @Override
-            public void onProfileSelected(SingleModeProfileItem profile) {
+            public void onProfileSelected(BaseDrawerProfile _profile) {
+                SingleModeProfileItem profile;
+                if (_profile instanceof MultiModeProfileItem)
+                    profile = ((MultiModeProfileItem) _profile).getCurrentProfile(ShareActivity.this);
+                else
+                    profile = (SingleModeProfileItem) _profile;
+
                 if (profile.status == ProfileItem.STATUS.ONLINE) {
                     CurrentProfile.setCurrentProfile(ShareActivity.this, profile);
                     handleStartDownload();
@@ -46,7 +57,7 @@ public class ShareActivity extends AppCompatActivity {
         layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.startProfilesTest(new ProfilesAdapter.IFinished() {
+                adapter.startProfilesTest(new CustomProfilesAdapter.IFinished() {
                     @Override
                     public void onFinished() {
                         runOnUiThread(new Runnable() {

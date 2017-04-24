@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
@@ -23,13 +24,14 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
-import com.gianlu.aria2app.Main.DrawerManager;
+import com.gianlu.aria2app.Main.Drawer.DrawerConst;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
@@ -41,11 +43,16 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Profile.AddProfileActivity;
+import com.gianlu.aria2app.Profile.CustomProfilesAdapter;
 import com.gianlu.aria2app.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Profile.ProfileItem;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Drawer.BaseDrawerItem;
+import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+import com.gianlu.commonutils.Drawer.DrawerManager;
+import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.google.android.gms.analytics.HitBuilders;
 import com.liulishuo.filedownloader.FileDownloader;
 
@@ -65,7 +72,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading, DrawerManager.ISetup {
     private static boolean versionChecked = false;
     private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
@@ -98,135 +105,135 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        drawerManager = new DrawerManager(this, (DrawerLayout) findViewById(R.id.main_drawer));
-        drawerManager.setToolbar(toolbar)
-                .buildProfiles()
-                .buildMenu()
-                .setDrawerListener(new DrawerManager.IDrawerListener() {
+        drawerManager = DrawerManager.setup(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this)
+                .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.ic_list_black_48dp, getString(R.string.menu_globalOptions)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.ABOUT_ARIA2, R.drawable.ic_cloud_black_48dp, getString(R.string.about_aria2)))
+                .addMenuItemSeparator()
+                .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.ic_settings_black_48dp, getString(R.string.menu_preferences)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.ic_report_problem_black_48dp, getString(R.string.support)))
+                .addProfiles(ProfileItem.getProfiles(this))
+                .build();
+
+        drawerManager.setDrawerListener(new DrawerManager.IDrawerListener() {
+            @Override
+            public boolean onMenuItemSelected(BaseDrawerItem which) {
+                Utils.IOptionsDialog handler = new Utils.IOptionsDialog() {
                     @Override
-                    public boolean onListItemSelected(DrawerManager.DrawerListItems which) {
-                        Utils.IOptionsDialog handler = new Utils.IOptionsDialog() {
+                    public void onApply(JTA2 jta2, Map<String, String> options) {
+                        if (options.entrySet().size() == 0) return;
+
+                        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+                        CommonUtils.showDialog(MainActivity.this, pd);
+
+                        ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
+                                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                                .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
+                                .build());
+
+                        jta2.changeGlobalOption(options, new JTA2.ISuccess() {
                             @Override
-                            public void onApply(JTA2 jta2, Map<String, String> options) {
-                                if (options.entrySet().size() == 0) return;
-
-                                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                                CommonUtils.showDialog(MainActivity.this, pd);
-
-                                ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
-                                        .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                                        .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
-                                        .build());
-
-                                jta2.changeGlobalOption(options, new JTA2.ISuccess() {
-                                    @Override
-                                    public void onSuccess() {
-                                        pd.dismiss();
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
-                                    }
-
-                                    @Override
-                                    public void onException(Exception exception) {
-                                        pd.dismiss();
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
-                                    }
-                                });
+                            public void onSuccess() {
+                                pd.dismiss();
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
                             }
-                        };
 
-                        switch (which) {
-                            case HOME:
-                                reloadPage();
-                                return true;
-                            case DIRECT_DOWNLOAD:
-                                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
-                                return false;
-                            case QUICK_OPTIONS:
-                                Utils.showOptionsDialog(MainActivity.this, null, true, true, handler);
-                                return true;
-                            case GLOBAL_OPTIONS:
-                                Utils.showOptionsDialog(MainActivity.this, null, true, false, handler);
-                                return true;
-                            case PREFERENCES:
-                                startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
-                                return false;
-                            case SUPPORT:
-                                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name));
-                                return true;
-                            case ABOUT_ARIA2:
-                                final JTA2 jta2;
-                                try {
-                                    jta2 = JTA2.newInstance(MainActivity.this);
-                                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
-                                    return true;
+                            @Override
+                            public void onException(Exception exception) {
+                                pd.dismiss();
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
+                            }
+                        });
+                    }
+                };
+
+                switch (which.id) {
+                    case DrawerConst.HOME:
+                        reloadPage();
+                        return true;
+                    case DrawerConst.DIRECT_DOWNLOAD:
+                        startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
+                        return false;
+                    case DrawerConst.QUICK_OPTIONS:
+                        Utils.showOptionsDialog(MainActivity.this, null, true, true, handler);
+                        return true;
+                    case DrawerConst.GLOBAL_OPTIONS:
+                        Utils.showOptionsDialog(MainActivity.this, null, true, false, handler);
+                        return true;
+                    case DrawerConst.PREFERENCES:
+                        startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                        return false;
+                    case DrawerConst.SUPPORT:
+                        CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name));
+                        return true;
+                    case DrawerConst.ABOUT_ARIA2:
+                        final JTA2 jta2;
+                        try {
+                            jta2 = JTA2.newInstance(MainActivity.this);
+                        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                            return true;
+                        }
+
+                        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+                        CommonUtils.showDialog(MainActivity.this, pd);
+                        jta2.getVersion(new JTA2.IVersion() {
+                            @Override
+                            public void onVersion(List<String> rawFeatures, String version) {
+                                final LinearLayout box = new LinearLayout(MainActivity.this);
+                                box.setOrientation(LinearLayout.VERTICAL);
+                                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+                                box.setPadding(padding, padding, padding, padding);
+
+                                //noinspection deprecation
+                                box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
+
+                                String extendedList = "";
+                                boolean first = true;
+                                for (String _feature : rawFeatures) {
+                                    if (!first)
+                                        extendedList += ", ";
+                                    else
+                                        first = false;
+
+                                    extendedList += _feature;
                                 }
 
-                                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                                CommonUtils.showDialog(MainActivity.this, pd);
-                                jta2.getVersion(new JTA2.IVersion() {
+                                //noinspection deprecation
+                                box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
+
+                                jta2.getSessionInfo(new JTA2.ISession() {
                                     @Override
-                                    public void onVersion(List<String> rawFeatures, String version) {
-                                        final LinearLayout box = new LinearLayout(MainActivity.this);
-                                        box.setOrientation(LinearLayout.VERTICAL);
-                                        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-                                        box.setPadding(padding, padding, padding, padding);
-
+                                    public void onSessionInfo(String sessionID) {
                                         //noinspection deprecation
-                                        box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
+                                        box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
 
-                                        String extendedList = "";
-                                        boolean first = true;
-                                        for (String _feature : rawFeatures) {
-                                            if (!first)
-                                                extendedList += ", ";
-                                            else
-                                                first = false;
-
-                                            extendedList += _feature;
-                                        }
-
-                                        //noinspection deprecation
-                                        box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
-
-                                        jta2.getSessionInfo(new JTA2.ISession() {
-                                            @Override
-                                            public void onSessionInfo(String sessionID) {
-                                                //noinspection deprecation
-                                                box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
-
-                                                pd.dismiss();
-                                                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
-                                                        .setView(box)
-                                                        .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                                        pd.dismiss();
+                                        CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
+                                                .setView(box)
+                                                .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        jta2.saveSession(new JTA2.ISuccess() {
                                                             @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                                jta2.saveSession(new JTA2.ISuccess() {
-                                                                    @Override
-                                                                    public void onSuccess() {
-                                                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onException(Exception exception) {
-                                                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_SAVE_SESSION, exception);
-                                                                    }
-                                                                });
+                                                            public void onSuccess() {
+                                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
                                                             }
-                                                        })
-                                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+
                                                             @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                            public void onException(Exception exception) {
+                                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_SAVE_SESSION, exception);
                                                             }
-                                                        }));
-                                            }
-
-                                            @Override
-                                            public void onException(Exception exception) {
-                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
-                                                pd.dismiss();
-                                            }
-                                        });
+                                                        });
+                                                    }
+                                                })
+                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                    }
+                                                }));
                                     }
 
                                     @Override
@@ -235,41 +242,79 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                                         pd.dismiss();
                                     }
                                 });
-                                return true;
-                            default:
-                                return true;
-                        }
-                    }
+                            }
 
-                    @Override
-                    public void onProfileItemSelected(final SingleModeProfileItem profile, boolean fromRecent) {
-                        if (!fromRecent && profile.status != ProfileItem.STATUS.ONLINE) {
-                            CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            startWithProfile(profile, true);
-                                            drawerManager.setDrawerState(false, true);
-                                        }
-                                    })
-                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            drawerManager.setDrawerState(true, true);
-                                        }
-                                    }));
-                        } else {
-                            drawerManager.setDrawerState(false, true);
-                            startWithProfile(profile, true);
-                        }
-                    }
+                            @Override
+                            public void onException(Exception exception) {
+                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
+                                pd.dismiss();
+                            }
+                        });
+                        return true;
+                    default:
+                        return true;
+                }
+            }
 
-                    @Override
-                    public void onAddProfile() {
-                        startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
-                                .putExtra("edit", false));
-                    }
-                });
+            @Override
+            public void onProfileSelected(final BaseDrawerProfile _profile, boolean fromRecent) {
+                final SingleModeProfileItem profile;
+                if (_profile instanceof MultiModeProfileItem) {
+                    profile = ((MultiModeProfileItem) _profile).getCurrentProfile(MainActivity.this);
+                } else if (_profile instanceof SingleModeProfileItem) {
+                    profile = (SingleModeProfileItem) _profile;
+                } else {
+                    return;
+                }
+
+                if (!fromRecent && profile.status != ProfileItem.STATUS.ONLINE) {
+                    CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startWithProfile(profile, true);
+                                    drawerManager.setDrawerState(false, true);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    drawerManager.setDrawerState(true, true);
+                                }
+                            }));
+                } else {
+                    drawerManager.setDrawerState(false, true);
+                    startWithProfile(profile, true);
+                }
+            }
+
+            @Override
+            public void addProfile() {
+                startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
+                        .putExtra("edit", false));
+            }
+
+            @Override
+            public void editProfile(final List<BaseDrawerProfile> items) {
+                CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.editProfile)
+                        .setAdapter(new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                try {
+                                    startActivity(new Intent(MainActivity.this, AddProfileActivity.class)
+                                            .putExtra("edit", true)
+                                            .putExtra("isSingleMode", ProfileItem.isSingleMode(MainActivity.this, ((ProfileItem) items.get(i)).fileName))
+                                            .putExtra("base64name", ((ProfileItem) items.get(i)).fileName));
+                                } catch (JSONException | IOException ex) {
+                                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.CANNOT_EDIT_PROFILE, ex);
+                                    deleteFile(((ProfileItem) items.get(i)).fileName);
+                                }
+                            }
+                        }));
+
+            }
+        });
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerView);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -360,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         });
 
         if (getIntent().getBooleanExtra("backFromAddProfile", false))
-            drawerManager.buildProfiles().openProfiles(false);
+            drawerManager.refreshProfiles(ProfileItem.getProfiles(this)).openProfiles(false);
 
         if (CurrentProfile.getCurrentProfile(this).connectionMethod == SingleModeProfileItem.ConnectionMethod.WEBSOCKET) {
             WebSocketing.setGlobalHandler(new WebSocketing.IListener() {
@@ -370,7 +415,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         @Override
                         public void run() {
                             swipeLayout.setRefreshing(false);
-                            drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
+                            drawerManager.updateBadge(DrawerConst.HOME, -1);
                         }
                     });
 
@@ -407,7 +452,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         public void run() {
                             swipeLayout.setRefreshing(false);
                             drawerManager.openProfiles(true);
-                            drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
+                            drawerManager.updateBadge(DrawerConst.HOME, -1);
                         }
                     });
                 }
@@ -467,15 +512,13 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (drawerManager != null)
-            drawerManager.syncTogglerState();
+        if (drawerManager != null) drawerManager.syncTogglerState();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (drawerManager != null)
-            drawerManager.syncTogglerState();
+        if (drawerManager != null) drawerManager.syncTogglerState();
     }
 
     private void saveExternalProfile(@NonNull SingleModeProfileItem profile) {
@@ -704,7 +747,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         }
 
                         if (drawerManager != null)
-                            drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, count);
+                            drawerManager.updateBadge(DrawerConst.HOME, count);
                     }
                 });
             }
@@ -821,7 +864,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             @Override
             public void run() {
                 mainRecyclerView.setAdapter(adapter);
-                drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, downloads.size());
+                drawerManager.updateBadge(DrawerConst.HOME, downloads.size());
 
                 updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
                 new Thread(updateUI).start();
@@ -910,8 +953,59 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             @Override
             public void run() {
                 swipeLayout.setRefreshing(false);
-                drawerManager.updateBadge(DrawerManager.DrawerListItems.HOME, -1);
+                drawerManager.updateBadge(DrawerConst.HOME, -1);
             }
         });
+    }
+
+    @Override
+    public int getColorAccent() {
+        return R.color.colorAccent;
+    }
+
+    @Override
+    public int getHeaderBackground() {
+        return R.drawable.drawer_background;
+    }
+
+    @Override
+    public int getOpenDrawerDesc() {
+        return R.string.openDrawer;
+    }
+
+    @Override
+    public int getCloseDrawerDesc() {
+        return R.string.closeDrawer;
+    }
+
+    @Override
+    public int getRippleDark() {
+        return R.drawable.ripple_effect_dark;
+    }
+
+    @Override
+    public int getDrawerBadge() {
+        return R.drawable.drawer_badge;
+    }
+
+    @Override
+    public int getColorPrimary() {
+        return R.color.colorPrimary;
+    }
+
+    @Override
+    public ProfilesAdapter getProfilesAdapter(Context context, List<BaseDrawerProfile> profiles, @DrawableRes int ripple_dark, final DrawerManager.IDrawerListener listener) {
+        return new CustomProfilesAdapter(context, profiles, ripple_dark, new ProfilesAdapter.IAdapter() {
+            @Override
+            public void onProfileSelected(BaseDrawerProfile profile) {
+                if (listener != null) listener.onProfileSelected(profile, false);
+                if (drawerManager != null) drawerManager.performUnlock();
+            }
+        });
+    }
+
+    @Override
+    public int getColorPrimaryShadow() {
+        return R.color.colorPrimary_shadow;
     }
 }

@@ -3,6 +3,8 @@ package com.gianlu.aria2app.Profile;
 import android.content.Context;
 import android.util.Base64;
 
+import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,7 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileItem implements Serializable {
+public abstract class ProfileItem implements Serializable, BaseDrawerProfile {
     public String fileName;
     public String globalProfileName;
     public boolean singleMode;
@@ -56,6 +58,16 @@ public class ProfileItem implements Serializable {
         return new JSONObject(builder.toString()).isNull("conditions");
     }
 
+    public static List<BaseDrawerProfile> getBaseProfiles(Context context) {
+        List<ProfileItem> items = getProfiles(context);
+        List<BaseDrawerProfile> baseItems = new ArrayList<>();
+
+        for (ProfileItem item : items)
+            baseItems.add(item);
+
+        return baseItems;
+    }
+
     public static List<ProfileItem> getProfiles(Context context) {
         List<ProfileItem> profiles = new ArrayList<>();
         File files[] = context.getFilesDir().listFiles(new FilenameFilter() {
@@ -83,6 +95,11 @@ public class ProfileItem implements Serializable {
         if (fileName == null) return null;
 
         return new String(Base64.decode(fileName.replace(".profile", "").getBytes(), Base64.DEFAULT));
+    }
+
+    @Override
+    public String toString() {
+        return globalProfileName;
     }
 
     public void setStatus(STATUS status) {

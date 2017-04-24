@@ -1,15 +1,10 @@
 package com.gianlu.aria2app.Profile;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Context;
+import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -18,6 +13,8 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -31,77 +28,34 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class ProfilesAdapter extends BaseAdapter {
-    private final Activity context;
-    private final List<ProfileItem> profiles;
-    private final IProfile handler;
-    private final View.OnClickListener statusClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String message = (String) v.getTag();
-            if (message != null)
-                CommonUtils.UIToast(context, message);
-        }
-    };
-
-    public ProfilesAdapter(Activity context, List<ProfileItem> profiles, IProfile handler) {
-        this.context = context;
-        this.profiles = profiles;
-        this.handler = handler;
-    }
-
-    public void startProfilesTest(IFinished handler) {
-        for (int i = 0; i < profiles.size(); i++) {
-            if (i == profiles.size() - 1)
-                runTest(i, handler);
-            else
-                runTest(i, null);
-        }
+public class CustomProfilesAdapter extends ProfilesAdapter {
+    public CustomProfilesAdapter(Context context, List<BaseDrawerProfile> profiles, @DrawableRes int ripple_dark, IAdapter listener) {
+        super(context, profiles, ripple_dark, listener);
     }
 
     @Override
-    public int getCount() {
-        return profiles.size();
-    }
+    public BaseDrawerProfile getItem(int pos) {
+        BaseDrawerProfile _profile = profiles.get(pos);
 
-    public SingleModeProfileItem getItem(int position) {
-        ProfileItem item = profiles.get(position);
-        if (item instanceof SingleModeProfileItem) {
-            return (SingleModeProfileItem) item;
-        } else {
-            return ((MultiModeProfileItem) item).getCurrentProfile(context);
-        }
+        if (_profile instanceof MultiModeProfileItem)
+            return ((MultiModeProfileItem) _profile).getCurrentProfile(context);
+        else
+            return _profile;
     }
 
     private boolean isItemSingleMode(int position) {
-        return profiles.get(position).singleMode;
+        return ((SingleModeProfileItem) getItem(position)).singleMode;
     }
 
     @Override
-    public long getItemId(int i) {
-        return i;
-    }
+    public void onBindViewHolder(ProfilesAdapter.ViewHolder holder, int position) {
+        final SingleModeProfileItem profile = (SingleModeProfileItem) getItem(position);
 
-    public List<String> getItemsName() {
-        List<String> names = new ArrayList<>();
-        for (ProfileItem item : profiles) {
-            names.add(item.globalProfileName);
-        }
-        return names;
-    }
-
-    @SuppressLint("ViewHolder")
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder = new ViewHolder(LayoutInflater.from(context).inflate(R.layout.material_drawer_profile_item, viewGroup, false));
-        final SingleModeProfileItem profile = getItem(i);
-
-        if (isItemSingleMode(i)) {
+        if (isItemSingleMode(position)) {
             holder.globalName.setVisibility(View.GONE);
             holder.name.setPadding(0, 0, 0, 0);
             holder.address.setPadding(0, 0, 0, 0);
@@ -123,13 +77,11 @@ public class ProfilesAdapter extends BaseAdapter {
         }
 
         if (profile.status == ProfileItem.STATUS.UNKNOWN) {
-            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.loading.setVisibility(View.VISIBLE);
             holder.status.setVisibility(View.GONE);
         } else {
-            holder.progressBar.setVisibility(View.GONE);
+            holder.loading.setVisibility(View.GONE);
             holder.status.setVisibility(View.VISIBLE);
-            holder.status.setOnClickListener(statusClick);
-            holder.status.setTag(profile.statusMessage);
 
             switch (profile.status) {
                 case ONLINE:
@@ -144,18 +96,17 @@ public class ProfilesAdapter extends BaseAdapter {
             }
         }
 
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handler.onProfileSelected(profile);
+                if (listener != null) listener.onProfileSelected(profile);
             }
         });
-
-        return holder.rootView;
     }
 
-    private void runTest(int pos, @Nullable final IFinished handler) {
-        final SingleModeProfileItem profile = getItem(pos);
+    @Override
+    protected void runTest(int pos, final IFinished handler) {
+        final SingleModeProfileItem profile = (SingleModeProfileItem) getItem(pos);
 
         switch (profile.connectionMethod) {
             case HTTP:
@@ -164,11 +115,10 @@ public class ProfilesAdapter extends BaseAdapter {
                     public void run() {
                         try {
                             HttpURLConnection conn;
-                            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP)) {
+                            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
                                 conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
-                            } else {
+                            else
                                 conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
-                            }
 
                             long start = System.currentTimeMillis();
                             conn.connect();
@@ -178,40 +128,39 @@ public class ProfilesAdapter extends BaseAdapter {
                                 profile.setStatusMessage("Online");
                                 profile.setLatency(System.currentTimeMillis() - start);
 
-                                context.runOnUiThread(new Runnable() {
+                                new Handler(context.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
                                         notifyDataSetChanged();
                                     }
                                 });
-                                if (handler != null)
-                                    handler.onFinished();
+
+                                if (handler != null) handler.onFinished();
                             } else {
                                 profile.setStatus(ProfileItem.STATUS.OFFLINE);
                                 profile.setStatusMessage(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()).getMessage());
 
-                                context.runOnUiThread(new Runnable() {
+                                new Handler(context.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
                                         notifyDataSetChanged();
                                     }
                                 });
-                                if (handler != null)
-                                    handler.onFinished();
+
+                                if (handler != null) handler.onFinished();
                             }
                         } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
                             profile.setStatus(ProfileItem.STATUS.ERROR);
                             profile.setStatusMessage(ex.getMessage());
 
-                            context.runOnUiThread(new Runnable() {
+                            new Handler(context.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
                                     notifyDataSetChanged();
                                 }
                             });
 
-                            if (handler != null)
-                                handler.onFinished();
+                            if (handler != null) handler.onFinished();
 
                             CommonUtils.logMe(context, ex);
                         }
@@ -242,15 +191,14 @@ public class ProfilesAdapter extends BaseAdapter {
                     profile.setStatus(ProfileItem.STATUS.ERROR);
                     profile.setStatusMessage(ex.getMessage());
 
-                    context.runOnUiThread(new Runnable() {
+                    new Handler(context.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             notifyDataSetChanged();
                         }
                     });
 
-                    if (handler != null)
-                        handler.onFinished();
+                    if (handler != null) handler.onFinished();
 
                     CommonUtils.logMe(context, ex);
                 }
@@ -258,38 +206,8 @@ public class ProfilesAdapter extends BaseAdapter {
         }
     }
 
-    public interface IProfile {
-        void onProfileSelected(SingleModeProfileItem which);
-    }
-
-    public interface IFinished {
-        void onFinished();
-    }
-
-    private class ViewHolder {
-        final View rootView;
-        final TextView globalName;
-        final TextView name;
-        final TextView address;
-        final TextView ping;
-        final ProgressBar progressBar;
-        final ImageView status;
-
-        public ViewHolder(View rootView) {
-            this.rootView = rootView;
-
-            globalName = (TextView) rootView.findViewById(R.id.materialDrawer_profileGlobalName);
-            name = (TextView) rootView.findViewById(R.id.materialDrawer_profileName);
-            address = (TextView) rootView.findViewById(R.id.materialDrawer_profileAddress);
-            ping = (TextView) rootView.findViewById(R.id.materialDrawer_profilePing);
-            progressBar = (ProgressBar) rootView.findViewById(R.id.materialDrawer_profileProgressBar);
-            status = (ImageView) rootView.findViewById(R.id.materialDrawer_profileStatus);
-        }
-    }
-
     private class StatusWebSocketHandler extends WebSocketAdapter {
         private final SingleModeProfileItem profile;
-        @Nullable
         private final IFinished handler;
         private long startTime;
 
@@ -303,14 +221,14 @@ public class ProfilesAdapter extends BaseAdapter {
             profile.setStatus(ProfileItem.STATUS.ONLINE);
             profile.setStatusMessage("Online");
 
-            context.runOnUiThread(new Runnable() {
+            new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     notifyDataSetChanged();
                 }
             });
-            if (handler != null)
-                handler.onFinished();
+
+            if (handler != null) handler.onFinished();
 
             startTime = System.currentTimeMillis();
             websocket.sendPing();
@@ -320,7 +238,7 @@ public class ProfilesAdapter extends BaseAdapter {
         public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
             profile.setLatency(System.currentTimeMillis() - startTime);
 
-            context.runOnUiThread(new Runnable() {
+            new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     notifyDataSetChanged();
@@ -333,30 +251,30 @@ public class ProfilesAdapter extends BaseAdapter {
             profile.setStatus(ProfileItem.STATUS.OFFLINE);
             profile.setStatusMessage(cause.getMessage());
 
-            context.runOnUiThread(new Runnable() {
+            new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     notifyDataSetChanged();
                 }
             });
-            if (handler != null)
-                handler.onFinished();
+
+            if (handler != null) handler.onFinished();
         }
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, cause);
+            // CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, cause);
             profile.setStatus(ProfileItem.STATUS.ERROR);
             profile.setStatusMessage(cause.getMessage());
 
-            context.runOnUiThread(new Runnable() {
+            new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     notifyDataSetChanged();
                 }
             });
-            if (handler != null)
-                handler.onFinished();
+
+            if (handler != null) handler.onFinished();
         }
 
         @Override
@@ -370,14 +288,14 @@ public class ProfilesAdapter extends BaseAdapter {
 
             profile.setStatusMessage(exception.getMessage());
 
-            context.runOnUiThread(new Runnable() {
+            new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     notifyDataSetChanged();
                 }
             });
-            if (handler != null)
-                handler.onFinished();
+
+            if (handler != null) handler.onFinished();
         }
 
         @Override
@@ -390,14 +308,14 @@ public class ProfilesAdapter extends BaseAdapter {
                 profile.setStatusMessage(clientCloseFrame.getCloseReason());
             }
 
-            context.runOnUiThread(new Runnable() {
+            new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     notifyDataSetChanged();
                 }
             });
-            if (handler != null)
-                handler.onFinished();
+
+            if (handler != null) handler.onFinished();
         }
     }
 }

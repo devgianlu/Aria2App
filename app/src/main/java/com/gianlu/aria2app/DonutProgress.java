@@ -17,10 +17,10 @@ import java.util.Locale;
 import java.util.Random;
 
 public class DonutProgress extends View {
+    private final Rect textBound = new Rect();
     private Paint arcPaint;
     private Paint transparentPaint;
     private Paint textPaint;
-    private Rect textBound = new Rect();
     private String percentage;
     private float padding;
     private int sweepAngle;

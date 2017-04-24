@@ -19,7 +19,7 @@
             android:layout_marginBottom="8dp"
             android:text="@string/pickServer" />
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/share_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
