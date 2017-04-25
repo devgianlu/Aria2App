@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Main.Drawer;
+package com.gianlu.aria2app.Main;
 
 public class DrawerConst {
     public static final int HOME = 0;

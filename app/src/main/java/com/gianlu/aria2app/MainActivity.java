@@ -31,7 +31,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Main.AddTorrentActivity;
 import com.gianlu.aria2app.Main.AddURIActivity;
-import com.gianlu.aria2app.Main.Drawer.DrawerConst;
+import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.IThread;
 import com.gianlu.aria2app.Main.LoadDownloads;
 import com.gianlu.aria2app.Main.MainCardAdapter;
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
 
             @Override
-            public void onProfileSelected(final BaseDrawerProfile _profile, boolean fromRecent) {
+            public void onProfileSelected(final BaseDrawerProfile _profile) {
                 final SingleModeProfileItem profile;
                 if (_profile instanceof MultiModeProfileItem) {
                     profile = ((MultiModeProfileItem) _profile).getCurrentProfile(MainActivity.this);
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     return;
                 }
 
-                if (!fromRecent && profile.status != ProfileItem.STATUS.ONLINE) {
+                if (profile.status != ProfileItem.STATUS.ONLINE) {
                     CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
@@ -998,7 +998,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         return new CustomProfilesAdapter(context, profiles, ripple_dark, new ProfilesAdapter.IAdapter() {
             @Override
             public void onProfileSelected(BaseDrawerProfile profile) {
-                if (listener != null) listener.onProfileSelected(profile, false);
+                if (listener != null) listener.onProfileSelected(profile);
                 if (drawerManager != null) drawerManager.performUnlock();
             }
         });

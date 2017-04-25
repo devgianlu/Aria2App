@@ -40,8 +40,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <android.support.v7.widget.RecyclerView
