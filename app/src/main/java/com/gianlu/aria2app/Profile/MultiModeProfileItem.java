@@ -78,9 +78,8 @@ public class MultiModeProfileItem extends ProfileItem implements Serializable {
 
     @NonNull
     private SingleModeProfileItem getDefaultProfile() {
-        for (ConnectivityCondition cond : profiles.keySet()) {
+        for (ConnectivityCondition cond : profiles.keySet())
             if (profiles.get(cond).isDefault) return profiles.get(cond);
-        }
         return profiles.values().toArray(new SingleModeProfileItem[profiles.size()])[0];
     }
 
@@ -156,22 +155,17 @@ public class MultiModeProfileItem extends ProfileItem implements Serializable {
     }
 
     @Override
-    public String getGlobalName() {
-        return globalProfileName;
+    public String getProfileName() {
+        return getGlobalProfileName();
     }
 
     @Override
-    public String getName() {
-        return "DUNNO NAME";
+    public String getSecondaryText() {
+        return getGlobalProfileName(); // Never queried
     }
 
     @Override
-    public String getAddress() {
-        return "DUNNO ADDR";
-    }
-
-    @Override
-    public int getPort() {
-        return -345345;
+    public String getInitials() {
+        return getGlobalProfileName().substring(0, 2);
     }
 }

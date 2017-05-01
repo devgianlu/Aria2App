@@ -173,9 +173,20 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
         this.globalProfileName = globalProfileName;
     }
 
-    String getProfileName() {
+    @Override
+    public String getProfileName() {
         if (profileName == null) return globalProfileName;
         return profileName;
+    }
+
+    @Override
+    public String getSecondaryText() {
+        return getFullServerAddress();
+    }
+
+    @Override
+    public String getInitials() {
+        return getProfileName().substring(0, 2);
     }
 
     public String getFullServerAddress() {
@@ -208,26 +219,6 @@ public class SingleModeProfileItem extends ProfileItem implements Serializable {
             profile.put("directDownload", directDownload.toJSON());
 
         return profile;
-    }
-
-    @Override
-    public String getGlobalName() {
-        return globalProfileName;
-    }
-
-    @Override
-    public String getName() {
-        return profileName;
-    }
-
-    @Override
-    public String getAddress() {
-        return serverAddr;
-    }
-
-    @Override
-    public int getPort() {
-        return serverPort;
     }
 
     public enum ConnectionMethod {

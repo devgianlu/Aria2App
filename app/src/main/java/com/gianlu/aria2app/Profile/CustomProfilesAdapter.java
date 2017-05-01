@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -48,7 +47,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
     }
 
     private boolean isItemSingleMode(int position) {
-        return ((SingleModeProfileItem) getItem(position)).singleMode;
+        return ((ProfileItem) getItems().get(position)).singleMode;
     }
 
     @Override
@@ -57,17 +56,13 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
 
         if (isItemSingleMode(position)) {
             holder.globalName.setVisibility(View.GONE);
-            holder.name.setPadding(0, 0, 0, 0);
-            holder.address.setPadding(0, 0, 0, 0);
         } else {
             holder.globalName.setVisibility(View.VISIBLE);
-            holder.name.setPadding(18, 0, 0, 0);
-            holder.address.setPadding(18, 0, 0, 0);
             holder.globalName.setText(profile.globalProfileName);
         }
 
         holder.name.setText(profile.getProfileName());
-        holder.address.setText(profile.getFullServerAddress());
+        holder.secondary.setText(profile.getFullServerAddress());
 
         if (profile.latency != -1) {
             holder.ping.setVisibility(View.VISIBLE);
@@ -125,7 +120,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
 
                             if (conn.getResponseCode() == 400) {
                                 profile.setStatus(ProfileItem.STATUS.ONLINE);
-                                profile.setStatusMessage("Online");
                                 profile.setLatency(System.currentTimeMillis() - start);
 
                                 new Handler(context.getMainLooper()).post(new Runnable() {
@@ -138,7 +132,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
                                 if (handler != null) handler.onFinished();
                             } else {
                                 profile.setStatus(ProfileItem.STATUS.OFFLINE);
-                                profile.setStatusMessage(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()).getMessage());
 
                                 new Handler(context.getMainLooper()).post(new Runnable() {
                                     @Override
@@ -151,7 +144,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
                             }
                         } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
                             profile.setStatus(ProfileItem.STATUS.ERROR);
-                            profile.setStatusMessage(ex.getMessage());
 
                             new Handler(context.getMainLooper()).post(new Runnable() {
                                 @Override
@@ -189,7 +181,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
                             .connectAsynchronously();
                 } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                     profile.setStatus(ProfileItem.STATUS.ERROR);
-                    profile.setStatusMessage(ex.getMessage());
 
                     new Handler(context.getMainLooper()).post(new Runnable() {
                         @Override
@@ -219,7 +210,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             profile.setStatus(ProfileItem.STATUS.ONLINE);
-            profile.setStatusMessage("Online");
 
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
@@ -249,7 +239,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
             profile.setStatus(ProfileItem.STATUS.OFFLINE);
-            profile.setStatusMessage(cause.getMessage());
 
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
@@ -263,9 +252,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            // CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, cause);
             profile.setStatus(ProfileItem.STATUS.ERROR);
-            profile.setStatusMessage(cause.getMessage());
 
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
@@ -286,8 +273,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
             else
                 profile.setStatus(ProfileItem.STATUS.ERROR);
 
-            profile.setStatusMessage(exception.getMessage());
-
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
@@ -300,13 +285,8 @@ public class CustomProfilesAdapter extends ProfilesAdapter {
 
         @Override
         public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-            if (closedByServer) {
-                profile.setStatus(ProfileItem.STATUS.ERROR);
-                profile.setStatusMessage(serverCloseFrame.getCloseReason());
-            } else {
-                profile.setStatus(ProfileItem.STATUS.OFFLINE);
-                profile.setStatusMessage(clientCloseFrame.getCloseReason());
-            }
+            if (closedByServer) profile.setStatus(ProfileItem.STATUS.ERROR);
+            else profile.setStatus(ProfileItem.STATUS.OFFLINE);
 
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override

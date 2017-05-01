@@ -25,8 +25,7 @@ public abstract class ProfileItem implements Serializable, BaseDrawerProfile {
     public boolean singleMode;
     public boolean notificationsEnabled;
     public STATUS status;
-    public String statusMessage;
-    public Long latency = -1L;
+    Long latency = -1L;
     boolean isDefault;
 
     ProfileItem() {
@@ -112,10 +111,6 @@ public abstract class ProfileItem implements Serializable, BaseDrawerProfile {
 
     void setLatency(Long latency) {
         this.latency = latency;
-    }
-
-    void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
     }
 
     public enum STATUS {
