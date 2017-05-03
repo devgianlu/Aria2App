@@ -209,10 +209,8 @@ public class Download {
                     break;
             }
 
-            if (firstCapital)
-                return val;
-            else
-                return val.substring(0, 1).toLowerCase() + val.substring(1);
+            if (firstCapital) return val;
+            else return val.substring(0, 1).toLowerCase() + val.substring(1);
         }
     }
 }

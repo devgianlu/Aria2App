@@ -228,19 +228,16 @@ public class JTA2 {
 
             JSONArray jUris = new JSONArray();
             for (String uri : uris) {
-                if (uri == null)
-                    continue;
-
+                if (uri == null) continue;
                 jUris.put(uri);
             }
             params.put(jUris);
 
             JSONObject jOptions = new JSONObject();
-            if (options != null) {
-                for (String key : options.keySet()) {
+            if (options != null)
+                for (String key : options.keySet())
                     jOptions.put(key, options.get(key));
-                }
-            }
+
             params.put(jOptions);
 
             if (position != null) params.put(position);
@@ -273,19 +270,17 @@ public class JTA2 {
             params.put(base64);
 
             JSONArray jUris = new JSONArray();
-            if (uris != null) {
-                for (String uri : uris) {
+            if (uris != null)
+                for (String uri : uris)
                     jUris.put(uri);
-                }
-            }
+
             params.put(jUris);
 
             JSONObject jOptions = new JSONObject();
-            if (options != null) {
-                for (String key : options.keySet()) {
+            if (options != null)
+                for (String key : options.keySet())
                     jOptions.put(key, options.get(key));
-                }
-            }
+
             params.put(jOptions);
 
             if (position != null) params.put(position);
@@ -318,19 +313,17 @@ public class JTA2 {
             params.put(base64);
 
             JSONArray jUris = new JSONArray();
-            if (uris != null) {
-                for (String uri : uris) {
+            if (uris != null)
+                for (String uri : uris)
                     jUris.put(uri);
-                }
-            }
+
             params.put(jUris);
 
             JSONObject jOptions = new JSONObject();
-            if (options != null) {
-                for (String key : options.keySet()) {
+            if (options != null)
+                for (String key : options.keySet())
                     jOptions.put(key, options.get(key));
-                }
-            }
+
             params.put(jOptions);
 
             if (position != null) params.put(position);
@@ -458,9 +451,8 @@ public class JTA2 {
                 List<Download> downloads = new ArrayList<>();
                 JSONArray jResult = response.getJSONArray("result");
 
-                for (int c = 0; c < jResult.length(); c++) {
+                for (int c = 0; c < jResult.length(); c++)
                     downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
-                }
 
                 handler.onDownloads(downloads);
             }
@@ -733,9 +725,8 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             JSONObject jOptions = new JSONObject();
-            for (Map.Entry<String, String> entry : options.entrySet()) {
+            for (Map.Entry<String, String> entry : options.entrySet())
                 jOptions.put(entry.getKey(), entry.getValue());
-            }
             params.put(jOptions);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -766,9 +757,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.changePosition");
             JSONArray params = Utils.readyParams(context);
-            params.put(gid)
-                    .put(pos)
-                    .put("POS_CUR");
+            params.put(gid).put(pos).put("POS_CUR");
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -799,9 +788,8 @@ public class JTA2 {
             request.put("method", "aria2.changeGlobalOption");
             JSONArray params = Utils.readyParams(context);
             JSONObject jOptions = new JSONObject();
-            for (Map.Entry<String, String> entry : options.entrySet()) {
+            for (Map.Entry<String, String> entry : options.entrySet())
                 jOptions.put(entry.getKey(), entry.getValue());
-            }
             params.put(jOptions);
             request.put("params", params);
         } catch (JSONException ex) {
@@ -831,8 +819,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getServers");
-            request.put("params", Utils.readyParams(context)
-                    .put(gid));
+            request.put("params", Utils.readyParams(context).put(gid));
         } catch (JSONException ex) {
             handler.onException(ex);
             return;
@@ -865,8 +852,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getPeers");
-            request.put("params", Utils.readyParams(context)
-                    .put(gid));
+            request.put("params", Utils.readyParams(context).put(gid));
         } catch (JSONException ex) {
             handler.onException(ex);
             return;
@@ -899,8 +885,7 @@ public class JTA2 {
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getFiles");
-            request.put("params", Utils.readyParams(context)
-                    .put(gid));
+            request.put("params", Utils.readyParams(context).put(gid));
         } catch (JSONException ex) {
             handler.onException(ex);
             return;

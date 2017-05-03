@@ -20,6 +20,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
@@ -243,7 +244,7 @@ public class UpdateUI implements Runnable {
 
                                 holder.btAnnounceList.removeAllViews();
                                 for (String tracker : download.bitTorrent.announceList) {
-                                    TextView _tracker = CommonUtils.fastTextView(context, tracker);
+                                    SuperTextView _tracker = new SuperTextView(context, tracker);
                                     _tracker.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                     _tracker.setPadding(50, 10, 0, 10);
                                     _tracker.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
@@ -261,11 +262,9 @@ public class UpdateUI implements Runnable {
                 @Override
                 public void onException(Exception exception) {
                     errorCounter++;
-                    if (errorCounter <= 2) {
+                    if (errorCounter <= 2)
                         CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
-                    } else {
-                        _shouldStop = true;
-                    }
+                    else _shouldStop = true;
                 }
             });
 

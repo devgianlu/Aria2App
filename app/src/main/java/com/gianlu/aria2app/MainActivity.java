@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +52,7 @@ import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
+import com.gianlu.commonutils.SuperTextView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.liulishuo.filedownloader.FileDownloader;
 
@@ -187,8 +187,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
                                 box.setPadding(padding, padding, padding, padding);
 
-                                //noinspection deprecation
-                                box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.version, version))));
+                                box.addView(new SuperTextView(MainActivity.this, R.string.version, version));
 
                                 String extendedList = "";
                                 boolean first = true;
@@ -201,14 +200,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                                     extendedList += _feature;
                                 }
 
-                                //noinspection deprecation
-                                box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.features, extendedList))));
+                                box.addView(new SuperTextView(MainActivity.this, R.string.features, extendedList));
 
                                 jta2.getSessionInfo(new JTA2.ISession() {
                                     @Override
                                     public void onSessionInfo(String sessionID) {
-                                        //noinspection deprecation
-                                        box.addView(CommonUtils.fastTextView(MainActivity.this, Html.fromHtml(getString(R.string.sessionId, sessionID))));
+                                        box.addView(new SuperTextView(MainActivity.this, R.string.sessionId, sessionID));
 
                                         pd.dismiss();
                                         CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)

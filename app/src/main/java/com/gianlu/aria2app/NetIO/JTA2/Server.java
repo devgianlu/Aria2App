@@ -10,7 +10,7 @@ public class Server extends Item {
     public String uri;
     public String currentUri;
     public int downloadSpeed;
-    private int membershipIndex;
+    public int membershipIndex;
 
     private Server() {
     }
@@ -33,14 +33,6 @@ public class Server extends Item {
         server.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
 
         return server;
-    }
-
-    public int getMembershipIndex() {
-        return membershipIndex;
-    }
-
-    public void setMembershipIndex(int membershipIndex) {
-        this.membershipIndex = membershipIndex;
     }
 
     @Override

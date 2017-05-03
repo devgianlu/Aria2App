@@ -31,7 +31,7 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             items.add(header);
 
             for (Server server : objs.get(index)) {
-                server.setMembershipIndex(index);
+                server.membershipIndex = index;
                 items.add(server);
             }
         }
@@ -62,7 +62,7 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             for (Server newServer : servers.get(index)) {
                 for (Item item : items) {
                     if (item.getItemType() == Item.SERVER
-                            && ((Server) item).getMembershipIndex() == index
+                            && ((Server) item).membershipIndex == index
                             && newServer.currentUri.equals(((Server) item).currentUri)) {
                         notifyItemChanged(items.indexOf(item), newServer);
                     }

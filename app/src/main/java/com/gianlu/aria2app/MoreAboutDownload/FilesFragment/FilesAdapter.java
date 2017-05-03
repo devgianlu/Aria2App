@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.Html;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.DirectDownload.DownloadSupervisor;
@@ -32,6 +30,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.SuperTextView;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
@@ -230,7 +229,6 @@ class FilesAdapter {
             this.file = file;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public void onClick(View view) {
             final LinearLayout layout = new LinearLayout(context);
@@ -238,10 +236,10 @@ class FilesAdapter {
             int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources().getDisplayMetrics());
             layout.setPadding(padding, padding, padding, 0);
 
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.index, file.file.index))));
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.path, file.file.path))));
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(file.file.length)))));
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength)))));
+            layout.addView(new SuperTextView(context, R.string.index, file.file.index));
+            layout.addView(new SuperTextView(context, R.string.path, file.file.path));
+            layout.addView(new SuperTextView(context, R.string.total_length, CommonUtils.dimensionFormatter(file.file.length)));
+            layout.addView(new SuperTextView(context, R.string.completed_length, CommonUtils.dimensionFormatter(file.file.completedLength)));
 
             CheckBox selected = new CheckBox(context);
             layout.addView(selected);
@@ -355,10 +353,10 @@ class FilesAdapter {
             urisLayout.setOrientation(LinearLayout.VERTICAL);
 
             if (file.file.uris.size() > 0) {
-                layout.addView(CommonUtils.fastTextView(context, context.getString(R.string.uris)));
+                layout.addView(new SuperTextView(context, R.string.uris));
 
                 for (Map.Entry<AFile.URI_STATUS, String> uri : file.file.uris.entrySet()) {
-                    TextView _uri = CommonUtils.fastTextView(context, Html.fromHtml(uri.getValue() + " (<b>" + uri.getKey() + "</b>)"));
+                    SuperTextView _uri = new SuperTextView(context, uri.getValue() + " (<b>" + uri.getKey() + "</b>)");
                     _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     _uri.setPadding(50, 10, 0, 10);
                     _uri.setBackground(ContextCompat.getDrawable(context, R.drawable.ripple_effect_dark));
@@ -413,7 +411,6 @@ class FilesAdapter {
             this.directory = directory;
         }
 
-        @SuppressWarnings("deprecation")
         @Override
         public void onClick(View view) {
             final LinearLayout layout = new LinearLayout(context);
@@ -421,15 +418,14 @@ class FilesAdapter {
             int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources().getDisplayMetrics());
             layout.setPadding(padding, padding, padding, 0);
 
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.indexes, extendIndexes(true, directory)))));
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.path, directory.incrementalPath))));
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(directory.getLength())))));
-            layout.addView(CommonUtils.fastTextView(context, Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(directory.getCompletedLength())))));
+            layout.addView(new SuperTextView(context, R.string.indexes, extendIndexes(true, directory)));
+            layout.addView(new SuperTextView(context, R.string.path, directory.incrementalPath));
+            layout.addView(new SuperTextView(context, R.string.total_length, CommonUtils.dimensionFormatter(directory.getLength())));
+            layout.addView(new SuperTextView(context, R.string.completed_length, CommonUtils.dimensionFormatter(directory.getCompletedLength())));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context)
                     .setView(layout)
                     .setTitle(directory.name);
-
 
             if (CurrentProfile.getCurrentProfile(context).directDownloadEnabled && UpdateUI.dir != null) {
                 builder.setNeutralButton(R.string.downloadDirectory, new DialogInterface.OnClickListener() {
@@ -453,7 +449,6 @@ class FilesAdapter {
                     }
                 });
             }
-
 
             CommonUtils.showDialog(context, builder);
         }

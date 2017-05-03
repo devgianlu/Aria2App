@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.Menu;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -29,6 +28,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.SuperTextView;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.IOException;
@@ -118,7 +118,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                 public void onItemClick(final SearchResult which) {
                                     CommonUtils.showDialog(SearchActivity.this, pd);
                                     SearchUtils.findMagnetLink(which, new SearchUtils.IMagnetLink() {
-                                        @SuppressWarnings("deprecation")
                                         @Override
                                         public void onMagnetLink(@Nullable final String magnet) {
                                             pd.dismiss();
@@ -128,9 +127,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                             layout.setPadding(padding, padding, padding, padding);
                                             layout.setOrientation(LinearLayout.VERTICAL);
 
-                                            layout.addView(CommonUtils.fastTextView(SearchActivity.this, Html.fromHtml(getString(R.string.size, which.size))));
-                                            layout.addView(CommonUtils.fastTextView(SearchActivity.this, Html.fromHtml(getString(R.string.uploader, which.uploader))));
-                                            layout.addView(CommonUtils.fastTextView(SearchActivity.this, Html.fromHtml(getString(R.string.uploaderType, which.uploaderType.toFormal(SearchActivity.this)))));
+                                            layout.addView(new SuperTextView(SearchActivity.this, R.string.size, which.size));
+                                            layout.addView(new SuperTextView(SearchActivity.this, R.string.uploader, which.uploader));
+                                            layout.addView(new SuperTextView(SearchActivity.this, R.string.uploaderType, which.uploaderType.toFormal(SearchActivity.this)));
 
                                             AlertDialog.Builder builder = new AlertDialog.Builder(SearchActivity.this);
                                             builder.setTitle(which.name)
