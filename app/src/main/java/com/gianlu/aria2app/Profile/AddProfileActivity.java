@@ -432,7 +432,8 @@ public class AddProfileActivity extends AppCompatActivity {
                 }
 
                 if (!holder.port.getText().toString().trim().isEmpty()) {
-                    if (0 > Integer.parseInt(holder.port.getText().toString()) && Integer.parseInt(holder.port.getText().toString()) < 65536) {
+                    int port = Integer.parseInt(holder.port.getText().toString());
+                    if (port < 0 || port > 65536) {
                         CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_PORT);
                         return;
                     }
@@ -543,8 +544,9 @@ public class AddProfileActivity extends AppCompatActivity {
         }
 
         if (!sViewHolder.port.getText().toString().trim().isEmpty()) {
-            if (0 > Integer.parseInt(sViewHolder.port.getText().toString()) && Integer.parseInt(sViewHolder.port.getText().toString()) < 65536) {
-                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_SERVER_PORT);
+            int port = Integer.parseInt(sViewHolder.port.getText().toString());
+            if (port < 0 || port > 65536) {
+                CommonUtils.UIToast(AddProfileActivity.this, Utils.ToastMessages.INVALID_SERVER_PORT);
                 return;
             }
         } else {
