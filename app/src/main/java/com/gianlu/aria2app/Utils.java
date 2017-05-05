@@ -34,6 +34,7 @@ import com.gianlu.aria2app.Options.OptionsAdapter;
 import com.gianlu.aria2app.Profile.DirectDownload;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.YAxis;
@@ -428,7 +429,7 @@ public class Utils {
             URI uri = new URI(base.getProtocol(), null, base.getHost(), base.getPort(), file.getRelativePath(downloadDir), null, null);
             url = uri.toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
-            CommonUtils.logMe(context, ex);
+            Logging.logMe(context, ex);
             return null;
         }
 

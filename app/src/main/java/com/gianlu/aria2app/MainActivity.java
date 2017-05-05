@@ -52,6 +52,7 @@ import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -89,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        CommonUtils.DEBUG = BuildConfig.DEBUG;
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     .apply();
         }
 
-        CommonUtils.logCleaner(this);
+        Logging.clearLogs(this);
         Utils.renameOldProfiles(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
@@ -458,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             try {
                 WebSocketing.enableEventManager(this);
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                CommonUtils.logMe(this, ex);
+                Logging.logMe(this, ex);
             }
         }
 

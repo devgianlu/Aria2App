@@ -10,6 +10,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.UncaughtExceptionHandler;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -40,7 +41,7 @@ class UpdateUI implements Runnable {
         try {
             jta2 = JTA2.newInstance(context);
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-            CommonUtils.logMe(context, ex);
+            Logging.logMe(context, ex);
         }
     }
 

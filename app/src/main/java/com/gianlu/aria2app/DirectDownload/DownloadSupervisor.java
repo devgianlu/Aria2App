@@ -15,6 +15,7 @@ import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.Profile.DirectDownload;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.FileDownloadLargeFileListener;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -118,8 +119,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
     protected void retry(BaseDownloadTask task, Throwable ex, int retryingTimes, long soFarBytes) {
         if (listener != null) {
             Context context = listener.onUpdateAdapter(downloads.size());
-            if (context != null)
-                CommonUtils.logMe(context, ex);
+            if (context != null) Logging.logMe(context, ex);
         }
     }
 
@@ -139,8 +139,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
     protected void error(BaseDownloadTask task, Throwable ex) {
         if (listener != null) {
             Context context = listener.onUpdateAdapter(downloads.size());
-            if (context != null)
-                CommonUtils.logMe(context, ex);
+            if (context != null) Logging.logMe(context, ex);
         }
     }
 

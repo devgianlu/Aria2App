@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import com.gianlu.aria2app.Profile.MultiModeProfileItem;
 import com.gianlu.aria2app.Profile.ProfileItem;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 
 import org.json.JSONException;
 
@@ -26,7 +26,7 @@ public class CurrentProfile {
                     else
                         profile = MultiModeProfileItem.fromName(context, lastProfile).getCurrentProfile(context);
                 } catch (JSONException | IOException ex) {
-                    CommonUtils.logMe(context, ex);
+                    Logging.logMe(context, ex);
                     profile = SingleModeProfileItem.defaultProfile();
                 }
             } else {
