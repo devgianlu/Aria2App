@@ -47,8 +47,7 @@ public class PeersPagerFragment extends CommonFragment {
         UpdateUI.stop(updateUI);
 
         final Activity activity = getActivity();
-        if (activity == null)
-            return;
+        if (activity == null) return;
 
         try {
             JTA2.newInstance(activity).getPeers(getArguments().getString("gid"), new JTA2.IPeers() {

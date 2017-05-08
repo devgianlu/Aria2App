@@ -38,9 +38,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
     }
 
     public static DownloadSupervisor getInstance() {
-        if (supervisor == null)
-            supervisor = new DownloadSupervisor();
-
+        if (supervisor == null) supervisor = new DownloadSupervisor();
         return supervisor;
     }
 
@@ -85,9 +83,8 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
     private static List<BaseDownloadTask> createTasks(Activity context, String gid, FileDownloadLargeFileListener listener, TreeDirectory parent) {
         List<BaseDownloadTask> list = new ArrayList<>();
 
-        for (TreeDirectory child : parent.children) {
+        for (TreeDirectory child : parent.children)
             list.addAll(createTasks(context, gid, listener, child));
-        }
 
         for (TreeFile file : parent.files) {
             BaseDownloadTask task = createTask(context, gid, file.file, listener);
@@ -105,14 +102,12 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
 
     public void attachListener(IListener listener) {
         this.listener = listener;
-
         listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
     protected void connected(BaseDownloadTask task, String etag, boolean isContinue, long soFarBytes, long totalBytes) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
@@ -125,14 +120,12 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
 
     @Override
     protected void started(BaseDownloadTask task) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
     protected void completed(BaseDownloadTask task) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
@@ -145,26 +138,22 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
 
     @Override
     protected void warn(BaseDownloadTask task) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
     protected void pending(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
     protected void progress(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     @Override
     protected void paused(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     public void start(Activity context, String gid, AFile file) {
@@ -174,8 +163,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             downloads.add(task);
         }
 
-        if (countListener != null)
-            countListener.onUpdateDownloadsCount(downloads.size());
+        if (countListener != null) countListener.onUpdateDownloadsCount(downloads.size());
     }
 
     public void start(Activity context, String gid, TreeDirectory parent) {
@@ -185,8 +173,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
             downloads.add(task);
         }
 
-        if (countListener != null)
-            countListener.onUpdateDownloadsCount(downloads.size());
+        if (countListener != null) countListener.onUpdateDownloadsCount(downloads.size());
     }
 
     public List<BaseDownloadTask> getDownloads() {
@@ -206,11 +193,8 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
         task.pause();
         downloads.remove(task);
 
-        if (countListener != null)
-            countListener.onUpdateDownloadsCount(downloads.size());
-
-        if (listener != null)
-            listener.onUpdateAdapter(downloads.size());
+        if (countListener != null) countListener.onUpdateDownloadsCount(downloads.size());
+        if (listener != null) listener.onUpdateAdapter(downloads.size());
     }
 
     public void pause(BaseDownloadTask task) {

@@ -42,7 +42,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             ThisApplication.sendAnalytics(MoreAboutDownloadActivity.this, new HitBuilders.EventBuilder()
                     .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                     .setAction(ThisApplication.ACTION_CHANGED_DOWNLOAD_OPTIONS)
-                        .build());
+                    .build());
 
             jta2.changeOption(gid, options, new JTA2.ISuccess() {
                 @Override

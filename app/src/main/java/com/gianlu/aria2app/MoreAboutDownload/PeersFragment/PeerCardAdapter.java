@@ -79,10 +79,8 @@ class PeerCardAdapter extends RecyclerView.Adapter<PeerCardAdapter.ViewHolder> {
     @SuppressWarnings("deprecation")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if (objs.isEmpty())
-            noDataCardView.setVisibility(View.VISIBLE);
-        else
-            noDataCardView.setVisibility(View.GONE);
+        if (objs.isEmpty()) noDataCardView.setVisibility(View.VISIBLE);
+        else noDataCardView.setVisibility(View.GONE);
 
         Peer peer = getItem(position);
 

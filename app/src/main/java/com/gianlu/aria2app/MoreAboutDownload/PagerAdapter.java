@@ -15,9 +15,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     }
 
     public void stopAllUpdater() {
-        for (CommonFragment fragment : fragments) {
-            fragment.stopUpdater();
-        }
+        for (CommonFragment fragment : fragments) fragment.stopUpdater();
     }
 
     @Override
@@ -34,6 +32,4 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         return getItem(position).getArguments().getString("title");
     }
-
-
 }

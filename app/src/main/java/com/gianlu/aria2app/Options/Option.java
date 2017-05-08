@@ -5,7 +5,6 @@ import java.util.Objects;
 public class Option {
     public final String longName;
     public final String value;
-
     public String newValue;
     public boolean useMe;
     boolean isQuick;

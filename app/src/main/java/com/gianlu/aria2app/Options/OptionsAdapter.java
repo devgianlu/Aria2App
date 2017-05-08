@@ -71,10 +71,9 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
     @Nullable
     private Option getRealItem(String name) {
-        for (Option option : originalObjs) {
+        for (Option option : originalObjs)
             if (Objects.equals(option.longName, name))
                 return option;
-        }
 
         return null;
     }
@@ -111,8 +110,6 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             @Override
             public void afterTextChanged(Editable editable) {
                 item.newValue = editable.toString();
-
-                System.out.println(item);
             }
         });
 
@@ -121,11 +118,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             @Override
             public void onClick(View view) {
                 CommonUtils.animateCollapsingArrowBellows(holder.expand, CommonUtils.isExpanded(holder.edit));
-
-                if (CommonUtils.isExpanded(holder.edit))
-                    CommonUtils.collapse(holder.edit);
-                else
-                    CommonUtils.expand(holder.edit);
+                if (CommonUtils.isExpanded(holder.edit)) CommonUtils.collapse(holder.edit);
+                else CommonUtils.expand(holder.edit);
             }
         });
 
@@ -226,19 +220,14 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             } else {
                 List<Option> filtered = new ArrayList<>();
 
-                for (Option option : originalObjs) {
-                    if (option.longName.toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                for (Option option : originalObjs)
+                    if (option.longName.toLowerCase().startsWith(constraint.toString().toLowerCase()))
                         filtered.add(option);
-                    }
-                }
 
-                if (constraint.length() >= 1) {
-                    for (Option option : originalObjs) {
-                        if (!filtered.contains(option) && option.longName.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                if (constraint.length() >= 1)
+                    for (Option option : originalObjs)
+                        if (!filtered.contains(option) && option.longName.toLowerCase().contains(constraint.toString().toLowerCase()))
                             filtered.add(option);
-                        }
-                    }
-                }
 
                 results.values = filtered;
                 results.count = filtered.size();

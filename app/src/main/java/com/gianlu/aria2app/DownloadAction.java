@@ -201,6 +201,7 @@ public class DownloadAction {
 
     interface IPause {
         void onPaused(String gid);
+
         void onException(Exception ex);
     }
 

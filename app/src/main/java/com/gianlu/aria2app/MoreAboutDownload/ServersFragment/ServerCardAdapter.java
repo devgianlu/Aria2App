@@ -100,11 +100,8 @@ class ServerCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder cHolder, int position) {
-        if (items.isEmpty())
-            noDataCardView.setVisibility(View.VISIBLE);
-        else
-            noDataCardView.setVisibility(View.GONE);
-
+        if (items.isEmpty()) noDataCardView.setVisibility(View.VISIBLE);
+        else noDataCardView.setVisibility(View.GONE);
 
         if (getItemViewType(position) == Item.HEADER) {
             HeaderItem header = (HeaderItem) getItem(position);

@@ -44,15 +44,16 @@ public class UpdateUI implements Runnable {
     public static void stop(UpdateUI updateUI) {
         if (updateUI != null) updateUI.stop();
     }
+
     public static void stop(UpdateUI updateUI, IThread handler) {
-        if (updateUI == null)
-            handler.stopped();
-        else
-            updateUI.stop(handler);
+        if (updateUI == null) handler.stopped();
+        else updateUI.stop(handler);
     }
+
     private void stop() {
         _shouldStop = true;
     }
+
     private void stop(IThread handler) {
         this.handler = handler;
         _shouldStop = true;

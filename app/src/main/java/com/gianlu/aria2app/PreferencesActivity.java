@@ -51,8 +51,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            if (!super.onMenuItemSelected(featureId, item))
-                NavUtils.navigateUpFromSameTask(this);
+            if (!super.onMenuItemSelected(featureId, item)) NavUtils.navigateUpFromSameTask(this);
             return true;
         }
         return super.onMenuItemSelected(featureId, item);

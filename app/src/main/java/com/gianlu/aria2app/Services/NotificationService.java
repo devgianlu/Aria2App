@@ -48,11 +48,8 @@ public class NotificationService extends IntentService {
         ArrayList<SingleModeProfileItem> profiles = new ArrayList<>();
         for (ProfileItem profile : ProfileItem.getProfiles(context)) {
             if (!profile.notificationsEnabled) continue;
-
-            if (profile.singleMode)
-                profiles.add((SingleModeProfileItem) profile);
-            else
-                profiles.add(((MultiModeProfileItem) profile).getCurrentProfile(context));
+            if (profile.singleMode) profiles.add((SingleModeProfileItem) profile);
+            else profiles.add(((MultiModeProfileItem) profile).getCurrentProfile(context));
         }
 
         return new Intent(context, NotificationService.class)
@@ -65,10 +62,7 @@ public class NotificationService extends IntentService {
 
         boolean first = true;
         for (SingleModeProfileItem profile : profiles) {
-            if (!first) {
-                expanded += ", ";
-            }
-
+            if (!first) expanded += ", ";
             expanded += profile.globalProfileName;
             first = false;
         }
@@ -98,8 +92,7 @@ public class NotificationService extends IntentService {
                     .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT)).build());
         }
 
-        if (intent != null)
-            onHandleIntent(intent);
+        if (intent != null) onHandleIntent(intent);
         return START_STICKY;
     }
 
@@ -112,14 +105,11 @@ public class NotificationService extends IntentService {
         }
 
         for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
-            if (profile.connectionMethod == SingleModeProfileItem.ConnectionMethod.HTTP)
-                continue;
+            if (profile.connectionMethod == SingleModeProfileItem.ConnectionMethod.HTTP) continue;
 
             String scheme;
-            if (profile.serverSSL)
-                scheme = "wss://";
-            else
-                scheme = "ws://";
+            if (profile.serverSSL) scheme = "wss://";
+            else scheme = "ws://";
 
             WebSocket webSocket;
             try {
@@ -132,8 +122,7 @@ public class NotificationService extends IntentService {
                 return;
             }
 
-            webSocket.addListener(new NotificationHandler(profile))
-                    .connectAsynchronously();
+            webSocket.addListener(new NotificationHandler(profile)).connectAsynchronously();
         }
     }
 

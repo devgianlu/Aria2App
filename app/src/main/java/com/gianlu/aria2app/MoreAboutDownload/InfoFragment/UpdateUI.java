@@ -74,10 +74,8 @@ public class UpdateUI implements Runnable {
     }
 
     public static void stop(UpdateUI updateUI, IThread handler) {
-        if (updateUI == null)
-            handler.stopped();
-        else
-            updateUI.stop(handler);
+        if (updateUI == null) handler.stopped();
+        else updateUI.stop(handler);
     }
 
     static void setBitfieldEnabled(boolean enabled) {

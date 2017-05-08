@@ -76,11 +76,8 @@ public class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.View
                 break;
             case FileDownloadStatus.error:
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") String message = item.getErrorCause().getMessage();
-
-                if (message == null)
-                    holder.status.setText(R.string.error);
-                else
-                    holder.status.setText(context.getString(R.string.error_details, message));
+                if (message == null) holder.status.setText(R.string.error);
+                else holder.status.setText(context.getString(R.string.error_details, message));
                 break;
         }
 

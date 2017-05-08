@@ -9,7 +9,6 @@ class HeaderViewHolder extends RecyclerView.ViewHolder {
 
     HeaderViewHolder(View itemView) {
         super(itemView);
-
         title = (TextView) itemView;
     }
 }
