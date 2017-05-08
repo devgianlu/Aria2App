@@ -2,6 +2,7 @@ package com.gianlu.aria2app.MoreAboutDownload.FilesFragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -244,78 +245,6 @@ class FilesAdapter {
                 selected.setText(R.string.selectFile);
             }
 
-            selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
-                    final JTA2 jta2;
-                    try {
-                        jta2 = JTA2.newInstance(context);
-                    } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                        CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
-                        return;
-                    }
-
-                    final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
-                    CommonUtils.showDialog(context, pd);
-
-                    jta2.getOption(gid, new JTA2.IOption() {
-                        @Override
-                        public void onOptions(Map<String, String> options) {
-                            String selected = options.get("select-file");
-                            if (selected == null) selected = "";
-
-                            List<Integer> selected_files = new ArrayList<>();
-                            for (String i : selected.split(",")) {
-                                try {
-                                    selected_files.add(Integer.parseInt(i));
-                                } catch (Exception ignored) {
-                                }
-                            }
-
-                            if (selected_files.size() == 0)
-                                for (int i = 1; i <= UpdateUI.fileNum; i++)
-                                    selected_files.add(i);
-
-                            if (isChecked) {
-                                if (!selected_files.contains(file.file.index))
-                                    selected_files.add(file.file.index);
-                            } else {
-                                selected_files.remove(file.file.index);
-                            }
-
-                            Map<String, String> newOptions = new HashMap<>();
-                            StringBuilder newSelected = new StringBuilder();
-                            boolean firstItem = true;
-                            for (Integer i : selected_files) {
-                                if (!firstItem) newSelected.append(",");
-                                newSelected.append(String.valueOf(i));
-                                firstItem = false;
-                            }
-                            newOptions.put("select-file", newSelected.toString());
-
-                            jta2.changeOption(gid, newOptions, new JTA2.ISuccess() {
-                                @Override
-                                public void onSuccess() {
-                                    pd.dismiss();
-                                    CommonUtils.UIToast(context, Utils.ToastMessages.CHANGED_SELECTION);
-                                }
-
-                                @Override
-                                public void onException(Exception exception) {
-                                    pd.dismiss();
-                                    CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, exception);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onException(Exception exception) {
-                            pd.dismiss();
-                            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
-                        }
-                    });
-                }
-            });
 
             View.OnClickListener uriListener = new View.OnClickListener() {
                 @Override
@@ -378,7 +307,83 @@ class FilesAdapter {
                 });
             }
 
-            CommonUtils.showDialog(context, builder);
+            final Dialog dialog = builder.create();
+            selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+                    dialog.dismiss();
+
+                    final JTA2 jta2;
+                    try {
+                        jta2 = JTA2.newInstance(context);
+                    } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                        CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                        return;
+                    }
+
+                    final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
+                    CommonUtils.showDialog(context, pd);
+
+                    jta2.getOption(gid, new JTA2.IOption() {
+                        @Override
+                        public void onOptions(Map<String, String> options) {
+                            String selected = options.get("select-file");
+                            if (selected == null) selected = "";
+
+                            List<Integer> selected_files = new ArrayList<>();
+                            for (String i : selected.split(",")) {
+                                try {
+                                    selected_files.add(Integer.parseInt(i));
+                                } catch (Exception ignored) {
+                                }
+                            }
+
+                            if (selected_files.size() == 0)
+                                for (int i = 1; i <= UpdateUI.fileNum; i++)
+                                    selected_files.add(i);
+
+                            if (isChecked) {
+                                if (!selected_files.contains(file.file.index))
+                                    selected_files.add(file.file.index);
+                            } else {
+                                selected_files.remove(file.file.index);
+                            }
+
+                            Map<String, String> newOptions = new HashMap<>();
+                            StringBuilder newSelected = new StringBuilder();
+                            boolean firstItem = true;
+                            for (Integer i : selected_files) {
+                                if (!firstItem) newSelected.append(",");
+                                newSelected.append(String.valueOf(i));
+                                firstItem = false;
+                            }
+                            newOptions.put("select-file", newSelected.toString());
+
+                            jta2.changeOption(gid, newOptions, new JTA2.ISuccess() {
+                                @Override
+                                public void onSuccess() {
+                                    pd.dismiss();
+                                    CommonUtils.UIToast(context, Utils.ToastMessages.CHANGED_SELECTION); // TODO: Explicit
+                                }
+
+                                @Override
+                                public void onException(Exception exception) {
+                                    pd.dismiss();
+                                    CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, exception);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onException(Exception exception) {
+                            pd.dismiss();
+                            CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
+                        }
+                    });
+                }
+            });
+
+            CommonUtils.showDialog(context, dialog);
         }
     }
 

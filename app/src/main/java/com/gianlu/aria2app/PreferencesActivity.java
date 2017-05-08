@@ -44,8 +44,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         setTitle(R.string.menu_preferences);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
