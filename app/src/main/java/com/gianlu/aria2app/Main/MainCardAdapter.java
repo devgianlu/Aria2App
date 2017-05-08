@@ -18,9 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.DonutProgress;
-import com.gianlu.aria2app.DownloadAction;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -337,22 +337,22 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
                                 case R.id.downloadCardViewMenu_remove:
-                                    handler.onMenuItemSelected(item, DownloadAction.ACTION.REMOVE);
+                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
                                     break;
                                 case R.id.downloadCardViewMenu_restart:
-                                    handler.onMenuItemSelected(item, DownloadAction.ACTION.RESTART);
+                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
                                     break;
                                 case R.id.downloadCardViewMenu_resume:
-                                    handler.onMenuItemSelected(item, DownloadAction.ACTION.RESUME);
+                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
                                     break;
                                 case R.id.downloadCardViewMenu_pause:
-                                    handler.onMenuItemSelected(item, DownloadAction.ACTION.PAUSE);
+                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
                                     break;
                                 case R.id.downloadCardViewMenu_moveDown:
-                                    handler.onMenuItemSelected(item, DownloadAction.ACTION.MOVE_DOWN);
+                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
                                     break;
                                 case R.id.downloadCardViewMenu_moveUp:
-                                    handler.onMenuItemSelected(item, DownloadAction.ACTION.MOVE_UP);
+                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
                                     break;
                             }
                             return true;
@@ -406,7 +406,7 @@ public class MainCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         void onItemCountUpdated(int count);
 
-        void onMenuItemSelected(Download download, DownloadAction.ACTION action);
+        void onMenuItemSelected(Download download, JTA2.DownloadActions action);
     }
 
     private class StatusComparator implements Comparator<Download> {

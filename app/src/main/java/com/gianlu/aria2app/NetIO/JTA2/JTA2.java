@@ -2,6 +2,8 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.CurrentProfile;
@@ -9,6 +11,7 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IReceived;
 import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.Prefs;
 import com.gianlu.aria2app.Profile.SingleModeProfileItem;
 import com.gianlu.aria2app.Utils;
 
@@ -22,6 +25,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,16 +34,19 @@ import java.util.Objects;
 
 public class JTA2 {
     private final AbstractClient client;
-    private final Activity context;
+    private final Context context;
+    private final boolean forceAction;
 
-    private JTA2(Activity context, WebSocketing client) {
+    private JTA2(Context context, WebSocketing client) {
         this.context = context;
         this.client = client;
+        this.forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Prefs.A2_FORCE_ACTION, true);
     }
 
-    private JTA2(Activity context, HTTPing client) {
+    private JTA2(Context context, HTTPing client) {
         this.context = context;
         this.client = client;
+        this.forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Prefs.A2_FORCE_ACTION, true);
     }
 
     public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
@@ -48,6 +55,167 @@ public class JTA2 {
         } else {
             return new JTA2(context, HTTPing.newInstance(context));
         }
+    }
+
+    public void pause(final String gid, final IPause handler) {
+        pause(gid, new JTA2.IGID() {
+            @Override
+            public void onGID(String gid) {
+                handler.onPaused(gid);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                if (forceAction) forcePause(gid, handler);
+                else handler.onException(ex);
+            }
+        });
+    }
+
+    private void forcePause(String gid, final IPause handler) {
+        forcePause(gid, new JTA2.IGID() {
+            @Override
+            public void onGID(String gid) {
+                handler.onPaused(gid);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public void moveUp(final String gid, final IMove handler) {
+        changePosition(gid, -1, new JTA2.ISuccess() {
+            @Override
+            public void onSuccess() {
+                handler.onMoved(gid);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public void moveDown(final String gid, final IMove handler) {
+        changePosition(gid, 1, new JTA2.ISuccess() {
+            @Override
+            public void onSuccess() {
+                handler.onMoved(gid);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public void unpause(String gid, final IUnpause handler) {
+        unpause(gid, new JTA2.IGID() {
+            @Override
+            public void onGID(String gid) {
+                handler.onUnpaused(gid);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public void remove(final String gid, Download.STATUS status, final IRemove handler) {
+        if (status == Download.STATUS.COMPLETE || status == Download.STATUS.ERROR || status == Download.STATUS.REMOVED) {
+            removeDownloadResult(gid, new JTA2.ISuccess() {
+                @Override
+                public void onSuccess() {
+                    handler.onRemovedResult(gid);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    handler.onException(false, ex);
+                }
+            });
+        } else {
+            remove(gid, new JTA2.IGID() {
+                @Override
+                public void onGID(String gid) {
+                    handler.onRemoved(gid);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    if (forceAction) forceRemove(gid, handler);
+                    else handler.onException(true, ex);
+                }
+            });
+        }
+
+    }
+
+    private void forceRemove(String gid, final IRemove handler) {
+        forceRemove(gid, new JTA2.IGID() {
+            @Override
+            public void onGID(String gid) {
+                handler.onRemoved(gid);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(true, ex);
+            }
+        });
+    }
+
+    public void restart(final String gid, final IRestart handler) {
+        tellStatus(gid, new JTA2.IDownload() {
+            @Override
+            public void onDownload(final Download download) {
+                getOption(gid, new JTA2.IOption() {
+                    @Override
+                    public void onOptions(Map<String, String> options) {
+                        String url = download.files.get(0).uris.get(AFile.URI_STATUS.USED);
+
+                        addUri(Collections.singletonList(url), null, options, new JTA2.IGID() {
+                            @Override
+                            public void onGID(final String newGid) {
+                                removeDownloadResult(gid, new JTA2.ISuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        handler.onRestarted();
+                                    }
+
+                                    @Override
+                                    public void onException(Exception ex) {
+                                        handler.onRemoveResultException(ex);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                handler.onException(ex);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        handler.onGatheringInformationException(ex);
+                    }
+                });
+            }
+
+            @Override
+            public void onException(final Exception ex) {
+                handler.onGatheringInformationException(ex);
+            }
+        });
     }
 
     // Caster
@@ -928,10 +1096,55 @@ public class JTA2 {
         });
     }
 
+    public enum DownloadActions {
+        PAUSE,
+        MOVE_UP,
+        MOVE_DOWN,
+        REMOVE,
+        RESTART,
+        RESUME
+    }
+
     public enum AuthMethod {
         NONE,
         HTTP,
         TOKEN
+    }
+
+    public interface IPause {
+        void onPaused(String gid);
+
+        void onException(Exception ex);
+    }
+
+    public interface IMove {
+        void onMoved(String gid);
+
+        void onException(Exception ex);
+    }
+
+    public interface IUnpause {
+        void onUnpaused(String gid);
+
+        void onException(Exception ex);
+    }
+
+    public interface IRemove {
+        void onRemoved(String gid);
+
+        void onRemovedResult(String gid);
+
+        void onException(boolean b, Exception ex);
+    }
+
+    public interface IRestart {
+        void onRestarted();
+
+        void onException(Exception ex);
+
+        void onRemoveResultException(Exception ex);
+
+        void onGatheringInformationException(Exception ex);
     }
 
     public interface IDownload {

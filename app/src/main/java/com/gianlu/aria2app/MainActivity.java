@@ -73,16 +73,81 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading, DrawerManager.ISetup {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, LoadDownloads.ILoading, DrawerManager.ISetup, Utils.IOptionsDialog {
     private static boolean versionChecked = false;
-    private RecyclerView mainRecyclerView;
     private DrawerManager drawerManager;
     private FloatingActionsMenu fabMenu;
     private UpdateUI updateUI;
-    private SwipeRefreshLayout swipeLayout;
+    private SwipeRefreshLayout swipeRefresh;
     private LoadDownloads loadDownloads;
     private MainCardAdapter adapter;
     private Menu sortingSubMenu;
+    private RecyclerView list;
+
+    private void showAboutDialog() {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.newInstance(MainActivity.this);
+        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+            return;
+        }
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+        CommonUtils.showDialog(MainActivity.this, pd);
+        jta2.getVersion(new JTA2.IVersion() {
+            @Override
+            public void onVersion(List<String> rawFeatures, String version) {
+                final LinearLayout layout = new LinearLayout(MainActivity.this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
+                layout.setPadding(padding, padding, padding, padding);
+                layout.addView(new SuperTextView(MainActivity.this, R.string.version, version));
+                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(rawFeatures, ",")));
+
+                jta2.getSessionInfo(new JTA2.ISession() {
+                    @Override
+                    public void onSessionInfo(String sessionID) {
+                        layout.addView(new SuperTextView(MainActivity.this, R.string.sessionId, sessionID));
+                        pd.dismiss();
+
+                        CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                                .setTitle(R.string.about_aria2)
+                                .setView(layout)
+                                .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        jta2.saveSession(new JTA2.ISuccess() {
+                                            @Override
+                                            public void onSuccess() {
+                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
+                                            }
+
+                                            @Override
+                                            public void onException(Exception exception) {
+                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_SAVE_SESSION, exception);
+                                            }
+                                        });
+                                    }
+                                })
+                                .setPositiveButton(android.R.string.ok, null));
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                        pd.dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                pd.dismiss();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +158,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (sharedPreferences.getString("dd_downloadPath", null) == null) {
+        if (sharedPreferences.getString(Prefs.DD_DOWNLOAD_PATH, null) == null) {
             sharedPreferences.edit()
-                    .putString("dd_downloadPath", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())
+                    .putString(Prefs.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())
                     .apply();
         }
 
@@ -120,35 +185,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         drawerManager.setDrawerListener(new DrawerManager.IDrawerListener() {
             @Override
             public boolean onMenuItemSelected(BaseDrawerItem which) {
-                Utils.IOptionsDialog handler = new Utils.IOptionsDialog() {
-                    @Override
-                    public void onApply(JTA2 jta2, Map<String, String> options) {
-                        if (options.entrySet().size() == 0) return;
-
-                        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                        CommonUtils.showDialog(MainActivity.this, pd);
-
-                        ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
-                                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                                .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
-                                .build());
-
-                        jta2.changeGlobalOption(options, new JTA2.ISuccess() {
-                            @Override
-                            public void onSuccess() {
-                                pd.dismiss();
-                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
-                            }
-
-                            @Override
-                            public void onException(Exception exception) {
-                                pd.dismiss();
-                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
-                            }
-                        });
-                    }
-                };
-
                 switch (which.id) {
                     case DrawerConst.HOME:
                         reloadPage();
@@ -157,10 +193,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
                         return false;
                     case DrawerConst.QUICK_OPTIONS:
-                        Utils.showOptionsDialog(MainActivity.this, null, true, true, handler);
+                        Utils.showOptionsDialog(MainActivity.this, null, true, true, MainActivity.this);
                         return true;
                     case DrawerConst.GLOBAL_OPTIONS:
-                        Utils.showOptionsDialog(MainActivity.this, null, true, false, handler);
+                        Utils.showOptionsDialog(MainActivity.this, null, true, false, MainActivity.this);
                         return true;
                     case DrawerConst.PREFERENCES:
                         startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
@@ -169,84 +205,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name));
                         return true;
                     case DrawerConst.ABOUT_ARIA2:
-                        final JTA2 jta2;
-                        try {
-                            jta2 = JTA2.newInstance(MainActivity.this);
-                        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
-                            return true;
-                        }
-
-                        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-                        CommonUtils.showDialog(MainActivity.this, pd);
-                        jta2.getVersion(new JTA2.IVersion() {
-                            @Override
-                            public void onVersion(List<String> rawFeatures, String version) {
-                                final LinearLayout box = new LinearLayout(MainActivity.this);
-                                box.setOrientation(LinearLayout.VERTICAL);
-                                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-                                box.setPadding(padding, padding, padding, padding);
-
-                                box.addView(new SuperTextView(MainActivity.this, R.string.version, version));
-
-                                String extendedList = "";
-                                boolean first = true;
-                                for (String _feature : rawFeatures) {
-                                    if (!first)
-                                        extendedList += ", ";
-                                    else
-                                        first = false;
-
-                                    extendedList += _feature;
-                                }
-
-                                box.addView(new SuperTextView(MainActivity.this, R.string.features, extendedList));
-
-                                jta2.getSessionInfo(new JTA2.ISession() {
-                                    @Override
-                                    public void onSessionInfo(String sessionID) {
-                                        box.addView(new SuperTextView(MainActivity.this, R.string.sessionId, sessionID));
-
-                                        pd.dismiss();
-                                        CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setTitle(R.string.about_aria2)
-                                                .setView(box)
-                                                .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                        jta2.saveSession(new JTA2.ISuccess() {
-                                                            @Override
-                                                            public void onSuccess() {
-                                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
-                                                            }
-
-                                                            @Override
-                                                            public void onException(Exception exception) {
-                                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_SAVE_SESSION, exception);
-                                                            }
-                                                        });
-                                                    }
-                                                })
-                                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                                    }
-                                                }));
-                                    }
-
-                                    @Override
-                                    public void onException(Exception exception) {
-                                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
-                                        pd.dismiss();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onException(Exception exception) {
-                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
-                                pd.dismiss();
-                            }
-                        });
+                        showAboutDialog();
                         return true;
                     default:
                         return true;
@@ -265,7 +224,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 }
 
                 if (profile.status != ProfileItem.STATUS.ONLINE) {
-                    CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this).setMessage(R.string.serverOffline)
+                    CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                            .setMessage(R.string.serverOffline)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -313,14 +273,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
         });
 
-        mainRecyclerView = (RecyclerView) findViewById(R.id.main_recyclerView);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        mainRecyclerView.setLayoutManager(llm);
+        list = (RecyclerView) findViewById(R.id.main_recyclerView);
+        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipeLayout);
-        swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.main_swipeLayout);
+        swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 reloadPage();
@@ -411,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, ex, new Runnable() {
                         @Override
                         public void run() {
-                            swipeLayout.setRefreshing(false);
+                            swipeRefresh.setRefreshing(false);
                             drawerManager.updateBadge(DrawerConst.HOME, -1);
                         }
                     });
@@ -447,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_DISCONNECTED, new Runnable() {
                         @Override
                         public void run() {
-                            swipeLayout.setRefreshing(false);
+                            swipeRefresh.setRefreshing(false);
                             drawerManager.openProfiles(true);
                             drawerManager.updateBadge(DrawerConst.HOME, -1);
                         }
@@ -485,11 +443,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             new Thread(loadDownloads).start();
         }
 
-        if (sharedPreferences.getBoolean("a2_enableNotifications", true)) {
+        if (sharedPreferences.getBoolean("a2_enableNotifications", true))
             startService(NotificationService.createStartIntent(this));
-        } else {
-            stopService(new Intent(this, NotificationService.class).setAction("STOP"));
-        }
+        else stopService(new Intent(this, NotificationService.class).setAction("STOP"));
 
         FileDownloader.getImpl().bindService(new Runnable() {
             @Override
@@ -502,8 +458,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (drawerManager != null)
-            drawerManager.onTogglerConfigurationChanged(newConfig);
+        if (drawerManager != null) drawerManager.onTogglerConfigurationChanged(newConfig);
     }
 
     @Override
@@ -566,16 +521,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onBackPressed() {
-        if (fabMenu == null) {
-            super.onBackPressed();
-            return;
-        }
-
-        if (fabMenu.isExpanded()) {
-            fabMenu.collapse();
-        } else {
-            super.onBackPressed();
-        }
+        if (fabMenu != null && fabMenu.isExpanded()) fabMenu.collapse();
+        else super.onBackPressed();
     }
 
     @Override
@@ -586,70 +533,40 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 break;
             // Filters
             case R.id.a2menu_active:
-                if (adapter == null)
-                    break;
-
+                if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-
-                if (item.isChecked())
-                    adapter.removeFilter(Download.STATUS.ACTIVE);
-                else
-                    adapter.addFilter(Download.STATUS.ACTIVE);
+                if (item.isChecked()) adapter.removeFilter(Download.STATUS.ACTIVE);
+                else adapter.addFilter(Download.STATUS.ACTIVE);
                 break;
             case R.id.a2menu_paused:
-                if (adapter == null)
-                    break;
-
+                if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-
-                if (item.isChecked())
-                    adapter.removeFilter(Download.STATUS.PAUSED);
-                else
-                    adapter.addFilter(Download.STATUS.PAUSED);
+                if (item.isChecked()) adapter.removeFilter(Download.STATUS.PAUSED);
+                else adapter.addFilter(Download.STATUS.PAUSED);
                 break;
             case R.id.a2menu_error:
-                if (adapter == null)
-                    break;
-
+                if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-
-                if (item.isChecked())
-                    adapter.removeFilter(Download.STATUS.ERROR);
-                else
-                    adapter.addFilter(Download.STATUS.ERROR);
+                if (item.isChecked()) adapter.removeFilter(Download.STATUS.ERROR);
+                else adapter.addFilter(Download.STATUS.ERROR);
                 break;
             case R.id.a2menu_waiting:
-                if (adapter == null)
-                    break;
-
+                if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-
-                if (item.isChecked())
-                    adapter.removeFilter(Download.STATUS.WAITING);
-                else
-                    adapter.addFilter(Download.STATUS.WAITING);
+                if (item.isChecked()) adapter.removeFilter(Download.STATUS.WAITING);
+                else adapter.addFilter(Download.STATUS.WAITING);
                 break;
             case R.id.a2menu_complete:
-                if (adapter == null)
-                    break;
-
+                if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-
-                if (item.isChecked())
-                    adapter.removeFilter(Download.STATUS.COMPLETE);
-                else
-                    adapter.addFilter(Download.STATUS.COMPLETE);
+                if (item.isChecked()) adapter.removeFilter(Download.STATUS.COMPLETE);
+                else adapter.addFilter(Download.STATUS.COMPLETE);
                 break;
             case R.id.a2menu_removed:
-                if (adapter == null)
-                    break;
-
+                if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-
-                if (item.isChecked())
-                    adapter.removeFilter(Download.STATUS.REMOVED);
-                else
-                    adapter.addFilter(Download.STATUS.REMOVED);
+                if (item.isChecked()) adapter.removeFilter(Download.STATUS.REMOVED);
+                else adapter.addFilter(Download.STATUS.REMOVED);
                 break;
             // Sorting
             default:
@@ -711,23 +628,24 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                swipeLayout.setRefreshing(true);
+                swipeRefresh.setRefreshing(true);
             }
         });
     }
 
     @Override
-    public void onLoaded(JTA2 jta2, final List<Download> downloads) {
-        adapter = new MainCardAdapter(MainActivity.this, downloads, PreferenceManager.getDefaultSharedPreferences(this).getBoolean("a2_summaryCard", true), new MainCardAdapter.IActions() {
+    public void onLoaded(final JTA2 jta2, final List<Download> downloads) {
+        adapter = new MainCardAdapter(MainActivity.this, downloads, PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Prefs.A2_SHOW_SUMMARY, true), new MainCardAdapter.IActions() {
             @Override
             public void onMoreClick(Download item) {
-                Intent launchActivity = new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
+                if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
+                    return;
+
+                startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
                         .putExtra("gid", item.gid)
                         .putExtra("name", item.getName())
                         .putExtra("isTorrent", item.isBitTorrent)
-                        .putExtra("status", item.status.name());
-                if (!item.status.equals(Download.STATUS.UNKNOWN) && !item.status.equals(Download.STATUS.ERROR))
-                    MainActivity.this.startActivity(launchActivity);
+                        .putExtra("status", item.status.name()));
             }
 
             @Override
@@ -737,10 +655,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     public void run() {
                         if (count > 0) {
                             findViewById(R.id.main_noItems).setVisibility(View.GONE);
-                            mainRecyclerView.setVisibility(View.VISIBLE);
+                            list.setVisibility(View.VISIBLE);
                         } else {
                             findViewById(R.id.main_noItems).setVisibility(View.VISIBLE);
-                            mainRecyclerView.setVisibility(View.GONE);
+                            list.setVisibility(View.GONE);
                         }
 
                         if (drawerManager != null)
@@ -750,16 +668,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
 
             @Override
-            public void onMenuItemSelected(Download item, DownloadAction.ACTION action) {
-                DownloadAction downloadAction;
-                try {
-                    downloadAction = new DownloadAction(MainActivity.this);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                    CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
-                    return;
-                }
-
-                DownloadAction.IMove iMove = new DownloadAction.IMove() {
+            public void onMenuItemSelected(Download item, JTA2.DownloadActions action) {
+                JTA2.IMove iMove = new JTA2.IMove() {
                     @Override
                     public void onMoved(String gid) {
                         CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.MOVED, gid);
@@ -773,7 +683,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
                 switch (action) {
                     case PAUSE:
-                        downloadAction.pause(MainActivity.this, item.gid, new DownloadAction.IPause() {
+                        jta2.pause(item.gid, new JTA2.IPause() {
                             @Override
                             public void onPaused(String gid) {
                                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.PAUSED, gid);
@@ -786,7 +696,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         });
                         break;
                     case REMOVE:
-                        downloadAction.remove(MainActivity.this, item.gid, item.status, new DownloadAction.IRemove() {
+                        jta2.remove(item.gid, item.status, new JTA2.IRemove() {
                             @Override
                             public void onRemoved(String gid) {
                                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.REMOVED, gid);
@@ -812,7 +722,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         });
                         break;
                     case RESTART:
-                        downloadAction.restart(item.gid, new DownloadAction.IRestart() {
+                        jta2.restart(item.gid, new JTA2.IRestart() {
                             @Override
                             public void onRestarted() {
                                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESTARTED);
@@ -835,7 +745,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         });
                         break;
                     case RESUME:
-                        downloadAction.unpause(item.gid, new DownloadAction.IUnpause() {
+                        jta2.unpause(item.gid, new JTA2.IUnpause() {
                             @Override
                             public void onUnpaused(String gid) {
                                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.RESUMED, gid);
@@ -848,10 +758,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         });
                         break;
                     case MOVE_DOWN:
-                        downloadAction.moveDown(item.gid, iMove);
+                        jta2.moveDown(item.gid, iMove);
                         break;
                     case MOVE_UP:
-                        downloadAction.moveUp(item.gid, iMove);
+                        jta2.moveUp(item.gid, iMove);
                         break;
                 }
             }
@@ -860,16 +770,16 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mainRecyclerView.setAdapter(adapter);
+                list.setAdapter(adapter);
                 drawerManager.updateBadge(DrawerConst.HOME, downloads.size());
 
-                updateUI = new UpdateUI(MainActivity.this, (MainCardAdapter) mainRecyclerView.getAdapter());
+                updateUI = new UpdateUI(MainActivity.this, adapter);
                 new Thread(updateUI).start();
 
-                swipeLayout.setRefreshing(false);
+                swipeRefresh.setRefreshing(false);
 
                 if (getIntent().getBooleanExtra("fromNotification", false)) {
-                    Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                    Download item = adapter.getItem(getIntent().getStringExtra("gid"));
                     if (item == null || item.status == Download.STATUS.UNKNOWN) return;
 
                     startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
@@ -878,7 +788,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                             .putExtra("status", item.status.name())
                             .putExtra("name", item.getName()));
                 } else if (getIntent().getBooleanExtra("fromDirectDownload", false)) {
-                    Download item = ((MainCardAdapter) mainRecyclerView.getAdapter()).getItem(getIntent().getStringExtra("gid"));
+                    Download item = adapter.getItem(getIntent().getStringExtra("gid"));
                     if (item == null || item.status == Download.STATUS.UNKNOWN) return;
 
                     startActivity(new Intent(MainActivity.this, MoreAboutDownloadActivity.class)
@@ -949,7 +859,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex, new Runnable() {
             @Override
             public void run() {
-                swipeLayout.setRefreshing(false);
+                swipeRefresh.setRefreshing(false);
                 drawerManager.updateBadge(DrawerConst.HOME, -1);
             }
         });
@@ -1004,5 +914,32 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public int getColorPrimaryShadow() {
         return R.color.colorPrimary_shadow;
+    }
+
+    @Override
+    public void onApply(JTA2 jta2, Map<String, String> options) {
+        if (options.entrySet().size() == 0) return;
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
+        CommonUtils.showDialog(MainActivity.this, pd);
+
+        ThisApplication.sendAnalytics(MainActivity.this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
+                .build());
+
+        jta2.changeGlobalOption(options, new JTA2.ISuccess() {
+            @Override
+            public void onSuccess() {
+                pd.dismiss();
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
+            }
+
+            @Override
+            public void onException(Exception exception) {
+                pd.dismiss();
+                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
+            }
+        });
     }
 }
