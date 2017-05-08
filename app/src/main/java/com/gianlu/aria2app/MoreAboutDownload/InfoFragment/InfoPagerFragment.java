@@ -40,11 +40,8 @@ public class InfoPagerFragment extends CommonFragment {
     }
 
     public InfoPagerFragment setObserver(UpdateUI.IDownloadObserver observer) {
-        if (updateUI == null)
-            pendingObserver = observer;
-        else
-            updateUI.setObserver(observer);
-
+        if (updateUI == null) pendingObserver = observer;
+        else updateUI.setObserver(observer);
         return this;
     }
 

@@ -28,9 +28,7 @@ public class TreeDirectory {
     }
 
     private static int indexOf(List<TreeDirectory> nodes, TreeDirectory node) {
-        for (int i = 0; i < nodes.size(); i++)
-            if (areEquals(nodes.get(i), node)) return i;
-
+        for (int i = 0; i < nodes.size(); i++) if (areEquals(nodes.get(i), node)) return i;
         return -1;
     }
 
@@ -38,31 +36,17 @@ public class TreeDirectory {
         return Objects.equals(first.incrementalPath, second.incrementalPath) && Objects.equals(first.name, second.name);
     }
 
-    private static Long doLengthSum(TreeDirectory parent) {
-        Long length = 0L;
-
-        for (TreeFile file : parent.files) {
-            length += file.file.length;
-        }
-
-        for (TreeDirectory child : parent.children) {
-            length += doLengthSum(child);
-        }
-
+    private static long doLengthSum(TreeDirectory parent) {
+        long length = 0;
+        for (TreeFile file : parent.files) length += file.file.length;
+        for (TreeDirectory child : parent.children) length += doLengthSum(child);
         return length;
     }
 
     private static Long doCompletedLengthSum(TreeDirectory parent) {
-        Long completedLength = 0L;
-
-        for (TreeFile file : parent.files) {
-            completedLength += file.file.completedLength;
-        }
-
-        for (TreeDirectory child : parent.children) {
-            completedLength += doLengthSum(child);
-        }
-
+        long completedLength = 0;
+        for (TreeFile file : parent.files) completedLength += file.file.completedLength;
+        for (TreeDirectory child : parent.children) completedLength += doLengthSum(child);
         return completedLength;
     }
 
@@ -98,10 +82,9 @@ public class TreeDirectory {
                 return file;
         }
 
-        for (TreeFile file : files) {
+        for (TreeFile file : files)
             if (Objects.equals(file.file.path, path))
                 return file;
-        }
 
         return null;
     }
@@ -114,19 +97,18 @@ public class TreeDirectory {
                 return file;
         }
 
-        for (TreeFile file : files) {
+        for (TreeFile file : files)
             if (file.file.index == index)
                 return file;
-        }
 
         return null;
     }
 
-    public Long getLength() {
+    public long getLength() {
         return doLengthSum(this);
     }
 
-    Long getCompletedLength() {
+    long getCompletedLength() {
         return doCompletedLengthSum(this);
     }
 }

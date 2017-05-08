@@ -8,7 +8,6 @@ import java.util.List;
 
 class Tree {
     private static final String separator = "/";
-
     private final TreeDirectory root;
     private TreeDirectory commonRoot;
 
@@ -28,11 +27,7 @@ class Tree {
 
     Tree addElements(List<AFile> elements) {
         if (elements.isEmpty()) return this;
-
-        for (AFile e : elements) {
-            addElement(e);
-        }
-
+        for (AFile e : elements) addElement(e);
         return this;
     }
 

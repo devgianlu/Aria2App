@@ -58,8 +58,7 @@ class FilesAdapter {
     }
 
     static void setupAsync(final Activity context, final String gid, final Tree tree, final IAsync handler) {
-        if (context == null)
-            return;
+        if (context == null) return;
 
         new Thread(new Runnable() {
             @Override
@@ -78,32 +77,20 @@ class FilesAdapter {
 
     private static String extendIndexes(boolean first, TreeDirectory parent) {
         String str = "";
-        for (TreeFile file : parent.files) {
-            str += file.file.index + ", ";
-        }
-
-        for (TreeDirectory child : parent.children) {
-            str += extendIndexes(false, child);
-        }
-
-        if (first && str.endsWith(", ")) {
-            str = str.substring(0, str.length() - 2);
-        }
-
+        for (TreeFile file : parent.files) str += file.file.index + ", ";
+        for (TreeDirectory child : parent.children) str += extendIndexes(false, child);
+        if (first && str.endsWith(", ")) str = str.substring(0, str.length() - 2);
         return str;
     }
 
     void gotoIndex(int index) {
         final TreeFile file = tree.findFile(index);
-
-        if (file != null) {
-            context.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new FileClick(file).onClick(null);
-                }
-            });
-        }
+        if (file != null) context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new FileClick(file).onClick(null);
+            }
+        });
     }
 
     private void setupViews(TreeDirectory parent) {
@@ -185,9 +172,7 @@ class FilesAdapter {
             populateDirectory(subView, subDir, paddingMultiplier + 1);
         }
 
-        for (TreeFile file : parentNode.files) {
-            parentView.addView(file.viewHolder.rootView);
-        }
+        for (TreeFile file : parentNode.files) parentView.addView(file.viewHolder.rootView);
     }
 
     void onUpdate(final List<AFile> files) {
@@ -277,11 +262,9 @@ class FilesAdapter {
                         @Override
                         public void onOptions(Map<String, String> options) {
                             String selected = options.get("select-file");
-                            if (selected == null)
-                                selected = "";
+                            if (selected == null) selected = "";
 
                             List<Integer> selected_files = new ArrayList<>();
-
                             for (String i : selected.split(",")) {
                                 try {
                                     selected_files.add(Integer.parseInt(i));
@@ -289,11 +272,9 @@ class FilesAdapter {
                                 }
                             }
 
-                            if (selected_files.size() == 0) {
-                                for (int i = 1; i <= UpdateUI.fileNum; i++) {
+                            if (selected_files.size() == 0)
+                                for (int i = 1; i <= UpdateUI.fileNum; i++)
                                     selected_files.add(i);
-                                }
-                            }
 
                             if (isChecked) {
                                 if (!selected_files.contains(file.file.index))
@@ -303,17 +284,14 @@ class FilesAdapter {
                             }
 
                             Map<String, String> newOptions = new HashMap<>();
-                            String newSelected = "";
+                            StringBuilder newSelected = new StringBuilder();
                             boolean firstItem = true;
                             for (Integer i : selected_files) {
-                                if (!firstItem)
-                                    newSelected += ",";
-
-                                newSelected += String.valueOf(i);
-
+                                if (!firstItem) newSelected.append(",");
+                                newSelected.append(String.valueOf(i));
                                 firstItem = false;
                             }
-                            newOptions.put("select-file", newSelected);
+                            newOptions.put("select-file", newSelected.toString());
 
                             jta2.changeOption(gid, newOptions, new JTA2.ISuccess() {
                                 @Override

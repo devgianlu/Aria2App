@@ -43,15 +43,11 @@ public class FilesPagerFragment extends CommonFragment {
 
     public void gotoIndex(int index) {
         this.gotoIndex = index;
-
-        if (adapter != null)
-            realGoto();
+        if (adapter != null) realGoto();
     }
 
     private void realGoto() {
-        if (gotoIndex == -1)
-            return;
-
+        if (gotoIndex == -1) return;
         adapter.gotoIndex(gotoIndex);
     }
 

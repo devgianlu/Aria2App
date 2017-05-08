@@ -87,9 +87,9 @@ public class DonutProgress extends View {
 
     public void setProgress(float progress) {
         sweepAngle = (int) ((progress / 100) * 360);
-        percentage = String.format(Locale.getDefault(), "%.1f", progress);
+        if (progress == 100) percentage = "100";
+        else percentage = String.format(Locale.getDefault(), "%.1f", progress);
         textPaint.getTextBounds(percentage, 0, percentage.length(), textBound);
-
         invalidate();
     }
 }
