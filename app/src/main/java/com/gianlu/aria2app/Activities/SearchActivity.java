@@ -141,7 +141,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             CommonUtils.showDialog(SearchActivity.this, pdd);
                                                             try {
-                                                                JTA2.newInstance(SearchActivity.this)
+                                                                JTA2.instantiate(SearchActivity.this)
                                                                         .addUri(Collections.singletonList(magnet), null, null, new JTA2.IGID() {
                                                                             @Override
                                                                             public void onGID(String gid) {

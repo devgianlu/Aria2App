@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -12,75 +11,27 @@ import java.util.Map;
 import java.util.Objects;
 
 public class AFile {
-    // Global
-    public Long completedLength;
-    public Long length;
-    public String path;
-    public boolean selected;
-    public Integer index;
-    public Map<URI_STATUS, String> uris;
+    public final long completedLength;
+    public final long length;
+    public final String path;
+    public final boolean selected;
+    public final int index;
+    public final Map<Status, String> uris;
 
-    private AFile() {
-    }
+    public AFile(JSONObject obj) {
+        index = Integer.parseInt(obj.optString("index", "0"));
+        path = obj.optString("path");
+        length = Long.parseLong(obj.optString("length", "0"));
+        completedLength = Long.parseLong(obj.optString("completedLength", "0"));
+        selected = Boolean.parseBoolean(obj.optString("selected", "false"));
+        uris = new HashMap<>();
 
-    @Nullable
-    private static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return 0;
-        }
-    }
-
-    @Nullable
-    private static Long parseLong(String val) {
-        try {
-            return Long.parseLong(val);
-        } catch (Exception ex) {
-            return 0L;
-        }
-    }
-
-    @NonNull
-    private static Boolean parseBoolean(String val) {
-        try {
-            return Boolean.parseBoolean(val);
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    private static URI_STATUS uriStatusFromString(String status) {
-        if (status == null) return URI_STATUS.WAITING;
-        switch (status.toLowerCase()) {
-            case "used":
-                return URI_STATUS.USED;
-            case "waiting":
-                return URI_STATUS.WAITING;
-            default:
-                return URI_STATUS.WAITING;
-        }
-    }
-
-    public static AFile fromJSON(JSONObject obj) {
-        if (obj == null) return null;
-
-        AFile file = new AFile();
-        file.index = parseInt(obj.optString("index"));
-        file.path = obj.optString("path");
-        file.length = parseLong(obj.optString("length"));
-        file.completedLength = parseLong(obj.optString("completedLength"));
-        file.selected = parseBoolean(obj.optString("selected"));
-        file.uris = new HashMap<>();
-
-        if (!obj.isNull("uris")) {
+        if (obj.has("uris")) {
             JSONArray array = obj.optJSONArray("uris");
 
             for (int i = 0; i < array.length(); i++)
-                file.uris.put(uriStatusFromString(array.optJSONObject(i).optString("status")), array.optJSONObject(i).optString("uri"));
+                uris.put(Status.parse(array.optJSONObject(i).optString("status")), array.optJSONObject(i).optString("uri"));
         }
-
-        return file;
     }
 
     public String getName() {
@@ -88,8 +39,8 @@ public class AFile {
         return splitted[splitted.length - 1];
     }
 
-    public Float getProgress() {
-        return completedLength.floatValue() / length.floatValue() * 100;
+    public float getProgress() {
+        return ((float) completedLength) / ((float) length) * 100;
     }
 
     public String getPercentage() {
@@ -102,14 +53,24 @@ public class AFile {
 
     public String getRelativePath(String dir) {
         String relPath = path.replace(dir, "");
-        if (relPath.startsWith("/"))
-            return relPath;
-        else
-            return "/" + relPath;
+        if (relPath.startsWith("/")) return relPath;
+        else return "/" + relPath;
     }
 
-    public enum URI_STATUS {
+    public enum Status {
         USED,
-        WAITING
+        WAITING;
+
+        public static Status parse(@Nullable String val) {
+            if (val == null) return Status.WAITING;
+            switch (val.toLowerCase()) {
+                case "used":
+                    return Status.USED;
+                case "waiting":
+                    return Status.WAITING;
+                default:
+                    return Status.WAITING;
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.R;
@@ -12,126 +11,78 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: NOW
 public class Download {
-    public String bitfield;
-    public boolean isBitTorrent;
-    public Long completedLength;
-    public Long length;
-    public Long uploadLength;
-    public String dir;
-    public Integer connections;
-    public String gid;
-    public Integer numPieces;
-    public Long pieceLength;
-    public Status status;
-    public Integer downloadSpeed;
-    public Integer uploadSpeed;
-    public List<AFile> files;
-    public Integer errorCode;
-    public String errorMessage;
-    public String followedBy;
-    public Long verifiedLength;
-    public boolean verifyIntegrityPending;
+    public final String bitfield;
+    public final boolean isBitTorrent;
+    public final long completedLength;
+    public final long length;
+    public final long uploadLength;
+    public final String dir;
+    public final int connections;
+    public final String gid;
+    public final int numPieces;
+    public final long pieceLength;
+    public final Status status;
+    public final int downloadSpeed;
+    public final int uploadSpeed;
+    public final List<AFile> files;
+    public final int errorCode;
+    public final String errorMessage;
+    public final String followedBy;
+    public final long verifiedLength;
+    public final boolean verifyIntegrityPending;
     // BitTorrent only
-    public boolean seeder;
-    public Integer numSeeders;
-    public BitTorrent bitTorrent;
-    private String following;
-    private String belongsTo;
-    private String infoHash;
+    public final boolean seeder;
+    public final int numSeeders;
+    public final BitTorrent bitTorrent;
+    private final String following;
+    private final String belongsTo;
+    private final String infoHash;
 
-    private Download() {
-    }
+    public Download(JSONObject obj) {
+        gid = obj.optString("gid");
+        status = Status.parse(obj.optString("status"));
+        length = Long.parseLong(obj.optString("totalLength", "0"));
+        completedLength = Long.parseLong(obj.optString("completedLength"));
+        uploadLength = Long.parseLong(obj.optString("uploadLength", "0"));
+        bitfield = obj.optString("bitfield");
+        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
+        uploadSpeed = Integer.parseInt(obj.optString("uploadSpeed", "0"));
+        pieceLength = Long.parseLong(obj.optString("pieceLength", "0"));
+        numPieces = Integer.parseInt(obj.optString("numPieces", "0"));
+        connections = Integer.parseInt(obj.optString("connections", "0"));
+        followedBy = obj.optString("followedBy");
+        following = obj.optString("following");
+        belongsTo = obj.optString("belongsTo");
+        dir = obj.optString("dir");
+        verifiedLength = Long.parseLong(obj.optString("verifiedLength", "0"));
+        verifyIntegrityPending = Boolean.parseBoolean(obj.optString("verifyIntegrityPending", "false"));
+        files = new ArrayList<>();
 
-    @Nullable
-    private static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return 0;
-        }
-    }
-
-    @Nullable
-    private static Long parseLong(String val) {
-        try {
-            return Long.parseLong(val);
-        } catch (Exception ex) {
-            return 0L;
-        }
-    }
-
-    @NonNull
-    private static Boolean parseBoolean(String val) {
-        try {
-            return Boolean.parseBoolean(val);
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    public static Download fromJSON(JSONObject jResult) {
-        Download download = new Download();
-        download.gid = jResult.optString("gid");
-        download.status = statusFromString(jResult.optString("status"));
-        download.length = parseLong(jResult.optString("totalLength"));
-        download.completedLength = parseLong(jResult.optString("completedLength"));
-        download.uploadLength = parseLong(jResult.optString("uploadLength"));
-        download.bitfield = jResult.optString("bitfield");
-        download.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
-        download.uploadSpeed = parseInt(jResult.optString("uploadSpeed"));
-        download.pieceLength = parseLong(jResult.optString("pieceLength"));
-        download.numPieces = parseInt(jResult.optString("numPieces"));
-        download.connections = parseInt(jResult.optString("connections"));
-        download.followedBy = jResult.optString("followedBy");
-        download.following = jResult.optString("following");
-        download.belongsTo = jResult.optString("belongsTo");
-        download.dir = jResult.optString("dir");
-        download.verifiedLength = parseLong(jResult.optString("verifiedLength"));
-        download.verifyIntegrityPending = parseBoolean(jResult.optString("verifyIntegrityPending"));
-        download.files = new ArrayList<>();
-
-        if (!jResult.isNull("files")) {
-            JSONArray array = jResult.optJSONArray("files");
-
-            for (int i = 0; i < array.length(); i++)
-                download.files.add(AFile.fromJSON(array.optJSONObject(i)));
+        if (obj.has("files")) {
+            JSONArray array = obj.optJSONArray("files");
+            for (int i = 0; i < array.length(); i++) files.add(new AFile(array.optJSONObject(i)));
         }
 
-        download.isBitTorrent = !jResult.isNull("bittorrent");
-        if (!jResult.isNull("bittorrent")) {
-            download.infoHash = jResult.optString("infoHash");
-            download.numSeeders = parseInt(jResult.optString("numSeeders"));
-            download.seeder = parseBoolean(jResult.optString("seeder"));
-            download.bitTorrent = new BitTorrent(jResult.optJSONObject("bittorrent"));
+        isBitTorrent = obj.has("bittorrent");
+        if (obj.has("bittorrent")) {
+            infoHash = obj.optString("infoHash");
+            numSeeders = Integer.parseInt(obj.optString("numSeeders", "0"));
+            seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
+            bitTorrent = new BitTorrent(obj.optJSONObject("bittorrent"));
+        } else {
+            infoHash = null;
+            numSeeders = 0;
+            seeder = false;
+            bitTorrent = null;
         }
 
-        if (!jResult.isNull("errorCode")) {
-            download.errorCode = parseInt(jResult.optString("errorCode"));
-            download.errorMessage = jResult.optString("errorMessage");
-        }
-
-        return download;
-    }
-
-    private static Status statusFromString(String status) {
-        if (status == null) return Status.UNKNOWN;
-        switch (status.toLowerCase()) {
-            case "active":
-                return Status.ACTIVE;
-            case "paused":
-                return Status.PAUSED;
-            case "waiting":
-                return Status.WAITING;
-            case "complete":
-                return Status.COMPLETE;
-            case "error":
-                return Status.ERROR;
-            case "removed":
-                return Status.REMOVED;
-            default:
-                return Status.UNKNOWN;
+        if (obj.has("errorCode")) {
+            errorCode = Integer.parseInt(obj.optString("errorCode", "0"));
+            errorMessage = obj.optString("errorMessage");
+        } else {
+            errorCode = -1;
+            errorMessage = null;
         }
     }
 
@@ -147,10 +98,10 @@ public class Download {
             } else {
                 String[] splitted = files.get(0).path.split("/");
                 if (splitted.length == 1) {
-                    if (files.get(0).uris.get(AFile.URI_STATUS.USED) != null) {
-                        return files.get(0).uris.get(AFile.URI_STATUS.USED);
-                    } else if (files.get(0).uris.get(AFile.URI_STATUS.WAITING) != null) {
-                        return files.get(0).uris.get(AFile.URI_STATUS.WAITING);
+                    if (files.get(0).uris.get(AFile.Status.USED) != null) {
+                        return files.get(0).uris.get(AFile.Status.USED);
+                    } else if (files.get(0).uris.get(AFile.Status.WAITING) != null) {
+                        return files.get(0).uris.get(AFile.Status.WAITING);
                     } else {
                         return "Unknown";
                     }
@@ -164,7 +115,7 @@ public class Download {
     }
 
     public float getProgress() {
-        return completedLength.floatValue() / length.floatValue() * 100;
+        return ((float) completedLength) / ((float) length) * 100;
     }
 
     @Nullable
@@ -181,6 +132,26 @@ public class Download {
         REMOVED,
         COMPLETE,
         UNKNOWN;
+
+        public static Status parse(@Nullable String val) {
+            if (val == null) return Status.UNKNOWN;
+            switch (val.toLowerCase()) {
+                case "active":
+                    return Status.ACTIVE;
+                case "paused":
+                    return Status.PAUSED;
+                case "waiting":
+                    return Status.WAITING;
+                case "complete":
+                    return Status.COMPLETE;
+                case "error":
+                    return Status.ERROR;
+                case "removed":
+                    return Status.REMOVED;
+                default:
+                    return Status.UNKNOWN;
+            }
+        }
 
         public String getFormal(Context context, boolean firstCapital) {
             String val;

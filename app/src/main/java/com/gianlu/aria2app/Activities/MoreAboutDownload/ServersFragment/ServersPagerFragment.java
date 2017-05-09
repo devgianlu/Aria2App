@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.util.List;
-import java.util.Map;
 
 public class ServersPagerFragment extends CommonFragment {
     // private UpdateUI updateUI;
@@ -43,9 +42,10 @@ public class ServersPagerFragment extends CommonFragment {
         // UpdateUI.stop(updateUI);
 
         try {
-            JTA2.newInstance(getActivity()).getServers(getArguments().getString("gid"), new JTA2.IServers() {
+            JTA2.instantiate(getActivity()).getServers(getArguments().getString("gid"), new JTA2.IServers() {
                 @Override
-                public void onServers(Map<Integer, List<Server>> servers) {
+                public void onServers(SparseArray<List<Server>> servers) {
+                    /* TODO
                     final ServerCardAdapter adapter = new ServerCardAdapter(getContext(), servers, (CardView) view.findViewById(R.id.serversFragment_noData));
                     Activity activity = getActivity();
                     if (activity != null) {
@@ -57,7 +57,6 @@ public class ServersPagerFragment extends CommonFragment {
                         });
                     }
 
-                    /* TODO
                     updateUI = new UpdateUI(getActivity(), getArguments().getString("gid"), adapter);
                     new Thread(updateUI).start();
                     */

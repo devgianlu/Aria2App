@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private void showAboutDialog() {
         final JTA2 jta2;
         try {
-            jta2 = JTA2.newInstance(MainActivity.this);
+            jta2 = JTA2.instantiate(MainActivity.this);
         } catch (JTA2InitializingException ex) {
             CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
             return;

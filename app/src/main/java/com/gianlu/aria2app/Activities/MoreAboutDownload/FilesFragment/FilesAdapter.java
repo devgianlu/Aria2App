@@ -104,7 +104,7 @@ class FilesAdapter {
         for (final TreeFile file : parent.files) {
             FileViewHolder holder = new FileViewHolder(View.inflate(context, R.layout.file_item, null));
             holder.name.setText(file.file.getName());
-            holder.progressBar.setProgress(file.file.getProgress().intValue());
+            holder.progressBar.setProgress((int) file.file.getProgress());
             holder.percentage.setText(file.file.getPercentage());
             if (file.file.isCompleted()) {
                 holder.status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
@@ -181,7 +181,7 @@ class FilesAdapter {
 
                 found.file = _file;
                 found.viewHolder.percentage.setText(_file.getPercentage());
-                found.viewHolder.progressBar.setProgress(_file.getProgress().intValue());
+                found.viewHolder.progressBar.setProgress((int) _file.getProgress());
                 if (found.file.isCompleted()) {
                     found.viewHolder.status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
                 } else if (found.file.selected) {
@@ -257,7 +257,7 @@ class FilesAdapter {
             if (file.file.uris.size() > 0) {
                 layout.addView(new SuperTextView(context, R.string.uris));
 
-                for (Map.Entry<AFile.URI_STATUS, String> uri : file.file.uris.entrySet()) {
+                for (Map.Entry<AFile.Status, String> uri : file.file.uris.entrySet()) {
                     SuperTextView _uri = new SuperTextView(context, uri.getValue() + " (<b>" + uri.getKey() + "</b>)");
                     _uri.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     _uri.setPadding(50, 10, 0, 10);
@@ -310,7 +310,7 @@ class FilesAdapter {
 
                     final JTA2 jta2;
                     try {
-                        jta2 = JTA2.newInstance(context);
+                        jta2 = JTA2.instantiate(context);
                     } catch (JTA2InitializingException ex) {
                         CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
                         return;

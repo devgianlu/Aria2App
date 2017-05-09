@@ -50,7 +50,7 @@ public class FilesPagerFragment extends CommonFragment {
         final String gid = getArguments().getString("gid");
 
         try {
-            JTA2.newInstance(getActivity()).getFiles(gid, new JTA2.IFiles() {
+            JTA2.instantiate(getActivity()).getFiles(gid, new JTA2.IFiles() {
                 @Override
                 public void onFiles(final List<AFile> files) {
                     FilesAdapter.setupAsync(getActivity(), gid, Tree.newTree().addElements(files), new FilesAdapter.IAsync() {

@@ -1,41 +1,22 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-import android.support.annotation.Nullable;
-
 import org.json.JSONObject;
 
 
 public class GlobalStats {
-    public Integer downloadSpeed;
-    public Integer uploadSpeed;
-    public Integer numActive;
-    public Integer numWaiting;
-    public Integer numStopped;
-    public Integer numStoppedTotal;
+    public final int downloadSpeed;
+    public final int uploadSpeed;
+    public final int numActive;
+    public final int numWaiting;
+    public final int numStopped;
+    public final int numStoppedTotal;
 
-    private GlobalStats() {
-    }
-
-    @Nullable
-    private static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return 0;
-        }
-    }
-
-    public static GlobalStats fromJSON(JSONObject jResult) {
-        if (jResult == null) return null;
-
-        GlobalStats stats = new GlobalStats();
-        stats.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
-        stats.uploadSpeed = parseInt(jResult.optString("uploadSpeed"));
-        stats.numActive = parseInt(jResult.optString("numActive"));
-        stats.numWaiting = parseInt(jResult.optString("numWaiting"));
-        stats.numStopped = parseInt(jResult.optString("numStopped"));
-        stats.numStoppedTotal = parseInt(jResult.optString("numStoppedTotal"));
-
-        return stats;
+    public GlobalStats(JSONObject obj) {
+        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
+        uploadSpeed = Integer.parseInt(obj.optString("uploadSpeed", "0"));
+        numActive = Integer.parseInt(obj.optString("numActive", "0"));
+        numWaiting = Integer.parseInt(obj.optString("numWaiting", "0"));
+        numStopped = Integer.parseInt(obj.optString("numStopped", "0"));
+        numStoppedTotal = Integer.parseInt(obj.optString("numStoppedTotal", "0"));
     }
 }

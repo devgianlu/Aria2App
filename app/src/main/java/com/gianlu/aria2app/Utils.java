@@ -283,7 +283,7 @@ public class Utils {
     public static void showOptionsDialog(@NonNull final Activity context, String gid, final boolean global, final boolean isQuick, final IOptionsDialog handler) {
         final JTA2 jta2;
         try {
-            jta2 = JTA2.newInstance(context);
+            jta2 = JTA2.instantiate(context);
         } catch (JTA2InitializingException ex) {
             CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
             return;

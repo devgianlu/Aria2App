@@ -1,9 +1,10 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HTTPing;
@@ -48,7 +49,7 @@ public class JTA2 {
         this.forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Prefs.A2_FORCE_ACTION, true);
     }
 
-    public static JTA2 newInstance(Context context) throws JTA2InitializingException {
+    public static JTA2 instantiate(Context context) throws JTA2InitializingException {
         try {
             if (ProfilesManager.get(context).getCurrentAssert().connectionMethod == UserProfile.ConnectionMethod.WEBSOCKET)
                 return new JTA2(context, WebSocketing.instantiate(context));
@@ -57,6 +58,66 @@ public class JTA2 {
         } catch (IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
             throw new JTA2InitializingException(ex);
         }
+    }
+
+    @NonNull
+    private static List<String> parseRawFeatures(JSONArray raw) throws JSONException {
+        if (raw == null) return new ArrayList<>();
+        List<String> features = new ArrayList<>();
+        for (int i = 0; i < raw.length(); i++) features.add(raw.getString(i));
+        return features;
+    }
+
+    @NonNull
+    private static Map<String, String> parseOptions(JSONObject jResult) {
+        if (jResult == null) return new HashMap<>();
+        Iterator<String> keys = jResult.keys();
+        Map<String, String> options = new HashMap<>();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            options.put(key, jResult.optString(key));
+        }
+        return options;
+    }
+
+    @NonNull
+    private static List<String> parseMethods(JSONArray array) throws JSONException {
+        if (array == null) return new ArrayList<>();
+        List<String> methods = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) methods.add(array.getString(i));
+        return methods;
+    }
+
+    @NonNull
+    private static List<Peer> parsePeers(JSONArray array) throws JSONException {
+        if (array == null) return new ArrayList<>();
+        List<Peer> peers = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) peers.add(new Peer(array.getJSONObject(i)));
+        return peers;
+    }
+
+    @NonNull
+    private static List<AFile> parseAFiles(JSONArray array) throws JSONException {
+        if (array == null) return new ArrayList<>();
+        List<AFile> files = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) files.add(new AFile(array.getJSONObject(i)));
+        return files;
+    }
+
+    @NonNull
+    private static SparseArray<List<Server>> parseServers(JSONArray array) throws JSONException {
+        if (array == null) return new SparseArray<>();
+        SparseArray<List<Server>> list = new SparseArray<>();
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject server = array.getJSONObject(i);
+            int index = server.getInt("index");
+            JSONArray serversArray = server.getJSONArray("servers");
+            List<Server> servers = new ArrayList<>();
+            for (int j = 0; j < serversArray.length(); j++)
+                servers.add(new Server(serversArray.getJSONObject(j)));
+            list.put(index, servers);
+        }
+        return list;
     }
 
     public void pause(final String gid, final IPause handler) {
@@ -181,7 +242,7 @@ public class JTA2 {
                 getOption(gid, new JTA2.IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
-                        String url = download.files.get(0).uris.get(AFile.URI_STATUS.USED);
+                        String url = download.files.get(0).uris.get(AFile.Status.USED);
 
                         addUri(Collections.singletonList(url), null, options, new JTA2.IGID() {
                             @Override
@@ -220,92 +281,6 @@ public class JTA2 {
         });
     }
 
-    // Caster
-    private List<String> fromFeaturesRaw(JSONArray features) throws JSONException {
-        if (features == null) return null;
-
-        List<String> featuresList = new ArrayList<>();
-        for (int i = 0; i < features.length(); i++) {
-            featuresList.add(features.getString(i));
-        }
-
-        return featuresList;
-    }
-
-    private Map<String, String> fromOptions(JSONObject jResult) {
-        if (jResult == null) return null;
-
-        Iterator<?> keys = jResult.keys();
-
-        Map<String, String> options = new HashMap<>();
-
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            options.put(key, jResult.optString(key));
-        }
-
-        return options;
-    }
-
-    private List<String> fromMethods(JSONArray jResult) throws JSONException {
-        if (jResult == null) return null;
-
-        List<String> methods = new ArrayList<>();
-
-        for (int i = 0; i < jResult.length(); i++) {
-            methods.add(jResult.getString(i));
-        }
-
-        return methods;
-    }
-
-    private List<Peer> fromPeers(JSONArray jResult) throws JSONException {
-        if (jResult == null) return null;
-
-        List<Peer> peers = new ArrayList<>();
-
-        for (int i = 0; i < jResult.length(); i++) {
-            peers.add(Peer.fromJSON(jResult.getJSONObject(i)));
-        }
-
-        return peers;
-    }
-
-    private List<AFile> fromFiles(JSONArray jResult) throws JSONException {
-        if (jResult == null) return null;
-
-        List<AFile> files = new ArrayList<>();
-
-        for (int i = 0; i < jResult.length(); i++) {
-            files.add(AFile.fromJSON(jResult.getJSONObject(i)));
-        }
-
-        return files;
-    }
-
-    private Map<Integer, List<Server>> fromServers(JSONArray jResult) throws JSONException {
-        if (jResult == null) return null;
-
-        @SuppressLint("UseSparseArrays") Map<Integer, List<Server>> list = new HashMap<>();
-
-        for (int i = 0; i < jResult.length(); i++) {
-            JSONObject jServer = jResult.getJSONObject(i);
-
-            int index = jServer.getInt("index");
-
-            JSONArray _servers = jServer.getJSONArray("servers");
-
-            List<Server> servers = new ArrayList<>();
-            for (int ii = 0; ii < _servers.length(); ii++) {
-                servers.add(Server.fromJSON(_servers.getJSONObject(i)));
-            }
-            list.put(index, servers);
-        }
-
-
-        return list;
-    }
-
     // Requests
     //aria2.getVersion
     public void getVersion(final IVersion handler) {
@@ -323,7 +298,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onVersion(fromFeaturesRaw(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
+                handler.onVersion(parseRawFeatures(response.getJSONObject("result").optJSONArray("enabledFeatures")), response.getJSONObject("result").optString("version"));
             }
 
             @Override
@@ -533,7 +508,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onDownload(Download.fromJSON(response.getJSONObject("result")));
+                handler.onDownload(new Download(response.getJSONObject("result")));
             }
 
             @Override
@@ -558,7 +533,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onStats(GlobalStats.fromJSON(response.getJSONObject("result")));
+                handler.onStats(new GlobalStats(response.getJSONObject("result")));
             }
 
             @Override
@@ -587,7 +562,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
+                    downloads.add(new Download(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -622,7 +597,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++)
-                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
+                    downloads.add(new Download(jResult.getJSONObject(c)));
 
                 handler.onDownloads(downloads);
             }
@@ -656,7 +631,7 @@ public class JTA2 {
                 JSONArray jResult = response.getJSONArray("result");
 
                 for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(Download.fromJSON(jResult.getJSONObject(c)));
+                    downloads.add(new Download(jResult.getJSONObject(c)));
                 }
 
                 handler.onDownloads(downloads);
@@ -851,7 +826,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onOptions(fromOptions(response.getJSONObject("result")));
+                handler.onOptions(parseOptions(response.getJSONObject("result")));
             }
 
             @Override
@@ -876,7 +851,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onOptions(fromOptions(response.getJSONObject("result")));
+                handler.onOptions(parseOptions(response.getJSONObject("result")));
             }
 
             @Override
@@ -998,7 +973,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onServers(fromServers(response.optJSONArray("result")));
+                handler.onServers(parseServers(response.optJSONArray("result")));
             }
 
             @Override
@@ -1031,7 +1006,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onPeers(fromPeers(response.optJSONArray("result")));
+                handler.onPeers(parsePeers(response.optJSONArray("result")));
             }
 
             @Override
@@ -1064,7 +1039,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onFiles(fromFiles(response.optJSONArray("result")));
+                handler.onFiles(parseAFiles(response.optJSONArray("result")));
             }
 
             @Override
@@ -1088,7 +1063,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onMethods(fromMethods(response.getJSONArray("result")));
+                handler.onMethods(parseMethods(response.getJSONArray("result")));
             }
 
             @Override
@@ -1200,7 +1175,7 @@ public class JTA2 {
     }
 
     public interface IServers {
-        void onServers(Map<Integer, List<Server>> servers);
+        void onServers(SparseArray<List<Server>> servers);
 
         void onException(Exception exception);
 

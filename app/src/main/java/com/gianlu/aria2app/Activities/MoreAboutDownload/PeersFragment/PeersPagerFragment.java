@@ -45,7 +45,7 @@ public class PeersPagerFragment extends CommonFragment {
         if (activity == null) return;
 
         try {
-            JTA2.newInstance(activity).getPeers(getArguments().getString("gid"), new JTA2.IPeers() {
+            JTA2.instantiate(activity).getPeers(getArguments().getString("gid"), new JTA2.IPeers() {
                 @Override
                 public void onPeers(List<Peer> peers) {
                     final PeerCardAdapter adapter = new PeerCardAdapter(getContext(), peers, (CardView) view.findViewById(R.id.peersFragment_noData));

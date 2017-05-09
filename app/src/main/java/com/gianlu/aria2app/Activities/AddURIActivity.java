@@ -130,7 +130,7 @@ public class AddURIActivity extends AppCompatActivity {
 
         final JTA2 jta2;
         try {
-            jta2 = JTA2.newInstance(this);
+            jta2 = JTA2.instantiate(this);
         } catch (JTA2InitializingException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);
             return;
@@ -241,7 +241,7 @@ public class AddURIActivity extends AppCompatActivity {
 
         final JTA2 jta2;
         try {
-            jta2 = JTA2.newInstance(this);
+            jta2 = JTA2.instantiate(this);
         } catch (JTA2InitializingException ex) {
             pd.dismiss();
             CommonUtils.UIToast(this, Utils.ToastMessages.WS_EXCEPTION, ex);

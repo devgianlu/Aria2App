@@ -1,38 +1,19 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-import android.support.annotation.NonNull;
-
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment.Item;
 
 import org.json.JSONObject;
 
 public class Server extends Item {
-    public String uri;
-    public String currentUri;
-    public int downloadSpeed;
+    public final String uri;
+    public final String currentUri;
+    public final int downloadSpeed;
     public int membershipIndex;
 
-    private Server() {
-    }
-
-    @NonNull
-    private static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return 0;
-        }
-    }
-
-    public static Server fromJSON(JSONObject jResult) {
-        if (jResult == null) return null;
-
-        Server server = new Server();
-        server.uri = jResult.optString("uri");
-        server.currentUri = jResult.optString("currentUri");
-        server.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
-
-        return server;
+    public Server(JSONObject obj) {
+        uri = obj.optString("uri");
+        currentUri = obj.optString("currentUri");
+        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
     }
 
     @Override

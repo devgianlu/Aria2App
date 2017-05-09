@@ -1,8 +1,5 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -10,53 +7,26 @@ import java.net.URLDecoder;
 
 @SuppressWarnings("ConstantConditions")
 public class Peer {
-    public String peerId;
-    public boolean amChoking;
-    public boolean peerChoking;
-    public int downloadSpeed;
-    public int uploadSpeed;
-    public boolean seeder;
-    private String ip;
-    private int port;
-    private String bitfield;
+    public final String peerId;
+    public final boolean amChoking;
+    public final boolean peerChoking;
+    public final int downloadSpeed;
+    public final int uploadSpeed;
+    public final boolean seeder;
+    private final String ip;
+    private final int port;
+    private final String bitfield;
 
-    private Peer() {
-    }
-
-    @Nullable
-    private static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    @NonNull
-    private static Boolean parseBoolean(String val) {
-        try {
-            return Boolean.parseBoolean(val);
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    public static Peer fromJSON(JSONObject jResult) {
-        if (jResult == null) return null;
-
-        Peer peer = new Peer();
-
-        peer.peerId = jResult.optString("peerId");
-        peer.ip = jResult.optString("ip");
-        peer.port = parseInt(jResult.optString("port"));
-        peer.bitfield = jResult.optString("bitfield");
-        peer.amChoking = parseBoolean(jResult.optString("amChoking"));
-        peer.peerChoking = parseBoolean(jResult.optString("peerChoking"));
-        peer.downloadSpeed = parseInt(jResult.optString("downloadSpeed"));
-        peer.uploadSpeed = parseInt(jResult.optString("uploadSpeed"));
-        peer.seeder = parseBoolean(jResult.optString("seeder"));
-
-        return peer;
+    public Peer(JSONObject obj) {
+        peerId = obj.optString("peerId");
+        ip = obj.optString("ip");
+        port = Integer.parseInt(obj.optString("port", "-1"));
+        bitfield = obj.optString("bitfield");
+        amChoking = Boolean.parseBoolean(obj.optString("amChoking", "false"));
+        peerChoking = Boolean.parseBoolean(obj.optString("peerChoking", "false"));
+        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
+        uploadSpeed = Integer.parseInt(obj.optString("uploadSpeed", "0"));
+        seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
     }
 
     public String getPeerId() {

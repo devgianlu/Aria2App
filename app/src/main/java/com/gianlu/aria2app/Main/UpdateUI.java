@@ -17,7 +17,7 @@ public class UpdateUI extends Thread implements JTA2.IDownloadList {
     private boolean _shouldStop = false;
 
     public UpdateUI(Context context, IUI listener) throws JTA2InitializingException {
-        this.jta2 = JTA2.newInstance(context);
+        this.jta2 = JTA2.instantiate(context);
         this.listener = listener;
         this.handler = new Handler(context.getMainLooper());
     }
