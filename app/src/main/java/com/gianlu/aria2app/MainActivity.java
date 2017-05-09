@@ -29,6 +29,7 @@ import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Main.DrawerConst;
+import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -46,16 +47,18 @@ import com.gianlu.commonutils.SuperTextView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.liulishuo.filedownloader.FileDownloader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, Utils.IOptionsDialog, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile> {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, Utils.IOptionsDialog, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter {
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
     private Menu sortingSubMenu;
     private RecyclerView list;
     private DownloadCardsAdapter adapter;
+    private UpdateUI updater;
 
     @Override
     public boolean onMenuItemSelected(BaseDrawerItem which) {
@@ -197,8 +200,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         ProfilesManager manager = ProfilesManager.get(this);
         UserProfile currentProfile = manager.getCurrentAssert();
 
-        drawerManager.setCurrentProfile(currentProfile)
-                .setDrawerListener(this);
+        drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
 
         setTitle(currentProfile.getProfileName() + " - " + getString(R.string.app_name));
 
@@ -256,6 +258,17 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 FileDownloader.getImpl().setMaxNetworkThreadCount(3);
             }
         });
+
+        adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
+        list.setAdapter(adapter);
+
+        try {
+            updater = new UpdateUI(this, this);
+        } catch (JTA2InitializingException ex) {
+            ex.printStackTrace(); // TODO: Handle this
+        }
+
+        updater.start();
     }
 
     @Override
@@ -302,38 +315,38 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             case R.id.a2menu_active:
                 if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.STATUS.ACTIVE);
-                else adapter.addFilter(Download.STATUS.ACTIVE);
+                if (item.isChecked()) adapter.removeFilter(Download.Status.ACTIVE);
+                else adapter.addFilter(Download.Status.ACTIVE);
                 break;
             case R.id.a2menu_paused:
                 if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.STATUS.PAUSED);
-                else adapter.addFilter(Download.STATUS.PAUSED);
+                if (item.isChecked()) adapter.removeFilter(Download.Status.PAUSED);
+                else adapter.addFilter(Download.Status.PAUSED);
                 break;
             case R.id.a2menu_error:
                 if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.STATUS.ERROR);
-                else adapter.addFilter(Download.STATUS.ERROR);
+                if (item.isChecked()) adapter.removeFilter(Download.Status.ERROR);
+                else adapter.addFilter(Download.Status.ERROR);
                 break;
             case R.id.a2menu_waiting:
                 if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.STATUS.WAITING);
-                else adapter.addFilter(Download.STATUS.WAITING);
+                if (item.isChecked()) adapter.removeFilter(Download.Status.WAITING);
+                else adapter.addFilter(Download.Status.WAITING);
                 break;
             case R.id.a2menu_complete:
                 if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.STATUS.COMPLETE);
-                else adapter.addFilter(Download.STATUS.COMPLETE);
+                if (item.isChecked()) adapter.removeFilter(Download.Status.COMPLETE);
+                else adapter.addFilter(Download.Status.COMPLETE);
                 break;
             case R.id.a2menu_removed:
                 if (adapter == null) break;
                 item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.STATUS.REMOVED);
-                else adapter.addFilter(Download.STATUS.REMOVED);
+                if (item.isChecked()) adapter.removeFilter(Download.Status.REMOVED);
+                else adapter.addFilter(Download.Status.REMOVED);
                 break;
             // Sorting
             default:
@@ -467,5 +480,25 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_CHANGE_OPTIONS, exception);
             }
         });
+    }
+
+    @Override
+    public void onUpdateAdapter(Download download) {
+        if (adapter != null) adapter.notifyItemChanged(adapter.indexOf(download.gid), download);
+    }
+
+    @Override
+    public void onMoreClick(Download item) {
+        // TODO
+    }
+
+    @Override
+    public void onItemCountUpdated(int count) {
+        if (drawerManager != null) drawerManager.updateBadge(DrawerConst.HOME, count);
+    }
+
+    @Override
+    public void onMenuItemSelected(Download download, JTA2.DownloadActions action) {
+        // TODO
     }
 }

@@ -12,8 +12,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+// FIXME: NOW
 public class Download {
-    // General
     public String bitfield;
     public boolean isBitTorrent;
     public Long completedLength;
@@ -24,7 +24,7 @@ public class Download {
     public String gid;
     public Integer numPieces;
     public Long pieceLength;
-    public STATUS status;
+    public Status status;
     public Integer downloadSpeed;
     public Integer uploadSpeed;
     public List<AFile> files;
@@ -104,7 +104,7 @@ public class Download {
             download.infoHash = jResult.optString("infoHash");
             download.numSeeders = parseInt(jResult.optString("numSeeders"));
             download.seeder = parseBoolean(jResult.optString("seeder"));
-            download.bitTorrent = BitTorrent.fromJSON(jResult.optJSONObject("bittorrent"));
+            download.bitTorrent = new BitTorrent(jResult.optJSONObject("bittorrent"));
         }
 
         if (!jResult.isNull("errorCode")) {
@@ -115,23 +115,23 @@ public class Download {
         return download;
     }
 
-    private static STATUS statusFromString(String status) {
-        if (status == null) return STATUS.UNKNOWN;
+    private static Status statusFromString(String status) {
+        if (status == null) return Status.UNKNOWN;
         switch (status.toLowerCase()) {
             case "active":
-                return STATUS.ACTIVE;
+                return Status.ACTIVE;
             case "paused":
-                return STATUS.PAUSED;
+                return Status.PAUSED;
             case "waiting":
-                return STATUS.WAITING;
+                return Status.WAITING;
             case "complete":
-                return STATUS.COMPLETE;
+                return Status.COMPLETE;
             case "error":
-                return STATUS.ERROR;
+                return Status.ERROR;
             case "removed":
-                return STATUS.REMOVED;
+                return Status.REMOVED;
             default:
-                return STATUS.UNKNOWN;
+                return Status.UNKNOWN;
         }
     }
 
@@ -173,7 +173,7 @@ public class Download {
         return (length - completedLength) / downloadSpeed;
     }
 
-    public enum STATUS {
+    public enum Status {
         ACTIVE,
         PAUSED,
         WAITING,

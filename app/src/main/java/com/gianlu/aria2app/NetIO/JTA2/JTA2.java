@@ -130,8 +130,8 @@ public class JTA2 {
         });
     }
 
-    public void remove(final String gid, Download.STATUS status, final IRemove handler) {
-        if (status == Download.STATUS.COMPLETE || status == Download.STATUS.ERROR || status == Download.STATUS.REMOVED) {
+    public void remove(final String gid, Download.Status status, final IRemove handler) {
+        if (status == Download.Status.COMPLETE || status == Download.Status.ERROR || status == Download.Status.REMOVED) {
             removeDownloadResult(gid, new JTA2.ISuccess() {
                 @Override
                 public void onSuccess() {

@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
-import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -10,63 +10,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BitTorrent {
-    // Global
-    public List<String> announceList;
-    public MODE mode;
-    public String comment;
-    public Integer creationDate;
-    public String name;
+    public final List<String> announceList;
+    public final Mode mode;
+    public final String comment;
+    public final int creationDate;
+    public final String name;
 
-    private BitTorrent() {
-    }
+    public BitTorrent(@NonNull JSONObject obj) {
 
-    private static MODE modeFromString(String mode) {
-        if (mode == null) return MODE.SINGLE;
+        comment = obj.optString("comment");
+        creationDate = Integer.parseInt(obj.optString("creationDate", "-1"));
+        mode = Mode.parse(obj.optString("mode"));
+        announceList = new ArrayList<>();
 
-        switch (mode.toLowerCase()) {
-            case "multi":
-                return MODE.MULTI;
-            case "single":
-                return MODE.SINGLE;
-            default:
-                return MODE.SINGLE;
-        }
-    }
-
-    @Nullable
-    private static Integer parseInt(String val) {
-        try {
-            return Integer.parseInt(val);
-        } catch (Exception ex) {
-            return null;
-        }
-    }
-
-    public static BitTorrent fromJSON(JSONObject obj) {
-        if (obj == null) return null;
-
-        BitTorrent bitTorrent = new BitTorrent();
-        bitTorrent.comment = obj.optString("comment");
-        bitTorrent.creationDate = parseInt(obj.optString("creationDate"));
-        bitTorrent.mode = modeFromString(obj.optString("mode"));
-        bitTorrent.announceList = new ArrayList<>();
-
-        if (!obj.isNull("announceList")) {
+        if (obj.has("announceList")) {
             JSONArray array = obj.optJSONArray("announceList");
-
             for (int i = 0; i < array.length(); i++)
-                bitTorrent.announceList.add(obj.optJSONArray("announceList").optJSONArray(i).optString(0));
+                announceList.add(obj.optJSONArray("announceList").optJSONArray(i).optString(0));
         }
 
-        if (!obj.isNull("info")) bitTorrent.name = obj.optJSONObject("info").optString("name");
-
-        return bitTorrent;
+        if (obj.has("info")) name = obj.optJSONObject("info").optString("name");
+        else name = null;
     }
 
-    @SuppressLint("canBeLocal")
-    public enum MODE {
+    public enum Mode {
         MULTI,
         SINGLE;
+
+        public static Mode parse(@Nullable String val) {
+            if (val == null) return Mode.SINGLE;
+
+            switch (val.toLowerCase()) {
+                case "multi":
+                    return Mode.MULTI;
+                case "single":
+                    return Mode.SINGLE;
+                default:
+                    return Mode.SINGLE;
+            }
+        }
 
         @Override
         public String toString() {

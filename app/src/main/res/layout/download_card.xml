@@ -22,7 +22,7 @@
             android:theme="@style/CardViewTopSection">
 
             <com.gianlu.aria2app.DonutProgress
-                android:id="@+id/downloadCardView_donutProgress"
+                android:id="@+id/downloadCard_donutProgress"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_marginEnd="8dp" />
@@ -33,15 +33,15 @@
                 android:orientation="vertical"
                 android:paddingBottom="4dp">
 
-                <TextView
-                    android:id="@+id/downloadCardView_status"
+                <com.gianlu.commonutils.SuperTextView
+                    android:id="@+id/downloadCard_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:textSize="13sp" />
 
-                <TextView
-                    android:id="@+id/downloadCardView_name"
+                <com.gianlu.commonutils.SuperTextView
+                    android:id="@+id/downloadCard_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
@@ -61,8 +61,8 @@
                         android:layout_marginEnd="2dp"
                         android:src="@drawable/ic_file_download_white_48dp" />
 
-                    <TextView
-                        android:id="@+id/downloadCardView_downloadSpeed"
+                    <com.gianlu.commonutils.SuperTextView
+                        android:id="@+id/downloadCard_downloadSpeed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -76,8 +76,8 @@
                         android:layout_marginEnd="2dp"
                         android:src="@drawable/ic_access_time_white_48dp" />
 
-                    <TextView
-                        android:id="@+id/downloadCardView_missingTime"
+                    <com.gianlu.commonutils.SuperTextView
+                        android:id="@+id/downloadCard_missingTime"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
@@ -87,19 +87,19 @@
                         android:textSize="13sp" />
 
                     <ImageButton
-                        android:id="@+id/downloadCardView_expand"
+                        android:id="@+id/downloadCard_expand"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
-                        android:background="@drawable/ripple_effect_light"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
+                        android:src="@drawable/ic_keyboard_arrow_down_white_48dp" /> <!-- FIXME: ripples -->
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/downloadCardView_details"
+            android:id="@+id/downloadCard_details"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
@@ -111,13 +111,13 @@
                 android:layout_height="wrap_content">
 
                 <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/downloadCardViewDetails_chart"
+                    android:id="@+id/downloadCard_detailsChart"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginBottom="16dp" />
 
                 <ImageButton
-                    android:id="@+id/downloadCardViewDetails_chartRefresh"
+                    android:id="@+id/downloadCard_detailsChartRefresh"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:layout_gravity="end|bottom"
@@ -128,23 +128,23 @@
                     android:src="@drawable/ic_refresh_black_48dp" />
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/downloadCardViewDetails_gid"
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/downloadCard_detailsGid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/downloadCardViewDetails_totalLength"
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/downloadCard_detailsTotalLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/downloadCardViewDetails_completedLength"
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/downloadCard_detailsCompletedLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/downloadCardViewDetails_uploadLength"
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/downloadCard_detailsUploadLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -156,7 +156,7 @@
             android:padding="8dp">
 
             <Button
-                android:id="@+id/downloadCardView_actionMore"
+                android:id="@+id/downloadCard_actionMore"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -169,7 +169,7 @@
                 android:layout_weight="1" />
 
             <ImageButton
-                android:id="@+id/downloadCardView_actionMenu"
+                android:id="@+id/downloadCard_actionMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

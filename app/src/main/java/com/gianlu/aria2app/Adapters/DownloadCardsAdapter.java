@@ -1,12 +1,9 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,15 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -36,27 +32,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class DownloadCardsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int TYPE_CARD = 0;
-    private static final int TYPE_SUMMARY = 1;
-    final boolean hasSummary;
+// TODO: Rearrange layout of the card
+// FIXME: Sorting
+// FIXME: Filters
+public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdapter.DownloadViewHolder> {
     private final Context context;
     private final List<Download> objs;
-    private final IActions handler;
-    private final List<Download.STATUS> filters;
+    private final IAdapter handler;
+    private final List<Download.Status> filters;
     private final LayoutInflater inflater;
-    private final Typeface roboto;
-    private final Handler mainHandler;
 
-    public DownloadCardsAdapter(Context context, List<Download> objs, boolean hasSummary, IActions handler) {
+    public DownloadCardsAdapter(Context context, List<Download> objs, IAdapter handler) {
         this.context = context;
         this.objs = objs;
-        this.hasSummary = hasSummary;
         this.handler = handler;
         this.filters = new ArrayList<>();
         this.inflater = LayoutInflater.from(context);
-        this.roboto = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
-        this.mainHandler = new Handler(context.getMainLooper());
 
         Collections.sort(this.objs, new StatusComparator());
     }
@@ -86,302 +77,225 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyDataSetChanged();
     }
 
-    public void addFilter(Download.STATUS status) {
+    public void addFilter(Download.Status status) {
         filters.add(status);
         notifyDataSetChanged();
     }
 
-    public void removeFilter(Download.STATUS status) {
+    public void removeFilter(Download.Status status) {
         filters.remove(status);
         notifyDataSetChanged();
     }
 
-    void updateItem(final int position, final Download update) {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyItemChanged(position + (hasSummary ? 1 : 0), update);
-            }
-        });
+    public int indexOf(String gid) {
+        for (int i = 0; i < objs.size(); i++)
+            if (Objects.equals(objs.get(i).gid, gid))
+                return i;
+
+        return -1;
     }
 
-    public Download getItem(String gid) {
-        for (Download download : objs)
-            if (download.gid.equals(gid))
-                return download;
-        return null;
-    }
-
-    public void removeItem(String gid) {
-        int index = objs.indexOf(getItem(gid));
-        if (index != -1) {
-            objs.remove(index);
-            notifyDataSetChanged();
+    public void notifyItemChanged(int pos, Download payload) {
+        if (pos == -1) {
+            objs.add(payload);
+            super.notifyItemInserted(objs.size() - 1);
+            return;
         }
 
-        if (handler != null) handler.onItemCountUpdated(objs.size());
+        super.notifyItemChanged(pos, payload);
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (position == 0 && hasSummary)
-            return TYPE_SUMMARY;
-        else
-            return TYPE_CARD;
+    public DownloadCardsAdapter.DownloadViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new DownloadViewHolder(inflater.inflate(R.layout.download_card, parent, false));
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_SUMMARY)
-            return new SummaryViewHolder(inflater.inflate(R.layout.summary_cardview, parent, false));
-        else
-            return new DownloadViewHolder(inflater.inflate(R.layout.download_cardview, parent, false));
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
+    public void onBindViewHolder(DownloadCardsAdapter.DownloadViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
-            if (position == 0 && hasSummary) {
-                SummaryViewHolder castHolder = (SummaryViewHolder) holder;
-                GlobalStats stats = (GlobalStats) payloads.get(0);
+            Download item = (Download) payloads.get(0);
 
-                castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(stats.downloadSpeed));
-                castHolder.uploadSpeed.setText(CommonUtils.speedFormatter(stats.uploadSpeed));
+            if (item.status == Download.Status.ACTIVE) {
+                holder.detailsChartRefresh.setEnabled(true);
 
-                castHolder.active.setText(Html.fromHtml(context.getString(R.string.summaryActive, stats.numActive)));
-                castHolder.waiting.setText(Html.fromHtml(context.getString(R.string.summaryWaiting, stats.numWaiting)));
-                castHolder.stopped.setText(Html.fromHtml(context.getString(R.string.summaryStopped, stats.numStoppedTotal, stats.numStopped)));
-
-                LineData data = castHolder.chart.getData();
+                LineData data = holder.detailsChart.getData();
                 if (data == null) {
-                    Utils.setupChart(castHolder.chart, true);
-                    data = castHolder.chart.getData();
+                    Utils.setupChart(holder.detailsChart, true);
+                    data = holder.detailsChart.getData();
                 }
 
                 if (data != null) {
                     int pos = data.getEntryCount() / 2 + 1;
-                    data.addEntry(new Entry(pos, stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                    data.addEntry(new Entry(pos, stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                    data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
                     data.notifyDataChanged();
-                    castHolder.chart.notifyDataSetChanged();
+                    holder.detailsChart.notifyDataSetChanged();
 
-                    castHolder.chart.setVisibleXRangeMaximum(90);
-                    castHolder.chart.moveViewToX(pos - 91);
+                    holder.detailsChart.setVisibleXRangeMaximum(90);
+                    holder.detailsChart.moveViewToX(pos - 91);
                 }
             } else {
-                DownloadViewHolder castHolder = (DownloadViewHolder) holder;
-                Download item = (Download) payloads.get(0);
+                holder.detailsChartRefresh.setEnabled(false);
 
-                if (item.status == Download.STATUS.ACTIVE) {
-                    castHolder.detailsChartRefresh.setEnabled(true);
-
-                    LineData data = castHolder.detailsChart.getData();
-                    if (data == null) {
-                        Utils.setupChart(castHolder.detailsChart, true);
-                        data = castHolder.detailsChart.getData();
-                    }
-
-                    if (data != null) {
-                        int pos = data.getEntryCount() / 2 + 1;
-                        data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                        data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
-                        data.notifyDataChanged();
-                        castHolder.detailsChart.notifyDataSetChanged();
-
-                        castHolder.detailsChart.setVisibleXRangeMaximum(90);
-                        castHolder.detailsChart.moveViewToX(pos - 91);
-                    }
-                } else {
-                    castHolder.detailsChartRefresh.setEnabled(false);
-
-                    castHolder.detailsChart.clear();
-                    castHolder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
-                }
-
-                castHolder.donutProgress.setProgress(item.getProgress());
-                castHolder.downloadName.setText(item.getName());
-                if (item.status == Download.STATUS.ERROR)
-                    castHolder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
-                else
-                    castHolder.downloadStatus.setText(item.status.getFormal(context, true));
-                castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed));
-                castHolder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
-
-                castHolder.detailsCompletedLength.setText(Html.fromHtml(context.getString(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength))));
-                castHolder.detailsUploadLength.setText(Html.fromHtml(context.getString(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength))));
-
-                if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
-                    castHolder.more.setVisibility(View.INVISIBLE);
+                holder.detailsChart.clear();
+                holder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
             }
+
+            holder.donutProgress.setProgress(item.getProgress());
+            holder.downloadName.setText(item.getName());
+            if (item.status == Download.Status.ERROR)
+                holder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
+            else
+                holder.downloadStatus.setText(item.status.getFormal(context, true));
+            holder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed));
+            holder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
+
+            holder.detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength));
+            holder.detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength));
+
+            if (item.status == Download.Status.UNKNOWN || item.status == Download.Status.ERROR)
+                holder.more.setVisibility(View.INVISIBLE);
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (position == 0 && hasSummary) {
-            final SummaryViewHolder castHolder = (SummaryViewHolder) holder;
-            Utils.setupChart(castHolder.chart, true);
-            castHolder.chartRefresh.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.setupChart(castHolder.chart, true);
-                }
-            });
+    public void onBindViewHolder(final DownloadCardsAdapter.DownloadViewHolder holder, int position) {
+        final Download item = objs.get(position);
 
-            castHolder.downloadSpeed.setTypeface(roboto);
-            castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(0));
-            castHolder.uploadSpeed.setTypeface(roboto);
-            castHolder.uploadSpeed.setText(CommonUtils.speedFormatter(0));
-
-            castHolder.active.setText(Html.fromHtml(context.getString(R.string.summaryActive, 0)));
-            castHolder.waiting.setText(Html.fromHtml(context.getString(R.string.summaryWaiting, 0)));
-            castHolder.stopped.setText(Html.fromHtml(context.getString(R.string.summaryStopped, 0, 0)));
+        if (filters.contains(item.status)) {
+            holder.itemView.setVisibility(View.GONE);
+            return;
         } else {
-            final DownloadViewHolder castHolder = (DownloadViewHolder) holder;
-            final Download item = objs.get(position - (hasSummary ? 1 : 0));
-
-            final int color;
-            if (item.isBitTorrent)
-                color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
-            else color = ContextCompat.getColor(context, R.color.colorAccent);
-
-            Utils.setupChart(castHolder.detailsChart, true);
-            castHolder.donutProgress.setFinishedStrokeColor(color);
-
-            castHolder.detailsGid.setText(Html.fromHtml(context.getString(R.string.gid, item.gid)));
-            castHolder.detailsTotalLength.setText(Html.fromHtml(context.getString(R.string.total_length, CommonUtils.dimensionFormatter(item.length))));
-
-            castHolder.expand.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    CommonUtils.animateCollapsingArrowBellows((ImageButton) view, CommonUtils.isExpanded(castHolder.details));
-
-                    if (CommonUtils.isExpanded(castHolder.details)) {
-                        CommonUtils.collapse(castHolder.details);
-                        CommonUtils.collapseTitle(castHolder.downloadName);
-                    } else {
-                        CommonUtils.expand(castHolder.details);
-                        CommonUtils.expandTitle(castHolder.downloadName);
-                    }
-                }
-            });
-            castHolder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Utils.setupChart(castHolder.detailsChart, true);
-                }
-            });
-            castHolder.more.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    handler.onMoreClick(item);
-                }
-            });
-            castHolder.menu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PopupMenu popupMenu = new PopupMenu(context, castHolder.menu, Gravity.BOTTOM);
-                    popupMenu.inflate(R.menu.download_cardview);
-                    Menu menu = popupMenu.getMenu();
-
-                    switch (item.status) {
-                        case ACTIVE:
-                            menu.removeItem(R.id.downloadCardViewMenu_resume);
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                            break;
-                        case WAITING:
-                            menu.removeItem(R.id.downloadCardViewMenu_pause);
-                            menu.removeItem(R.id.downloadCardViewMenu_resume);
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
-                            break;
-                        case PAUSED:
-                            menu.removeItem(R.id.downloadCardViewMenu_pause);
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                            break;
-                        case COMPLETE:
-                            menu.removeItem(R.id.downloadCardViewMenu_pause);
-                            menu.removeItem(R.id.downloadCardViewMenu_resume);
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                            break;
-                        case ERROR:
-                            if (item.isBitTorrent)
-                                menu.removeItem(R.id.downloadCardViewMenu_restart);
-                            menu.removeItem(R.id.downloadCardViewMenu_pause);
-                            menu.removeItem(R.id.downloadCardViewMenu_resume);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                            break;
-                        case REMOVED:
-                            if (item.isBitTorrent)
-                                menu.removeItem(R.id.downloadCardViewMenu_restart);
-                            menu.removeItem(R.id.downloadCardViewMenu_pause);
-                            menu.removeItem(R.id.downloadCardViewMenu_resume);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                            menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                            break;
-                    }
-
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()) {
-                                case R.id.downloadCardViewMenu_remove:
-                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
-                                    break;
-                                case R.id.downloadCardViewMenu_restart:
-                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
-                                    break;
-                                case R.id.downloadCardViewMenu_resume:
-                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
-                                    break;
-                                case R.id.downloadCardViewMenu_pause:
-                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
-                                    break;
-                                case R.id.downloadCardViewMenu_moveDown:
-                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
-                                    break;
-                                case R.id.downloadCardViewMenu_moveUp:
-                                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
-                                    break;
-                            }
-                            return true;
-                        }
-                    });
-                    popupMenu.show();
-                }
-            });
-
-            if (item.status == Download.STATUS.UNKNOWN || item.status == Download.STATUS.ERROR)
-                castHolder.more.setVisibility(View.INVISIBLE);
-
-            if (filters.contains(item.status)) castHolder.itemView.setVisibility(View.GONE);
-            else castHolder.itemView.setVisibility(View.VISIBLE);
+            holder.itemView.setVisibility(View.VISIBLE);
         }
+
+        final int color;
+        if (item.isBitTorrent)
+            color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
+        else color = ContextCompat.getColor(context, R.color.colorAccent);
+
+        Utils.setupChart(holder.detailsChart, true);
+        holder.donutProgress.setFinishedStrokeColor(color);
+
+        holder.detailsGid.setHtml(R.string.gid, item.gid);
+        holder.detailsTotalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(item.length));
+
+        holder.expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CommonUtils.animateCollapsingArrowBellows((ImageButton) view, CommonUtils.isExpanded(holder.details));
+
+                if (CommonUtils.isExpanded(holder.details)) {
+                    CommonUtils.collapse(holder.details);
+                    CommonUtils.collapseTitle(holder.downloadName);
+                } else {
+                    CommonUtils.expand(holder.details);
+                    CommonUtils.expandTitle(holder.downloadName);
+                }
+            }
+        });
+        holder.detailsChartRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.setupChart(holder.detailsChart, true);
+            }
+        });
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handler.onMoreClick(item);
+            }
+        });
+        holder.menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
+                popupMenu.inflate(R.menu.download_cardview);
+                Menu menu = popupMenu.getMenu();
+
+                switch (item.status) {
+                    case ACTIVE:
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case WAITING:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        break;
+                    case PAUSED:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case COMPLETE:
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case ERROR:
+                        if (item.isBitTorrent)
+                            menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                    case REMOVED:
+                        if (item.isBitTorrent)
+                            menu.removeItem(R.id.downloadCardViewMenu_restart);
+                        menu.removeItem(R.id.downloadCardViewMenu_pause);
+                        menu.removeItem(R.id.downloadCardViewMenu_resume);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
+                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
+                        break;
+                }
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.downloadCardViewMenu_remove:
+                                handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
+                                break;
+                            case R.id.downloadCardViewMenu_restart:
+                                handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
+                                break;
+                            case R.id.downloadCardViewMenu_resume:
+                                handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
+                                break;
+                            case R.id.downloadCardViewMenu_pause:
+                                handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
+                                break;
+                            case R.id.downloadCardViewMenu_moveDown:
+                                handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
+                                break;
+                            case R.id.downloadCardViewMenu_moveUp:
+                                handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
+        if (item.status == Download.Status.UNKNOWN || item.status == Download.Status.ERROR)
+            holder.more.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public int getItemCount() {
         if (handler != null) handler.onItemCountUpdated(objs.size());
-        return objs.size() + (hasSummary ? 1 : 0);
-    }
-
-    void updateSummary(final GlobalStats stats) {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyItemChanged(0, stats);
-            }
-        });
+        return objs.size();
     }
 
     public enum SortBy {
@@ -393,7 +307,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<RecyclerView.View
         LENGTH
     }
 
-    public interface IActions {
+    public interface IAdapter {
         void onMoreClick(Download item);
 
         void onItemCountUpdated(int count);
@@ -455,40 +369,18 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private class SummaryViewHolder extends RecyclerView.ViewHolder {
-        final LineChart chart;
-        final ImageButton chartRefresh;
-        final TextView downloadSpeed;
-        final TextView uploadSpeed;
-        final TextView active;
-        final TextView waiting;
-        final TextView stopped;
-
-        SummaryViewHolder(View itemView) {
-            super(itemView);
-
-            chart = (LineChart) itemView.findViewById(R.id.summaryCardViewDetails_chart);
-            chartRefresh = (ImageButton) itemView.findViewById(R.id.summaryCardViewDetails_chartRefresh);
-            downloadSpeed = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_downloadSpeed);
-            uploadSpeed = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_uploadSpeed);
-            active = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_active);
-            waiting = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_waiting);
-            stopped = (TextView) itemView.findViewById(R.id.summaryCardViewDetails_stopped);
-        }
-    }
-
-    private class DownloadViewHolder extends RecyclerView.ViewHolder {
+    class DownloadViewHolder extends RecyclerView.ViewHolder {
         final DonutProgress donutProgress;
-        final TextView downloadName;
-        final TextView downloadStatus;
-        final TextView downloadSpeed;
-        final TextView downloadMissingTime;
+        final SuperTextView downloadName;
+        final SuperTextView downloadStatus;
+        final SuperTextView downloadSpeed;
+        final SuperTextView downloadMissingTime;
         final LinearLayout details;
         final ImageButton detailsChartRefresh;
-        final TextView detailsGid;
-        final TextView detailsTotalLength;
-        final TextView detailsCompletedLength;
-        final TextView detailsUploadLength;
+        final SuperTextView detailsGid;
+        final SuperTextView detailsTotalLength;
+        final SuperTextView detailsCompletedLength;
+        final SuperTextView detailsUploadLength;
         final ImageButton expand;
         final Button more;
         final ImageButton menu;
@@ -497,22 +389,22 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<RecyclerView.View
         DownloadViewHolder(View itemView) {
             super(itemView);
 
-            donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCardView_donutProgress);
-            downloadName = (TextView) itemView.findViewById(R.id.downloadCardView_name);
-            downloadStatus = (TextView) itemView.findViewById(R.id.downloadCardView_status);
-            downloadSpeed = (TextView) itemView.findViewById(R.id.downloadCardView_downloadSpeed);
-            downloadMissingTime = (TextView) itemView.findViewById(R.id.downloadCardView_missingTime);
-            details = (LinearLayout) itemView.findViewById(R.id.downloadCardView_details);
-            expand = (ImageButton) itemView.findViewById(R.id.downloadCardView_expand);
-            more = (Button) itemView.findViewById(R.id.downloadCardView_actionMore);
-            menu = (ImageButton) itemView.findViewById(R.id.downloadCardView_actionMenu);
+            donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCard_donutProgress);
+            downloadName = (SuperTextView) itemView.findViewById(R.id.downloadCard_name);
+            downloadStatus = (SuperTextView) itemView.findViewById(R.id.downloadCard_status);
+            downloadSpeed = (SuperTextView) itemView.findViewById(R.id.downloadCard_downloadSpeed);
+            downloadMissingTime = (SuperTextView) itemView.findViewById(R.id.downloadCard_missingTime);
+            details = (LinearLayout) itemView.findViewById(R.id.downloadCard_details);
+            expand = (ImageButton) itemView.findViewById(R.id.downloadCard_expand);
+            more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
+            menu = (ImageButton) itemView.findViewById(R.id.downloadCard_actionMenu);
 
-            detailsChart = (LineChart) itemView.findViewById(R.id.downloadCardViewDetails_chart);
-            detailsChartRefresh = (ImageButton) itemView.findViewById(R.id.downloadCardViewDetails_chartRefresh);
-            detailsGid = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_gid);
-            detailsTotalLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_totalLength);
-            detailsCompletedLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_completedLength);
-            detailsUploadLength = (TextView) itemView.findViewById(R.id.downloadCardViewDetails_uploadLength);
+            detailsChart = (LineChart) itemView.findViewById(R.id.downloadCard_detailsChart);
+            detailsChartRefresh = (ImageButton) itemView.findViewById(R.id.downloadCard_detailsChartRefresh);
+            detailsGid = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsGid);
+            detailsTotalLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsTotalLength);
+            detailsCompletedLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsCompletedLength);
+            detailsUploadLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsUploadLength);
         }
     }
 }
