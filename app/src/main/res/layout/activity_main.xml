@@ -43,36 +43,14 @@
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <android.support.v7.widget.RecyclerView
-                        android:id="@+id/main_recyclerView"
+                        android:id="@+id/main_list"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
                 </android.support.v4.widget.SwipeRefreshLayout>
 
-                <LinearLayout
-                    android:id="@+id/main_noItems"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingEnd="@dimen/activity_horizontal_margin"
-                    android:paddingStart="@dimen/activity_horizontal_margin">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/mainList_noItems"
-                        android:textAlignment="center" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-                </LinearLayout>
+                <include
+                    layout="@layout/message_layout"
+                    android:visibility="gone" />
 
                 <View
                     android:id="@+id/main_mask"

@@ -6,10 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
-import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.Utils;
 
 import org.json.JSONException;
@@ -36,18 +36,16 @@ import javax.net.ssl.SSLSession;
 
 public class HTTPing extends AbstractClient {
     private static HTTPing httping;
-    private final SingleModeProfileItem profile;
+    private final UserProfile profile;
     private final SSLContext sslContext;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        profile = CurrentProfile.getCurrentProfile(context);
+        profile = ProfilesManager.get(context).getCurrentAssert();
         sslContext = Utils.readySSLContext(Utils.readyCertificate(context));
     }
 
     public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException {
-        if (httping == null)
-            httping = new HTTPing(context);
-
+        if (httping == null) httping = new HTTPing(context);
         return httping;
     }
 

@@ -1,18 +1,17 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.CurrentProfile;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IReceived;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Prefs;
-import com.gianlu.aria2app.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.Utils;
 
 import org.json.JSONArray;
@@ -49,11 +48,14 @@ public class JTA2 {
         this.forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Prefs.A2_FORCE_ACTION, true);
     }
 
-    public static JTA2 newInstance(Activity context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (CurrentProfile.getCurrentProfile(context).connectionMethod == SingleModeProfileItem.ConnectionMethod.WEBSOCKET) {
-            return new JTA2(context, WebSocketing.newInstance(context));
-        } else {
-            return new JTA2(context, HTTPing.newInstance(context));
+    public static JTA2 newInstance(Context context) throws JTA2InitializingException {
+        try {
+            if (ProfilesManager.get(context).getCurrentAssert().connectionMethod == UserProfile.ConnectionMethod.WEBSOCKET)
+                return new JTA2(context, WebSocketing.instantiate(context));
+            else
+                return new JTA2(context, HTTPing.newInstance(context));
+        } catch (IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
+            throw new JTA2InitializingException(ex);
         }
     }
 

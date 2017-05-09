@@ -2,7 +2,7 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.support.annotation.NonNull;
 
-import com.gianlu.aria2app.MoreAboutDownload.ServersFragment.Item;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment.Item;
 
 import org.json.JSONObject;
 

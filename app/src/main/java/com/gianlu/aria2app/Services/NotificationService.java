@@ -15,9 +15,8 @@ import android.support.v4.content.ContextCompat;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.aria2app.Profile.MultiModeProfileItem;
-import com.gianlu.aria2app.Profile.ProfileItem;
-import com.gianlu.aria2app.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.neovisionaries.ws.client.WebSocket;
@@ -45,11 +44,10 @@ public class NotificationService extends IntentService {
     public static Intent createStartIntent(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        ArrayList<SingleModeProfileItem> profiles = new ArrayList<>();
-        for (ProfileItem profile : ProfileItem.getProfiles(context)) {
+        ArrayList<UserProfile> profiles = new ArrayList<>();
+        for (UserProfile profile : ProfilesManager.get(context).getProfiles()) {
             if (!profile.notificationsEnabled) continue;
-            if (profile.singleMode) profiles.add((SingleModeProfileItem) profile);
-            else profiles.add(((MultiModeProfileItem) profile).getCurrentProfile(context));
+            profiles.add(profile);
         }
 
         return new Intent(context, NotificationService.class)
@@ -57,17 +55,25 @@ public class NotificationService extends IntentService {
                 .putExtra("profiles", profiles);
     }
 
-    private static String expandProfileList(List<SingleModeProfileItem> profiles) {
+    private static String expandProfileList(List<UserProfile> profiles) {
         String expanded = "";
 
         boolean first = true;
-        for (SingleModeProfileItem profile : profiles) {
+        for (UserProfile profile : profiles) {
             if (!first) expanded += ", ";
-            expanded += profile.globalProfileName;
+            expanded += profile.getProfileName();
             first = false;
         }
 
         return expanded;
+    }
+
+    public static void stop(Context context) {
+        context.stopService(new Intent(context, NotificationService.class).setAction("STOP"));
+    }
+
+    public static void start(Context context) {
+        context.startService(NotificationService.createStartIntent(context));
     }
 
     @SuppressWarnings("unchecked")
@@ -79,7 +85,7 @@ public class NotificationService extends IntentService {
                     .setPriority(Notification.PRIORITY_MIN)
                     .setContentTitle(getString(R.string.notificationService))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setContentText(expandProfileList((List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")))
+                    .setContentText(expandProfileList((List<UserProfile>) intent.getSerializableExtra("profiles")))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
                     .addAction(new NotificationCompat.Action.Builder(
@@ -99,13 +105,13 @@ public class NotificationService extends IntentService {
     @SuppressWarnings("unchecked")
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (Objects.equals(intent.getAction(), "STOP") || ((List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")).size() == 0) {
+        if (Objects.equals(intent.getAction(), "STOP") || ((List<UserProfile>) intent.getSerializableExtra("profiles")).size() == 0) {
             stopSelf();
             return;
         }
 
-        for (SingleModeProfileItem profile : (List<SingleModeProfileItem>) intent.getSerializableExtra("profiles")) {
-            if (profile.connectionMethod == SingleModeProfileItem.ConnectionMethod.HTTP) continue;
+        for (UserProfile profile : (List<UserProfile>) intent.getSerializableExtra("profiles")) {
+            if (profile.connectionMethod == UserProfile.ConnectionMethod.HTTP) continue;
 
             String scheme;
             if (profile.serverSSL) scheme = "wss://";
@@ -156,11 +162,11 @@ public class NotificationService extends IntentService {
     }
 
     private class NotificationHandler extends WebSocketAdapter {
-        private final SingleModeProfileItem profile;
+        private final UserProfile profile;
         private final boolean soundEnabled;
         private final Set<String> selectedNotifications;
 
-        NotificationHandler(SingleModeProfileItem profile) {
+        NotificationHandler(UserProfile profile) {
             this.profile = profile;
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(NotificationService.this);
 
@@ -179,9 +185,9 @@ public class NotificationService extends IntentService {
                     .setContentIntent(
                             PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, MainActivity.class)
                                     .putExtra("fromNotification", true)
-                                    .putExtra("fileName", profile.fileName)
+                                    .putExtra("fileName", profile.id)
                                     .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setContentText(profile.globalProfileName)
+                    .setContentText(profile.getProfileName())
                     .setContentInfo("GID#" + gid)
                     .setGroup(gid)
                     .setSmallIcon(R.drawable.ic_notification)

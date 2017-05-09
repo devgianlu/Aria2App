@@ -25,17 +25,12 @@
         android:theme="@style/AppTheme">
 
         <!-- Add profile activity -->
-        <activity
-            android:name=".Profile.AddProfileActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
 
-        <!-- Main activity -->
+        <!-- Loading activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoadingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,28 +38,34 @@
             </intent-filter>
         </activity>
 
+        <!-- Main activity -->
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <!-- DirectDownload activity -->
         <activity
-            android:name=".DirectDownloadActivity"
+            android:name=".Activities.DirectDownloadActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- Add download activities -->
         <activity
-            android:name=".Main.AddTorrentActivity"
+            android:name=".Activities.AddTorrentActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".Main.AddURIActivity"
+            android:name=".Activities.AddURIActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- More about download activity -->
         <activity
-            android:name=".MoreAboutDownloadActivity"
+            android:name=".Activities.MoreAboutDownloadActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -83,7 +84,7 @@
 
         <!-- Share activity -->
         <activity
-            android:name=".ShareActivity"
+            android:name=".Activities.ShareActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -1133,7 +1134,7 @@
 
         <!-- Search Torrent activity -->
         <activity
-            android:name=".Main.SearchActivity"
+            android:name=".Activities.SearchActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"

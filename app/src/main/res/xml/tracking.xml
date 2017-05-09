@@ -9,17 +9,22 @@
 
     <screenName name="com.gianlu.aria2app.MainActivity">Screen~Main</screenName>
     <screenName name="com.gianlu.aria2app.PreferencesActivity">Screen~Preferences</screenName>
-    <screenName name="com.gianlu.aria2app.ShareActivity">Screen~Share</screenName>
+    <screenName name="com.gianlu.aria2app.Activities.ShareActivity">Screen~Share</screenName>
     <screenName name="com.gianlu.commonutils.LogsActivity">Screen~Logs</screenName>
-    <screenName name="com.gianlu.aria2app.MoreAboutDownloadActivity">Screen~MoreAboutDownload
+    <screenName name="com.gianlu.aria2app.Activities.MoreAboutDownloadActivity">
+        Screen~MoreAboutDownload
     </screenName>
     <screenName name="com.gianlu.aria2app.TerminalActivity">Screen~Terminal</screenName>
-    <screenName name="com.gianlu.aria2app.Profile.AddProfileActivity">Screen~AddProfile</screenName>
-    <screenName name="com.gianlu.aria2app.Main.AddURIActivity">Screen~AddURI</screenName>
-    <screenName name="com.gianlu.aria2app.Main.AddTorrentActivity">Screen~AddTorrent</screenName>
+    <screenName name="com.gianlu.aria2app.ProfilesManager.AddProfileActivity">Screen~AddProfile
+    </screenName>
+    <screenName name="com.gianlu.aria2app.Activities.AddURIActivity">Screen~AddURI</screenName>
+    <screenName name="com.gianlu.aria2app.Activities.AddTorrentActivity">Screen~AddTorrent
+    </screenName>
     <screenName name="com.gianlu.aria2app.OldPreferencesActivity">Screen~Settings</screenName>
-    <screenName name="com.gianlu.aria2app.Main.SearchActivity">Screen~SearchTorrent</screenName>
-    <screenName name="com.gianlu.aria2app.DirectDownloadActivity">Screen~DirectDownload</screenName>
+    <screenName name="com.gianlu.aria2app.Activities.SearchActivity">Screen~SearchTorrent
+    </screenName>
+    <screenName name="com.gianlu.aria2app.Activities.DirectDownloadActivity">Screen~DirectDownload
+    </screenName>
     <screenName name="com.gianlu.commonutils.UncaughtExceptionActivity">Screen~UncaughtException
     </screenName>
 </resources>

@@ -29,10 +29,11 @@ import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsAdapter;
-import com.gianlu.aria2app.Profile.DirectDownload;
-import com.gianlu.aria2app.Profile.SingleModeProfileItem;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.github.mikephil.charting.charts.LineChart;
@@ -217,11 +218,11 @@ public class Utils {
 
     @Nullable
     public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
-        return readyCertificate(context, CurrentProfile.getCurrentProfile(context));
+        return readyCertificate(context, ProfilesManager.get(context).getCurrent());
     }
 
     @Nullable
-    public static Certificate readyCertificate(Context context, SingleModeProfileItem profile) throws CertificateException, FileNotFoundException {
+    public static Certificate readyCertificate(Context context, UserProfile profile) throws CertificateException, FileNotFoundException {
         if (!profile.serverSSL || profile.certificatePath == null || profile.certificatePath.isEmpty())
             return null;
 
@@ -234,9 +235,8 @@ public class Utils {
 
     public static JSONArray readyParams(Context context) {
         JSONArray array = new JSONArray();
-        if (CurrentProfile.getCurrentProfile(context).authMethod == JTA2.AuthMethod.TOKEN)
-            array.put("token:" + CurrentProfile.getCurrentProfile(context).serverToken);
-
+        UserProfile profile = ProfilesManager.get(context).getCurrentAssert();
+        if (profile.authMethod == JTA2.AuthMethod.TOKEN) array.put("token:" + profile.serverToken);
         return array;
     }
 
@@ -280,11 +280,11 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
-    static void showOptionsDialog(@NonNull final Activity context, String gid, final boolean global, final boolean isQuick, final IOptionsDialog handler) {
+    public static void showOptionsDialog(@NonNull final Activity context, String gid, final boolean global, final boolean isQuick, final IOptionsDialog handler) {
         final JTA2 jta2;
         try {
             jta2 = JTA2.newInstance(context);
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+        } catch (JTA2InitializingException ex) {
             CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
             return;
         }
@@ -421,19 +421,16 @@ public class Utils {
 
     @Nullable
     public static URL createDownloadRemoteURL(Context context, String downloadDir, AFile file) {
-        final DirectDownload dd = CurrentProfile.getCurrentProfile(context).directDownload;
+        final UserProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().directDownload;
 
-        final URL url;
         try {
             URL base = dd.getURLAddress();
             URI uri = new URI(base.getProtocol(), null, base.getHost(), base.getPort(), file.getRelativePath(downloadDir), null, null);
-            url = uri.toURL();
+            return uri.toURL();
         } catch (MalformedURLException | URISyntaxException ex) {
             Logging.logMe(context, ex);
             return null;
         }
-
-        return url;
     }
 
     public static File createDownloadLocalPath(File parent, String filename) {
@@ -458,7 +455,7 @@ public class Utils {
         return ioFile;
     }
 
-    interface IOptionsDialog {
+    public interface IOptionsDialog {
         void onApply(JTA2 jta2, Map<String, String> options);
     }
 
@@ -482,7 +479,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_PAUSE = new CommonUtils.ToastMessage("Failed to pause download!", true);
         public static final CommonUtils.ToastMessage MUST_CREATE_FIRST_PROFILE = new CommonUtils.ToastMessage("You must create your first profile to run the application!", false);
         public static final CommonUtils.ToastMessage CANNOT_EDIT_PROFILE = new CommonUtils.ToastMessage("Cannot edit this profile!", true);
-        public static final CommonUtils.ToastMessage PROFILE_DOES_NOT_EXIST = new CommonUtils.ToastMessage("Profile doesn't exist!", true);
+        public static final CommonUtils.ToastMessage PROFILE_DOES_NOT_EXIST = new CommonUtils.ToastMessage("BaseProfile doesn't exist!", true);
         public static final CommonUtils.ToastMessage FAILED_REMOVE = new CommonUtils.ToastMessage("Failed to remove download!", true);
         public static final CommonUtils.ToastMessage FAILED_UNPAUSE = new CommonUtils.ToastMessage("Failed to resume download!", true);
         public static final CommonUtils.ToastMessage FAILED_REMOVE_RESULT = new CommonUtils.ToastMessage("Failed to remove download's result!", true);
@@ -513,6 +510,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage READ_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot access the certificate file. You denied the read permission!", false);
         public static final CommonUtils.ToastMessage SEARCH_FAILED = new CommonUtils.ToastMessage("Search failed!", true);
         public static final CommonUtils.ToastMessage NOT_ONLINE = new CommonUtils.ToastMessage("This server isn't online. If it should try swiping down to refresh.", false);
+        public static final CommonUtils.ToastMessage FAILED_CONNECTING = new CommonUtils.ToastMessage("Failed connecting!", true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
