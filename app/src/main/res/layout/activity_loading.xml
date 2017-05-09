@@ -9,7 +9,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.6" />
+        android:layout_weight="0.6"
+        android:minHeight="200dp" />
 
     <ImageView
         android:layout_width="128dp"
@@ -43,9 +44,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/loading_picker"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
         android:paddingEnd="48dp"
         android:paddingStart="48dp"
         android:scrollbars="vertical"
@@ -54,5 +54,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:minHeight="200dp" />
 </LinearLayout>

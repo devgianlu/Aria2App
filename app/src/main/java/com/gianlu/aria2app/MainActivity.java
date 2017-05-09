@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onProfileSelected(final UserProfile profile) {
-        // TODO: BaseProfile selected
+        ProfilesManager.get(this).setLastProfile(this, profile);
+        startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     @Override
@@ -193,7 +194,13 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.ic_report_problem_black_48dp, getString(R.string.support)))
                 .addProfiles(ProfilesManager.get(this).getProfiles()));
 
-        drawerManager.setDrawerListener(this);
+        ProfilesManager manager = ProfilesManager.get(this);
+        UserProfile currentProfile = manager.getCurrentAssert();
+
+        drawerManager.setCurrentProfile(currentProfile)
+                .setDrawerListener(this);
+
+        setTitle(currentProfile.getProfileName() + " - " + getString(R.string.app_name));
 
         list = (RecyclerView) findViewById(R.id.main_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -420,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Nullable
     @Override
-    public ProfilesAdapter<UserProfile> getProfilesAdapter(Context context, List<UserProfile> profiles, final DrawerManager.IDrawerListener listener) {
+    public ProfilesAdapter<UserProfile> getProfilesAdapter(Context context, List<UserProfile> profiles, final DrawerManager.IDrawerListener<UserProfile> listener) {
         return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<UserProfile>() {
             @Override
             public void onProfileSelected(UserProfile profile) {
