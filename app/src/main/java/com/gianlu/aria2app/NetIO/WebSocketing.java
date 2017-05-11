@@ -34,9 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketing extends AbstractClient {
     private static WebSocketing webSocketing;
-    private static boolean isDestroying;
     private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
     private final List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
+    private boolean isDestroying;
     private IConnect connectionListener;
     private WebSocket socket;
 
@@ -66,7 +66,7 @@ public class WebSocketing extends AbstractClient {
 
     public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException, IllegalArgumentException {
         if (ca != null) {
-            return new WebSocketFactory().setSSLContext(Utils.readySSLContext(ca)).setConnectionTimeout(5000).createSocket(url.replace("ws://", "wss://"), 5000);
+            return new WebSocketFactory().setSSLContext(Utils.readySSLContext(ca)).setConnectionTimeout(5000).createSocket(url, 5000);
         } else {
             return new WebSocketFactory().setConnectionTimeout(5000).createSocket(url, 5000);
         }
@@ -104,6 +104,12 @@ public class WebSocketing extends AbstractClient {
         } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
         }
+    }
+
+    public static void destroy() {
+        if (webSocketing == null) return;
+        webSocketing.socket.disconnect();
+        webSocketing = null;
     }
 
     @Override

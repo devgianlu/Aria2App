@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
@@ -18,6 +20,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.InfoFragment.InfoPagerFr
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PagerAdapter;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment.PeersPagerFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment.ServersPagerFragment;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
@@ -30,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity {
-    private PagerAdapter adapter;
-    private String gid;
     private final Utils.IOptionsDialog optionsChanged = new Utils.IOptionsDialog() {
         @Override
         public void onApply(JTA2 jta2, Map<String, String> options) {
@@ -45,7 +46,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
                     .setAction(ThisApplication.ACTION_CHANGED_DOWNLOAD_OPTIONS)
                     .build());
 
-            jta2.changeOption(gid, options, new JTA2.ISuccess() {
+            jta2.changeOption("" /* FIXME */, options, new JTA2.ISuccess() {
                 @Override
                 public void onSuccess() {
                     pd.dismiss();
@@ -60,30 +61,40 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             });
         }
     };
+    private PagerAdapter adapter;
     private Menu menu;
+
+    public static void start(Context context, Download download) {
+        context.startActivity(new Intent(context, MoreAboutDownloadActivity.class).putExtra("download", download));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(getIntent().getBooleanExtra("isTorrent", false) ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
-        setTitle(getIntent().getStringExtra("name"));
 
-        gid = getIntent().getStringExtra("gid");
+        Download download = (Download) getIntent().getSerializableExtra("download");
+        if (download == null) {
+            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_LOADING, new NullPointerException("download is null!"));
+            onBackPressed();
+            return;
+        }
+
+        setTitle(download.getName());
+        setTheme(download.isBitTorrent ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null)
-            actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
 
         final List<CommonFragment> fragments = new ArrayList<>();
         /*
-        fragments.add(0, InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {
+        fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {
             @Override
             public void onDownloadStatusChanged(Download.STATUS newStatus) {
                 if (menu == null) return;
@@ -114,12 +125,12 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         }));
         */
 
-        if (getIntent().getBooleanExtra("isTorrent", false))
-            fragments.add(1, PeersPagerFragment.newInstance(getString(R.string.peers), gid));
+        if (download.isBitTorrent)
+            fragments.add(PeersPagerFragment.newInstance(getString(R.string.peers), download.gid));
         else
-            fragments.add(1, ServersPagerFragment.newInstance(getString(R.string.servers), gid));
+            fragments.add(ServersPagerFragment.newInstance(getString(R.string.servers), download.gid));
 
-        fragments.add(2, FilesPagerFragment.newInstance(getString(R.string.files), gid));
+        fragments.add(FilesPagerFragment.newInstance(getString(R.string.files), download.gid));
 
         adapter = new PagerAdapter(getSupportFragmentManager(), fragments);
         pager.setAdapter(adapter);
@@ -164,10 +175,10 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.moreAboutDownloadMenu_options:
-                Utils.showOptionsDialog(this, gid, false, false, optionsChanged);
+                Utils.showOptionsDialog(this, "" /* FIXME */, false, false, optionsChanged);
                 break;
             case R.id.moreAboutDownloadMenu_quickOptions:
-                Utils.showOptionsDialog(this, gid, false, true, optionsChanged);
+                Utils.showOptionsDialog(this, "" /* FIXME */, false, true, optionsChanged);
                 break;
             case R.id.moreAboutDownloadMenu_bitfield:
                 item.setChecked(!item.isChecked());

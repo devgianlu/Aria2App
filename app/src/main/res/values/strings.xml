@@ -188,7 +188,7 @@
     <string name="writeExternalStorageRequest_message">In order to save files to your devices, Aria2App needs to write to your external storage.</string>
     <string name="readExternalStorageRequest_title">Read permission required</string>
     <string name="readExternalStorageRequest_message">In order to load the certificate, Aria2App needs to read from your external storage.</string>
-    <string name="mainList_noItems">There are no downloads running. You can add one by tapping on the plus icon in the bottom corner.</string>
+    <string name="noDownloads">There are no downloads running. You can add one by tapping on the plus icon in the bottom corner.</string>
     <string name="donate">Donate</string>
     <string name="donateSummary">Send me a small amount of money to support me</string>
     <string name="connectingBillingService">Connecting to the billing service. Please wait…</string>
@@ -255,6 +255,8 @@
     <string name="jsoup_details">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
+    <string name="fatalExceptionMessage">A fatal exception had been thrown!</string>
+    <string name="subsequentExceptions">Too many exceptions have been thrown!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

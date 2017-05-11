@@ -99,6 +99,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         if (pos == -1) {
             objs.add(payload);
             super.notifyItemInserted(objs.size() - 1);
+            if (handler != null) handler.onItemCountUpdated(objs.size());
             return;
         }
 
@@ -294,7 +295,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
 
     @Override
     public int getItemCount() {
-        if (handler != null) handler.onItemCountUpdated(objs.size());
         return objs.size();
     }
 

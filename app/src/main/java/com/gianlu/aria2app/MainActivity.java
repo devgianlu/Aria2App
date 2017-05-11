@@ -19,6 +19,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -26,10 +27,13 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddURIActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
+import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.UpdateUI;
+import com.gianlu.aria2app.NetIO.BaseUpdater;
+import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -43,6 +47,7 @@ import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.Initializer;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -60,11 +65,30 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
 
+    private void refresh() {
+        updater.stopThread(new BaseUpdater.IThread() {
+            @Override
+            public void onStopped() {
+                adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<Download>(), MainActivity.this);
+                list.setAdapter(adapter);
+
+                try {
+                    updater = new UpdateUI(MainActivity.this, MainActivity.this);
+                    updater.start();
+                } catch (JTA2InitializingException ex) {
+                    ErrorHandler.get().notifyException(ex, true);
+                }
+
+                swipeRefresh.setRefreshing(false);
+            }
+        });
+    }
+
     @Override
     public boolean onMenuItemSelected(BaseDrawerItem which) {
         switch (which.id) {
             case DrawerConst.HOME:
-                // TODO
+                refresh();
                 return true;
             case DrawerConst.DIRECT_DOWNLOAD:
                 startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
@@ -212,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // TODO: Refresh
+                refresh();
             }
         });
 
@@ -264,11 +288,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         try {
             updater = new UpdateUI(this, this);
+            updater.start();
         } catch (JTA2InitializingException ex) {
-            ex.printStackTrace(); // TODO: Handle this
+            ErrorHandler.get().notifyException(ex, true);
         }
-
-        updater.start();
     }
 
     @Override
@@ -309,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.a2menu_refreshPage:
-                // TODO
+                refresh();
                 break;
             // Filters
             case R.id.a2menu_active:
@@ -489,12 +512,16 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onMoreClick(Download item) {
-        // TODO
+        MoreAboutDownloadActivity.start(this, item);
     }
 
     @Override
     public void onItemCountUpdated(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerConst.HOME, count);
+
+        if (count == 0)
+            MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.noDownloads, R.drawable.ic_info_outline_black_48dp);
+        else MessageLayout.hide((ViewGroup) findViewById(R.id.main_drawer));
     }
 
     @Override

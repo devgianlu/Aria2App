@@ -2,10 +2,14 @@ package com.gianlu.aria2app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
+import com.gianlu.aria2app.NetIO.ErrorHandler;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -14,7 +18,7 @@ import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.Map;
 
-public class ThisApplication extends Application {
+public class ThisApplication extends Application implements ErrorHandler.IErrorHandler {
     public static final String CATEGORY_USER_INPUT = "User input";
     public static final String ACTION_DOWNLOAD_FILE = "Download file";
     public static final String ACTION_NEW_PROFILE = "New profile";
@@ -55,10 +59,26 @@ public class ThisApplication extends Application {
         super.onCreate();
 
         CommonUtils.setDebug(BuildConfig.DEBUG);
-
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
         FileDownloader.init(getApplicationContext());
+        ErrorHandler.setup(Prefs.getInt(this, Prefs.Keys.A2_UPDATE_INTERVAL, 1000), this);
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         tracker = getTracker(this);
+    }
+
+    @Override
+    public void onFatal(Exception ex) {
+        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), ex);
+        WebSocketing.destroy();
+        Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+    }
+
+    @Override
+    public void onSubsequentExceptions() {
+        WebSocketing.destroy();
+        Toast.makeText(this, R.string.subsequentExceptions, Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 }

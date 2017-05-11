@@ -5,18 +5,18 @@ import android.support.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
-public class AFile {
+public class AFile implements Serializable {
     public final long completedLength;
     public final long length;
     public final String path;
     public final boolean selected;
     public final int index;
-    public final Map<Status, String> uris;
+    public final HashMap<Status, String> uris;
 
     public AFile(JSONObject obj) {
         index = Integer.parseInt(obj.optString("index", "0"));

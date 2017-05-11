@@ -8,10 +8,10 @@ import com.gianlu.aria2app.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-public class Download {
+public class Download implements Serializable {
     public final String bitfield;
     public final boolean isBitTorrent;
     public final long completedLength;
@@ -25,7 +25,7 @@ public class Download {
     public final Status status;
     public final int downloadSpeed;
     public final int uploadSpeed;
-    public final List<AFile> files;
+    public final ArrayList<AFile> files;
     public final int errorCode;
     public final String errorMessage;
     public final String followedBy;

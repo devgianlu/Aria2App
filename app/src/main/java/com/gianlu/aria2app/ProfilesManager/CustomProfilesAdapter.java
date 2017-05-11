@@ -94,9 +94,9 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
                         try {
                             HttpURLConnection conn;
                             if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
-                                conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
+                                conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
                             else
-                                conn = HTTPing.readyHttpConnection((profile.serverSSL ? "https://" : "http://") + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(context, profile));
+                                conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), Utils.readyCertificate(context, profile));
 
                             long start = System.currentTimeMillis();
                             conn.connect();
@@ -146,22 +146,11 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
                 try {
                     WebSocket webSocket;
                     if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
-                        webSocket = WebSocketing.readyWebSocket((profile.serverSSL ? "wss://" : "ws://")
-                                        + profile.serverAddr
-                                        + ":" + profile.serverPort
-                                        + profile.serverEndpoint,
-                                profile.serverUsername,
-                                profile.serverPassword,
-                                Utils.readyCertificate(context, profile));
+                        webSocket = WebSocketing.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
                     else
-                        webSocket = WebSocketing.readyWebSocket((profile.serverSSL ? "wss://" : "ws://")
-                                        + profile.serverAddr
-                                        + ":" + profile.serverPort
-                                        + profile.serverEndpoint,
-                                Utils.readyCertificate(context, profile));
+                        webSocket = WebSocketing.readyWebSocket(profile.buildWebSocketUrl(), Utils.readyCertificate(context, profile));
 
-                    webSocket.addListener(new StatusWebSocketHandler(profile, handler))
-                            .connectAsynchronously();
+                    webSocket.addListener(new StatusWebSocketHandler(profile, handler)).connectAsynchronously();
                 } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                     profile.setStatus(BaseProfile.Status.ERROR);
 

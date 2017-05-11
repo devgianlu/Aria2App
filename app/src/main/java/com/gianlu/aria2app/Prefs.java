@@ -29,9 +29,15 @@ public class Prefs {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    public static int getInt(Context context, Keys key, int fallback) {
+        init(context);
+        return prefs.getInt(key.key, fallback);
+    }
+
     public enum Keys {
         DD_DOWNLOAD_PATH("dd_downloadPath"),
-        A2_ENABLE_NOTIFS("a2_enableNotifications");
+        A2_ENABLE_NOTIFS("a2_enableNotifications"),
+        A2_UPDATE_INTERVAL("a2_updateInterval");
         public final String key;
 
         Keys(String key) {

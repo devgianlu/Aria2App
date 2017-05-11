@@ -30,23 +30,30 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile {
         notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
         if (!obj.isNull("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
         else authMethod = JTA2.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
-        serverUsername = obj.optString("serverUsername");
-        serverPassword = obj.optString("serverPassword");
-        serverToken = obj.optString("serverToken");
+        serverUsername = obj.optString("serverUsername", null);
+        serverPassword = obj.optString("serverPassword", null);
+        serverToken = obj.optString("serverToken", null);
         serverSSL = obj.optBoolean("serverSSL", false);
         // isDefault = obj.optBoolean("default", false);
 
-        serverAddr = obj.optString("serverAddr");
-        serverPort = obj.optInt("serverPort");
-        serverEndpoint = obj.optString("serverEndpoint");
-
-        certificatePath = obj.optString("certificatePath");
+        serverAddr = obj.getString("serverAddr");
+        serverPort = obj.getInt("serverPort");
+        serverEndpoint = obj.getString("serverEndpoint");
+        certificatePath = obj.optString("certificatePath", null);
 
         if (obj.has("directDownload"))
             directDownload = new DirectDownload(obj.getJSONObject("directDownload"));
         else directDownload = null;
 
         connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.WEBSOCKET.name()));
+    }
+
+    public String buildWebSocketUrl() {
+        return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+    }
+
+    public String buildHttpUrl() {
+        return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
     }
 
     public String getFullServerAddress() {

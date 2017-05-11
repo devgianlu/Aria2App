@@ -6,11 +6,11 @@ import android.support.annotation.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-public class BitTorrent {
-    public final List<String> announceList;
+public class BitTorrent implements Serializable {
+    public final ArrayList<String> announceList;
     public final Mode mode;
     public final String comment;
     public final int creationDate;

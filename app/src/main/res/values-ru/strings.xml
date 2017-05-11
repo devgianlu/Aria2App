@@ -188,7 +188,7 @@
     <string name="writeExternalStorageRequest_message">Чтобы сохранить файлы на ваших устройствах, Aria2App необходимо записать на внешнее хранилище.</string>
     <string name="readExternalStorageRequest_title">Требуется разрешение на чтение</string>
     <string name="readExternalStorageRequest_message">Чтобы загрузить сертификат, Aria2App необходимо чтение из внешнего хранилища.</string>
-    <string name="mainList_noItems">Нет запущенных загрузок. Вы можете добавить ее, нажав на значок плюса в нижнем углу.</string>
+    <string name="noDownloads">Нет запущенных загрузок. Вы можете добавить ее, нажав на значок плюса в нижнем углу.</string>
     <string name="donate">Пожертвовать</string>
     <string name="donateSummary">Отправьте мне небольшую сумму денег, чтобы поддержать меня</string>
     <string name="connectingBillingService">Подключение к услуге биллинга. пожалуйста, подождите…</string>
