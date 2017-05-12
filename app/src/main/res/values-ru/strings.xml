@@ -74,7 +74,7 @@
     <string name="endpoint">путь</string>
     <string name="endpoint_default">/jsonrpc</string>
     <string name="completeURL_default">ws://127.0.0.1:6800/jsonrpc</string>
-    <string name="authenticationMethod">Метод аутентификации:</string>
+    <string name="authenticationMethod">Метод аутентификации</string>
     <string name="token">Токен</string>
     <string name="token_hint">токен</string>
     <string name="username_hint">имя пользователя</string>
@@ -118,9 +118,9 @@
     <string name="directDownload_help">\"Прямая загрузка\" предоставляет возможность напрямую загружать файлы с сервера aria2 на ваше устройство одним нажатием! Вам просто нужна соответствующая конфигурация веб-сервера. Например: <a>https://docs.python.org/2/library/simplehttpserver.html</a>. Для этого потребуется разрешение на запись во внешнее хранилище.</string>
     <string name="directDownload_addrHint">http://127.0.0.1:6801/</string>
     <string name="directDownload_addrHelp">Адрес должен указывать на список каталогов в каталог загрузки aria2.</string>
-    <string name="username">Имя пользователя:</string>
+    <string name="username">Имя пользователя</string>
     <string name="directDownload_usernameHint">имя пользоваетля</string>
-    <string name="password">Пароль:</string>
+    <string name="password">Пароль</string>
     <string name="directDownload_passwordHint">пароль</string>
     <string name="remove">Удалить</string>
     <string name="pause">Пауза</string>
