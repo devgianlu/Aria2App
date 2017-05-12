@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -27,6 +28,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddURIActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
+import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
@@ -121,12 +123,20 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void addProfile() {
-        // TODO: Add profile
+        EditProfileActivity.start(this, false);
     }
 
     @Override
     public void editProfile(final List<UserProfile> items) {
-        // TODO: Edit profile
+        CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+                .setTitle(R.string.editProfile)
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditProfileActivity.start(MainActivity.this, items.get(which));
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null));
     }
 
     private void showAboutDialog() {

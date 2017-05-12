@@ -24,8 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- Add profile activity -->
-
         <!-- Loading activity -->
         <activity
             android:name=".LoadingActivity"
@@ -43,6 +41,13 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- Edit profile activity -->
+        <activity
+            android:name=".Activities.EditProfileActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
 
         <!-- DirectDownload activity -->
         <activity

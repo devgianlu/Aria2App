@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -20,7 +20,7 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.List;
 
 
-public class FilesPagerFragment extends CommonFragment {
+public class FilesPagerFragment extends Fragment {
     private FilesAdapter adapter;
     private int gotoIndex = -1;
 
@@ -101,10 +101,5 @@ public class FilesPagerFragment extends CommonFragment {
         });
 
         return rootView;
-    }
-
-    @Override
-    public void stopUpdater() {
-        // TODO
     }
 }

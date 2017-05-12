@@ -41,15 +41,39 @@
             android:textColor="@color/white" />
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
         android:id="@+id/loading_picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:paddingEnd="48dp"
-        android:paddingStart="48dp"
-        android:scrollbars="vertical"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textAlignment="center" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/loading_pickerList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:paddingEnd="48dp"
+            android:paddingStart="48dp"
+            android:scrollbars="vertical" />
+
+        <ImageButton
+            android:id="@+id/loading_pickerAdd"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add_circle_white_48dp" />
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"

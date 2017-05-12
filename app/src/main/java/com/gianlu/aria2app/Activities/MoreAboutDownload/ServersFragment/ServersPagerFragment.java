@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
@@ -23,7 +23,7 @@ import com.gianlu.commonutils.CommonUtils;
 
 import java.util.List;
 
-public class ServersPagerFragment extends CommonFragment {
+public class ServersPagerFragment extends Fragment {
     // private UpdateUI updateUI;
 
     public static ServersPagerFragment newInstance(String title, String gid) {
@@ -109,10 +109,5 @@ public class ServersPagerFragment extends CommonFragment {
         recyclerView.setLayoutManager(llm);
 
         return rootView;
-    }
-
-    @Override
-    public void stopUpdater() {
-        // TODO
     }
 }

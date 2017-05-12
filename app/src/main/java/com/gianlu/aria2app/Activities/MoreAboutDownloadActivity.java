@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +15,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment.FilesPagerFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.InfoFragment.InfoPagerFragment;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.PagerAdapter;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment.PeersPagerFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment.ServersPagerFragment;
+import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
@@ -70,9 +70,6 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_more_about_download);
-
         Download download = (Download) getIntent().getSerializableExtra("download");
         if (download == null) {
             CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_LOADING, new NullPointerException("download is null!"));
@@ -80,8 +77,10 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             return;
         }
 
-        setTitle(download.getName());
         setTheme(download.isBitTorrent ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_more_about_download);
+        setTitle(download.getName());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
         setSupportActionBar(toolbar);
@@ -92,7 +91,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
 
-        final List<CommonFragment> fragments = new ArrayList<>();
+        final List<Fragment> fragments = new ArrayList<>();
         /*
         fragments.add(InfoPagerFragment.newInstance(getString(R.string.info), gid).setObserver(new UpdateUI.IDownloadObserver() {
             @Override
@@ -194,11 +193,5 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        adapter.stopAllUpdater();
     }
 }

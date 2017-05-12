@@ -55,11 +55,12 @@
     <string name="info">Info</string>
     <string name="files">Files</string>
     <string name="bitfield">Bitfield</string>
+    <string name="profileName">Profile name</string>
     <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
     <string name="profile_hint">My profile</string>
     <string name="mode_single">Single mode (use same address for every connection)</string>
     <string name="mode_multi">Multi mode (use different addresses for different connectivity situations)</string>
-    <string name="address">Address:</string>
+    <string name="address">Address</string>
     <string name="downloadIs">Download is %s</string>
     <string name="peers">Peers</string>
     <string name="servers">Servers</string>
@@ -67,11 +68,11 @@
     <string name="home">Home</string>
     <string name="announceList"><b>Announce list:</b></string>
     <string name="address_hint">127.0.0.1</string>
-    <string name="port">Port:</string>
+    <string name="port">Port</string>
     <string name="move_up">Move up in queue</string>
     <string name="move_down">Move down in queue</string>
     <string name="port_hint">6800</string>
-    <string name="endpoint">RPC endpoint:</string>
+    <string name="endpoint">Endpoint</string>
     <string name="endpoint_default">/jsonrpc</string>
     <string name="completeURL_default">ws://127.0.0.1:6800/jsonrpc</string>
     <string name="authenticationMethod">Authentication method:</string>
@@ -192,7 +193,7 @@
     <string name="donate">Donate</string>
     <string name="donateSummary">Send me a small amount of money to support me</string>
     <string name="connectingBillingService">Connecting to the billing service. Please wait…</string>
-    <string name="certificate">CA certificate:</string>
+    <string name="certificate">CA certificate path</string>
     <string name="certificate_hint">/path/to/server/certificate</string>
     <string name="search">Search</string>
     <string name="certificateDisclaimer">The certificate must not be deleted or moved.</string>
@@ -249,7 +250,7 @@
     <string name="summaryStopped"><![CDATA[<b>Stopped:</b>]]> %1$d (%2$d)</string>
     <string name="connectionMethodWebSocket">WebSocket</string>
     <string name="connectionMethodHTTP">HTTP-GET</string>
-    <string name="connectionMethod">Connection method:</string>
+    <string name="connectionMethod">Connection method</string>
     <string name="connMethodHTTPDisclaimer">Some features may not work when using HTTP-GET.</string>
     <string name="mitLicense">Licensed under MIT license</string>
     <string name="jsoup_details">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
@@ -257,6 +258,16 @@
     <string name="addTorrent">Add Torrent</string>
     <string name="fatalExceptionMessage">A fatal exception had been thrown!</string>
     <string name="subsequentExceptions">Too many exceptions have been thrown!</string>
+    <string name="connection">Connection</string>
+    <string name="invalidProfileName">Invalid profile name!</string>
+    <string name="HTTP">HTTP</string>
+    <string name="ws">WebSocket</string>
+    <string name="addressEmpty">The address field is empty!</string>
+    <string name="invalidPort">Invalid port number!</string>
+    <string name="endpointEmpty">The endpoint field is empty!</string>
+    <string name="invalidCertificate">Invalid certificate path!</string>
+    <string name="emptyCertificate">The certificate path field is empty!</string>
+    <string name="invalidCompleteAddress">An address cannot be created with these settings!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

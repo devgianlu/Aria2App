@@ -3,6 +3,7 @@ package com.gianlu.aria2app.ProfilesManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.commonutils.Logging;
@@ -33,6 +34,10 @@ public class ProfilesManager {
     public static ProfilesManager get(Context context) {
         if (instance == null) instance = new ProfilesManager(context);
         return instance;
+    }
+
+    public static String getId(String name) {
+        return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
     }
 
     @Nullable

@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class UserProfile extends BaseProfile implements BaseDrawerProfile {
+public class UserProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
     public final String serverAddr;
     public final boolean notificationsEnabled;
     public final int serverPort;
@@ -103,6 +103,11 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile {
     @Override
     public String getInitials() {
         return getProfileName().substring(0, 2);
+    }
+
+    @Override
+    public String toString() {
+        return getProfileName();
     }
 
     public enum ConnectionMethod {

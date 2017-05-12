@@ -8,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -21,7 +23,8 @@ import com.gianlu.commonutils.Logging;
 public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
     private LinearLayout connecting;
-    private RecyclerView picker;
+    private LinearLayout picker;
+    private RecyclerView pickerList;
     private boolean finished = false;
 
     @Override
@@ -35,8 +38,16 @@ public class LoadingActivity extends AppCompatActivity {
         if (actionBar != null) actionBar.hide();
 
         connecting = (LinearLayout) findViewById(R.id.loading_connecting);
-        picker = (RecyclerView) findViewById(R.id.loading_picker);
-        picker.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        picker = (LinearLayout) findViewById(R.id.loading_picker);
+        pickerList = (RecyclerView) findViewById(R.id.loading_pickerList);
+        pickerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        ImageButton pickerAdd = (ImageButton) findViewById(R.id.loading_pickerAdd);
+        pickerAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditProfileActivity.start(LoadingActivity.this, false); // TODO: Check what happens if #onBackPressed()
+            }
+        });
 
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -64,7 +75,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         final ProfilesManager manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {
-            // TODO: Start "add profile" activity
+            EditProfileActivity.start(this, true);
             return;
         }
 
@@ -105,7 +116,7 @@ public class LoadingActivity extends AppCompatActivity {
             }
         });
 
-        picker.setAdapter(adapter);
+        pickerList.setAdapter(adapter);
         adapter.startProfilesTest(null);
     }
 

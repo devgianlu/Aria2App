@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +15,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.CommonFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.github.mikephil.charting.charts.LineChart;
 
-public class InfoPagerFragment extends CommonFragment {
+public class InfoPagerFragment extends Fragment {
     // private UpdateUI updateUI;
     // private UpdateUI.IDownloadObserver pendingObserver;
     private ViewHolder holder;
@@ -85,11 +85,6 @@ public class InfoPagerFragment extends CommonFragment {
 
         Utils.setupChart(holder.chart, false);
         return holder.rootView;
-    }
-
-    @Override
-    public void stopUpdater() {
-        // TODO
     }
 
     public class ViewHolder {

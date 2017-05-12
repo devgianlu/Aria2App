@@ -59,7 +59,7 @@
     <string name="profile_hint">Мой профиль</string>
     <string name="mode_single">Одиночный режим (используйте один и тот же адрес для каждого соединения)</string>
     <string name="mode_multi">Многорежимный режим (используйте разные адреса для разных ситуаций подключения)</string>
-    <string name="address">Адрес:</string>
+    <string name="address">Адрес</string>
     <string name="downloadIs">Скачивание %s</string>
     <string name="peers">Пиры</string>
     <string name="servers">Серверы</string>
@@ -67,11 +67,11 @@
     <string name="home">Главная</string>
     <string name="announceList"><b>Список трекеров:</b></string>
     <string name="address_hint">127.0.0.1</string>
-    <string name="port">Порт:</string>
+    <string name="port">Порт</string>
     <string name="move_up">Переместить вверх в очереди</string>
     <string name="move_down">Переместить вниз в очереди</string>
     <string name="port_hint">6800</string>
-    <string name="endpoint">RPC путь:</string>
+    <string name="endpoint">путь</string>
     <string name="endpoint_default">/jsonrpc</string>
     <string name="completeURL_default">ws://127.0.0.1:6800/jsonrpc</string>
     <string name="authenticationMethod">Метод аутентификации:</string>
@@ -192,7 +192,7 @@
     <string name="donate">Пожертвовать</string>
     <string name="donateSummary">Отправьте мне небольшую сумму денег, чтобы поддержать меня</string>
     <string name="connectingBillingService">Подключение к услуге биллинга. пожалуйста, подождите…</string>
-    <string name="certificate">Сертификат CA:</string>
+    <string name="certificate">Сертификат CA</string>
     <string name="certificate_hint">/путь/до/сервера/сертификата</string>
     <string name="search">Поиск</string>
     <string name="certificateDisclaimer">Сертификат не должен быть удален или перемещен.</string>
@@ -247,9 +247,9 @@
     <string name="summaryActive"><![CDATA[<b>Активный:</b>]]> %d</string>
     <string name="summaryWaiting"><![CDATA[<b>Ожидание:</b>]]> %d</string>
     <string name="summaryStopped"><![CDATA[<b>Остановлен:</b>]]> %1$d (%2$d)</string>
-    <string name="connectionMethodWebSocket">WebSocket</string>
-    <string name="connectionMethodHTTP">HTTP-GET</string>
-    <string name="connectionMethod">Способ подключения:</string>
+    <string name="ws">WebSocket</string>
+    <string name="HTTP">HTTP-GET</string>
+    <string name="connectionMethod">Способ подключения</string>
     <string name="connMethodHTTPDisclaimer">Некоторые функции могут не работать при использовании HTTP-GET.</string>
     <string name="mitLicense">Лицензия от MIT</string>
     <string name="jsoup_details">Авторские права © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
