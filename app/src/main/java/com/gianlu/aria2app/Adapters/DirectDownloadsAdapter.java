@@ -43,7 +43,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         float progress = (float) item.getLargeFileSoFarBytes() / (float) item.getLargeFileTotalBytes() * 100;
         holder.progressBar.setProgress((int) progress);
         holder.progressText.setText(String.format("%s %%", String.format(Locale.getDefault(), "%.2f", progress)));
-        holder.speed.setText(CommonUtils.speedFormatter(item.getSpeed() * 1000));
+        holder.speed.setText(CommonUtils.speedFormatter(item.getSpeed() * 1000, false));
         int speed = item.getSpeed() * 1000;
         if (speed != 0)
             holder.missingTime.setText(CommonUtils.timeFormatter((item.getLargeFileTotalBytes() - item.getLargeFileSoFarBytes()) / speed));
@@ -54,22 +54,22 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
             case FileDownloadStatus.completed:
                 holder.status.setText(R.string.completed);
-                holder.speed.setText(CommonUtils.speedFormatter(0));
+                holder.speed.setText(CommonUtils.speedFormatter(0, false));
                 break;
             case FileDownloadStatus.paused:
                 holder.status.setText(R.string.paused);
-                holder.speed.setText(CommonUtils.speedFormatter(0));
+                holder.speed.setText(CommonUtils.speedFormatter(0, false));
                 break;
             case FileDownloadStatus.pending:
                 holder.status.setText(R.string.pending);
-                holder.speed.setText(CommonUtils.speedFormatter(0));
+                holder.speed.setText(CommonUtils.speedFormatter(0, false));
                 break;
             case FileDownloadStatus.progress:
                 holder.status.setText(R.string.downloading);
                 break;
             case FileDownloadStatus.started:
                 holder.status.setText(R.string.connecting);
-                holder.speed.setText(CommonUtils.speedFormatter(0));
+                holder.speed.setText(CommonUtils.speedFormatter(0, false));
                 break;
             case FileDownloadStatus.error:
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") String message = item.getErrorCause().getMessage();

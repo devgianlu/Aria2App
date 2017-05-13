@@ -154,52 +154,6 @@ public class Utils {
         return set;
     }
 
-    @NonNull
-    public static List<Integer> bitfieldProcessor(int numPieces, String bitfield) {
-        List<Integer> pieces = new ArrayList<>();
-
-        for (char hexChar : bitfield.toLowerCase().toCharArray()) {
-            switch (hexChar) {
-                case '0':
-                    pieces.add(0);
-                    break;
-                case '1':
-                case '2':
-                case '4':
-                case '8':
-                    pieces.add(1);
-                    break;
-                case '3':
-                case '5':
-                case '6':
-                case '9':
-                case 'a':
-                case 'c':
-                    pieces.add(2);
-                    break;
-                case '7':
-                case 'b':
-                case 'd':
-                case 'e':
-                    pieces.add(3);
-                    break;
-                case 'f':
-                    pieces.add(4);
-                    break;
-            }
-        }
-
-        try {
-            return pieces.subList(0, (numPieces / 4) - 1);
-        } catch (Exception ex) {
-            return pieces;
-        }
-    }
-
-    public static int mapAlpha(int val) {
-        return 255 / 4 * val;
-    }
-
     public static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         String keyStoreType = KeyStore.getDefaultType();
         KeyStore keyStore = KeyStore.getInstance(keyStoreType);
@@ -496,7 +450,7 @@ public class Utils {
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            return CommonUtils.speedFormatter(value);
+            return CommonUtils.speedFormatter(value, false);
         }
     }
 }

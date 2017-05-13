@@ -7,29 +7,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <ProgressBar
             android:id="@+id/infoFragment_loading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="48dp" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:visibility="visible" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:id="@+id/infoFragment_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,74 +25,58 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             android:visibility="gone">
 
-            <FrameLayout
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/infoFragment_chart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="150dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/infoFragment_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginBottom="16dp" />
-
-                <ImageButton
-                    android:id="@+id/infoFragment_chartRefresh"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/ripple_effect_dark"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_refresh_black_48dp" />
-            </FrameLayout>
-
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_gid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_totalLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_completedLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_uploadLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_pieceLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_numPieces"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_connections"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_directory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_verifyIntegrityPending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/infoFragment_verifiedLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -116,35 +85,31 @@
                 android:id="@+id/infoFragment_bitTorrentOnly"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <TextView
+                <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_btMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <TextView
+                <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_btSeeders"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <TextView
+                <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_btSeeder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <TextView
+                <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_btComment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <TextView
+                <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_btCreationDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/infoFragment_btInfoHash"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -157,22 +122,13 @@
                     android:id="@+id/infoFragment_btAnnounceList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/activity_horizontal_margin" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/infoFragment_bitfieldLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/bitfield"
-                android:textStyle="bold" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/infoFragment_bitfield"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
         </LinearLayout>
+
+        <include
+            layout="@layout/message_layout"
+            android:visibility="gone" />
     </FrameLayout>
 </ScrollView>

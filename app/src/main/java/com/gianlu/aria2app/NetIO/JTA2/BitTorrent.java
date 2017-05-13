@@ -18,7 +18,7 @@ public class BitTorrent implements Serializable {
 
     public BitTorrent(@NonNull JSONObject obj) {
 
-        comment = obj.optString("comment");
+        comment = obj.optString("comment", null);
         creationDate = Integer.parseInt(obj.optString("creationDate", "-1"));
         mode = Mode.parse(obj.optString("mode"));
         announceList = new ArrayList<>();

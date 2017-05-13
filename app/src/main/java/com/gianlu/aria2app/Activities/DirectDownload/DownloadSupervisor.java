@@ -7,8 +7,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment.TreeDirectory;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment.TreeFile;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
@@ -79,6 +77,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
         return downloadTask;
     }
 
+    /* TODO
     private static List<BaseDownloadTask> createTasks(Activity context, String gid, FileDownloadLargeFileListener listener, TreeDirectory parent) {
         List<BaseDownloadTask> list = new ArrayList<>();
 
@@ -93,6 +92,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
 
         return list;
     }
+    */
 
     public void setDownloadsCountListener(IUpdateCount listener) {
         this.countListener = listener;
@@ -165,6 +165,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
         if (countListener != null) countListener.onUpdateDownloadsCount(downloads.size());
     }
 
+    /* TODO
     public void start(Activity context, String gid, TreeDirectory parent) {
         final List<BaseDownloadTask> tasks = createTasks(context, gid, this, parent);
         for (BaseDownloadTask task : tasks) {
@@ -174,6 +175,7 @@ public class DownloadSupervisor extends FileDownloadLargeFileListener {
 
         if (countListener != null) countListener.onUpdateDownloadsCount(downloads.size());
     }
+    */
 
     public List<BaseDownloadTask> getDownloads() {
         return downloads;

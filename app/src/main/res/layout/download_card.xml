@@ -97,27 +97,11 @@
             android:padding="8dp"
             android:visibility="gone">
 
-            <FrameLayout
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/downloadCard_detailsChart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/downloadCard_detailsChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginBottom="16dp" />
-
-                <ImageButton
-                    android:id="@+id/downloadCard_detailsChartRefresh"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/ripple_effect_dark"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_refresh_black_48dp" />
-            </FrameLayout>
+                android:layout_height="100dp"
+                android:layout_marginBottom="16dp" />
 
             <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/downloadCard_detailsGid"
