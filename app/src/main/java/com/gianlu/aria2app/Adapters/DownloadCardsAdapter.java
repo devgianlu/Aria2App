@@ -34,9 +34,9 @@ import java.util.Objects;
 
 // TODO: Rearrange layout of the card
 // FIXME: Sorting
-// FIXME: Filters
 public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdapter.DownloadViewHolder> {
     private final Context context;
+    private final List<Download> originalObjs;
     private final List<Download> objs;
     private final IAdapter handler;
     private final List<Download.Status> filters;
@@ -44,7 +44,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
 
     public DownloadCardsAdapter(Context context, List<Download> objs, IAdapter handler) {
         this.context = context;
-        this.objs = objs;
+        this.originalObjs = objs;
+        this.objs = new ArrayList<>(objs);
         this.handler = handler;
         this.filters = new ArrayList<>();
         this.inflater = LayoutInflater.from(context);
@@ -77,17 +78,28 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         notifyDataSetChanged();
     }
 
+    private void processFilters() {
+        objs.clear();
+
+        for (Download obj : originalObjs)
+            if (!filters.contains(obj.status))
+                objs.add(obj);
+
+        if (handler != null) handler.onItemCountUpdated(objs.size());
+        notifyDataSetChanged();
+    }
+
     public void addFilter(Download.Status status) {
         filters.add(status);
-        notifyDataSetChanged();
+        processFilters();
     }
 
     public void removeFilter(Download.Status status) {
         filters.remove(status);
-        notifyDataSetChanged();
+        processFilters();
     }
 
-    public int indexOf(String gid) {
+    private int indexOf(String gid) {
         for (int i = 0; i < objs.size(); i++)
             if (Objects.equals(objs.get(i).gid, gid))
                 return i;
@@ -95,9 +107,19 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         return -1;
     }
 
-    public void notifyItemChanged(int pos, Download payload) {
-        if (pos == -1) {
-            objs.add(payload);
+    private int originalIndexOf(String gid) {
+        for (int i = 0; i < originalObjs.size(); i++)
+            if (Objects.equals(originalObjs.get(i).gid, gid))
+                return i;
+
+        return -1;
+    }
+
+    public void notifyItemChanged(Download payload) {
+        int pos = indexOf(payload.gid);
+        if (pos == -1 && originalIndexOf(payload.gid) == -1) {
+            originalObjs.add(payload);
+            processFilters();
             super.notifyItemInserted(objs.size() - 1);
             if (handler != null) handler.onItemCountUpdated(objs.size());
             return;
@@ -164,13 +186,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
     @Override
     public void onBindViewHolder(final DownloadCardsAdapter.DownloadViewHolder holder, int position) {
         final Download item = objs.get(position);
-
-        if (filters.contains(item.status)) {
-            holder.itemView.setVisibility(View.GONE);
-            return;
-        } else {
-            holder.itemView.setVisibility(View.VISIBLE);
-        }
 
         final int color;
         if (item.isBitTorrent)

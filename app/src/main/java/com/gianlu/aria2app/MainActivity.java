@@ -87,8 +87,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent); // TODO: Reload profiles if back from EditProfile
+    protected void onRestart() {
+        super.onRestart();
+
+        if (drawerManager != null && drawerManager.isOpen())
+            drawerManager.refreshProfiles(ProfilesManager.get(this).getProfiles());
     }
 
     @Override
@@ -522,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onUpdateAdapter(Download download) {
-        if (adapter != null) adapter.notifyItemChanged(adapter.indexOf(download.gid), download);
+        if (adapter != null) adapter.notifyItemChanged(download);
     }
 
     @Override
@@ -536,7 +539,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         if (count == 0)
             MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.noDownloads, R.drawable.ic_info_outline_black_48dp);
-        else MessageLayout.hide((ViewGroup) findViewById(R.id.main_drawer));
+        else
+            MessageLayout.hide((ViewGroup) findViewById(R.id.main_drawer));
     }
 
     @Override

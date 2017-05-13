@@ -11,7 +11,6 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
-import com.gianlu.commonutils.Logging;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -147,8 +146,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
                             });
 
                             if (handler != null) handler.onFinished();
-
-                            Logging.logMe(context, ex);
                         }
                     }
                 }).start();
@@ -173,8 +170,6 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
                     });
 
                     if (handler != null) handler.onFinished();
-
-                    Logging.logMe(context, ex);
                 }
                 break;
         }
