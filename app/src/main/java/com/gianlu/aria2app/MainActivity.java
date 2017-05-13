@@ -485,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 if (listener != null) listener.onProfileSelected(profile);
                 if (drawerManager != null) drawerManager.performUnlock();
             }
-        }, null);
+        }, true, null);
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 
-// FIXME: Layout is crazy
 public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
     private LinearLayout connecting;
@@ -86,7 +85,14 @@ public class LoadingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        displayPicker(ProfilesManager.get(this));
+
+        ProfilesManager manager = ProfilesManager.get(this);
+        if (!manager.hasProfiles()) {
+            EditProfileActivity.start(this, true);
+            return;
+        }
+
+        displayPicker(manager);
     }
 
     private void tryConnecting(final ProfilesManager manager, UserProfile profile) {
@@ -105,8 +111,12 @@ public class LoadingActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailedConnecting(Exception ex) {
-                    CommonUtils.UIToast(LoadingActivity.this, Utils.ToastMessages.FAILED_CONNECTING, ex);
-                    displayPicker(manager);
+                    CommonUtils.UIToast(LoadingActivity.this, Utils.ToastMessages.FAILED_CONNECTING, ex, new Runnable() {
+                        @Override
+                        public void run() {
+                            displayPicker(manager);
+                        }
+                    });
                 }
             });
         }
@@ -121,7 +131,7 @@ public class LoadingActivity extends AppCompatActivity {
             public void onProfileSelected(UserProfile profile) {
                 tryConnecting(manager, profile);
             }
-        }, new CustomProfilesAdapter.IEdit() {
+        }, false, new CustomProfilesAdapter.IEdit() {
             @Override
             public void onEditProfile(UserProfile profile) {
                 EditProfileActivity.start(LoadingActivity.this, profile);

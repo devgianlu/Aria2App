@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 
 import java.net.URL;
 
@@ -47,6 +48,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 container.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                if (isChecked) Utils.requestWritePermission(getActivity(), 10);
             }
         });
         container = (LinearLayout) layout.findViewById(R.id.editProfile_dd_container);

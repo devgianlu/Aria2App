@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 
 import java.io.File;
 import java.net.URI;
@@ -111,7 +112,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 certificatePath.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 updateCompleteAddress();
-                // TODO: Request read permission!!
+                if (isChecked) Utils.requestReadPermission(getActivity(), 11);
             }
         });
         certificatePath = (TextInputLayout) layout.findViewById(R.id.editProfile_certificatePath);

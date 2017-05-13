@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
@@ -9,8 +10,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.6"
-        android:minHeight="200dp" />
+        android:layout_weight="0.4" />
 
     <ImageView
         android:layout_width="128dp"
@@ -44,8 +44,9 @@
     <LinearLayout
         android:id="@+id/loading_picker"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -53,16 +54,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:textAlignment="center" />
+            android:text="@string/pickProfile"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/loading_pickerList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:paddingBottom="8dp"
             android:paddingEnd="48dp"
             android:paddingStart="48dp"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            tools:ignore="NestedWeights" />
 
         <ImageButton
             android:id="@+id/loading_pickerAdd"
@@ -74,10 +79,8 @@
             android:src="@drawable/ic_add_circle_white_48dp" />
     </LinearLayout>
 
-
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:minHeight="200dp" />
+        android:layout_weight="0.6" />
 </LinearLayout>

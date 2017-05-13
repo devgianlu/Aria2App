@@ -32,8 +32,8 @@ import java.util.Map;
 public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
     private final IEdit editListener;
 
-    public CustomProfilesAdapter(Context context, List<UserProfile> profiles, IAdapter<UserProfile> listener, @Nullable IEdit editListener) {
-        super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, listener);
+    public CustomProfilesAdapter(Context context, List<UserProfile> profiles, IAdapter<UserProfile> listener, boolean black, @Nullable IEdit editListener) {
+        super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, black, listener);
         this.editListener = editListener;
     }
 
@@ -66,13 +66,13 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
 
             switch (profile.status) {
                 case ONLINE:
-                    holder.status.setImageResource(R.drawable.ic_done_black_48dp);
+                    holder.status.setImageResource(black ? R.drawable.ic_done_black_48dp : R.drawable.ic_done_white_48dp);
                     break;
                 case OFFLINE:
-                    holder.status.setImageResource(R.drawable.ic_clear_black_48dp);
+                    holder.status.setImageResource(black ? R.drawable.ic_clear_black_48dp : R.drawable.ic_clear_white_48dp);
                     break;
                 case ERROR:
-                    holder.status.setImageResource(R.drawable.ic_error_black_48dp);
+                    holder.status.setImageResource(black ? R.drawable.ic_error_black_48dp : R.drawable.ic_error_white_48dp);
                     break;
             }
         }

@@ -273,6 +273,7 @@
     <string name="emptyPassword">The password field is empty!</string>
     <string name="emptyUsername">The username field is empty!</string>
     <string name="invalidAddress">Invalid address!</string>
+    <string name="pickProfile">Choose a profile or create a new one:</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

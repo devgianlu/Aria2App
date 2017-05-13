@@ -241,6 +241,7 @@ public class Utils {
     }
 
     public static void requestWritePermission(final Activity activity, final int code) {
+        if (activity == null) return;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
@@ -259,6 +260,7 @@ public class Utils {
     }
 
     public static void requestReadPermission(final Activity activity, final int code) {
+        if (activity == null) return;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
