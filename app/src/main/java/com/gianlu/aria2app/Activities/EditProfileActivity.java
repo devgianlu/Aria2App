@@ -27,6 +27,7 @@ import com.gianlu.commonutils.CommonUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
     private UserProfile editProfile;
@@ -116,7 +117,8 @@ public class EditProfileActivity extends AppCompatActivity {
             UserProfile profile = new UserProfile(generalFields, connFields, authFields, ddFields);
             ProfilesManager manager = ProfilesManager.get(this);
             manager.save(profile);
-            if (editProfile != null) manager.delete(editProfile);
+            if (editProfile != null && !Objects.equals(editProfile.id, profile.id))
+                manager.delete(editProfile);
             onBackPressed();
         } catch (InvalidFieldException ex) {
             int pos = pagerAdapter.indexOf(ex.fragmentClass);

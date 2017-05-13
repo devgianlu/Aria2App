@@ -83,8 +83,8 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onRestart() {
+        super.onRestart();
 
         ProfilesManager manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {

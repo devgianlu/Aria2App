@@ -74,7 +74,9 @@ public class GeneralFragment extends FieldErrorFragment {
 
     public Fields getFields() throws InvalidFieldException {
         String profileName = this.profileName.getEditText().getText().toString().trim();
-        if (profileName.isEmpty() || ProfilesManager.get(getContext()).profileExists(ProfilesManager.getId(profileName))) {
+        if (profileName.isEmpty() ||
+                (ProfilesManager.get(getContext()).profileExists(ProfilesManager.getId(profileName))
+                        && getArguments().getSerializable("edit") == null)) {
             throw new InvalidFieldException(getClass(), R.id.editProfile_profileName, getString(R.string.invalidProfileName));
         }
 
