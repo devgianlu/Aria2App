@@ -143,29 +143,57 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <Button
-                android:id="@+id/downloadCard_actionMore"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/more" />
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pause_black_48dp" />
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_play_arrow_black_48dp" />
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_stop_black_48dp" />
+
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_refresh_black_48dp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <ImageButton
-                android:id="@+id/downloadCard_actionMenu"
+            <Button
+                android:id="@+id/downloadCard_actionMore"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/ripple_effect_dark"
-                android:src="@drawable/ic_menu_moreoverflow_material_dark" />
+                android:text="@string/more" />
         </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

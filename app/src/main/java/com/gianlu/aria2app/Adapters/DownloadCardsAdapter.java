@@ -2,12 +2,8 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -222,85 +218,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 handler.onMoreClick(item);
             }
         });
-        holder.menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
-                popupMenu.inflate(R.menu.download_card);
-                Menu menu = popupMenu.getMenu();
 
-                switch (item.status) {
-                    case ACTIVE:
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case WAITING:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        break;
-                    case PAUSED:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case COMPLETE:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case ERROR:
-                        if (item.isBitTorrent)
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case REMOVED:
-                        if (item.isBitTorrent)
-                            menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                }
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.downloadCardViewMenu_remove:
-                                handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
-                                break;
-                            case R.id.downloadCardViewMenu_restart:
-                                handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
-                                break;
-                            case R.id.downloadCardViewMenu_resume:
-                                handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
-                                break;
-                            case R.id.downloadCardViewMenu_pause:
-                                handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
-                                break;
-                            case R.id.downloadCardViewMenu_moveDown:
-                                handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
-                                break;
-                            case R.id.downloadCardViewMenu_moveUp:
-                                handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
-                                break;
-                        }
-                        return true;
-                    }
-                });
-                popupMenu.show();
-            }
-        });
+        // TODO: Download actions
 
         if (item.status == Download.Status.UNKNOWN || item.status == Download.Status.ERROR)
             holder.more.setVisibility(View.INVISIBLE);
@@ -395,7 +314,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         final SuperTextView detailsCompletedLength;
         final SuperTextView detailsUploadLength;
         final Button more;
-        final ImageButton menu;
         final LineChart detailsChart;
 
         DownloadViewHolder(View itemView) {
@@ -408,7 +326,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             downloadMissingTime = (SuperTextView) itemView.findViewById(R.id.downloadCard_missingTime);
             details = (LinearLayout) itemView.findViewById(R.id.downloadCard_details);
             more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
-            menu = (ImageButton) itemView.findViewById(R.id.downloadCard_actionMenu);
 
             detailsChart = (LineChart) itemView.findViewById(R.id.downloadCard_detailsChart);
             detailsChartRefresh = (ImageButton) itemView.findViewById(R.id.downloadCard_detailsChartRefresh);

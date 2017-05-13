@@ -2,12 +2,8 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -93,71 +89,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             }
         });
 
-        holder.menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
-                popupMenu.inflate(R.menu.download_card);
-                Menu menu = popupMenu.getMenu();
-
-                switch (item.getStatus()) {
-                    case FileDownloadStatus.progress:
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case FileDownloadStatus.pending:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case FileDownloadStatus.paused:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case FileDownloadStatus.completed:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                    case FileDownloadStatus.error:
-                        menu.removeItem(R.id.downloadCardViewMenu_pause);
-                        menu.removeItem(R.id.downloadCardViewMenu_resume);
-                        menu.removeItem(R.id.downloadCardViewMenu_restart);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveUp);
-                        menu.removeItem(R.id.downloadCardViewMenu_moveDown);
-                        break;
-                }
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.downloadCardViewMenu_remove:
-                                DownloadSupervisor.getInstance().remove(item);
-                                break;
-                            case R.id.downloadCardViewMenu_resume:
-                                DownloadSupervisor.getInstance().resume(item);
-                                break;
-                            case R.id.downloadCardViewMenu_pause:
-                                DownloadSupervisor.getInstance().pause(item);
-                                break;
-                        }
-
-                        notifyDataSetChanged();
-                        return true;
-                    }
-                });
-                popupMenu.show();
-            }
-        });
+        // TODO: Menu
     }
 
     private BaseDownloadTask getItem(int pos) {
