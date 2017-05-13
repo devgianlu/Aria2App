@@ -485,6 +485,12 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_CONNECTING = new CommonUtils.ToastMessage("Failed connecting!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING = new CommonUtils.ToastMessage("Failed loading!", true);
         public static final CommonUtils.ToastMessage CANNOT_SAVE_PROFILE = new CommonUtils.ToastMessage("Cannot save profile!", true);
+        public static final CommonUtils.ToastMessage FAILED_PERFORMING_ACTION = new CommonUtils.ToastMessage("Failed performing the action!", true);
+        public static final CommonUtils.ToastMessage PAUSED = new CommonUtils.ToastMessage("Download paused!", false);
+        public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted!", false);
+        public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed!", false);
+        public static final CommonUtils.ToastMessage REMOVED = new CommonUtils.ToastMessage("Download removed!", false);
+        public static final CommonUtils.ToastMessage RESULT_REMOVED = new CommonUtils.ToastMessage("Download result removed!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

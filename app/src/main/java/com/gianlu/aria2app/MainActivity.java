@@ -58,7 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, Utils.IOptionsDialog, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, Utils.IOptionsDialog, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart {
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -549,7 +549,71 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public void onMenuItemSelected(Download download, JTA2.DownloadActions action) {
-        // TODO
+    public void onMenuItemSelected(final Download download, JTA2.DownloadActions action) {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(this);
+        } catch (JTA2InitializingException ex) {
+            onException(ex);
+            return;
+        }
+
+        switch (action) {
+            case MOVE_UP:
+                break;
+            case MOVE_DOWN:
+                break;
+            case PAUSE:
+                jta2.pause(download.gid, this);
+                break;
+            case REMOVE:
+                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.removeName, download.getName()))
+                        .setMessage(R.string.removeDownloadAlert)
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                jta2.remove(download.gid, download.status, MainActivity.this);
+                            }
+                        }));
+                break;
+            case RESTART:
+                jta2.restart(download.gid, this);
+                break;
+            case RESUME:
+                jta2.unpause(download.gid, this);
+                break;
+        }
+    }
+
+    @Override
+    public void onPaused(String gid) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.PAUSED, gid);
+    }
+
+    @Override
+    public void onRestarted(String gid) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.RESTARTED, gid);
+    }
+
+    @Override
+    public void onUnpaused(String gid) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.RESUMED, gid);
+    }
+
+    @Override
+    public void onException(Exception ex) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_PERFORMING_ACTION, ex);
+    }
+
+    @Override
+    public void onRemoved(String gid) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.REMOVED, gid);
+    }
+
+    @Override
+    public void onRemovedResult(String gid) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.RESULT_REMOVED, gid);
     }
 }

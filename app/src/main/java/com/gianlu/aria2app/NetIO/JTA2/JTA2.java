@@ -201,7 +201,7 @@ public class JTA2 {
 
                 @Override
                 public void onException(Exception ex) {
-                    handler.onException(false, ex);
+                    handler.onException(ex);
                 }
             });
         } else {
@@ -214,7 +214,7 @@ public class JTA2 {
                 @Override
                 public void onException(Exception ex) {
                     if (forceAction) forceRemove(gid, handler);
-                    else handler.onException(true, ex);
+                    else handler.onException(ex);
                 }
             });
         }
@@ -230,7 +230,7 @@ public class JTA2 {
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(true, ex);
+                handler.onException(ex);
             }
         });
     }
@@ -250,12 +250,12 @@ public class JTA2 {
                                 removeDownloadResult(gid, new JTA2.ISuccess() {
                                     @Override
                                     public void onSuccess() {
-                                        handler.onRestarted();
+                                        handler.onRestarted(newGid);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        handler.onRemoveResultException(ex);
+                                        handler.onException(ex);
                                     }
                                 });
                             }
@@ -269,14 +269,14 @@ public class JTA2 {
 
                     @Override
                     public void onException(Exception ex) {
-                        handler.onGatheringInformationException(ex);
+                        handler.onException(ex);
                     }
                 });
             }
 
             @Override
             public void onException(final Exception ex) {
-                handler.onGatheringInformationException(ex);
+                handler.onException(ex);
             }
         });
     }
@@ -1111,17 +1111,13 @@ public class JTA2 {
 
         void onRemovedResult(String gid);
 
-        void onException(boolean b, Exception ex);
+        void onException(Exception ex);
     }
 
     public interface IRestart {
-        void onRestarted();
+        void onRestarted(String gid);
 
         void onException(Exception ex);
-
-        void onRemoveResultException(Exception ex);
-
-        void onGatheringInformationException(Exception ex);
     }
 
     public interface IDownload {

@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.ProfilesManager;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
@@ -67,6 +68,26 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
         serverPort = connFields.port;
         serverEndpoint = connFields.endpoint;
         directDownload = ddFields.dd;
+    }
+
+    private UserProfile(String name, String token, int port) {
+        super(name);
+        notificationsEnabled = false;
+        serverAddr = "localhost";
+        authMethod = JTA2.AuthMethod.TOKEN;
+        serverUsername = null;
+        serverPassword = null;
+        serverToken = token;
+        connectionMethod = ConnectionMethod.WEBSOCKET;
+        serverPort = port;
+        serverEndpoint = "/jsonrpc";
+        serverSSL = false;
+        certificatePath = null;
+        directDownload = null;
+    }
+
+    public static UserProfile createExternal(@NonNull String token, int port) {
+        return new UserProfile("Local device", token, port);
     }
 
     public String buildWebSocketUrl() {

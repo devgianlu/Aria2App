@@ -66,14 +66,15 @@ public class LoadingActivity extends AppCompatActivity {
 
         Logging.clearLogs(this);
 
-        /* TODO: External profiles from Aria2Android
-        if (getIntent().getBooleanExtra("external", false)) {
-            setTitle(getString(R.string.app_name) + " - Local device");
-            saveExternalProfile(SingleModeProfileItem.externalDefault(getIntent().getIntExtra("port", 6800), getIntent().getStringExtra("token")));
-        }
-        */
-
         final ProfilesManager manager = ProfilesManager.get(this);
+        if (getIntent().getBooleanExtra("external", false)) {
+            UserProfile profile = ProfilesManager.createExternalProfile(getIntent());
+            if (profile != null) {
+                tryConnecting(manager, profile);
+                return;
+            }
+        }
+
         if (!manager.hasProfiles()) {
             EditProfileActivity.start(this, true);
             return;

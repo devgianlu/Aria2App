@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -40,6 +41,18 @@ public class ProfilesManager {
 
     public static String getId(String name) {
         return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
+    }
+
+    @Nullable
+    public static UserProfile createExternalProfile(Intent intent) {
+        String token = intent.getStringExtra("token");
+        int port = intent.getIntExtra("port", -1);
+
+        if (token == null || port == -1) {
+            return null;
+        }
+
+        return UserProfile.createExternal(token, port);
     }
 
     public void delete(UserProfile profile) {

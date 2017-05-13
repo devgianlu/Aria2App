@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-// TODO: Rearrange layout of the card
 // FIXME: Sorting
 public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdapter.DownloadViewHolder> {
     private final Context context;
@@ -126,7 +125,37 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
 
     @Override
     public DownloadCardsAdapter.DownloadViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new DownloadViewHolder(inflater.inflate(R.layout.download_card, parent, false));
+        return new DownloadViewHolder(parent);
+    }
+
+    private void setupActions(DownloadViewHolder holder, final Download download) {
+        switch (download.status) {
+            case ACTIVE:
+                holder.restart.setVisibility(View.GONE);
+                holder.start.setVisibility(View.GONE);
+                break;
+            case PAUSED:
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                break;
+            case WAITING:
+                break;
+            case ERROR:
+                holder.more.setVisibility(View.INVISIBLE);
+            case COMPLETE:
+            case REMOVED:
+                holder.pause.setVisibility(View.GONE);
+                holder.start.setVisibility(View.GONE);
+                holder.stop.setVisibility(View.GONE);
+                break;
+            case UNKNOWN:
+                holder.more.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.GONE);
+                holder.start.setVisibility(View.GONE);
+                holder.stop.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                break;
+        }
     }
 
     @Override
@@ -174,8 +203,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             holder.detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength));
             holder.detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength));
 
-            if (item.status == Download.Status.UNKNOWN || item.status == Download.Status.ERROR)
-                holder.more.setVisibility(View.INVISIBLE);
+            setupActions(holder, item);
         }
     }
 
@@ -219,10 +247,32 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             }
         });
 
-        // TODO: Download actions
+        holder.pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
+            }
+        });
+        holder.restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
+            }
+        });
+        holder.start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
+            }
+        });
+        holder.stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
+            }
+        });
 
-        if (item.status == Download.Status.UNKNOWN || item.status == Download.Status.ERROR)
-            holder.more.setVisibility(View.INVISIBLE);
+        setupActions(holder, item);
     }
 
     @Override
@@ -313,11 +363,15 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         final SuperTextView detailsTotalLength;
         final SuperTextView detailsCompletedLength;
         final SuperTextView detailsUploadLength;
+        final ImageButton pause;
+        final ImageButton start;
+        final ImageButton stop;
+        final ImageButton restart;
         final Button more;
         final LineChart detailsChart;
 
-        DownloadViewHolder(View itemView) {
-            super(itemView);
+        DownloadViewHolder(ViewGroup parent) {
+            super(inflater.inflate(R.layout.download_card, parent, false));
 
             donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCard_donutProgress);
             downloadName = (SuperTextView) itemView.findViewById(R.id.downloadCard_name);
@@ -325,6 +379,10 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             downloadSpeed = (SuperTextView) itemView.findViewById(R.id.downloadCard_downloadSpeed);
             downloadMissingTime = (SuperTextView) itemView.findViewById(R.id.downloadCard_missingTime);
             details = (LinearLayout) itemView.findViewById(R.id.downloadCard_details);
+            pause = (ImageButton) itemView.findViewById(R.id.downloadCard_pause);
+            start = (ImageButton) itemView.findViewById(R.id.downloadCard_start);
+            stop = (ImageButton) itemView.findViewById(R.id.downloadCard_stop);
+            restart = (ImageButton) itemView.findViewById(R.id.downloadCard_restart);
             more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
 
             detailsChart = (LineChart) itemView.findViewById(R.id.downloadCard_detailsChart);
