@@ -97,7 +97,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             @Override
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
-                popupMenu.inflate(R.menu.download_cardview);
+                popupMenu.inflate(R.menu.download_card);
                 Menu menu = popupMenu.getMenu();
 
                 switch (item.getStatus()) {

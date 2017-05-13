@@ -85,15 +85,6 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:textSize="13sp" />
-
-                    <ImageButton
-                        android:id="@+id/downloadCard_expand"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_keyboard_arrow_down_white_48dp" /> <!-- FIXME: ripples -->
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

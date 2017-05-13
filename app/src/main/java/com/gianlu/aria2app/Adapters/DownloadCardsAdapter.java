@@ -198,11 +198,9 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         holder.detailsGid.setHtml(R.string.gid, item.gid);
         holder.detailsTotalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(item.length));
 
-        holder.expand.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CommonUtils.animateCollapsingArrowBellows((ImageButton) view, CommonUtils.isExpanded(holder.details));
-
                 if (CommonUtils.isExpanded(holder.details)) {
                     CommonUtils.collapse(holder.details);
                     CommonUtils.collapseTitle(holder.downloadName);
@@ -228,7 +226,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             @Override
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(context, holder.menu, Gravity.BOTTOM);
-                popupMenu.inflate(R.menu.download_cardview);
+                popupMenu.inflate(R.menu.download_card);
                 Menu menu = popupMenu.getMenu();
 
                 switch (item.status) {
@@ -396,7 +394,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         final SuperTextView detailsTotalLength;
         final SuperTextView detailsCompletedLength;
         final SuperTextView detailsUploadLength;
-        final ImageButton expand;
         final Button more;
         final ImageButton menu;
         final LineChart detailsChart;
@@ -410,7 +407,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             downloadSpeed = (SuperTextView) itemView.findViewById(R.id.downloadCard_downloadSpeed);
             downloadMissingTime = (SuperTextView) itemView.findViewById(R.id.downloadCard_missingTime);
             details = (LinearLayout) itemView.findViewById(R.id.downloadCard_details);
-            expand = (ImageButton) itemView.findViewById(R.id.downloadCard_expand);
             more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
             menu = (ImageButton) itemView.findViewById(R.id.downloadCard_actionMenu);
 

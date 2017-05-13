@@ -335,9 +335,14 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         getMenuInflater().inflate(R.menu.main, menu);
         getMenuInflater().inflate(R.menu.main_filters, menu.findItem(R.id.a2menu_filtering).getSubMenu());
         getMenuInflater().inflate(R.menu.main_sorting, menu.findItem(R.id.a2menu_sorting).getSubMenu());
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         sortingSubMenu = menu.findItem(R.id.a2menu_sorting).getSubMenu();
         sortingSubMenu.setGroupCheckable(0, true, true);
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
