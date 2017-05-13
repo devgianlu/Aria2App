@@ -30,8 +30,11 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
-    public CustomProfilesAdapter(Context context, List<UserProfile> profiles, IAdapter<UserProfile> listener) {
+    private final IEdit editListener;
+
+    public CustomProfilesAdapter(Context context, List<UserProfile> profiles, IAdapter<UserProfile> listener, @Nullable IEdit editListener) {
         super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, listener);
+        this.editListener = editListener;
     }
 
     @Override
@@ -78,6 +81,14 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
             @Override
             public void onClick(View view) {
                 if (listener != null) listener.onProfileSelected(profile);
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (editListener != null) editListener.onEditProfile(profile);
+                return editListener != null;
             }
         });
     }
@@ -167,6 +178,10 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
                 }
                 break;
         }
+    }
+
+    public interface IEdit {
+        void onEditProfile(UserProfile profile);
     }
 
     private class StatusWebSocketHandler extends WebSocketAdapter {

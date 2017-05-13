@@ -16,9 +16,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,10 @@ public class ProfilesManager {
 
     public static String getId(String name) {
         return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
+    }
+
+    public void delete(UserProfile profile) {
+        new File(PROFILES_PATH, profile.id + ".profile").delete();
     }
 
     @Nullable
@@ -119,5 +125,13 @@ public class ProfilesManager {
         }
 
         return profiles;
+    }
+
+    public void save(UserProfile profile) throws IOException, JSONException {
+        File file = new File(PROFILES_PATH, profile.id + ".profile");
+        try (OutputStream out = new FileOutputStream(file)) {
+            out.write(profile.toJSON().toString().getBytes());
+            out.flush();
+        }
     }
 }

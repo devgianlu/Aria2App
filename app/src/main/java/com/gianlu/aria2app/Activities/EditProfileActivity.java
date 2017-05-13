@@ -18,8 +18,15 @@ import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
 import com.gianlu.aria2app.Activities.EditProfile.GeneralFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
+
+import org.json.JSONException;
+
+import java.io.IOException;
 
 public class EditProfileActivity extends AppCompatActivity {
     private UserProfile editProfile;
@@ -50,8 +57,8 @@ public class EditProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar bar = getSupportActionBar();
-        if (bar != null && getIntent().getBooleanExtra("firstProfile", true))
-            bar.setDisplayHomeAsUpEnabled(false);
+        if (bar != null)
+            bar.setDisplayHomeAsUpEnabled(!getIntent().getBooleanExtra("firstProfile", true));
 
         editProfile = (UserProfile) getIntent().getSerializableExtra("edit");
         if (editProfile == null) setTitle(R.string.addProfile);
@@ -106,14 +113,19 @@ public class EditProfileActivity extends AppCompatActivity {
             AuthenticationFragment.Fields authFields = authFragment.getFields();
             DirectDownloadFragment.Fields ddFields = ddFragment.getFields();
 
-
-            // TODO
+            UserProfile profile = new UserProfile(generalFields, connFields, authFields, ddFields);
+            ProfilesManager manager = ProfilesManager.get(this);
+            manager.save(profile);
+            if (editProfile != null) manager.delete(editProfile);
+            onBackPressed();
         } catch (InvalidFieldException ex) {
             int pos = pagerAdapter.indexOf(ex.fragmentClass);
             if (pos != -1) {
                 pager.setCurrentItem(pos, true);
                 pagerAdapter.getItem(pos).onFieldError(ex.fieldId, ex.reason);
             }
+        } catch (JSONException | IOException ex) {
+            CommonUtils.UIToast(this, Utils.ToastMessages.CANNOT_SAVE_PROFILE, ex);
         }
     }
 
@@ -125,7 +137,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 break;
             case R.id.editProfile_delete:
                 if (editProfile == null) break;
-                editProfile.delete(this);
+                ProfilesManager.get(this).delete(editProfile);
                 onBackPressed();
                 break;
             case R.id.editProfile_done:

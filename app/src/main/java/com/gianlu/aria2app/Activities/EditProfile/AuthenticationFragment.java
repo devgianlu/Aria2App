@@ -42,7 +42,21 @@ public class AuthenticationFragment extends FieldErrorFragment {
         authMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int id) {
-                // TODO
+                switch (id) {
+                    default:
+                    case R.id.editProfile_authMethod_none:
+                        token.setVisibility(View.GONE);
+                        userAndPasswd.setVisibility(View.GONE);
+                        break;
+                    case R.id.editProfile_authMethod_token:
+                        token.setVisibility(View.VISIBLE);
+                        userAndPasswd.setVisibility(View.GONE);
+                        break;
+                    case R.id.editProfile_authMethod_http:
+                        token.setVisibility(View.GONE);
+                        userAndPasswd.setVisibility(View.VISIBLE);
+                        break;
+                }
             }
         });
         token = (TextInputLayout) layout.findViewById(R.id.editProfile_token);
@@ -97,6 +111,27 @@ public class AuthenticationFragment extends FieldErrorFragment {
                 password.setErrorEnabled(false);
             }
         });
+
+        UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
+        if (edit != null) {
+            switch (edit.authMethod) {
+                default:
+                case NONE:
+                    authMethod.check(R.id.editProfile_authMethod_none);
+                    break;
+                case HTTP:
+                    authMethod.check(R.id.editProfile_authMethod_http);
+                    username.getEditText().setText(edit.serverUsername);
+                    password.getEditText().setText(edit.serverPassword);
+                    break;
+                case TOKEN:
+                    authMethod.check(R.id.editProfile_authMethod_token);
+                    token.getEditText().setText(edit.serverToken);
+                    break;
+            }
+        }
+
+
         return layout;
     }
 
@@ -138,10 +173,10 @@ public class AuthenticationFragment extends FieldErrorFragment {
             username = this.username.getEditText().getText().toString().trim();
             password = this.password.getEditText().getText().toString().trim();
             if (username.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_token, getString(R.string.emptyUsername));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_username, getString(R.string.emptyUsername));
             }
             if (password.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_token, getString(R.string.emptyPassword));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_password, getString(R.string.emptyPassword));
             }
         }
 

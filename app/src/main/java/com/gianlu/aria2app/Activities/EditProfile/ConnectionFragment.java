@@ -132,6 +132,25 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
 
+        UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
+        if (edit != null) {
+            switch (edit.connectionMethod) {
+                case HTTP:
+                    connectionMethod.check(R.id.editProfile_connectionMethod_http);
+                    break;
+                default:
+                case WEBSOCKET:
+                    connectionMethod.check(R.id.editProfile_connectionMethod_ws);
+                    break;
+            }
+
+            address.getEditText().setText(edit.serverAddr);
+            port.getEditText().setText(String.valueOf(edit.serverPort));
+            endpoint.getEditText().setText(edit.serverEndpoint);
+            encryption.setChecked(edit.serverSSL);
+            if (edit.serverSSL) certificatePath.getEditText().setText(edit.certificatePath);
+        }
+
         return layout;
     }
 

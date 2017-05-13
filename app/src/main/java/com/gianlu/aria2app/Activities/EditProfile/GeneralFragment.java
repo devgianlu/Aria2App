@@ -53,6 +53,13 @@ public class GeneralFragment extends FieldErrorFragment {
             }
         });
         enableNotifs = (CheckBox) layout.findViewById(R.id.editProfile_enableNotifs);
+
+        UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
+        if (edit != null) {
+            profileName.getEditText().setText(edit.getProfileName());
+            enableNotifs.setChecked(edit.notificationsEnabled);
+        }
+
         return layout;
     }
 

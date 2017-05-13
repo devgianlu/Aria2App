@@ -1,5 +1,11 @@
 package com.gianlu.aria2app.ProfilesManager;
 
+import android.support.annotation.Nullable;
+
+import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
+import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
+import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
+import com.gianlu.aria2app.Activities.EditProfile.GeneralFragment;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 
@@ -28,13 +34,12 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
         super(obj);
 
         notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
-        if (!obj.isNull("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
+        if (obj.has("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
         else authMethod = JTA2.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
         serverUsername = obj.optString("serverUsername", null);
         serverPassword = obj.optString("serverPassword", null);
         serverToken = obj.optString("serverToken", null);
         serverSSL = obj.optBoolean("serverSSL", false);
-        // isDefault = obj.optBoolean("default", false);
 
         serverAddr = obj.getString("serverAddr");
         serverPort = obj.getInt("serverPort");
@@ -46,6 +51,22 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
         else directDownload = null;
 
         connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.WEBSOCKET.name()));
+    }
+
+    public UserProfile(GeneralFragment.Fields generalFields, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
+        super(generalFields.profileName);
+        notificationsEnabled = generalFields.enableNotifs;
+        authMethod = authFields.authMethod;
+        serverUsername = authFields.username;
+        serverPassword = authFields.password;
+        serverToken = authFields.token;
+        connectionMethod = connFields.connectionMethod;
+        serverSSL = connFields.encryption;
+        certificatePath = connFields.certificatePath;
+        serverAddr = connFields.address;
+        serverPort = connFields.port;
+        serverEndpoint = connFields.endpoint;
+        directDownload = ddFields.dd;
     }
 
     public String buildWebSocketUrl() {
@@ -81,7 +102,6 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
                 .put("serverToken", serverToken)
                 .put("serverUsername", serverUsername)
                 .put("serverPassword", serverPassword)
-                /* .put("default", isDefault) */
                 .put("serverSSL", serverSSL)
                 .put("connectionMethod", connectionMethod.name())
                 .put("certificatePath", certificatePath);
@@ -115,7 +135,7 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
         WEBSOCKET
     }
 
-    public class DirectDownload implements Serializable {
+    public static class DirectDownload implements Serializable {
         public final String address;
         public final boolean auth;
         public final String username;
@@ -126,6 +146,13 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
             auth = obj.getBoolean("auth");
             username = obj.getString("username");
             password = obj.getString("password");
+        }
+
+        public DirectDownload(String address, boolean auth, @Nullable String username, @Nullable String password) {
+            this.address = address;
+            this.auth = auth;
+            this.username = username;
+            this.password = password;
         }
 
         public JSONObject toJSON() throws JSONException {

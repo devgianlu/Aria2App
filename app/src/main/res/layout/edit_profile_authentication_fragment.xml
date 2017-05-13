@@ -43,7 +43,8 @@
         android:id="@+id/editProfile_token"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/token">
+        android:hint="@string/token"
+        android:visibility="gone">
 
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
@@ -55,7 +56,8 @@
         android:id="@+id/editProfile_userAndPasswd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/editProfile_username"
@@ -65,8 +67,7 @@
 
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                android:layout_height="wrap_content" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout

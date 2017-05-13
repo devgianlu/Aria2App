@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.ProfilesManager;
 
-import android.content.Context;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,10 +27,6 @@ public abstract class BaseProfile implements Serializable {
 
     public void setLatency(long latency) {
         this.latency = latency;
-    }
-
-    public void delete(Context context) {
-        context.deleteFile(id + ".profile");
     }
 
     public enum Status {

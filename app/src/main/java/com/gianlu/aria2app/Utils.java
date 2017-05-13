@@ -482,6 +482,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage NOT_ONLINE = new CommonUtils.ToastMessage("This server isn't online. If it should try swiping down to refresh.", false);
         public static final CommonUtils.ToastMessage FAILED_CONNECTING = new CommonUtils.ToastMessage("Failed connecting!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING = new CommonUtils.ToastMessage("Failed loading!", true);
+        public static final CommonUtils.ToastMessage CANNOT_SAVE_PROFILE = new CommonUtils.ToastMessage("Cannot save profile!", true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

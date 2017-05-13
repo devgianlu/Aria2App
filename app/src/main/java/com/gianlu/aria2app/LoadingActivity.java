@@ -20,6 +20,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 
+// FIXME: Layout is crazy
 public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
     private LinearLayout connecting;
@@ -45,7 +46,7 @@ public class LoadingActivity extends AppCompatActivity {
         pickerAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditProfileActivity.start(LoadingActivity.this, false); // TODO: Check what happens if #onBackPressed()
+                EditProfileActivity.start(LoadingActivity.this, false);
             }
         });
 
@@ -82,6 +83,12 @@ public class LoadingActivity extends AppCompatActivity {
         tryConnecting(manager, manager.getLastProfile(this));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayPicker(ProfilesManager.get(this));
+    }
+
     private void tryConnecting(final ProfilesManager manager, UserProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
@@ -113,6 +120,11 @@ public class LoadingActivity extends AppCompatActivity {
             @Override
             public void onProfileSelected(UserProfile profile) {
                 tryConnecting(manager, profile);
+            }
+        }, new CustomProfilesAdapter.IEdit() {
+            @Override
+            public void onEditProfile(UserProfile profile) {
+                EditProfileActivity.start(LoadingActivity.this, profile);
             }
         });
 

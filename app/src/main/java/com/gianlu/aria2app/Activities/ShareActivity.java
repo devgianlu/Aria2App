@@ -41,7 +41,7 @@ public class ShareActivity extends AppCompatActivity {
                     CommonUtils.UIToast(ShareActivity.this, Utils.ToastMessages.NOT_ONLINE, profile.getFullServerAddress());
                 }
             }
-        });
+        }, null);
         list.setAdapter(adapter);
         adapter.startProfilesTest(null);
 

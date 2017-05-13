@@ -87,6 +87,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent); // TODO: Reload profiles if back from EditProfile
+    }
+
+    @Override
     public boolean onMenuItemSelected(BaseDrawerItem which) {
         switch (which.id) {
             case DrawerConst.HOME:
@@ -480,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 if (listener != null) listener.onProfileSelected(profile);
                 if (drawerManager != null) drawerManager.performUnlock();
             }
-        });
+        }, null);
     }
 
     @Override
