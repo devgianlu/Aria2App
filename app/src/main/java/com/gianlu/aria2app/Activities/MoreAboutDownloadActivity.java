@@ -33,7 +33,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             return;
         }
 
-        setTheme(download.isBitTorrent ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
+        setTheme(download.isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
         setTitle(download.getName());

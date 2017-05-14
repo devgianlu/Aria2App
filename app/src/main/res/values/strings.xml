@@ -61,7 +61,7 @@
     <string name="mode_single">Single mode (use same address for every connection)</string>
     <string name="mode_multi">Multi mode (use different addresses for different connectivity situations)</string>
     <string name="address">Address</string>
-    <string name="downloadIs">Download is %s</string>
+    <string name="downloadIs">Download is %s.</string>
     <string name="peers">Peers</string>
     <string name="servers">Servers</string>
     <string name="addProfile">Add profile</string>

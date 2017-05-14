@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 public class Download implements Serializable {
     public final String bitfield;
-    public final boolean isBitTorrent;
     public final long completedLength;
     public final long length;
     public final long uploadLength;
@@ -34,7 +33,7 @@ public class Download implements Serializable {
     // BitTorrent only
     public final boolean seeder;
     public final int numSeeders;
-    public final BitTorrent bitTorrent;
+    public final BitTorrent torrent;
     private final String following;
     private final String belongsTo;
     private final String infoHash;
@@ -64,17 +63,16 @@ public class Download implements Serializable {
             for (int i = 0; i < array.length(); i++) files.add(new AFile(array.optJSONObject(i)));
         }
 
-        isBitTorrent = obj.has("bittorrent");
         if (obj.has("bittorrent")) {
             infoHash = obj.optString("infoHash");
             numSeeders = Integer.parseInt(obj.optString("numSeeders", "0"));
             seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
-            bitTorrent = new BitTorrent(obj.optJSONObject("bittorrent"));
+            torrent = new BitTorrent(obj.optJSONObject("bittorrent"));
         } else {
             infoHash = null;
             numSeeders = 0;
             seeder = false;
-            bitTorrent = null;
+            torrent = null;
         }
 
         if (obj.has("errorCode")) {
@@ -86,11 +84,15 @@ public class Download implements Serializable {
         }
     }
 
+    public boolean isTorrent() {
+        return torrent != null;
+    }
+
     public String getName() {
         try {
-            if (isBitTorrent) {
-                if (bitTorrent != null && bitTorrent.name != null) {
-                    return bitTorrent.name;
+            if (isTorrent()) {
+                if (torrent != null && torrent.name != null) {
+                    return torrent.name;
                 } else {
                     String[] splitted = files.get(0).path.split("/");
                     return splitted[splitted.length - 1];

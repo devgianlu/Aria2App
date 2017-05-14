@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.Date;
 
-// TODO: Set graph message if download isn't running
 // TODO: Add numeric download speeds and progress
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
     private UpdateUI updater;
@@ -34,6 +34,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.info));
         args.putSerializable("gid", download.gid);
+        args.putBoolean("torrent", download.isTorrent());
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,7 +99,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         final LinearLayout btAnnounceList;
         final LineChart chart;
 
-        public ViewHolder(ViewGroup rootView) {
+        ViewHolder(ViewGroup rootView) {
             this.rootView = rootView;
 
             container = (LinearLayout) rootView.findViewById(R.id.infoFragment_container);
@@ -126,6 +127,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
 
         void setup() {
             Utils.setupChart(chart, false);
+            chart.setNoDataTextColor(ContextCompat.getColor(getContext(), getArguments().getBoolean("torrent", false) ? R.color.colorTorrent : R.color.colorAccent));
         }
 
         boolean setChartState(Download download) {
@@ -140,7 +142,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
                 case COMPLETE:
                 case UNKNOWN:
                     chart.clear();
-                    chart.setNoDataText("Download is " + download.status.getFormal(getContext(), false));
+                    chart.setNoDataText(getString(R.string.downloadIs, download.status.getFormal(getContext(), false)));
                     return false;
             }
         }
@@ -174,32 +176,32 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             verifiedLength.setHtml(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength, false));
             verifyIntegrityPending.setHtml(R.string.verifyIntegrityPending, String.valueOf(download.verifyIntegrityPending));
 
-            bitTorrentOnly.setVisibility(download.isBitTorrent ? View.VISIBLE : View.GONE);
-            if (download.isBitTorrent) {
-                btMode.setHtml(R.string.mode, download.bitTorrent.mode.toString());
+            bitTorrentOnly.setVisibility(download.isTorrent() ? View.VISIBLE : View.GONE);
+            if (download.isTorrent()) {
+                btMode.setHtml(R.string.mode, download.torrent.mode.toString());
                 btSeeders.setHtml(R.string.numSeeder, download.numSeeders);
                 btSeeder.setHtml(R.string.seeder, String.valueOf(download.seeder));
 
-                if (download.bitTorrent.comment == null) {
+                if (download.torrent.comment == null) {
                     btComment.setVisibility(View.GONE);
                 } else {
                     btComment.setVisibility(View.VISIBLE);
-                    btComment.setHtml(R.string.comment, download.bitTorrent.comment);
+                    btComment.setHtml(R.string.comment, download.torrent.comment);
                 }
 
-                if (download.bitTorrent.creationDate == -1) {
+                if (download.torrent.creationDate == -1) {
                     btCreationDate.setVisibility(View.GONE);
                 } else {
                     btCreationDate.setVisibility(View.VISIBLE);
-                    btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(download.bitTorrent.creationDate)));
+                    btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(download.torrent.creationDate)));
                 }
 
-                if (download.bitTorrent.announceList.isEmpty()) {
+                if (download.torrent.announceList.isEmpty()) {
                     btAnnounceList.setVisibility(View.GONE);
                 } else {
                     btAnnounceList.setVisibility(View.VISIBLE);
                     btAnnounceList.removeAllViews();
-                    for (String url : download.bitTorrent.announceList)
+                    for (String url : download.torrent.announceList)
                         btAnnounceList.addView(new SuperTextView(getContext(), url));
                 }
             }

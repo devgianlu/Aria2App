@@ -60,7 +60,7 @@
     <string name="mode_single">Одиночный режим (используйте один и тот же адрес для каждого соединения)</string>
     <string name="mode_multi">Многорежимный режим (используйте разные адреса для разных ситуаций подключения)</string>
     <string name="address">Адрес</string>
-    <string name="downloadIs">Скачивание %s</string>
+    <string name="downloadIs">Скачивание %s.</string>
     <string name="peers">Пиры</string>
     <string name="servers">Серверы</string>
     <string name="addProfile">Добавить профиль</string>

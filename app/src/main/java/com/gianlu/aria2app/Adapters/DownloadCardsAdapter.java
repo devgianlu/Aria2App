@@ -155,7 +155,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 holder.more.setVisibility(View.INVISIBLE);
             case COMPLETE:
             case REMOVED:
-                if (download.isBitTorrent) holder.restart.setVisibility(View.GONE);
+                if (download.isTorrent()) holder.restart.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.stop.setVisibility(View.GONE);
@@ -221,11 +221,12 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         final Download item = objs.get(position);
 
         final int color;
-        if (item.isBitTorrent)
+        if (item.isTorrent())
             color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
         else color = ContextCompat.getColor(context, R.color.colorAccent);
 
         Utils.setupChart(holder.detailsChart, true);
+        holder.detailsChart.setNoDataTextColor(color);
         holder.donutProgress.setFinishedStrokeColor(color);
 
         holder.detailsGid.setHtml(R.string.gid, item.gid);
