@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.UpdateUI;
+import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
@@ -90,6 +91,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         final SuperTextView directory;
         final SuperTextView verifiedLength;
         final SuperTextView verifyIntegrityPending;
+        final BitfieldVisualizer bitfield;
         final LinearLayout bitTorrentOnly;
         final SuperTextView btMode;
         final SuperTextView btSeeders;
@@ -115,6 +117,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             directory = (SuperTextView) rootView.findViewById(R.id.infoFragment_directory);
             verifiedLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_verifiedLength);
             verifyIntegrityPending = (SuperTextView) rootView.findViewById(R.id.infoFragment_verifyIntegrityPending);
+            bitfield = (BitfieldVisualizer) rootView.findViewById(R.id.infoFragment_bitfield);
 
             bitTorrentOnly = (LinearLayout) rootView.findViewById(R.id.infoFragment_bitTorrentOnly);
             btMode = (SuperTextView) rootView.findViewById(R.id.infoFragment_btMode);
@@ -127,7 +130,9 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
 
         void setup() {
             Utils.setupChart(chart, false);
-            chart.setNoDataTextColor(ContextCompat.getColor(getContext(), getArguments().getBoolean("torrent", false) ? R.color.colorTorrent : R.color.colorAccent));
+            int colorRes = getArguments().getBoolean("torrent", false) ? R.color.colorTorrent : R.color.colorAccent;
+            chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
+            bitfield.setColor(colorRes);
         }
 
         boolean setChartState(Download download) {
@@ -164,6 +169,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
                 chart.setVisibleXRangeMaximum(90);
                 chart.moveViewToX(data.getEntryCount());
             }
+
+            bitfield.update(download);
 
             gid.setHtml(R.string.gid, download.gid);
             totalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(download.length, false));
