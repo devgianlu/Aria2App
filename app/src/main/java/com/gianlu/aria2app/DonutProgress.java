@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -72,8 +73,13 @@ public class DonutProgress extends View {
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 
-    public void setFinishedStrokeColor(int color) {
+    public void setFinishedStrokeColor(@ColorInt int color) {
         arcPaint.setColor(color);
+        invalidate();
+    }
+
+    public void setTextColor(@ColorInt int color) {
+        textPaint.setColor(color);
         invalidate();
     }
 
@@ -92,4 +98,6 @@ public class DonutProgress extends View {
         textPaint.getTextBounds(percentage, 0, percentage.length(), textBound);
         invalidate();
     }
+
+
 }

@@ -24,8 +24,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
 import java.util.Date;
+import java.util.Locale;
 
-// TODO: Add numeric download speeds and progress
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
     private UpdateUI updater;
     private ViewHolder holder;
@@ -81,6 +81,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         final ViewGroup rootView;
         final LinearLayout container;
         final ProgressBar loading;
+        final SuperTextView progress;
         final SuperTextView gid;
         final SuperTextView totalLength;
         final SuperTextView completedLength;
@@ -106,6 +107,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
 
             container = (LinearLayout) rootView.findViewById(R.id.infoFragment_container);
             loading = (ProgressBar) rootView.findViewById(R.id.infoFragment_loading);
+            progress = (SuperTextView) rootView.findViewById(R.id.infoFragment_progress);
             chart = (LineChart) rootView.findViewById(R.id.infoFragment_chart);
             gid = (SuperTextView) rootView.findViewById(R.id.infoFragment_gid);
             totalLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_totalLength);
@@ -133,6 +135,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             int colorRes = getArguments().getBoolean("torrent", false) ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
             bitfield.setColor(colorRes);
+            progress.setTypeface("fonts/Roboto-Light.ttf");
         }
 
         boolean setChartState(Download download) {
@@ -170,6 +173,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
                 chart.moveViewToX(data.getEntryCount());
             }
 
+            progress.setText(String.format(Locale.getDefault(), "%.1f", download.getProgress()) + "%");
             bitfield.update(download);
 
             gid.setHtml(R.string.gid, download.gid);
