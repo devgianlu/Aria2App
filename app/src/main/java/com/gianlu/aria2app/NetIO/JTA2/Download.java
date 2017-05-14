@@ -50,10 +50,10 @@ public class Download implements Serializable {
         pieceLength = Long.parseLong(obj.optString("pieceLength", "0"));
         numPieces = Integer.parseInt(obj.optString("numPieces", "0"));
         connections = Integer.parseInt(obj.optString("connections", "0"));
-        followedBy = obj.optString("followedBy");
-        following = obj.optString("following");
-        belongsTo = obj.optString("belongsTo");
-        dir = obj.optString("dir");
+        followedBy = obj.optString("followedBy", null);
+        following = obj.optString("following", null);
+        belongsTo = obj.optString("belongsTo", null);
+        dir = obj.optString("dir", null);
         verifiedLength = Long.parseLong(obj.optString("verifiedLength", "0"));
         verifyIntegrityPending = Boolean.parseBoolean(obj.optString("verifyIntegrityPending", "false"));
         files = new ArrayList<>();
@@ -82,6 +82,10 @@ public class Download implements Serializable {
             errorCode = -1;
             errorMessage = null;
         }
+    }
+
+    public boolean isMetadata() {
+        return getName().startsWith("[METADATA]");
     }
 
     public boolean isTorrent() {

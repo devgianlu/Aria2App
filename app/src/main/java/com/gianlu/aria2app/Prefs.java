@@ -37,7 +37,8 @@ public class Prefs {
     public enum Keys {
         DD_DOWNLOAD_PATH("dd_downloadPath"),
         A2_ENABLE_NOTIFS("a2_enableNotifications"),
-        A2_UPDATE_INTERVAL("a2_updateInterval");
+        A2_UPDATE_INTERVAL("a2_updateInterval"),
+        A2_HIDE_METADATA("a2_hideMetadata");
         public final String key;
 
         Keys(String key) {
