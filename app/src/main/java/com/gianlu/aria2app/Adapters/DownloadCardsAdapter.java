@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 // FIXME: Sorting
-// TODO: Remove action
 public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdapter.DownloadViewHolder> {
     private final Context context;
     private final List<Download> originalObjs;
@@ -47,6 +46,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         this.inflater = LayoutInflater.from(context);
 
         Collections.sort(this.objs, new StatusComparator());
+        if (handler != null) handler.onItemCountUpdated(objs.size());
     }
 
     public void sortBy(SortBy sorting) {
@@ -134,18 +134,22 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         holder.stop.setVisibility(View.VISIBLE);
         holder.restart.setVisibility(View.VISIBLE);
         holder.pause.setVisibility(View.VISIBLE);
+        holder.remove.setVisibility(View.VISIBLE);
         holder.more.setVisibility(View.VISIBLE);
 
         switch (download.status) {
             case ACTIVE:
                 holder.restart.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.GONE);
                 break;
             case PAUSED:
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.GONE);
                 break;
             case WAITING:
+                // TODO: What can be done if it's in waiting status?
                 break;
             case ERROR:
                 holder.more.setVisibility(View.INVISIBLE);
@@ -162,6 +166,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 holder.start.setVisibility(View.GONE);
                 holder.stop.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.GONE);
                 break;
         }
     }
@@ -269,6 +274,12 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
             }
         });
+        holder.remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
+            }
+        });
 
         setupActions(holder, item);
     }
@@ -364,6 +375,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         final ImageButton start;
         final ImageButton stop;
         final ImageButton restart;
+        final ImageButton remove;
         final Button more;
         final LineChart detailsChart;
 
@@ -380,6 +392,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             start = (ImageButton) itemView.findViewById(R.id.downloadCard_start);
             stop = (ImageButton) itemView.findViewById(R.id.downloadCard_stop);
             restart = (ImageButton) itemView.findViewById(R.id.downloadCard_restart);
+            remove = (ImageButton) itemView.findViewById(R.id.downloadCard_remove);
             more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
 
             detailsChart = (LineChart) itemView.findViewById(R.id.downloadCard_detailsChart);

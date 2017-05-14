@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,7 @@ import java.util.Date;
 
 // TODO: Set graph message if download isn't running
 // TODO: Add numeric download speeds and progress
-public class InfoFragment extends Fragment implements UpdateUI.IUI {
+public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
     private UpdateUI updater;
     private ViewHolder holder;
 
@@ -69,6 +68,11 @@ public class InfoFragment extends Fragment implements UpdateUI.IUI {
     @Override
     public void onUpdateUI(Download download) {
         if (holder != null) holder.update(download);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (updater != null) updater.stopThread(null);
     }
 
     public class ViewHolder {
@@ -124,6 +128,23 @@ public class InfoFragment extends Fragment implements UpdateUI.IUI {
             Utils.setupChart(chart, false);
         }
 
+        boolean setChartState(Download download) {
+            switch (download.status) {
+                case ACTIVE:
+                    return true;
+                default:
+                case PAUSED:
+                case WAITING:
+                case ERROR:
+                case REMOVED:
+                case COMPLETE:
+                case UNKNOWN:
+                    chart.clear();
+                    chart.setNoDataText("Download is " + download.status.getFormal(getContext(), false));
+                    return false;
+            }
+        }
+
         void update(Download download) {
             if (!isAdded()) return;
 
@@ -131,14 +152,16 @@ public class InfoFragment extends Fragment implements UpdateUI.IUI {
             loading.setVisibility(View.GONE);
             container.setVisibility(View.VISIBLE);
 
-            LineData data = chart.getLineData();
-            int pos = data.getEntryCount();
-            data.addEntry(new Entry(pos, download.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-            data.addEntry(new Entry(pos, download.uploadSpeed), Utils.CHART_UPLOAD_SET);
-            data.notifyDataChanged();
-            chart.notifyDataSetChanged();
-            chart.setVisibleXRangeMaximum(90);
-            chart.moveViewToX(data.getEntryCount());
+            if (setChartState(download)) {
+                LineData data = chart.getLineData();
+                int pos = data.getEntryCount();
+                data.addEntry(new Entry(pos, download.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                data.addEntry(new Entry(pos, download.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                data.notifyDataChanged();
+                chart.notifyDataSetChanged();
+                chart.setVisibleXRangeMaximum(90);
+                chart.moveViewToX(data.getEntryCount());
+            }
 
             gid.setHtml(R.string.gid, download.gid);
             totalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(download.length, false));

@@ -43,4 +43,8 @@ public class PagerAdapter<F extends Fragment> extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         return getItem(position).getArguments().getString("title");
     }
+
+    public List<F> getFragments() {
+        return fragments;
+    }
 }

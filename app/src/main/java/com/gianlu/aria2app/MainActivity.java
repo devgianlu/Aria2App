@@ -567,16 +567,20 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 jta2.pause(download.gid, this);
                 break;
             case REMOVE:
-                CommonUtils.showDialog(this, new AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.removeName, download.getName()))
-                        .setMessage(R.string.removeDownloadAlert)
-                        .setNegativeButton(android.R.string.no, null)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                jta2.remove(download.gid, download.status, MainActivity.this);
-                            }
-                        }));
+                if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED) {
+                    CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.removeName, download.getName()))
+                            .setMessage(R.string.removeDownloadAlert)
+                            .setNegativeButton(android.R.string.no, null)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    jta2.remove(download.gid, download.status, MainActivity.this);
+                                }
+                            }));
+                } else {
+                    jta2.remove(download.gid, download.status, MainActivity.this);
+                }
                 break;
             case RESTART:
                 jta2.restart(download.gid, this);
