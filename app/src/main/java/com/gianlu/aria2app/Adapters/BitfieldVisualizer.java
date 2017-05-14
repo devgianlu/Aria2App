@@ -18,13 +18,14 @@ import java.util.Objects;
 public class BitfieldVisualizer extends View {
     private String bitfield = null;
     private int pieces = -1;
-    private boolean[] binary = null;
+    private int[] binary = null;
     private Paint paint;
     private int padding = 12;
     private int square = 48;
     private int columns;
     private int rows;
     private int hoff;
+
 
     public BitfieldVisualizer(Context context) {
         super(context);
@@ -41,117 +42,46 @@ public class BitfieldVisualizer extends View {
         init();
     }
 
-    private void init() {
-        paint = new Paint();
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-    }
-
-    // TODO: Shrink down code
-    private boolean[] hexToBinary(String hex, int num) {
+    private static int[] hexToBinary(String hex, int num) {
         hex = hex.toLowerCase();
-        boolean[] array = new boolean[hex.length() * 4];
-        for (int i = 0; i < hex.length() * 4; i += 4) {
-            switch (hex.charAt(i / 4)) {
+        int[] array = new int[hex.length()];
+        for (int i = 0; i < hex.length(); i++) {
+            switch (hex.charAt(i)) {
                 case '0':
-                    array[i] = false;
-                    array[i + 1] = false;
-                    array[i + 2] = false;
-                    array[i + 3] = false;
+                    array[i] = 0;
                     break;
                 case '1':
-                    array[i] = false;
-                    array[i + 1] = false;
-                    array[i + 2] = false;
-                    array[i + 3] = true;
-                    break;
                 case '2':
-                    array[i] = false;
-                    array[i + 1] = false;
-                    array[i + 2] = true;
-                    array[i + 3] = false;
+                case '4':
+                case '8':
+                    array[i] = 1;
                     break;
                 case '3':
-                    array[i] = false;
-                    array[i + 1] = false;
-                    array[i + 2] = true;
-                    array[i + 3] = true;
-                    break;
-                case '4':
-                    array[i] = false;
-                    array[i + 1] = true;
-                    array[i + 2] = false;
-                    array[i + 3] = false;
-                    break;
                 case '5':
-                    array[i] = false;
-                    array[i + 1] = true;
-                    array[i + 2] = false;
-                    array[i + 3] = true;
-                    break;
                 case '6':
-                    array[i] = false;
-                    array[i + 1] = true;
-                    array[i + 2] = true;
-                    array[i + 3] = false;
+                case '9':
+                case 'a':
+                case 'c':
+                    array[i] = 2;
                     break;
                 case '7':
-                    array[i] = false;
-                    array[i + 1] = true;
-                    array[i + 2] = true;
-                    array[i + 3] = true;
-                    break;
-                case '8':
-                    array[i] = true;
-                    array[i + 1] = false;
-                    array[i + 2] = false;
-                    array[i + 3] = false;
-                    break;
-                case '9':
-                    array[i] = true;
-                    array[i + 1] = false;
-                    array[i + 2] = false;
-                    array[i + 3] = true;
-                    break;
-                case 'a':
-                    array[i] = true;
-                    array[i + 1] = false;
-                    array[i + 2] = true;
-                    array[i + 3] = false;
-                    break;
                 case 'b':
-                    array[i] = true;
-                    array[i + 1] = false;
-                    array[i + 2] = true;
-                    array[i + 3] = true;
-                    break;
-                case 'c':
-                    array[i] = true;
-                    array[i + 1] = true;
-                    array[i + 2] = false;
-                    array[i + 3] = false;
-                    break;
                 case 'd':
-                    array[i] = true;
-                    array[i + 1] = true;
-                    array[i + 2] = false;
-                    array[i + 3] = true;
-                    break;
                 case 'e':
-                    array[i] = true;
-                    array[i + 1] = true;
-                    array[i + 2] = true;
-                    array[i + 3] = false;
+                    array[i] = 3;
                     break;
                 case 'f':
-                    array[i] = true;
-                    array[i + 1] = true;
-                    array[i + 2] = true;
-                    array[i + 3] = true;
+                    array[i] = 4;
                     break;
             }
         }
 
         return Arrays.copyOfRange(array, 0, num);
+    }
+
+    private void init() {
+        paint = new Paint();
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
     }
 
     public void setColor(@ColorRes int color) {
@@ -163,7 +93,7 @@ public class BitfieldVisualizer extends View {
         if (Objects.equals(bitfield, download.bitfield)) return;
 
         bitfield = download.bitfield;
-        pieces = download.numPieces;
+        pieces = download.numPieces / 4;
         binary = hexToBinary(bitfield, pieces);
 
         invalidate();
@@ -196,7 +126,8 @@ public class BitfieldVisualizer extends View {
         int i = 0;
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {
-                if (i < pieces && binary[i]) {
+                if (i < pieces && binary[i] != 0) {
+                    paint.setAlpha(255 / 4 * binary[i]);
                     int px = padding + column * (square + padding) + hoff;
                     int py = padding + row * (square + padding);
                     canvas.drawRect(px, py, square + px, square + py, paint);

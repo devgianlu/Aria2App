@@ -619,5 +619,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onRemovedResult(String gid) {
         CommonUtils.UIToast(this, Utils.ToastMessages.RESULT_REMOVED, gid);
+        if (adapter != null) adapter.removeItem(gid);
     }
 }

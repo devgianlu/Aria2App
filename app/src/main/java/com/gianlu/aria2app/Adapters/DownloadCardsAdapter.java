@@ -124,6 +124,16 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         super.notifyItemChanged(pos, payload);
     }
 
+    public void removeItem(String gid) {
+        int pos = originalIndexOf(gid);
+        if (pos != -1) {
+            originalObjs.remove(pos);
+            processFilters();
+            super.notifyItemRemoved(pos);
+            if (handler != null) handler.onItemCountUpdated(objs.size());
+        }
+    }
+
     @Override
     public DownloadCardsAdapter.DownloadViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new DownloadViewHolder(parent);
