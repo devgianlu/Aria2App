@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BackPressedFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.InfoFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.R;
@@ -47,8 +48,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
 
-        adapter = new PagerAdapter<BackPressedFragment>(getSupportFragmentManager(), InfoFragment.getInstance(this, download));
+        adapter = new PagerAdapter<>(getSupportFragmentManager(),
+                InfoFragment.getInstance(this, download),
+                PeersFragment.getInstance(this, download));
         pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(3);
 
         tabLayout.setupWithViewPager(pager);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

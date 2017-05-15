@@ -23,7 +23,6 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -45,29 +44,29 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         this.filters = new ArrayList<>();
         this.inflater = LayoutInflater.from(context);
 
-        Collections.sort(this.objs, new StatusComparator());
+        Collections.sort(this.objs, new Download.StatusComparator());
         if (handler != null) handler.onItemCountUpdated(objs.size());
     }
 
     public void sortBy(SortBy sorting) {
         switch (sorting) {
             case STATUS:
-                Collections.sort(objs, new StatusComparator());
+                Collections.sort(objs, new Download.StatusComparator());
                 break;
             case PROGRESS:
-                Collections.sort(objs, new ProgressComparator());
+                Collections.sort(objs, new Download.ProgressComparator());
                 break;
             case DOWNLOAD_SPEED:
-                Collections.sort(objs, new DownloadSpeedComparator());
+                Collections.sort(objs, new Download.DownloadSpeedComparator());
                 break;
             case UPLOAD_SPEED:
-                Collections.sort(objs, new UploadSpeedComparator());
+                Collections.sort(objs, new Download.UploadSpeedComparator());
                 break;
             case COMPLETED_LENGTH:
-                Collections.sort(objs, new CompletedLengthComparator());
+                Collections.sort(objs, new Download.CompletedLengthComparator());
                 break;
             case LENGTH:
-                Collections.sort(objs, new LengthComparator());
+                Collections.sort(objs, new Download.LengthComparator());
                 break;
         }
 
@@ -116,7 +115,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         if (pos == -1 && originalIndexOf(payload.gid) == -1) {
             originalObjs.add(payload);
             processFilters();
-            super.notifyItemInserted(objs.size() - 1);
             if (handler != null) handler.onItemCountUpdated(objs.size());
             return;
         }
@@ -124,6 +122,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         super.notifyItemChanged(pos, payload);
     }
 
+    // FIXME
     public void removeItem(String gid) {
         int pos = indexOf(gid);
         if (pos != -1) {
@@ -321,60 +320,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         void onItemCountUpdated(int count);
 
         void onMenuItemSelected(Download download, JTA2.DownloadActions action);
-    }
-
-    private class StatusComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (o1.status == o2.status) return 0;
-            else if (o1.status.ordinal() < o2.status.ordinal()) return -1;
-            else return 1;
-        }
-    }
-
-    private class DownloadSpeedComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
-            else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
-            else return 1;
-        }
-    }
-
-    private class UploadSpeedComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.uploadSpeed, o2.uploadSpeed)) return 0;
-            else if (o1.uploadSpeed > o2.uploadSpeed) return -1;
-            else return 1;
-        }
-    }
-
-    private class LengthComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.length, o2.length)) return 0;
-            else if (o1.length > o2.length) return -1;
-            else return 1;
-        }
-    }
-
-    private class CompletedLengthComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.completedLength, o2.completedLength)) return 0;
-            else if (o1.completedLength > o2.completedLength) return -1;
-            else return 1;
-        }
-    }
-
-    private class ProgressComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.getProgress(), o2.getProgress())) return 0;
-            else if (o1.getProgress() > o2.getProgress()) return 1;
-            else return -1;
-        }
     }
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {

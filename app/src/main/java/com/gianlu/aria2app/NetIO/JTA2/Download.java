@@ -10,6 +10,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Objects;
 
 public class Download implements Serializable {
     public final String bitfield;
@@ -187,6 +189,60 @@ public class Download implements Serializable {
 
             if (firstCapital) return val;
             else return val.substring(0, 1).toLowerCase() + val.substring(1);
+        }
+    }
+
+    public static class StatusComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            if (o1.status == o2.status) return 0;
+            else if (o1.status.ordinal() < o2.status.ordinal()) return -1;
+            else return 1;
+        }
+    }
+
+    public static class DownloadSpeedComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
+            else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
+            else return 1;
+        }
+    }
+
+    public static class UploadSpeedComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            if (Objects.equals(o1.uploadSpeed, o2.uploadSpeed)) return 0;
+            else if (o1.uploadSpeed > o2.uploadSpeed) return -1;
+            else return 1;
+        }
+    }
+
+    public static class LengthComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            if (Objects.equals(o1.length, o2.length)) return 0;
+            else if (o1.length > o2.length) return -1;
+            else return 1;
+        }
+    }
+
+    public static class CompletedLengthComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            if (Objects.equals(o1.completedLength, o2.completedLength)) return 0;
+            else if (o1.completedLength > o2.completedLength) return -1;
+            else return 1;
+        }
+    }
+
+    public static class ProgressComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            if (Objects.equals(o1.getProgress(), o2.getProgress())) return 0;
+            else if (o1.getProgress() > o2.getProgress()) return 1;
+            else return -1;
         }
     }
 }

@@ -2,10 +2,9 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.util.Comparator;
+import java.util.Objects;
 
-@SuppressWarnings("ConstantConditions")
 public class Peer {
     public final String peerId;
     public final boolean amChoking;
@@ -13,15 +12,15 @@ public class Peer {
     public final int downloadSpeed;
     public final int uploadSpeed;
     public final boolean seeder;
-    private final String ip;
-    private final int port;
-    private final String bitfield;
+    public final String ip;
+    public final int port;
+    public final String bitfield;
 
     public Peer(JSONObject obj) {
-        peerId = obj.optString("peerId");
-        ip = obj.optString("ip");
+        peerId = obj.optString("peerId", null);
+        ip = obj.optString("ip", null);
         port = Integer.parseInt(obj.optString("port", "-1"));
-        bitfield = obj.optString("bitfield");
+        bitfield = obj.optString("bitfield", null);
         amChoking = Boolean.parseBoolean(obj.optString("amChoking", "false"));
         peerChoking = Boolean.parseBoolean(obj.optString("peerChoking", "false"));
         downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
@@ -29,15 +28,29 @@ public class Peer {
         seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
     }
 
-    public String getPeerId() {
-        try {
-            return URLDecoder.decode(peerId, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return "Unknown";
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Peer peer = (Peer) o;
+        return peerId.equals(peer.peerId);
+    }
+
+    public static class DownloadSpeedComparator implements Comparator<Peer> {
+        @Override
+        public int compare(Peer o1, Peer o2) {
+            if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
+            else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
+            else return 1;
         }
     }
 
-    public String getFullAddress() {
-        return ip + ":" + port;
+    public static class UploadSpeedComparator implements Comparator<Peer> {
+        @Override
+        public int compare(Peer o1, Peer o2) {
+            if (Objects.equals(o1.uploadSpeed, o2.uploadSpeed)) return 0;
+            else if (o1.uploadSpeed > o2.uploadSpeed) return -1;
+            else return 1;
+        }
     }
 }

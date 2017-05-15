@@ -17,6 +17,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
@@ -26,6 +27,7 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.Date;
 import java.util.Locale;
 
+// TODO: download actions
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
     private UpdateUI updater;
     private ViewHolder holder;
@@ -61,6 +63,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         } catch (JTA2InitializingException ex) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
+            Logging.logMe(getContext(), ex);
             return holder.rootView;
         }
 
