@@ -24,7 +24,7 @@ import com.gianlu.commonutils.MessageLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI {
+public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, PeersAdapter.IAdapter {
     private UpdateUI updater;
     private SwipeRefreshLayout layout;
     private PeersAdapter adapter;
@@ -44,11 +44,17 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (SwipeRefreshLayout) inflater.inflate(R.layout.peers_fragment, container, false);
+        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // TODO
+            }
+        });
         loading = (ProgressBar) layout.findViewById(R.id.peersFragment_loading);
         list = (RecyclerView) layout.findViewById(R.id.peersFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        adapter = new PeersAdapter(getContext(), new ArrayList<Peer>());
+        adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), this);
         list.setAdapter(adapter);
 
         String gid = getArguments().getString("gid");
@@ -86,8 +92,24 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI {
 
     @Override
     public void onNoPeers(String message) {
-        MessageLayout.show(layout, message, R.drawable.ic_info_black_24dp);
+        MessageLayout.show(layout, message, R.drawable.ic_info_outline_black_48dp);
         loading.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPeerSelected(Peer peer) {
+        // TODO
+    }
+
+    @Override
+    public void onItemCountUpdated(int count) {
+        if (count == 0) {
+            MessageLayout.show(layout, R.string.noPeers, R.drawable.ic_info_outline_black_48dp);
+            list.setVisibility(View.GONE);
+        } else {
+            MessageLayout.hide(layout);
+            list.setVisibility(View.VISIBLE);
+        }
     }
 }

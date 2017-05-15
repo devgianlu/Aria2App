@@ -542,10 +542,13 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     public void onItemCountUpdated(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerConst.HOME, count);
 
-        if (count == 0)
+        if (count == 0) {
             MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.noDownloads, R.drawable.ic_info_outline_black_48dp);
-        else
+            list.setVisibility(View.GONE);
+        } else {
             MessageLayout.hide((ViewGroup) findViewById(R.id.main_drawer));
+            list.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

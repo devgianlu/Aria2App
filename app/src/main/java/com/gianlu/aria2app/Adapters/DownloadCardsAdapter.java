@@ -112,14 +112,16 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
 
     public void notifyItemChanged(Download payload) {
         int pos = indexOf(payload.gid);
-        if (pos == -1 && originalIndexOf(payload.gid) == -1) {
+        int realPos = originalIndexOf(payload.gid);
+        if (pos == -1 && realPos == -1) {
             originalObjs.add(payload);
             processFilters();
             if (handler != null) handler.onItemCountUpdated(objs.size());
-            return;
+        } else {
+            originalObjs.set(realPos, payload);
+            objs.set(pos, payload);
+            super.notifyItemChanged(pos, payload);
         }
-
-        super.notifyItemChanged(pos, payload);
     }
 
     // FIXME

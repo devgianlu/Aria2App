@@ -19,11 +19,15 @@ import java.util.Objects;
 // TODO: Not handling "peers.size() == 0"
 public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> {
     private final List<Peer> peers;
+    private final IAdapter listener;
     private final LayoutInflater inflater;
 
-    public PeersAdapter(Context context, List<Peer> peers) {
+    public PeersAdapter(Context context, List<Peer> peers, IAdapter listener) {
         this.peers = peers;
         this.inflater = LayoutInflater.from(context);
+        this.listener = listener;
+
+        if (listener != null) listener.onItemCountUpdated(peers.size());
     }
 
     @Override
@@ -44,14 +48,14 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Peer peer = peers.get(position);
+        final Peer peer = peers.get(position);
         holder.address.setText(peer.ip + ":" + peer.port);
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Show dialog
+                if (listener != null) listener.onPeerSelected(peer);
             }
         });
     }
@@ -74,14 +78,21 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
         if (pos == -1) {
             peers.add(payload);
             super.notifyItemInserted(peers.size() - 1);
-            return;
+            if (listener != null) listener.onItemCountUpdated(peers.size());
+        } else {
+            peers.set(pos, payload);
+            super.notifyItemChanged(pos, payload);
         }
-
-        super.notifyItemChanged(pos, payload);
     }
 
     public void notifyItemsChanged(List<Peer> peers) {
         for (Peer peer : peers) notifyItemChanged(peer);
+    }
+
+    public interface IAdapter {
+        void onPeerSelected(Peer peer);
+
+        void onItemCountUpdated(int count);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
