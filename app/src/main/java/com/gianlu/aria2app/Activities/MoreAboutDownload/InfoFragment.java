@@ -82,6 +82,9 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         final LinearLayout container;
         final ProgressBar loading;
         final SuperTextView progress;
+        final SuperTextView downloadSpeed;
+        final SuperTextView uploadSpeed;
+        final SuperTextView remainingTime;
         final SuperTextView gid;
         final SuperTextView totalLength;
         final SuperTextView completedLength;
@@ -108,6 +111,9 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             container = (LinearLayout) rootView.findViewById(R.id.infoFragment_container);
             loading = (ProgressBar) rootView.findViewById(R.id.infoFragment_loading);
             progress = (SuperTextView) rootView.findViewById(R.id.infoFragment_progress);
+            downloadSpeed = (SuperTextView) rootView.findViewById(R.id.infoFragment_downloadSpeed);
+            uploadSpeed = (SuperTextView) rootView.findViewById(R.id.infoFragment_uploadSpeed);
+            remainingTime = (SuperTextView) rootView.findViewById(R.id.infoFragment_remainingTime);
             chart = (LineChart) rootView.findViewById(R.id.infoFragment_chart);
             gid = (SuperTextView) rootView.findViewById(R.id.infoFragment_gid);
             totalLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_totalLength);
@@ -136,6 +142,9 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
             bitfield.setColor(colorRes);
             progress.setTypeface("fonts/Roboto-Light.ttf");
+            downloadSpeed.setTypeface("fonts/Roboto-Light.ttf");
+            uploadSpeed.setTypeface("fonts/Roboto-Light.ttf");
+            remainingTime.setTypeface("fonts/Roboto-Light.ttf");
         }
 
         boolean setChartState(Download download) {
@@ -173,7 +182,10 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
                 chart.moveViewToX(data.getEntryCount());
             }
 
-            progress.setText(String.format(Locale.getDefault(), "%.1f", download.getProgress()) + "%");
+            progress.setText(String.format(Locale.getDefault(), "%.1f %%", download.getProgress()));
+            downloadSpeed.setText(CommonUtils.speedFormatter(download.downloadSpeed, false));
+            uploadSpeed.setText(CommonUtils.speedFormatter(download.uploadSpeed, false));
+            remainingTime.setText(CommonUtils.timeFormatter(download.getMissingTime()));
             bitfield.update(download);
 
             gid.setHtml(R.string.gid, download.gid);

@@ -124,9 +124,8 @@ public class Download implements Serializable {
         return ((float) completedLength) / ((float) length) * 100;
     }
 
-    @Nullable
-    public Long getMissingTime() {
-        if (downloadSpeed == 0) return null;
+    public long getMissingTime() {
+        if (downloadSpeed == 0) return 0;
         return (length - completedLength) / downloadSpeed;
     }
 
