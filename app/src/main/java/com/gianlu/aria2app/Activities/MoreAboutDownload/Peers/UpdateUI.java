@@ -10,7 +10,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Peer;
 
 import java.util.List;
 
-public class UpdateUI extends BaseUpdater {
+public class UpdateUI extends BaseUpdater implements JTA2.IPeers {
     private final String gid;
     private final IUI listener;
 
@@ -22,20 +22,32 @@ public class UpdateUI extends BaseUpdater {
 
     @Override
     public void loop() {
-        jta2.getPeers(gid, new JTA2.IPeers() {
-            @Override
-            public void onPeers(List<Peer> peers) {
-                if (listener != null) listener.onUpdateAdapter(peers);
-            }
+        jta2.getPeers(gid, this);
+    }
 
+    @Override
+    public void onPeers(final List<Peer> peers) {
+        if (listener == null) return;
+        handler.post(new Runnable() {
             @Override
-            public void onException(Exception ex) {
-                ErrorHandler.get().notifyException(ex, false);
+            public void run() {
+                listener.onUpdateAdapter(peers);
             }
+        });
+    }
 
+    @Override
+    public void onException(Exception ex) {
+        ErrorHandler.get().notifyException(ex, false);
+    }
+
+    @Override
+    public void onNoPeerData(final Exception ex) {
+        if (listener == null) return;
+        handler.post(new Runnable() {
             @Override
-            public void onNoPeerData(Exception ex) {
-                if (listener != null) listener.onNoPeers(ex.getMessage());
+            public void run() {
+                listener.onNoPeers(ex.getMessage());
             }
         });
     }

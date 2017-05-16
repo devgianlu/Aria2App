@@ -124,23 +124,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         }
     }
 
-    // FIXME
-    public void removeItem(String gid) {
-        int pos = indexOf(gid);
-        if (pos != -1) {
-            objs.remove(pos);
-        }
-
-        int realPos = originalIndexOf(gid);
-        if (realPos != -1) {
-            originalObjs.remove(realPos);
-            processFilters();
-        }
-
-        notifyDataSetChanged();
-        if (handler != null) handler.onItemCountUpdated(objs.size());
-    }
-
     @Override
     public DownloadCardsAdapter.DownloadViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new DownloadViewHolder(parent);

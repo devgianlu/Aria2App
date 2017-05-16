@@ -14,10 +14,13 @@ import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.UpdateUI;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
+import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 
@@ -44,12 +47,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (SwipeRefreshLayout) inflater.inflate(R.layout.peers_fragment, container, false);
-        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // TODO
-            }
-        });
+        layout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         loading = (ProgressBar) layout.findViewById(R.id.peersFragment_loading);
         list = (RecyclerView) layout.findViewById(R.id.peersFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -57,12 +55,37 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), this);
         list.setAdapter(adapter);
 
-        String gid = getArguments().getString("gid");
+        final String gid = getArguments().getString("gid");
         if (gid == null) {
             MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
             loading.setVisibility(View.GONE);
             return layout;
         }
+
+        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updater.stopThread(new BaseUpdater.IThread() {
+                    @Override
+                    public void onStopped() {
+                        try {
+                            adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), PeersFragment.this);
+                            list.setAdapter(adapter);
+
+                            updater = new UpdateUI(getContext(), gid, PeersFragment.this);
+                            updater.start();
+                        } catch (JTA2InitializingException ex) {
+                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_REFRESHING, ex, new Runnable() {
+                                @Override
+                                public void run() {
+                                    layout.setRefreshing(false);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
 
         try {
             updater = new UpdateUI(getContext(), gid, this);

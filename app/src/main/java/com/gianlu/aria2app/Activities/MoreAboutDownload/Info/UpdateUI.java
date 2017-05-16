@@ -26,7 +26,6 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownload {
     @Override
     public void onDownload(final Download download) {
         if (listener == null) return;
-
         handler.post(new Runnable() {
             @Override
             public void run() {
