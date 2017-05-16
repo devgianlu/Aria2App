@@ -75,9 +75,14 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (adapter != null)
+        if (adapter != null) {
+            for (BackPressedFragment fragment : adapter.getFragments())
+                if (!fragment.canGoBack())
+                    return;
+
             for (BackPressedFragment fragment : adapter.getFragments())
                 fragment.onBackPressed();
+        }
 
         super.onBackPressed();
     }

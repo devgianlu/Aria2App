@@ -76,6 +76,11 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
     }
 
     @Override
+    public boolean canGoBack() {
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         if (updater != null) updater.stopThread(null);
     }

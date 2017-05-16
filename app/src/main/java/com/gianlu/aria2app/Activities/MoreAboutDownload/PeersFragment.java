@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeerBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.UpdateUI;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
@@ -29,10 +31,11 @@ import java.util.List;
 
 public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, PeersAdapter.IAdapter {
     private UpdateUI updater;
-    private SwipeRefreshLayout layout;
+    private CoordinatorLayout layout;
     private PeersAdapter adapter;
     private RecyclerView list;
     private ProgressBar loading;
+    private PeerBottomSheet sheet;
 
     public static PeersFragment getInstance(Context context, Download download) {
         PeersFragment fragment = new PeersFragment();
@@ -46,14 +49,17 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layout = (SwipeRefreshLayout) inflater.inflate(R.layout.peers_fragment, container, false);
-        layout.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        layout = (CoordinatorLayout) inflater.inflate(R.layout.peers_fragment, container, false);
+        final SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) layout.findViewById(R.id.peersFragment_swipeRefresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         loading = (ProgressBar) layout.findViewById(R.id.peersFragment_loading);
         list = (RecyclerView) layout.findViewById(R.id.peersFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), this);
         list.setAdapter(adapter);
+
+        sheet = PeerBottomSheet.setup(layout.findViewById(R.id.peersFragment_sheet));
 
         final String gid = getArguments().getString("gid");
         if (gid == null) {
@@ -62,7 +68,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
             return layout;
         }
 
-        layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 updater.stopThread(new BaseUpdater.IThread() {
@@ -78,7 +84,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
                             CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_REFRESHING, ex, new Runnable() {
                                 @Override
                                 public void run() {
-                                    layout.setRefreshing(false);
+                                    swipeRefresh.setRefreshing(false);
                                 }
                             });
                         }
@@ -101,6 +107,16 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
+    public boolean canGoBack() {
+        if (sheet.shouldUpdate()) {
+            sheet.collapse();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (updater != null) updater.stopThread(null);
     }
@@ -111,6 +127,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
         if (adapter != null) adapter.notifyItemsChanged(peers);
+        if (sheet != null && sheet.shouldUpdate()) sheet.update(peers);
     }
 
     @Override
@@ -118,11 +135,12 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         MessageLayout.show(layout, message, R.drawable.ic_info_outline_black_48dp);
         loading.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
+        if (sheet != null) sheet.collapse();
     }
 
     @Override
     public void onPeerSelected(Peer peer) {
-        // TODO
+        sheet.expand(peer);
     }
 
     @Override
@@ -130,6 +148,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (count == 0) {
             MessageLayout.show(layout, R.string.noPeers, R.drawable.ic_info_outline_black_48dp);
             list.setVisibility(View.GONE);
+            if (sheet != null) sheet.collapse();
         } else {
             MessageLayout.hide(layout);
             list.setVisibility(View.VISIBLE);
