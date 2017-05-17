@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ripple_effect_dark"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingStart="36dp"
+    android:paddingTop="4dp">
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/serverItem_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@android:color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:alpha="0.54"
+            android:src="@drawable/ic_file_download_black_48dp" />
+
+        <com.gianlu.commonutils.SuperTextView
+            android:id="@+id/serverItem_downloadSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

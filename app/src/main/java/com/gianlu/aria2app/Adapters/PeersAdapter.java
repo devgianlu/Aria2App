@@ -16,7 +16,6 @@ import java.util.Objects;
 
 // FIXME: Handle item removed
 // TODO: Sorting
-// TODO: Not handling "peers.size() == 0"
 public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> {
     private final List<Peer> peers;
     private final IAdapter listener;

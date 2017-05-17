@@ -7,8 +7,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Objects;
 
 public class AFile implements Serializable {
     public final long completedLength;
@@ -41,14 +39,6 @@ public class AFile implements Serializable {
 
     public float getProgress() {
         return ((float) completedLength) / ((float) length) * 100;
-    }
-
-    public String getPercentage() {
-        return String.format(Locale.getDefault(), "%.2f", getProgress()) + " %";
-    }
-
-    public boolean isCompleted() {
-        return Objects.equals(completedLength, length);
     }
 
     public String getRelativePath(String dir) {

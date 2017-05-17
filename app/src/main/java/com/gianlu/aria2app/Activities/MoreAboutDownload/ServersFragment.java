@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -17,6 +16,7 @@ import android.widget.ProgressBar;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.UpdateUI;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
+import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
@@ -53,8 +53,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         loading = (ProgressBar) layout.findViewById(R.id.serversFragment_loading);
         list = (RecyclerView) layout.findViewById(R.id.serversFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        adapter = new ServersAdapter(getContext(), new SparseArray<List<Server>>(), this);
+        adapter = new ServersAdapter(getContext(), this);
         list.setAdapter(adapter);
 
         final String gid = getArguments().getString("gid");
@@ -71,7 +70,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
                     @Override
                     public void onStopped() {
                         try {
-                            adapter = new ServersAdapter(getContext(), new SparseArray<List<Server>>(), ServersFragment.this);
+                            adapter = new ServersAdapter(getContext(), ServersFragment.this);
                             list.setAdapter(adapter);
 
                             updater = new UpdateUI(getContext(), gid, ServersFragment.this);
@@ -130,14 +129,12 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     }
 
     @Override
-    public void onUpdateAdapter(SparseArray<List<Server>> servers) {
+    public void onUpdateAdapter(SparseArray<List<Server>> servers, List<AFile> files) {
         MessageLayout.hide(layout);
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
-        /* TODO
-        if (adapter != null) adapter.notifyItemsChanged(servers);
-        if (sheet != null && sheet.shouldUpdate()) sheet.update(servers);
-        */
+        if (adapter != null) adapter.notifyItemsChanged(servers, files);
+        // TODO: if (sheet != null && sheet.shouldUpdate()) sheet.update(servers);
     }
 
     @Override
