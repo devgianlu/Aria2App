@@ -81,12 +81,16 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
                             updater = new UpdateUI(getContext(), gid, PeersFragment.this);
                             updater.start();
                         } catch (JTA2InitializingException ex) {
-                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_REFRESHING, ex, new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeRefresh.setRefreshing(false);
-                                }
-                            });
+                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_REFRESHING, ex);
+                        } finally {
+                            if (isAdded()) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefresh.setRefreshing(false);
+                                    }
+                                });
+                            }
                         }
                     }
                 });
@@ -123,6 +127,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onUpdateAdapter(List<Peer> peers) {
+        if (peers.isEmpty()) return;
         MessageLayout.hide(layout);
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
@@ -148,6 +153,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (count == 0) {
             MessageLayout.show(layout, R.string.noPeers, R.drawable.ic_info_outline_black_48dp);
             list.setVisibility(View.GONE);
+            loading.setVisibility(View.GONE);
             if (sheet != null) sheet.collapse();
         } else {
             MessageLayout.hide(layout);
