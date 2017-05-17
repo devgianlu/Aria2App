@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:alpha="0.54"
+            android:src="@drawable/ic_file_download_black_48dp" />
+
+        <com.gianlu.commonutils.SuperTextView
+            android:id="@+id/peerSheet_downloadSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:alpha="0.54"
+            android:src="@drawable/ic_file_upload_black_48dp" />
+
+        <com.gianlu.commonutils.SuperTextView
+            android:id="@+id/peerSheet_uploadSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/peerSheet_chart"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginBottom="8dp" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/peerSheet_seeder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/peerSheet_peerChoking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/peerSheet_amChoking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

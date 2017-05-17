@@ -1,13 +1,12 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.view.View;
-import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
@@ -16,76 +15,39 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.List;
 
-public class PeerBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
-    private final BottomSheetBehavior behavior;
-    private final TextView title;
+// TODO: Clicking outside should close the sheet
+public class PeerBottomSheet extends BaseBottomSheet<Peer> {
     private final SuperTextView downloadSpeed;
     private final SuperTextView uploadSpeed;
     private final LineChart chart;
     private final SuperTextView seeder;
     private final SuperTextView peerChoking;
     private final SuperTextView amChoking;
-    private Peer currentPeer;
 
-    private PeerBottomSheet(View sheet, final BottomSheetBehavior behavior) {
-        this.behavior = behavior;
-        this.behavior.setBottomSheetCallback(this);
+    public PeerBottomSheet(View sheet) {
+        super(sheet, R.layout.peer_sheet);
 
-        this.title = (TextView) sheet.findViewById(R.id.peersFragment_sheetTitle);
-        this.downloadSpeed = (SuperTextView) sheet.findViewById(R.id.peersFragment_sheetDownloadSpeed);
-        this.uploadSpeed = (SuperTextView) sheet.findViewById(R.id.peersFragment_sheetUploadSpeed);
-        this.chart = (LineChart) sheet.findViewById(R.id.peersFragment_sheetChart);
-        this.seeder = (SuperTextView) sheet.findViewById(R.id.peersFragment_sheetSeeder);
-        this.peerChoking = (SuperTextView) sheet.findViewById(R.id.peersFragment_sheetPeerChoking);
-        this.amChoking = (SuperTextView) sheet.findViewById(R.id.peersFragment_sheetAmChoking);
-
-        sheet.findViewById(R.id.peersFragment_sheetClose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
-    }
-
-    public static PeerBottomSheet setup(View sheet) {
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(sheet);
-        behavior.setPeekHeight(0);
-        behavior.setHideable(true);
-        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        return new PeerBottomSheet(sheet, behavior);
+        this.downloadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_downloadSpeed);
+        this.uploadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_uploadSpeed);
+        this.chart = (LineChart) content.findViewById(R.id.peerSheet_chart);
+        this.seeder = (SuperTextView) content.findViewById(R.id.peerSheet_seeder);
+        this.peerChoking = (SuperTextView) content.findViewById(R.id.peerSheet_peerChoking);
+        this.amChoking = (SuperTextView) content.findViewById(R.id.peerSheet_amChoking);
     }
 
     @Override
-    public void onStateChanged(@NonNull View bottomSheet, int newState) {
-        if (newState == BottomSheetBehavior.STATE_COLLAPSED) behavior.setPeekHeight(0);
+    protected int getRippleDark() {
+        return R.drawable.ripple_effect_dark;
     }
 
     @Override
-    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-    }
-
-    public boolean shouldUpdate() {
-        return behavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
-    }
-
-    public void expand(Peer peer) {
-        currentPeer = peer;
-        setupView(peer);
-        updateView(peer);
-        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-    }
-
-    private void setupView(Peer peer) {
-        if (peer == null) return;
+    protected void setupView(@NonNull Peer peer) {
         title.setText(peer.ip + ":" + peer.port);
-
         Utils.setupChart(chart, true);
     }
 
-    private void updateView(Peer peer) {
-        if (peer == null) return;
-        currentPeer = peer;
-
+    @Override
+    protected void updateView(@NonNull Peer peer) {
         downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
 
@@ -106,16 +68,7 @@ public class PeerBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
     }
 
     public void update(List<Peer> peers) {
-        if (currentPeer == null) return;
-        update(Peer.find(peers, currentPeer.peerId));
-    }
-
-    public void update(Peer peer) {
-        updateView(peer);
-    }
-
-    public void collapse() {
-        currentPeer = null;
-        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        if (current == null) return;
+        update(Peer.find(peers, current.peerId));
     }
 }

@@ -59,7 +59,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), this);
         list.setAdapter(adapter);
 
-        sheet = PeerBottomSheet.setup(layout.findViewById(R.id.peersFragment_sheet));
+        sheet = new PeerBottomSheet(layout);
 
         final String gid = getArguments().getString("gid");
         if (gid == null) {

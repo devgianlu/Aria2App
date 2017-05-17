@@ -31,6 +31,8 @@
                 android:visibility="gone" />
         </FrameLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <include layout="@layout/bottom_sheet" />
 </android.support.design.widget.CoordinatorLayout>
 
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServerBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.UpdateUI;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
@@ -34,6 +35,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     private ServersAdapter adapter;
     private RecyclerView list;
     private ProgressBar loading;
+    private ServerBottomSheet sheet;
 
     public static ServersFragment getInstance(Context context, Download download) {
         ServersFragment fragment = new ServersFragment();
@@ -55,6 +57,8 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = new ServersAdapter(getContext(), this);
         list.setAdapter(adapter);
+
+        sheet = new ServerBottomSheet(layout, R.layout.server_sheet);
 
         final String gid = getArguments().getString("gid");
         if (gid == null) {
@@ -113,7 +117,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
 
     @Override
     public void onServerSelected(Server server) {
-        // TODO: sheet.expand(server);
+        sheet.expand(server);
     }
 
     @Override
@@ -121,7 +125,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         if (count == 0) {
             MessageLayout.show(layout, R.string.noPeers, R.drawable.ic_info_outline_black_48dp);
             list.setVisibility(View.GONE);
-            // TODO: if (sheet != null) sheet.collapse();
+            if (sheet != null) sheet.collapse();
         } else {
             MessageLayout.hide(layout);
             list.setVisibility(View.VISIBLE);
@@ -134,7 +138,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
         if (adapter != null) adapter.notifyItemsChanged(servers, files);
-        // TODO: if (sheet != null && sheet.shouldUpdate()) sheet.update(servers);
+        if (sheet != null && sheet.shouldUpdate()) sheet.update(servers);
     }
 
     @Override
@@ -142,7 +146,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         MessageLayout.show(layout, reason, R.drawable.ic_info_outline_black_48dp);
         loading.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
-        // TODO: if (sheet != null) sheet.collapse();
+        if (sheet != null) sheet.collapse();
     }
 }
 

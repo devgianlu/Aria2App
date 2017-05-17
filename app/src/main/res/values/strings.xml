@@ -104,7 +104,6 @@
     <string name="addURIs_help">All URIs must point to the same resource otherwise the download may fail or be corrupted without aria2 complaining.</string>
     <string name="addURIs_torrentHelp">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
     <string name="zero">0</string>
-    <string name="uri">URI</string>
     <string name="torrent">Torrent</string>
     <string name="metalink">Metalink</string>
     <string name="downloadSpeed">Download speed</string>
@@ -277,6 +276,8 @@
     <string name="removeName">Remove %s</string>
     <string name="removeDownloadAlert">If you remove the download you won\'t be able to restart it. Would you like to remove it anyway?</string>
     <string name="failedLoading">Failed loading the page!</string>
+    <string name="currentUri"><![CDATA[<b>Current URI:</b>]]> %s</string>
+    <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

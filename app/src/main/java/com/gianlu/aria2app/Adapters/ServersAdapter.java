@@ -15,7 +15,6 @@ import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 // TODO: Sorting
@@ -78,7 +77,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             AFile file = (AFile) objs.get(position);
             HeaderViewHolder castHolder = (HeaderViewHolder) holder;
 
-            castHolder.name.setText(file.getName() + " (" + String.format(Locale.getDefault(), "%.1f %%", file.getProgress()) + ")");
+            castHolder.name.setText(file.getName());
         }
     }
 
