@@ -17,7 +17,6 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.List;
 
-// TODO: Clicking outside should close the sheet
 public class ServerBottomSheet extends BaseBottomSheet<Server> {
     private final SuperTextView downloadSpeed;
     private final LineChart chart;

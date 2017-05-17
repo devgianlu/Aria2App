@@ -15,7 +15,6 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.List;
 
-// TODO: Clicking outside should close the sheet
 public class PeerBottomSheet extends BaseBottomSheet<Peer> {
     private final SuperTextView downloadSpeed;
     private final SuperTextView uploadSpeed;
