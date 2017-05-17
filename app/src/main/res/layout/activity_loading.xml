@@ -16,7 +16,7 @@
         android:layout_width="128dp"
         android:layout_height="128dp"
         android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/logo" />
 
     <LinearLayout
         android:id="@+id/loading_connecting"
