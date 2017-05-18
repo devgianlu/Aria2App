@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BackPressedFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.InfoFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment;
@@ -51,7 +52,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
         adapter = new PagerAdapter<>(getSupportFragmentManager(),
                 InfoFragment.getInstance(this, download),
-                download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download));
+                (download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download)),
+                FilesFragment.getInstance(this, download));
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);
 
