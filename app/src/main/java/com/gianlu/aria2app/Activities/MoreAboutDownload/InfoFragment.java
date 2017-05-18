@@ -1,18 +1,22 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.UpdateUI;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -27,8 +31,8 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.Date;
 import java.util.Locale;
 
-// TODO: download actions
-public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
+// FIXME: A bit unstable when changing status (!!)
+public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause {
     private UpdateUI updater;
     private ViewHolder holder;
 
@@ -36,10 +40,51 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         InfoFragment fragment = new InfoFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.info));
-        args.putSerializable("gid", download.gid);
-        args.putBoolean("torrent", download.isTorrent());
+        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private void handleDownloadAction(final Download download, JTA2.DownloadActions action) {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(getContext());
+        } catch (JTA2InitializingException ex) {
+            onException(ex);
+            return;
+        }
+
+        switch (action) {
+            case MOVE_UP:
+                break;
+            case MOVE_DOWN:
+                break;
+            case PAUSE:
+                jta2.pause(download.gid, this);
+                break;
+            case REMOVE:
+                if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED) {
+                    CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
+                            .setTitle(getString(R.string.removeName, download.getName()))
+                            .setMessage(R.string.removeDownloadAlert)
+                            .setNegativeButton(android.R.string.no, null)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    jta2.remove(download.gid, download.status, InfoFragment.this);
+                                }
+                            }));
+                } else {
+                    jta2.remove(download.gid, download.status, this);
+                }
+                break;
+            case RESTART:
+                jta2.restart(download.gid, this);
+                break;
+            case RESUME:
+                jta2.unpause(download.gid, this);
+                break;
+        }
     }
 
     @Nullable
@@ -48,17 +93,17 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.info_fragment, container, false));
         MessageLayout.setPaddingTop(holder.rootView, 48);
 
-        String gid = getArguments().getString("gid");
-        if (gid == null) {
+        Download download = (Download) getArguments().getSerializable("download");
+        if (download == null) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
             return holder.rootView;
         }
 
-        holder.setup();
+        holder.setup(download);
 
         try {
-            updater = new UpdateUI(getContext(), gid, this);
+            updater = new UpdateUI(getContext(), download.gid, this);
             updater.start();
         } catch (JTA2InitializingException ex) {
             holder.loading.setVisibility(View.GONE);
@@ -85,6 +130,36 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         if (updater != null) updater.stopThread(null);
     }
 
+    @Override
+    public void onPaused(String gid) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.PAUSED, gid);
+    }
+
+    @Override
+    public void onRestarted(String gid) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESTARTED, gid);
+    }
+
+    @Override
+    public void onUnpaused(String gid) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESUMED, gid);
+    }
+
+    @Override
+    public void onException(Exception ex) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_PERFORMING_ACTION, ex);
+    }
+
+    @Override
+    public void onRemoved(String gid) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.REMOVED, gid);
+    }
+
+    @Override
+    public void onRemovedResult(String gid) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESULT_REMOVED, gid);
+    }
+
     public class ViewHolder {
         final ViewGroup rootView;
         final LinearLayout container;
@@ -93,6 +168,12 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         final SuperTextView downloadSpeed;
         final SuperTextView uploadSpeed;
         final SuperTextView remainingTime;
+        final ImageButton pause;
+        final ImageButton start;
+        final ImageButton stop;
+        final ImageButton restart;
+        final ImageButton remove;
+        final LineChart chart;
         final SuperTextView gid;
         final SuperTextView totalLength;
         final SuperTextView completedLength;
@@ -111,7 +192,6 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
         final SuperTextView btComment;
         final SuperTextView btCreationDate;
         final LinearLayout btAnnounceList;
-        final LineChart chart;
 
         ViewHolder(ViewGroup rootView) {
             this.rootView = rootView;
@@ -123,6 +203,11 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             uploadSpeed = (SuperTextView) rootView.findViewById(R.id.infoFragment_uploadSpeed);
             remainingTime = (SuperTextView) rootView.findViewById(R.id.infoFragment_remainingTime);
             chart = (LineChart) rootView.findViewById(R.id.infoFragment_chart);
+            pause = (ImageButton) rootView.findViewById(R.id.infoFragment_pause);
+            start = (ImageButton) rootView.findViewById(R.id.infoFragment_start);
+            stop = (ImageButton) rootView.findViewById(R.id.infoFragment_stop);
+            restart = (ImageButton) rootView.findViewById(R.id.infoFragment_restart);
+            remove = (ImageButton) rootView.findViewById(R.id.infoFragment_remove);
             gid = (SuperTextView) rootView.findViewById(R.id.infoFragment_gid);
             totalLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_totalLength);
             completedLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_completedLength);
@@ -144,7 +229,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
-        void setup() {
+        void setup(final Download download) {
             Utils.setupChart(chart, false);
             int colorRes = getArguments().getBoolean("torrent", false) ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
@@ -153,6 +238,76 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             downloadSpeed.setTypeface("fonts/Roboto-Light.ttf");
             uploadSpeed.setTypeface("fonts/Roboto-Light.ttf");
             remainingTime.setTypeface("fonts/Roboto-Light.ttf");
+
+            pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleDownloadAction(download, JTA2.DownloadActions.PAUSE);
+                }
+            });
+            start.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleDownloadAction(download, JTA2.DownloadActions.RESUME);
+                }
+            });
+            stop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
+                }
+            });
+            restart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleDownloadAction(download, JTA2.DownloadActions.RESTART);
+                }
+            });
+            remove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
+                }
+            });
+        }
+
+        void setActionsState(Download download) {
+            start.setVisibility(View.VISIBLE);
+            stop.setVisibility(View.VISIBLE);
+            restart.setVisibility(View.VISIBLE);
+            pause.setVisibility(View.VISIBLE);
+            remove.setVisibility(View.VISIBLE);
+
+            switch (download.status) {
+                case ACTIVE:
+                    restart.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    remove.setVisibility(View.GONE);
+                    break;
+                case PAUSED:
+                    pause.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
+                    remove.setVisibility(View.GONE);
+                    break;
+                case WAITING:
+                    // TODO: What can be done if it's in waiting status?
+                    break;
+                case ERROR:
+                case COMPLETE:
+                case REMOVED:
+                    if (download.isTorrent()) restart.setVisibility(View.GONE);
+                    pause.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    stop.setVisibility(View.GONE);
+                    break;
+                case UNKNOWN:
+                    pause.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    stop.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
+                    remove.setVisibility(View.GONE);
+                    break;
+            }
         }
 
         boolean setChartState(Download download) {
@@ -179,8 +334,15 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI {
             loading.setVisibility(View.GONE);
             container.setVisibility(View.VISIBLE);
 
+            setActionsState(download);
+
             if (setChartState(download)) {
                 LineData data = chart.getLineData();
+                if (data == null) {
+                    Utils.setupChart(chart, true);
+                    data = chart.getLineData();
+                }
+
                 int pos = data.getEntryCount();
                 data.addEntry(new Entry(pos, download.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
                 data.addEntry(new Entry(pos, download.uploadSpeed), Utils.CHART_UPLOAD_SET);
