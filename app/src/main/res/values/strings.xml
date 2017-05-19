@@ -278,6 +278,7 @@
     <string name="failedLoading">Failed loading the page!</string>
     <string name="currentUri"><![CDATA[<b>Current URI:</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
+    <string name="selectForDownload">Select file for download</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

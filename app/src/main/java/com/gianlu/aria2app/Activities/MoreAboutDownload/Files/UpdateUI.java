@@ -40,7 +40,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IFiles {
 
             @Override
             public void onException(Exception ex) {
-                // TODO: Handle ex
+                if (listener != null) listener.onFatalException(ex);
             }
         });
     }
@@ -72,5 +72,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IFiles {
 
     public interface IUI {
         void onUpdateHierarchy(List<AFile> files, String commonRoot);
+
+        void onFatalException(Exception ex);
     }
 }

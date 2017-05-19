@@ -4,4 +4,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/fileSheet_index"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/fileSheet_path"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/fileSheet_length"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/fileSheet_completedLength"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:id="@+id/fileSheet_selected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/selectForDownload" />
 </LinearLayout>

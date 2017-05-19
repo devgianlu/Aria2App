@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class AFile implements Serializable {
     public final long completedLength;
@@ -30,6 +32,15 @@ public class AFile implements Serializable {
             for (int i = 0; i < array.length(); i++)
                 uris.put(Status.parse(array.optJSONObject(i).optString("status")), array.optJSONObject(i).optString("uri"));
         }
+    }
+
+    @Nullable
+    public static AFile find(List<AFile> files, AFile item) {
+        for (AFile file : files)
+            if (file.index == item.index && Objects.equals(file.path, item.path))
+                return file;
+
+        return null;
     }
 
     public String getName() {

@@ -146,7 +146,16 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         MessageLayout.hide(layout);
         loading.setVisibility(View.GONE);
         container.setVisibility(View.VISIBLE);
-        adapter.update(files, commonRoot);
+        if (adapter != null) adapter.update(files, commonRoot);
+        if (sheet != null) sheet.update(files);
+    }
+
+    @Override
+    public void onFatalException(Exception ex) {
+        MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
+        loading.setVisibility(View.GONE);
+        container.setVisibility(View.GONE);
+        Logging.logMe(getContext(), ex);
     }
 
     @Override
