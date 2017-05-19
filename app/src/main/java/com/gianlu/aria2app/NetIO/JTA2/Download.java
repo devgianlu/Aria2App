@@ -34,11 +34,12 @@ public class Download implements Serializable {
     public final boolean verifyIntegrityPending;
     // BitTorrent only
     public final boolean seeder;
+    public final float shareRatio;
     public final int numSeeders;
     public final BitTorrent torrent;
-    private final String following;
-    private final String belongsTo;
-    private final String infoHash;
+    public final String following;
+    public final String belongsTo;
+    public final String infoHash;
 
     public Download(JSONObject obj) {
         gid = obj.optString("gid");
@@ -69,10 +70,12 @@ public class Download implements Serializable {
             infoHash = obj.optString("infoHash");
             numSeeders = Integer.parseInt(obj.optString("numSeeders", "0"));
             seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
+            shareRatio = uploadLength / completedLength;
             torrent = new BitTorrent(obj.optJSONObject("bittorrent"));
         } else {
             infoHash = null;
             numSeeders = 0;
+            shareRatio = 0;
             seeder = false;
             torrent = null;
         }

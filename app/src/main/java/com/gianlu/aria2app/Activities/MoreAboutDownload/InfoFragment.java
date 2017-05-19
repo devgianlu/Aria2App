@@ -189,6 +189,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         final SuperTextView btMode;
         final SuperTextView btSeeders;
         final SuperTextView btSeeder;
+        final SuperTextView shareRatio;
         final SuperTextView btComment;
         final SuperTextView btCreationDate;
         final LinearLayout btAnnounceList;
@@ -224,6 +225,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             btMode = (SuperTextView) rootView.findViewById(R.id.infoFragment_btMode);
             btSeeders = (SuperTextView) rootView.findViewById(R.id.infoFragment_btSeeders);
             btSeeder = (SuperTextView) rootView.findViewById(R.id.infoFragment_btSeeder);
+            shareRatio = (SuperTextView) rootView.findViewById(R.id.infoFragment_shareRatio);
             btComment = (SuperTextView) rootView.findViewById(R.id.infoFragment_btComment);
             btCreationDate = (SuperTextView) rootView.findViewById(R.id.infoFragment_btCreationDate);
             btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
@@ -374,6 +376,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 btMode.setHtml(R.string.mode, download.torrent.mode.toString());
                 btSeeders.setHtml(R.string.numSeeder, download.numSeeders);
                 btSeeder.setHtml(R.string.seeder, String.valueOf(download.seeder));
+                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", download.shareRatio));
 
                 if (download.torrent.comment == null) {
                     btComment.setVisibility(View.GONE);
