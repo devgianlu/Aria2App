@@ -79,19 +79,25 @@ public class ShareActivity extends AppCompatActivity {
             if (Objects.equals(data.getScheme(), "file")) {
                 File file = new File(data.getPath());
                 if (file.exists() && file.canRead()) {
+                    /* TODO
                     startActivity(new Intent(this, AddTorrentActivity.class)
                             .putExtra("share_file", file)
                             .putExtra("torrentMode", Objects.equals(intent.getType(), "application/x-bittorrent")));
+                            */
                 } else {
                     CommonUtils.UIToast(this, Utils.ToastMessages.FILE_NOT_FOUND, file.getPath());
                 }
             } else {
+                /* TODO
                 startActivity(new Intent(this, AddURIActivity.class)
                         .putExtra("share_uri", data.toString()));
+                        */
             }
         } else if (strData != null) {
+            /* TODO
             startActivity(new Intent(this, AddURIActivity.class)
                     .putExtra("share_uri", strData));
+                    */
         } else {
             CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, "Invalid or missing data.");
         }

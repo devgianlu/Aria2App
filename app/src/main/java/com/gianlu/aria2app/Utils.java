@@ -2,36 +2,19 @@ package com.gianlu.aria2app;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Base64;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
-import com.gianlu.aria2app.Options.Option;
-import com.gianlu.aria2app.Options.OptionsAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.commonutils.CommonUtils;
@@ -63,14 +46,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -245,145 +223,6 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
     }
 
-    public static void showOptionsDialog(@NonNull final Activity context, String gid, final boolean global, final boolean isQuick, final IOptionsDialog handler) {
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(context);
-        } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(context, Utils.ToastMessages.WS_EXCEPTION, ex);
-            return;
-        }
-
-        final Set<String> quickOptions = PreferenceManager.getDefaultSharedPreferences(context).getStringSet(global ? "a2_globalQuickOptions" : "a2_quickOptions", new HashSet<String>());
-        if (isQuick) {
-            if (quickOptions.size() <= 0) {
-                CommonUtils.UIToast(context, Utils.ToastMessages.ADD_QUICK_OPTIONS);
-                return;
-            }
-        }
-
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(context, R.string.gathering_information);
-        CommonUtils.showDialog(context, pd);
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(isQuick ? R.string.menu_downloadQuickOptions : R.string.options)
-                .setNegativeButton(android.R.string.cancel, null);
-
-        final LinearLayout layout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.options_dialog, null, false);
-        JTA2.IOption optionHandler = new JTA2.IOption() {
-            @Override
-            public void onOptions(Map<String, String> options) {
-                final List<Option> optionsList = new ArrayList<>();
-
-                for (String resLongOption : context.getResources().getStringArray(global ? R.array.globalOptions : R.array.downloadOptions)) {
-                    if (isQuick && !quickOptions.contains(resLongOption)) continue;
-
-                    String optionVal = options.get(resLongOption);
-                    if (optionVal != null) {
-                        optionsList.add(new Option(resLongOption, optionVal, quickOptions.contains(resLongOption)));
-                    }
-                }
-
-                pd.dismiss();
-
-                final RecyclerView list = (RecyclerView) layout.findViewById(R.id.optionsDialog_list);
-                list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-                final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
-                final ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
-
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final OptionsAdapter adapter = new OptionsAdapter(context, optionsList, isQuick, false, global, true);
-                        list.setAdapter(adapter);
-
-                        search.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                list.scrollToPosition(0);
-                                adapter.getFilter().filter(query.getText().toString().trim());
-                            }
-                        });
-                    }
-                });
-
-
-                query.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        search.callOnClick();
-                    }
-                });
-                builder.setView(layout);
-
-                builder.setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Map<String, String> map = new HashMap<>();
-
-                        for (Option item : optionsList) {
-                            if (item.isChanged()) {
-                                map.put(item.longName, item.newValue);
-                            }
-                        }
-
-                        handler.onApply(jta2, map);
-                    }
-                });
-
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final AlertDialog dialog = builder.create();
-
-                        CommonUtils.showDialog(context, dialog);
-
-                        final Window window = dialog.getWindow();
-                        if (window != null) {
-                            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-                            ViewTreeObserver vto = layout.getViewTreeObserver();
-                            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @Override
-                                public void onGlobalLayout() {
-                                    WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-                                    params.copyFrom(window.getAttributes());
-                                    params.width = dialog.getWindow().getDecorView().getWidth();
-                                    params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                                    dialog.getWindow().setAttributes(params);
-
-                                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onException(Exception exception) {
-                pd.dismiss();
-                CommonUtils.UIToast(context, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, exception);
-            }
-        };
-
-        if (gid == null) {
-            jta2.getGlobalOption(optionHandler);
-        } else {
-            jta2.getOption(gid, optionHandler);
-        }
-    }
-
     @Nullable
     public static URL createDownloadRemoteURL(Context context, String downloadDir, AFile file) {
         final UserProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().directDownload;
@@ -440,7 +279,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file!", true);
         public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
-        public static final CommonUtils.ToastMessage ADD_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
+        public static final CommonUtils.ToastMessage NO_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
         public static final CommonUtils.ToastMessage INVALID_DOWNLOAD_PATH = new CommonUtils.ToastMessage("Invalid download path.", false);
         public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
         public static final CommonUtils.ToastMessage SEARCH_FAILED = new CommonUtils.ToastMessage("Search failed!", true);

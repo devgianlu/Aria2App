@@ -127,7 +127,7 @@
     <string name="more">Еще</string>
     <string name="resume">Продолжить</string>
     <string name="restart">Перезапуск</string>
-    <string name="menu_globalOptions">Глобальные настройки</string>
+    <string name="globalOptions">Глобальные настройки</string>
     <string name="menu_downloadOptions">Настройки загрузки</string>
     <string name="menu_refreshPage">Обновить список</string>
     <string name="menu_preferences">Настройки</string>

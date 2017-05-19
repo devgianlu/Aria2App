@@ -25,8 +25,6 @@ import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.gianlu.aria2app.Activities.AddTorrentActivity;
-import com.gianlu.aria2app.Activities.AddURIActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
@@ -39,6 +37,7 @@ import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
@@ -102,10 +101,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
                 return false;
             case DrawerConst.QUICK_OPTIONS:
-                // TODO: Utils.showOptionsDialog(MainActivity.this, null, true, true, MainActivity.this);
+                OptionsUtils.showGlobalDialog(this, true);
                 return true;
             case DrawerConst.GLOBAL_OPTIONS:
-                // TODO: Utils.showOptionsDialog(MainActivity.this, null, true, false, MainActivity.this);
+                OptionsUtils.showGlobalDialog(this, false);
                 return true;
             case DrawerConst.PREFERENCES:
                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
@@ -230,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         drawerManager = new DrawerManager<>(new Initializer<>(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this).addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.ic_list_black_48dp, getString(R.string.menu_globalOptions)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.ic_list_black_48dp, getString(R.string.globalOptions)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.ABOUT_ARIA2, R.drawable.ic_cloud_black_48dp, getString(R.string.about_aria2)))
                 .addMenuItemSeparator()
                 .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.ic_settings_black_48dp, getString(R.string.menu_preferences)))
@@ -270,21 +269,21 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         fabAddURI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddURIActivity.class));
+                // TODO: startActivity(new Intent(MainActivity.this, AddURIActivity.class));
             }
         });
         final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
         fabAddTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
+                // TODO: startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
             }
         });
         final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
         fabAddMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", false));
+                // TODO: startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", false));
             }
         });
 

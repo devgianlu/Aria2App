@@ -57,16 +57,6 @@
             android:windowSoftInputMode="stateHidden" />
 
         <!-- Add download activities -->
-        <activity
-            android:name=".Activities.AddTorrentActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".Activities.AddURIActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
 
         <!-- More about download activity -->
         <activity
