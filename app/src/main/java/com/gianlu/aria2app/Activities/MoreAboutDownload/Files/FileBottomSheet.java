@@ -6,6 +6,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
@@ -19,9 +22,11 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     private final SuperTextView length;
     private final SuperTextView completedLength;
     private final CheckBox selected;
+    private final Download download;
 
-    public FileBottomSheet(View parent) {
+    public FileBottomSheet(View parent, Download download) {
         super(parent, R.layout.file_sheet);
+        this.download = download;
 
         index = (SuperTextView) content.findViewById(R.id.fileSheet_index);
         path = (SuperTextView) content.findViewById(R.id.fileSheet_path);
@@ -36,13 +41,31 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     }
 
     @Override
-    protected void setupView(@NonNull AFile item) {
+    protected void setupView(@NonNull final AFile item) {
         title.setText(item.getName());
         selected.setChecked(item.selected);
         selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // TODO: Select/deselect file
+                JTA2 jta2;
+                try {
+                    jta2 = JTA2.instantiate(buttonView.getContext());
+                } catch (JTA2InitializingException e) {
+                    e.printStackTrace();
+                    return;
+                }
+
+                jta2.changeSelection(download, item, isChecked, new JTA2.IChangeSelection() {
+                    @Override
+                    public void onChangedSelection(boolean selected) {
+                        System.out.println("DONE!!");
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
             }
         });
     }

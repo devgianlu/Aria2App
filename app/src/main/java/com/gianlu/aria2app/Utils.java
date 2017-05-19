@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -95,6 +96,14 @@ public class Utils {
         }
 
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("oldProfiles", false).apply();
+    }
+
+    public static int indexOf(String[] items, String item) {
+        for (int i = 0; i < items.length; i++)
+            if (Objects.equals(items[i], item))
+                return i;
+
+        return -1;
     }
 
     public static void setupChart(LineChart chart, boolean isCardView) {

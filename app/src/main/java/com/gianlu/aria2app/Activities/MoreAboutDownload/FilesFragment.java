@@ -84,8 +84,6 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        sheet = new FileBottomSheet(layout);
-
         final Download download = (Download) getArguments().getSerializable("download");
         if (download == null) {
             MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
@@ -97,6 +95,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
         adapter = new FilesAdapter(getContext(), colorRes, this);
         list.setAdapter(adapter);
+
+        sheet = new FileBottomSheet(layout, download);
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

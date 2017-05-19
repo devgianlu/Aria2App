@@ -14,6 +14,7 @@ import com.gianlu.aria2app.Prefs;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -121,6 +123,7 @@ public class JTA2 {
         return list;
     }
 
+    // Utils
     public void pause(final String gid, final IPause handler) {
         pause(gid, new JTA2.IGID() {
             @Override
@@ -277,6 +280,94 @@ public class JTA2 {
 
             @Override
             public void onException(final Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    private void performIndexesOperation(Download download, String[] indexes, AFile file, boolean select, final IChangeSelection handler) {
+        if (select) {
+            if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1) {
+                String[] newIndexes = Arrays.copyOf(indexes, indexes.length + 1);
+                newIndexes[newIndexes.length - 1] = String.valueOf(file.index);
+
+                Map<String, String> map = new HashMap<>();
+                map.put("select-file", CommonUtils.join(newIndexes, ","));
+
+                changeOption(download.gid, map, new ISuccess() {
+                    @Override
+                    public void onSuccess() {
+                        handler.onChangedSelection(true);
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        handler.onException(ex);
+                    }
+                });
+            } else {
+                handler.onChangedSelection(true);
+            }
+        } else {
+            if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1) {
+                String[] newIndexes = new String[indexes.length - 1];
+                int i = 0;
+                for (String index : indexes) {
+                    if (!Objects.equals(index, String.valueOf(file.index))) {
+                        newIndexes[i] = index;
+                        i++;
+                    }
+                }
+
+                Map<String, String> map = new HashMap<>();
+                map.put("select-file", CommonUtils.join(newIndexes, ","));
+
+                changeOption(download.gid, map, new ISuccess() {
+                    @Override
+                    public void onSuccess() {
+                        handler.onChangedSelection(true);
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        handler.onException(ex);
+                    }
+                });
+            } else {
+                handler.onChangedSelection(false);
+            }
+        }
+    }
+
+    // FIXME: Change selection not working for torrent (?!)
+    public void changeSelection(final Download download, final AFile file, final boolean select, final IChangeSelection handler) {
+        getOption(download.gid, new IOption() {
+            @Override
+            public void onOptions(Map<String, String> options) {
+                String indexes = options.get("select-file");
+                if (indexes == null || indexes.isEmpty()) {
+                    getFiles(download.gid, new IFiles() {
+                        @Override
+                        public void onFiles(List<AFile> files) {
+                            String[] indexes = new String[files.size()];
+                            for (int i = 0; i <= files.size(); i++)
+                                indexes[i] = String.valueOf(i + 1);
+
+                            performIndexesOperation(download, indexes, file, select, handler);
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            handler.onException(ex);
+                        }
+                    });
+                } else {
+                    performIndexesOperation(download, indexes.replace(" ", "").split(","), file, select, handler);
+                }
+            }
+
+            @Override
+            public void onException(Exception ex) {
                 handler.onException(ex);
             }
         });
@@ -1089,6 +1180,12 @@ public class JTA2 {
         TOKEN
     }
 
+    public interface IChangeSelection {
+        void onChangedSelection(boolean selected);
+
+        void onException(Exception ex);
+    }
+
     public interface IPause {
         void onPaused(String gid);
 
@@ -1124,19 +1221,19 @@ public class JTA2 {
     public interface IDownload {
         void onDownload(Download download);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 
     public interface IDownloadList {
         void onDownloads(List<Download> downloads);
 
-        void onException(boolean queuing, Exception exception);
+        void onException(boolean queuing, Exception ex);
     }
 
     public interface IFiles {
         void onFiles(List<AFile> files);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 
     public interface IGID {
@@ -1154,46 +1251,46 @@ public class JTA2 {
     public interface IOption {
         void onOptions(Map<String, String> options);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 
     public interface IPeers {
         void onPeers(List<Peer> peers);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
 
-        void onNoPeerData(Exception exception);
+        void onNoPeerData(Exception ex);
     }
 
     public interface ISession {
         void onSessionInfo(String sessionID);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 
     public interface IServers {
         void onServers(SparseArray<List<Server>> servers);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
 
-        void onDownloadNotActive(Exception exception);
+        void onDownloadNotActive(Exception ex);
     }
 
     public interface IStats {
         void onStats(GlobalStats stats);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 
     public interface ISuccess {
         void onSuccess();
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 
     public interface IVersion {
         void onVersion(List<String> rawFeatures, String version);
 
-        void onException(Exception exception);
+        void onException(Exception ex);
     }
 }
