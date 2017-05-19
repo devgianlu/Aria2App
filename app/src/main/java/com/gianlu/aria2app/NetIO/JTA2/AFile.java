@@ -37,6 +37,14 @@ public class AFile implements Serializable {
         return splitted[splitted.length - 1];
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AFile aFile = (AFile) o;
+        return index == aFile.index && path.equals(aFile.path);
+    }
+
     public float getProgress() {
         return ((float) completedLength) / ((float) length) * 100;
     }

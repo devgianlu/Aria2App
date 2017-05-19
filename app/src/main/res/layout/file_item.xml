@@ -20,7 +20,7 @@
         android:layout_gravity="center_vertical"
         android:orientation="vertical">
 
-        <TextView
+        <com.gianlu.commonutils.SuperTextView
             android:id="@+id/fileItem_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,19 +37,21 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1" />
 
-            <TextView
+            <com.gianlu.commonutils.SuperTextView
                 android:id="@+id/fileItem_percentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp" />
+                android:layout_marginEnd="4dp" />
 
             <ImageView
                 android:id="@+id/fileItem_status"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_marginStart="4dp"
+                android:layout_gravity="bottom"
+                android:alpha="0.54"
                 android:src="@drawable/ic_file_download_black_48dp" />
         </LinearLayout>
     </LinearLayout>

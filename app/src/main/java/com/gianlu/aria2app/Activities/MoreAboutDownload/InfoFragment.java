@@ -231,7 +231,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
         void setup(final Download download) {
             Utils.setupChart(chart, false);
-            int colorRes = getArguments().getBoolean("torrent", false) ? R.color.colorTorrent : R.color.colorAccent;
+            int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
             bitfield.setColor(colorRes);
             progress.setTypeface("fonts/Roboto-Light.ttf");

@@ -7,17 +7,6 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <ImageButton
-        android:id="@+id/directoryItem_toggle"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="2dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/ripple_effect_dark"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_keyboard_arrow_right_black_48dp" />
-
     <ImageView
         android:layout_width="28dp"
         android:layout_height="28dp"
@@ -25,7 +14,7 @@
         android:layout_marginEnd="8dp"
         android:src="@drawable/ic_folder_black_48dp" />
 
-    <TextView
+    <com.gianlu.commonutils.SuperTextView
         android:id="@+id/directoryItem_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

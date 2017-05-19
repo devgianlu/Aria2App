@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: Test with more complex hierarchies
 public class TreeNode {
     private static String SEPARATOR = "/";
     public final List<TreeNode> files;
@@ -15,8 +14,10 @@ public class TreeNode {
     public final AFile obj;
     public final String incrementalPath;
     public final String name;
+    public final TreeNode parent;
 
-    public TreeNode(String incrementalPath, AFile obj) {
+    public TreeNode(TreeNode parent, String incrementalPath, AFile obj) {
+        this.parent = parent;
         this.incrementalPath = incrementalPath;
         this.obj = obj;
         this.files = null;
@@ -24,7 +25,8 @@ public class TreeNode {
         this.name = obj.getName();
     }
 
-    private TreeNode(String name, String incrementalPath) {
+    private TreeNode(TreeNode parent, String name, String incrementalPath) {
+        this.parent = parent;
         this.dirs = new ArrayList<>();
         this.files = new ArrayList<>();
         this.name = name;
@@ -39,9 +41,27 @@ public class TreeNode {
     }
 
     public static TreeNode create(List<AFile> files, String commonRoot) {
-        TreeNode rootNode = new TreeNode(SEPARATOR, "");
+        TreeNode rootNode = new TreeNode(null, SEPARATOR, "");
         for (AFile file : files) rootNode.addElement(file, commonRoot);
         return rootNode;
+    }
+
+    public TreeNode update(AFile file) {
+        return new TreeNode(parent, incrementalPath, file);
+    }
+
+    public int indexOfObj(AFile obj) {
+        if (isFile()) return -1;
+        for (int i = 0; i < files.size(); i++) {
+            if (Objects.equals(files.get(i).obj, obj))
+                return i;
+        }
+
+        return -1;
+    }
+
+    public boolean isRoot() {
+        return parent == null;
     }
 
     public int indexOfDir(TreeNode node) {
@@ -61,6 +81,7 @@ public class TreeNode {
     }
 
     public void addElement(AFile element, String commonRoot) {
+        if (element.path.isEmpty()) return;
         String[] list = element.path.replace(commonRoot, "").split(SEPARATOR);
         addElement(incrementalPath, list, element);
     }
@@ -70,9 +91,9 @@ public class TreeNode {
             list = Arrays.copyOfRange(list, 1, list.length);
 
         if (list.length == 1) {
-            files.add(new TreeNode(currentPath, file));
+            files.add(new TreeNode(this, currentPath, file));
         } else {
-            TreeNode currentChild = new TreeNode(list[0], currentPath + SEPARATOR + list[0]);
+            TreeNode currentChild = new TreeNode(this, list[0], currentPath + SEPARATOR + list[0]);
 
             int index = indexOfDir(currentChild);
             if (index == -1) {
