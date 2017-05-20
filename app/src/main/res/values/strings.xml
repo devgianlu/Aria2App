@@ -280,6 +280,9 @@
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
     <string name="selectForDownload">Select file for download</string>
     <string name="shareRatio"><![CDATA[<b>Share ratio:</b>]]> %s</string>
+    <string name="currentValue"><![CDATA[<b>Current value:</b>]]> %s</string>
+    <string name="newValue">New value:</string>
+    <string name="set">Set</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

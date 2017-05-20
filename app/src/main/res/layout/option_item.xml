@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="32dp"
     android:orientation="horizontal">
 
     <com.gianlu.commonutils.SuperTextView
         android:id="@+id/optionItem_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:paddingBottom="6dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="6dp" />
 
     <com.gianlu.commonutils.SuperTextView
         android:id="@+id/optionItem_value"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:lines="1"
+        android:paddingBottom="6dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="6dp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/optionItem_edit"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.54"
+        android:background="@drawable/ripple_effect_dark"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_edit_black_48dp" />
+
+    <ImageButton
+        android:id="@+id/optionItem_toggleFavourite"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.54"
+        android:background="@drawable/ripple_effect_dark"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_favorite_border_black_48dp" />
+
+    <ImageButton
+        android:id="@+id/optionItem_info"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.54"
+        android:background="@drawable/ripple_effect_dark"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_info_outline_black_48dp" />
 </LinearLayout>

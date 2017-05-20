@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BackPressedFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment;
@@ -16,6 +18,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -25,6 +28,37 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     public static void start(Context context, Download download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class).putExtra("download", download));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.more_about_download, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return true; // TODO: Hide if status doesn't allow changing options
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Download download = (Download) getIntent().getSerializableExtra("download");
+        if (download == null) return false;
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.moreAboutDownload_options:
+                OptionsUtils.showDownloadDialog(this, download.gid, false);
+                break;
+            case R.id.moreAboutDownload_quickOptions:
+                OptionsUtils.showDownloadDialog(this, download.gid, true);
+                break;
+        }
+
+        return true;
     }
 
     @Override

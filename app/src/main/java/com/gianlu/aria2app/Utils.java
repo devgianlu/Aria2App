@@ -294,6 +294,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage REMOVED = new CommonUtils.ToastMessage("Download removed!", false);
         public static final CommonUtils.ToastMessage RESULT_REMOVED = new CommonUtils.ToastMessage("Download result removed!", false);
         public static final CommonUtils.ToastMessage FAILED_REFRESHING = new CommonUtils.ToastMessage("Failed refreshing!", true);
+        public static final CommonUtils.ToastMessage GLOBAL_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Global options successfully changed!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

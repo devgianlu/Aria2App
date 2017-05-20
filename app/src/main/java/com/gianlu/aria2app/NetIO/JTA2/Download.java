@@ -89,7 +89,7 @@ public class Download implements Serializable {
 
     public float shareRatio() {
         if (completedLength == 0) return 0f;
-        return uploadLength / completedLength;
+        return ((float) uploadLength) / ((float) completedLength);
     }
 
     public boolean isMetadata() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Prefs {
@@ -34,6 +35,18 @@ public class Prefs {
     public static int getInt(Context context, Keys key, int fallback) {
         init(context);
         return prefs.getInt(key.key, fallback);
+    }
+
+    public static void removeFromSet(Context context, Keys key, String value) {
+        Set<String> set = new HashSet<>(getSet(context, key, new HashSet<String>()));
+        set.remove(value);
+        prefs.edit().putStringSet(key.key, set).apply();
+    }
+
+    public static void addToSet(Context context, Keys key, String value) {
+        Set<String> set = new HashSet<>(getSet(context, key, new HashSet<String>()));
+        if (!set.contains(value)) set.add(value);
+        prefs.edit().putStringSet(key.key, set).apply();
     }
 
     public static Set<String> getSet(Context context, Keys key, Set<String> fallback) {

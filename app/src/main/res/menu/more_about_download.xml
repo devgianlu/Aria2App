@@ -3,19 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/moreAboutDownloadMenu_quickOptions"
+        android:id="@+id/moreAboutDownload_quickOptions"
         android:icon="@drawable/ic_favorite_white_48dp"
         android:title="@string/menu_downloadQuickOptions"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/moreAboutDownloadMenu_options"
+        android:id="@+id/moreAboutDownload_options"
         android:title="@string/menu_downloadOptions"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/moreAboutDownloadMenu_bitfield"
-        android:checkable="true"
-        android:title="@string/showBitfield"
         app:showAsAction="never" />
 </menu>
