@@ -78,7 +78,6 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     @Override
     public void onSubsequentExceptions() {
         WebSocketing.destroy();
-        Toast.makeText(this, R.string.subsequentExceptions, Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 }

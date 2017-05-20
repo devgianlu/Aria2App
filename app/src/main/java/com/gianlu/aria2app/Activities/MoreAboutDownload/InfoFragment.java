@@ -33,11 +33,14 @@ import java.util.Locale;
 
 // FIXME: A bit unstable when changing status (!!)
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause {
+    private IStatusChanged listener;
     private UpdateUI updater;
     private ViewHolder holder;
+    private Download.Status lastStatus = Download.Status.UNKNOWN;
 
-    public static InfoFragment getInstance(Context context, Download download) {
+    public static InfoFragment getInstance(Context context, Download download, IStatusChanged listener) {
         InfoFragment fragment = new InfoFragment();
+        fragment.listener = listener;
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.info));
         args.putSerializable("download", download);
@@ -63,7 +66,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 jta2.pause(download.gid, this);
                 break;
             case REMOVE:
-                if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED) {
+                if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED || download.status == Download.Status.WAITING) {
                     CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
                             .setTitle(getString(R.string.removeName, download.getName()))
                             .setMessage(R.string.removeDownloadAlert)
@@ -71,11 +74,13 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    jta2.remove(download.gid, download.status, InfoFragment.this);
+                                    if (jta2.remove(download.gid, download.status, InfoFragment.this) && listener != null)
+                                        listener.onStatusChanged(Download.Status.UNKNOWN);
                                 }
                             }));
                 } else {
-                    jta2.remove(download.gid, download.status, this);
+                    if (jta2.remove(download.gid, download.status, this) && listener != null)
+                        listener.onStatusChanged(Download.Status.UNKNOWN);
                 }
                 break;
             case RESTART:
@@ -118,6 +123,11 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     @Override
     public void onUpdateUI(Download download) {
         if (holder != null) holder.update(download);
+
+        if (listener != null && lastStatus != download.status)
+            listener.onStatusChanged(download.status);
+
+        lastStatus = download.status;
     }
 
     @Override
@@ -158,6 +168,10 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     @Override
     public void onRemovedResult(String gid) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESULT_REMOVED, gid);
+    }
+
+    public interface IStatusChanged {
+        void onStatusChanged(Download.Status newStatus);
     }
 
     public class ViewHolder {

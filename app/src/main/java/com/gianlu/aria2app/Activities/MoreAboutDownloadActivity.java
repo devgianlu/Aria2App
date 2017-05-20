@@ -23,8 +23,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
-public class MoreAboutDownloadActivity extends AppCompatActivity {
+public class MoreAboutDownloadActivity extends AppCompatActivity implements InfoFragment.IStatusChanged {
     private PagerAdapter<BackPressedFragment> adapter;
+    private Download.Status currentStatus = null;
 
     public static void start(Context context, Download download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class).putExtra("download", download));
@@ -38,7 +39,18 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        return true; // TODO: Hide if status doesn't allow changing options
+        if (currentStatus == Download.Status.UNKNOWN
+                || currentStatus == Download.Status.ERROR
+                || currentStatus == Download.Status.COMPLETE
+                || currentStatus == Download.Status.REMOVED) {
+            menu.findItem(R.id.moreAboutDownload_options).setVisible(false);
+            menu.findItem(R.id.moreAboutDownload_quickOptions).setVisible(false);
+        } else {
+            menu.findItem(R.id.moreAboutDownload_options).setVisible(true);
+            menu.findItem(R.id.moreAboutDownload_quickOptions).setVisible(true);
+        }
+
+        return true;
     }
 
     @Override
@@ -70,6 +82,8 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
             return;
         }
 
+        if (currentStatus == null) currentStatus = download.status;
+
         setTheme(download.isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
@@ -85,7 +99,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
 
         adapter = new PagerAdapter<>(getSupportFragmentManager(),
-                InfoFragment.getInstance(this, download),
+                InfoFragment.getInstance(this, download, this),
                 (download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download)),
                 FilesFragment.getInstance(this, download));
         pager.setAdapter(adapter);
@@ -122,5 +136,13 @@ public class MoreAboutDownloadActivity extends AppCompatActivity {
         }
 
         super.onBackPressed();
+    }
+
+    @Override
+    public void onStatusChanged(Download.Status newStatus) {
+        currentStatus = newStatus;
+        invalidateOptionsMenu();
+
+        if (currentStatus == Download.Status.UNKNOWN) onBackPressed();
     }
 }

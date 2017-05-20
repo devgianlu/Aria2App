@@ -69,7 +69,7 @@ public class Download implements Serializable {
         if (obj.has("bittorrent")) {
             infoHash = obj.optString("infoHash", null);
             numSeeders = Integer.parseInt(obj.getString("numSeeders"));
-            seeder = Boolean.parseBoolean(obj.getString("seeder"));
+            seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
             torrent = new BitTorrent(obj.getJSONObject("bittorrent"));
         } else {
             infoHash = null;

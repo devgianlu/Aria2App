@@ -195,7 +195,7 @@ public class JTA2 {
         });
     }
 
-    public void remove(final String gid, Download.Status status, final IRemove handler) {
+    public boolean remove(final String gid, Download.Status status, final IRemove handler) {
         if (status == Download.Status.COMPLETE || status == Download.Status.ERROR || status == Download.Status.REMOVED) {
             removeDownloadResult(gid, new JTA2.ISuccess() {
                 @Override
@@ -208,6 +208,7 @@ public class JTA2 {
                     handler.onException(ex);
                 }
             });
+            return true;
         } else {
             remove(gid, new JTA2.IGID() {
                 @Override
@@ -221,8 +222,8 @@ public class JTA2 {
                     else handler.onException(ex);
                 }
             });
+            return false;
         }
-
     }
 
     private void forceRemove(String gid, final IRemove handler) {

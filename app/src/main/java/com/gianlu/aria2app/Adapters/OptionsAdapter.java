@@ -108,7 +108,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         final ImageButton toggleFavourite;
         final ImageButton info;
 
-        public ViewHolder(ViewGroup parent) {
+        ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.option_item, parent, false));
 
             name = (SuperTextView) itemView.findViewById(R.id.optionItem_name);
