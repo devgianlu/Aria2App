@@ -688,6 +688,13 @@ public class JTA2 {
                 List<Download> downloads = new ArrayList<>();
                 JSONArray jResult = response.getJSONArray("result");
 
+                Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
+
                 for (int c = 0; c < jResult.length(); c++)
                     downloads.add(new Download(jResult.getJSONObject(c)));
 

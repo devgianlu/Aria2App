@@ -376,7 +376,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 btMode.setHtml(R.string.mode, download.torrent.mode.toString());
                 btSeeders.setHtml(R.string.numSeeder, download.numSeeders);
                 btSeeder.setHtml(R.string.seeder, String.valueOf(download.seeder));
-                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", download.shareRatio));
+                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", download.shareRatio()));
 
                 if (download.torrent.comment == null) {
                     btComment.setVisibility(View.GONE);

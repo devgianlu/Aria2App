@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -34,25 +35,24 @@ public class Download implements Serializable {
     public final boolean verifyIntegrityPending;
     // BitTorrent only
     public final boolean seeder;
-    public final float shareRatio;
     public final int numSeeders;
     public final BitTorrent torrent;
     public final String following;
     public final String belongsTo;
     public final String infoHash;
 
-    public Download(JSONObject obj) {
-        gid = obj.optString("gid");
-        status = Status.parse(obj.optString("status"));
-        length = Long.parseLong(obj.optString("totalLength", "0"));
-        completedLength = Long.parseLong(obj.optString("completedLength"));
-        uploadLength = Long.parseLong(obj.optString("uploadLength", "0"));
-        bitfield = obj.optString("bitfield");
-        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
-        uploadSpeed = Integer.parseInt(obj.optString("uploadSpeed", "0"));
-        pieceLength = Long.parseLong(obj.optString("pieceLength", "0"));
-        numPieces = Integer.parseInt(obj.optString("numPieces", "0"));
-        connections = Integer.parseInt(obj.optString("connections", "0"));
+    public Download(JSONObject obj) throws JSONException {
+        gid = obj.getString("gid");
+        status = Status.parse(obj.getString("status"));
+        length = Long.parseLong(obj.getString("totalLength"));
+        completedLength = Long.parseLong(obj.getString("completedLength"));
+        uploadLength = Long.parseLong(obj.getString("uploadLength"));
+        bitfield = obj.optString("bitfield", null);
+        downloadSpeed = Integer.parseInt(obj.getString("downloadSpeed"));
+        uploadSpeed = Integer.parseInt(obj.getString("uploadSpeed"));
+        pieceLength = Long.parseLong(obj.getString("pieceLength"));
+        numPieces = Integer.parseInt(obj.getString("numPieces"));
+        connections = Integer.parseInt(obj.getString("connections"));
         followedBy = obj.optString("followedBy", null);
         following = obj.optString("following", null);
         belongsTo = obj.optString("belongsTo", null);
@@ -67,26 +67,29 @@ public class Download implements Serializable {
         }
 
         if (obj.has("bittorrent")) {
-            infoHash = obj.optString("infoHash");
-            numSeeders = Integer.parseInt(obj.optString("numSeeders", "0"));
-            seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
-            shareRatio = uploadLength / completedLength;
-            torrent = new BitTorrent(obj.optJSONObject("bittorrent"));
+            infoHash = obj.optString("infoHash", null);
+            numSeeders = Integer.parseInt(obj.getString("numSeeders"));
+            seeder = Boolean.parseBoolean(obj.getString("seeder"));
+            torrent = new BitTorrent(obj.getJSONObject("bittorrent"));
         } else {
             infoHash = null;
             numSeeders = 0;
-            shareRatio = 0;
             seeder = false;
             torrent = null;
         }
 
         if (obj.has("errorCode")) {
-            errorCode = Integer.parseInt(obj.optString("errorCode", "0"));
-            errorMessage = obj.optString("errorMessage");
+            errorCode = Integer.parseInt(obj.getString("errorCode"));
+            errorMessage = obj.getString("errorMessage");
         } else {
             errorCode = -1;
             errorMessage = null;
         }
+    }
+
+    public float shareRatio() {
+        if (completedLength == 0) return 0f;
+        return uploadLength / completedLength;
     }
 
     public boolean isMetadata() {
@@ -132,6 +135,10 @@ public class Download implements Serializable {
     public long getMissingTime() {
         if (downloadSpeed == 0) return 0;
         return (length - completedLength) / downloadSpeed;
+    }
+
+    public boolean isLinked() {
+        return following != null;
     }
 
     public enum Status {

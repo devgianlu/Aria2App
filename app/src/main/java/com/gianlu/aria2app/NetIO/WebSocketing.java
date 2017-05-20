@@ -160,7 +160,7 @@ public class WebSocketing extends AbstractClient {
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
             JSONObject response = new JSONObject(text);
 
-            String method = response.optString("method");
+            String method = response.optString("method", null);
             if (method != null && method.startsWith("aria2.on")) return;
 
             IReceived handler = requests.remove(response.getInt("id"));
@@ -170,6 +170,11 @@ public class WebSocketing extends AbstractClient {
             } else {
                 handler.onException(false, new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
             }
+        }
+
+        @Override
+        public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+            ErrorHandler.get().notifyException(cause, false);
         }
 
         @Override

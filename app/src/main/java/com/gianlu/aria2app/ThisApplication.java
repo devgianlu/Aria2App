@@ -68,7 +68,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     }
 
     @Override
-    public void onFatal(Exception ex) {
+    public void onFatal(Throwable ex) {
         Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), ex);
         WebSocketing.destroy();
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();

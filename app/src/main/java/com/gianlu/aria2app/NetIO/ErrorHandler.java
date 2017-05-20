@@ -2,6 +2,8 @@ package com.gianlu.aria2app.NetIO;
 
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.BuildConfig;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,7 +32,7 @@ public class ErrorHandler {
         return instance;
     }
 
-    public void notifyException(Exception ex, boolean fatal) {
+    public void notifyException(Throwable ex, boolean fatal) {
         errorCount++;
 
         if (fatal) {
@@ -38,10 +40,12 @@ public class ErrorHandler {
         } else if (errorCount >= 5) {
             if (handler != null) handler.onSubsequentExceptions();
         }
+
+        if (BuildConfig.DEBUG) ex.printStackTrace();
     }
 
     public interface IErrorHandler {
-        void onFatal(Exception ex);
+        void onFatal(Throwable ex);
 
         void onSubsequentExceptions();
     }
