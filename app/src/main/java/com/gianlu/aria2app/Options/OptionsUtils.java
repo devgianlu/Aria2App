@@ -1,11 +1,16 @@
 package com.gianlu.aria2app.Options;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -21,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+// FIXME: stupid things apparently stopped working, damn
 public class OptionsUtils {
 
     private static void showGlobalDialog(Activity activity, List<Option> options) {
@@ -41,9 +47,33 @@ public class OptionsUtils {
                         // TODO: Handle apply
                     }
                 });
-        CommonUtils.showDialog(activity, builder);
+
+        _showDialog(activity, list, builder);
     }
 
+    private static void _showDialog(Activity activity, final View layout, AlertDialog.Builder builder) {
+        final Dialog dialog = builder.create();
+        final Window window = dialog.getWindow();
+        if (window != null) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+            ViewTreeObserver vto = layout.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+                    params.copyFrom(window.getAttributes());
+                    params.width = dialog.getWindow().getDecorView().getWidth();
+                    params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.getWindow().setAttributes(params);
+
+                    layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        }
+
+        CommonUtils.showDialog(activity, dialog);
+    }
 
     private static void showDialog(Activity activity, List<Option> options) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -63,7 +93,8 @@ public class OptionsUtils {
                         // TODO: Handle apply
                     }
                 });
-        CommonUtils.showDialog(activity, builder);
+
+        _showDialog(activity, list, builder);
     }
 
     public static void showGlobalDialog(final Activity activity, final boolean quick) {
@@ -86,6 +117,7 @@ public class OptionsUtils {
                     Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
                         CommonUtils.UIToast(activity, Utils.ToastMessages.NO_QUICK_OPTIONS);
+                        pd.dismiss();
                         return;
                     }
 
@@ -93,6 +125,8 @@ public class OptionsUtils {
                 } else {
                     showGlobalDialog(activity, Option.fromOptionsMap(options));
                 }
+
+                pd.dismiss();
             }
 
             @Override
@@ -123,6 +157,7 @@ public class OptionsUtils {
                     Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
                         CommonUtils.UIToast(activity, Utils.ToastMessages.NO_QUICK_OPTIONS);
+                        pd.dismiss();
                         return;
                     }
 
@@ -130,6 +165,8 @@ public class OptionsUtils {
                 } else {
                     showDialog(activity, Option.fromOptionsMap(options));
                 }
+
+                pd.dismiss();
             }
 
             @Override

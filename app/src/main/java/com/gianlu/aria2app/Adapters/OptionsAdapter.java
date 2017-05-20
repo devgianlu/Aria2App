@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.SuperTextView;
 
 import java.util.List;
 
@@ -27,7 +28,10 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Option option = options.get(position);
 
+        holder.name.setText(option.name);
+        holder.value.setText(option.value);
     }
 
     @Override
@@ -36,9 +40,14 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        final SuperTextView name;
+        final SuperTextView value;
 
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.option_item, parent, false));
+
+            name = (SuperTextView) itemView.findViewById(R.id.optionItem_name);
+            value = (SuperTextView) itemView.findViewById(R.id.optionItem_value);
         }
     }
 }
