@@ -13,7 +13,6 @@ import com.gianlu.aria2app.R;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Allow only one uri if it the one starts with "magnet:"
 public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
     private final List<String> uris;
     private final LayoutInflater inflater;
