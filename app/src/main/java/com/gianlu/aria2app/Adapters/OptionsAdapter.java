@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,18 +15,20 @@ import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Search
 public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder> {
     private final List<Option> options;
+    private final List<Option> originalOptions;
     private final LayoutInflater inflater;
     private final Context context;
     private IAdapter handler;
 
     public OptionsAdapter(Context context, List<Option> options) {
         this.context = context;
-        this.options = options;
+        this.originalOptions = options;
+        this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -44,6 +47,24 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             options.set(pos, option);
             super.notifyItemChanged(pos);
         }
+
+        int realPos = originalOptions.indexOf(option);
+        if (realPos != -1) originalOptions.set(realPos, option);
+    }
+
+    public void filter(@Nullable String query) {
+        options.clear();
+        if (query == null || query.isEmpty()) {
+            options.addAll(originalOptions);
+            notifyDataSetChanged();
+            return;
+        }
+
+        for (Option option : originalOptions)
+            if (option.name.startsWith(query) || option.name.contains(query))
+                options.add(option);
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -94,7 +115,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     public List<Option> getOptions() {
-        return options;
+        return originalOptions;
     }
 
     public interface IAdapter {

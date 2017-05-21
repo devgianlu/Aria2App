@@ -8,13 +8,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
@@ -41,9 +43,8 @@ public class OptionsUtils {
         builder.setTitle(R.string.globalOptions)
                 .setNegativeButton(android.R.string.cancel, null);
 
-        final RecyclerView list = new RecyclerView(activity);
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, activity.getResources().getDisplayMetrics());
-        list.setPadding(padding, padding, padding, padding);
+        LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.options_dialog, null, false);
+        RecyclerView list = (RecyclerView) layout.findViewById(R.id.optionsDialog_list);
         list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
@@ -56,7 +57,32 @@ public class OptionsUtils {
         });
         list.setAdapter(adapter);
 
-        builder.setView(list)
+        final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
+        query.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                adapter.filter(s.toString());
+            }
+        });
+        ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.filter(query.getText().toString());
+            }
+        });
+
+        builder.setView(layout)
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -72,9 +98,8 @@ public class OptionsUtils {
         builder.setTitle(R.string.options)
                 .setNegativeButton(android.R.string.cancel, null);
 
-        final RecyclerView list = new RecyclerView(activity);
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, activity.getResources().getDisplayMetrics());
-        list.setPadding(padding, padding, padding, padding);
+        LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.options_dialog, null, false);
+        RecyclerView list = (RecyclerView) layout.findViewById(R.id.optionsDialog_list);
         list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
@@ -87,7 +112,32 @@ public class OptionsUtils {
         });
         list.setAdapter(adapter);
 
-        builder.setView(list)
+        final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
+        query.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                adapter.filter(s.toString());
+            }
+        });
+        ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.filter(query.getText().toString());
+            }
+        });
+
+        builder.setView(layout)
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
