@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class Download implements Serializable {
@@ -168,6 +169,12 @@ public class Download implements Serializable {
                 default:
                     return Status.UNKNOWN;
             }
+        }
+
+        public static List<String> stringValues() {
+            List<String> values = new ArrayList<>();
+            for (Status value : values()) values.add(value.name());
+            return values;
         }
 
         public String getFormal(Context context, boolean firstCapital) {

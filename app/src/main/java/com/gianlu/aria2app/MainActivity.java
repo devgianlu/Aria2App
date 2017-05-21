@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         list.setAdapter(adapter);
 
         List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
-        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, null);
+        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
 
