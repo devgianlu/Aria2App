@@ -118,8 +118,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             processFilters();
             if (handler != null) handler.onItemCountUpdated(objs.size());
         } else {
-            originalObjs.set(realPos, payload);
-            objs.set(pos, payload);
+            if (pos != -1) objs.set(pos, payload);
+            if (realPos != -1) originalObjs.set(realPos, payload);
             super.notifyItemChanged(pos, payload);
         }
     }
@@ -135,6 +135,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         holder.restart.setVisibility(View.VISIBLE);
         holder.pause.setVisibility(View.VISIBLE);
         holder.remove.setVisibility(View.VISIBLE);
+        holder.moveUp.setVisibility(View.VISIBLE);
+        holder.moveDown.setVisibility(View.VISIBLE);
         holder.more.setVisibility(View.VISIBLE);
 
         switch (download.status) {
@@ -142,14 +144,21 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 holder.restart.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.GONE);
+                holder.moveUp.setVisibility(View.GONE);
+                holder.moveDown.setVisibility(View.GONE);
                 break;
             case PAUSED:
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.GONE);
+                holder.moveUp.setVisibility(View.GONE);
+                holder.moveDown.setVisibility(View.GONE);
                 break;
             case WAITING:
-                // TODO: What can be done if it's in waiting status?
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                holder.stop.setVisibility(View.GONE);
+                holder.start.setVisibility(View.GONE);
                 break;
             case ERROR:
                 holder.more.setVisibility(View.INVISIBLE);
@@ -159,6 +168,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 holder.pause.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.stop.setVisibility(View.GONE);
+                holder.moveUp.setVisibility(View.GONE);
+                holder.moveDown.setVisibility(View.GONE);
                 break;
             case UNKNOWN:
                 holder.more.setVisibility(View.GONE);
@@ -167,6 +178,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 holder.stop.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.GONE);
+                holder.moveUp.setVisibility(View.GONE);
+                holder.moveDown.setVisibility(View.GONE);
                 break;
         }
     }
@@ -281,6 +294,19 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
                 if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
             }
         });
+        holder.moveUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
+            }
+        });
+        holder.moveDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (handler != null)
+                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
+            }
+        });
 
         setupActions(holder, item);
     }
@@ -323,6 +349,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         final ImageButton stop;
         final ImageButton restart;
         final ImageButton remove;
+        final ImageButton moveUp;
+        final ImageButton moveDown;
         final Button more;
         final LineChart detailsChart;
 
@@ -340,6 +368,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             stop = (ImageButton) itemView.findViewById(R.id.downloadCard_stop);
             restart = (ImageButton) itemView.findViewById(R.id.downloadCard_restart);
             remove = (ImageButton) itemView.findViewById(R.id.downloadCard_remove);
+            moveUp = (ImageButton) itemView.findViewById(R.id.downloadCard_moveUp);
+            moveDown = (ImageButton) itemView.findViewById(R.id.downloadCard_moveDown);
             more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
 
             detailsChart = (LineChart) itemView.findViewById(R.id.downloadCard_detailsChart);

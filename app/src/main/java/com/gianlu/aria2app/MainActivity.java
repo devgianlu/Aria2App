@@ -55,7 +55,7 @@ import com.liulishuo.filedownloader.FileDownloader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove {
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -533,8 +533,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         switch (action) {
             case MOVE_UP:
+                jta2.moveUp(download.gid, this);
                 break;
             case MOVE_DOWN:
+                jta2.moveDown(download.gid, this);
                 break;
             case PAUSE:
                 jta2.pause(download.gid, this);
@@ -577,6 +579,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onUnpaused(String gid) {
         CommonUtils.UIToast(this, Utils.ToastMessages.RESUMED, gid);
+    }
+
+    @Override
+    public void onMoved(String gid) {
+        CommonUtils.UIToast(this, Utils.ToastMessages.MOVED, gid);
     }
 
     @Override

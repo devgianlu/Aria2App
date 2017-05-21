@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 // FIXME: A bit unstable when changing status (!!)
-public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause {
+public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
     private IStatusChanged listener;
     private UpdateUI updater;
     private ViewHolder holder;
@@ -59,8 +59,10 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
         switch (action) {
             case MOVE_UP:
+                jta2.moveUp(download.gid, this);
                 break;
             case MOVE_DOWN:
+                jta2.moveDown(download.gid, this);
                 break;
             case PAUSE:
                 jta2.pause(download.gid, this);
@@ -156,6 +158,11 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     }
 
     @Override
+    public void onMoved(String gid) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.MOVED, gid);
+    }
+
+    @Override
     public void onException(Exception ex) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_PERFORMING_ACTION, ex);
     }
@@ -187,6 +194,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         final ImageButton stop;
         final ImageButton restart;
         final ImageButton remove;
+        final ImageButton moveUp;
+        final ImageButton moveDown;
         final LineChart chart;
         final SuperTextView gid;
         final SuperTextView totalLength;
@@ -223,6 +232,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             stop = (ImageButton) rootView.findViewById(R.id.infoFragment_stop);
             restart = (ImageButton) rootView.findViewById(R.id.infoFragment_restart);
             remove = (ImageButton) rootView.findViewById(R.id.infoFragment_remove);
+            moveUp = (ImageButton) rootView.findViewById(R.id.infoFragment_moveUp);
+            moveDown = (ImageButton) rootView.findViewById(R.id.infoFragment_moveDown);
             gid = (SuperTextView) rootView.findViewById(R.id.infoFragment_gid);
             totalLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_totalLength);
             completedLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_completedLength);
@@ -293,20 +304,29 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             restart.setVisibility(View.VISIBLE);
             pause.setVisibility(View.VISIBLE);
             remove.setVisibility(View.VISIBLE);
+            moveUp.setVisibility(View.VISIBLE);
+            moveDown.setVisibility(View.VISIBLE);
 
             switch (download.status) {
                 case ACTIVE:
                     restart.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
                     remove.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
                     break;
                 case PAUSED:
                     pause.setVisibility(View.GONE);
                     restart.setVisibility(View.GONE);
                     remove.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
                     break;
                 case WAITING:
-                    // TODO: What can be done if it's in waiting status?
+                    pause.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
+                    stop.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
                     break;
                 case ERROR:
                 case COMPLETE:
@@ -315,6 +335,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                     pause.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
                     stop.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
                     break;
                 case UNKNOWN:
                     pause.setVisibility(View.GONE);
@@ -322,6 +344,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                     stop.setVisibility(View.GONE);
                     restart.setVisibility(View.GONE);
                     remove.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
                     break;
             }
         }
