@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: Sorting
 public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_SERVER = 0;
     private static final int ITEM_HEADER = 1;

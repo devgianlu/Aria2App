@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/peersFragmentSort_downloadSpeed"
+        android:checked="true"
+        android:title="@string/downloadSpeed" />
+
+    <item
+        android:id="@+id/peersFragmentSort_uploadSpeed"
+        android:title="@string/uploadSpeed" />
+</menu>

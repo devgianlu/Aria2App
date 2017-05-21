@@ -61,16 +61,16 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
+                return true;
             case R.id.moreAboutDownload_options:
                 OptionsUtils.showDownloadDialog(this, download.gid, false);
-                break;
+                return true;
             case R.id.moreAboutDownload_quickOptions:
                 OptionsUtils.showDownloadDialog(this, download.gid, true);
-                break;
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override

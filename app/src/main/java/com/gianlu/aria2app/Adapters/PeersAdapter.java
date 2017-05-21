@@ -11,11 +11,11 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 // FIXME: Handle item removed
-// TODO: Sorting
 public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> {
     private final List<Peer> peers;
     private final IAdapter listener;
@@ -27,6 +27,20 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
         this.listener = listener;
 
         if (listener != null) listener.onItemCountUpdated(peers.size());
+    }
+
+    public void sort(SortBy sortBy) {
+        switch (sortBy) {
+            default:
+            case DOWNLOAD_SPEED:
+                Collections.sort(peers, new Peer.DownloadSpeedComparator());
+                break;
+            case UPLOAD_SPEED:
+                Collections.sort(peers, new Peer.UploadSpeedComparator());
+                break;
+        }
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -86,6 +100,11 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
 
     public void notifyItemsChanged(List<Peer> peers) {
         for (Peer peer : peers) notifyItemChanged(peer);
+    }
+
+    public enum SortBy {
+        DOWNLOAD_SPEED,
+        UPLOAD_SPEED
     }
 
     public interface IAdapter {

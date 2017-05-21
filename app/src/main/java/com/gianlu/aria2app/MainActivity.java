@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
-    private Menu sortingSubMenu;
     private RecyclerView list;
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
@@ -337,9 +336,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        sortingSubMenu = menu.findItem(R.id.a2menu_sorting).getSubMenu();
-        sortingSubMenu.setGroupCheckable(0, true, true);
-        return super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.a2menu_sorting).getSubMenu().setGroupCheckable(0, true, true);
+        return true;
     }
 
     @Override
@@ -393,37 +391,38 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 break;
             // Sorting
             default:
-                handleSorting(item);
+                return handleSorting(item);
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
-    private void handleSorting(MenuItem clicked) {
-        if (sortingSubMenu == null || adapter == null)
-            return;
+    private boolean handleSorting(MenuItem clicked) {
+        if (adapter == null) return false;
 
         clicked.setChecked(true);
         switch (clicked.getItemId()) {
-            case R.id.a2menu_sortStatus:
+            case R.id.mainSort_status:
                 adapter.sortBy(DownloadCardsAdapter.SortBy.STATUS);
                 break;
-            case R.id.a2menu_sortProgress:
+            case R.id.mainSort_progress:
                 adapter.sortBy(DownloadCardsAdapter.SortBy.PROGRESS);
                 break;
-            case R.id.a2menu_sortDownloadSpeed:
+            case R.id.mainSort_downloadSpeed:
                 adapter.sortBy(DownloadCardsAdapter.SortBy.DOWNLOAD_SPEED);
                 break;
-            case R.id.a2menu_sortUploadSpeed:
+            case R.id.mainSort_uploadSpeed:
                 adapter.sortBy(DownloadCardsAdapter.SortBy.UPLOAD_SPEED);
                 break;
-            case R.id.a2menu_sortLength:
+            case R.id.mainSort_length:
                 adapter.sortBy(DownloadCardsAdapter.SortBy.LENGTH);
                 break;
-            case R.id.a2menu_sortCompletedLength:
+            case R.id.mainSort_completedLength:
                 adapter.sortBy(DownloadCardsAdapter.SortBy.COMPLETED_LENGTH);
                 break;
         }
+
+        return true;
     }
 
     @Override

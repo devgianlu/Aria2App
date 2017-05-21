@@ -9,6 +9,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -39,11 +42,40 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     public static PeersFragment getInstance(Context context, Download download) {
         PeersFragment fragment = new PeersFragment();
+        fragment.setHasOptionsMenu(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.peers));
         args.putString("gid", download.gid);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.peers_fragment, menu);
+        inflater.inflate(R.menu.peers_fragment_sorting, menu.findItem(R.id.peersFragment_sorting).getSubMenu());
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.peersFragment_sorting).getSubMenu().setGroupCheckable(0, true, true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (adapter == null) return false;
+
+        item.setChecked(true);
+        switch (item.getItemId()) {
+            case R.id.peersFragmentSort_downloadSpeed:
+                adapter.sort(PeersAdapter.SortBy.DOWNLOAD_SPEED);
+                break;
+            case R.id.peersFragmentSort_uploadSpeed:
+                adapter.sort(PeersAdapter.SortBy.UPLOAD_SPEED);
+                break;
+        }
+
+        return true;
     }
 
     @Nullable

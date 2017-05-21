@@ -6,6 +6,7 @@ import android.util.SparseArray;
 
 import org.json.JSONObject;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,5 +30,14 @@ public class Server {
         }
 
         return null;
+    }
+
+    public static class DownloadSpeedComparator implements Comparator<Server> {
+        @Override
+        public int compare(Server o1, Server o2) {
+            if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
+            else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
+            else return 1;
+        }
     }
 }
