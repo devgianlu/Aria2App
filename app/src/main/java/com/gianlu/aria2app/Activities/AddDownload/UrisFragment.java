@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.Activities.AddDownload;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -19,9 +21,11 @@ import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.MessageLayout;
 
+import java.net.URI;
 import java.util.List;
 
 
@@ -51,6 +55,13 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
                 .setPositiveButton(edit == null ? R.string.add : R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if (uri.getText().toString().trim().startsWith("magnet:")) {
+                            if (!adapter.getUris().isEmpty()) {
+                                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.ONLY_ONE_TORRENT);
+                                return;
+                            }
+                        }
+
                         if (oldPos != -1) adapter.removeUri(oldPos);
                         adapter.addUri(uri.getText().toString());
                     }
@@ -70,7 +81,8 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddUriDialog(-1, null);
+                if (adapter.canAddUri()) showAddUriDialog(-1, null);
+                else CommonUtils.UIToast(getActivity(), Utils.ToastMessages.ONLY_ONE_TORRENT);
             }
         });
 
@@ -82,7 +94,28 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        showAddUriDialog(-1, null); // TODO: Pick uri from clipboard if available
+        ClipboardManager manager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = manager.getPrimaryClip();
+        if (clip != null) {
+            for (int i = 0; i < clip.getItemCount(); i++) {
+                ClipData.Item item = clip.getItemAt(i);
+                String uri = item.coerceToText(getContext()).toString();
+
+                try {
+                    new URI(uri);
+                    showAddUriDialog(-1, uri);
+                    return;
+                } catch (Exception ignored) {
+                }
+
+                if (uri.startsWith("magnet:")) {
+                    showAddUriDialog(-1, uri);
+                    return;
+                }
+            }
+        }
+
+        showAddUriDialog(-1, null);
     }
 
     public List<String> getUris() {

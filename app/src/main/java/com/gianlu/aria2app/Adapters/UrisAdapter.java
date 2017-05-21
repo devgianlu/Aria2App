@@ -75,6 +75,14 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         if (handler != null) handler.onUrisCountChanged(uris.size());
     }
 
+    public boolean canAddUri() {
+        for (String uri : uris)
+            if (uri.startsWith("magnet:"))
+                return false;
+
+        return true;
+    }
+
     public interface IAdapter {
         void onUrisCountChanged(int count);
 
