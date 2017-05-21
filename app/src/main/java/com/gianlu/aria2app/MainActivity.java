@@ -53,7 +53,10 @@ import com.gianlu.commonutils.SuperTextView;
 import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove {
     private DrawerManager<UserProfile> drawerManager;
@@ -300,6 +303,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
         list.setAdapter(adapter);
 
+        List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
+        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, null);
+        for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
+        adapter.setFilters(filters);
+
         try {
             updater = new UpdateUI(this, this);
             updater.start();
@@ -329,7 +337,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        getMenuInflater().inflate(R.menu.main_filters, menu.findItem(R.id.a2menu_filtering).getSubMenu());
         getMenuInflater().inflate(R.menu.main_sorting, menu.findItem(R.id.a2menu_sorting).getSubMenu());
         return true;
     }
@@ -346,6 +353,54 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         else super.onBackPressed();
     }
 
+    private void showFilteringDialog() {
+        final Download.Status[] filters = new Download.Status[]{Download.Status.ACTIVE, Download.Status.PAUSED, Download.Status.WAITING, Download.Status.ERROR, Download.Status.REMOVED, Download.Status.COMPLETE};
+        CharSequence[] stringFilters = new CharSequence[filters.length];
+
+        for (int i = 0; i < filters.length; i++)
+            stringFilters[i] = filters[i].getFormal(this, true);
+
+        final boolean[] checkedFilters = new boolean[filters.length];
+        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, null);
+
+        if (checkedFiltersSet == null) {
+            for (int i = 0; i < checkedFilters.length; i++) checkedFilters[i] = true;
+        } else {
+            for (String checkedFilter : checkedFiltersSet) {
+                Download.Status filter = Download.Status.valueOf(checkedFilter);
+                int pos = Utils.indexOf(filters, filter);
+                if (pos != -1) checkedFilters[pos] = true;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.filters)
+                .setMultiChoiceItems(stringFilters, checkedFilters, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checkedFilters[which] = isChecked;
+                    }
+                })
+                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        List<Download.Status> toApplyFilters = new ArrayList<>();
+                        for (int i = 0; i < checkedFilters.length; i++)
+                            if (!checkedFilters[i]) toApplyFilters.add(filters[i]);
+
+                        if (adapter != null) adapter.setFilters(toApplyFilters);
+                        Set<String> set = new HashSet<>();
+                        for (int i = 0; i < checkedFilters.length; i++)
+                            if (checkedFilters[i]) set.add(filters[i].name());
+
+                        Prefs.putSet(MainActivity.this, Prefs.Keys.A2_MAIN_FILTERS, set);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+
+        CommonUtils.showDialog(this, builder);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -353,41 +408,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 refresh();
                 break;
             // Filters
-            case R.id.a2menu_active:
-                if (adapter == null) break;
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.Status.ACTIVE);
-                else adapter.addFilter(Download.Status.ACTIVE);
-                break;
-            case R.id.a2menu_paused:
-                if (adapter == null) break;
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.Status.PAUSED);
-                else adapter.addFilter(Download.Status.PAUSED);
-                break;
-            case R.id.a2menu_error:
-                if (adapter == null) break;
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.Status.ERROR);
-                else adapter.addFilter(Download.Status.ERROR);
-                break;
-            case R.id.a2menu_waiting:
-                if (adapter == null) break;
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.Status.WAITING);
-                else adapter.addFilter(Download.Status.WAITING);
-                break;
-            case R.id.a2menu_complete:
-                if (adapter == null) break;
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.Status.COMPLETE);
-                else adapter.addFilter(Download.Status.COMPLETE);
-                break;
-            case R.id.a2menu_removed:
-                if (adapter == null) break;
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) adapter.removeFilter(Download.Status.REMOVED);
-                else adapter.addFilter(Download.Status.REMOVED);
+            case R.id.a2menu_filtering:
+                showFilteringDialog();
                 break;
             // Sorting
             default:

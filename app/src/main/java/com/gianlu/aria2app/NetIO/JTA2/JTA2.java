@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
@@ -43,13 +42,13 @@ public class JTA2 {
     private JTA2(Context context, WebSocketing client) {
         this.context = context;
         this.client = client;
-        this.forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Prefs.A2_FORCE_ACTION, true);
+        this.forceAction = Prefs.getBoolean(context, Prefs.Keys.A2_FORCE_ACTION, true);
     }
 
     private JTA2(Context context, HTTPing client) {
         this.context = context;
         this.client = client;
-        this.forceAction = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(Prefs.A2_FORCE_ACTION, true);
+        this.forceAction = Prefs.getBoolean(context, Prefs.Keys.A2_FORCE_ACTION, true);
     }
 
     public static JTA2 instantiate(Context context) throws JTA2InitializingException {

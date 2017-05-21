@@ -46,7 +46,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -259,8 +258,12 @@ public class Utils {
         return ioFile;
     }
 
-    public interface IOptionsDialog {
-        void onApply(JTA2 jta2, Map<String, String> options);
+    public static <T> int indexOf(T[] items, T item) {
+        for (int i = 0; i < items.length; i++)
+            if (items[i] == item)
+                return i;
+
+        return -1;
     }
 
     @SuppressWarnings("WeakerAccess")

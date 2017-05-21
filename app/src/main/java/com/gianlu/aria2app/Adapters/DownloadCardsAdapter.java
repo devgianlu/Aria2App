@@ -84,16 +84,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         notifyDataSetChanged();
     }
 
-    public void addFilter(Download.Status status) {
-        filters.add(status);
-        processFilters();
-    }
-
-    public void removeFilter(Download.Status status) {
-        filters.remove(status);
-        processFilters();
-    }
-
     private int indexOf(String gid) {
         for (int i = 0; i < objs.size(); i++)
             if (Objects.equals(objs.get(i).gid, gid))
@@ -314,6 +304,12 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
     @Override
     public int getItemCount() {
         return objs.size();
+    }
+
+    public void setFilters(List<Download.Status> toApplyFilters) {
+        filters.clear();
+        filters.addAll(toApplyFilters);
+        processFilters();
     }
 
     public enum SortBy {
