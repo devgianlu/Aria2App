@@ -72,12 +72,16 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
         Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), ex);
         WebSocketing.destroy();
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
-        startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        startActivity(new Intent(this, LoadingActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("showPicker", true));
     }
 
     @Override
     public void onSubsequentExceptions() {
         WebSocketing.destroy();
-        startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        startActivity(new Intent(this, LoadingActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("showPicker", true));
     }
 }

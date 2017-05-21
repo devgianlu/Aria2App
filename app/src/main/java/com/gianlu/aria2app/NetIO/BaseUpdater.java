@@ -51,10 +51,6 @@ public abstract class BaseUpdater extends Thread {
         _shouldStop = true;
     }
 
-    public final void stopThread() {
-        stopThread(null);
-    }
-
     public interface IThread {
         void onStopped();
     }

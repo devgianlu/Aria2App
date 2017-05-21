@@ -80,7 +80,11 @@ public class LoadingActivity extends AppCompatActivity {
             return;
         }
 
-        tryConnecting(manager, manager.getLastProfile(this));
+        if (getIntent().getBooleanExtra("showPicker", false)) {
+            displayPicker(manager);
+        } else {
+            tryConnecting(manager, manager.getLastProfile(this));
+        }
     }
 
     @Override
@@ -130,6 +134,7 @@ public class LoadingActivity extends AppCompatActivity {
         CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<UserProfile>() {
             @Override
             public void onProfileSelected(UserProfile profile) {
+                WebSocketing.unlock();
                 tryConnecting(manager, profile);
             }
         }, false, new CustomProfilesAdapter.IEdit() {

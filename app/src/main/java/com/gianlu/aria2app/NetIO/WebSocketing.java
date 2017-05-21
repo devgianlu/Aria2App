@@ -15,7 +15,6 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
-import com.neovisionaries.ws.client.WebSocketFrame;
 import com.neovisionaries.ws.client.WebSocketState;
 
 import org.json.JSONException;
@@ -34,9 +33,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketing extends AbstractClient {
     private static WebSocketing webSocketing;
+    private static boolean locked = false;
     private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
     private final List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
-    private boolean isDestroying;
     private IConnect connectionListener;
     private WebSocket socket;
 
@@ -107,13 +106,20 @@ public class WebSocketing extends AbstractClient {
     }
 
     public static void destroy() {
+        locked = true;
         if (webSocketing == null) return;
         webSocketing.socket.disconnect();
         webSocketing = null;
     }
 
+    public static void unlock() {
+        locked = false;
+    }
+
     @Override
     public void send(JSONObject request, IReceived handler) {
+        if (locked) return;
+
         if (requests.size() > 10) {
             synchronized (requests) {
                 requests.clear();
@@ -158,6 +164,8 @@ public class WebSocketing extends AbstractClient {
     private class Adapter extends WebSocketAdapter {
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
+            if (locked) return;
+
             JSONObject response = new JSONObject(text);
 
             String method = response.optString("method", null);
@@ -196,11 +204,6 @@ public class WebSocketing extends AbstractClient {
         @Override
         public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
             if (newState.equals(WebSocketState.OPEN) && connectionQueue.size() > 0) processQueue();
-        }
-
-        @Override
-        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-            if (isDestroying) isDestroying = false;
         }
     }
 }
