@@ -285,6 +285,8 @@
     <string name="set">Set</string>
     <string name="noUris_help">There are no uris. Please add at least one by clicking the button down below.</string>
     <string name="editUri">Edit uri</string>
+    <string name="queuePosition_help">Leave empty to add the download to the end of the queue.</string>
+    <string name="uris_disclaimer">It\'s compulsory to add only HTTP/FTP/SFTP/BitTorrent URIs pointing to the same resource. If you mix URIs pointing to different resources, then the download may fail or be corrupted without aria2 complaining.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

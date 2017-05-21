@@ -25,11 +25,10 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.MessageLayout;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
 
-// TODO: Disclaimer
 public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     private LinearLayout layout;
     private UrisAdapter adapter;
@@ -102,7 +101,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
                 String uri = item.coerceToText(getContext()).toString();
 
                 try {
-                    new URI(uri);
+                    new URL(uri);
                     showAddUriDialog(-1, uri);
                     return;
                 } catch (Exception ignored) {

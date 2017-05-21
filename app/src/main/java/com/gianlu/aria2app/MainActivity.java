@@ -333,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     protected void onResume() {
         super.onResume();
         if (drawerManager != null) drawerManager.syncTogglerState();
+        if (fabMenu != null) fabMenu.collapse();
     }
 
     @Override

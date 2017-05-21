@@ -14,7 +14,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-class OptionsManager {
+public class OptionsManager {
     private static OptionsManager instance;
     private final AssetManager manager;
     private JSONObject options;
@@ -39,7 +39,7 @@ class OptionsManager {
         return options;
     }
 
-    List<String> loadDownloadOptions() throws IOException, JSONException {
+    public List<String> loadDownloadOptions() throws IOException, JSONException {
         openOptions();
 
         JSONArray downloadOptions = options.getJSONArray("download");

@@ -69,13 +69,15 @@ public class Option implements Comparable<Option> {
         return newValue != null && !Objects.equals(value, newValue);
     }
 
-    public boolean isQuick(Context context) {
-        return Prefs.getSet(context, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()).contains(name);
+    public boolean isQuick(Context context, boolean global) {
+        return Prefs.getSet(context, global ? Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS : Prefs.Keys.A2_QUICK_OPTIONS, new HashSet<String>()).contains(name);
     }
 
-    public void setQuick(Context context, boolean quick) {
-        if (quick) Prefs.addToSet(context, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, name);
-        else Prefs.removeFromSet(context, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, name);
+    public void setQuick(Context context, boolean global, boolean quick) {
+        if (quick)
+            Prefs.addToSet(context, global ? Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS : Prefs.Keys.A2_QUICK_OPTIONS, name);
+        else
+            Prefs.removeFromSet(context, global ? Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS : Prefs.Keys.A2_QUICK_OPTIONS, name);
     }
 
     @Override

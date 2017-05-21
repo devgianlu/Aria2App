@@ -22,14 +22,16 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final List<Option> options;
     private final List<Option> originalOptions;
     private final LayoutInflater inflater;
+    private final boolean global;
     private final Context context;
     private IAdapter handler;
 
-    public OptionsAdapter(Context context, List<Option> options) {
+    public OptionsAdapter(Context context, List<Option> options, boolean global) {
         this.context = context;
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);
+        this.global = global;
     }
 
     @Override
@@ -81,7 +83,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             holder.value.setTextColor(ContextCompat.getColor(context, android.R.color.secondary_text_light));
         }
 
-        if (option.isQuick(context))
+        if (option.isQuick(context, global))
             holder.toggleFavourite.setImageResource(R.drawable.ic_favorite_black_48dp);
         else
             holder.toggleFavourite.setImageResource(R.drawable.ic_favorite_border_black_48dp);
@@ -96,7 +98,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         holder.toggleFavourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                option.setQuick(context, !option.isQuick(context));
+                option.setQuick(context, global, !option.isQuick(context, global));
                 notifyItemChanged(holder.getAdapterPosition());
             }
         });

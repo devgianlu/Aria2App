@@ -24,6 +24,13 @@
             android:visibility="gone" />
     </FrameLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/uris_disclaimer"
+        android:textAlignment="center"
+        android:textSize="12sp" />
+
     <Button
         android:id="@+id/urisFragment_addNew"
         style="?buttonBarButtonStyle"

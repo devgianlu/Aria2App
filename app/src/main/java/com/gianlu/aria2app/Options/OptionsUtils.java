@@ -48,7 +48,7 @@ public class OptionsUtils {
         list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
-        final OptionsAdapter adapter = new OptionsAdapter(activity, options);
+        final OptionsAdapter adapter = new OptionsAdapter(activity, options, true);
         adapter.setHandler(new OptionsAdapter.IAdapter() {
             @Override
             public void onEditOption(Option option) {
@@ -103,7 +103,7 @@ public class OptionsUtils {
         list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
 
-        final OptionsAdapter adapter = new OptionsAdapter(activity, options);
+        final OptionsAdapter adapter = new OptionsAdapter(activity, options, false);
         adapter.setHandler(new OptionsAdapter.IAdapter() {
             @Override
             public void onEditOption(Option option) {
