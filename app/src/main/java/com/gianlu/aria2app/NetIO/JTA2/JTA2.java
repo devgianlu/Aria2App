@@ -541,20 +541,13 @@ public class JTA2 {
     }
 
     //aria2.addMetalink
-    public void addMetalink(String base64, @Nullable List<String> uris, @Nullable Map<String, String> options, @Nullable Integer position, final IGID handler) {
+    public void addMetalink(String base64, @Nullable Map<String, String> options, @Nullable Integer position, final IGID handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.addMetalink");
             JSONArray params = Utils.readyParams(context);
             params.put(base64);
-
-            JSONArray jUris = new JSONArray();
-            if (uris != null)
-                for (String uri : uris)
-                    jUris.put(uri);
-
-            params.put(jUris);
 
             JSONObject jOptions = new JSONObject();
             if (options != null)

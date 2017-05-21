@@ -1,9 +1,9 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
@@ -21,24 +21,25 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="AddTorrentTheme" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/colorTorrent</item>
-        <item name="colorPrimaryDark">@color/colorTorrent_pressed</item>
-        <item name="colorAccent">@color/colorTorrent_pressed</item>
+    <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
-    <style name="AddMetalinkTheme" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/colorMetalink</item>
-        <item name="colorPrimaryDark">@color/colorMetalink_pressed</item>
+
+    <style name="AppTheme.NoActionBar.Metalink" parent="Theme.AppCompat">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorMetalink_pressed</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="CardViewTopSection">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/colorPrimary</item>
-    </style>
-
-    <style name="CardViewButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
     <style name="menu_labels_style">

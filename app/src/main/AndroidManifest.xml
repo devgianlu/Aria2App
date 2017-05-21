@@ -57,6 +57,11 @@
             android:windowSoftInputMode="stateHidden" />
 
         <!-- Add download activities -->
+        <activity
+            android:name=".Activities.AddUriActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.URI" />
 
         <!-- More about download activity -->
         <activity

@@ -283,6 +283,8 @@
     <string name="currentValue"><![CDATA[<b>Current value:</b>]]> %s</string>
     <string name="newValue">New value:</string>
     <string name="set">Set</string>
+    <string name="noUris_help">There are no uris. Please add at least one by clicking the button down below.</string>
+    <string name="editUri">Edit uri</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

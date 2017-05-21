@@ -89,13 +89,13 @@ public class ShareActivity extends AppCompatActivity {
                 }
             } else {
                 /* TODO
-                startActivity(new Intent(this, AddURIActivity.class)
+                startActivity(new Intent(this, AddUriActivity.class)
                         .putExtra("share_uri", data.toString()));
                         */
             }
         } else if (strData != null) {
             /* TODO
-            startActivity(new Intent(this, AddURIActivity.class)
+            startActivity(new Intent(this, AddUriActivity.class)
                     .putExtra("share_uri", strData));
                     */
         } else {

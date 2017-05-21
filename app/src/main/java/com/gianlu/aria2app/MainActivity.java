@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
@@ -271,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         fabAddURI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: startActivity(new Intent(MainActivity.this, AddURIActivity.class));
+                startActivity(new Intent(MainActivity.this, AddUriActivity.class));
             }
         });
         final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
