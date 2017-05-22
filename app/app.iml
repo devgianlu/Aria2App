@@ -95,6 +95,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="constraint-layout-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-10.2.6" level="project" />
     <orderEntry type="library" exported="" name="transition-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-tagmanager-v4-impl-10.2.6" level="project" />
@@ -112,6 +113,7 @@
     <orderEntry type="library" exported="" name="support-fragment-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-impl-10.2.6" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-impl-10.2.6" level="project" />
+    <orderEntry type="library" exported="" name="constraint-layout-solver-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="MPAndroidChart-v3.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-common-10.2.6" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-10.2.6" level="project" />

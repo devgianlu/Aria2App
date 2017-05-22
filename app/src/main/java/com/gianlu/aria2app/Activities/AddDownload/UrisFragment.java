@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
@@ -34,9 +35,10 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     private UrisAdapter adapter;
     private RecyclerView list;
 
-    public static UrisFragment getInstance(Context context) {
+    public static UrisFragment getInstance(Context context, boolean compulsory) {
         UrisFragment fragment = new UrisFragment();
         Bundle args = new Bundle();
+        args.putBoolean("compulsory", compulsory);
         args.putString("title", context.getString(R.string.uris));
         fragment.setArguments(args);
         return fragment;
@@ -85,6 +87,12 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
             }
         });
 
+        TextView disclaimer = (TextView) layout.findViewById(R.id.urisFragment_disclaimer);
+        if (getArguments().getBoolean("compulsory", false))
+            disclaimer.setText(R.string.uris_disclaimer);
+        else
+            disclaimer.setText(R.string.torrentUris_disclaimer);
+
         adapter = new UrisAdapter(getContext(), this);
         list.setAdapter(adapter);
 
@@ -93,6 +101,8 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        if (!getArguments().getBoolean("compulsory", false)) return;
+
         ClipboardManager manager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = manager.getPrimaryClip();
         if (clip != null) {
@@ -125,7 +135,10 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     public void onUrisCountChanged(int count) {
         if (count == 0) {
             list.setVisibility(View.GONE);
-            MessageLayout.show(layout, R.string.noUris_help, R.drawable.ic_info_outline_black_48dp);
+            if (getArguments().getBoolean("compulsory", false))
+                MessageLayout.show(layout, R.string.noUris_help, R.drawable.ic_info_outline_black_48dp);
+            else
+                MessageLayout.show(layout, R.string.noUris, R.drawable.ic_info_outline_black_48dp);
         } else {
             list.setVisibility(View.VISIBLE);
             MessageLayout.hide(layout);

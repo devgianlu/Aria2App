@@ -287,6 +287,8 @@
     <string name="editUri">Edit uri</string>
     <string name="queuePosition_help">Leave empty to add the download to the end of the queue.</string>
     <string name="uris_disclaimer">It\'s compulsory to add only HTTP/FTP/SFTP/BitTorrent URIs pointing to the same resource. If you mix URIs pointing to different resources, then the download may fail or be corrupted without aria2 complaining.</string>
+    <string name="noUris">There are no uris.</string>
+    <string name="torrentUris_disclaimer">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

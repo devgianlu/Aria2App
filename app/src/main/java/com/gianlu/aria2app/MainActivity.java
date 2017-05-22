@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
@@ -279,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         fabAddTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", true));
+                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class));
             }
         });
         final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
@@ -333,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     protected void onResume() {
         super.onResume();
         if (drawerManager != null) drawerManager.syncTogglerState();
-        if (fabMenu != null) fabMenu.collapse();
+        if (fabMenu != null) fabMenu.collapseImmediately();
     }
 
     @Override

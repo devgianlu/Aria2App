@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.gianlu.aria2app.Activities.AddDownload.Base64Fragment;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
@@ -21,16 +22,17 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.List;
 import java.util.Map;
 
-public class AddUriActivity extends AppCompatActivity {
+public class AddTorrentActivity extends AppCompatActivity {
+    private ViewPager pager;
     private UrisFragment urisFragment;
     private OptionsFragment optionsFragment;
-    private ViewPager pager;
+    private Base64Fragment base64Fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_download);
-        setTitle(R.string.addUri);
+        setTitle(R.string.addTorrent);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.addDownload_toolbar);
         setSupportActionBar(toolbar);
@@ -41,10 +43,11 @@ public class AddUriActivity extends AppCompatActivity {
         pager = (ViewPager) findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.addDownload_tabs);
 
-        urisFragment = UrisFragment.getInstance(this, true);
+        base64Fragment = Base64Fragment.getInstance(this);
+        urisFragment = UrisFragment.getInstance(this, false);
         optionsFragment = OptionsFragment.getInstance(this);
 
-        pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), urisFragment, optionsFragment));
+        pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, urisFragment, optionsFragment));
         pager.setOffscreenPageLimit(2);
 
         tabLayout.setupWithViewPager(pager);
@@ -73,13 +76,14 @@ public class AddUriActivity extends AppCompatActivity {
     }
 
     private void done() {
-        List<String> uris = urisFragment.getUris();
-        if (uris.isEmpty()) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.NO_URIS);
+        String base64 = base64Fragment.getBase64();
+        if (base64 == null) {
+            CommonUtils.UIToast(this, Utils.ToastMessages.NO_BASE64_FILE);
             pager.setCurrentItem(0, true);
             return;
         }
 
+        List<String> uris = urisFragment.getUris();
         Map<String, String> options = optionsFragment.getOptions();
         Integer position = optionsFragment.getPosition();
 
@@ -91,10 +95,10 @@ public class AddUriActivity extends AppCompatActivity {
             return;
         }
 
-        jta2.addUri(uris, position, options, new JTA2.IGID() {
+        jta2.addTorrent(base64, uris, options, position, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                CommonUtils.UIToast(AddUriActivity.this, Utils.ToastMessages.DOWNLOAD_ADDED, gid, new Runnable() {
+                CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.DOWNLOAD_ADDED, gid, new Runnable() {
                     @Override
                     public void run() {
                         onBackPressed();
@@ -104,7 +108,7 @@ public class AddUriActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(AddUriActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+                CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
             }
         });
     }

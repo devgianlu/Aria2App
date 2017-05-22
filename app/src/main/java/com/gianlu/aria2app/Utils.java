@@ -300,6 +300,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_REFRESHING = new CommonUtils.ToastMessage("Failed refreshing!", true);
         public static final CommonUtils.ToastMessage GLOBAL_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Global options successfully changed!", false);
         public static final CommonUtils.ToastMessage ONLY_ONE_TORRENT = new CommonUtils.ToastMessage("When adding torrent magnets only one link should be added at once.", false);
+        public static final CommonUtils.ToastMessage NO_BASE64_FILE = new CommonUtils.ToastMessage("No file selected!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
