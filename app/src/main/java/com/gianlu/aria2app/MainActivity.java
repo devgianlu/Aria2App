@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         fabAddMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: startActivity(new Intent(MainActivity.this, AddTorrentActivity.class).putExtra("torrentMode", false));
+                startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class));
             }
         });
 

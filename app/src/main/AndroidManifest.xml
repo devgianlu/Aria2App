@@ -67,6 +67,11 @@
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Torrent" />
+        <activity
+            android:name=".Activities.AddMetalinkActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Metalink" />
 
         <!-- More about download activity -->
         <activity
@@ -1169,4 +1174,5 @@
             android:enabled="true"
             android:exported="false" />
     </application>
+
 </manifest>

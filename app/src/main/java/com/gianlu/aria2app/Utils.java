@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -266,6 +268,25 @@ public class Utils {
         return -1;
     }
 
+    @Nullable
+    public static String resolveUri(Context context, Uri uri) {
+        if (uri == null) return null;
+
+        if (uri.getScheme().equalsIgnoreCase("content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
+                if (cursor != null) {
+                    int column_index = cursor.getColumnIndexOrThrow("_data");
+                    if (cursor.moveToFirst()) return cursor.getString(column_index);
+                }
+            } catch (Exception ignored) {
+            }
+        } else if (uri.getScheme().equalsIgnoreCase("file")) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static class ToastMessages {
         public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
@@ -301,6 +322,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage GLOBAL_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Global options successfully changed!", false);
         public static final CommonUtils.ToastMessage ONLY_ONE_TORRENT = new CommonUtils.ToastMessage("When adding torrent magnets only one link should be added at once.", false);
         public static final CommonUtils.ToastMessage NO_BASE64_FILE = new CommonUtils.ToastMessage("No file selected!", false);
+        public static final CommonUtils.ToastMessage NO_FILE_MANAGER = new CommonUtils.ToastMessage("A file manager has not been found!", true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

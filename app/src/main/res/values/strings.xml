@@ -289,6 +289,9 @@
     <string name="uris_disclaimer">It\'s compulsory to add only HTTP/FTP/SFTP/BitTorrent URIs pointing to the same resource. If you mix URIs pointing to different resources, then the download may fail or be corrupted without aria2 complaining.</string>
     <string name="noUris">There are no uris.</string>
     <string name="torrentUris_disclaimer">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
+    <string name="file">File</string>
+    <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
+    <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
