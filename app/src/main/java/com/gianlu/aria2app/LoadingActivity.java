@@ -30,6 +30,7 @@ public class LoadingActivity extends AppCompatActivity {
     private LinearLayout picker;
     private RecyclerView pickerList;
     private boolean finished = false;
+    private Uri shareData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         if (hasShareData()) {
             displayPicker(manager);
-            getShareData();
+            shareData = getShareData();
             return;
         }
 
@@ -99,12 +100,14 @@ public class LoadingActivity extends AppCompatActivity {
         return Objects.equals(action, Intent.ACTION_SEND) || Objects.equals(action, Intent.ACTION_VIEW);
     }
 
-    private String getShareData() {
-        Intent intent = getIntent();
-        String strData = intent.getStringExtra(Intent.EXTRA_TEXT);
-        Uri data = intent.getData();
-
-        System.out.println("RECEIVED: " + data + " - " + strData); // FIXME
+    private Uri getShareData() {
+        Uri stream = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
+        if (stream == null) {
+            Uri data = getIntent().getData();
+            if (data != null) return data;
+        } else {
+            return stream;
+        }
 
         return null;
     }
@@ -172,6 +175,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     private void goTo(Class goTo) {
         Intent intent = new Intent(LoadingActivity.this, goTo).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (shareData != null) intent.putExtra("shareData", shareData);
         if (finished) startActivity(intent);
         else this.goTo = intent;
     }

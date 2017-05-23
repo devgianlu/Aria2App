@@ -26,6 +26,7 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.MessageLayout;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -35,11 +36,12 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     private UrisAdapter adapter;
     private RecyclerView list;
 
-    public static UrisFragment getInstance(Context context, boolean compulsory) {
+    public static UrisFragment getInstance(Context context, boolean compulsory, @Nullable URI uri) {
         UrisFragment fragment = new UrisFragment();
         Bundle args = new Bundle();
         args.putBoolean("compulsory", compulsory);
         args.putString("title", context.getString(R.string.uris));
+        if (uri != null) args.putSerializable("uri", uri);
         fragment.setArguments(args);
         return fragment;
     }
@@ -103,23 +105,29 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         if (!getArguments().getBoolean("compulsory", false)) return;
 
-        ClipboardManager manager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = manager.getPrimaryClip();
-        if (clip != null) {
-            for (int i = 0; i < clip.getItemCount(); i++) {
-                ClipData.Item item = clip.getItemAt(i);
-                String uri = item.coerceToText(getContext()).toString();
+        URI uri = (URI) getArguments().getSerializable("uri");
+        if (uri != null) {
+            showAddUriDialog(-1, uri.toASCIIString());
+            return;
+        } else {
+            ClipboardManager manager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = manager.getPrimaryClip();
+            if (clip != null) {
+                for (int i = 0; i < clip.getItemCount(); i++) {
+                    ClipData.Item item = clip.getItemAt(i);
+                    String clipUri = item.coerceToText(getContext()).toString();
 
-                try {
-                    new URL(uri);
-                    showAddUriDialog(-1, uri);
-                    return;
-                } catch (Exception ignored) {
-                }
+                    try {
+                        new URL(clipUri);
+                        showAddUriDialog(-1, clipUri);
+                        return;
+                    } catch (Exception ignored) {
+                    }
 
-                if (uri.startsWith("magnet:")) {
-                    showAddUriDialog(-1, uri);
-                    return;
+                    if (clipUri.startsWith("magnet:")) {
+                        showAddUriDialog(-1, clipUri);
+                        return;
+                    }
                 }
             }
         }

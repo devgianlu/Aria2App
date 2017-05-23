@@ -29,11 +29,12 @@ public class Base64Fragment extends Fragment {
     private final int FILE_SELECT_CODE = 7;
     private TextView path;
 
-    public static Base64Fragment getInstance(Context context, boolean torrent) {
+    public static Base64Fragment getInstance(Context context, boolean torrent, @Nullable File file) {
         Base64Fragment fragment = new Base64Fragment();
         Bundle args = new Bundle();
         args.putBoolean("torrent", torrent);
         args.putString("title", context.getString(R.string.file));
+        if (file != null) args.putSerializable("file", file);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,6 +56,15 @@ public class Base64Fragment extends Fragment {
         path.setText(null);
     }
 
+    private void setFile(File file) {
+        if (!file.exists() || !file.canRead()) {
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("File doesn't exist or can't be read."));
+        } else {
+            path.setText(file.getAbsolutePath());
+            path.setTag(file);
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -64,17 +74,17 @@ public class Base64Fragment extends Fragment {
                     if (filePath == null) {
                         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("Uri cannot be resolved!"));
                     } else {
-                        File file = new File(filePath);
-                        if (!file.exists() || !file.canRead()) {
-                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("File doesn't exist or can't be read."));
-                        } else {
-                            path.setText(filePath);
-                            path.setTag(file);
-                        }
+                        setFile(new File(filePath));
                     }
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        File file = (File) getArguments().getSerializable("file");
+        if (file != null) setFile(file);
     }
 
     @Nullable

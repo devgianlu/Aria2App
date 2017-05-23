@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.Activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -19,6 +21,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,10 @@ public class AddTorrentActivity extends AppCompatActivity {
     private UrisFragment urisFragment;
     private OptionsFragment optionsFragment;
     private Base64Fragment base64Fragment;
+
+    public static void startAndAdd(Context context, File file) {
+        context.startActivity(new Intent(context, AddTorrentActivity.class).putExtra("file", file));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +50,8 @@ public class AddTorrentActivity extends AppCompatActivity {
         pager = (ViewPager) findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.addDownload_tabs);
 
-        base64Fragment = Base64Fragment.getInstance(this, true);
-        urisFragment = UrisFragment.getInstance(this, false);
+        base64Fragment = Base64Fragment.getInstance(this, true, (File) getIntent().getSerializableExtra("file"));
+        urisFragment = UrisFragment.getInstance(this, false, null);
         optionsFragment = OptionsFragment.getInstance(this);
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, urisFragment, optionsFragment));

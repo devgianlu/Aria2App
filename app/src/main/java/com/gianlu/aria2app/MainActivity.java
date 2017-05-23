@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
@@ -55,10 +57,14 @@ import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.liulishuo.filedownloader.FileDownloader;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove {
@@ -316,6 +322,41 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             updater.start();
         } catch (JTA2InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
+        }
+
+        Uri shareData = getIntent().getParcelableExtra("shareData");
+        if (shareData != null) {
+            String path = Utils.resolveUri(this, shareData);
+            if (path != null) {
+                File file = new File(path);
+                if (file.exists() && file.canRead()) {
+                    String ext = MimeTypeMap.getFileExtensionFromUrl(path);
+                    if (ext == null) {
+                        CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
+                    } else {
+                        String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                        if (Objects.equals(mime, "application/x-bittorrent")) {
+                            AddTorrentActivity.startAndAdd(this, file);
+                        } else if (Objects.equals(mime, "application/metalink4+xml") || Objects.equals(mime, "application/metalink+xml")) {
+                            AddMetalinkActivity.startAndAdd(this, file);
+                        } else {
+                            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
+                        }
+                    }
+                } else {
+                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read!"));
+                }
+            } else {
+                URI uri;
+                try {
+                    uri = new URI(shareData.toString());
+                } catch (URISyntaxException ex) {
+                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot identify shared file/url!", ex));
+                    return;
+                }
+
+                AddUriActivity.startAndAdd(this, uri);
+            }
         }
     }
 

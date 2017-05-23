@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.Activities;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -18,6 +20,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +28,10 @@ public class AddUriActivity extends AppCompatActivity {
     private UrisFragment urisFragment;
     private OptionsFragment optionsFragment;
     private ViewPager pager;
+
+    public static void startAndAdd(Context context, URI uri) {
+        context.startActivity(new Intent(context, AddUriActivity.class).putExtra("uri", uri));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +48,7 @@ public class AddUriActivity extends AppCompatActivity {
         pager = (ViewPager) findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.addDownload_tabs);
 
-        urisFragment = UrisFragment.getInstance(this, true);
+        urisFragment = UrisFragment.getInstance(this, true, (URI) getIntent().getSerializableExtra("uri"));
         optionsFragment = OptionsFragment.getInstance(this);
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), urisFragment, optionsFragment));
