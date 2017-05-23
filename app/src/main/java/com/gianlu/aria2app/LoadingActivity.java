@@ -1,6 +1,7 @@
 package com.gianlu.aria2app;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
@@ -20,6 +21,9 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 
+import java.util.Objects;
+
+// TODO: Change picker label when receiving share Intent
 public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
     private LinearLayout connecting;
@@ -67,6 +71,17 @@ public class LoadingActivity extends AppCompatActivity {
         Logging.clearLogs(this);
 
         final ProfilesManager manager = ProfilesManager.get(this);
+        if (!manager.hasProfiles()) {
+            EditProfileActivity.start(this, true);
+            return;
+        }
+
+        if (hasShareData()) {
+            displayPicker(manager);
+            getShareData();
+            return;
+        }
+
         if (getIntent().getBooleanExtra("external", false)) {
             UserProfile profile = ProfilesManager.createExternalProfile(getIntent());
             if (profile != null) {
@@ -75,16 +90,23 @@ public class LoadingActivity extends AppCompatActivity {
             }
         }
 
-        if (!manager.hasProfiles()) {
-            EditProfileActivity.start(this, true);
-            return;
-        }
+        if (getIntent().getBooleanExtra("showPicker", false)) displayPicker(manager);
+        else tryConnecting(manager, manager.getLastProfile(this));
+    }
 
-        if (getIntent().getBooleanExtra("showPicker", false)) {
-            displayPicker(manager);
-        } else {
-            tryConnecting(manager, manager.getLastProfile(this));
-        }
+    private boolean hasShareData() {
+        String action = getIntent().getAction();
+        return Objects.equals(action, Intent.ACTION_SEND) || Objects.equals(action, Intent.ACTION_VIEW);
+    }
+
+    private String getShareData() {
+        Intent intent = getIntent();
+        String strData = intent.getStringExtra(Intent.EXTRA_TEXT);
+        Uri data = intent.getData();
+
+        System.out.println("RECEIVED: " + data + " - " + strData); // FIXME
+
+        return null;
     }
 
     @Override

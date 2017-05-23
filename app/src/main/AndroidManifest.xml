@@ -34,68 +34,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
-        <!-- Main activity -->
-        <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- Edit profile activity -->
-        <activity
-            android:name=".Activities.EditProfileActivity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-
-        <!-- DirectDownload activity -->
-        <activity
-            android:name=".Activities.DirectDownloadActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
-
-        <!-- Add download activities -->
-        <activity
-            android:name=".Activities.AddUriActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.URI" />
-        <activity
-            android:name=".Activities.AddTorrentActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Torrent" />
-        <activity
-            android:name=".Activities.AddMetalinkActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Metalink" />
-
-        <!-- More about download activity -->
-        <activity
-            android:name=".Activities.MoreAboutDownloadActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- Preferences activity -->
-        <activity
-            android:name=".PreferencesActivity"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Logs activity -->
-        <activity
-            android:name="com.gianlu.commonutils.LogsActivity"
-            android:parentActivityName=".PreferencesActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Share activity -->
-        <activity
-            android:name=".Activities.ShareActivity"
-            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
@@ -1141,6 +1080,62 @@
                 <data android:pathPattern=".*\\.wlmp" />
             </intent-filter>
         </activity>
+
+        <!-- Main activity -->
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Drawer" />
+
+        <!-- Edit profile activity -->
+        <activity
+            android:name=".Activities.EditProfileActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+
+        <!-- DirectDownload activity -->
+        <activity
+            android:name=".Activities.DirectDownloadActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
+        <!-- Add download activities -->
+        <activity
+            android:name=".Activities.AddUriActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.URI" />
+        <activity
+            android:name=".Activities.AddTorrentActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Torrent" />
+        <activity
+            android:name=".Activities.AddMetalinkActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Metalink" />
+
+        <!-- More about download activity -->
+        <activity
+            android:name=".Activities.MoreAboutDownloadActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- Preferences activity -->
+        <activity
+            android:name=".PreferencesActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Logs activity -->
+        <activity
+            android:name="com.gianlu.commonutils.LogsActivity"
+            android:parentActivityName=".PreferencesActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Search Torrent activity -->
         <activity
