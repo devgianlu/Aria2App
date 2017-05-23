@@ -292,6 +292,7 @@
     <string name="file">File</string>
     <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
+    <string name="pickProfile_share">Choose a profile to start the download on:</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

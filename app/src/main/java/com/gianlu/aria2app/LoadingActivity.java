@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.NetIO.WebSocketing;
@@ -28,6 +29,7 @@ public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
+    private TextView pickerHint;
     private RecyclerView pickerList;
     private boolean finished = false;
     private Uri shareData;
@@ -44,6 +46,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         connecting = (LinearLayout) findViewById(R.id.loading_connecting);
         picker = (LinearLayout) findViewById(R.id.loading_picker);
+        pickerHint = (TextView) findViewById(R.id.loading_pickerHint);
         pickerList = (RecyclerView) findViewById(R.id.loading_pickerList);
         pickerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         ImageButton pickerAdd = (ImageButton) findViewById(R.id.loading_pickerAdd);
@@ -78,7 +81,7 @@ public class LoadingActivity extends AppCompatActivity {
         }
 
         if (hasShareData()) {
-            displayPicker(manager);
+            displayPicker(manager, true);
             shareData = getShareData();
             return;
         }
@@ -91,7 +94,7 @@ public class LoadingActivity extends AppCompatActivity {
             }
         }
 
-        if (getIntent().getBooleanExtra("showPicker", false)) displayPicker(manager);
+        if (getIntent().getBooleanExtra("showPicker", false)) displayPicker(manager, false);
         else tryConnecting(manager, manager.getLastProfile(this));
     }
 
@@ -122,7 +125,7 @@ public class LoadingActivity extends AppCompatActivity {
             return;
         }
 
-        displayPicker(manager);
+        displayPicker(manager, hasShareData());
     }
 
     private void tryConnecting(final ProfilesManager manager, UserProfile profile) {
@@ -130,7 +133,7 @@ public class LoadingActivity extends AppCompatActivity {
         picker.setVisibility(View.GONE);
 
         if (profile == null) {
-            displayPicker(manager);
+            displayPicker(manager, hasShareData());
         } else {
             manager.setCurrent(this, profile);
             WebSocketing.instantiate(this, new WebSocketing.IConnect() {
@@ -144,7 +147,7 @@ public class LoadingActivity extends AppCompatActivity {
                     CommonUtils.UIToast(LoadingActivity.this, Utils.ToastMessages.FAILED_CONNECTING, ex, new Runnable() {
                         @Override
                         public void run() {
-                            displayPicker(manager);
+                            displayPicker(manager, hasShareData());
                         }
                     });
                 }
@@ -152,9 +155,12 @@ public class LoadingActivity extends AppCompatActivity {
         }
     }
 
-    private void displayPicker(final ProfilesManager manager) {
+    private void displayPicker(final ProfilesManager manager, boolean share) {
         connecting.setVisibility(View.GONE);
         picker.setVisibility(View.VISIBLE);
+
+        if (share) pickerHint.setText(R.string.pickProfile_share);
+        else pickerHint.setText(R.string.pickProfile);
 
         CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<UserProfile>() {
             @Override
