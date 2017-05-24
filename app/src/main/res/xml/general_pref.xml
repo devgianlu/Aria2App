@@ -15,21 +15,6 @@
         android:summary="@string/updateRateSummary"
         android:title="@string/updateRate" />
 
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/downloadListUpdateRate"
-        android:entryValues="@array/downloadListUpdateRateValue"
-        android:key="a2_downloadListRate"
-        android:summary="@string/reloadListSummary"
-        android:title="@string/reloadList" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="a2_summaryCard"
-        android:summaryOff="@string/showSummaryOff"
-        android:summaryOn="@string/showSummaryOn"
-        android:title="@string/showSummary" />
-
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="a2_forceAction"

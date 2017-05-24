@@ -18,7 +18,7 @@ public abstract class BaseUpdater extends Thread {
     public BaseUpdater(Context context) throws JTA2InitializingException {
         this.jta2 = JTA2.instantiate(context);
         this.handler = new Handler(context.getMainLooper());
-        this.updateInterval = Prefs.getInt(context, Prefs.Keys.A2_UPDATE_INTERVAL, 1) * 1000;
+        this.updateInterval = Prefs.getFakeInt(context, Prefs.Keys.A2_UPDATE_INTERVAL, 1) * 1000;
     }
 
     @Override

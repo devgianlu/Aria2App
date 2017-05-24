@@ -39,6 +39,7 @@ import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
+import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -358,6 +359,49 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 AddUriActivity.startAndAdd(this, uri);
             }
         }
+
+        if (!((ThisApplication) getApplication()).hasCheckedVersion() && Prefs.getBoolean(this, Prefs.Keys.A2_CHECK_VERSION, true)) {
+            GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
+                @Override
+                public void onRelease(final String latestVersion) {
+                    JTA2 jta2;
+                    try {
+                        jta2 = JTA2.instantiate(MainActivity.this);
+                    } catch (JTA2InitializingException ex) {
+                        Logging.logMe(MainActivity.this, ex);
+                        return;
+                    }
+
+                    jta2.getVersion(new JTA2.IVersion() {
+                        @Override
+                        public void onVersion(List<String> rawFeatures, String version) {
+                            ((ThisApplication) getApplication()).setHasCheckedVersion(true);
+                            if (!Objects.equals(version, latestVersion))
+                                showOutdatedDialog(latestVersion, version);
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            Logging.logMe(MainActivity.this, ex);
+                        }
+                    });
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    Logging.logMe(MainActivity.this, ex);
+                }
+            });
+        }
+    }
+
+    private void showOutdatedDialog(String latest, String current) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.outdated_aria2)
+                .setMessage(getString(R.string.outdated_aria2_message, latest, current))
+                .setPositiveButton(android.R.string.ok, null);
+
+        CommonUtils.showDialog(this, builder);
     }
 
     @Override

@@ -35,6 +35,11 @@ public class Prefs {
         return prefs.getInt(key.key, fallback);
     }
 
+    public static int getFakeInt(Context context, Keys key, int fallback) {
+        init(context);
+        return Integer.parseInt(prefs.getString(key.key, String.valueOf(fallback)));
+    }
+
     public static void removeFromSet(Context context, Keys key, String value) {
         init(context);
         Set<String> set = new HashSet<>(getSet(context, key, new HashSet<String>()));
@@ -64,9 +69,10 @@ public class Prefs {
         A2_FORCE_ACTION("a2_forceAction"),
         A2_MAIN_FILTERS("a2_mainFilters"),
         A2_ENABLE_NOTIFS("a2_enableNotifications"),
-        A2_UPDATE_INTERVAL("a2_updateInterval"),
+        A2_UPDATE_INTERVAL("a2_updateRate"),
         A2_HIDE_METADATA("a2_hideMetadata"),
         A2_GLOBAL_QUICK_OPTIONS("a2_globalQuickOptions"),
+        A2_CHECK_VERSION("a2_runVersionCheckAtStartup"),
         A2_QUICK_OPTIONS("a2_quickOptions");
         public final String key;
 

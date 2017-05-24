@@ -34,6 +34,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
     public static final String ACTION_SEARCH = "Search torrent";
     private static Tracker tracker;
+    private boolean checkedVersion = false;
 
     @NonNull
     private static Tracker getTracker(Application application) {
@@ -54,6 +55,10 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
                 tracker.send(map);
     }
 
+    public boolean hasCheckedVersion() {
+        return checkedVersion;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -61,7 +66,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
         CommonUtils.setDebug(BuildConfig.DEBUG);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
         FileDownloader.init(getApplicationContext());
-        ErrorHandler.setup(Prefs.getInt(this, Prefs.Keys.A2_UPDATE_INTERVAL, 1000), this);
+        ErrorHandler.setup(Prefs.getFakeInt(this, Prefs.Keys.A2_UPDATE_INTERVAL, 1000), this);
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         tracker = getTracker(this);
@@ -83,5 +88,9 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
         startActivity(new Intent(this, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("showPicker", true));
+    }
+
+    public void setHasCheckedVersion(boolean checkedVersion) {
+        this.checkedVersion = checkedVersion;
     }
 }
