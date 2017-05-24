@@ -135,8 +135,8 @@
     <string name="hideLinkedMetadata">Hide linked meta-data</string>
     <string name="visibleMetadata">Linked meta-data visible</string>
     <string name="hiddenMetadata">Linked meta-data hidden</string>
-    <string name="updateRate">Update rate</string>
-    <string name="updateRateSummary">Refreshing timeout in seconds</string>
+    <string name="refreshRate">Refresh rate</string>
+    <string name="refreshRateSummary">Refreshing timeout in seconds</string>
     <string name="reloadList">Reload list rate</string>
     <string name="reloadListSummary">Reloading timeout of the download list in seconds</string>
     <string name="forceAction">Force action if it fails</string>

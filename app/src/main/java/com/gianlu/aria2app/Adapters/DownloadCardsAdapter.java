@@ -179,43 +179,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
-            Download item = (Download) payloads.get(0);
-
-            if (item.status == Download.Status.ACTIVE) {
-                LineData data = holder.detailsChart.getData();
-                if (data == null) {
-                    Utils.setupChart(holder.detailsChart, true);
-                    data = holder.detailsChart.getData();
-                }
-
-                if (data != null) {
-                    int pos = data.getEntryCount() / 2 + 1;
-                    data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                    data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
-                    data.notifyDataChanged();
-                    holder.detailsChart.notifyDataSetChanged();
-
-                    holder.detailsChart.setVisibleXRangeMaximum(90);
-                    holder.detailsChart.moveViewToX(pos - 91);
-                }
-            } else {
-                holder.detailsChart.clear();
-                holder.detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
-            }
-
-            holder.donutProgress.setProgress(item.getProgress());
-            holder.downloadName.setText(item.getName());
-            if (item.status == Download.Status.ERROR)
-                holder.downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
-            else
-                holder.downloadStatus.setText(item.status.getFormal(context, true));
-            holder.downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed, false));
-            holder.downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
-
-            holder.detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength, false));
-            holder.detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength, false));
-
-            setupActions(holder, item);
+            holder.update((Download) payloads.get(0));
         }
     }
 
@@ -299,6 +263,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         });
 
         setupActions(holder, item);
+
+        holder.update(item);
     }
 
     @Override
@@ -373,6 +339,44 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             detailsTotalLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsTotalLength);
             detailsCompletedLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsCompletedLength);
             detailsUploadLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsUploadLength);
+        }
+
+        public void update(Download item) {
+            if (item.status == Download.Status.ACTIVE) {
+                LineData data = detailsChart.getData();
+                if (data == null) {
+                    Utils.setupChart(detailsChart, true);
+                    data = detailsChart.getData();
+                }
+
+                if (data != null) {
+                    int pos = data.getEntryCount() / 2 + 1;
+                    data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                    data.notifyDataChanged();
+                    detailsChart.notifyDataSetChanged();
+
+                    detailsChart.setVisibleXRangeMaximum(90);
+                    detailsChart.moveViewToX(pos - 91);
+                }
+            } else {
+                detailsChart.clear();
+                detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
+            }
+
+            donutProgress.setProgress(item.getProgress());
+            downloadName.setText(item.getName());
+            if (item.status == Download.Status.ERROR)
+                downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
+            else
+                downloadStatus.setText(item.status.getFormal(context, true));
+            downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed, false));
+            downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
+
+            detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength, false));
+            detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength, false));
+
+            setupActions(this, item);
         }
     }
 }

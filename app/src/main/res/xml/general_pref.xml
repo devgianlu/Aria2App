@@ -12,8 +12,8 @@
         android:entries="@array/updateRate"
         android:entryValues="@array/updateRateValue"
         android:key="a2_updateRate"
-        android:summary="@string/updateRateSummary"
-        android:title="@string/updateRate" />
+        android:summary="@string/refreshRateSummary"
+        android:title="@string/refreshRate" />
 
     <CheckBoxPreference
         android:defaultValue="true"
