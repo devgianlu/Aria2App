@@ -7,9 +7,8 @@ import android.view.View;
 
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -27,13 +26,19 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
     private final IEdit editListener;
+    private final ExecutorService service = Executors.newCachedThreadPool();
+    private final Handler handler;
 
     public CustomProfilesAdapter(Context context, List<UserProfile> profiles, IAdapter<UserProfile> listener, boolean black, @Nullable IEdit editListener) {
         super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, black, listener);
         this.editListener = editListener;
+        this.handler = new Handler(context.getMainLooper());
     }
 
     @Override
@@ -49,21 +54,21 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
         holder.name.setText(profile.getProfileName());
         holder.secondary.setText(profile.getFullServerAddress());
 
-        if (profile.latency != -1) {
+        if (profile.status.latency != -1) {
             holder.ping.setVisibility(View.VISIBLE);
-            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", profile.latency));
+            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", profile.status.latency));
         } else {
             holder.ping.setVisibility(View.GONE);
         }
 
-        if (profile.status == BaseProfile.Status.UNKNOWN) {
+        if (profile.status.status == BaseProfile.Status.UNKNOWN) {
             holder.loading.setVisibility(View.VISIBLE);
             holder.status.setVisibility(View.GONE);
         } else {
             holder.loading.setVisibility(View.GONE);
             holder.status.setVisibility(View.VISIBLE);
 
-            switch (profile.status) {
+            switch (profile.status.status) {
                 case ONLINE:
                     holder.status.setImageResource(black ? R.drawable.ic_done_black_48dp : R.drawable.ic_done_white_48dp);
                     break;
@@ -92,85 +97,43 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
         });
     }
 
+    private void notifyItemChanged(UserProfile profile, BaseProfile.TestStatus status) {
+        profile.setStatus(status);
+
+        final int pos = indexOf(profile);
+        if (pos != -1) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemChanged(pos);
+                }
+            });
+        }
+    }
+
+    private int indexOf(UserProfile match) {
+        for (int i = 0; i < profiles.size(); i++) {
+            UserProfile profile = profiles.get(i);
+            if (Objects.equals(profile.serverAddr, match.serverAddr)
+                    && Objects.equals(profile.serverPort, match.serverPort)
+                    && Objects.equals(profile.authMethod, match.authMethod))
+                return i;
+        }
+
+        return -1;
+    }
+
     @Override
-    protected void runTest(int pos, final IFinished handler) {
+    protected void runTest(int pos) {
         final UserProfile profile = getItem(pos);
 
         switch (profile.connectionMethod) {
             case HTTP:
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            HttpURLConnection conn;
-                            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
-                                conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
-                            else
-                                conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), Utils.readyCertificate(context, profile));
-
-                            long start = System.currentTimeMillis();
-                            conn.connect();
-
-                            if (conn.getResponseCode() == 400) {
-                                profile.setStatus(BaseProfile.Status.ONLINE);
-                                profile.setLatency(System.currentTimeMillis() - start);
-
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        notifyDataSetChanged();
-                                    }
-                                });
-
-                                if (handler != null) handler.onFinished();
-                            } else {
-                                profile.setStatus(BaseProfile.Status.OFFLINE);
-
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        notifyDataSetChanged();
-                                    }
-                                });
-
-                                if (handler != null) handler.onFinished();
-                            }
-                        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
-                            profile.setStatus(BaseProfile.Status.ERROR);
-
-                            new Handler(context.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    notifyDataSetChanged();
-                                }
-                            });
-
-                            if (handler != null) handler.onFinished();
-                        }
-                    }
-                }).start();
+                service.execute(new HttpProfileTester(profile));
                 break;
+            default:
             case WEBSOCKET:
-                try {
-                    WebSocket webSocket;
-                    if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
-                        webSocket = WebSocketing.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, Utils.readyCertificate(context, profile));
-                    else
-                        webSocket = WebSocketing.readyWebSocket(profile.buildWebSocketUrl(), Utils.readyCertificate(context, profile));
-
-                    webSocket.addListener(new StatusWebSocketHandler(profile, handler)).connectAsynchronously();
-                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
-                    profile.setStatus(BaseProfile.Status.ERROR);
-
-                    new Handler(context.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyDataSetChanged();
-                        }
-                    });
-
-                    if (handler != null) handler.onFinished();
-                }
+                service.execute(new WsProfileTester(profile));
                 break;
         }
     }
@@ -179,105 +142,97 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
         void onEditProfile(UserProfile profile);
     }
 
-    private class StatusWebSocketHandler extends WebSocketAdapter {
+    private class HttpProfileTester implements Runnable {
         private final UserProfile profile;
-        private final IFinished handler;
-        private long startTime;
 
-        StatusWebSocketHandler(UserProfile profile, @Nullable IFinished handler) {
+        public HttpProfileTester(UserProfile profile) {
             this.profile = profile;
-            this.handler = handler;
+        }
+
+        @Override
+        public void run() {
+            try {
+                HttpURLConnection conn;
+                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
+                    conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
+                else
+                    conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), NetUtils.readyCertificate(context, profile));
+
+                long start = System.currentTimeMillis();
+                conn.connect();
+
+                if (conn.getResponseCode() == 400) {
+                    notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ONLINE, System.currentTimeMillis() - start));
+                } else {
+                    notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
+                }
+            } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
+                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+            }
+        }
+    }
+
+    private class WsProfileTester extends WebSocketAdapter implements Runnable {
+        private final UserProfile profile;
+        private long pingTime;
+
+        public WsProfileTester(UserProfile profile) {
+            this.profile = profile;
+        }
+
+        @Override
+        public void run() {
+            try {
+                WebSocket webSocket;
+                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
+                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
+                else
+                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), NetUtils.readyCertificate(context, profile));
+
+                webSocket.addListener(this).connectAsynchronously();
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
+                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+            }
         }
 
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-            profile.setStatus(BaseProfile.Status.ONLINE);
+            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ONLINE));
 
-            new Handler(context.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
-
-            if (handler != null) handler.onFinished();
-
-            startTime = System.currentTimeMillis();
+            pingTime = System.currentTimeMillis();
             websocket.sendPing();
         }
 
         @Override
         public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-            profile.setLatency(System.currentTimeMillis() - startTime);
-
-            new Handler(context.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
+            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ONLINE, System.currentTimeMillis() - pingTime));
         }
 
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-            profile.setStatus(BaseProfile.Status.OFFLINE);
-
-            new Handler(context.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
-
-            if (handler != null) handler.onFinished();
+            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
         }
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            profile.setStatus(BaseProfile.Status.ERROR);
-
-            new Handler(context.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
-
-            if (handler != null) handler.onFinished();
+            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
         }
 
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
             if (exception.getCause() instanceof ConnectException)
-                profile.setStatus(BaseProfile.Status.OFFLINE);
+                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
             else if (exception.getCause() instanceof SocketTimeoutException)
-                profile.setStatus(BaseProfile.Status.OFFLINE);
+                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
             else
-                profile.setStatus(BaseProfile.Status.ERROR);
-
-            new Handler(context.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
-
-            if (handler != null) handler.onFinished();
+                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
         }
 
         @Override
         public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-            if (closedByServer) profile.setStatus(BaseProfile.Status.ERROR);
-            else profile.setStatus(BaseProfile.Status.OFFLINE);
-
-            new Handler(context.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
-
-            if (handler != null) handler.onFinished();
+            if (closedByServer)
+                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+            else notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
         }
     }
 }

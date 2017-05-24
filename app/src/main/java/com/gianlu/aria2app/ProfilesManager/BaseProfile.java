@@ -8,25 +8,22 @@ import java.io.Serializable;
 public abstract class BaseProfile implements Serializable {
     public final String id;
     public final String name;
-    public long latency = -1;
-    public Status status = Status.UNKNOWN;
+    public TestStatus status;
 
     public BaseProfile(String name) {
         this.id = ProfilesManager.getId(name);
         this.name = name;
+        this.status = new TestStatus(Status.UNKNOWN);
     }
 
     public BaseProfile(JSONObject obj) throws JSONException {
         this.name = obj.getString("name");
         this.id = ProfilesManager.getId(name);
+        this.status = new TestStatus(Status.UNKNOWN);
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(TestStatus status) {
         this.status = status;
-    }
-
-    public void setLatency(long latency) {
-        this.latency = latency;
     }
 
     public enum Status {
@@ -34,5 +31,20 @@ public abstract class BaseProfile implements Serializable {
         ERROR,
         UNKNOWN,
         ONLINE
+    }
+
+    public static class TestStatus {
+        public final long latency;
+        public final Status status;
+
+        public TestStatus(Status status, long latency) {
+            this.latency = latency;
+            this.status = status;
+        }
+
+        public TestStatus(Status status) {
+            this.latency = -1;
+            this.status = status;
+        }
     }
 }

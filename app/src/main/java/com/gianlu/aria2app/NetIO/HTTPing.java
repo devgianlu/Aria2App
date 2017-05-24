@@ -10,7 +10,6 @@ import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
-import com.gianlu.aria2app.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +40,7 @@ public class HTTPing extends AbstractClient {
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         profile = ProfilesManager.get(context).getCurrentAssert();
-        sslContext = Utils.readySSLContext(Utils.readyCertificate(context));
+        sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context));
     }
 
     public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException {
@@ -59,7 +58,7 @@ public class HTTPing extends AbstractClient {
                     return true;
                 }
             });
-            conn.setSSLSocketFactory(Utils.readySSLContext(ca).getSocketFactory());
+            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
             conn.setConnectTimeout(5000);
             return conn;
         } else {
@@ -79,7 +78,7 @@ public class HTTPing extends AbstractClient {
                     return true;
                 }
             });
-            conn.setSSLSocketFactory(Utils.readySSLContext(ca).getSocketFactory());
+            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
             conn.setConnectTimeout(5000);
             conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
             return conn;

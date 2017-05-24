@@ -33,26 +33,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.Objects;
 import java.util.Random;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
@@ -140,39 +127,6 @@ public class Utils {
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set.setDrawFilled(false);
         return set;
-    }
-
-    public static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
-
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.getTrustManagers(), null);
-
-        return context;
-    }
-
-    @Nullable
-    public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
-        return readyCertificate(context, ProfilesManager.get(context).getCurrent());
-    }
-
-    @Nullable
-    public static Certificate readyCertificate(Context context, UserProfile profile) throws CertificateException, FileNotFoundException {
-        if (!profile.serverSSL || profile.certificatePath == null || profile.certificatePath.isEmpty())
-            return null;
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            return null;
-
-        CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return factory.generateCertificate(new FileInputStream(profile.certificatePath));
     }
 
     public static JSONArray readyParams(Context context) {

@@ -24,7 +24,6 @@ import com.gianlu.commonutils.Logging;
 
 import java.util.Objects;
 
-// TODO: Change picker label when receiving share Intent
 public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
     private LinearLayout connecting;
@@ -176,7 +175,7 @@ public class LoadingActivity extends AppCompatActivity {
         });
 
         pickerList.setAdapter(adapter);
-        adapter.startProfilesTest(null);
+        adapter.startProfilesTest();
     }
 
     private void goTo(Class goTo) {

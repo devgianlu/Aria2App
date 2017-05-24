@@ -14,11 +14,10 @@ import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 
@@ -119,10 +118,10 @@ public class NotificationService extends IntentService {
 
             WebSocket webSocket;
             try {
-                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP))
-                    webSocket = WebSocketing.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, Utils.readyCertificate(getApplicationContext(), profile));
+                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
+                    webSocket = NetUtils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(getApplicationContext(), profile));
                 else
-                    webSocket = WebSocketing.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, Utils.readyCertificate(getApplicationContext(), profile));
+                    webSocket = NetUtils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, NetUtils.readyCertificate(getApplicationContext(), profile));
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;
@@ -132,7 +131,7 @@ public class NotificationService extends IntentService {
         }
     }
 
-    private enum EVENT {
+    private enum Event {
         START,
         PAUSE,
         STOP,
@@ -141,22 +140,22 @@ public class NotificationService extends IntentService {
         BTCOMPLETE,
         UNKNOWN;
 
-        private static EVENT parseEvent(String event) {
+        private static Event parseEvent(String event) {
             switch (event.replace("aria2.", "")) {
                 case "onDownloadStart":
-                    return EVENT.START;
+                    return Event.START;
                 case "onDownloadPause":
-                    return EVENT.PAUSE;
+                    return Event.PAUSE;
                 case "onDownloadStop":
-                    return EVENT.STOP;
+                    return Event.STOP;
                 case "onDownloadComplete":
-                    return EVENT.COMPLETE;
+                    return Event.COMPLETE;
                 case "onDownloadError":
-                    return EVENT.ERROR;
+                    return Event.ERROR;
                 case "onBtDownloadComplete":
-                    return EVENT.BTCOMPLETE;
+                    return Event.BTCOMPLETE;
                 default:
-                    return EVENT.UNKNOWN;
+                    return Event.UNKNOWN;
             }
         }
     }
@@ -197,7 +196,7 @@ public class NotificationService extends IntentService {
             if (soundEnabled)
                 builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-            switch (EVENT.parseEvent(jResponse.getString("method"))) {
+            switch (Event.parseEvent(jResponse.getString("method"))) {
                 case START:
                     if (!selectedNotifications.contains("START")) return;
                     builder.setContentTitle(getString(R.string.notificationStarted));
