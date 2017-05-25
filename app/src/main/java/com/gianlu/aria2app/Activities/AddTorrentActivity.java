@@ -18,8 +18,10 @@ import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.File;
 import java.util.List;
@@ -117,6 +119,11 @@ public class AddTorrentActivity extends AppCompatActivity {
                 CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
             }
         });
+
+        ThisApplication.sendAnalytics(AddTorrentActivity.this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_NEW_TORRENT)
+                .build());
     }
 
     @Override

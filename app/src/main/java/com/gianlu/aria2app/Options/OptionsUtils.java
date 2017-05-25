@@ -24,9 +24,11 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.Prefs;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
@@ -180,6 +182,11 @@ public class OptionsUtils {
                 pd.dismiss();
             }
         });
+
+        ThisApplication.sendAnalytics(activity, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_CHANGED_DOWNLOAD_OPTIONS)
+                .build());
     }
 
     private static void handleApplyGlobalOptions(final Activity activity, List<Option> options) {
@@ -214,6 +221,11 @@ public class OptionsUtils {
                 pd.dismiss();
             }
         });
+
+        ThisApplication.sendAnalytics(activity, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_CHANGED_GLOBAL_OPTIONS)
+                .build());
     }
 
     private static void showEditOptionDialog(Activity activity, final OptionsAdapter adapter, final Option option) {

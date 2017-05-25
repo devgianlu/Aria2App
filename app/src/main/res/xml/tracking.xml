@@ -7,6 +7,7 @@
     <bool name="ga_anonymizeIp">false</bool>
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
+    <!-- TODO: Change activities in tracking.xml -->
     <screenName name="com.gianlu.aria2app.MainActivity">Screen~Main</screenName>
     <screenName name="com.gianlu.aria2app.PreferencesActivity">Screen~Preferences</screenName>
     <screenName name="com.gianlu.aria2app.Activities.ShareActivity">Screen~Share</screenName>

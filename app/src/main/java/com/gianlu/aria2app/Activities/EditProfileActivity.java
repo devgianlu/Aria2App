@@ -21,8 +21,10 @@ import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
@@ -129,6 +131,11 @@ public class EditProfileActivity extends AppCompatActivity {
         } catch (JSONException | IOException ex) {
             CommonUtils.UIToast(this, Utils.ToastMessages.CANNOT_SAVE_PROFILE, ex);
         }
+
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_NEW_PROFILE)
+                .build());
     }
 
     @Override
@@ -139,6 +146,12 @@ public class EditProfileActivity extends AppCompatActivity {
                 break;
             case R.id.editProfile_delete:
                 if (editProfile == null) break;
+
+                ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                        .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                        .setAction(ThisApplication.ACTION_DELETE_PROFILE)
+                        .build());
+
                 ProfilesManager.get(this).delete(editProfile);
                 onBackPressed();
                 break;
