@@ -30,7 +30,6 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
-import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
@@ -56,7 +55,6 @@ import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
-import com.liulishuo.filedownloader.FileDownloader;
 
 import java.io.File;
 import java.net.URI;
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 refresh();
                 return true;
             case DrawerConst.DIRECT_DOWNLOAD:
-                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
+                // TODO: startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
                 return false;
             case DrawerConst.QUICK_OPTIONS:
                 OptionsUtils.showGlobalDialog(this, true);
@@ -302,13 +300,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (Prefs.getBoolean(this, Prefs.Keys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
         else NotificationService.stop(this);
-
-        FileDownloader.getImpl().bindService(new Runnable() {
-            @Override
-            public void run() {
-                FileDownloader.getImpl().setMaxNetworkThreadCount(3);
-            }
-        });
 
         adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
         list.setAdapter(adapter);

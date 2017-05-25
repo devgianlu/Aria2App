@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -9,6 +10,7 @@ import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
@@ -21,6 +23,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     private final SuperTextView path;
     private final SuperTextView length;
     private final SuperTextView completedLength;
+    private final Button downloadFile;
     private final CheckBox selected;
     private final Download download;
     private final ISheet handler;
@@ -35,6 +38,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
         length = (SuperTextView) content.findViewById(R.id.fileSheet_length);
         completedLength = (SuperTextView) content.findViewById(R.id.fileSheet_completedLength);
         selected = (CheckBox) content.findViewById(R.id.fileSheet_selected);
+        downloadFile = (Button) content.findViewById(R.id.fileSheet_downloadFile);
     }
 
     @Override
@@ -89,6 +93,23 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
         } else {
             selected.setEnabled(false);
         }
+
+        if (download.isMetadata() || !ProfilesManager.get(context).getCurrentAssert().isDirectDownloadEnabled()) {
+            downloadFile.setVisibility(View.GONE);
+        } else {
+            downloadFile.setVisibility(View.VISIBLE);
+            downloadFile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (handler != null) handler.onWantsToDownload(download, item);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
@@ -110,5 +131,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
         void onDeselectedFile(AFile file);
 
         void onExceptionSelectingFile(Exception ex);
+
+        void onWantsToDownload(Download download, AFile file);
     }
 }

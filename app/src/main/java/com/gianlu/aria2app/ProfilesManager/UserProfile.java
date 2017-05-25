@@ -165,8 +165,8 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
         public DirectDownload(JSONObject obj) throws JSONException {
             address = obj.getString("addr");
             auth = obj.getBoolean("auth");
-            username = obj.getString("username");
-            password = obj.getString("password");
+            username = obj.optString("username", null);
+            password = obj.optString("password", null);
         }
 
         public DirectDownload(String address, boolean auth, @Nullable String username, @Nullable String password) {

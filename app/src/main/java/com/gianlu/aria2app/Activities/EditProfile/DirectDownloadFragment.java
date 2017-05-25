@@ -20,6 +20,7 @@ import com.gianlu.aria2app.Utils;
 
 import java.net.URL;
 
+// TODO: Better explanation here
 public class DirectDownloadFragment extends FieldErrorFragment {
     private LinearLayout layout;
     private CheckBox enableDirectDownload;

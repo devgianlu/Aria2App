@@ -279,6 +279,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage NO_FILE_MANAGER = new CommonUtils.ToastMessage("A file manager has not been found!", true);
         public static final CommonUtils.ToastMessage FILE_DESELECTED = new CommonUtils.ToastMessage("File deselected for download.", false);
         public static final CommonUtils.ToastMessage FILE_SELECTED = new CommonUtils.ToastMessage("File selected for download.", false);
+        public static final CommonUtils.ToastMessage DOWNLOAD_FILE_STARTED = new CommonUtils.ToastMessage("Download started!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

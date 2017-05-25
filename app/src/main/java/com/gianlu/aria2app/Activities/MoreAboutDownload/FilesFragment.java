@@ -1,10 +1,13 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,8 +24,11 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.UpdateUI;
 import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
+import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
+import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManagerException;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -194,16 +200,75 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     public void onSelectedFile(AFile file) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_SELECTED, file.getName());
         adapter.notifyItemChanged(file);
+        if (sheet != null) sheet.collapse();
     }
 
     @Override
     public void onDeselectedFile(AFile file) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_DESELECTED, file.getName());
         adapter.notifyItemChanged(file);
+        if (sheet != null) sheet.collapse();
     }
 
     @Override
     public void onExceptionSelectingFile(Exception ex) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, ex);
+        if (sheet != null) sheet.collapse();
+    }
+
+    @Override
+    public void onWantsToDownload(Download download, final AFile file) {
+        JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(getContext());
+        } catch (JTA2InitializingException ex) {
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+            return;
+        }
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
+        CommonUtils.showDialog(getActivity(), pd);
+
+        jta2.getFiles(download.gid, new JTA2.IFiles() {
+            @Override
+            public void onFiles(List<AFile> files) {
+                startDownload(AFile.find(files, file));
+                pd.dismiss();
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+                pd.dismiss();
+            }
+        });
+    }
+
+    private void realStartDownload(AFile file) {
+        try {
+            DownloadsManager.get(getContext()).startDownload(getContext(), file);
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DOWNLOAD_FILE_STARTED);
+        } catch (DownloadsManagerException ex) {
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+        }
+    }
+
+    private void startDownload(final AFile file) {
+        if (file.completed()) {
+            realStartDownload(file);
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.downloadIncomplete)
+                    .setMessage(R.string.downloadIncompleteMessage)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            realStartDownload(file);
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null);
+
+            CommonUtils.showDialog(getActivity(), builder);
+        }
     }
 }
