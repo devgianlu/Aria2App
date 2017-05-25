@@ -32,7 +32,7 @@ import com.gianlu.commonutils.MessageLayout;
 
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet {
     private UpdateUI updater;
     private CoordinatorLayout layout;
     private RecyclerView list;
@@ -96,7 +96,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         adapter = new FilesAdapter(getContext(), colorRes, this);
         list.setAdapter(adapter);
 
-        sheet = new FileBottomSheet(layout, download);
+        sheet = new FileBottomSheet(layout, download, this);
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -188,5 +188,22 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public void onDirSelected(TreeNode node) {
         if (adapter != null) adapter.rebaseTo(node);
+    }
+
+    @Override
+    public void onSelectedFile(AFile file) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_SELECTED, file.getName());
+        adapter.notifyItemChanged(file);
+    }
+
+    @Override
+    public void onDeselectedFile(AFile file) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_DESELECTED, file.getName());
+        adapter.notifyItemChanged(file);
+    }
+
+    @Override
+    public void onExceptionSelectingFile(Exception ex) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, ex);
     }
 }

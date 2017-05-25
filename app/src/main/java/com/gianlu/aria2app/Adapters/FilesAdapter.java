@@ -42,14 +42,16 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return;
         }
 
-        for (AFile file : files) {
-            int pos = currentNode.indexOfObj(file);
-            if (pos != -1) {
-                TreeNode newNode = currentNodes.get(pos + currentNode.dirs.size()).update(file);
-                currentNode.files.set(pos, newNode);
-                currentNodes.set(pos + currentNode.dirs.size(), newNode);
-                notifyItemChanged(pos, file);
-            }
+        for (AFile file : files) notifyItemChanged(file);
+    }
+
+    public void notifyItemChanged(AFile file) {
+        int pos = currentNode.indexOfObj(file);
+        if (pos != -1) {
+            TreeNode newNode = currentNodes.get(pos + currentNode.dirs.size()).update(file);
+            currentNode.files.set(pos, newNode);
+            currentNodes.set(pos + currentNode.dirs.size(), newNode);
+            notifyItemChanged(pos + currentNode.dirs.size(), file);
         }
     }
 
@@ -74,6 +76,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 castHolder.progressBar.setProgress((int) payload.getProgress());
                 castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", payload.getProgress()));
+                castHolder.updateStatus(payload);
             }
         }
     }
@@ -113,6 +116,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             castHolder.name.setText(file.name);
             castHolder.progressBar.setProgress((int) file.obj.getProgress());
             castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", file.obj.getProgress()));
+            castHolder.updateStatus(file.obj);
         } else if (holder instanceof DirViewHolder) {
             DirViewHolder castHolder = (DirViewHolder) holder;
             TreeNode dir = currentNodes.get(position);
@@ -178,6 +182,16 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             progressBar.setProgressTintList(ColorStateList.valueOf(color));
             percentage = (SuperTextView) itemView.findViewById(R.id.fileItem_percentage);
             status = (ImageView) itemView.findViewById(R.id.fileItem_status);
+        }
+
+        public void updateStatus(AFile file) {
+            if (file.completed()) {
+                status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
+            } else if (file.selected) {
+                status.setImageResource(R.drawable.ic_cloud_download_black_48dp);
+            } else {
+                status.setImageResource(R.drawable.ic_cloud_off_black_48dp);
+            }
         }
     }
 }

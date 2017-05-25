@@ -142,6 +142,10 @@ public class Download implements Serializable {
         return following != null;
     }
 
+    public boolean supportsDeselectingFiles() {
+        return isTorrent() && files.size() > 1;
+    }
+
     public enum Status {
         ACTIVE,
         PAUSED,

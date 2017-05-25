@@ -14,9 +14,9 @@ public class AFile implements Serializable {
     public final long completedLength;
     public final long length;
     public final String path;
-    public final boolean selected;
     public final int index;
     public final HashMap<Status, String> uris;
+    public boolean selected;
 
     public AFile(JSONObject obj) {
         index = Integer.parseInt(obj.optString("index", "0"));
@@ -64,6 +64,10 @@ public class AFile implements Serializable {
         String relPath = path.replace(dir, "");
         if (relPath.startsWith("/")) return relPath;
         else return "/" + relPath;
+    }
+
+    public boolean completed() {
+        return completedLength == length;
     }
 
     public enum Status {

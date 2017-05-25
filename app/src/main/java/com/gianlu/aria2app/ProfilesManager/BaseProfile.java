@@ -33,7 +33,7 @@ public abstract class BaseProfile implements Serializable {
         ONLINE
     }
 
-    public static class TestStatus {
+    public static class TestStatus implements Serializable {
         public final long latency;
         public final Status status;
 

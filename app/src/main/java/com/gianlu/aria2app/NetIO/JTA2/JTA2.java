@@ -285,7 +285,7 @@ public class JTA2 {
         });
     }
 
-    private void performIndexesOperation(Download download, String[] indexes, AFile file, boolean select, final IChangeSelection handler) {
+    private void performIndexesOperation(Download download, String[] indexes, final AFile file, boolean select, final IChangeSelection handler) {
         if (select) {
             if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1) {
                 String[] newIndexes = Arrays.copyOf(indexes, indexes.length + 1);
@@ -297,6 +297,7 @@ public class JTA2 {
                 changeOption(download.gid, map, new ISuccess() {
                     @Override
                     public void onSuccess() {
+                        file.selected = true;
                         handler.onChangedSelection(true);
                     }
 
@@ -306,6 +307,7 @@ public class JTA2 {
                     }
                 });
             } else {
+                file.selected = true;
                 handler.onChangedSelection(true);
             }
         } else {
@@ -325,7 +327,8 @@ public class JTA2 {
                 changeOption(download.gid, map, new ISuccess() {
                     @Override
                     public void onSuccess() {
-                        handler.onChangedSelection(true);
+                        file.selected = false;
+                        handler.onChangedSelection(false);
                     }
 
                     @Override
@@ -334,24 +337,24 @@ public class JTA2 {
                     }
                 });
             } else {
+                file.selected = false;
                 handler.onChangedSelection(false);
             }
         }
     }
 
-    // FIXME: Change selection not working for torrent (?!)
     public void changeSelection(final Download download, final AFile file, final boolean select, final IChangeSelection handler) {
         getOption(download.gid, new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
                 String indexes = options.get("select-file");
-                if (indexes == null || indexes.isEmpty()) {
+                if (indexes == null) {
                     getFiles(download.gid, new IFiles() {
                         @Override
                         public void onFiles(List<AFile> files) {
                             String[] indexes = new String[files.size()];
-                            for (int i = 0; i <= files.size(); i++)
-                                indexes[i] = String.valueOf(i + 1);
+                            for (int i = 0; i < files.size(); i++)
+                                indexes[i] = String.valueOf(files.get(i).index);
 
                             performIndexesOperation(download, indexes, file, select, handler);
                         }

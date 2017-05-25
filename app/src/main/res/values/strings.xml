@@ -295,6 +295,7 @@
     <string name="pickProfile_share">Choose a profile to start the download on:</string>
     <string name="outdated_aria2">Outdated aria2 version</string>
     <string name="outdated_aria2_message">Your version of aria2 is outdated. Aria2App is developed to run on the latest aria2 version and so you should update it. You can disable this message in the preferences. \n\nCurrent version: %1$s \nLatest version: %2$s</string>
+    <string name="selectFile_help">File can be selected or deselected from download only on multi-file torrents.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

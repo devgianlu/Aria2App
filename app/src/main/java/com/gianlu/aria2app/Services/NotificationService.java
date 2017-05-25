@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
+import com.gianlu.aria2app.Prefs;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
@@ -41,16 +42,12 @@ public class NotificationService extends IntentService {
     }
 
     public static Intent createStartIntent(Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
         ArrayList<UserProfile> profiles = new ArrayList<>();
-        for (UserProfile profile : ProfilesManager.get(context).getProfiles()) {
-            if (!profile.notificationsEnabled) continue;
-            profiles.add(profile);
-        }
+        for (UserProfile profile : ProfilesManager.get(context).getProfiles())
+            if (profile.notificationsEnabled) profiles.add(profile);
 
         return new Intent(context, NotificationService.class)
-                .putExtra("foreground", sharedPreferences.getBoolean("a2_enablePersistent", true))
+                .putExtra("foreground", Prefs.getBoolean(context, Prefs.Keys.A2_PERSISTENT_NOTIFS, true))
                 .putExtra("profiles", profiles);
     }
 

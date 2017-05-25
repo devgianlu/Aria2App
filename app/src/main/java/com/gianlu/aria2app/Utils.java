@@ -277,6 +277,8 @@ public class Utils {
         public static final CommonUtils.ToastMessage ONLY_ONE_TORRENT = new CommonUtils.ToastMessage("When adding torrent magnets only one link should be added at once.", false);
         public static final CommonUtils.ToastMessage NO_BASE64_FILE = new CommonUtils.ToastMessage("No file selected!", false);
         public static final CommonUtils.ToastMessage NO_FILE_MANAGER = new CommonUtils.ToastMessage("A file manager has not been found!", true);
+        public static final CommonUtils.ToastMessage FILE_DESELECTED = new CommonUtils.ToastMessage("File deselected for download.", false);
+        public static final CommonUtils.ToastMessage FILE_SELECTED = new CommonUtils.ToastMessage("File selected for download.", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
