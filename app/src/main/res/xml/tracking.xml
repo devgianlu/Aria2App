@@ -7,21 +7,20 @@
     <bool name="ga_anonymizeIp">false</bool>
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
-    <!-- TODO: Change activities in tracking.xml -->
+    <screenName name="com.gianlu.aria2app.LoadingActivity">Screen~Loading</screenName>
     <screenName name="com.gianlu.aria2app.MainActivity">Screen~Main</screenName>
     <screenName name="com.gianlu.aria2app.PreferencesActivity">Screen~Preferences</screenName>
-    <screenName name="com.gianlu.aria2app.Activities.ShareActivity">Screen~Share</screenName>
     <screenName name="com.gianlu.commonutils.LogsActivity">Screen~Logs</screenName>
     <screenName name="com.gianlu.aria2app.Activities.MoreAboutDownloadActivity">
         Screen~MoreAboutDownload
     </screenName>
-    <screenName name="com.gianlu.aria2app.TerminalActivity">Screen~Terminal</screenName>
-    <screenName name="com.gianlu.aria2app.ProfilesManager.AddProfileActivity">Screen~AddProfile
+    <screenName name="com.gianlu.aria2app.Activities.EditProfileActivity">Screen~EditProfile
     </screenName>
     <screenName name="com.gianlu.aria2app.Activities.AddUriActivity">Screen~AddURI</screenName>
     <screenName name="com.gianlu.aria2app.Activities.AddTorrentActivity">Screen~AddTorrent
     </screenName>
-    <screenName name="com.gianlu.aria2app.OldPreferencesActivity">Screen~Settings</screenName>
+    <screenName name="com.gianlu.aria2app.Activities.AddMetalinkActivity">Screen~AddMetalink
+    </screenName>
     <screenName name="com.gianlu.aria2app.Activities.SearchActivity">Screen~SearchTorrent
     </screenName>
     <screenName name="com.gianlu.aria2app.Activities.DirectDownloadActivity">Screen~DirectDownload
