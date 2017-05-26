@@ -34,6 +34,7 @@ import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
+import com.gianlu.aria2app.Adapters.Sorting.SortingArrayList;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
@@ -505,22 +506,22 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         clicked.setChecked(true);
         switch (clicked.getItemId()) {
             case R.id.mainSort_status:
-                adapter.sortBy(DownloadCardsAdapter.SortBy.STATUS);
+                adapter.sortBy(SortingArrayList.SortBy.STATUS);
                 break;
             case R.id.mainSort_progress:
-                adapter.sortBy(DownloadCardsAdapter.SortBy.PROGRESS);
+                adapter.sortBy(SortingArrayList.SortBy.PROGRESS);
                 break;
             case R.id.mainSort_downloadSpeed:
-                adapter.sortBy(DownloadCardsAdapter.SortBy.DOWNLOAD_SPEED);
+                adapter.sortBy(SortingArrayList.SortBy.DOWNLOAD_SPEED);
                 break;
             case R.id.mainSort_uploadSpeed:
-                adapter.sortBy(DownloadCardsAdapter.SortBy.UPLOAD_SPEED);
+                adapter.sortBy(SortingArrayList.SortBy.UPLOAD_SPEED);
                 break;
             case R.id.mainSort_length:
-                adapter.sortBy(DownloadCardsAdapter.SortBy.LENGTH);
+                adapter.sortBy(SortingArrayList.SortBy.LENGTH);
                 break;
             case R.id.mainSort_completedLength:
-                adapter.sortBy(DownloadCardsAdapter.SortBy.COMPLETED_LENGTH);
+                adapter.sortBy(SortingArrayList.SortBy.COMPLETED_LENGTH);
                 break;
         }
 

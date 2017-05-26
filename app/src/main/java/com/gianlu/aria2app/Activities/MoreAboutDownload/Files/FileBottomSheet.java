@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -27,11 +28,13 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     private final CheckBox selected;
     private final Download download;
     private final ISheet handler;
+    private final Handler mainHandler;
 
     public FileBottomSheet(View parent, Download download, ISheet handler) {
         super(parent, R.layout.file_sheet);
         this.download = download;
         this.handler = handler;
+        this.mainHandler = new Handler(context.getMainLooper());
 
         index = (SuperTextView) content.findViewById(R.id.fileSheet_index);
         path = (SuperTextView) content.findViewById(R.id.fileSheet_path);

@@ -115,9 +115,9 @@
     <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a>. This will require the permission to write to the external storage.</string>
+    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a>. The address must be pointing to a directory listing of the aria2 download directory, any path added to the address will be ignored. This will require the permission to write to the external storage.</string>
     <string name="directDownload_addrHint">http://127.0.0.1:6801/</string>
-    <string name="directDownload_addrHelp">The address must be pointing to a directory listing of the aria2 download directory.</string>
+    <string name="directDownload_addrHelp"></string>
     <string name="username">Username</string>
     <string name="directDownload_usernameHint">myusername</string>
     <string name="password">Password</string>

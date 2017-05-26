@@ -88,6 +88,14 @@ public class Download implements Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Download download = (Download) o;
+        return gid.equals(download.gid);
+    }
+
     public float shareRatio() {
         if (completedLength == 0) return 0f;
         return ((float) uploadLength) / ((float) completedLength);

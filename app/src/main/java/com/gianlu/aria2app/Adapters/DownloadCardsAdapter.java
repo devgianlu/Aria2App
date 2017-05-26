@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Adapters;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.gianlu.aria2app.Adapters.Sorting.SortingArrayList;
 import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -27,11 +29,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-// FIXME: Sorting
 public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdapter.DownloadViewHolder> {
     private final Context context;
     private final List<Download> originalObjs;
-    private final List<Download> objs;
+    private final SortingArrayList objs;
     private final IAdapter handler;
     private final List<Download.Status> filters;
     private final LayoutInflater inflater;
@@ -39,7 +40,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
     public DownloadCardsAdapter(Context context, List<Download> objs, IAdapter handler) {
         this.context = context;
         this.originalObjs = objs;
-        this.objs = new ArrayList<>(objs);
+        this.objs = new SortingArrayList(objs);
         this.handler = handler;
         this.filters = new ArrayList<>();
         this.inflater = LayoutInflater.from(context);
@@ -48,28 +49,8 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         if (handler != null) handler.onItemCountUpdated(objs.size());
     }
 
-    public void sortBy(SortBy sorting) {
-        switch (sorting) {
-            case STATUS:
-                Collections.sort(objs, new Download.StatusComparator());
-                break;
-            case PROGRESS:
-                Collections.sort(objs, new Download.ProgressComparator());
-                break;
-            case DOWNLOAD_SPEED:
-                Collections.sort(objs, new Download.DownloadSpeedComparator());
-                break;
-            case UPLOAD_SPEED:
-                Collections.sort(objs, new Download.UploadSpeedComparator());
-                break;
-            case COMPLETED_LENGTH:
-                Collections.sort(objs, new Download.CompletedLengthComparator());
-                break;
-            case LENGTH:
-                Collections.sort(objs, new Download.LengthComparator());
-                break;
-        }
-
+    public void sortBy(SortingArrayList.SortBy sorting) {
+        objs.sort(sorting);
         notifyDataSetChanged();
     }
 
@@ -100,6 +81,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         return -1;
     }
 
+    // FIXME: Mhh
     public void notifyItemChanged(Download payload) {
         int pos = indexOf(payload.gid);
         int realPos = originalIndexOf(payload.gid);
@@ -108,9 +90,10 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
             processFilters();
             if (handler != null) handler.onItemCountUpdated(objs.size());
         } else {
-            if (pos != -1) objs.set(pos, payload);
+            Pair<Integer, Integer> moved = objs.addAndSort(payload);
+            if (Objects.equals(moved.first, moved.second)) notifyItemChanged(moved.first);
+            else notifyItemMoved(moved.first, moved.second);
             if (realPos != -1) originalObjs.set(realPos, payload);
-            super.notifyItemChanged(pos, payload);
         }
     }
 
@@ -276,15 +259,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         filters.clear();
         filters.addAll(toApplyFilters);
         processFilters();
-    }
-
-    public enum SortBy {
-        STATUS,
-        PROGRESS,
-        DOWNLOAD_SPEED,
-        UPLOAD_SPEED,
-        COMPLETED_LENGTH,
-        LENGTH
     }
 
     public interface IAdapter {
