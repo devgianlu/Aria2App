@@ -1,6 +1,9 @@
 *.iml
 *.apk
 .gradle
+gradlew
+gradlew.bat
+/gradle
 /.idea
 /local.properties
 /.idea/workspace.xml
