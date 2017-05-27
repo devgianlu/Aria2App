@@ -11,11 +11,12 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-// FIXME: Handle item removed
+// TODO: Sorting
 public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> {
     private final List<Peer> peers;
     private final IAdapter listener;
@@ -27,6 +28,15 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
         this.listener = listener;
 
         if (listener != null) listener.onItemCountUpdated(peers.size());
+    }
+
+    // FIXME: Mhh
+    private static List<Peer> findMissingItems(List<Peer> oldItems, List<Peer> newItems) {
+        List<Peer> missingItems = new ArrayList<>();
+        for (Peer oldItem : oldItems)
+            if (!newItems.contains(oldItem))
+                missingItems.add(oldItem);
+        return missingItems;
     }
 
     public void sort(SortBy sortBy) {
@@ -99,7 +109,16 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
     }
 
     public void notifyItemsChanged(List<Peer> peers) {
+        for (Peer peer : findMissingItems(this.peers, peers)) notifyItemRemoved(peer);
         for (Peer peer : peers) notifyItemChanged(peer);
+    }
+
+    private void notifyItemRemoved(Peer peer) {
+        int pos = peers.indexOf(peer);
+        if (pos != -1) {
+            peers.remove(pos);
+            notifyItemRemoved(pos);
+        }
     }
 
     public enum SortBy {
