@@ -67,6 +67,7 @@ public class Prefs {
     public enum Keys {
         DD_DOWNLOAD_PATH("dd_downloadPath"),
         A2_PERSISTENT_NOTIFS("a2_enablePersistent"),
+        A2_NOTIFS_AT_BOOT("a2_enableNotificationsAtBoot"),
         A2_FORCE_ACTION("a2_forceAction"),
         A2_MAIN_FILTERS("a2_mainFilters"),
         A2_ENABLE_NOTIFS("a2_enableNotifications"),

@@ -41,7 +41,7 @@ public class NotificationService extends IntentService {
         super("Aria2App notification service");
     }
 
-    public static Intent createStartIntent(Context context) {
+    private static Intent createStartIntent(Context context) {
         ArrayList<UserProfile> profiles = new ArrayList<>();
         for (UserProfile profile : ProfilesManager.get(context).getProfiles())
             if (profile.notificationsEnabled) profiles.add(profile);

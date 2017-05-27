@@ -7,6 +7,14 @@
         android:summaryOn="@string/notificationsOn"
         android:title="@string/enableNotifications" />
 
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:dependency="a2_enableNotifications"
+        android:key="a2_enableNotificationsAtBoot"
+        android:summaryOff="@string/notificationsAtBootOff"
+        android:summaryOn="@string/notificationsAtBootOn"
+        android:title="@string/enableNotificationsAtBoot" />
+
     <MultiSelectListPreference
         android:defaultValue="@array/selectedNotificationsValue"
         android:dependency="a2_enableNotifications"
