@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
@@ -11,7 +12,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.Adapters.Sorting.SortingArrayList;
+import com.gianlu.aria2app.Adapters.Sorting.BaseSortingArrayList;
 import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -25,6 +26,7 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -49,7 +51,7 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         if (handler != null) handler.onItemCountUpdated(objs.size());
     }
 
-    public void sortBy(SortingArrayList.SortBy sorting) {
+    public void sortBy(SortBy sorting) {
         objs.sort(sorting);
         notifyDataSetChanged();
     }
@@ -251,12 +253,47 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         processFilters();
     }
 
+    public enum SortBy {
+        STATUS,
+        PROGRESS,
+        DOWNLOAD_SPEED,
+        UPLOAD_SPEED,
+        COMPLETED_LENGTH,
+        LENGTH
+    }
+
     public interface IAdapter {
         void onMoreClick(Download item);
 
         void onItemCountUpdated(int count);
 
         void onMenuItemSelected(Download download, JTA2.DownloadActions action);
+    }
+
+    private static class SortingArrayList extends BaseSortingArrayList<Download, SortBy> {
+        SortingArrayList(List<Download> objs) {
+            super(objs, SortBy.STATUS);
+        }
+
+        @NonNull
+        @Override
+        public Comparator<Download> getComparator(SortBy sorting) {
+            switch (sorting) {
+                default:
+                case STATUS:
+                    return new Download.StatusComparator();
+                case PROGRESS:
+                    return new Download.ProgressComparator();
+                case DOWNLOAD_SPEED:
+                    return new Download.DownloadSpeedComparator();
+                case UPLOAD_SPEED:
+                    return new Download.UploadSpeedComparator();
+                case COMPLETED_LENGTH:
+                    return new Download.CompletedLengthComparator();
+                case LENGTH:
+                    return new Download.LengthComparator();
+            }
+        }
     }
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {

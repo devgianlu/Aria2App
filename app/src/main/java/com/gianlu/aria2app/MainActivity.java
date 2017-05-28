@@ -35,7 +35,6 @@ import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
-import com.gianlu.aria2app.Adapters.Sorting.SortingArrayList;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
@@ -228,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
 
-        adapter.sortBy(SortingArrayList.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, SortingArrayList.SortBy.STATUS.name())));
+        adapter.sortBy(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
     @Override
@@ -435,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (sortingMenu != null) {
             sortingMenu.setGroupCheckable(0, true, true);
 
-            SortingArrayList.SortBy sorting = SortingArrayList.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, SortingArrayList.SortBy.STATUS.name()));
+            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
             MenuItem item;
             switch (sorting) {
                 default:
@@ -540,29 +539,29 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         clicked.setChecked(true);
         switch (clicked.getItemId()) {
             case R.id.mainSort_status:
-                handleSortingReal(SortingArrayList.SortBy.STATUS);
+                handleSortingReal(DownloadCardsAdapter.SortBy.STATUS);
                 break;
             case R.id.mainSort_progress:
-                handleSortingReal(SortingArrayList.SortBy.PROGRESS);
+                handleSortingReal(DownloadCardsAdapter.SortBy.PROGRESS);
                 break;
             case R.id.mainSort_downloadSpeed:
-                handleSortingReal(SortingArrayList.SortBy.DOWNLOAD_SPEED);
+                handleSortingReal(DownloadCardsAdapter.SortBy.DOWNLOAD_SPEED);
                 break;
             case R.id.mainSort_uploadSpeed:
-                handleSortingReal(SortingArrayList.SortBy.UPLOAD_SPEED);
+                handleSortingReal(DownloadCardsAdapter.SortBy.UPLOAD_SPEED);
                 break;
             case R.id.mainSort_length:
-                handleSortingReal(SortingArrayList.SortBy.LENGTH);
+                handleSortingReal(DownloadCardsAdapter.SortBy.LENGTH);
                 break;
             case R.id.mainSort_completedLength:
-                handleSortingReal(SortingArrayList.SortBy.COMPLETED_LENGTH);
+                handleSortingReal(DownloadCardsAdapter.SortBy.COMPLETED_LENGTH);
                 break;
         }
 
         return true;
     }
 
-    private void handleSortingReal(SortingArrayList.SortBy sorting) {
+    private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {
         if (adapter != null) adapter.sortBy(sorting);
 
         Prefs.putString(this, Prefs.Keys.A2_MAIN_SORTING, sorting.name());
