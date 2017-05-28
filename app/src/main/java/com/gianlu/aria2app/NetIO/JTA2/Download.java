@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Sorting.Filterable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Download implements Serializable {
+public class Download implements Serializable, Filterable<Download.Status> {
     public final String bitfield;
     public final long completedLength;
     public final long length;
@@ -152,6 +153,11 @@ public class Download implements Serializable {
 
     public boolean supportsDeselectingFiles() {
         return isTorrent() && files.size() > 1;
+    }
+
+    @Override
+    public Status getFilterable() {
+        return status;
     }
 
     public enum Status {

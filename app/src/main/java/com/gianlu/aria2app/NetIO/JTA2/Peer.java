@@ -2,6 +2,9 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.support.annotation.Nullable;
 
+import com.gianlu.commonutils.Sorting.Filterable;
+import com.gianlu.commonutils.Sorting.NotFilterable;
+
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -9,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Peer implements Serializable {
+public class Peer implements Serializable, Filterable<NotFilterable> {
     public final String peerId;
     public final boolean amChoking;
     public final boolean peerChoking;
@@ -47,6 +50,11 @@ public class Peer implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Peer peer = (Peer) o;
         return peerId.equals(peer.peerId);
+    }
+
+    @Override
+    public NotFilterable getFilterable() {
+        return new NotFilterable();
     }
 
     public static class DownloadSpeedComparator implements Comparator<Peer> {

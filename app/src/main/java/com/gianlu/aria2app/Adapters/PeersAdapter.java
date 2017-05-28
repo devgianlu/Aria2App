@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,48 +10,21 @@ import android.view.ViewGroup;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Sorting.NotFilterable;
+import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.SuperTextView;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
-// TODO: Sorting
-public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> {
-    private final List<Peer> peers;
+public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
     private final IAdapter listener;
     private final LayoutInflater inflater;
 
     public PeersAdapter(Context context, List<Peer> peers, IAdapter listener) {
-        this.peers = peers;
+        super(peers, SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
-
-        if (listener != null) listener.onItemCountUpdated(peers.size());
-    }
-
-    // FIXME: Mhh
-    private static List<Peer> findMissingItems(List<Peer> oldItems, List<Peer> newItems) {
-        List<Peer> missingItems = new ArrayList<>();
-        for (Peer oldItem : oldItems)
-            if (!newItems.contains(oldItem))
-                missingItems.add(oldItem);
-        return missingItems;
-    }
-
-    public void sort(SortBy sortBy) {
-        switch (sortBy) {
-            default:
-            case DOWNLOAD_SPEED:
-                Collections.sort(peers, new Peer.DownloadSpeedComparator());
-                break;
-            case UPLOAD_SPEED:
-                Collections.sort(peers, new Peer.UploadSpeedComparator());
-                break;
-        }
-
-        notifyDataSetChanged();
     }
 
     @Override
@@ -71,7 +45,7 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Peer peer = peers.get(position);
+        final Peer peer = objs.get(position);
         holder.address.setText(peer.ip + ":" + peer.port);
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
@@ -84,41 +58,24 @@ public class PeersAdapter extends RecyclerView.Adapter<PeersAdapter.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() {
-        return peers.size();
+    protected void shouldUpdateItemCount(int count) {
+        if (listener != null) listener.onItemCountUpdated(count);
     }
 
-    private int indexOf(String peerId) {
-        for (int i = 0; i < peers.size(); i++)
-            if (Objects.equals(peers.get(i).peerId, peerId))
-                return i;
-
-        return -1;
-    }
-
-    public void notifyItemChanged(Peer payload) {
-        int pos = indexOf(payload.peerId);
-        if (pos == -1) {
-            peers.add(payload);
-            super.notifyItemInserted(peers.size() - 1);
-            if (listener != null) listener.onItemCountUpdated(peers.size());
-        } else {
-            peers.set(pos, payload);
-            super.notifyItemChanged(pos, payload);
+    @NonNull
+    @Override
+    public Comparator<Peer> getComparatorFor(SortBy sorting) {
+        switch (sorting) {
+            default:
+            case DOWNLOAD_SPEED:
+                return new Peer.DownloadSpeedComparator();
+            case UPLOAD_SPEED:
+                return new Peer.UploadSpeedComparator();
         }
     }
 
     public void notifyItemsChanged(List<Peer> peers) {
-        for (Peer peer : findMissingItems(this.peers, peers)) notifyItemRemoved(peer);
         for (Peer peer : peers) notifyItemChanged(peer);
-    }
-
-    private void notifyItemRemoved(Peer peer) {
-        int pos = peers.indexOf(peer);
-        if (pos != -1) {
-            peers.remove(pos);
-            notifyItemRemoved(pos);
-        }
     }
 
     public enum SortBy {

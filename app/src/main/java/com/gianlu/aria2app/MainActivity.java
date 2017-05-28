@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
 
-        adapter.sortBy(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
+        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
     @Override
@@ -562,7 +562,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {
-        if (adapter != null) adapter.sortBy(sorting);
+        if (adapter != null) adapter.sort(sorting);
 
         Prefs.putString(this, Prefs.Keys.A2_MAIN_SORTING, sorting.name());
     }

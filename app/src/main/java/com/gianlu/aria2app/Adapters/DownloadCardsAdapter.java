@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,81 +11,32 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.Adapters.Sorting.BaseSortingArrayList;
 import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
-public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdapter.DownloadViewHolder> {
+public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.DownloadViewHolder, Download, DownloadCardsAdapter.SortBy, Download.Status> {
     private final Context context;
-    private final List<Download> originalObjs;
-    private final SortingArrayList objs;
     private final IAdapter handler;
-    private final List<Download.Status> filters;
     private final LayoutInflater inflater;
 
     public DownloadCardsAdapter(Context context, List<Download> objs, IAdapter handler) {
+        super(objs, SortBy.STATUS);
         this.context = context;
-        this.originalObjs = objs;
-        this.objs = new SortingArrayList(objs);
         this.handler = handler;
-        this.filters = new ArrayList<>();
         this.inflater = LayoutInflater.from(context);
-
-        Collections.sort(this.objs, new Download.StatusComparator());
-        if (handler != null) handler.onItemCountUpdated(objs.size());
-    }
-
-    public void sortBy(SortBy sorting) {
-        objs.sort(sorting);
-        notifyDataSetChanged();
-    }
-
-    private void processFilters() {
-        objs.clear();
-
-        for (Download obj : originalObjs)
-            if (!filters.contains(obj.status))
-                objs.add(obj);
-
-        if (handler != null) handler.onItemCountUpdated(objs.size());
-        notifyDataSetChanged();
-    }
-
-    private boolean notifyItemChangedOriginal(Download payload) {
-        int pos = originalObjs.indexOf(payload);
-        if (pos == -1) {
-            originalObjs.add(payload);
-            processFilters();
-            return true;
-        } else {
-            originalObjs.set(pos, payload);
-            return false;
-        }
-    }
-
-    public void notifyItemChanged(Download payload) {
-        if (!notifyItemChangedOriginal(payload) && !filters.contains(payload.status)) {
-            Pair<Integer, Integer> res = objs.addAndSort(payload);
-            if (res.first == -1) super.notifyItemInserted(res.second);
-            else if (Objects.equals(res.first, res.second))
-                super.notifyItemChanged(res.first, payload);
-            else super.notifyItemMoved(res.first, res.second);
-        }
     }
 
     @Override
@@ -243,14 +193,28 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
     }
 
     @Override
-    public int getItemCount() {
-        return objs.size();
+    protected void shouldUpdateItemCount(int count) {
+        if (handler != null) handler.onItemCountUpdated(count);
     }
 
-    public void setFilters(List<Download.Status> toApplyFilters) {
-        filters.clear();
-        filters.addAll(toApplyFilters);
-        processFilters();
+    @Override
+    @NonNull
+    public Comparator<Download> getComparatorFor(SortBy sorting) {
+        switch (sorting) {
+            default:
+            case STATUS:
+                return new Download.StatusComparator();
+            case PROGRESS:
+                return new Download.ProgressComparator();
+            case DOWNLOAD_SPEED:
+                return new Download.DownloadSpeedComparator();
+            case UPLOAD_SPEED:
+                return new Download.UploadSpeedComparator();
+            case COMPLETED_LENGTH:
+                return new Download.CompletedLengthComparator();
+            case LENGTH:
+                return new Download.LengthComparator();
+        }
     }
 
     public enum SortBy {
@@ -268,32 +232,6 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         void onItemCountUpdated(int count);
 
         void onMenuItemSelected(Download download, JTA2.DownloadActions action);
-    }
-
-    private static class SortingArrayList extends BaseSortingArrayList<Download, SortBy> {
-        SortingArrayList(List<Download> objs) {
-            super(objs, SortBy.STATUS);
-        }
-
-        @NonNull
-        @Override
-        public Comparator<Download> getComparator(SortBy sorting) {
-            switch (sorting) {
-                default:
-                case STATUS:
-                    return new Download.StatusComparator();
-                case PROGRESS:
-                    return new Download.ProgressComparator();
-                case DOWNLOAD_SPEED:
-                    return new Download.DownloadSpeedComparator();
-                case UPLOAD_SPEED:
-                    return new Download.UploadSpeedComparator();
-                case COMPLETED_LENGTH:
-                    return new Download.CompletedLengthComparator();
-                case LENGTH:
-                    return new Download.LengthComparator();
-            }
-        }
     }
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {
