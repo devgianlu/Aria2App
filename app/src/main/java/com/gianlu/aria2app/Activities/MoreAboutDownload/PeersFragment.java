@@ -159,7 +159,6 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onUpdateAdapter(List<Peer> peers) {
-        if (peers.isEmpty()) return;
         MessageLayout.hide(layout);
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
@@ -190,6 +189,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         } else {
             MessageLayout.hide(layout);
             list.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.GONE);
         }
     }
 }

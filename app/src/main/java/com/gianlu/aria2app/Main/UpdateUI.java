@@ -11,6 +11,7 @@ import com.gianlu.aria2app.Prefs;
 
 import java.util.List;
 
+// FIXME: This way we can't use the auto-remove item feature of the OrderedRecyclerViewAdapter
 public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
     private final IUI listener;
     private final boolean hideMetadata;

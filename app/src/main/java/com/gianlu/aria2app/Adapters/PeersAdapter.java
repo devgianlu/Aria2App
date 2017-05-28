@@ -74,10 +74,6 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         }
     }
 
-    public void notifyItemsChanged(List<Peer> peers) {
-        for (Peer peer : peers) notifyItemChanged(peer);
-    }
-
     public enum SortBy {
         DOWNLOAD_SPEED,
         UPLOAD_SPEED
