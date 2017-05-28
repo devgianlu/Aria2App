@@ -20,7 +20,7 @@ public class Prefs {
         return prefs.getString(key.key, fallback);
     }
 
-    public static void editString(Context context, Keys key, String value) {
+    public static void putString(Context context, Keys key, String value) {
         init(context);
         prefs.edit().putString(key.key, value).apply();
     }
@@ -75,7 +75,8 @@ public class Prefs {
         A2_HIDE_METADATA("a2_hideMetadata"),
         A2_GLOBAL_QUICK_OPTIONS("a2_globalQuickOptions"),
         A2_CHECK_VERSION("a2_runVersionCheckAtStartup"),
-        A2_QUICK_OPTIONS("a2_quickOptions");
+        A2_QUICK_OPTIONS("a2_quickOptions"),
+        A2_MAIN_SORTING("a2_mainSorting");
         public final String key;
 
         Keys(String key) {

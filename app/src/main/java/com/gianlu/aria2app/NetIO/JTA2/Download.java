@@ -269,8 +269,10 @@ public class Download implements Serializable {
     public static class ProgressComparator implements Comparator<Download> {
         @Override
         public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.getProgress(), o2.getProgress())) return 0;
-            else if (o1.getProgress() > o2.getProgress()) return 1;
+            int p1 = (int) o1.getProgress();
+            int p2 = (int) o2.getProgress();
+            if (p1 == p2) return 0;
+            else if (p1 < p2) return 1;
             else return -1;
         }
     }

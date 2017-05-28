@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             public void onStopped() {
                 adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<Download>(), MainActivity.this);
                 list.setAdapter(adapter);
+                setupAdapterFiltersAndSorting();
 
                 try {
                     updater = new UpdateUI(MainActivity.this, MainActivity.this);
@@ -220,6 +222,15 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         });
     }
 
+    private void setupAdapterFiltersAndSorting() {
+        List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
+        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
+        for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
+        adapter.setFilters(filters);
+
+        adapter.sortBy(SortingArrayList.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, SortingArrayList.SortBy.STATUS.name())));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -229,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         if (Prefs.getString(this, Prefs.Keys.DD_DOWNLOAD_PATH, null) == null)
-            Prefs.editString(this, Prefs.Keys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+            Prefs.putString(this, Prefs.Keys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 
         Logging.clearLogs(this);
         Utils.renameOldProfiles(this);
@@ -304,11 +315,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
         list.setAdapter(adapter);
-
-        List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
-        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
-        for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
-        adapter.setFilters(filters);
+        setupAdapterFiltersAndSorting();
 
         try {
             updater = new UpdateUI(this, this);
@@ -424,7 +431,36 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.a2menu_sorting).getSubMenu().setGroupCheckable(0, true, true);
+        SubMenu sortingMenu = menu.findItem(R.id.a2menu_sorting).getSubMenu();
+        if (sortingMenu != null) {
+            sortingMenu.setGroupCheckable(0, true, true);
+
+            SortingArrayList.SortBy sorting = SortingArrayList.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, SortingArrayList.SortBy.STATUS.name()));
+            MenuItem item;
+            switch (sorting) {
+                default:
+                case STATUS:
+                    item = sortingMenu.findItem(R.id.mainSort_status);
+                    break;
+                case PROGRESS:
+                    item = sortingMenu.findItem(R.id.mainSort_progress);
+                    break;
+                case DOWNLOAD_SPEED:
+                    item = sortingMenu.findItem(R.id.mainSort_downloadSpeed);
+                    break;
+                case UPLOAD_SPEED:
+                    item = sortingMenu.findItem(R.id.mainSort_uploadSpeed);
+                    break;
+                case COMPLETED_LENGTH:
+                    item = sortingMenu.findItem(R.id.mainSort_completedLength);
+                    break;
+                case LENGTH:
+                    item = sortingMenu.findItem(R.id.mainSort_length);
+                    break;
+            }
+
+            item.setChecked(true);
+        }
         return true;
     }
 
@@ -501,31 +537,35 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     private boolean handleSorting(MenuItem clicked) {
-        if (adapter == null) return false;
-
         clicked.setChecked(true);
         switch (clicked.getItemId()) {
             case R.id.mainSort_status:
-                adapter.sortBy(SortingArrayList.SortBy.STATUS);
+                handleSortingReal(SortingArrayList.SortBy.STATUS);
                 break;
             case R.id.mainSort_progress:
-                adapter.sortBy(SortingArrayList.SortBy.PROGRESS);
+                handleSortingReal(SortingArrayList.SortBy.PROGRESS);
                 break;
             case R.id.mainSort_downloadSpeed:
-                adapter.sortBy(SortingArrayList.SortBy.DOWNLOAD_SPEED);
+                handleSortingReal(SortingArrayList.SortBy.DOWNLOAD_SPEED);
                 break;
             case R.id.mainSort_uploadSpeed:
-                adapter.sortBy(SortingArrayList.SortBy.UPLOAD_SPEED);
+                handleSortingReal(SortingArrayList.SortBy.UPLOAD_SPEED);
                 break;
             case R.id.mainSort_length:
-                adapter.sortBy(SortingArrayList.SortBy.LENGTH);
+                handleSortingReal(SortingArrayList.SortBy.LENGTH);
                 break;
             case R.id.mainSort_completedLength:
-                adapter.sortBy(SortingArrayList.SortBy.COMPLETED_LENGTH);
+                handleSortingReal(SortingArrayList.SortBy.COMPLETED_LENGTH);
                 break;
         }
 
         return true;
+    }
+
+    private void handleSortingReal(SortingArrayList.SortBy sorting) {
+        if (adapter != null) adapter.sortBy(sorting);
+
+        Prefs.putString(this, Prefs.Keys.A2_MAIN_SORTING, sorting.name());
     }
 
     @Override

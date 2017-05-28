@@ -65,35 +65,25 @@ public class DownloadCardsAdapter extends RecyclerView.Adapter<DownloadCardsAdap
         notifyDataSetChanged();
     }
 
-    private int indexOf(String gid) {
-        for (int i = 0; i < objs.size(); i++)
-            if (Objects.equals(objs.get(i).gid, gid))
-                return i;
-
-        return -1;
-    }
-
-    private int originalIndexOf(String gid) {
-        for (int i = 0; i < originalObjs.size(); i++)
-            if (Objects.equals(originalObjs.get(i).gid, gid))
-                return i;
-
-        return -1;
-    }
-
-    // FIXME: Mhh
-    public void notifyItemChanged(Download payload) {
-        int pos = indexOf(payload.gid);
-        int realPos = originalIndexOf(payload.gid);
-        if (pos == -1 && realPos == -1) {
+    private boolean notifyItemChangedOriginal(Download payload) {
+        int pos = originalObjs.indexOf(payload);
+        if (pos == -1) {
             originalObjs.add(payload);
             processFilters();
-            if (handler != null) handler.onItemCountUpdated(objs.size());
+            return true;
         } else {
-            Pair<Integer, Integer> moved = objs.addAndSort(payload);
-            if (Objects.equals(moved.first, moved.second)) notifyItemChanged(moved.first);
-            else notifyItemMoved(moved.first, moved.second);
-            if (realPos != -1) originalObjs.set(realPos, payload);
+            originalObjs.set(pos, payload);
+            return false;
+        }
+    }
+
+    public void notifyItemChanged(Download payload) {
+        if (!notifyItemChangedOriginal(payload) && !filters.contains(payload.status)) {
+            Pair<Integer, Integer> res = objs.addAndSort(payload);
+            if (res.first == -1) super.notifyItemInserted(res.second);
+            else if (Objects.equals(res.first, res.second))
+                super.notifyItemChanged(res.first, payload);
+            else super.notifyItemMoved(res.first, res.second);
         }
     }
 
