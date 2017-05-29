@@ -31,7 +31,6 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.Date;
 import java.util.Locale;
 
-// FIXME: A bit unstable when changing status (!!)
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
     private IStatusChanged listener;
     private UpdateUI updater;

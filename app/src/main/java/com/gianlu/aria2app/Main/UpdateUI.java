@@ -9,9 +9,9 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.Prefs;
 
+import java.util.ArrayList;
 import java.util.List;
 
-// FIXME: This way we can't use the auto-remove item feature of the OrderedRecyclerViewAdapter
 public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
     private final IUI listener;
     private final boolean hideMetadata;
@@ -24,9 +24,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
 
     @Override
     public void loop() {
-        jta2.tellActive(this);
-        jta2.tellWaiting(this);
-        jta2.tellStopped(this);
+        jta2.tellAll(this);
     }
 
     @Override
@@ -36,9 +34,12 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
         handler.post(new Runnable() {
             @Override
             public void run() {
+                List<Download> filteredDownloads = new ArrayList<>();
                 for (Download download : downloads)
                     if (!(hideMetadata && download.isMetadata()) || !download.isLinked())
-                        listener.onUpdateAdapter(download);
+                        filteredDownloads.add(download);
+
+                listener.onUpdateAdapter(filteredDownloads);
             }
         });
     }
@@ -49,6 +50,6 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
     }
 
     public interface IUI {
-        void onUpdateAdapter(Download download);
+        void onUpdateAdapter(List<Download> downloads);
     }
 }

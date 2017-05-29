@@ -739,6 +739,45 @@ public class JTA2 {
         });
     }
 
+    //not an aria2 RPC method
+    public void tellAll(final IDownloadList handler) {
+        final List<Download> allDownloads = new ArrayList<>();
+        tellActive(new IDownloadList() {
+            @Override
+            public void onDownloads(List<Download> downloads) {
+                allDownloads.addAll(downloads);
+                tellWaiting(new IDownloadList() {
+                    @Override
+                    public void onDownloads(List<Download> downloads) {
+                        allDownloads.addAll(downloads);
+                        tellStopped(new IDownloadList() {
+                            @Override
+                            public void onDownloads(List<Download> downloads) {
+                                allDownloads.addAll(downloads);
+                                handler.onDownloads(allDownloads);
+                            }
+
+                            @Override
+                            public void onException(boolean queuing, Exception ex) {
+                                handler.onException(queuing, ex);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onException(boolean queuing, Exception ex) {
+                        handler.onException(queuing, ex);
+                    }
+                });
+            }
+
+            @Override
+            public void onException(boolean queuing, Exception ex) {
+                handler.onException(queuing, ex);
+            }
+        });
+    }
+
     //aria2.pause
     public void pause(String gid, final IGID handler) {
         JSONObject request;

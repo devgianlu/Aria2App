@@ -640,8 +640,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public void onUpdateAdapter(Download download) {
-        if (adapter != null) adapter.notifyItemChanged(download);
+    public void onUpdateAdapter(List<Download> downloads) {
+        if (adapter != null) adapter.notifyItemsChanged(downloads);
     }
 
     @Override
