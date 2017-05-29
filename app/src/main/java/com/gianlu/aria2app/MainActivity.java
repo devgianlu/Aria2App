@@ -31,6 +31,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
+import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
@@ -38,6 +39,7 @@ import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
+import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
@@ -67,7 +69,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove {
+// TODO: Search
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener {
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -110,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 refresh();
                 return true;
             case DrawerConst.DIRECT_DOWNLOAD:
-                // TODO: startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
+                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
                 return false;
             case DrawerConst.QUICK_OPTIONS:
                 OptionsUtils.showGlobalDialog(this, true);
@@ -247,7 +250,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        drawerManager = new DrawerManager<>(new Initializer<>(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this).addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
+        drawerManager = new DrawerManager<>(new Initializer<>(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this)
+                .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.ic_list_black_48dp, getString(R.string.globalOptions)))
@@ -307,6 +311,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class));
             }
         });
+
+        DownloadsManager.get(this).setListener(this);
 
         if (Prefs.getBoolean(this, Prefs.Keys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
@@ -740,5 +746,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onRemovedResult(String gid) {
         CommonUtils.UIToast(this, Utils.ToastMessages.RESULT_REMOVED, gid);
+    }
+
+    @Override
+    public void onDownloadsCountChanged(int count) {
+        if (drawerManager != null) drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, count);
     }
 }

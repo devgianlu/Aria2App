@@ -217,7 +217,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(Download download, final AFile file) {
+    public void onWantsToDownload(final Download download, final AFile file) {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
@@ -232,7 +232,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         jta2.getFiles(download.gid, new JTA2.IFiles() {
             @Override
             public void onFiles(List<AFile> files) {
-                startDownload(AFile.find(files, file));
+                startDownload(AFile.find(files, file), download.dir);
                 pd.dismiss();
             }
 
@@ -244,18 +244,18 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         });
     }
 
-    private void realStartDownload(AFile file) {
+    private void realStartDownload(AFile file, String dir) {
         try {
-            DownloadsManager.get(getContext()).startDownload(getContext(), file);
+            DownloadsManager.get(getContext()).startDownload(getContext(), file, dir);
             CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DOWNLOAD_FILE_STARTED);
         } catch (DownloadsManagerException ex) {
             CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
         }
     }
 
-    private void startDownload(final AFile file) {
+    private void startDownload(final AFile file, final String dir) {
         if (file.completed()) {
-            realStartDownload(file);
+            realStartDownload(file, dir);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(R.string.downloadIncomplete)
@@ -263,7 +263,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            realStartDownload(file);
+                            realStartDownload(file, dir);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null);

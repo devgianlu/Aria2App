@@ -34,7 +34,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
@@ -1095,6 +1094,9 @@
             android:windowSoftInputMode="stateHidden" />
 
         <!-- DirectDownload activity -->
+        <activity
+            android:name=".Activities.DirectDownloadActivity"
+            android:parentActivityName=".MainActivity" />
 
         <!-- Add download activities -->
         <activity
@@ -1174,5 +1176,4 @@
             android:enabled="true"
             android:exported="false" />
     </application>
-
 </manifest>

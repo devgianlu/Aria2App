@@ -49,7 +49,7 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Peer peer = (Peer) o;
-        return peerId.equals(peer.peerId);
+        return port == peer.port && ip.equals(peer.ip);
     }
 
     @Override

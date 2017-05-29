@@ -1031,7 +1031,7 @@ public class JTA2 {
 
     //aria2.changePosition
     public void changePosition(String gid, int pos, final ISuccess handler) {
-        JSONObject request;
+        final JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.changePosition");
@@ -1046,10 +1046,12 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                if (Objects.equals(response.optString("result"), "OK"))
+                try {
+                    response.getInt("result");
                     handler.onSuccess();
-                else
+                } catch (Exception ex) {
                     handler.onException(new Aria2Exception(response.toString(), -1));
+                }
             }
 
             @Override
