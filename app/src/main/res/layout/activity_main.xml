@@ -4,8 +4,7 @@
     android:id="@+id/main_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:elevation="7dp"
-    android:fitsSystemWindows="true">
+    android:elevation="7dp">
 
     <LinearLayout
         android:layout_width="match_parent"
