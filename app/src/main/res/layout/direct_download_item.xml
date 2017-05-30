@@ -9,6 +9,13 @@
     android:paddingTop="4dp">
 
     <TextView
+        android:id="@+id/ddItem_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/ddItem_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

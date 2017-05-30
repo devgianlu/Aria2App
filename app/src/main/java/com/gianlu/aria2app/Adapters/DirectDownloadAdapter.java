@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -17,10 +19,12 @@ import java.util.Locale;
 // TODO: Better layout
 public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAdapter.ViewHolder> {
     private final DownloadsManager manager;
+    private final Context context;
     private final LayoutInflater inflater;
 
     public DirectDownloadAdapter(Context context, DownloadsManager manager) {
         this.inflater = LayoutInflater.from(context);
+        this.context = context;
         this.manager = manager;
     }
 
@@ -59,6 +63,7 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
+        final TextView status;
         final TextView name;
         final ProgressBar progress;
         final TextView percentage;
@@ -66,6 +71,7 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.direct_download_item, parent, false));
 
+            status = (TextView) itemView.findViewById(R.id.ddItem_status);
             name = (TextView) itemView.findViewById(R.id.ddItem_name);
             progress = (ProgressBar) itemView.findViewById(R.id.ddItem_progress);
             progress.setMax(1000);
@@ -75,6 +81,14 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
         public void update(DDDownload download) {
             progress.setProgress((int) download.getProgress());
             percentage.setText(String.format(Locale.getDefault(), "%.2f%%", download.getProgress()));
+
+            if (download.status == DDDownload.Status.ERROR) {
+                status.setText(context.getString(R.string.error_details, download.errorCause.getMessage()));
+                status.setTextColor(Color.RED);
+            } else {
+                status.setText(download.status.toFormal(context));
+                status.setTextColor(ContextCompat.getColor(context, android.R.color.secondary_text_light));
+            }
         }
     }
 }

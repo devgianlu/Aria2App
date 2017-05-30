@@ -61,7 +61,6 @@ public class DownloadsManager {
         if (listener != null) listener.onDownloadsCountChanged(runningDownloads.size());
     }
 
-    // TODO: Must handle all the exceptions
     public void startDownload(Context context, AFile file, String dir) throws DownloadsManagerException {
         URI fileUrl;
         try {
