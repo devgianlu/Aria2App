@@ -443,6 +443,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
             MenuItem item;
             switch (sorting) {
+                case NAME:
+                    item = sortingMenu.findItem(R.id.mainSort_name);
+                    break;
                 default:
                 case STATUS:
                     item = sortingMenu.findItem(R.id.mainSort_status);
@@ -544,6 +547,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private boolean handleSorting(MenuItem clicked) {
         clicked.setChecked(true);
         switch (clicked.getItemId()) {
+            case R.id.mainSort_name:
+                handleSortingReal(DownloadCardsAdapter.SortBy.NAME);
+                break;
             case R.id.mainSort_status:
                 handleSortingReal(DownloadCardsAdapter.SortBy.STATUS);
                 break;
@@ -569,7 +575,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {
         if (adapter != null) adapter.sort(sorting);
-
         Prefs.putString(this, Prefs.Keys.A2_MAIN_SORTING, sorting.name());
     }
 

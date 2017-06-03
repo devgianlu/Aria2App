@@ -201,6 +201,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     @NonNull
     public Comparator<Download> getComparatorFor(SortBy sorting) {
         switch (sorting) {
+            case NAME:
+                return new Download.NameComparator();
             default:
             case STATUS:
                 return new Download.StatusComparator();
@@ -218,6 +220,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     public enum SortBy {
+        NAME,
         STATUS,
         PROGRESS,
         DOWNLOAD_SPEED,

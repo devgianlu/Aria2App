@@ -263,6 +263,13 @@ public class Download implements Serializable, Filterable<Download.Status> {
         }
     }
 
+    public static class NameComparator implements Comparator<Download> {
+        @Override
+        public int compare(Download o1, Download o2) {
+            return o1.getName().compareToIgnoreCase(o2.getName());
+        }
+    }
+
     public static class CompletedLengthComparator implements Comparator<Download> {
         @Override
         public int compare(Download o1, Download o2) {
