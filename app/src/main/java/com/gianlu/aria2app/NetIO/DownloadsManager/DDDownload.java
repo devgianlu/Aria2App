@@ -7,14 +7,16 @@ import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.model.FileDownloadStatus;
 
 public class DDDownload {
+    public final int id;
     public final String name;
     public final long length;
     public final long completedLength;
     public final Status status;
-    public final int downloadSpeed;
     public final Throwable errorCause;
+    private final int downloadSpeed;
 
     public DDDownload(BaseDownloadTask task) {
+        id = task.getId();
         name = task.getFilename();
         length = task.getLargeFileTotalBytes();
         completedLength = task.getLargeFileSoFarBytes();
@@ -28,8 +30,13 @@ public class DDDownload {
     }
 
     public long getMissingTime() {
-        if (downloadSpeed == 0) return 0;
-        return (length - completedLength) / downloadSpeed;
+        if (getDownloadSpeed() == 0) return 0;
+        return (length - completedLength) / getDownloadSpeed();
+    }
+
+    public int getDownloadSpeed() {
+        if (status == Status.RUNNING) return downloadSpeed;
+        else return 0;
     }
 
     public enum Status {

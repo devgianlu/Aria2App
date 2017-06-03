@@ -212,7 +212,7 @@
     <string name="paused">Paused</string>
     <string name="pending">Pending</string>
     <string name="directDownload_noItems">There no download running currently. You can add a download, from the \"Files\" tab, selecting a file. If you haven\'t set up DirectDownload you can do it by editing your profile.</string>
-    <string name="error">Error (See logs for more)</string>
+    <string name="error">Error</string>
     <string name="error_details">Error: %s</string>
     <string name="indexes"><![CDATA[<b>Indexes:</b>]]> %s</string>
     <string name="downloadDirectory">Download directory</string>

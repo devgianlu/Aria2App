@@ -53,12 +53,40 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        DDDownload download = manager.getRunningDownloadAt(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final DDDownload download = manager.getRunningDownloadAt(holder.getAdapterPosition());
         holder.name.setText(download.name);
         holder.update(download);
 
-        // TODO: Setup actions
+        holder.pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manager.pause(download);
+            }
+        });
+
+        holder.resume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manager.resume(download);
+            }
+        });
+
+        holder.stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manager.remove(download);
+                notifyItemRemoved(holder.getAdapterPosition());
+            }
+        });
+
+        holder.remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manager.remove(download);
+                notifyItemRemoved(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -103,10 +131,6 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
 
             switch (status) {
                 case COMPLETED:
-                    pause.setVisibility(View.GONE);
-                    resume.setVisibility(View.GONE);
-                    stop.setVisibility(View.GONE);
-                    break;
                 case ERROR:
                     pause.setVisibility(View.GONE);
                     resume.setVisibility(View.GONE);
@@ -126,12 +150,14 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
         public void update(DDDownload download) {
             progress.setProgress((int) download.getProgress());
             percentage.setText(String.format(Locale.getDefault(), "%.2f%%", download.getProgress()));
-            downloadSpeed.setText(CommonUtils.speedFormatter(download.downloadSpeed, false));
+            downloadSpeed.setText(CommonUtils.speedFormatter(download.getDownloadSpeed(), false));
             missingTime.setText(CommonUtils.timeFormatter(download.getMissingTime()));
 
             if (download.status == DDDownload.Status.ERROR) {
-                status.setText(context.getString(R.string.error_details, download.errorCause.getMessage()));
                 status.setTextColor(Color.RED);
+                if (download.errorCause == null) status.setText(R.string.error);
+                else
+                    status.setText(context.getString(R.string.error_details, download.errorCause.getMessage()));
             } else {
                 status.setText(download.status.toFormal(context));
                 status.setTextColor(ContextCompat.getColor(context, android.R.color.secondary_text_light));

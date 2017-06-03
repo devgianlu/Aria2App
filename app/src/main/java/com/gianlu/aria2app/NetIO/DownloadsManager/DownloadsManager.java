@@ -15,6 +15,7 @@ import com.liulishuo.filedownloader.DownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.liulishuo.filedownloader.model.FileDownloadHeader;
+import com.liulishuo.filedownloader.model.FileDownloadStatus;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,8 +38,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+// FIXME: Not working properly
 public class DownloadsManager extends FileDownloadListener {
     private static DownloadsManager instance;
+    private static IGlobalMonitor monitor;
     private final FileDownloader downloader;
     private final File downloadPath;
     private final List<DownloadTask> runningDownloads;
@@ -52,6 +55,10 @@ public class DownloadsManager extends FileDownloadListener {
         ddJournal = new File(context.getFilesDir(), "dd.journal");
 
         loadRunningDownloads();
+    }
+
+    public static void setGlobalMonitor(IGlobalMonitor monitor) {
+        DownloadsManager.monitor = monitor;
     }
 
     public static DownloadsManager get(Context context) {
@@ -230,13 +237,47 @@ public class DownloadsManager extends FileDownloadListener {
     }
 
     @Override
-    protected void error(BaseDownloadTask task, Throwable e) {
+    protected void error(BaseDownloadTask task, Throwable ex) {
         saveRunningDownloads();
+
+        if (monitor != null) monitor.onException(ex);
     }
 
     @Override
     protected void warn(BaseDownloadTask task) {
 
+    }
+
+    public void pause(DDDownload download) {
+        downloader.pause(download.id);
+    }
+
+    public void resume(DDDownload download) {
+        int pos = indexOf(download);
+        if (pos != -1) {
+            DownloadTask task = runningDownloads.get(pos);
+            if (task.getStatus() == FileDownloadStatus.paused)
+                if (task.reuse()) task.start();
+        }
+    }
+
+    private int indexOf(DDDownload download) {
+        for (int i = 0; i < runningDownloads.size(); i++)
+            if (runningDownloads.get(i).getId() == download.id)
+                return i;
+
+        return -1;
+    }
+
+    public void remove(DDDownload download) {
+        pause(download);
+
+        int pos = indexOf(download);
+        if (pos != -1) runningDownloads.remove(pos);
+    }
+
+    public interface IGlobalMonitor {
+        void onException(Throwable ex);
     }
 
     public interface IListener {

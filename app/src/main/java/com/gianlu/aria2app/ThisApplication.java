@@ -8,9 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -18,7 +20,7 @@ import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.Map;
 
-public class ThisApplication extends Application implements ErrorHandler.IErrorHandler {
+public class ThisApplication extends Application implements ErrorHandler.IErrorHandler, DownloadsManager.IGlobalMonitor {
     public static final String CATEGORY_USER_INPUT = "User input";
     public static final String ACTION_DOWNLOAD_FILE = "Download file";
     public static final String ACTION_NEW_PROFILE = "New profile";
@@ -70,6 +72,8 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         tracker = getTracker(this);
+
+        DownloadsManager.setGlobalMonitor(this);
     }
 
     @Override
@@ -92,5 +96,10 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
     public void setHasCheckedVersion(boolean checkedVersion) {
         this.checkedVersion = checkedVersion;
+    }
+
+    @Override
+    public void onException(Throwable ex) {
+        Logging.logMe(this, ex);
     }
 }
