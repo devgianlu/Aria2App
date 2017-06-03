@@ -1084,7 +1084,11 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Drawer" />
+            android:theme="@style/AppTheme.NoActionBar.Drawer">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/main_searchable" />
+        </activity>
 
         <!-- Edit profile activity -->
         <activity
@@ -1143,7 +1147,7 @@
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/torrent_searchable" />
         </activity>
 
         <!-- Notification service -->

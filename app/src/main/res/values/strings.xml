@@ -300,6 +300,7 @@
     <string name="notificationsAtBootOn">Notification service will be started at boot</string>
     <string name="notificationsAtBootOff">Notification service won\'t be started at boot</string>
     <string name="name">Name</string>
+    <string name="searchDownloads">Search for download</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

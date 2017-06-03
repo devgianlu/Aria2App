@@ -66,6 +66,11 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     }
 
     @Override
+    protected boolean matchQuery(Peer item, String query) {
+        return true;
+    }
+
+    @Override
     protected void shouldUpdateItemCount(int count) {
         if (handler != null) handler.onItemCountUpdated(count);
     }

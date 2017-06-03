@@ -1,6 +1,7 @@
 package com.gianlu.aria2app;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -69,8 +71,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-// TODO: Search
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -430,13 +431,21 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        getMenuInflater().inflate(R.menu.main_sorting, menu.findItem(R.id.a2menu_sorting).getSubMenu());
+        getMenuInflater().inflate(R.menu.main_sorting, menu.findItem(R.id.main_sort).getSubMenu());
+
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.main_search).getActionView();
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnCloseListener(this);
+        searchView.setOnQueryTextListener(this);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        SubMenu sortingMenu = menu.findItem(R.id.a2menu_sorting).getSubMenu();
+        SubMenu sortingMenu = menu.findItem(R.id.main_sort).getSubMenu();
         if (sortingMenu != null) {
             sortingMenu.setGroupCheckable(0, true, true);
 
@@ -529,11 +538,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.a2menu_refreshPage:
+            case R.id.main_refreshPage:
                 refresh();
                 break;
             // Filters
-            case R.id.a2menu_filtering:
+            case R.id.main_filter:
                 showFilteringDialog();
                 break;
             // Sorting
@@ -762,5 +771,21 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onDownloadsCountChanged(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, count);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        adapter.filterWithQuery(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return onQueryTextSubmit(newText);
+    }
+
+    @Override
+    public boolean onClose() { // TODO: Clear filter
+        return false;
     }
 }

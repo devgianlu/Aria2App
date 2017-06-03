@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/a2menu_filtering"
+        android:id="@+id/main_search"
+        android:icon="@drawable/ic_search_white_48dp"
+        android:title="@string/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="collapseActionView|always" />
+
+    <item
+        android:id="@+id/main_filter"
         android:icon="@drawable/ic_filter_list_white_48dp"
         android:title="@string/filters"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/a2menu_sorting"
+        android:id="@+id/main_sort"
         android:title="@string/sorting"
         app:showAsAction="never">
         <menu><!-- SubMenu placeholder --></menu>
     </item>
 
     <item
-        android:id="@+id/a2menu_refreshPage"
+        android:id="@+id/main_refreshPage"
         android:title="@string/menu_refreshPage"
         app:showAsAction="never" />
 </menu>

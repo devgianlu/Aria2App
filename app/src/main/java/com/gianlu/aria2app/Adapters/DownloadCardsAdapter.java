@@ -201,6 +201,11 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
+    protected boolean matchQuery(Download item, @Nullable String query) {
+        return query == null || item.getName().toLowerCase().contains(query.toLowerCase());
+    }
+
+    @Override
     protected void shouldUpdateItemCount(int count) {
         if (handler != null) handler.onItemCountUpdated(count);
     }
