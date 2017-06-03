@@ -37,6 +37,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     private ProgressBar loading;
     private ServerBottomSheet sheet;
 
+
     public static ServersFragment getInstance(Context context, Download download) {
         ServersFragment fragment = new ServersFragment();
         Bundle args = new Bundle();
@@ -110,7 +111,12 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     }
 
     @Override
-    public boolean canGoBack() {
+    public boolean canGoBack(int code) {
+        if (code == CODE_CLOSE_SHEET) {
+            sheet.collapse();
+            return true;
+        }
+
         if (sheet.shouldUpdate()) {
             sheet.collapse();
             return false;

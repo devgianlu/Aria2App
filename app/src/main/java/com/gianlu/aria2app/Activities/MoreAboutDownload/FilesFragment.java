@@ -59,7 +59,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public boolean canGoBack() {
+    public boolean canGoBack(int code) {
+        if (code == CODE_CLOSE_SHEET) {
+            sheet.collapse();
+            return true;
+        }
+
         if (sheet.shouldUpdate()) {
             sheet.collapse();
             return false;

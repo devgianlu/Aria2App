@@ -132,7 +132,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     }
 
     @Override
-    public boolean canGoBack() {
+    public boolean canGoBack(int code) {
         return true;
     }
 

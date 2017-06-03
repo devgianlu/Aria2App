@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
-public interface OnBackPressed {
-    boolean canGoBack();
+interface OnBackPressed {
+    boolean canGoBack(int code);
+
     void onBackPressed();
 }

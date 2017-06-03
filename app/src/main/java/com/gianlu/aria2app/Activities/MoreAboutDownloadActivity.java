@@ -104,6 +104,23 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
                 FilesFragment.getInstance(this, download));
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if (state == ViewPager.SCROLL_STATE_DRAGGING)
+                    adapter.getFragments().get(pager.getCurrentItem()).canGoBack(BackPressedFragment.CODE_CLOSE_SHEET);
+            }
+        });
 
         tabLayout.setupWithViewPager(pager);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -128,7 +145,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
     public void onBackPressed() {
         if (adapter != null) {
             for (BackPressedFragment fragment : adapter.getFragments())
-                if (!fragment.canGoBack())
+                if (!fragment.canGoBack(-1))
                     return;
 
             for (BackPressedFragment fragment : adapter.getFragments())
