@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="4dp"
     android:paddingEnd="@dimen/activity_horizontal_margin"
@@ -39,5 +39,111 @@
             android:layout_gravity="center_vertical"
             android:paddingStart="8dp"
             android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/ddItem_pause"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pause_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/ddItem_resume"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_play_arrow_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/ddItem_stop"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_stop_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/ddItem_remove"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_clear_black_48dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="2dp"
+                    android:alpha="0.54"
+                    android:src="@drawable/ic_file_download_black_48dp" />
+
+                <TextView
+                    android:id="@+id/ddItem_downloadSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="2dp"
+                    android:alpha="0.54"
+                    android:src="@drawable/ic_access_time_black_48dp" />
+
+                <TextView
+                    android:id="@+id/ddItem_missingTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

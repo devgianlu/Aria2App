@@ -27,6 +27,11 @@ public class DDDownload {
         return ((float) completedLength) / ((float) length) * 100;
     }
 
+    public long getMissingTime() {
+        if (downloadSpeed == 0) return 0;
+        return (length - completedLength) / downloadSpeed;
+    }
+
     public enum Status {
         COMPLETED,
         ERROR,
