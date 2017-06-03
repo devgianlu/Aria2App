@@ -197,4 +197,10 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
             loading.setVisibility(View.GONE);
         }
     }
+
+    @Nullable
+    @Override
+    public RecyclerView getRecyclerView() {
+        return list;
+    }
 }

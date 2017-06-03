@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,13 @@ import java.util.Comparator;
 import java.util.List;
 
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
-    private final IAdapter listener;
+    private final IAdapter handler;
     private final LayoutInflater inflater;
 
-    public PeersAdapter(Context context, List<Peer> peers, IAdapter listener) {
+    public PeersAdapter(Context context, List<Peer> peers, IAdapter handler) {
         super(peers, SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
-        this.listener = listener;
+        this.handler = handler;
     }
 
     @Override
@@ -52,14 +53,21 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) listener.onPeerSelected(peer);
+                if (handler != null) handler.onPeerSelected(peer);
             }
         });
     }
 
+    @Nullable
+    @Override
+    protected RecyclerView getRecyclerView() {
+        if (handler != null) return handler.getRecyclerView();
+        else return null;
+    }
+
     @Override
     protected void shouldUpdateItemCount(int count) {
-        if (listener != null) listener.onItemCountUpdated(count);
+        if (handler != null) handler.onItemCountUpdated(count);
     }
 
     @NonNull
@@ -83,6 +91,9 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         void onPeerSelected(Peer peer);
 
         void onItemCountUpdated(int count);
+
+        @Nullable
+        RecyclerView getRecyclerView();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

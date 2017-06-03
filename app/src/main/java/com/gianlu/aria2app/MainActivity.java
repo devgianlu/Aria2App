@@ -718,6 +718,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
     }
 
+    @Nullable
+    @Override
+    public RecyclerView getRecyclerView() {
+        return list;
+    }
+
     @Override
     public void onPaused(String gid) {
         CommonUtils.UIToast(this, Utils.ToastMessages.PAUSED, gid);

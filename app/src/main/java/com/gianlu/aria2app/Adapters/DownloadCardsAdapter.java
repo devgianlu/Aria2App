@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -192,6 +193,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         holder.update(item);
     }
 
+    @Nullable
+    @Override
+    protected RecyclerView getRecyclerView() {
+        if (handler != null) return handler.getRecyclerView();
+        else return null;
+    }
+
     @Override
     protected void shouldUpdateItemCount(int count) {
         if (handler != null) handler.onItemCountUpdated(count);
@@ -235,6 +243,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         void onItemCountUpdated(int count);
 
         void onMenuItemSelected(Download download, JTA2.DownloadActions action);
+
+        @Nullable
+        RecyclerView getRecyclerView();
     }
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {
