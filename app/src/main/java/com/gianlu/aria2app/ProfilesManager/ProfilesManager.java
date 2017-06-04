@@ -147,4 +147,8 @@ public class ProfilesManager {
             out.flush();
         }
     }
+
+    public void reloadCurrentProfile(Context context) throws IOException, JSONException {
+        setCurrent(context, retrieveProfile(getCurrentAssert().id));
+    }
 }

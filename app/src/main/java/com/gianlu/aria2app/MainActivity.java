@@ -48,6 +48,7 @@ import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -62,7 +63,10 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
 
+import org.json.JSONException;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -428,6 +432,16 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         super.onResume();
         if (drawerManager != null) drawerManager.syncTogglerState();
         if (fabMenu != null) fabMenu.collapseImmediately();
+
+        try {
+            ProfilesManager.get(this).reloadCurrentProfile(this);
+        } catch (IOException | JSONException ex) {
+            Logging.logMe(this, ex);
+            WebSocketing.destroy();
+            startActivity(new Intent(this, LoadingActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .putExtra("showPicker", true));
+        }
     }
 
     @Override
