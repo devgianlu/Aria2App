@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     updater.start();
                 } catch (JTA2InitializingException ex) {
                     ErrorHandler.get().notifyException(ex, true);
+                    MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
                 }
 
                 swipeRefresh.setRefreshing(false);
@@ -334,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             updater.start();
         } catch (JTA2InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
+            MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
         }
 
         Uri shareData = getIntent().getParcelableExtra("shareData");

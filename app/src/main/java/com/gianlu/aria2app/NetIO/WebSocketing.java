@@ -9,7 +9,6 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketState;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -87,16 +86,17 @@ public class WebSocketing extends AbstractClient {
             handler.onException(true, null);
             return;
         } else if (socket.getState() != WebSocketState.OPEN) {
+            handler.onException(false, new Exception("socket isn't open!"));
             return;
         }
 
         try {
             requests.put(request.getInt("id"), handler);
             socket.sendText(request.toString());
-        } catch (JSONException ex) {
-            handler.onException(false, ex);
-        } catch (Exception ignored) {
+        } catch (OutOfMemoryError ex) {
             System.gc();
+        } catch (Exception ex) {
+            handler.onException(false, ex);
         }
     }
 
