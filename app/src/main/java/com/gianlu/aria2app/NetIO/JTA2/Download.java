@@ -147,10 +147,6 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return (length - completedLength) / downloadSpeed;
     }
 
-    public boolean isLinked() {
-        return following != null;
-    }
-
     public boolean supportsDeselectingFiles() {
         return isTorrent() && files.size() > 1;
     }

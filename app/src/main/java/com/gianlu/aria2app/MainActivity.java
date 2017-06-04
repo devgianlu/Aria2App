@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -71,13 +72,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
     private DrawerManager<UserProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView list;
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
+    private SearchView searchView;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -434,7 +436,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         getMenuInflater().inflate(R.menu.main_sorting, menu.findItem(R.id.main_sort).getSubMenu());
 
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.main_search).getActionView();
+        MenuItem searchItem = menu.findItem(R.id.main_search);
+        MenuItemCompat.setOnActionExpandListener(searchItem, this);
+        searchView = (SearchView) searchItem.getActionView();
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
@@ -785,7 +789,19 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public boolean onClose() { // TODO: Clear filter
+    public boolean onClose() {
+        searchView.setQuery(null, true);
         return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        onClose();
+        return true;
     }
 }
