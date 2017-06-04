@@ -214,6 +214,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         final SuperTextView shareRatio;
         final SuperTextView btComment;
         final SuperTextView btCreationDate;
+        final LinearLayout btAnnounceListContainer;
+        final ImageButton toggleBtAnnounceList;
         final LinearLayout btAnnounceList;
 
         ViewHolder(ViewGroup rootView) {
@@ -252,6 +254,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             shareRatio = (SuperTextView) rootView.findViewById(R.id.infoFragment_shareRatio);
             btComment = (SuperTextView) rootView.findViewById(R.id.infoFragment_btComment);
             btCreationDate = (SuperTextView) rootView.findViewById(R.id.infoFragment_btCreationDate);
+            btAnnounceListContainer = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceListContainer);
+            toggleBtAnnounceList = (ImageButton) rootView.findViewById(R.id.infoFragment_toggleBtAnnounceList);
             btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
@@ -293,6 +297,18 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 @Override
                 public void onClick(View v) {
                     handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
+                }
+            });
+
+            toggleBtAnnounceList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CommonUtils.animateCollapsingArrowBellows(toggleBtAnnounceList, CommonUtils.isExpanded(btAnnounceList));
+
+                    if (CommonUtils.isExpanded(btAnnounceList))
+                        CommonUtils.collapse(btAnnounceList);
+                    else
+                        CommonUtils.expand(btAnnounceList);
                 }
             });
         }
@@ -430,9 +446,9 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 }
 
                 if (download.torrent.announceList.isEmpty()) {
-                    btAnnounceList.setVisibility(View.GONE);
+                    btAnnounceListContainer.setVisibility(View.GONE);
                 } else {
-                    btAnnounceList.setVisibility(View.VISIBLE);
+                    btAnnounceListContainer.setVisibility(View.VISIBLE);
                     btAnnounceList.removeAllViews();
                     for (String url : download.torrent.announceList)
                         btAnnounceList.addView(new SuperTextView(getContext(), url));

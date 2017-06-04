@@ -66,7 +66,7 @@
     <string name="servers">Servers</string>
     <string name="addProfile">Add profile</string>
     <string name="home">Home</string>
-    <string name="announceList"><b>Announce list:</b></string>
+    <string name="announceList">Announce list</string>
     <string name="address_hint">127.0.0.1</string>
     <string name="port">Port</string>
     <string name="move_up">Move up in queue</string>
