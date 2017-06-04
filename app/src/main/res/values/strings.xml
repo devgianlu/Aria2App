@@ -272,7 +272,7 @@
     <string name="emptyPassword">The password field is empty!</string>
     <string name="emptyUsername">The username field is empty!</string>
     <string name="invalidAddress">Invalid address!</string>
-    <string name="pickProfile">Choose a profile or create a new one:</string>
+    <string name="pickProfile">Choose a profile or create a new one. Press and hold to edit.</string>
     <string name="removeName">Remove %s</string>
     <string name="removeDownloadAlert">If you remove the download you won\'t be able to restart it. Would you like to remove it anyway?</string>
     <string name="failedLoading">Failed loading the page!</string>

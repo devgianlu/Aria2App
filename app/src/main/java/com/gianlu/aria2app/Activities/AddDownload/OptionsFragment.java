@@ -88,6 +88,7 @@ public class OptionsFragment extends Fragment {
 
     @NonNull
     public Map<String, String> getOptions() {
+        if (adapter == null) return new HashMap<>();
         List<Option> options = adapter.getOptions();
         Map<String, String> map = new HashMap<>();
 
