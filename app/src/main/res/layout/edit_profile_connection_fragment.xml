@@ -96,16 +96,36 @@
         android:layout_height="wrap_content"
         android:text="@string/encryption" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/editProfile_certificatePath"
+    <LinearLayout
+        android:id="@+id/editProfile_certificatePathContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/certificate"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:visibility="gone">
 
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/editProfile_certificatePath"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textUri" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_weight="1"
+            android:hint="@string/certificate">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+        </android.support.design.widget.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/editProfile_pickCertificatePath"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:adjustViewBounds="true"
+            android:alpha="0.54"
+            android:background="@drawable/ripple_effect_dark"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_insert_drive_file_black_48dp" />
+    </LinearLayout>
 </LinearLayout>

@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -25,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class ConnectionFragment extends FieldErrorFragment {
+    private final static int CODE_PICK_CERT = 1;
     private LinearLayout layout;
     private TextView completeAddress;
     private RadioGroup connectionMethod;
@@ -32,6 +36,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     private TextInputLayout port;
     private TextInputLayout endpoint;
     private CheckBox encryption;
+    private LinearLayout certificatePathContainer;
     private TextInputLayout certificatePath;
 
     public static ConnectionFragment getInstance(Context context, @Nullable UserProfile edit) {
@@ -110,11 +115,12 @@ public class ConnectionFragment extends FieldErrorFragment {
         encryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                certificatePath.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                certificatePathContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 updateCompleteAddress();
                 if (isChecked) Utils.requestReadPermission(getActivity(), 11);
             }
         });
+        certificatePathContainer = (LinearLayout) layout.findViewById(R.id.editProfile_certificatePathContainer);
         certificatePath = (TextInputLayout) layout.findViewById(R.id.editProfile_certificatePath);
         certificatePath.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -130,6 +136,16 @@ public class ConnectionFragment extends FieldErrorFragment {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        ImageButton pickCertificatePath = (ImageButton) layout.findViewById(R.id.editProfile_pickCertificatePath);
+        pickCertificatePath.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
+                        .setType("*/*")
+                        .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
             }
         });
 
@@ -153,6 +169,13 @@ public class ConnectionFragment extends FieldErrorFragment {
         }
 
         return layout;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && certificatePath != null && isAdded()) {
+            certificatePath.getEditText().setText(Utils.resolveUri(getContext(), data.getData()));
+        }
     }
 
     private void updateCompleteAddress() {
