@@ -34,6 +34,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
         return fragment;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -144,6 +145,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Fields getFields() throws InvalidFieldException {
         JTA2.AuthMethod authMethod;
         switch (this.authMethod.getCheckedRadioButtonId()) {

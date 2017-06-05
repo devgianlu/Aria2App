@@ -48,6 +48,7 @@ public class ConnectionFragment extends FieldErrorFragment {
         return fragment;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -202,6 +203,7 @@ public class ConnectionFragment extends FieldErrorFragment {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Fields getFields(boolean partial) throws InvalidFieldException {
         UserProfile.ConnectionMethod connectionMethod;
         switch (this.connectionMethod.getCheckedRadioButtonId()) {

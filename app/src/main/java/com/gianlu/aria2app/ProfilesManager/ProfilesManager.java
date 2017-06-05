@@ -55,6 +55,7 @@ public class ProfilesManager {
         return UserProfile.createExternal(token, port);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void delete(UserProfile profile) {
         new File(PROFILES_PATH, profile.id + ".profile").delete();
     }

@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// FIXME: Not working properly
 public class DownloadsManager extends FileDownloadListener {
     private static DownloadsManager instance;
     private static IGlobalMonitor monitor;
@@ -91,17 +90,6 @@ public class DownloadsManager extends FileDownloadListener {
         return obj;
     }
 
-    private static DownloadTask JSONToTask(FileDownloader downloader, JSONObject obj) throws JSONException {
-        DownloadTask task = (DownloadTask) downloader.create(obj.getString("url"));
-        task.setPath(obj.getString("path"), false);
-
-        for (Map.Entry<String, List<String>> header : JSONToHeaders(obj.getJSONObject("headers")).entrySet())
-            for (String val : header.getValue())
-                task.addHeader(header.getKey(), val);
-
-        return task;
-    }
-
     public static Map<String, List<String>> JSONToHeaders(JSONObject headers) throws JSONException {
         Map<String, List<String>> map = new HashMap<>();
 
@@ -137,6 +125,18 @@ public class DownloadsManager extends FileDownloadListener {
         }
 
         return obj;
+    }
+
+    private DownloadTask JSONToTask(FileDownloader downloader, JSONObject obj) throws JSONException {
+        DownloadTask task = (DownloadTask) downloader.create(obj.getString("url"));
+        task.setPath(obj.getString("path"), false);
+
+        for (Map.Entry<String, List<String>> header : JSONToHeaders(obj.getJSONObject("headers")).entrySet())
+            for (String val : header.getValue())
+                task.addHeader(header.getKey(), val);
+
+        baseTaskSetup(task);
+        return task;
     }
 
     public void setListener(IListener listener) {
@@ -239,7 +239,6 @@ public class DownloadsManager extends FileDownloadListener {
     @Override
     protected void error(BaseDownloadTask task, Throwable ex) {
         saveRunningDownloads();
-
         if (monitor != null) monitor.onException(ex);
     }
 

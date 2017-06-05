@@ -111,7 +111,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             findPreference("dd_downloadPath").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    File path = new File((String) o);
+                    File path = new File(((String) o).trim());
                     if (!path.exists() || !path.isDirectory()) {
                         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_DOWNLOAD_PATH, (String) o);
                         return false;

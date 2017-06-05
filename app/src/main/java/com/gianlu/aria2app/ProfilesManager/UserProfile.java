@@ -31,7 +31,7 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
     public final DirectDownload directDownload;
     public final ConnectionMethod connectionMethod;
 
-    public UserProfile(JSONObject obj) throws JSONException, MalformedURLException {
+    public UserProfile(JSONObject obj) throws JSONException {
         super(obj);
 
         notificationsEnabled = obj.optBoolean("notificationsEnabled", true);

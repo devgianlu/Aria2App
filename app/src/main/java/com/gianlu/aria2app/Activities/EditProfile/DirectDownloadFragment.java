@@ -39,6 +39,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         return fragment;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
@@ -128,6 +129,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         return layout;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Fields getFields() throws InvalidFieldException {
         UserProfile.DirectDownload dd = null;
         boolean enableDirectDownload = this.enableDirectDownload.isChecked();

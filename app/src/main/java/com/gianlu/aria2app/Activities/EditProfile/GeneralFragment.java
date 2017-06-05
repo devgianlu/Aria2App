@@ -31,6 +31,7 @@ public class GeneralFragment extends FieldErrorFragment {
         return fragment;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class GeneralFragment extends FieldErrorFragment {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Fields getFields() throws InvalidFieldException {
         String profileName = this.profileName.getEditText().getText().toString().trim();
         if (profileName.isEmpty() ||

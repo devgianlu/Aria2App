@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Aria2App</string>
-    <string name="title_activity_addProfile_new">New profile</string>
-    <string name="title_activity_addProfile_edit">Edit profile</string>
     <string name="nv_websocket_client_license"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
     <string name="mpAndroidChart_details">Copyright 2016 Philipp Jahoda</string>
     <string name="downloadStatus_waiting">Waiting in queue</string>
@@ -30,36 +28,22 @@
     <string name="path"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
-    <string name="selectFileNotPaused">Select file (available only when download is paused)</string>
-    <string name="selectFileNotTorrent">Select file (available only on BitTorrent downloads)</string>
-    <string name="selectFileSingleFile">Select file (not available on single file downloads)</string>
     <string name="notificationComplete">Download completed!</string>
     <string name="notificationStarted">New download started!</string>
     <string name="notificationStopped">Download stopped!</string>
     <string name="notificationPaused">Download paused!</string>
     <string name="notificationError">Got error on download!</string>
     <string name="notificationBTComplete">BitTorrent download completed!</string>
-    <string name="serverOffline">This server is actually offline. Would you like to connect to it anyway?</string>
-    <string name="copiedClipboard">Copied to clipboard!</string>
-    <string name="profile">Profile name:</string>
     <string name="unknown">Unknown</string>
     <string name="noPeers">No peers</string>
-    <string name="noServers">No servers</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
     <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
-    <string name="noServersMessage">No servers: %s</string>
-    <string name="noPeersMessage">No peers: %s</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
-    <string name="showBitfield">Show bitfield</string>
     <string name="info">Info</string>
     <string name="files">Files</string>
-    <string name="bitfield">Bitfield</string>
     <string name="profileName">Profile name</string>
     <string name="profile_help">Aria2App uses the aria2 JSON-RPC interface! See <a>https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface</a> for more!</string>
-    <string name="profile_hint">My profile</string>
-    <string name="mode_single">Single mode (use same address for every connection)</string>
-    <string name="mode_multi">Multi mode (use different addresses for different connectivity situations)</string>
     <string name="address">Address</string>
     <string name="downloadIs">Download is %s.</string>
     <string name="peers">Peers</string>
@@ -67,66 +51,31 @@
     <string name="addProfile">Add profile</string>
     <string name="home">Home</string>
     <string name="announceList">Announce list</string>
-    <string name="address_hint">127.0.0.1</string>
     <string name="port">Port</string>
-    <string name="move_up">Move up in queue</string>
-    <string name="move_down">Move down in queue</string>
-    <string name="port_hint">6800</string>
     <string name="endpoint">Endpoint</string>
     <string name="endpoint_default">/jsonrpc</string>
-    <string name="completeURL_default">ws://127.0.0.1:6800/jsonrpc</string>
     <string name="authenticationMethod">Authentication method</string>
     <string name="token">Token</string>
-    <string name="token_hint">token</string>
-    <string name="username_hint">username</string>
-    <string name="password_hint">password</string>
     <string name="authentication">Authentication</string>
-    <string name="retry">Retry</string>
-    <string name="exit">Exit</string>
     <string name="pickFromFile">Pick from file</string>
-    <string name="magnetURI_help">If you want to add a magnet link go to the URI section.</string>
-    <string name="noCommunication">Cannot connect</string>
-    <string name="noCommunication_message">%s.\nPlease check your configuration or contact me at altomanigianluca@gmail.com</string>
     <string name="filters">Filters</string>
     <string name="encryption">Enable TLS/SSL encryption</string>
     <string name="apply">Apply</string>
-    <string name="cancel">Cancel</string>
     <string name="uris">URIs</string>
-    <string name="_default">Default</string>
     <string name="save">Save</string>
     <string name="support">Support</string>
-    <string name="changeProfile">Change profile</string>
     <string name="add">Add</string>
     <string name="options">Options</string>
     <string name="position">Queue position:</string>
-    <string name="pickTorrent">Pick a Torrent file</string>
-    <string name="pickMetalink">Pick a Metalink file</string>
-    <string name="addURIs_help">All URIs must point to the same resource otherwise the download may fail or be corrupted without aria2 complaining.</string>
-    <string name="addURIs_torrentHelp">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
-    <string name="zero">0</string>
-    <string name="torrent">Torrent</string>
-    <string name="metalink">Metalink</string>
     <string name="downloadSpeed">Download speed</string>
     <string name="uploadSpeed">Upload speed</string>
-    <string name="addNew">Add new</string>
-    <string name="ssid">SSID:</string>
-    <string name="ssid_hint">My-WiFi</string>
     <string name="delete">Delete</string>
-    <string name="user_passwd">Username and password</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
     <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration. For example: <a>https://docs.python.org/2/library/simplehttpserver.html</a>. The address must be pointing to a directory listing of the aria2 download directory, any path added to the address will be ignored. This will require the permission to write to the external storage.</string>
-    <string name="directDownload_addrHint">http://127.0.0.1:6801/</string>
-    <string name="directDownload_addrHelp"></string>
     <string name="username">Username</string>
-    <string name="directDownload_usernameHint">myusername</string>
     <string name="password">Password</string>
-    <string name="directDownload_passwordHint">mypassword</string>
-    <string name="remove">Remove</string>
-    <string name="pause">Pause</string>
     <string name="more">More</string>
-    <string name="resume">Resume</string>
-    <string name="restart">Restart</string>
     <string name="globalOptions">Global options</string>
     <string name="menu_downloadOptions">Download options</string>
     <string name="menu_refreshPage">Refresh page</string>
@@ -137,8 +86,6 @@
     <string name="hiddenMetadata">Linked meta-data hidden</string>
     <string name="refreshRate">Refresh rate</string>
     <string name="refreshRateSummary">Refreshing timeout in seconds</string>
-    <string name="reloadList">Reload list rate</string>
-    <string name="reloadListSummary">Reloading timeout of the download list in seconds</string>
     <string name="forceAction">Force action if it fails</string>
     <string name="forceActionOn">If action on download fails, we\'ll try to force it</string>
     <string name="forceActionOff">If action on download fails, we\'re going to do nothing</string>
@@ -175,12 +122,7 @@
     <string name="versionCheck">Check aria2 version at startup</string>
     <string name="enabledVersionCheck">Version will be checked and you\'ll be notified if your version it\'s outdated</string>
     <string name="disabledVersionCheck">No version check will be performed</string>
-    <string name="versionCheckURL">https://api.github.com/repos/aria2/aria2/releases</string>
-    <string name="dialogVersionCheck">Outdated version</string>
-    <string name="dialogVersionCheckMessage">Your version of aria2 is outdated. Please update it to the latest to avoid bugs or problems of any kind.\nYou can disable this feature in the preferences.\n\nNewer version: %1$s\nYour version: %2$s</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
-    <string name="enableProfileNotifications">Enable notifications for this profile</string>
-    <string name="downloadFile">Download file</string>
     <string name="downloadIncomplete">Incomplete download</string>
     <string name="downloadIncompleteMessage">The current file is incomplete (aka not fully downloaded).\nWould you like to download it anyway?</string>
     <string name="notificationService">Notification service</string>
@@ -193,13 +135,8 @@
     <string name="donateSummary">Send me a small amount of money to support me</string>
     <string name="connectingBillingService">Connecting to the billing service. Please wait…</string>
     <string name="certificate">CA certificate path</string>
-    <string name="certificate_hint">/path/to/server/certificate</string>
     <string name="search">Search</string>
-    <string name="certificateDisclaimer">The certificate must not be deleted or moved.</string>
     <string name="addUri">Add URI</string>
-    <string name="fileName">File name:</string>
-    <string name="fileName_help">The following path is added to the path of the \'dir\' option. Leave empty to let aria2 choose.</string>
-    <string name="options_help">Only selected options are going to be included. To select an option click on the label icon.</string>
     <string name="directDownload">DirectDownload</string>
     <string name="apacheLicense">Licensed under Apache License 2.0</string>
     <string name="fileDownloader_details">Copyright 2015 LingoChamp Inc.</string>
@@ -207,16 +144,10 @@
     <string name="dd_downloadPath">Download path</string>
     <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
     <string name="connecting">Connecting…</string>
-    <string name="downloading">Downloading</string>
     <string name="completed">Completed</string>
-    <string name="paused">Paused</string>
-    <string name="pending">Pending</string>
     <string name="directDownload_noItems">There no download running currently. You can add a download, from the \"Files\" tab, selecting a file. If you haven\'t set up DirectDownload you can do it by editing your profile.</string>
     <string name="error">Error</string>
     <string name="error_details">Error: %s</string>
-    <string name="indexes"><![CDATA[<b>Indexes:</b>]]> %s</string>
-    <string name="downloadDirectory">Download directory</string>
-    <string name="downloadDirectoryMessage">Are you sure you want to download all files contained in this directory and its subdirectories?</string>
     <string name="searchTorrent">Search for torrents</string>
     <string name="nothingFound">Nothing found!</string>
     <string name="fetching_information">Fetching information. Please wait…</string>
@@ -238,25 +169,12 @@
     <string name="totalLengthMenu">Total length</string>
     <string name="completedLengthMenu">Completed length</string>
     <string name="progress">Progress</string>
-    <string name="pickServer">Pick the server you want to start the download on:</string>
-    <string name="startDownload">Start download</string>
-    <string name="selectFile">Select file</string>
-    <string name="showSummary">Show summary</string>
-    <string name="showSummaryOn">A summary card will be displayed on the top of the downloads list</string>
-    <string name="showSummaryOff">No summary card will be displayed</string>
-    <string name="summaryActive"><![CDATA[<b>Active:</b>]]> %d</string>
-    <string name="summaryWaiting"><![CDATA[<b>Waiting:</b>]]> %d</string>
-    <string name="summaryStopped"><![CDATA[<b>Stopped:</b>]]> %1$d (%2$d)</string>
-    <string name="connectionMethodWebSocket">WebSocket</string>
-    <string name="connectionMethodHTTP">HTTP-GET</string>
     <string name="connectionMethod">Connection method</string>
-    <string name="connMethodHTTPDisclaimer">Some features may not work when using HTTP-GET.</string>
     <string name="mitLicense">Licensed under MIT license</string>
     <string name="jsoup_details">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
     <string name="fatalExceptionMessage">A fatal exception had been thrown!</string>
-    <string name="subsequentExceptions">Too many exceptions have been thrown!</string>
     <string name="connection">Connection</string>
     <string name="invalidProfileName">Invalid profile name!</string>
     <string name="HTTP">HTTP</string>
@@ -317,20 +235,6 @@
         <item>3 sec</item>
         <item>4 sec</item>
         <item>5 sec</item>
-    </string-array>
-    <string-array name="downloadListUpdateRateValue" translatable="false">
-        <item>0</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>60</item>
-    </string-array>
-    <string-array name="downloadListUpdateRate">
-        <item>Do not reload</item>
-        <item>10 sec</item>
-        <item>20 sec</item>
-        <item>30 sec</item>
-        <item>60 sec</item>
     </string-array>
     <string-array name="selectedNotificationsValue" translatable="false">
         <item>START</item>

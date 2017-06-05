@@ -16,16 +16,15 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class BitfieldVisualizer extends View {
+    private final int padding = 12;
+    private final int square = 48;
     private String bitfield = null;
     private int pieces = -1;
     private int[] binary = null;
     private Paint paint;
-    private int padding = 12;
-    private int square = 48;
     private int columns;
     private int rows;
     private int hoff;
-
 
     public BitfieldVisualizer(Context context) {
         super(context);
