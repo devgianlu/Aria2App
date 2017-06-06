@@ -36,7 +36,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
             public void run() {
                 List<Download> filteredDownloads = new ArrayList<>();
                 for (Download download : downloads)
-                    if (!(hideMetadata && download.isMetadata()))
+                    if (!(hideMetadata && download.isMetadata() && download.followedBy != null))
                         filteredDownloads.add(download);
 
                 listener.onUpdateAdapter(filteredDownloads);
