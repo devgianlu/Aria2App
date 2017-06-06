@@ -18,6 +18,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.DirBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FileBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.UpdateUI;
@@ -26,6 +27,7 @@ import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManagerException;
+import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -44,10 +46,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private RecyclerView list;
     private ProgressBar loading;
     private FilesAdapter adapter;
-    private FileBottomSheet sheet;
+    private FileBottomSheet fileSheet;
+    private DirBottomSheet dirSheet;
     private LinearLayout container;
     private LinearLayout breadcrumbsContainer;
     private HorizontalScrollView breadcrumbs;
+    private Download download;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
@@ -61,12 +65,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public boolean canGoBack(int code) {
         if (code == CODE_CLOSE_SHEET) {
-            sheet.collapse();
+            fileSheet.collapse();
             return true;
         }
 
-        if (sheet.shouldUpdate()) {
-            sheet.collapse();
+        if (fileSheet.shouldUpdate()) { // We don't need to do this for dirSheet too, it would be redundant
+            fileSheet.collapse();
             return false;
         } else if (adapter.canGoUp()) {
             adapter.navigateUp();
@@ -95,7 +99,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        final Download download = (Download) getArguments().getSerializable("download");
+
+        download = (Download) getArguments().getSerializable("download");
         if (download == null) {
             MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
             loading.setVisibility(View.GONE);
@@ -107,7 +112,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         adapter = new FilesAdapter(getContext(), colorRes, this);
         list.setAdapter(adapter);
 
-        sheet = new FileBottomSheet(layout, download, this);
+        fileSheet = new FileBottomSheet(layout, download, this);
+        dirSheet = new DirBottomSheet(layout);
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -158,7 +164,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         loading.setVisibility(View.GONE);
         container.setVisibility(View.VISIBLE);
         if (adapter != null) adapter.update(files, commonRoot);
-        if (sheet != null) sheet.update(files);
+        if (fileSheet != null) fileSheet.update(files);
     }
 
     @Override
@@ -171,7 +177,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onFileSelected(AFile file) {
-        sheet.expand(file);
+        fileSheet.expand(file);
+    }
+
+    @Override
+    public void onDirectorySelected(TreeNode dir) {
+        dirSheet.expand(new ADir(dir, download));
     }
 
     @Override
@@ -205,20 +216,20 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     public void onSelectedFile(AFile file) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_SELECTED, file.getName());
         adapter.notifyItemChanged(file);
-        if (sheet != null) sheet.collapse();
+        if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override
     public void onDeselectedFile(AFile file) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_DESELECTED, file.getName());
         adapter.notifyItemChanged(file);
-        if (sheet != null) sheet.collapse();
+        if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override
     public void onExceptionSelectingFile(Exception ex) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, ex);
-        if (sheet != null) sheet.collapse();
+        if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override

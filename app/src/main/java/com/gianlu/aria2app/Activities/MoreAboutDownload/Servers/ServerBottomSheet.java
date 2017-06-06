@@ -18,23 +18,26 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.List;
 
 public class ServerBottomSheet extends BaseBottomSheet<Server> {
-    private final SuperTextView downloadSpeed;
-    private final LineChart chart;
-    private final SuperTextView currentUri;
-    private final SuperTextView uri;
+    private SuperTextView downloadSpeed;
+    private LineChart chart;
+    private SuperTextView currentUri;
+    private SuperTextView uri;
 
     public ServerBottomSheet(View parent, @LayoutRes int layoutRes) {
-        super(parent, layoutRes);
-
-        downloadSpeed = (SuperTextView) content.findViewById(R.id.serverSheet_downloadSpeed);
-        chart = (LineChart) content.findViewById(R.id.serverSheet_chart);
-        currentUri = (SuperTextView) content.findViewById(R.id.serverSheet_currentUri);
-        uri = (SuperTextView) content.findViewById(R.id.serverSheet_uri);
+        super(parent, layoutRes, false);
     }
 
     @Override
     protected int getRippleDark() {
         return R.drawable.ripple_effect_dark;
+    }
+
+    @Override
+    public void bindViews() {
+        downloadSpeed = (SuperTextView) content.findViewById(R.id.serverSheet_downloadSpeed);
+        chart = (LineChart) content.findViewById(R.id.serverSheet_chart);
+        currentUri = (SuperTextView) content.findViewById(R.id.serverSheet_currentUri);
+        uri = (SuperTextView) content.findViewById(R.id.serverSheet_uri);
     }
 
     @Override

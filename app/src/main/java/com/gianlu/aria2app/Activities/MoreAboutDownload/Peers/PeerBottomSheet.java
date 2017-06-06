@@ -16,27 +16,30 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.List;
 
 public class PeerBottomSheet extends BaseBottomSheet<Peer> {
-    private final SuperTextView downloadSpeed;
-    private final SuperTextView uploadSpeed;
-    private final LineChart chart;
-    private final SuperTextView seeder;
-    private final SuperTextView peerChoking;
-    private final SuperTextView amChoking;
+    private SuperTextView downloadSpeed;
+    private SuperTextView uploadSpeed;
+    private LineChart chart;
+    private SuperTextView seeder;
+    private SuperTextView peerChoking;
+    private SuperTextView amChoking;
 
     public PeerBottomSheet(View sheet) {
-        super(sheet, R.layout.peer_sheet);
-
-        this.downloadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_downloadSpeed);
-        this.uploadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_uploadSpeed);
-        this.chart = (LineChart) content.findViewById(R.id.peerSheet_chart);
-        this.seeder = (SuperTextView) content.findViewById(R.id.peerSheet_seeder);
-        this.peerChoking = (SuperTextView) content.findViewById(R.id.peerSheet_peerChoking);
-        this.amChoking = (SuperTextView) content.findViewById(R.id.peerSheet_amChoking);
+        super(sheet, R.layout.peer_sheet, false);
     }
 
     @Override
     protected int getRippleDark() {
         return R.drawable.ripple_effect_dark;
+    }
+
+    @Override
+    public void bindViews() {
+        downloadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_downloadSpeed);
+        uploadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_uploadSpeed);
+        chart = (LineChart) content.findViewById(R.id.peerSheet_chart);
+        seeder = (SuperTextView) content.findViewById(R.id.peerSheet_seeder);
+        peerChoking = (SuperTextView) content.findViewById(R.id.peerSheet_peerChoking);
+        amChoking = (SuperTextView) content.findViewById(R.id.peerSheet_amChoking);
     }
 
     @Override

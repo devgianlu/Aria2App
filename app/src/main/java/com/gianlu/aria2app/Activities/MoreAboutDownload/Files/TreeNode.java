@@ -34,6 +34,15 @@ public class TreeNode {
         this.incrementalPath = incrementalPath;
     }
 
+    public TreeNode(TreeNode node) {
+        this.files = node.files;
+        this.dirs = node.dirs;
+        this.obj = node.obj;
+        this.incrementalPath = node.incrementalPath;
+        this.name = node.name;
+        this.parent = node.parent;
+    }
+
     public static void guessSeparator(String path) {
         if (path.contains("/")) SEPARATOR = "/";
         else if (path.contains("\\")) SEPARATOR = "\\";

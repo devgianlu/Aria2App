@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/dirSheet_indexes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/dirSheet_path"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/dirSheet_length"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/dirSheet_completedLength"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

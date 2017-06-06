@@ -136,6 +136,20 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TreeNode node = currentNodes.get(holder.getAdapterPosition());
+                if (node == null) return false;
+                if (!node.isFile()) {
+                    if (handler != null) handler.onDirectorySelected(node);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 
     @Override
@@ -156,6 +170,8 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void onFileSelected(AFile file);
 
         void onDirectoryChanged(TreeNode dir);
+
+        void onDirectorySelected(TreeNode dir);
     }
 
     private class DirViewHolder extends RecyclerView.ViewHolder {

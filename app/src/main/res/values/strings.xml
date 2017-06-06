@@ -220,6 +220,7 @@
     <string name="name">Name</string>
     <string name="searchDownloads">Search for download</string>
     <string name="failedLoadingDownloads">Failed loading downloads!</string>
+    <string name="indexes"><![CDATA[<b>Indexes:</b>]]> %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

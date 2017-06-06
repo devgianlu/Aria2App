@@ -20,33 +20,36 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.List;
 
 public class FileBottomSheet extends BaseBottomSheet<AFile> {
-    private final SuperTextView index;
-    private final SuperTextView path;
-    private final SuperTextView length;
-    private final SuperTextView completedLength;
-    private final Button downloadFile;
-    private final CheckBox selected;
     private final Download download;
     private final ISheet handler;
     private final Handler mainHandler;
+    private SuperTextView index;
+    private SuperTextView path;
+    private SuperTextView length;
+    private SuperTextView completedLength;
+    private Button downloadFile;
+    private CheckBox selected;
 
     public FileBottomSheet(View parent, Download download, ISheet handler) {
-        super(parent, R.layout.file_sheet);
+        super(parent, R.layout.file_sheet, true);
         this.download = download;
         this.handler = handler;
         this.mainHandler = new Handler(context.getMainLooper());
+    }
 
+    @Override
+    protected int getRippleDark() {
+        return R.drawable.ripple_effect_dark;
+    }
+
+    @Override
+    public void bindViews() {
         index = (SuperTextView) content.findViewById(R.id.fileSheet_index);
         path = (SuperTextView) content.findViewById(R.id.fileSheet_path);
         length = (SuperTextView) content.findViewById(R.id.fileSheet_length);
         completedLength = (SuperTextView) content.findViewById(R.id.fileSheet_completedLength);
         selected = (CheckBox) content.findViewById(R.id.fileSheet_selected);
         downloadFile = (Button) content.findViewById(R.id.fileSheet_downloadFile);
-    }
-
-    @Override
-    protected int getRippleDark() {
-        return R.drawable.ripple_effect_dark;
     }
 
     @Override
