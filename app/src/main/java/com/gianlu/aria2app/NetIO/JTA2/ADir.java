@@ -27,7 +27,7 @@ public class ADir extends TreeNode {
         fullPath = download.dir + node.incrementalPath;
     }
 
-    private static long calcCompletedLength(TreeNode parent, int sum) {
+    private static long calcCompletedLength(TreeNode parent, long sum) {
         for (TreeNode file : parent.files) sum += file.obj.completedLength;
         for (TreeNode dir : parent.dirs) calcCompletedLength(dir, sum);
         return sum;

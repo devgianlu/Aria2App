@@ -3,6 +3,7 @@ package com.gianlu.aria2app.NetIO.JTA2;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -18,17 +19,16 @@ public class AFile implements Serializable {
     public final HashMap<Status, String> uris;
     public boolean selected;
 
-    public AFile(JSONObject obj) {
-        index = Integer.parseInt(obj.optString("index", "0"));
-        path = obj.optString("path");
-        length = Long.parseLong(obj.optString("length", "0"));
-        completedLength = Long.parseLong(obj.optString("completedLength", "0"));
-        selected = Boolean.parseBoolean(obj.optString("selected", "false"));
+    public AFile(JSONObject obj) throws JSONException {
+        index = Integer.parseInt(obj.getString("index"));
+        path = obj.getString("path");
+        length = Long.parseLong(obj.getString("length"));
+        completedLength = Long.parseLong(obj.getString("completedLength"));
+        selected = Boolean.parseBoolean(obj.getString("selected"));
         uris = new HashMap<>();
 
         if (obj.has("uris")) {
-            JSONArray array = obj.optJSONArray("uris");
-
+            JSONArray array = obj.getJSONArray("uris");
             for (int i = 0; i < array.length(); i++)
                 uris.put(Status.parse(array.optJSONObject(i).optString("status")), array.optJSONObject(i).optString("uri"));
         }
