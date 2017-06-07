@@ -76,7 +76,9 @@ public class Prefs {
         A2_GLOBAL_QUICK_OPTIONS("a2_globalQuickOptions"),
         A2_CHECK_VERSION("a2_runVersionCheckAtStartup"),
         A2_QUICK_OPTIONS("a2_quickOptions"),
-        A2_MAIN_SORTING("a2_mainSorting");
+        A2_MAIN_SORTING("a2_mainSorting"),
+        A2_NOTIFS_SOUND("a2_enableSound"),
+        A2_SELECTED_NOTIFS_TYPE("a2_selectedNotifications");
         public final String key;
 
         Keys(String key) {

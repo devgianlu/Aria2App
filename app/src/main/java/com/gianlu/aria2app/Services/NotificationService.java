@@ -5,9 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.RingtoneManager;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +17,7 @@ import com.gianlu.aria2app.Prefs;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 
@@ -51,19 +50,6 @@ public class NotificationService extends IntentService {
                 .putExtra("profiles", profiles);
     }
 
-    private static String expandProfileList(List<UserProfile> profiles) {
-        String expanded = "";
-
-        boolean first = true;
-        for (UserProfile profile : profiles) {
-            if (!first) expanded += ", ";
-            expanded += profile.getProfileName();
-            first = false;
-        }
-
-        return expanded;
-    }
-
     public static void stop(Context context) {
         context.stopService(new Intent(context, NotificationService.class).setAction("STOP"));
     }
@@ -81,7 +67,7 @@ public class NotificationService extends IntentService {
                     .setPriority(Notification.PRIORITY_MIN)
                     .setContentTitle(getString(R.string.notificationService))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setContentText(expandProfileList((List<UserProfile>) intent.getSerializableExtra("profiles")))
+                    .setContentText(CommonUtils.join((ArrayList<UserProfile>) intent.getSerializableExtra("profiles"), ", "))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
                     .addAction(new NotificationCompat.Action.Builder(
@@ -101,24 +87,21 @@ public class NotificationService extends IntentService {
     @SuppressWarnings("unchecked")
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (Objects.equals(intent.getAction(), "STOP") || ((List<UserProfile>) intent.getSerializableExtra("profiles")).size() == 0) {
+        List<UserProfile> profiles = (ArrayList<UserProfile>) intent.getSerializableExtra("profiles");
+        if (Objects.equals(intent.getAction(), "STOP") || profiles == null || profiles.isEmpty()) {
             stopSelf();
             return;
         }
 
-        for (UserProfile profile : (List<UserProfile>) intent.getSerializableExtra("profiles")) {
+        for (UserProfile profile : profiles) {
             if (profile.connectionMethod == UserProfile.ConnectionMethod.HTTP) continue;
-
-            String scheme;
-            if (profile.serverSSL) scheme = "wss://";
-            else scheme = "ws://";
 
             WebSocket webSocket;
             try {
                 if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                    webSocket = NetUtils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(getApplicationContext(), profile));
+                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(getApplicationContext(), profile));
                 else
-                    webSocket = NetUtils.readyWebSocket(scheme + profile.serverAddr + ":" + profile.serverPort + profile.serverEndpoint, NetUtils.readyCertificate(getApplicationContext(), profile));
+                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), NetUtils.readyCertificate(getApplicationContext(), profile));
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;
@@ -164,17 +147,15 @@ public class NotificationService extends IntentService {
 
         NotificationHandler(UserProfile profile) {
             this.profile = profile;
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(NotificationService.this);
 
-            selectedNotifications = sharedPreferences.getStringSet("a2_selectedNotifications", new HashSet<String>());
-            soundEnabled = sharedPreferences.getBoolean("a2_enableSound", true);
+            selectedNotifications = Prefs.getSet(getApplicationContext(), Prefs.Keys.A2_SELECTED_NOTIFS_TYPE, new HashSet<String>());
+            soundEnabled = Prefs.getBoolean(getApplicationContext(), Prefs.Keys.A2_NOTIFS_SOUND, true);
         }
 
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
-            JSONObject jResponse = new JSONObject(text);
-
-            String gid = jResponse.getJSONArray("params").getJSONObject(0).getString("gid");
+            JSONObject eventBody = new JSONObject(text);
+            String gid = eventBody.getJSONArray("params").getJSONObject(0).getString("gid");
 
             int reqCode = new Random().nextInt(10000);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this)
@@ -193,7 +174,7 @@ public class NotificationService extends IntentService {
             if (soundEnabled)
                 builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-            switch (Event.parseEvent(jResponse.getString("method"))) {
+            switch (Event.parseEvent(eventBody.getString("method"))) {
                 case START:
                     if (!selectedNotifications.contains("START")) return;
                     builder.setContentTitle(getString(R.string.notificationStarted));
