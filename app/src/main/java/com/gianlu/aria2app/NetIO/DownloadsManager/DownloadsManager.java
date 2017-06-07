@@ -175,8 +175,8 @@ public class DownloadsManager extends FileDownloadListener {
                 for (int i = 0; i < array.length(); i++) {
                     try {
                         DownloadTask task = JSONToTask(downloader, array.getJSONObject(i));
-                        if (task.reuse()) task.start();
-                    } catch (JSONException ignored) {
+                        task.start();
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -291,6 +291,23 @@ public class DownloadsManager extends FileDownloadListener {
 
         int pos = indexOf(download);
         if (pos != -1) runningTasks.remove(pos);
+    }
+
+    private DownloadTask copyTask(DownloadTask item) {
+        DownloadTask copy = (DownloadTask) downloader.create(item.getUrl()).setPath(item.getPath(), false);
+
+        for (Map.Entry<String, List<String>> header : item.getHeader().getHeaders().entrySet())
+            for (String val : header.getValue())
+                copy.addHeader(header.getKey(), val);
+
+        baseTaskSetup(copy);
+        return copy;
+    }
+
+    public void restart(DDDownload download) {
+        int pos = indexOf(download);
+        DownloadTask copy = copyTask(runningTasks.get(pos));
+        copy.start();
     }
 
     public interface IGlobalMonitor {

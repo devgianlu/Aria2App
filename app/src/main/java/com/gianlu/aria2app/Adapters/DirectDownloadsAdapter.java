@@ -19,12 +19,12 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.List;
 import java.util.Locale;
 
-public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAdapter.ViewHolder> {
+public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloadsAdapter.ViewHolder> {
     private final DownloadsManager manager;
     private final Context context;
     private final LayoutInflater inflater;
 
-    public DirectDownloadAdapter(Context context, DownloadsManager manager) {
+    public DirectDownloadsAdapter(Context context, DownloadsManager manager) {
         this.inflater = LayoutInflater.from(context);
         this.context = context;
         this.manager = manager;
@@ -87,6 +87,15 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
                 notifyItemRemoved(holder.getAdapterPosition());
             }
         });
+
+        holder.restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                manager.restart(download);
+                manager.remove(download);
+                notifyItemRemoved(holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -105,6 +114,7 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
         final ImageButton resume;
         final ImageButton stop;
         final ImageButton remove;
+        final ImageButton restart;
 
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.direct_download_item, parent, false));
@@ -121,6 +131,7 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
             resume = (ImageButton) itemView.findViewById(R.id.ddItem_resume);
             stop = (ImageButton) itemView.findViewById(R.id.ddItem_stop);
             remove = (ImageButton) itemView.findViewById(R.id.ddItem_remove);
+            restart = (ImageButton) itemView.findViewById(R.id.ddItem_restart);
         }
 
         private void updateStatus(DDDownload.Status status) {
@@ -128,6 +139,7 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
             resume.setVisibility(View.VISIBLE);
             stop.setVisibility(View.VISIBLE);
             remove.setVisibility(View.VISIBLE);
+            restart.setVisibility(View.VISIBLE);
 
             switch (status) {
                 case COMPLETED:
@@ -139,10 +151,12 @@ public class DirectDownloadAdapter extends RecyclerView.Adapter<DirectDownloadAd
                 case PAUSED:
                     pause.setVisibility(View.GONE);
                     remove.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
                     break;
                 case RUNNING:
                     resume.setVisibility(View.GONE);
                     remove.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
                     break;
             }
         }

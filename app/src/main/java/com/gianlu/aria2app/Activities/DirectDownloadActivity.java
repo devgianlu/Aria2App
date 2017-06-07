@@ -10,14 +10,14 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.gianlu.aria2app.Activities.DirectDownload.UpdateUI;
-import com.gianlu.aria2app.Adapters.DirectDownloadAdapter;
+import com.gianlu.aria2app.Adapters.DirectDownloadsAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.MessageLayout;
 
 public class DirectDownloadActivity extends AppCompatActivity implements UpdateUI.IUI {
-    private DirectDownloadAdapter adapter;
+    private DirectDownloadsAdapter adapter;
     private UpdateUI updater;
     private FrameLayout layout;
     private RecyclerView list;
@@ -38,7 +38,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements UpdateU
                 updater.stopThread(new BaseUpdater.IThread() {
                     @Override
                     public void onStopped() {
-                        adapter = new DirectDownloadAdapter(DirectDownloadActivity.this, DownloadsManager.get(DirectDownloadActivity.this));
+                        adapter = new DirectDownloadsAdapter(DirectDownloadActivity.this, DownloadsManager.get(DirectDownloadActivity.this));
                         list.setAdapter(adapter);
                         swipeRefresh.setRefreshing(false);
                     }
@@ -50,7 +50,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements UpdateU
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        adapter = new DirectDownloadAdapter(this, DownloadsManager.get(this));
+        adapter = new DirectDownloadsAdapter(this, DownloadsManager.get(this));
         list.setAdapter(adapter);
 
         updater = new UpdateUI(this, this);
