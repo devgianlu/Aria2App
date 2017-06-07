@@ -40,7 +40,7 @@ import com.gianlu.commonutils.MessageLayout;
 
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
     private UpdateUI updater;
     private CoordinatorLayout layout;
     private RecyclerView list;
@@ -113,7 +113,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         list.setAdapter(adapter);
 
         fileSheet = new FileBottomSheet(layout, download, this);
-        dirSheet = new DirBottomSheet(layout);
+        dirSheet = new DirBottomSheet(layout, download, this);
 
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -165,6 +165,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         container.setVisibility(View.VISIBLE);
         if (adapter != null) adapter.update(files, commonRoot);
         if (fileSheet != null) fileSheet.update(files);
+        if (dirSheet != null) dirSheet.update(files);
     }
 
     @Override
@@ -227,7 +228,21 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onExceptionSelectingFile(Exception ex) {
+    public void onSelectedDir(ADir dir) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DIR_SELECTED, dir.name);
+        adapter.notifyItemsChanged(dir, true);
+        if (dirSheet != null) dirSheet.collapse();
+    }
+
+    @Override
+    public void onDeselectedDir(ADir dir) {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DIR_DESELECTED, dir.name);
+        adapter.notifyItemsChanged(dir, false);
+        if (dirSheet != null) dirSheet.collapse();
+    }
+
+    @Override
+    public void onExceptionChangingSelection(Exception ex) {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, ex);
         if (fileSheet != null) fileSheet.collapse();
     }

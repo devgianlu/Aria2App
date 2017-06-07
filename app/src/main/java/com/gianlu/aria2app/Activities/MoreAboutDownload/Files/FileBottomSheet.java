@@ -17,6 +17,7 @@ import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FileBottomSheet extends BaseBottomSheet<AFile> {
@@ -66,14 +67,16 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
                     try {
                         jta2 = JTA2.instantiate(buttonView.getContext());
                     } catch (JTA2InitializingException ex) {
-                        if (handler != null) handler.onExceptionSelectingFile(ex);
+                        if (handler != null) handler.onExceptionChangingSelection(ex);
                         return;
                     }
 
-                    jta2.changeSelection(download, item, isChecked, new JTA2.IChangeSelection() {
+                    jta2.changeSelection(download, Collections.singletonList(item), isChecked, new JTA2.IChangeSelection() {
                         @Override
                         public void onChangedSelection(final boolean selected) {
                             if (handler == null) return;
+
+                            item.selected = selected;
 
                             mainHandler.post(new Runnable() {
                                 @Override
@@ -89,7 +92,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
                             mainHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (handler != null) handler.onExceptionSelectingFile(ex);
+                                    if (handler != null) handler.onExceptionChangingSelection(ex);
                                 }
                             });
                         }
@@ -136,7 +139,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
 
         void onDeselectedFile(AFile file);
 
-        void onExceptionSelectingFile(Exception ex);
+        void onExceptionChangingSelection(Exception ex);
 
         void onWantsToDownload(Download download, AFile file);
     }

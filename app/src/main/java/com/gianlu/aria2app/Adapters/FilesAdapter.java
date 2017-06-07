@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
+import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
@@ -38,19 +39,18 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void update(List<AFile> files, String commonRoot) {
         if (currentNode == null) {
             currentNode = TreeNode.create(files, commonRoot);
-            notifyDirChanged();
+            notifyCurrentDirChanged();
             return;
         }
 
+        currentNode.updateHierarchy(files);
         for (AFile file : files) notifyItemChanged(file);
     }
 
     public void notifyItemChanged(AFile file) {
         int pos = currentNode.indexOfObj(file);
         if (pos != -1) {
-            TreeNode newNode = currentNodes.get(pos + currentNode.dirs.size()).update(file);
-            currentNode.files.set(pos, newNode);
-            currentNodes.set(pos + currentNode.dirs.size(), newNode);
+            currentNodes.get(pos + currentNode.dirs.size()).update(file);
             notifyItemChanged(pos + currentNode.dirs.size(), file);
         }
     }
@@ -62,7 +62,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void cd(TreeNode node) {
         currentNode = node;
-        notifyDirChanged();
+        notifyCurrentDirChanged();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public void notifyDirChanged() {
+    public void notifyCurrentDirChanged() {
         if (currentNode == null) return;
         currentNodes.clear();
         currentNodes.addAll(currentNode.dirs);
@@ -159,11 +159,18 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void rebaseTo(TreeNode node) {
         currentNode = node;
-        notifyDirChanged();
+        notifyCurrentDirChanged();
     }
 
     public boolean canGoUp() {
         return currentNode != null && !currentNode.isRoot();
+    }
+
+    public void notifyItemsChanged(ADir dir, boolean selected) {
+        List<AFile> files = dir.objs();
+        for (AFile file : files) file.selected = selected;
+        currentNode.updateHierarchy(files);
+        for (AFile file : files) notifyItemChanged(file);
     }
 
     public interface IAdapter {

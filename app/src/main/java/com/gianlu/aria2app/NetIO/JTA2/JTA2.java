@@ -284,65 +284,51 @@ public class JTA2 {
         });
     }
 
-    private void performIndexesOperation(Download download, String[] indexes, final AFile file, boolean select, final IChangeSelection handler) {
+    private void performSelectIndexesOperation(Download download, String[] indexes, final List<AFile> files, boolean select, final IChangeSelection handler) {
         if (select) {
-            if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1) {
-                String[] newIndexes = Arrays.copyOf(indexes, indexes.length + 1);
-                newIndexes[newIndexes.length - 1] = String.valueOf(file.index);
+            List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
+            for (AFile file : files)
+                if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1)
+                    newIndexes.add(String.valueOf(file.index));
 
-                Map<String, String> map = new HashMap<>();
-                map.put("select-file", CommonUtils.join(newIndexes, ","));
+            Map<String, String> map = new HashMap<>();
+            map.put("select-file", CommonUtils.join(newIndexes, ","));
 
-                changeOption(download.gid, map, new ISuccess() {
-                    @Override
-                    public void onSuccess() {
-                        file.selected = true;
-                        handler.onChangedSelection(true);
-                    }
-
-                    @Override
-                    public void onException(Exception ex) {
-                        handler.onException(ex);
-                    }
-                });
-            } else {
-                file.selected = true;
-                handler.onChangedSelection(true);
-            }
-        } else {
-            if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1) {
-                String[] newIndexes = new String[indexes.length - 1];
-                int i = 0;
-                for (String index : indexes) {
-                    if (!Objects.equals(index, String.valueOf(file.index))) {
-                        newIndexes[i] = index;
-                        i++;
-                    }
+            changeOption(download.gid, map, new ISuccess() {
+                @Override
+                public void onSuccess() {
+                    handler.onChangedSelection(true);
                 }
 
-                Map<String, String> map = new HashMap<>();
-                map.put("select-file", CommonUtils.join(newIndexes, ","));
+                @Override
+                public void onException(Exception ex) {
+                    handler.onException(ex);
+                }
+            });
+        } else {
+            List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
+            for (AFile file : files)
+                if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1)
+                    newIndexes.remove(String.valueOf(file.index));
 
-                changeOption(download.gid, map, new ISuccess() {
-                    @Override
-                    public void onSuccess() {
-                        file.selected = false;
-                        handler.onChangedSelection(false);
-                    }
+            Map<String, String> map = new HashMap<>();
+            map.put("select-file", CommonUtils.join(newIndexes, ","));
 
-                    @Override
-                    public void onException(Exception ex) {
-                        handler.onException(ex);
-                    }
-                });
-            } else {
-                file.selected = false;
-                handler.onChangedSelection(false);
-            }
+            changeOption(download.gid, map, new ISuccess() {
+                @Override
+                public void onSuccess() {
+                    handler.onChangedSelection(false);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    handler.onException(ex);
+                }
+            });
         }
     }
 
-    public void changeSelection(final Download download, final AFile file, final boolean select, final IChangeSelection handler) {
+    public void changeSelection(final Download download, final List<AFile> files, final boolean select, final IChangeSelection handler) {
         getOption(download.gid, new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
@@ -355,7 +341,7 @@ public class JTA2 {
                             for (int i = 0; i < files.size(); i++)
                                 indexes[i] = String.valueOf(files.get(i).index);
 
-                            performIndexesOperation(download, indexes, file, select, handler);
+                            performSelectIndexesOperation(download, indexes, files, select, handler);
                         }
 
                         @Override
@@ -364,7 +350,7 @@ public class JTA2 {
                         }
                     });
                 } else {
-                    performIndexesOperation(download, indexes.replace(" ", "").split(","), file, select, handler);
+                    performSelectIndexesOperation(download, indexes.replace(" ", "").split(","), files, select, handler);
                 }
             }
 

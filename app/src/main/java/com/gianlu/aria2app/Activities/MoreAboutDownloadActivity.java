@@ -131,7 +131,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                adapter.getFragments().get(tab.getPosition()).canGoBack(BackPressedFragment.CODE_CLOSE_SHEET);
             }
 
             @Override

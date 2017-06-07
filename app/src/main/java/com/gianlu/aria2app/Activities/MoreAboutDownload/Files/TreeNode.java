@@ -11,10 +11,10 @@ public class TreeNode {
     private static String SEPARATOR = "/";
     public final List<TreeNode> files;
     public final List<TreeNode> dirs;
-    public final AFile obj;
     public final String incrementalPath;
     public final String name;
     public final TreeNode parent;
+    public AFile obj;
 
     public TreeNode(TreeNode parent, String incrementalPath, AFile obj) {
         this.parent = parent;
@@ -55,8 +55,39 @@ public class TreeNode {
         return rootNode;
     }
 
-    public TreeNode update(AFile file) {
-        return new TreeNode(parent, incrementalPath, file);
+    private TreeNode root() {
+        if (isRoot()) return this;
+        return parent.root();
+    }
+
+    public void updateHierarchy(List<AFile> objs) {
+        TreeNode root = root();
+        root.updateOrFall(new ArrayList<>(objs));
+    }
+
+    private void updateOrFall(List<AFile> newFiles) {
+        if (isFile()) {
+            update(AFile.find(newFiles, this.obj));
+            return;
+        }
+
+        for (TreeNode file : files) {
+            List<AFile> toRemove = new ArrayList<>();
+            for (AFile newFile : newFiles) {
+                if (file.obj.equals(newFile)) {
+                    file.obj = newFile;
+                    toRemove.add(newFile);
+                }
+            }
+
+            newFiles.removeAll(toRemove);
+        }
+
+        for (TreeNode dir : dirs) dir.updateOrFall(newFiles);
+    }
+
+    public void update(AFile file) {
+        this.obj = file;
     }
 
     public int indexOfObj(AFile obj) {
@@ -74,6 +105,7 @@ public class TreeNode {
     }
 
     public int indexOfDir(TreeNode node) {
+        if (isFile()) return -1;
         for (int i = 0; i < dirs.size(); i++)
             if (Objects.equals(dirs.get(i), node))
                 return i;

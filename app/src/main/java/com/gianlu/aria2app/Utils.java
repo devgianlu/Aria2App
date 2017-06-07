@@ -255,7 +255,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_ADD_DOWNLOAD = new CommonUtils.ToastMessage("Failed to add new download!", true);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_OPTIONS = new CommonUtils.ToastMessage("Failed to change options for download!", true);
         public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
-        public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file!", true);
+        public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file(s)!", true);
         public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
         public static final CommonUtils.ToastMessage NO_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
         public static final CommonUtils.ToastMessage INVALID_DOWNLOAD_PATH = new CommonUtils.ToastMessage("Invalid download path.", false);
@@ -279,6 +279,8 @@ public class Utils {
         public static final CommonUtils.ToastMessage NO_FILE_MANAGER = new CommonUtils.ToastMessage("A file manager has not been found!", true);
         public static final CommonUtils.ToastMessage FILE_DESELECTED = new CommonUtils.ToastMessage("File deselected for download.", false);
         public static final CommonUtils.ToastMessage FILE_SELECTED = new CommonUtils.ToastMessage("File selected for download.", false);
+        public static final CommonUtils.ToastMessage DIR_DESELECTED = new CommonUtils.ToastMessage("All files in directory are deselected for download.", false);
+        public static final CommonUtils.ToastMessage DIR_SELECTED = new CommonUtils.ToastMessage("All files in directory are selected for download.", false);
         public static final CommonUtils.ToastMessage DOWNLOAD_FILE_STARTED = new CommonUtils.ToastMessage("Download started!", false);
     }
 
