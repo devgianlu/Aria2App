@@ -66,6 +66,6 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
 
     public void update(SparseArray<List<Server>> servers) {
         if (current == null) return;
-        update(Server.find(servers, current.uri));
+        update(Server.find(servers, current));
     }
 }

@@ -36,9 +36,9 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
     }
 
     @Nullable
-    public static Peer find(List<Peer> peers, String peerId) {
+    public static Peer find(List<Peer> peers, Peer current) {
         for (Peer peer : peers)
-            if (Objects.equals(peer.peerId, peerId))
+            if (Objects.equals(peer, current))
                 return peer;
 
         return null;

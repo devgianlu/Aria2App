@@ -37,7 +37,6 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     private ProgressBar loading;
     private ServerBottomSheet sheet;
 
-
     public static ServersFragment getInstance(Context context, Download download) {
         ServersFragment fragment = new ServersFragment();
         Bundle args = new Bundle();

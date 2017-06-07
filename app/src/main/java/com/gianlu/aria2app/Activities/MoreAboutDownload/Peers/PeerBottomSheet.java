@@ -71,6 +71,6 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
 
     public void update(List<Peer> peers) {
         if (current == null) return;
-        update(Peer.find(peers, current.peerId));
+        update(Peer.find(peers, current));
     }
 }

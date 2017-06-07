@@ -4,6 +4,7 @@ package com.gianlu.aria2app.NetIO.JTA2;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Comparator;
@@ -15,21 +16,28 @@ public class Server {
     public final String currentUri;
     public final int downloadSpeed;
 
-    public Server(JSONObject obj) {
-        uri = obj.optString("uri");
-        currentUri = obj.optString("currentUri");
-        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
+    public Server(JSONObject obj) throws JSONException {
+        uri = obj.getString("uri");
+        currentUri = obj.getString("currentUri");
+        downloadSpeed = Integer.parseInt(obj.getString("downloadSpeed"));
     }
 
     @Nullable
-    public static Server find(SparseArray<List<Server>> servers, String uri) {
-        for (int i = 0; i < servers.size(); i++) {
+    public static Server find(SparseArray<List<Server>> servers, Server current) {
+        for (int i = 0; i < servers.size(); i++)
             for (Server server : servers.valueAt(i))
-                if (Objects.equals(server.uri, uri) || Objects.equals(server.currentUri, uri))
+                if (Objects.equals(server, current))
                     return server;
-        }
 
         return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Server server = (Server) o;
+        return uri.equals(server.uri) || currentUri.equals(server.uri);
     }
 
     public static class DownloadSpeedComparator implements Comparator<Server> {
