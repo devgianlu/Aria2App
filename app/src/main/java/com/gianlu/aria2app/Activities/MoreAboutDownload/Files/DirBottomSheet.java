@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -10,6 +11,7 @@ import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
@@ -25,6 +27,7 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     private SuperTextView length;
     private SuperTextView completedLength;
     private CheckBox selected;
+    private Button downloadDir;
 
     public DirBottomSheet(View parent, Download download, ISheet handler) {
         super(parent, R.layout.dir_sheet, true);
@@ -44,6 +47,7 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         length = (SuperTextView) content.findViewById(R.id.dirSheet_length);
         completedLength = (SuperTextView) content.findViewById(R.id.dirSheet_completedLength);
         selected = (CheckBox) content.findViewById(R.id.dirSheet_selected);
+        downloadDir = (Button) content.findViewById(R.id.dirSheet_downloadDir);
     }
 
     public void update(List<AFile> files) {
@@ -108,6 +112,24 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         } else {
             selected.setEnabled(false);
         }
+
+
+        if (download.isMetadata() || !ProfilesManager.get(context).getCurrentAssert().isDirectDownloadEnabled()) {
+            downloadDir.setVisibility(View.GONE);
+        } else {
+            downloadDir.setVisibility(View.VISIBLE);
+            downloadDir.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (handler != null) handler.onWantsToDownload(download, item);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
@@ -126,5 +148,7 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         void onCantDeselectAll();
 
         void onExceptionChangingSelection(Exception ex);
+
+        void onWantsToDownload(Download download, ADir dir);
     }
 }

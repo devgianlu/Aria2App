@@ -275,8 +275,9 @@ public class Utils {
         public static final CommonUtils.ToastMessage FILE_SELECTED = new CommonUtils.ToastMessage("File selected for download.", false);
         public static final CommonUtils.ToastMessage DIR_DESELECTED = new CommonUtils.ToastMessage("All files in directory are deselected for download.", false);
         public static final CommonUtils.ToastMessage DIR_SELECTED = new CommonUtils.ToastMessage("All files in directory are selected for download.", false);
-        public static final CommonUtils.ToastMessage DOWNLOAD_FILE_STARTED = new CommonUtils.ToastMessage("Download started!", false);
+        public static final CommonUtils.ToastMessage DOWNLOAD_STARTED = new CommonUtils.ToastMessage("Download started!", false);
         public static final CommonUtils.ToastMessage CANT_DESELECT_ALL_FILES = new CommonUtils.ToastMessage("Can't deselect all files!", false);
+        public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_DIR = new CommonUtils.ToastMessage("Failed downloading directory!", true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

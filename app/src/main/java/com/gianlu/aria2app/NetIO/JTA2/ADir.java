@@ -49,6 +49,12 @@ public class ADir extends TreeNode {
         for (TreeNode dir : parent.dirs) findIndexes(indexes, dir);
     }
 
+    public static List<AFile> find(ADir dir, List<AFile> files) {
+        List<AFile> items = new ArrayList<>();
+        for (AFile file : dir.allObjs()) items.add(AFile.find(files, file));
+        return items;
+    }
+
     public ADir update(Download download, List<AFile> files) {
         update(this, files);
         return new ADir(this, download);

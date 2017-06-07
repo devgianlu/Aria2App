@@ -38,6 +38,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
@@ -248,6 +249,34 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
+    public void onWantsToDownload(final Download download, final ADir dir) {
+        JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(getContext());
+        } catch (JTA2InitializingException ex) {
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_DIR, ex);
+            return;
+        }
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
+        CommonUtils.showDialog(getActivity(), pd);
+
+        jta2.getFiles(download.gid, new JTA2.IFiles() {
+            @Override
+            public void onFiles(List<AFile> files) {
+                realStartDownload(ADir.find(dir, files), download.dir);
+                pd.dismiss();
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+                pd.dismiss();
+            }
+        });
+    }
+
+    @Override
     public void onCantDeselectAll() {
         CommonUtils.UIToast(getActivity(), Utils.ToastMessages.CANT_DESELECT_ALL_FILES, download.gid);
         if (dirSheet != null) dirSheet.collapse();
@@ -281,10 +310,11 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         });
     }
 
-    private void realStartDownload(AFile file, String dir) {
+    private void realStartDownload(List<AFile> files, String dir) {
         try {
-            DownloadsManager.get(getContext()).startDownload(getContext(), file, dir);
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DOWNLOAD_FILE_STARTED);
+            for (AFile file : files)
+                DownloadsManager.get(getContext()).startDownload(getContext(), file, dir);
+            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DOWNLOAD_STARTED);
         } catch (DownloadsManagerException ex) {
             CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
         }
@@ -292,7 +322,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     private void startDownload(final AFile file, final String dir) {
         if (file.completed()) {
-            realStartDownload(file, dir);
+            realStartDownload(Collections.singletonList(file), dir);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(R.string.downloadIncomplete)
@@ -300,7 +330,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            realStartDownload(file, dir);
+                            realStartDownload(Collections.singletonList(file), dir);
                         }
                     })
                     .setNegativeButton(android.R.string.no, null);
