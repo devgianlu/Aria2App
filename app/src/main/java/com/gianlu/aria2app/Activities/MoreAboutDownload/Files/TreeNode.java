@@ -4,6 +4,7 @@ import com.gianlu.aria2app.NetIO.JTA2.AFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +44,20 @@ public class TreeNode {
         this.parent = node.parent;
     }
 
+    private static boolean allSelected(TreeNode node) {
+        if (node.isFile()) return node.obj.selected;
+
+        for (TreeNode file : node.files)
+            if (!file.obj.selected)
+                return false;
+
+        for (TreeNode dir : node.dirs)
+            if (!allSelected(dir))
+                return false;
+
+        return true;
+    }
+
     public static void guessSeparator(String path) {
         if (path.contains("/")) SEPARATOR = "/";
         else if (path.contains("\\")) SEPARATOR = "\\";
@@ -53,6 +68,25 @@ public class TreeNode {
         TreeNode rootNode = new TreeNode(null, SEPARATOR, "");
         for (AFile file : files) rootNode.addElement(file, commonRoot);
         return rootNode;
+    }
+
+    public boolean allSelected() {
+        return allSelected(this);
+    }
+
+    public List<AFile> allObjs() {
+        if (isFile()) return Collections.singletonList(obj);
+        List<AFile> objs = new ArrayList<>();
+        objs.addAll(objs());
+        for (TreeNode dir : dirs) objs.addAll(dir.allObjs());
+        return objs;
+    }
+
+    public List<AFile> objs() {
+        if (isFile()) return Collections.singletonList(obj);
+        List<AFile> objs = new ArrayList<>();
+        for (TreeNode file : files) objs.add(file.obj);
+        return objs;
     }
 
     private TreeNode root() {

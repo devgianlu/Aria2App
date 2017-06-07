@@ -311,6 +311,11 @@ public class JTA2 {
                 if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1)
                     newIndexes.remove(String.valueOf(file.index));
 
+            if (newIndexes.isEmpty()) {
+                handler.cantDeselectAll();
+                return;
+            }
+
             Map<String, String> map = new HashMap<>();
             map.put("select-file", CommonUtils.join(newIndexes, ","));
 
@@ -1211,6 +1216,8 @@ public class JTA2 {
 
     public interface IChangeSelection {
         void onChangedSelection(boolean selected);
+
+        void cantDeselectAll();
 
         void onException(Exception ex);
     }

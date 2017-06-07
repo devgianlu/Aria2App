@@ -248,6 +248,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
+    public void onCantDeselectAll() {
+        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.CANT_DESELECT_ALL_FILES, download.gid);
+        if (dirSheet != null) dirSheet.collapse();
+    }
+
+    @Override
     public void onWantsToDownload(final Download download, final AFile file) {
         JTA2 jta2;
         try {

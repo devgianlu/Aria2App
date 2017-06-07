@@ -245,23 +245,18 @@ public class Utils {
     public static class ToastMessages {
         public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
         public static final CommonUtils.ToastMessage FAILED_GATHERING_INFORMATION = new CommonUtils.ToastMessage("Failed on gathering information!", true);
-        public static final CommonUtils.ToastMessage WRITE_STORAGE_DENIED = new CommonUtils.ToastMessage("Cannot download. You denied the write permission!", false);
         public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_FILE = new CommonUtils.ToastMessage("Failed downloading file!", true);
         public static final CommonUtils.ToastMessage DOWNLOAD_ADDED = new CommonUtils.ToastMessage("Download added.", false);
-        public static final CommonUtils.ToastMessage CHANGED_SELECTION = new CommonUtils.ToastMessage("File selected/deselected.", false);
         public static final CommonUtils.ToastMessage SESSION_SAVED = new CommonUtils.ToastMessage("Session saved correctly.", false);
         public static final CommonUtils.ToastMessage FAILED_SAVE_SESSION = new CommonUtils.ToastMessage("Failed saving current session!", true);
         public static final CommonUtils.ToastMessage NO_URIS = new CommonUtils.ToastMessage("Add at least one URI!", false);
         public static final CommonUtils.ToastMessage FAILED_ADD_DOWNLOAD = new CommonUtils.ToastMessage("Failed to add new download!", true);
-        public static final CommonUtils.ToastMessage FAILED_CHANGE_OPTIONS = new CommonUtils.ToastMessage("Failed to change options for download!", true);
         public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
         public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file(s)!", true);
-        public static final CommonUtils.ToastMessage FILE_NOT_FOUND = new CommonUtils.ToastMessage("File not found!", true);
         public static final CommonUtils.ToastMessage NO_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
         public static final CommonUtils.ToastMessage INVALID_DOWNLOAD_PATH = new CommonUtils.ToastMessage("Invalid download path.", false);
         public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
         public static final CommonUtils.ToastMessage SEARCH_FAILED = new CommonUtils.ToastMessage("Search failed!", true);
-        public static final CommonUtils.ToastMessage NOT_ONLINE = new CommonUtils.ToastMessage("This server isn't online. If it should try swiping down to refresh.", false);
         public static final CommonUtils.ToastMessage FAILED_CONNECTING = new CommonUtils.ToastMessage("Failed connecting!", true);
         public static final CommonUtils.ToastMessage FAILED_LOADING = new CommonUtils.ToastMessage("Failed loading!", true);
         public static final CommonUtils.ToastMessage CANNOT_SAVE_PROFILE = new CommonUtils.ToastMessage("Cannot save profile!", true);
@@ -275,13 +270,13 @@ public class Utils {
         public static final CommonUtils.ToastMessage FAILED_REFRESHING = new CommonUtils.ToastMessage("Failed refreshing!", true);
         public static final CommonUtils.ToastMessage GLOBAL_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Global options successfully changed!", false);
         public static final CommonUtils.ToastMessage ONLY_ONE_TORRENT = new CommonUtils.ToastMessage("When adding torrent magnets only one link should be added at once.", false);
-        public static final CommonUtils.ToastMessage NO_BASE64_FILE = new CommonUtils.ToastMessage("No file selected!", false);
         public static final CommonUtils.ToastMessage NO_FILE_MANAGER = new CommonUtils.ToastMessage("A file manager has not been found!", true);
         public static final CommonUtils.ToastMessage FILE_DESELECTED = new CommonUtils.ToastMessage("File deselected for download.", false);
         public static final CommonUtils.ToastMessage FILE_SELECTED = new CommonUtils.ToastMessage("File selected for download.", false);
         public static final CommonUtils.ToastMessage DIR_DESELECTED = new CommonUtils.ToastMessage("All files in directory are deselected for download.", false);
         public static final CommonUtils.ToastMessage DIR_SELECTED = new CommonUtils.ToastMessage("All files in directory are selected for download.", false);
         public static final CommonUtils.ToastMessage DOWNLOAD_FILE_STARTED = new CommonUtils.ToastMessage("Download started!", false);
+        public static final CommonUtils.ToastMessage CANT_DESELECT_ALL_FILES = new CommonUtils.ToastMessage("Can't deselect all files!", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

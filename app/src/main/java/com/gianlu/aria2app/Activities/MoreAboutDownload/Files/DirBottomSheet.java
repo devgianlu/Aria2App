@@ -49,7 +49,6 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     public void update(List<AFile> files) {
         if (current == null) return;
         update(current.update(download, files));
-        System.out.println("LENGTH: " + current.completedLength);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
                         return;
                     }
 
-                    jta2.changeSelection(download, item.objs(), isChecked, new JTA2.IChangeSelection() {
+                    jta2.changeSelection(download, item.allObjs(), isChecked, new JTA2.IChangeSelection() {
                         @Override
                         public void onChangedSelection(final boolean selected) {
                             if (handler == null) return;
@@ -80,6 +79,16 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
                                 public void run() {
                                     if (selected) handler.onSelectedDir(item);
                                     else handler.onDeselectedDir(item);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void cantDeselectAll() {
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (handler != null) handler.onCantDeselectAll();
                                 }
                             });
                         }
@@ -113,6 +122,8 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         void onSelectedDir(ADir dir);
 
         void onDeselectedDir(ADir dir);
+
+        void onCantDeselectAll();
 
         void onExceptionChangingSelection(Exception ex);
     }

@@ -32,18 +32,6 @@ public class ADir extends TreeNode {
         for (TreeNode dir : node.dirs) update(dir, files);
     }
 
-    private static boolean allSelected(TreeNode node) {
-        for (TreeNode file : node.files)
-            if (!file.obj.selected)
-                return false;
-
-        for (TreeNode dir : node.dirs)
-            if (!allSelected(dir))
-                return false;
-
-        return true;
-    }
-
     private static long calcCompletedLength(TreeNode parent, long sum) {
         for (TreeNode file : parent.files) sum += file.obj.completedLength;
         for (TreeNode dir : parent.dirs) calcCompletedLength(dir, sum);
@@ -64,16 +52,6 @@ public class ADir extends TreeNode {
     public ADir update(Download download, List<AFile> files) {
         update(this, files);
         return new ADir(this, download);
-    }
-
-    public boolean allSelected() {
-        return allSelected(this);
-    }
-
-    public List<AFile> objs() {
-        List<AFile> objs = new ArrayList<>();
-        for (TreeNode file : files) objs.add(file.obj);
-        return objs;
     }
 
     public float getProgress() {

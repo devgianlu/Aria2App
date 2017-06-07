@@ -88,6 +88,16 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
                         }
 
                         @Override
+                        public void cantDeselectAll() {
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (handler != null) handler.onCantDeselectAll();
+                                }
+                            });
+                        }
+
+                        @Override
                         public void onException(final Exception ex) {
                             mainHandler.post(new Runnable() {
                                 @Override
@@ -140,6 +150,8 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
         void onDeselectedFile(AFile file);
 
         void onExceptionChangingSelection(Exception ex);
+
+        void onCantDeselectAll();
 
         void onWantsToDownload(Download download, AFile file);
     }

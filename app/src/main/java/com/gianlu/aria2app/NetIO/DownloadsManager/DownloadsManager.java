@@ -43,14 +43,14 @@ public class DownloadsManager extends FileDownloadListener {
     private static IGlobalMonitor monitor;
     private final FileDownloader downloader;
     private final File downloadPath;
-    private final List<DownloadTask> runningDownloads;
+    private final List<DownloadTask> runningTasks;
     private final File ddJournal;
     private IListener listener;
 
     private DownloadsManager(Context context) {
         downloader = FileDownloader.getImpl();
         downloadPath = new File(Prefs.getString(context, Prefs.Keys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()));
-        runningDownloads = new ArrayList<>();
+        runningTasks = new ArrayList<>();
         ddJournal = new File(context.getFilesDir(), "dd.journal");
 
         loadRunningDownloads();
@@ -141,7 +141,7 @@ public class DownloadsManager extends FileDownloadListener {
 
     public void setListener(IListener listener) {
         this.listener = listener;
-        if (listener != null) listener.onDownloadsCountChanged(runningDownloads.size());
+        if (listener != null) listener.onDownloadsCountChanged(runningTasks.size());
     }
 
     public void startDownload(Context context, AFile file, String dir) throws DownloadsManagerException {
@@ -156,10 +156,7 @@ public class DownloadsManager extends FileDownloadListener {
         baseTaskSetup(task);
         task.setPath(new File(downloadPath, createFileName(file)).getAbsolutePath(), false);
         setupAuth(context, task);
-        runningDownloads.add(task);
         task.start();
-
-        if (listener != null) listener.onDownloadsCountChanged(runningDownloads.size());
     }
 
     private void baseTaskSetup(BaseDownloadTask task) {
@@ -174,10 +171,11 @@ public class DownloadsManager extends FileDownloadListener {
             if (json != null && !json.isEmpty()) {
                 JSONArray array = new JSONArray(json);
 
-                runningDownloads.clear();
+                runningTasks.clear();
                 for (int i = 0; i < array.length(); i++) {
                     try {
-                        runningDownloads.add(JSONToTask(downloader, array.getJSONObject(i)));
+                        DownloadTask task = JSONToTask(downloader, array.getJSONObject(i));
+                        if (task.reuse()) task.start();
                     } catch (JSONException ignored) {
                     }
                 }
@@ -189,7 +187,7 @@ public class DownloadsManager extends FileDownloadListener {
     private void saveRunningDownloads() {
         JSONArray array = new JSONArray();
 
-        for (DownloadTask task : runningDownloads) {
+        for (DownloadTask task : runningTasks) {
             try {
                 array.put(taskToJSON(task));
             } catch (JSONException ignored) {
@@ -203,17 +201,29 @@ public class DownloadsManager extends FileDownloadListener {
         }
     }
 
+    private boolean hasTask(BaseDownloadTask task) {
+        for (BaseDownloadTask running : runningTasks)
+            if (running.getId() == task.getId())
+                return true;
+
+        return false;
+    }
+
     @Override
     protected void started(BaseDownloadTask task) {
+        if (hasTask(task)) runningTasks.set(indexOf(task), (DownloadTask) task);
+        else runningTasks.add((DownloadTask) task);
         saveRunningDownloads();
+
+        if (listener != null) listener.onDownloadsCountChanged(runningTasks.size());
     }
 
     public int getRunningDownloadsCount() {
-        return runningDownloads.size();
+        return runningTasks.size();
     }
 
     public DDDownload getRunningDownloadAt(int i) {
-        return new DDDownload(runningDownloads.get(i));
+        return new DDDownload(runningTasks.get(i));
     }
 
     @Override
@@ -254,15 +264,23 @@ public class DownloadsManager extends FileDownloadListener {
     public void resume(DDDownload download) {
         int pos = indexOf(download);
         if (pos != -1) {
-            DownloadTask task = runningDownloads.get(pos);
+            DownloadTask task = runningTasks.get(pos);
             if (task.getStatus() == FileDownloadStatus.paused)
                 if (task.reuse()) task.start();
         }
     }
 
+    private int indexOf(BaseDownloadTask task) {
+        for (int i = 0; i < runningTasks.size(); i++)
+            if (runningTasks.get(i).getId() == task.getId())
+                return i;
+
+        return -1;
+    }
+
     private int indexOf(DDDownload download) {
-        for (int i = 0; i < runningDownloads.size(); i++)
-            if (runningDownloads.get(i).getId() == download.id)
+        for (int i = 0; i < runningTasks.size(); i++)
+            if (runningTasks.get(i).getId() == download.id)
                 return i;
 
         return -1;
@@ -272,7 +290,7 @@ public class DownloadsManager extends FileDownloadListener {
         pause(download);
 
         int pos = indexOf(download);
-        if (pos != -1) runningDownloads.remove(pos);
+        if (pos != -1) runningTasks.remove(pos);
     }
 
     public interface IGlobalMonitor {
