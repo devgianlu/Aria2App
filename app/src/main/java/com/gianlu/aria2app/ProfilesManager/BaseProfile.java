@@ -1,13 +1,18 @@
 package com.gianlu.aria2app.ProfilesManager;
 
+import android.content.Context;
+
+import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 
-public abstract class BaseProfile implements Serializable {
+public abstract class BaseProfile implements Serializable, BaseDrawerProfile {
     public final String id;
     public final String name;
+    public boolean notificationsEnabled;
     public TestStatus status;
 
     public BaseProfile(String name) {
@@ -18,9 +23,12 @@ public abstract class BaseProfile implements Serializable {
 
     public BaseProfile(JSONObject obj) throws JSONException {
         this.name = obj.getString("name");
+        this.notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
         this.id = ProfilesManager.getId(name);
         this.status = new TestStatus(Status.UNKNOWN);
     }
+
+    public abstract UserProfile getProfile(Context context);
 
     public void setStatus(TestStatus status) {
         this.status = status;

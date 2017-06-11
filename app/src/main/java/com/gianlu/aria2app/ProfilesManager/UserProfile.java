@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.ProfilesManager;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -19,7 +20,6 @@ import java.net.URL;
 
 public class UserProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
     public final String serverAddr;
-    public final boolean notificationsEnabled;
     public final int serverPort;
     public final String serverEndpoint;
     public final JTA2.AuthMethod authMethod;
@@ -34,7 +34,6 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
     public UserProfile(JSONObject obj) throws JSONException {
         super(obj);
 
-        notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
         if (obj.has("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
         else authMethod = JTA2.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
         serverUsername = obj.optString("serverUsername", null);
@@ -90,6 +89,11 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
         return new UserProfile("Local device", token, port);
     }
 
+    @Override
+    public UserProfile getProfile(Context context) {
+        return this;
+    }
+
     public String buildWebSocketUrl() {
         return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
     }
@@ -132,23 +136,18 @@ public class UserProfile extends BaseProfile implements BaseDrawerProfile, Seria
     }
 
     @Override
-    public String getProfileName() {
+    public String getProfileName(Context context) {
         return name;
     }
 
     @Override
-    public String getSecondaryText() {
+    public String getSecondaryText(Context context) {
         return getFullServerAddress();
     }
 
     @Override
-    public String getInitials() {
-        return getProfileName().substring(0, 2);
-    }
-
-    @Override
-    public String toString() {
-        return getProfileName();
+    public String getInitials(Context context) {
+        return getProfileName(context).substring(0, 2);
     }
 
     public enum ConnectionMethod {

@@ -30,28 +30,28 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
+public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
     private final IEdit editListener;
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final Handler handler;
 
-    public CustomProfilesAdapter(Context context, List<UserProfile> profiles, IAdapter<UserProfile> listener, boolean black, @Nullable IEdit editListener) {
+    public CustomProfilesAdapter(Context context, List<BaseProfile> profiles, IAdapter<BaseProfile> listener, boolean black, @Nullable IEdit editListener) {
         super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, black, listener);
         this.editListener = editListener;
         this.handler = new Handler(context.getMainLooper());
     }
 
     @Override
-    public UserProfile getItem(int pos) {
+    public BaseProfile getItem(int pos) {
         return profiles.get(pos);
     }
 
     @Override
     public void onBindViewHolder(ProfilesAdapter.ViewHolder holder, int position) {
-        final UserProfile profile = getItem(position);
+        final UserProfile profile = getItem(position).getProfile(context);
 
         holder.globalName.setVisibility(View.GONE);
-        holder.name.setText(profile.getProfileName());
+        holder.name.setText(profile.getProfileName(context));
         holder.secondary.setText(profile.getFullServerAddress());
 
         if (profile.status.latency != -1) {
@@ -113,7 +113,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
 
     private int indexOf(UserProfile match) {
         for (int i = 0; i < profiles.size(); i++) {
-            UserProfile profile = profiles.get(i);
+            UserProfile profile = profiles.get(i).getProfile(context);
             if (Objects.equals(profile.serverAddr, match.serverAddr)
                     && Objects.equals(profile.serverPort, match.serverPort)
                     && Objects.equals(profile.authMethod, match.authMethod))
@@ -125,7 +125,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
 
     @Override
     protected void runTest(int pos) {
-        final UserProfile profile = getItem(pos);
+        final UserProfile profile = getItem(pos).getProfile(context);
 
         switch (profile.connectionMethod) {
             case HTTP:
@@ -139,7 +139,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<UserProfile> {
     }
 
     public interface IEdit {
-        void onEditProfile(UserProfile profile);
+        void onEditProfile(BaseProfile profile);
     }
 
     private class HttpProfileTester implements Runnable {

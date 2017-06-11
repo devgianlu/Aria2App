@@ -14,6 +14,7 @@ import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
@@ -41,8 +42,8 @@ public class NotificationService extends IntentService {
     }
 
     private static Intent createStartIntent(Context context) {
-        ArrayList<UserProfile> profiles = new ArrayList<>();
-        for (UserProfile profile : ProfilesManager.get(context).getProfiles())
+        ArrayList<BaseProfile> profiles = new ArrayList<>();
+        for (BaseProfile profile : ProfilesManager.get(context).getProfiles())
             if (profile.notificationsEnabled) profiles.add(profile);
 
         return new Intent(context, NotificationService.class)
@@ -164,7 +165,7 @@ public class NotificationService extends IntentService {
                                     .putExtra("fromNotification", true)
                                     .putExtra("fileName", profile.id)
                                     .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setContentText(profile.getProfileName())
+                    .setContentText(profile.getProfileName(getApplicationContext()))
                     .setContentInfo("GID#" + gid)
                     .setGroup(gid)
                     .setSmallIcon(R.drawable.ic_notification)

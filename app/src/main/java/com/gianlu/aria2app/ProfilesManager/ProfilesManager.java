@@ -77,7 +77,7 @@ public class ProfilesManager {
     }
 
     @Nullable
-    public UserProfile getLastProfile(Context context) {
+    public BaseProfile getLastProfile(Context context) {
         String id = Prefs.getString(context, Prefs.Keys.LAST_USED_PROFILE, null);
         if (id == null || !profileExists(id)) return null;
         try {
@@ -92,7 +92,7 @@ public class ProfilesManager {
         Prefs.editString(context, Prefs.Keys.LAST_USED_PROFILE, profile.id);
     }
 
-    public UserProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {
+    public BaseProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {
         if (!profileExists(id))
             throw new FileNotFoundException("Profile " + id + " doesn't exists!");
 
@@ -102,7 +102,9 @@ public class ProfilesManager {
         String line;
         while ((line = reader.readLine()) != null) builder.append(line);
 
-        return new UserProfile(new JSONObject(builder.toString()));
+        JSONObject json = new JSONObject(builder.toString());
+        if (json.has("serverAddr")) return new UserProfile(json);
+        else return new MultiProfile(json);
     }
 
     public boolean profileExists(@NonNull String id) {
@@ -121,7 +123,7 @@ public class ProfilesManager {
         return profiles.length > 0;
     }
 
-    public List<UserProfile> getProfiles() {
+    public List<BaseProfile> getProfiles() {
         String[] profilesId = PROFILES_PATH.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -129,7 +131,7 @@ public class ProfilesManager {
             }
         });
 
-        List<UserProfile> profiles = new ArrayList<>();
+        List<BaseProfile> profiles = new ArrayList<>();
         for (String id : profilesId) {
             try {
                 profiles.add(retrieveProfile(id.replace(".profile", "")));
@@ -150,6 +152,6 @@ public class ProfilesManager {
     }
 
     public void reloadCurrentProfile(Context context) throws IOException, JSONException {
-        setCurrent(context, retrieveProfile(getCurrentAssert().id));
+        setCurrent(context, retrieveProfile(getCurrentAssert().id).getProfile(context));
     }
 }

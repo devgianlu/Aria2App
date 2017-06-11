@@ -50,6 +50,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
+import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
@@ -76,8 +77,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<UserProfile>, DrawerManager.ISetup<UserProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
-    private DrawerManager<UserProfile> drawerManager;
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<BaseProfile>, DrawerManager.ISetup<BaseProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
+    private DrawerManager<BaseProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView list;
@@ -144,8 +145,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public void onProfileSelected(final UserProfile profile) {
-        ProfilesManager.get(this).setLastProfile(this, profile);
+    public void onProfileSelected(final BaseProfile profile) {
+        ProfilesManager.get(this).setLastProfile(this, profile.getProfile(this));
         startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
@@ -155,13 +156,13 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public void editProfile(final List<UserProfile> items) {
+    public void editProfile(final List<BaseProfile> items) {
         CommonUtils.showDialog(this, new AlertDialog.Builder(this)
                 .setTitle(R.string.editProfile)
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditProfileActivity.start(MainActivity.this, items.get(which));
+                        EditProfileActivity.start(MainActivity.this, items.get(which).getProfile(MainActivity.this));
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null));
@@ -274,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
 
-        setTitle(currentProfile.getProfileName() + " - " + getString(R.string.app_name));
+        setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
 
         list = (RecyclerView) findViewById(R.id.main_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -664,10 +665,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Nullable
     @Override
-    public ProfilesAdapter<UserProfile> getProfilesAdapter(Context context, List<UserProfile> profiles, final DrawerManager.IDrawerListener<UserProfile> listener) {
-        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<UserProfile>() {
+    public ProfilesAdapter<BaseProfile> getProfilesAdapter(Context context, List<BaseProfile> profiles, final DrawerManager.IDrawerListener<BaseProfile> listener) {
+        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<BaseProfile>() {
             @Override
-            public void onProfileSelected(UserProfile profile) {
+            public void onProfileSelected(BaseProfile profile) {
                 if (listener != null) listener.onProfileSelected(profile);
                 if (drawerManager != null) drawerManager.performUnlock();
             }

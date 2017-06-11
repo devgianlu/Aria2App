@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
@@ -133,14 +134,14 @@ public class LoadingActivity extends AppCompatActivity {
         displayPicker(manager, hasShareData());
     }
 
-    private void tryConnecting(final ProfilesManager manager, UserProfile profile) {
+    private void tryConnecting(final ProfilesManager manager, BaseProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
 
         if (profile == null) {
             displayPicker(manager, hasShareData());
         } else {
-            manager.setCurrent(this, profile);
+            manager.setCurrent(this, profile.getProfile(this));
             WebSocketing.instantiate(this, new WebSocketing.IConnect() {
                 @Override
                 public void onConnected() {
@@ -167,16 +168,16 @@ public class LoadingActivity extends AppCompatActivity {
         if (share) pickerHint.setText(R.string.pickProfile_share);
         else pickerHint.setText(R.string.pickProfile);
 
-        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<UserProfile>() {
+        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<BaseProfile>() {
             @Override
-            public void onProfileSelected(UserProfile profile) {
+            public void onProfileSelected(BaseProfile profile) {
                 WebSocketing.unlock();
                 tryConnecting(manager, profile);
             }
         }, false, new CustomProfilesAdapter.IEdit() {
             @Override
-            public void onEditProfile(UserProfile profile) {
-                EditProfileActivity.start(LoadingActivity.this, profile);
+            public void onEditProfile(BaseProfile profile) {
+                EditProfileActivity.start(LoadingActivity.this, profile.getProfile(LoadingActivity.this));
             }
         });
 

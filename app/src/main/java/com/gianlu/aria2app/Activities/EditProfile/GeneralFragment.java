@@ -57,7 +57,7 @@ public class GeneralFragment extends FieldErrorFragment {
 
         UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
         if (edit != null) {
-            profileName.getEditText().setText(edit.getProfileName());
+            profileName.getEditText().setText(edit.getProfileName(getContext()));
             enableNotifs.setChecked(edit.notificationsEnabled);
         }
 

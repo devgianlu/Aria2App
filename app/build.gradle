@@ -28,7 +28,7 @@ dependencies {
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     compile 'com.neovisionaries:nv-websocket-client:2.2'
-    compile 'com.google.android.gms:play-services-analytics:10.2.6'
+    compile 'com.google.android.gms:play-services-analytics:11.0.0'
     compile 'com.android.support:design:25.3.1'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.liulishuo.filedownloader:library:1.4.3'
