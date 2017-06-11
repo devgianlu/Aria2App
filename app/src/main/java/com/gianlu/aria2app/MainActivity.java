@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditProfileActivity.start(MainActivity.this, items.get(which).getProfile(MainActivity.this));
+                        EditProfileActivity.start(MainActivity.this, items.get(which));
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null));

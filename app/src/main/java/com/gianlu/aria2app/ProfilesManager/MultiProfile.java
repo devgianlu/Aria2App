@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class MultiProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
+class MultiProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
     private final Map<ConnectivityCondition, UserProfile> profiles;
 
-    public MultiProfile(JSONObject obj) throws JSONException {
+    MultiProfile(JSONObject obj) throws JSONException {
         super(obj);
 
         JSONArray profilesArray = obj.getJSONArray("conditions");

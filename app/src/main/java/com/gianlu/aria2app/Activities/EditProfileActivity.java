@@ -18,6 +18,7 @@ import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
 import com.gianlu.aria2app.Activities.EditProfile.GeneralFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
@@ -45,7 +46,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 .putExtra("firstProfile", firstProfile));
     }
 
-    public static void start(Context context, UserProfile edit) {
+    public static void start(Context context, BaseProfile edit) {
         context.startActivity(new Intent(context, EditProfileActivity.class)
                 .putExtra("firstProfile", false)
                 .putExtra("edit", edit));
@@ -63,7 +64,13 @@ public class EditProfileActivity extends AppCompatActivity {
         if (bar != null)
             bar.setDisplayHomeAsUpEnabled(!getIntent().getBooleanExtra("firstProfile", true));
 
-        editProfile = (UserProfile) getIntent().getSerializableExtra("edit");
+        BaseProfile editBase = (BaseProfile) getIntent().getSerializableExtra("edit");
+        if (editBase instanceof UserProfile) {
+            editProfile = (UserProfile) editBase;
+        } else {
+            // TODO: SHIITTTT
+        }
+
         if (editProfile == null) setTitle(R.string.addProfile);
         else setTitle(R.string.editProfile);
 

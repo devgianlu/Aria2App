@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.R;
 
 class ConnectivityCondition {
-    public final Type type;
-    public final String ssid;
-    public final boolean isDefault;
+    final Type type;
+    final String ssid;
+    final boolean isDefault;
 
     private ConnectivityCondition(Type type, boolean isDefault, @Nullable String ssid) {
         this.type = type;
@@ -30,10 +30,6 @@ class ConnectivityCondition {
 
     static ConnectivityCondition newEthernetCondition(boolean isDefault) {
         return new ConnectivityCondition(Type.ETHERNET, isDefault, null);
-    }
-
-    String getFormalName(Context context) {
-        return type.getFormal(context) + (type == Type.WIFI ? ": " + ssid : "");
     }
 
     enum Type {

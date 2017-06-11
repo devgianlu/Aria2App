@@ -177,7 +177,7 @@ public class LoadingActivity extends AppCompatActivity {
         }, false, new CustomProfilesAdapter.IEdit() {
             @Override
             public void onEditProfile(BaseProfile profile) {
-                EditProfileActivity.start(LoadingActivity.this, profile.getProfile(LoadingActivity.this));
+                EditProfileActivity.start(LoadingActivity.this, profile);
             }
         });
 

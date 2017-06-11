@@ -15,13 +15,13 @@ public abstract class BaseProfile implements Serializable, BaseDrawerProfile {
     public boolean notificationsEnabled;
     public TestStatus status;
 
-    public BaseProfile(String name) {
+    BaseProfile(String name) {
         this.id = ProfilesManager.getId(name);
         this.name = name;
         this.status = new TestStatus(Status.UNKNOWN);
     }
 
-    public BaseProfile(JSONObject obj) throws JSONException {
+    BaseProfile(JSONObject obj) throws JSONException {
         this.name = obj.getString("name");
         this.notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
         this.id = ProfilesManager.getId(name);
@@ -41,16 +41,16 @@ public abstract class BaseProfile implements Serializable, BaseDrawerProfile {
         ONLINE
     }
 
-    public static class TestStatus implements Serializable {
-        public final long latency;
+    static class TestStatus implements Serializable {
         public final Status status;
+        final long latency;
 
-        public TestStatus(Status status, long latency) {
+        TestStatus(Status status, long latency) {
             this.latency = latency;
             this.status = status;
         }
 
-        public TestStatus(Status status) {
+        TestStatus(Status status) {
             this.latency = -1;
             this.status = status;
         }
