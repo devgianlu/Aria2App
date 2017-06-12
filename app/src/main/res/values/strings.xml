@@ -225,6 +225,8 @@
     <string name="ethernet">Ethernet</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="wifi">Wifi</string>
+    <string name="profiles">Profiles</string>
+    <string name="always">Always</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

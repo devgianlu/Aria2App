@@ -32,12 +32,16 @@ class ConnectivityCondition {
         return new ConnectivityCondition(Type.ETHERNET, isDefault, null);
     }
 
+    public static ConnectivityCondition newUniqueCondition() {
+        return new ConnectivityCondition(Type.ALWAYS, true, null);
+    }
+
     enum Type {
+        ALWAYS,
         WIFI,
         MOBILE,
         ETHERNET,
-        BLUETOOTH,
-        UNKNOWN;
+        BLUETOOTH;
 
         public String getFormal(Context context) {
             switch (this) {
@@ -50,8 +54,8 @@ class ConnectivityCondition {
                 case BLUETOOTH:
                     return context.getString(R.string.bluetooth);
                 default:
-                case UNKNOWN:
-                    return context.getString(R.string.unknown);
+                case ALWAYS:
+                    return context.getString(R.string.always);
             }
         }
     }

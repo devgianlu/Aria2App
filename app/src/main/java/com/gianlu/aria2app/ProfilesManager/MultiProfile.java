@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-class MultiProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
+public class MultiProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
     private final Map<ConnectivityCondition, UserProfile> profiles;
 
     MultiProfile(JSONObject obj) throws JSONException {
@@ -47,15 +47,12 @@ class MultiProfile extends BaseProfile implements BaseDrawerProfile, Serializabl
                     condition = ConnectivityCondition.newBluetoothCondition(isDefault);
                     break;
                 default:
-                case UNKNOWN:
-                    continue;
+                case ALWAYS:
+                    condition = ConnectivityCondition.newUniqueCondition();
+                    break;
             }
 
             profiles.put(condition, new UserProfile(conditionObj.getJSONObject("profile")));
-        }
-
-        if (profiles.isEmpty()) {
-            // TODO: Must get angry here
         }
     }
 

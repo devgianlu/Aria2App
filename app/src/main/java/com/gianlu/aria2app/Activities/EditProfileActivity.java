@@ -19,6 +19,7 @@ import com.gianlu.aria2app.Activities.EditProfile.GeneralFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.ProfilesManager.BaseProfile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
@@ -34,6 +35,7 @@ import java.util.Objects;
 
 public class EditProfileActivity extends AppCompatActivity {
     private UserProfile editProfile;
+    private MultiProfile editMulti;
     private GeneralFragment generalFragment;
     private ConnectionFragment connectionFragment;
     private AuthenticationFragment authFragment;
@@ -52,6 +54,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 .putExtra("edit", edit));
     }
 
+    private boolean isMulti() {
+        return editMulti != null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,15 +66,14 @@ public class EditProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.editProfile_toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar bar = getSupportActionBar();
-        if (bar != null)
-            bar.setDisplayHomeAsUpEnabled(!getIntent().getBooleanExtra("firstProfile", true));
-
         BaseProfile editBase = (BaseProfile) getIntent().getSerializableExtra("edit");
-        if (editBase instanceof UserProfile) {
-            editProfile = (UserProfile) editBase;
-        } else {
-            // TODO: SHIITTTT
+        if (editBase instanceof UserProfile) editProfile = (UserProfile) editBase;
+        else editMulti = (MultiProfile) editBase;
+
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setDisplayHomeAsUpEnabled(!getIntent().getBooleanExtra("firstProfile", true));
+            bar.setDisplayShowTitleEnabled(!isMulti());
         }
 
         if (editProfile == null) setTitle(R.string.addProfile);
@@ -113,7 +118,9 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (editProfile == null) menu.findItem(R.id.editProfile_delete).setVisible(false);
-        return super.onPrepareOptionsMenu(menu);
+
+
+        return true;
     }
 
     private void done() {

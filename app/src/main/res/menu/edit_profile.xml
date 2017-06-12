@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/editProfile_profiles"
+        android:title="@string/profiles"
+        app:actionViewClass="android.widget.Spinner"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/editProfile_delete"
         android:icon="@drawable/ic_delete_white_48dp"
         android:title="@string/delete"
