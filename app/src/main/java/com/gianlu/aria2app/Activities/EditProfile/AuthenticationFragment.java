@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 
 public class AuthenticationFragment extends FieldErrorFragment {
@@ -25,7 +25,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
     private TextInputLayout username;
     private TextInputLayout password;
 
-    public static AuthenticationFragment getInstance(Context context, @Nullable UserProfile edit) {
+    public static AuthenticationFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         AuthenticationFragment fragment = new AuthenticationFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.authentication));
@@ -113,7 +113,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
             }
         });
 
-        UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
+        MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
         if (edit != null) {
             switch (edit.authMethod) {
                 default:

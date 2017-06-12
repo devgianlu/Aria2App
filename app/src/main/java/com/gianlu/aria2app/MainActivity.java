@@ -50,10 +50,9 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
-import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
@@ -77,8 +76,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<BaseProfile>, DrawerManager.ISetup<BaseProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
-    private DrawerManager<BaseProfile> drawerManager;
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
+    private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
     private RecyclerView list;
@@ -145,8 +144,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public void onProfileSelected(final BaseProfile profile) {
-        ProfilesManager.get(this).setLastProfile(this, profile.getProfile(this));
+    public void onProfileSelected(final MultiProfile profile) {
+        ProfilesManager.get(this).setLastProfile(this, profile);
         startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
@@ -156,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public void editProfile(final List<BaseProfile> items) {
+    public void editProfile(final List<MultiProfile> items) {
         CommonUtils.showDialog(this, new AlertDialog.Builder(this)
                 .setTitle(R.string.editProfile)
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
@@ -271,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 .addProfiles(ProfilesManager.get(this).getProfiles()));
 
         ProfilesManager manager = ProfilesManager.get(this);
-        UserProfile currentProfile = manager.getCurrentAssert();
+        MultiProfile currentProfile = manager.getCurrentAssert();
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
 
@@ -665,10 +664,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Nullable
     @Override
-    public ProfilesAdapter<BaseProfile> getProfilesAdapter(Context context, List<BaseProfile> profiles, final DrawerManager.IDrawerListener<BaseProfile> listener) {
-        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<BaseProfile>() {
+    public ProfilesAdapter<MultiProfile> getProfilesAdapter(Context context, List<MultiProfile> profiles, final DrawerManager.IDrawerListener<MultiProfile> listener) {
+        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<MultiProfile>() {
             @Override
-            public void onProfileSelected(BaseProfile profile) {
+            public void onProfileSelected(MultiProfile profile) {
                 if (listener != null) listener.onProfileSelected(profile);
                 if (drawerManager != null) drawerManager.performUnlock();
             }

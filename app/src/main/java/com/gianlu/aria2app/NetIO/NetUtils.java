@@ -9,8 +9,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
@@ -48,11 +48,11 @@ public class NetUtils {
 
     @Nullable
     public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
-        return readyCertificate(context, ProfilesManager.get(context).getCurrent());
+        return readyCertificate(context, ProfilesManager.get(context).getCurrentAssert().getProfile(context));
     }
 
     @Nullable
-    public static Certificate readyCertificate(Context context, UserProfile profile) throws CertificateException, FileNotFoundException {
+    public static Certificate readyCertificate(Context context, MultiProfile.UserProfile profile) throws CertificateException, FileNotFoundException {
         if (!profile.serverSSL || profile.certificatePath == null || profile.certificatePath.isEmpty())
             return null;
 
@@ -84,7 +84,7 @@ public class NetUtils {
     }
 
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        UserProfile profile = ProfilesManager.get(context).getCurrentAssert();
+        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentAssert().getProfile(context);
 
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);

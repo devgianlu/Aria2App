@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 
@@ -39,7 +39,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     private LinearLayout certificatePathContainer;
     private TextInputLayout certificatePath;
 
-    public static ConnectionFragment getInstance(Context context, @Nullable UserProfile edit) {
+    public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         ConnectionFragment fragment = new ConnectionFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.connection));
@@ -150,7 +150,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
 
-        UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
+        MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
         if (edit != null) {
             switch (edit.connectionMethod) {
                 case HTTP:
@@ -205,14 +205,14 @@ public class ConnectionFragment extends FieldErrorFragment {
 
     @SuppressWarnings("ConstantConditions")
     public Fields getFields(boolean partial) throws InvalidFieldException {
-        UserProfile.ConnectionMethod connectionMethod;
+        MultiProfile.ConnectionMethod connectionMethod;
         switch (this.connectionMethod.getCheckedRadioButtonId()) {
             default:
             case R.id.editProfile_connectionMethod_ws:
-                connectionMethod = UserProfile.ConnectionMethod.WEBSOCKET;
+                connectionMethod = MultiProfile.ConnectionMethod.WEBSOCKET;
                 break;
             case R.id.editProfile_connectionMethod_http:
-                connectionMethod = UserProfile.ConnectionMethod.HTTP;
+                connectionMethod = MultiProfile.ConnectionMethod.HTTP;
                 break;
         }
 
@@ -263,14 +263,14 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     public class Fields {
-        public final UserProfile.ConnectionMethod connectionMethod;
+        public final MultiProfile.ConnectionMethod connectionMethod;
         public final String address;
         public final int port;
         public final String endpoint;
         public final boolean encryption;
         public final String certificatePath;
 
-        public Fields(UserProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable String certificatePath) {
+        public Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable String certificatePath) {
             this.connectionMethod = connectionMethod;
             this.address = address;
             this.port = port;

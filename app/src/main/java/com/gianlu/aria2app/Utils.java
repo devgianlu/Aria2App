@@ -15,12 +15,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.YAxis;
@@ -34,10 +32,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Objects;
 import java.util.Random;
 
@@ -131,7 +125,7 @@ public class Utils {
 
     public static JSONArray readyParams(Context context) {
         JSONArray array = new JSONArray();
-        UserProfile profile = ProfilesManager.get(context).getCurrentAssert();
+        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentAssert().getProfile(context);
         if (profile.authMethod == JTA2.AuthMethod.TOKEN) array.put("token:" + profile.serverToken);
         return array;
     }
@@ -176,42 +170,6 @@ public class Utils {
 
     public static JSONObject readyRequest() throws JSONException {
         return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
-    }
-
-    @Nullable
-    public static URL createDownloadRemoteURL(Context context, String downloadDir, AFile file) {
-        final UserProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().directDownload;
-
-        try {
-            URL base = dd.getURLAddress();
-            URI uri = new URI(base.getProtocol(), null, base.getHost(), base.getPort(), file.getRelativePath(downloadDir), null, null);
-            return uri.toURL();
-        } catch (MalformedURLException | URISyntaxException ex) {
-            Logging.logMe(context, ex);
-            return null;
-        }
-    }
-
-    public static File createDownloadLocalPath(File parent, String filename) {
-        File ioFile = new File(parent, filename);
-
-        int c = 1;
-        while (ioFile.exists()) {
-            String[] split = filename.split("\\.");
-
-            String newName;
-            if (split.length == 1) {
-                newName = filename + "." + c;
-            } else {
-                String ext = split[split.length - 1];
-                newName = filename.substring(0, filename.length() - ext.length() - 1) + "." + c + "." + ext;
-            }
-
-            ioFile = new File(parent, newName);
-            c++;
-        }
-
-        return ioFile;
     }
 
     public static <T> int indexOf(T[] items, T item) {

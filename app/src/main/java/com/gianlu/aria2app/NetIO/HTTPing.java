@@ -8,8 +8,8 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,11 +35,11 @@ import javax.net.ssl.SSLSession;
 
 public class HTTPing extends AbstractClient {
     private static HTTPing httping;
-    private final UserProfile profile;
+    private final MultiProfile.UserProfile profile;
     private final SSLContext sslContext;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        profile = ProfilesManager.get(context).getCurrentAssert();
+        profile = ProfilesManager.get(context).getCurrentAssert().getProfile(context);
         sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context));
     }
 

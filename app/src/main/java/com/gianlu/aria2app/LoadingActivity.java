@@ -15,10 +15,9 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
@@ -88,7 +87,7 @@ public class LoadingActivity extends AppCompatActivity {
         }
 
         if (getIntent().getBooleanExtra("external", false)) {
-            UserProfile profile = ProfilesManager.createExternalProfile(getIntent());
+            MultiProfile profile = ProfilesManager.createExternalProfile(getIntent());
             if (profile != null) {
                 tryConnecting(manager, profile);
                 return;
@@ -134,14 +133,14 @@ public class LoadingActivity extends AppCompatActivity {
         displayPicker(manager, hasShareData());
     }
 
-    private void tryConnecting(final ProfilesManager manager, BaseProfile profile) {
+    private void tryConnecting(final ProfilesManager manager, MultiProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
 
         if (profile == null) {
             displayPicker(manager, hasShareData());
         } else {
-            manager.setCurrent(this, profile.getProfile(this));
+            manager.setCurrent(this, profile);
             WebSocketing.instantiate(this, new WebSocketing.IConnect() {
                 @Override
                 public void onConnected() {
@@ -168,15 +167,15 @@ public class LoadingActivity extends AppCompatActivity {
         if (share) pickerHint.setText(R.string.pickProfile_share);
         else pickerHint.setText(R.string.pickProfile);
 
-        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<BaseProfile>() {
+        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<MultiProfile>() {
             @Override
-            public void onProfileSelected(BaseProfile profile) {
+            public void onProfileSelected(MultiProfile profile) {
                 WebSocketing.unlock();
                 tryConnecting(manager, profile);
             }
         }, false, new CustomProfilesAdapter.IEdit() {
             @Override
-            public void onEditProfile(BaseProfile profile) {
+            public void onEditProfile(MultiProfile profile) {
                 EditProfileActivity.start(LoadingActivity.this, profile);
             }
         });

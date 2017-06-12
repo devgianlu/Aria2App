@@ -8,8 +8,8 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.DownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
@@ -66,13 +66,13 @@ public class DownloadsManager extends FileDownloadListener {
     }
 
     private static void setupAuth(Context context, BaseDownloadTask task) {
-        UserProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().directDownload;
+        MultiProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().getProfile(context).directDownload;
         if (dd.auth)
             task.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
     }
 
     private static URI createRemoteUrl(Context context, AFile file, String dir) throws URISyntaxException, MalformedURLException {
-        UserProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().directDownload;
+        MultiProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().getProfile(context).directDownload;
         URL remoteAddr = dd.getURLAddress();
         return new URI(remoteAddr.getProtocol(), null, remoteAddr.getHost(), remoteAddr.getPort(), file.getRelativePath(dir), null, null);
     }

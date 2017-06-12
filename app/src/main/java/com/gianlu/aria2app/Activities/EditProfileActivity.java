@@ -16,26 +16,15 @@ import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
 import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
 import com.gianlu.aria2app.Activities.EditProfile.GeneralFragment;
-import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
-import com.gianlu.aria2app.ProfilesManager.BaseProfile;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
-import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
 import com.google.android.gms.analytics.HitBuilders;
 
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.util.Objects;
-
 public class EditProfileActivity extends AppCompatActivity {
-    private UserProfile editProfile;
-    private MultiProfile editMulti;
+    private MultiProfile editProfile;
     private GeneralFragment generalFragment;
     private ConnectionFragment connectionFragment;
     private AuthenticationFragment authFragment;
@@ -48,14 +37,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 .putExtra("firstProfile", firstProfile));
     }
 
-    public static void start(Context context, BaseProfile edit) {
+    public static void start(Context context, MultiProfile edit) {
         context.startActivity(new Intent(context, EditProfileActivity.class)
                 .putExtra("firstProfile", false)
                 .putExtra("edit", edit));
-    }
-
-    private boolean isMulti() {
-        return editMulti != null;
     }
 
     @Override
@@ -66,15 +51,13 @@ public class EditProfileActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.editProfile_toolbar);
         setSupportActionBar(toolbar);
 
-        BaseProfile editBase = (BaseProfile) getIntent().getSerializableExtra("edit");
-        if (editBase instanceof UserProfile) editProfile = (UserProfile) editBase;
-        else editMulti = (MultiProfile) editBase;
-
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(!getIntent().getBooleanExtra("firstProfile", true));
-            bar.setDisplayShowTitleEnabled(!isMulti());
+            bar.setDisplayShowTitleEnabled(false);
         }
+
+        editProfile = (MultiProfile) getIntent().getSerializableExtra("edit");
 
         if (editProfile == null) setTitle(R.string.addProfile);
         else setTitle(R.string.editProfile);
@@ -99,10 +82,12 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        /*
         generalFragment = GeneralFragment.getInstance(this, editProfile);
         connectionFragment = ConnectionFragment.getInstance(this, editProfile);
         authFragment = AuthenticationFragment.getInstance(this, editProfile);
         ddFragment = DirectDownloadFragment.getInstance(this, editProfile);
+        */
 
         pagerAdapter = new PagerAdapter<>(getSupportFragmentManager(), generalFragment, connectionFragment, authFragment, ddFragment);
         pager.setAdapter(pagerAdapter);
@@ -124,6 +109,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void done() {
+        /*
         try {
             GeneralFragment.Fields generalFields = generalFragment.getFields();
             ConnectionFragment.Fields connFields = connectionFragment.getFields(false);
@@ -150,6 +136,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_NEW_PROFILE)
                 .build());
+                */
     }
 
     @Override

@@ -30,25 +30,26 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
+public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
     private final IEdit editListener;
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final Handler handler;
 
-    public CustomProfilesAdapter(Context context, List<BaseProfile> profiles, IAdapter<BaseProfile> listener, boolean black, @Nullable IEdit editListener) {
+    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, IAdapter<MultiProfile> listener, boolean black, @Nullable IEdit editListener) {
         super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, black, listener);
         this.editListener = editListener;
         this.handler = new Handler(context.getMainLooper());
     }
 
     @Override
-    public BaseProfile getItem(int pos) {
+    public MultiProfile getItem(int pos) {
         return profiles.get(pos);
     }
 
     @Override
     public void onBindViewHolder(ProfilesAdapter.ViewHolder holder, int position) {
-        final UserProfile profile = getItem(position).getProfile(context);
+        final MultiProfile multi = getItem(position);
+        final MultiProfile.UserProfile profile = multi.getProfile(context);
 
         holder.globalName.setVisibility(View.GONE);
         holder.name.setText(profile.getProfileName(context));
@@ -84,20 +85,20 @@ public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (listener != null) listener.onProfileSelected(profile);
+                if (listener != null) listener.onProfileSelected(multi);
             }
         });
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (editListener != null) editListener.onEditProfile(profile);
+                if (editListener != null) editListener.onEditProfile(multi);
                 return editListener != null;
             }
         });
     }
 
-    private void notifyItemChanged(UserProfile profile, BaseProfile.TestStatus status) {
+    private void notifyItemChanged(MultiProfile.UserProfile profile, BaseProfile.TestStatus status) {
         profile.setStatus(status);
 
         final int pos = indexOf(profile);
@@ -111,9 +112,9 @@ public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
         }
     }
 
-    private int indexOf(UserProfile match) {
+    private int indexOf(MultiProfile.UserProfile match) {
         for (int i = 0; i < profiles.size(); i++) {
-            UserProfile profile = profiles.get(i).getProfile(context);
+            MultiProfile.UserProfile profile = profiles.get(i).getProfile(context);
             if (Objects.equals(profile.serverAddr, match.serverAddr)
                     && Objects.equals(profile.serverPort, match.serverPort)
                     && Objects.equals(profile.authMethod, match.authMethod))
@@ -125,7 +126,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
 
     @Override
     protected void runTest(int pos) {
-        final UserProfile profile = getItem(pos).getProfile(context);
+        final MultiProfile.UserProfile profile = getItem(pos).getProfile(context);
 
         switch (profile.connectionMethod) {
             case HTTP:
@@ -139,13 +140,13 @@ public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
     }
 
     public interface IEdit {
-        void onEditProfile(BaseProfile profile);
+        void onEditProfile(MultiProfile profile);
     }
 
     private class HttpProfileTester implements Runnable {
-        private final UserProfile profile;
+        private final MultiProfile.UserProfile profile;
 
-        public HttpProfileTester(UserProfile profile) {
+        public HttpProfileTester(MultiProfile.UserProfile profile) {
             this.profile = profile;
         }
 
@@ -173,10 +174,10 @@ public class CustomProfilesAdapter extends ProfilesAdapter<BaseProfile> {
     }
 
     private class WsProfileTester extends WebSocketAdapter implements Runnable {
-        private final UserProfile profile;
+        private final MultiProfile.UserProfile profile;
         private long pingTime;
 
-        public WsProfileTester(UserProfile profile) {
+        public WsProfileTester(MultiProfile.UserProfile profile) {
             this.profile = profile;
         }
 

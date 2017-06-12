@@ -28,7 +28,7 @@ public abstract class BaseProfile implements Serializable, BaseDrawerProfile {
         this.status = new TestStatus(Status.UNKNOWN);
     }
 
-    public abstract UserProfile getProfile(Context context);
+    public abstract MultiProfile.UserProfile getProfile(Context context);
 
     public void setStatus(TestStatus status) {
         this.status = status;

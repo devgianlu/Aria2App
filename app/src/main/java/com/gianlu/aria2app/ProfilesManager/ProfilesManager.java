@@ -28,7 +28,7 @@ import java.util.List;
 public class ProfilesManager {
     private static ProfilesManager instance;
     private final File PROFILES_PATH;
-    private UserProfile currentProfile;
+    private MultiProfile currentProfile;
 
     private ProfilesManager(Context context) {
         PROFILES_PATH = context.getFilesDir();
@@ -44,7 +44,7 @@ public class ProfilesManager {
     }
 
     @Nullable
-    public static UserProfile createExternalProfile(Intent intent) {
+    public static MultiProfile createExternalProfile(Intent intent) {
         String token = intent.getStringExtra("token");
         int port = intent.getIntExtra("port", -1);
 
@@ -52,32 +52,32 @@ public class ProfilesManager {
             return null;
         }
 
-        return UserProfile.createExternal(token, port);
+        return MultiProfile.createForExternal(token, port);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void delete(UserProfile profile) {
+    public void delete(MultiProfile profile) {
         new File(PROFILES_PATH, profile.id + ".profile").delete();
     }
 
     @Nullable
-    public UserProfile getCurrent() {
+    public MultiProfile getCurrent() {
         return currentProfile;
     }
 
-    public void setCurrent(Context context, UserProfile profile) {
+    public void setCurrent(Context context, MultiProfile profile) {
         currentProfile = profile;
         setLastProfile(context, profile);
     }
 
     @NonNull
-    public UserProfile getCurrentAssert() throws NullPointerException {
+    public MultiProfile getCurrentAssert() throws NullPointerException {
         if (currentProfile == null) throw new NullPointerException("currentProfile is null!");
         return currentProfile;
     }
 
     @Nullable
-    public BaseProfile getLastProfile(Context context) {
+    public MultiProfile getLastProfile(Context context) {
         String id = Prefs.getString(context, Prefs.Keys.LAST_USED_PROFILE, null);
         if (id == null || !profileExists(id)) return null;
         try {
@@ -88,11 +88,11 @@ public class ProfilesManager {
         }
     }
 
-    public void setLastProfile(Context context, UserProfile profile) {
+    public void setLastProfile(Context context, MultiProfile profile) {
         Prefs.editString(context, Prefs.Keys.LAST_USED_PROFILE, profile.id);
     }
 
-    public BaseProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {
+    public MultiProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {
         if (!profileExists(id))
             throw new FileNotFoundException("Profile " + id + " doesn't exists!");
 
@@ -102,9 +102,7 @@ public class ProfilesManager {
         String line;
         while ((line = reader.readLine()) != null) builder.append(line);
 
-        JSONObject json = new JSONObject(builder.toString());
-        if (json.has("serverAddr")) return new UserProfile(json);
-        else return new MultiProfile(json);
+        return new MultiProfile(new JSONObject(builder.toString()));
     }
 
     public boolean profileExists(@NonNull String id) {
@@ -123,7 +121,7 @@ public class ProfilesManager {
         return profiles.length > 0;
     }
 
-    public List<BaseProfile> getProfiles() {
+    public List<MultiProfile> getProfiles() {
         String[] profilesId = PROFILES_PATH.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -131,7 +129,7 @@ public class ProfilesManager {
             }
         });
 
-        List<BaseProfile> profiles = new ArrayList<>();
+        List<MultiProfile> profiles = new ArrayList<>();
         for (String id : profilesId) {
             try {
                 profiles.add(retrieveProfile(id.replace(".profile", "")));
@@ -143,7 +141,7 @@ public class ProfilesManager {
         return profiles;
     }
 
-    public void save(UserProfile profile) throws IOException, JSONException {
+    public void save(MultiProfile profile) throws IOException, JSONException {
         File file = new File(PROFILES_PATH, profile.id + ".profile");
         try (OutputStream out = new FileOutputStream(file)) {
             out.write(profile.toJSON().toString().getBytes());
@@ -152,6 +150,6 @@ public class ProfilesManager {
     }
 
     public void reloadCurrentProfile(Context context) throws IOException, JSONException {
-        setCurrent(context, retrieveProfile(getCurrentAssert().id).getProfile(context));
+        setCurrent(context, retrieveProfile(getCurrentAssert().id));
     }
 }

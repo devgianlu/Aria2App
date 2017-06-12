@@ -15,8 +15,8 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.Prefs;
 import com.gianlu.aria2app.ProfilesManager.BaseProfile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.neovisionaries.ws.client.WebSocket;
@@ -68,7 +68,7 @@ public class NotificationService extends IntentService {
                     .setPriority(Notification.PRIORITY_MIN)
                     .setContentTitle(getString(R.string.notificationService))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setContentText(CommonUtils.join((ArrayList<UserProfile>) intent.getSerializableExtra("profiles"), ", "))
+                    .setContentText(CommonUtils.join((ArrayList<MultiProfile>) intent.getSerializableExtra("profiles"), ", "))
                     .setCategory(Notification.CATEGORY_SERVICE)
                     .setSmallIcon(R.drawable.ic_notification)
                     .addAction(new NotificationCompat.Action.Builder(
@@ -88,14 +88,15 @@ public class NotificationService extends IntentService {
     @SuppressWarnings("unchecked")
     @Override
     protected void onHandleIntent(Intent intent) {
-        List<UserProfile> profiles = (ArrayList<UserProfile>) intent.getSerializableExtra("profiles");
+        List<MultiProfile> profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
         if (Objects.equals(intent.getAction(), "STOP") || profiles == null || profiles.isEmpty()) {
             stopSelf();
             return;
         }
 
-        for (UserProfile profile : profiles) {
-            if (profile.connectionMethod == UserProfile.ConnectionMethod.HTTP) continue;
+        for (MultiProfile multi : profiles) {
+            MultiProfile.UserProfile profile = multi.getProfile(getApplicationContext());
+            if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP) continue;
 
             WebSocket webSocket;
             try {
@@ -142,11 +143,11 @@ public class NotificationService extends IntentService {
     }
 
     private class NotificationHandler extends WebSocketAdapter {
-        private final UserProfile profile;
+        private final MultiProfile.UserProfile profile;
         private final boolean soundEnabled;
         private final Set<String> selectedNotifications;
 
-        NotificationHandler(UserProfile profile) {
+        NotificationHandler(MultiProfile.UserProfile profile) {
             this.profile = profile;
 
             selectedNotifications = Prefs.getSet(getApplicationContext(), Prefs.Keys.A2_SELECTED_NOTIFS_TYPE, new HashSet<String>());

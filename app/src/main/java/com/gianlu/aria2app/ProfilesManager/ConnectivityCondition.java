@@ -5,7 +5,9 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.R;
 
-class ConnectivityCondition {
+import java.io.Serializable;
+
+class ConnectivityCondition implements Serializable {
     final Type type;
     final String ssid;
     final boolean isDefault;

@@ -10,8 +10,8 @@ import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IReceived;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 
@@ -52,7 +52,7 @@ public class JTA2 {
 
     public static JTA2 instantiate(Context context) throws JTA2InitializingException {
         try {
-            if (ProfilesManager.get(context).getCurrentAssert().connectionMethod == UserProfile.ConnectionMethod.WEBSOCKET)
+            if (ProfilesManager.get(context).getCurrentAssert().getProfile(context).connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
                 return new JTA2(context, WebSocketing.instantiate(context));
             else
                 return new JTA2(context, HTTPing.newInstance(context));

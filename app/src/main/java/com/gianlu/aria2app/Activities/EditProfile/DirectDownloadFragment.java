@@ -14,7 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.ProfilesManager.UserProfile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 
@@ -30,7 +30,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     private TextInputLayout username;
     private TextInputLayout password;
 
-    public static DirectDownloadFragment getInstance(Context context, @Nullable UserProfile edit) {
+    public static DirectDownloadFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         DirectDownloadFragment fragment = new DirectDownloadFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.directDownload));
@@ -113,7 +113,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             }
         });
 
-        UserProfile edit = (UserProfile) getArguments().getSerializable("edit");
+        MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
         if (edit != null) {
             enableDirectDownload.setChecked(edit.isDirectDownloadEnabled());
             if (edit.isDirectDownloadEnabled()) {
@@ -131,7 +131,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
 
     @SuppressWarnings("ConstantConditions")
     public Fields getFields() throws InvalidFieldException {
-        UserProfile.DirectDownload dd = null;
+        MultiProfile.DirectDownload dd = null;
         boolean enableDirectDownload = this.enableDirectDownload.isChecked();
         if (enableDirectDownload) {
             String address = this.address.getEditText().getText().toString().trim();
@@ -156,7 +156,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
                 }
             }
 
-            dd = new UserProfile.DirectDownload(address, auth, username, password);
+            dd = new MultiProfile.DirectDownload(address, auth, username, password);
         }
 
         return new Fields(enableDirectDownload, dd);
@@ -173,9 +173,9 @@ public class DirectDownloadFragment extends FieldErrorFragment {
 
     public class Fields {
         public final boolean enableDirectDownload;
-        public final UserProfile.DirectDownload dd;
+        public final MultiProfile.DirectDownload dd;
 
-        public Fields(boolean enableDirectDownload, @Nullable UserProfile.DirectDownload dd) {
+        public Fields(boolean enableDirectDownload, @Nullable MultiProfile.DirectDownload dd) {
             this.enableDirectDownload = enableDirectDownload;
             this.dd = dd;
         }
