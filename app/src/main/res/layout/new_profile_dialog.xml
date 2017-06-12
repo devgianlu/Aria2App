@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="?attr/dialogPreferredPadding">
+
+    <!-- TODO: Conditions help -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/connectivityCondition" />
+
+    <RadioGroup
+        android:id="@+id/editProfile_connectivityCondition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+        <RadioButton
+            android:id="@+id/editProfile_connectivityCondition_always"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/always" />
+
+        <RadioButton
+            android:id="@+id/editProfile_connectivityCondition_wifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wifi" />
+
+        <RadioButton
+            android:id="@+id/editProfile_connectivityCondition_mobile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mobile" />
+
+        <RadioButton
+            android:id="@+id/editProfile_connectivityCondition_ethernet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ethernet" />
+
+        <RadioButton
+            android:id="@+id/editProfile_connectivityCondition_bluetooth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bluetooth" />
+    </RadioGroup>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/editProfile_ssid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/ssid"
+        android:visibility="gone">
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.design.widget.TextInputLayout>
+</LinearLayout>

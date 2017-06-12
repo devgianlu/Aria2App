@@ -62,7 +62,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
             holder.ping.setVisibility(View.GONE);
         }
 
-        if (profile.status.status == BaseProfile.Status.UNKNOWN) {
+        if (profile.status.status == MultiProfile.Status.UNKNOWN) {
             holder.loading.setVisibility(View.VISIBLE);
             holder.status.setVisibility(View.GONE);
         } else {
@@ -98,7 +98,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
         });
     }
 
-    private void notifyItemChanged(MultiProfile.UserProfile profile, BaseProfile.TestStatus status) {
+    private void notifyItemChanged(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
         profile.setStatus(status);
 
         final int pos = indexOf(profile);
@@ -163,12 +163,12 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
                 conn.connect();
 
                 if (conn.getResponseCode() == 400) {
-                    notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ONLINE, System.currentTimeMillis() - start));
+                    notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - start));
                 } else {
-                    notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
+                    notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
                 }
             } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
-                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
             }
         }
     }
@@ -192,13 +192,13 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
 
                 webSocket.addListener(this).connectAsynchronously();
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
-                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
             }
         }
 
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ONLINE));
+            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE));
 
             pingTime = System.currentTimeMillis();
             websocket.sendPing();
@@ -206,34 +206,35 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
 
         @Override
         public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ONLINE, System.currentTimeMillis() - pingTime));
+            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - pingTime));
         }
 
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
+            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
         }
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
         }
 
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
             if (exception.getCause() instanceof ConnectException)
-                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
             else if (exception.getCause() instanceof SocketTimeoutException)
-                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
             else
-                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
         }
 
         @Override
         public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
             if (closedByServer)
-                notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.ERROR));
-            else notifyItemChanged(profile, new BaseProfile.TestStatus(BaseProfile.Status.OFFLINE));
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
+            else
+                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
         }
     }
 }

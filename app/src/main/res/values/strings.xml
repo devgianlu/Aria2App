@@ -227,6 +227,11 @@
     <string name="wifi">Wifi</string>
     <string name="profiles">Profiles</string>
     <string name="always">Always</string>
+    <string name="ssid">SSID</string>
+    <string name="connectivityCondition">Connectivity condition</string>
+    <string name="newProfile">New profile</string>
+    <string name="create">Create</string>
+    <string name="emptySSID">The SSID field is empty!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

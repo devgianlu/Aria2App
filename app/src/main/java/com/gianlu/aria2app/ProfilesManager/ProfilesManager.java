@@ -52,7 +52,7 @@ public class ProfilesManager {
             return null;
         }
 
-        return MultiProfile.createForExternal(token, port);
+        return new MultiProfile(token, port);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- FIXME: Spinner is too long -->
+
     <item
         android:id="@+id/editProfile_profiles"
         android:title="@string/profiles"
@@ -15,8 +17,14 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/editProfile_done"
-        android:icon="@drawable/ic_done_white_48dp"
+        android:id="@+id/editProfile_createNew"
+        android:icon="@drawable/ic_add_white_48dp"
+        android:title="@string/newProfile"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/editProfile_doneAll"
+        android:icon="@drawable/ic_done_all_white_48dp"
         android:title="@string/save"
         app:showAsAction="always" />
 </menu>

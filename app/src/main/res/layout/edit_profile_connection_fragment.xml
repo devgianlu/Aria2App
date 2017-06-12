@@ -1,115 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
-
-    <TextView
-        android:id="@+id/editProfile_completeAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/connectionMethod" />
-
-    <RadioGroup
-        android:id="@+id/editProfile_connectionMethod"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
-
-        <RadioButton
-            android:id="@+id/editProfile_connectionMethod_ws"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/ws" />
-
-        <RadioButton
-            android:id="@+id/editProfile_connectionMethod_http"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/HTTP" />
-    </RadioGroup>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/editProfile_address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/address">
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textUri" />
-    </android.support.design.widget.TextInputLayout>
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/editProfile_port"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/editProfile_completeAddress"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.6"
-            android:hint="@string/port">
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-            <android.support.design.widget.TextInputEditText
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connectionMethod" />
+
+        <RadioGroup
+            android:id="@+id/editProfile_connectionMethod"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+            <RadioButton
+                android:id="@+id/editProfile_connectionMethod_ws"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
-        </android.support.design.widget.TextInputLayout>
+                android:checked="true"
+                android:text="@string/ws" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/editProfile_endpoint"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/endpoint">
-
-            <android.support.design.widget.TextInputEditText
+            <RadioButton
+                android:id="@+id/editProfile_connectionMethod_http"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textUri"
-                android:text="@string/endpoint_default" />
-        </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/editProfile_encryption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/encryption" />
-
-    <LinearLayout
-        android:id="@+id/editProfile_certificatePathContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="gone">
+                android:text="@string/HTTP" />
+        </RadioGroup>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/editProfile_certificatePath"
-            android:layout_width="0dp"
+            android:id="@+id/editProfile_address"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/certificate">
+            android:hint="@string/address">
 
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
@@ -117,15 +59,78 @@
                 android:inputType="textUri" />
         </android.support.design.widget.TextInputLayout>
 
-        <ImageButton
-            android:id="@+id/editProfile_pickCertificatePath"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:adjustViewBounds="true"
-            android:alpha="0.54"
-            android:background="@drawable/ripple_effect_dark"
-            android:padding="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_insert_drive_file_black_48dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editProfile_port"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:hint="@string/port">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editProfile_endpoint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/endpoint">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri"
+                    android:text="@string/endpoint_default" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/editProfile_encryption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/encryption" />
+
+        <LinearLayout
+            android:id="@+id/editProfile_certificatePathContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/editProfile_certificatePath"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/certificate">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri" />
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/editProfile_pickCertificatePath"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:adjustViewBounds="true"
+                android:alpha="0.54"
+                android:background="@drawable/ripple_effect_dark"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_insert_drive_file_black_48dp" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

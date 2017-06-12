@@ -17,6 +17,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -29,7 +30,7 @@ import java.net.URISyntaxException;
 
 public class ConnectionFragment extends FieldErrorFragment {
     private final static int CODE_PICK_CERT = 1;
-    private LinearLayout layout;
+    private ScrollView layout;
     private TextView completeAddress;
     private RadioGroup connectionMethod;
     private TextInputLayout address;
@@ -52,7 +53,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layout = (LinearLayout) inflater.inflate(R.layout.edit_profile_connection_fragment, container, false);
+        layout = (ScrollView) inflater.inflate(R.layout.edit_profile_connection_fragment, container, false);
         completeAddress = (TextView) layout.findViewById(R.id.editProfile_completeAddress);
         connectionMethod = (RadioGroup) layout.findViewById(R.id.editProfile_connectionMethod);
         connectionMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

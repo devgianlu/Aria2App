@@ -236,6 +236,7 @@ public class Utils {
         public static final CommonUtils.ToastMessage DOWNLOAD_STARTED = new CommonUtils.ToastMessage("Download started!", false);
         public static final CommonUtils.ToastMessage CANT_DESELECT_ALL_FILES = new CommonUtils.ToastMessage("Can't deselect all files!", false);
         public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_DIR = new CommonUtils.ToastMessage("Failed downloading directory!", true);
+        public static final CommonUtils.ToastMessage DUPLICATED_CONDITION = new CommonUtils.ToastMessage("This condition is already present in this profile.", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

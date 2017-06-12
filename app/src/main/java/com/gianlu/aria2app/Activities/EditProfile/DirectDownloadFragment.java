@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
@@ -21,7 +22,7 @@ import com.gianlu.aria2app.Utils;
 import java.net.URL;
 
 public class DirectDownloadFragment extends FieldErrorFragment {
-    private LinearLayout layout;
+    private ScrollView layout;
     private CheckBox enableDirectDownload;
     private LinearLayout container;
     private TextInputLayout address;
@@ -43,7 +44,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        layout = (LinearLayout) inflater.inflate(R.layout.edit_profile_dd_fragment, parent, false);
+        layout = (ScrollView) inflater.inflate(R.layout.edit_profile_dd_fragment, parent, false);
         enableDirectDownload = (CheckBox) layout.findViewById(R.id.editProfile_enableDirectDownload);
         enableDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

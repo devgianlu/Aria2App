@@ -12,13 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 
 public class AuthenticationFragment extends FieldErrorFragment {
-    private LinearLayout layout;
+    private ScrollView layout;
     private RadioGroup authMethod;
     private TextInputLayout token;
     private LinearLayout userAndPasswd;
@@ -38,7 +39,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layout = (LinearLayout) inflater.inflate(R.layout.edit_profile_authentication_fragment, container, false);
+        layout = (ScrollView) inflater.inflate(R.layout.edit_profile_authentication_fragment, container, false);
         authMethod = (RadioGroup) layout.findViewById(R.id.editProfile_authenticationMethod);
         authMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

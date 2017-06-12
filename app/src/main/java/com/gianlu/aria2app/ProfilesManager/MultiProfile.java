@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
-import com.gianlu.aria2app.Activities.EditProfile.GeneralFragment;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 
 import org.json.JSONArray;
@@ -20,94 +20,110 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class MultiProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
-    private final Map<ConnectivityCondition, UserProfile> profiles;
+public class MultiProfile implements BaseDrawerProfile, Serializable {
+    public final List<UserProfile> profiles;
+    public final String id;
+    public final String name;
+    public boolean notificationsEnabled;
+
+    public MultiProfile(String name, boolean enableNotifs) {
+        this.name = name;
+        this.notificationsEnabled = enableNotifs;
+        this.id = ProfilesManager.getId(name);
+        profiles = new ArrayList<>();
+    }
 
     MultiProfile(JSONObject obj) throws JSONException {
-        super(obj);
+        this.name = obj.getString("name");
+        this.notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
+        this.id = ProfilesManager.getId(name);
 
-        profiles = new HashMap<>();
-        if (obj.isNull("conditions")) { // Needed for backward compatibility
+        profiles = new ArrayList<>();
+        if (obj.has("serverAddr")) { // Needed for backward compatibility
             UserProfile unique = new UserProfile(obj);
-            profiles.put(ConnectivityCondition.newUniqueCondition(), unique);
+            profiles.add(unique);
             return;
         }
 
-        JSONArray profilesArray = obj.getJSONArray("conditions");
-        for (int i = 0; i < profilesArray.length(); i++) {
-            JSONObject conditionObj = profilesArray.getJSONObject(i);
-            ConnectivityCondition.Type type = ConnectivityCondition.Type.valueOf(conditionObj.getString("type").toUpperCase());
+        if (obj.isNull("profiles")) { // I hate backward compatibility
+            JSONArray profilesArray = obj.getJSONArray("conditions");
+            for (int i = 0; i < profilesArray.length(); i++) {
+                JSONObject conditionObj = profilesArray.getJSONObject(i);
+                ConnectivityCondition.Type type = ConnectivityCondition.Type.valueOf(conditionObj.getString("type").toUpperCase());
 
-            boolean isDefault; // Needed for backward compatibility
-            if (conditionObj.has("isDefault")) isDefault = conditionObj.getBoolean("isDefault");
-            else isDefault = conditionObj.getJSONObject("profile").getBoolean("default");
+                boolean isDefault; // Needed for backward compatibility
+                if (conditionObj.has("isDefault")) isDefault = conditionObj.getBoolean("isDefault");
+                else isDefault = conditionObj.getJSONObject("profile").getBoolean("default");
 
-            ConnectivityCondition condition;
-            switch (type) {
-                case WIFI:
-                    condition = ConnectivityCondition.newWiFiCondition(conditionObj.getString("ssid"), isDefault);
-                    break;
-                case MOBILE:
-                    condition = ConnectivityCondition.newMobileCondition(isDefault);
-                    break;
-                case ETHERNET:
-                    condition = ConnectivityCondition.newEthernetCondition(isDefault);
-                    break;
-                case BLUETOOTH:
-                    condition = ConnectivityCondition.newBluetoothCondition(isDefault);
-                    break;
-                default:
-                case ALWAYS:
-                    condition = ConnectivityCondition.newUniqueCondition();
-                    break;
+                ConnectivityCondition condition;
+                switch (type) {
+                    case WIFI:
+                        condition = ConnectivityCondition.newWiFiCondition(conditionObj.getString("ssid"), isDefault);
+                        break;
+                    case MOBILE:
+                        condition = ConnectivityCondition.newMobileCondition(isDefault);
+                        break;
+                    case ETHERNET:
+                        condition = ConnectivityCondition.newEthernetCondition(isDefault);
+                        break;
+                    case BLUETOOTH:
+                        condition = ConnectivityCondition.newBluetoothCondition(isDefault);
+                        break;
+                    default:
+                    case ALWAYS:
+                        condition = ConnectivityCondition.newUniqueCondition();
+                        break;
+                }
+
+                JSONObject profile = conditionObj.getJSONObject("profile");
+                profile.put("name", name + " - " + condition.type.name().toLowerCase());
+                profiles.add(new UserProfile(profile, condition));
             }
-
-            profiles.put(condition, new UserProfile(conditionObj.getJSONObject("profile")));
+        } else {
+            JSONArray profilesArray = obj.getJSONArray("profiles");
+            for (int i = 0; i < profilesArray.length(); i++)
+                profiles.add(new UserProfile(profilesArray.getJSONObject(i)));
         }
     }
 
-    public MultiProfile(String name, UserProfile unique) {
-        super(name);
+    public MultiProfile(@NonNull String token, int port) {
+        this.name = "Local device";
+        this.id = ProfilesManager.getId(name);
 
-        profiles = new HashMap<>();
-        profiles.put(ConnectivityCondition.newUniqueCondition(), unique);
-    }
-
-    public static MultiProfile createForExternal(@NonNull String token, int port) {
-        return new MultiProfile("Local device", new UserProfile("Local device", token, port));
+        profiles = new ArrayList<>();
+        profiles.add(new UserProfile(token, port));
     }
 
     private UserProfile getDefaultProfile() {
-        for (Map.Entry<ConnectivityCondition, UserProfile> entry : profiles.entrySet())
-            if (entry.getKey().isDefault)
-                return entry.getValue();
+        for (UserProfile profile : profiles)
+            if (profile.connectivityCondition.isDefault)
+                return profile;
 
-        return profiles.values().iterator().next();
+        return profiles.get(0);
     }
 
     @Nullable
     private UserProfile findFor(ConnectivityCondition.Type type) {
-        for (Map.Entry<ConnectivityCondition, UserProfile> entry : profiles.entrySet())
-            if (entry.getKey().type == type)
-                return entry.getValue();
+        for (UserProfile profile : profiles)
+            if (profile.connectivityCondition.type == type)
+                return profile;
 
         return null;
     }
 
     @Nullable
     private UserProfile findForWifi(String ssid) {
-        for (Map.Entry<ConnectivityCondition, UserProfile> entry : profiles.entrySet())
-            if (entry.getKey().type == ConnectivityCondition.Type.WIFI && Objects.equals(entry.getKey().ssid, ssid))
-                return entry.getValue();
+        for (UserProfile profile : profiles)
+            if (profile.connectivityCondition.type == ConnectivityCondition.Type.WIFI && Objects.equals(profile.connectivityCondition.ssid, ssid))
+                return profile;
 
         return null;
     }
 
-    @Override
     public UserProfile getProfile(Context context) {
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -150,8 +166,26 @@ public class MultiProfile extends BaseProfile implements BaseDrawerProfile, Seri
         return getProfile(context).getInitials(context);
     }
 
-    public JSONObject toJSON() {
-        return null; // TODO
+    public JSONObject toJSON() throws JSONException {
+        if (profiles.isEmpty()) throw new IllegalStateException("profiles cannot be empty!");
+
+        JSONObject obj = new JSONObject();
+        obj.put("name", name).put("notificationsEnabled", notificationsEnabled);
+
+        JSONArray profilesArray = new JSONArray();
+        for (UserProfile profile : profiles) profilesArray.put(profile.toJSON());
+
+        obj.put("profiles", profilesArray);
+        return obj;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    public void add(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
+        profiles.add(new UserProfile(cond, connFields, authFields, ddFields));
     }
 
     public enum ConnectionMethod {
@@ -159,132 +193,91 @@ public class MultiProfile extends BaseProfile implements BaseDrawerProfile, Seri
         WEBSOCKET
     }
 
-    public static class UserProfile extends BaseProfile implements BaseDrawerProfile, Serializable {
-        public final String serverAddr;
-        public final int serverPort;
-        public final String serverEndpoint;
-        public final JTA2.AuthMethod authMethod;
-        public final boolean serverSSL;
-        public final String certificatePath;
-        public final String serverUsername;
-        public final String serverPassword;
-        public final String serverToken;
-        public final DirectDownload directDownload;
-        public final ConnectionMethod connectionMethod;
+    public enum Status {
+        OFFLINE,
+        ERROR,
+        UNKNOWN,
+        ONLINE
+    }
 
-        public UserProfile(JSONObject obj) throws JSONException {
-            super(obj);
+    public static class ConnectivityCondition implements Serializable {
+        public final Type type;
+        public final String ssid;
+        public final boolean isDefault;
 
-            if (obj.has("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
-            else authMethod = JTA2.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
-            serverUsername = obj.optString("serverUsername", null);
-            serverPassword = obj.optString("serverPassword", null);
-            serverToken = obj.optString("serverToken", null);
-            serverSSL = obj.optBoolean("serverSSL", false);
-
-            serverAddr = obj.getString("serverAddr");
-            serverPort = obj.getInt("serverPort");
-            serverEndpoint = obj.getString("serverEndpoint");
-            certificatePath = obj.optString("certificatePath", null);
-
-            if (obj.has("directDownload"))
-                directDownload = new DirectDownload(obj.getJSONObject("directDownload"));
-            else directDownload = null;
-
-            connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.WEBSOCKET.name()));
+        private ConnectivityCondition(Type type, boolean isDefault, @Nullable String ssid) {
+            this.type = type;
+            this.isDefault = isDefault;
+            this.ssid = ssid;
         }
 
-        public UserProfile(GeneralFragment.Fields generalFields, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
-            super(generalFields.profileName);
-            notificationsEnabled = generalFields.enableNotifs;
-            authMethod = authFields.authMethod;
-            serverUsername = authFields.username;
-            serverPassword = authFields.password;
-            serverToken = authFields.token;
-            connectionMethod = connFields.connectionMethod;
-            serverSSL = connFields.encryption;
-            certificatePath = connFields.certificatePath;
-            serverAddr = connFields.address;
-            serverPort = connFields.port;
-            serverEndpoint = connFields.endpoint;
-            directDownload = ddFields.dd;
+        public ConnectivityCondition(JSONObject obj) throws JSONException {
+            type = Type.valueOf(obj.getString("type"));
+            ssid = obj.optString("ssid", null);
+            isDefault = obj.getBoolean("isDefault");
         }
 
-        private UserProfile(String name, String token, int port) {
-            super(name);
-            notificationsEnabled = false;
-            serverAddr = "localhost";
-            authMethod = JTA2.AuthMethod.TOKEN;
-            serverUsername = null;
-            serverPassword = null;
-            serverToken = token;
-            connectionMethod = ConnectionMethod.WEBSOCKET;
-            serverPort = port;
-            serverEndpoint = "/jsonrpc";
-            serverSSL = false;
-            certificatePath = null;
-            directDownload = null;
+        public static ConnectivityCondition newWiFiCondition(String ssid, boolean isDefault) {
+            return new ConnectivityCondition(Type.WIFI, isDefault, ssid);
+        }
+
+        public static ConnectivityCondition newMobileCondition(boolean isDefault) {
+            return new ConnectivityCondition(Type.MOBILE, isDefault, null);
+        }
+
+        public static ConnectivityCondition newBluetoothCondition(boolean isDefault) {
+            return new ConnectivityCondition(Type.BLUETOOTH, isDefault, null);
+        }
+
+        public static ConnectivityCondition newEthernetCondition(boolean isDefault) {
+            return new ConnectivityCondition(Type.ETHERNET, isDefault, null);
+        }
+
+        public static ConnectivityCondition newUniqueCondition() {
+            return new ConnectivityCondition(Type.ALWAYS, true, null);
         }
 
         @Override
-        public UserProfile getProfile(Context context) {
-            return this;
-        }
-
-        public String buildWebSocketUrl() {
-            return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
-        }
-
-        public String buildHttpUrl() {
-            return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
-        }
-
-        public String getFullServerAddress() {
-            switch (connectionMethod) {
-                case HTTP:
-                    return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
-                default:
-                case WEBSOCKET:
-                    return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
-            }
-        }
-
-        public boolean isDirectDownloadEnabled() {
-            return directDownload != null;
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ConnectivityCondition that = (ConnectivityCondition) o;
+            return type == that.type && (ssid != null ? ssid.equals(that.ssid) : that.ssid == null);
         }
 
         public JSONObject toJSON() throws JSONException {
-            JSONObject profile = new JSONObject();
-            profile.put("name", name)
-                    .put("serverAddr", serverAddr)
-                    .put("serverPort", serverPort)
-                    .put("notificationsEnabled", notificationsEnabled)
-                    .put("serverEndpoint", serverEndpoint)
-                    .put("authMethod", authMethod.name())
-                    .put("serverToken", serverToken)
-                    .put("serverUsername", serverUsername)
-                    .put("serverPassword", serverPassword)
-                    .put("serverSSL", serverSSL)
-                    .put("connectionMethod", connectionMethod.name())
-                    .put("certificatePath", certificatePath);
-
-            if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJSON());
-            return profile;
+            JSONObject obj = new JSONObject();
+            obj.put("type", type.name()).put("isDefault", isDefault);
+            if (ssid != null) obj.put("ssid", ssid);
+            return obj;
         }
 
-        @Override
-        public String getProfileName(Context context) {
-            return name;
+        public String getFormal(Context context) {
+            return type.getFormal(context) + (type == Type.WIFI ? ": " + ssid : "");
         }
 
-        @Override
-        public String getSecondaryText(Context context) {
-            return getFullServerAddress();
-        }
+        public enum Type {
+            ALWAYS,
+            WIFI,
+            MOBILE,
+            ETHERNET,
+            BLUETOOTH;
 
-        @Override
-        public String getInitials(Context context) {
-            return getProfileName(context).substring(0, 2);
+            public String getFormal(Context context) {
+                switch (this) {
+                    case WIFI:
+                        return context.getString(R.string.wifi);
+                    case MOBILE:
+                        return context.getString(R.string.mobile);
+                    case ETHERNET:
+                        return context.getString(R.string.ethernet);
+                    case BLUETOOTH:
+                        return context.getString(R.string.bluetooth);
+                    default:
+                    case ALWAYS:
+                        return context.getString(R.string.always);
+                }
+            }
         }
     }
 
@@ -316,6 +309,163 @@ public class MultiProfile extends BaseProfile implements BaseDrawerProfile, Seri
 
         public URL getURLAddress() throws MalformedURLException {
             return new URL(address);
+        }
+    }
+
+    static class TestStatus implements Serializable {
+        public final Status status;
+        final long latency;
+
+        TestStatus(Status status, long latency) {
+            this.latency = latency;
+            this.status = status;
+        }
+
+        TestStatus(Status status) {
+            this.latency = -1;
+            this.status = status;
+        }
+    }
+
+    public class UserProfile implements BaseDrawerProfile, Serializable {
+        public final String serverAddr;
+        public final int serverPort;
+        public final String serverEndpoint;
+        public final JTA2.AuthMethod authMethod;
+        public final boolean serverSSL;
+        public final String certificatePath;
+        public final String serverUsername;
+        public final String serverPassword;
+        public final String serverToken;
+        public final DirectDownload directDownload;
+        public final ConnectionMethod connectionMethod;
+        public final ConnectivityCondition connectivityCondition;
+        public TestStatus status;
+
+        public UserProfile(JSONObject obj) throws JSONException {
+            this(obj, null);
+        }
+
+        public UserProfile(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
+            connectivityCondition = cond;
+            authMethod = authFields.authMethod;
+            serverUsername = authFields.username;
+            serverPassword = authFields.password;
+            serverToken = authFields.token;
+            connectionMethod = connFields.connectionMethod;
+            serverSSL = connFields.encryption;
+            certificatePath = connFields.certificatePath;
+            serverAddr = connFields.address;
+            serverPort = connFields.port;
+            serverEndpoint = connFields.endpoint;
+            directDownload = ddFields.dd;
+            this.status = new TestStatus(Status.UNKNOWN);
+        }
+
+        private UserProfile(String token, int port) {
+            serverAddr = "localhost";
+            authMethod = JTA2.AuthMethod.TOKEN;
+            serverUsername = null;
+            serverPassword = null;
+            serverToken = token;
+            connectionMethod = ConnectionMethod.WEBSOCKET;
+            serverPort = port;
+            serverEndpoint = "/jsonrpc";
+            serverSSL = false;
+            certificatePath = null;
+            directDownload = null;
+            connectivityCondition = ConnectivityCondition.newUniqueCondition();
+            status = new TestStatus(Status.UNKNOWN);
+        }
+
+        public UserProfile(JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
+            if (obj.has("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
+            else authMethod = JTA2.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
+            serverUsername = obj.optString("serverUsername", null);
+            serverPassword = obj.optString("serverPassword", null);
+            serverToken = obj.optString("serverToken", null);
+            serverSSL = obj.optBoolean("serverSSL", false);
+
+            serverAddr = obj.getString("serverAddr");
+            serverPort = obj.getInt("serverPort");
+            serverEndpoint = obj.getString("serverEndpoint");
+            certificatePath = obj.optString("certificatePath", null);
+
+            if (obj.has("directDownload"))
+                directDownload = new DirectDownload(obj.getJSONObject("directDownload"));
+            else directDownload = null;
+
+            connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.WEBSOCKET.name()));
+
+            if (obj.isNull("connectivityCondition")) {
+                if (condition == null)
+                    connectivityCondition = ConnectivityCondition.newUniqueCondition();
+                else
+                    connectivityCondition = condition;
+            } else {
+                connectivityCondition = new ConnectivityCondition(obj.getJSONObject("connectivityCondition"));
+            }
+
+            status = new TestStatus(Status.UNKNOWN);
+        }
+
+        public void setStatus(TestStatus status) {
+            this.status = status;
+        }
+
+        public String buildWebSocketUrl() {
+            return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+        }
+
+        public String buildHttpUrl() {
+            return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+        }
+
+        public String getFullServerAddress() {
+            switch (connectionMethod) {
+                case HTTP:
+                    return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+                default:
+                case WEBSOCKET:
+                    return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+            }
+        }
+
+        public boolean isDirectDownloadEnabled() {
+            return directDownload != null;
+        }
+
+        public JSONObject toJSON() throws JSONException {
+            JSONObject profile = new JSONObject();
+            profile.put("serverAddr", serverAddr)
+                    .put("serverPort", serverPort)
+                    .put("serverEndpoint", serverEndpoint)
+                    .put("authMethod", authMethod.name())
+                    .put("serverToken", serverToken)
+                    .put("serverUsername", serverUsername)
+                    .put("serverPassword", serverPassword)
+                    .put("serverSSL", serverSSL)
+                    .put("connectionMethod", connectionMethod.name())
+                    .put("certificatePath", certificatePath)
+                    .put("connectivityCondition", connectivityCondition.toJSON());
+
+            if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJSON());
+            return profile;
+        }
+
+        @Override
+        public String getProfileName(Context context) {
+            return name;
+        }
+
+        @Override
+        public String getSecondaryText(Context context) {
+            return getFullServerAddress();
+        }
+
+        @Override
+        public String getInitials(Context context) {
+            return getProfileName(context).substring(0, 2);
         }
     }
 }
