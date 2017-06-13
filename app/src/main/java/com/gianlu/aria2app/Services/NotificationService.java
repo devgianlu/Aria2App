@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
@@ -108,7 +109,7 @@ public class NotificationService extends IntentService {
                 return;
             }
 
-            webSocket.addListener(new NotificationHandler(profile)).connectAsynchronously();
+            webSocket.addListener(new NotificationHandler(profile, multi.id)).connectAsynchronously();
         }
     }
 
@@ -141,14 +142,15 @@ public class NotificationService extends IntentService {
         }
     }
 
-    // FIXME: ContentIntent
     private class NotificationHandler extends WebSocketAdapter {
         private final MultiProfile.UserProfile profile;
+        private final String profileId;
         private final boolean soundEnabled;
         private final Set<String> selectedNotifications;
 
-        NotificationHandler(MultiProfile.UserProfile profile) {
+        NotificationHandler(MultiProfile.UserProfile profile, String profileId) {
             this.profile = profile;
+            this.profileId = profileId;
 
             selectedNotifications = Prefs.getSet(getApplicationContext(), Prefs.Keys.A2_SELECTED_NOTIFS_TYPE, new HashSet<String>());
             soundEnabled = Prefs.getBoolean(getApplicationContext(), Prefs.Keys.A2_NOTIFS_SOUND, true);
@@ -162,9 +164,9 @@ public class NotificationService extends IntentService {
             int reqCode = new Random().nextInt(10000);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this)
                     .setContentIntent(
-                            PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, MainActivity.class)
+                            PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, LoadingActivity.class)
                                     .putExtra("fromNotification", true)
-                                    .putExtra("fileName", "TEXTEWIQ")
+                                    .putExtra("profileId", profileId)
                                     .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
                     .setContentText(profile.getProfileName(getApplicationContext()))
                     .setContentInfo("GID#" + gid)

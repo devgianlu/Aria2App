@@ -60,11 +60,6 @@ public class ProfilesManager {
         new File(PROFILES_PATH, profile.id + ".profile").delete();
     }
 
-    @Nullable
-    public MultiProfile getCurrent() {
-        return currentProfile;
-    }
-
     public void setCurrent(Context context, MultiProfile profile) {
         currentProfile = profile;
         setLastProfile(context, profile);

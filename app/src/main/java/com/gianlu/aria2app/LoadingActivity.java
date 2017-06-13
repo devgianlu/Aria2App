@@ -23,6 +23,9 @@ import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.google.android.gms.analytics.HitBuilders;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.Objects;
 
 public class LoadingActivity extends AppCompatActivity {
@@ -33,6 +36,7 @@ public class LoadingActivity extends AppCompatActivity {
     private RecyclerView pickerList;
     private boolean finished = false;
     private Uri shareData;
+    private String fromNotifGid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,19 @@ public class LoadingActivity extends AppCompatActivity {
             if (profile != null) {
                 tryConnecting(manager, profile);
                 return;
+            }
+        }
+
+        if (getIntent().getBooleanExtra("fromNotification", false)) {
+            String profileId = getIntent().getStringExtra("profileId");
+            if (manager.profileExists(profileId)) {
+                try {
+                    fromNotifGid = getIntent().getStringExtra("gid");
+                    tryConnecting(manager, manager.retrieveProfile(profileId));
+                    return;
+                } catch (IOException | JSONException ex) {
+                    Logging.logMe(this, ex);
+                }
             }
         }
 
@@ -187,6 +204,7 @@ public class LoadingActivity extends AppCompatActivity {
     private void goTo(Class goTo) {
         Intent intent = new Intent(LoadingActivity.this, goTo).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if (shareData != null) intent.putExtra("shareData", shareData);
+        if (fromNotifGid != null) intent.putExtra("gid", fromNotifGid);
         if (finished) startActivity(intent);
         else this.goTo = intent;
     }

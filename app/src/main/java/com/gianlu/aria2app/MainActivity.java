@@ -682,6 +682,15 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onUpdateAdapter(List<Download> downloads) {
         if (adapter != null) adapter.notifyItemsChanged(downloads);
+
+        String gid = getIntent().getStringExtra("gid");
+        if (gid != null) {
+            for (Download download : downloads)
+                if (Objects.equals(download.gid, gid))
+                    onMoreClick(download);
+
+            getIntent().removeExtra("gid");
+        }
     }
 
     @Override
