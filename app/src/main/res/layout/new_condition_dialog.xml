@@ -5,7 +5,13 @@
     android:orientation="vertical"
     android:padding="?attr/dialogPreferredPadding">
 
-    <!-- TODO: Conditions help -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:autoLink="web"
+        android:text="@string/profile_help"
+        android:textAlignment="center" />
 
     <TextView
         android:layout_width="match_parent"
