@@ -3,7 +3,6 @@ package com.gianlu.aria2app;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -52,7 +51,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     }
 
     public static void sendAnalytics(Context context, @Nullable Map<String, String> map) {
-        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("a2_trackingDisable", false) && !BuildConfig.DEBUG)
+        if (!Prefs.getBoolean(context, Prefs.Keys.TRACKING_DISABLE, false) && !BuildConfig.DEBUG)
             if (tracker != null)
                 tracker.send(map);
     }
