@@ -232,6 +232,9 @@
     <string name="newProfile">New profile</string>
     <string name="create">Create</string>
     <string name="emptySSID">The SSID field is empty!</string>
+    <string name="newCondition">Create new condition</string>
+    <string name="deleteProfile">Delete profile</string>
+    <string name="deleteCondition">Delete condition</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

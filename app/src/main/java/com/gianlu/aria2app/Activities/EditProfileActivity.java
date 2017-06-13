@@ -46,12 +46,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: Delete condition
 // TODO: Set default condition
 public class EditProfileActivity extends AppCompatActivity {
     private MultiProfile editProfile;
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
+    private List<MultiProfile.ConnectivityCondition> conditions;
     private List<ConnectionFragment> connectionFragments;
     private List<AuthenticationFragment> authFragments;
     private List<DirectDownloadFragment> ddFragments;
@@ -59,7 +59,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private PagerAdapter<FieldErrorFragment> pagerAdapter;
     private Spinner conditionsSpinner;
     private TabLayout tabLayout;
-    private List<MultiProfile.ConnectivityCondition> conditions;
 
     public static void start(Context context, boolean firstProfile) {
         context.startActivity(new Intent(context, EditProfileActivity.class)
@@ -70,6 +69,14 @@ public class EditProfileActivity extends AppCompatActivity {
         context.startActivity(new Intent(context, EditProfileActivity.class)
                 .putExtra("firstProfile", false)
                 .putExtra("edit", edit));
+    }
+
+    private boolean hasAlwaysCondition() {
+        for (MultiProfile.ConnectivityCondition cond : conditions)
+            if (cond.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)
+                return true;
+
+        return false;
     }
 
     @Override
@@ -100,6 +107,19 @@ public class EditProfileActivity extends AppCompatActivity {
             enableNotifs.setChecked(editProfile.notificationsEnabled);
         }
 
+        conditionsSpinner = (Spinner) findViewById(R.id.editProfile_conditionsSpinner);
+        conditionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                showFragmentsAt(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         pager = (ViewPager) findViewById(R.id.editProfile_pager);
         pager.setOffscreenPageLimit(3);
 
@@ -126,9 +146,8 @@ public class EditProfileActivity extends AppCompatActivity {
         ddFragments = new ArrayList<>();
 
         createAllFragments();
-        if (editProfile == null) {
-            createNewProfile(true);
-        }
+        if (editProfile == null) createNewCondition(true);
+        refreshSpinner();
     }
 
     private void createAllFragments() {
@@ -166,28 +185,17 @@ public class EditProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.editProfile_delete).setVisible(editProfile != null);
-        MenuItem spinnerItem = menu.findItem(R.id.editProfile_profiles);
-        conditionsSpinner = (Spinner) spinnerItem.getActionView();
-        conditionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                showFragmentsAt(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        refreshSpinner();
-
+        menu.findItem(R.id.editProfile_deleteProfile).setVisible(editProfile != null);
         return true;
     }
 
-    private void createNewProfile(boolean compulsory) {
-        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.new_profile_dialog, null, false);
+    private void createNewCondition(boolean compulsory) {
+        if (hasAlwaysCondition()) {
+            CommonUtils.UIToast(this, Utils.ToastMessages.HAS_ALWAYS_CONDITION);
+            return;
+        }
+
+        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null, false);
         final RadioGroup connectivityCondition = (RadioGroup) layout.findViewById(R.id.editProfile_connectivityCondition);
         final TextInputLayout ssid = (TextInputLayout) layout.findViewById(R.id.editProfile_ssid);
         ssid.getEditText().addTextChangedListener(new TextWatcher() {
@@ -217,7 +225,7 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.newProfile)
+        builder.setTitle(R.string.newCondition)
                 .setView(layout)
                 .setCancelable(!compulsory)
                 .setPositiveButton(R.string.create, null);
@@ -254,6 +262,11 @@ public class EditProfileActivity extends AppCompatActivity {
                             case R.id.editProfile_connectivityCondition_bluetooth:
                                 condition = MultiProfile.ConnectivityCondition.newBluetoothCondition(true);
                                 break;
+                        }
+
+                        if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
+                            CommonUtils.UIToast(EditProfileActivity.this, Utils.ToastMessages.CANNOT_ADD_ALWAYS);
+                            return;
                         }
 
                         if (conditions.contains(condition)) {
@@ -324,25 +337,39 @@ public class EditProfileActivity extends AppCompatActivity {
                 .build());
     }
 
+    private void deleteProfile() {
+        if (editProfile == null) return;
+
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_DELETE_PROFILE)
+                .build());
+
+        ProfilesManager.get(this).delete(editProfile);
+        onBackPressed();
+    }
+
+    private void deleteCondition(int position) {
+        conditions.remove(position);
+        refreshSpinner();
+        conditionsSpinner.setSelection(conditions.size() - 1);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 break;
-            case R.id.editProfile_delete:
-                if (editProfile == null) break;
-
-                ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                        .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                        .setAction(ThisApplication.ACTION_DELETE_PROFILE)
-                        .build());
-
-                ProfilesManager.get(this).delete(editProfile);
-                onBackPressed();
+            case R.id.editProfile_deleteProfile:
+                deleteProfile();
+                break;
+            case R.id.editProfile_deleteCondition:
+                if (conditions.size() == 1) deleteProfile();
+                else deleteCondition(conditionsSpinner.getSelectedItemPosition());
                 break;
             case R.id.editProfile_createNew:
-                createNewProfile(true);
+                createNewCondition(false);
                 break;
             case R.id.editProfile_doneAll:
                 doneAll();

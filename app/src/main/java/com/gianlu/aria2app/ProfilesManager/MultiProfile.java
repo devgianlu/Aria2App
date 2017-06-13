@@ -133,7 +133,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         switch (connManager.getActiveNetworkInfo().getType()) {
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_WIFI:
-                profile = findForWifi(wifiManager.getConnectionInfo().getSSID());
+                profile = findForWifi(wifiManager.getConnectionInfo().getSSID().replace("\"", ""));
                 break;
             case ConnectivityManager.TYPE_MOBILE_DUN:
             case ConnectivityManager.TYPE_MOBILE:
@@ -451,6 +451,31 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
             if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJSON());
             return profile;
+        }
+
+        @Override
+        @SuppressWarnings("SimplifiableIfStatement")
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            UserProfile profile = (UserProfile) o;
+
+            if (serverPort != profile.serverPort) return false;
+            if (serverSSL != profile.serverSSL) return false;
+            if (!serverAddr.equals(profile.serverAddr)) return false;
+            if (!serverEndpoint.equals(profile.serverEndpoint)) return false;
+            if (authMethod != profile.authMethod) return false;
+            if (certificatePath != null ? !certificatePath.equals(profile.certificatePath) : profile.certificatePath != null)
+                return false;
+            if (serverUsername != null ? !serverUsername.equals(profile.serverUsername) : profile.serverUsername != null)
+                return false;
+            if (serverPassword != null ? !serverPassword.equals(profile.serverPassword) : profile.serverPassword != null)
+                return false;
+            if (serverToken != null ? !serverToken.equals(profile.serverToken) : profile.serverToken != null)
+                return false;
+            if (connectionMethod != profile.connectionMethod) return false;
+            return connectivityCondition.equals(profile.connectivityCondition);
         }
 
         @Override

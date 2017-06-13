@@ -237,6 +237,8 @@ public class Utils {
         public static final CommonUtils.ToastMessage CANT_DESELECT_ALL_FILES = new CommonUtils.ToastMessage("Can't deselect all files!", false);
         public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_DIR = new CommonUtils.ToastMessage("Failed downloading directory!", true);
         public static final CommonUtils.ToastMessage DUPLICATED_CONDITION = new CommonUtils.ToastMessage("This condition is already present in this profile.", false);
+        public static final CommonUtils.ToastMessage HAS_ALWAYS_CONDITION = new CommonUtils.ToastMessage("You cannot add a new condition if you already specified one to use every time.", false);
+        public static final CommonUtils.ToastMessage CANNOT_ADD_ALWAYS = new CommonUtils.ToastMessage("You cannot add an \"always\" condition if you already have others.", false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

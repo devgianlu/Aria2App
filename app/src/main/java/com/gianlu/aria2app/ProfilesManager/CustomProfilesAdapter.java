@@ -26,7 +26,6 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -113,13 +112,9 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
     }
 
     private int indexOf(MultiProfile.UserProfile match) {
-        for (int i = 0; i < profiles.size(); i++) {
-            MultiProfile.UserProfile profile = profiles.get(i).getProfile(context);
-            if (Objects.equals(profile.serverAddr, match.serverAddr)
-                    && Objects.equals(profile.serverPort, match.serverPort)
-                    && Objects.equals(profile.authMethod, match.authMethod))
+        for (int i = 0; i < profiles.size(); i++)
+            if (profiles.get(i).profiles.contains(match))
                 return i;
-        }
 
         return -1;
     }
