@@ -60,7 +60,7 @@ public class TreeNode {
 
     public static void guessSeparator(String path) {
         if (path.contains("/")) SEPARATOR = "/";
-        else if (path.contains("\\")) SEPARATOR = "\\\\";
+        else if (path.contains("\\")) SEPARATOR = "\\";
         else SEPARATOR = "/";
     }
 
@@ -157,7 +157,7 @@ public class TreeNode {
 
     public void addElement(AFile element, String commonRoot) {
         if (element.path.isEmpty()) return;
-        String[] list = element.path.replace(commonRoot, "").split(SEPARATOR);
+        String[] list = element.path.replace(commonRoot, "").split("\\u005C" + SEPARATOR + "\\u005C");
         addElement(incrementalPath, list, element);
     }
 

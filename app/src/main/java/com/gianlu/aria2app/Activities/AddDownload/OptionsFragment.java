@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Activities.AddDownload;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -71,15 +72,33 @@ public class OptionsFragment extends Fragment {
                 List<Option> options = Option.fromOptionsMap(optionsMap, downloadOptions);
                 adapter = new OptionsAdapter(getContext(), options, false);
                 list.setAdapter(adapter);
-                list.setVisibility(View.VISIBLE);
-                loading.setVisibility(View.GONE);
+
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            list.setVisibility(View.VISIBLE);
+                            loading.setVisibility(View.GONE);
+                        }
+                    });
+                }
             }
 
             @Override
             public void onException(Exception ex) {
                 MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
-                list.setVisibility(View.GONE);
-                loading.setVisibility(View.GONE);
+
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            list.setVisibility(View.GONE);
+                            loading.setVisibility(View.GONE);
+                        }
+                    });
+                }
             }
         });
 
