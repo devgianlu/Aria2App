@@ -1094,13 +1094,15 @@
         <activity
             android:name=".Activities.EditProfileActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- DirectDownload activity -->
         <activity
             android:name=".Activities.DirectDownloadActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Add download activities -->
         <activity

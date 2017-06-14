@@ -28,8 +28,9 @@ import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
 import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
-import com.gianlu.aria2app.Activities.EditProfile.SpinnerAdapter;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.Adapters.RadioConditionsAdapter;
+import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -46,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// TODO: Set default condition
+// FIXME: SHIT
 public class EditProfileActivity extends AppCompatActivity {
     private MultiProfile editProfile;
     private TextInputLayout profileName;
@@ -189,6 +190,15 @@ public class EditProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean hasDefault() {
+        for (MultiProfile.ConnectivityCondition cond : conditions)
+            if (cond.isDefault)
+                return true;
+
+        return false;
+    }
+
+    @SuppressWarnings("ConstantConditions")
     private void createNewCondition(boolean compulsory) {
         if (hasAlwaysCondition()) {
             CommonUtils.UIToast(this, Utils.ToastMessages.HAS_ALWAYS_CONDITION);
@@ -246,7 +256,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                 condition = MultiProfile.ConnectivityCondition.newUniqueCondition();
                                 break;
                             case R.id.editProfile_connectivityCondition_mobile:
-                                condition = MultiProfile.ConnectivityCondition.newMobileCondition(true);
+                                condition = MultiProfile.ConnectivityCondition.newMobileCondition(!hasDefault());
                                 break;
                             case R.id.editProfile_connectivityCondition_wifi:
                                 if (ssid.getEditText().getText().toString().isEmpty()) {
@@ -254,13 +264,13 @@ public class EditProfileActivity extends AppCompatActivity {
                                     return;
                                 }
 
-                                condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssid.getEditText().getText().toString(), true);
+                                condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssid.getEditText().getText().toString(), !hasDefault());
                                 break;
                             case R.id.editProfile_connectivityCondition_ethernet:
-                                condition = MultiProfile.ConnectivityCondition.newEthernetCondition(true);
+                                condition = MultiProfile.ConnectivityCondition.newEthernetCondition(!hasDefault());
                                 break;
                             case R.id.editProfile_connectivityCondition_bluetooth:
-                                condition = MultiProfile.ConnectivityCondition.newBluetoothCondition(true);
+                                condition = MultiProfile.ConnectivityCondition.newBluetoothCondition(!hasDefault());
                                 break;
                         }
 
@@ -290,9 +300,10 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void refreshSpinner() {
-        conditionsSpinner.setAdapter(new SpinnerAdapter(this, conditions));
+        conditionsSpinner.setAdapter(new SpinnerConditionsAdapter(this, conditions));
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void doneAll() {
         try {
             String profileName = this.profileName.getEditText().getText().toString().trim();
@@ -355,6 +366,44 @@ public class EditProfileActivity extends AppCompatActivity {
         conditionsSpinner.setSelection(conditions.size() - 1);
     }
 
+    private int findDefaultCondition() {
+        for (int i = 0; i < conditions.size(); i++)
+            if (conditions.get(i).isDefault)
+                return i;
+
+        return -1;
+    }
+
+    private void setDefaultCondition(int pos) {
+        int oldDefPos = findDefaultCondition();
+        MultiProfile.ConnectivityCondition oldDefault = conditions.get(oldDefPos);
+        conditions.set(oldDefPos, new MultiProfile.ConnectivityCondition(oldDefault.type, oldDefault.ssid, false));
+
+        MultiProfile.ConnectivityCondition newDefault = conditions.get(pos);
+        conditions.set(pos, new MultiProfile.ConnectivityCondition(newDefault.type, newDefault.ssid, true));
+    }
+
+    private void setDefaultCondition() {
+        int def = findDefaultCondition();
+        if (def == -1) {
+            setDefaultCondition(0);
+            def = 0;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.setDefaultCondition)
+                .setSingleChoiceItems(new RadioConditionsAdapter(this, conditions), def, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setDefaultCondition(which);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+
+        CommonUtils.showDialog(this, builder);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -367,6 +416,9 @@ public class EditProfileActivity extends AppCompatActivity {
             case R.id.editProfile_deleteCondition:
                 if (conditions.size() == 1) deleteProfile();
                 else deleteCondition(conditionsSpinner.getSelectedItemPosition());
+                break;
+            case R.id.editProfile_setDefault:
+                setDefaultCondition();
                 break;
             case R.id.editProfile_createNew:
                 createNewCondition(false);

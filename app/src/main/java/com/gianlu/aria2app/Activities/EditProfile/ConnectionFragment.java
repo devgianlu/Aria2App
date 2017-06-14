@@ -49,7 +49,6 @@ public class ConnectionFragment extends FieldErrorFragment {
         return fragment;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -169,15 +168,13 @@ public class ConnectionFragment extends FieldErrorFragment {
             encryption.setChecked(edit.serverSSL);
             if (edit.serverSSL) certificatePath.getEditText().setText(edit.certificatePath);
         }
-
         return layout;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && certificatePath != null && isAdded()) {
+        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && certificatePath != null && isAdded())
             certificatePath.getEditText().setText(Utils.resolveUri(getContext(), data.getData()));
-        }
     }
 
     private void updateCompleteAddress() {
@@ -202,6 +199,11 @@ public class ConnectionFragment extends FieldErrorFragment {
         } catch (InvalidFieldException | URISyntaxException | NullPointerException ex) {
             completeAddress.setText(R.string.invalidCompleteAddress);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        System.out.println("SAVE STATE NOW!");
     }
 
     @SuppressWarnings("ConstantConditions")

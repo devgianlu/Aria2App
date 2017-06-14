@@ -205,7 +205,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final String ssid;
         public final boolean isDefault;
 
-        private ConnectivityCondition(Type type, boolean isDefault, @Nullable String ssid) {
+        public ConnectivityCondition(Type type, boolean isDefault, @Nullable String ssid) {
             this.type = type;
             this.isDefault = isDefault;
             this.ssid = ssid;
@@ -215,6 +215,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             type = Type.valueOf(obj.getString("type"));
             ssid = obj.optString("ssid", null);
             isDefault = obj.getBoolean("isDefault");
+        }
+
+        public ConnectivityCondition(Type type, String ssid, boolean isDefault) {
+            this.type = type;
+            this.ssid = ssid;
+            this.isDefault = isDefault;
         }
 
         public static ConnectivityCondition newWiFiCondition(String ssid, boolean isDefault) {

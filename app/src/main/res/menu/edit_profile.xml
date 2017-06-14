@@ -15,14 +15,20 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/editProfile_deleteProfile"
-        android:icon="@drawable/ic_delete_forever_white_48dp"
-        android:title="@string/deleteProfile"
-        app:showAsAction="never" />
+        android:id="@+id/editProfile_setDefault"
+        android:icon="@drawable/ic_done_all_white_48dp"
+        android:title="@string/setDefaultCondition"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/editProfile_deleteCondition"
         android:icon="@drawable/ic_delete_white_48dp"
         android:title="@string/deleteCondition"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/editProfile_deleteProfile"
+        android:icon="@drawable/ic_delete_forever_white_48dp"
+        android:title="@string/deleteProfile"
+        app:showAsAction="ifRoom" />
 </menu>

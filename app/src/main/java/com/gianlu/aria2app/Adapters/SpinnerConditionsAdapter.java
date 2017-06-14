@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Activities.EditProfile;
+package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,10 +13,10 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
 import java.util.List;
 
-public class SpinnerAdapter extends ArrayAdapter<MultiProfile.ConnectivityCondition> {
+public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.ConnectivityCondition> {
     private final Context context;
 
-    public SpinnerAdapter(@NonNull Context context, @NonNull List<MultiProfile.ConnectivityCondition> objects) {
+    public SpinnerConditionsAdapter(@NonNull Context context, @NonNull List<MultiProfile.ConnectivityCondition> objects) {
         super(context, android.R.layout.simple_spinner_dropdown_item, objects);
         this.context = context;
     }
