@@ -30,9 +30,7 @@ public class WebSocketing extends AbstractClient {
     private WebSocket socket;
 
     private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        socket = NetUtils.readyWebSocket(context)
-                .addListener(new Adapter())
-                .connectAsynchronously();
+        socket = NetUtils.readyWebSocket(context).addListener(new Adapter()).connectAsynchronously();
     }
 
     public WebSocketing(Context context, IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
@@ -131,11 +129,13 @@ public class WebSocketing extends AbstractClient {
 
         @Override
         public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+            if (locked) return;
             ErrorHandler.get().notifyException(cause, false);
         }
 
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
+            if (locked) return;
             if (connectionListener != null) {
                 connectionListener.onConnected();
                 connectionListener = null;
@@ -144,6 +144,7 @@ public class WebSocketing extends AbstractClient {
 
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
+            if (locked) return;
             if (connectionListener != null) {
                 connectionListener.onFailedConnecting(exception);
                 connectionListener = null;
@@ -152,6 +153,7 @@ public class WebSocketing extends AbstractClient {
 
         @Override
         public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
+            if (locked) return;
             if (newState.equals(WebSocketState.OPEN) && connectionQueue.size() > 0) processQueue();
         }
     }
