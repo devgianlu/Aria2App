@@ -133,6 +133,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
             }
         }
 
+        created = true;
 
         return layout;
     }
@@ -148,6 +149,11 @@ public class AuthenticationFragment extends FieldErrorFragment {
 
     @SuppressWarnings("ConstantConditions")
     public Fields getFields() throws InvalidFieldException {
+        if (!created) {
+            MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
+            return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);
+        }
+
         JTA2.AuthMethod authMethod;
         switch (this.authMethod.getCheckedRadioButtonId()) {
             default:

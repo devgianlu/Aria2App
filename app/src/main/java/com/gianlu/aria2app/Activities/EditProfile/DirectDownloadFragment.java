@@ -127,11 +127,18 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             }
         }
 
+        created = true;
+
         return layout;
     }
 
     @SuppressWarnings("ConstantConditions")
     public Fields getFields() throws InvalidFieldException {
+        if (!created) {
+            MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
+            return new Fields(edit.isDirectDownloadEnabled(), edit.directDownload);
+        }
+
         MultiProfile.DirectDownload dd = null;
         boolean enableDirectDownload = this.enableDirectDownload.isChecked();
         if (enableDirectDownload) {

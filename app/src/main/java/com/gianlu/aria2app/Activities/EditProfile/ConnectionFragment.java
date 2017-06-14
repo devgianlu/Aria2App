@@ -168,6 +168,9 @@ public class ConnectionFragment extends FieldErrorFragment {
             encryption.setChecked(edit.serverSSL);
             if (edit.serverSSL) certificatePath.getEditText().setText(edit.certificatePath);
         }
+
+        created = true;
+
         return layout;
     }
 
@@ -208,6 +211,11 @@ public class ConnectionFragment extends FieldErrorFragment {
 
     @SuppressWarnings("ConstantConditions")
     public Fields getFields(boolean partial) throws InvalidFieldException {
+        if (!created) {
+            MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
+            return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificatePath);
+        }
+
         MultiProfile.ConnectionMethod connectionMethod;
         switch (this.connectionMethod.getCheckedRadioButtonId()) {
             default:
