@@ -60,7 +60,7 @@ public class TreeNode {
 
     public static void guessSeparator(String path) {
         if (path.contains("/")) SEPARATOR = "/";
-        else if (path.contains("\\")) SEPARATOR = "\\";
+        else if (path.contains("\\")) SEPARATOR = "\\\\";
         else SEPARATOR = "/";
     }
 
