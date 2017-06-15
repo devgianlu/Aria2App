@@ -124,7 +124,12 @@ public class LoadingActivity extends AppCompatActivity {
         Uri stream = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
         if (stream == null) {
             Uri data = getIntent().getData();
-            if (data != null) return data;
+            if (data == null) {
+                String text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+                if (text != null) return Uri.parse(text);
+            } else {
+                return data;
+            }
         } else {
             return stream;
         }

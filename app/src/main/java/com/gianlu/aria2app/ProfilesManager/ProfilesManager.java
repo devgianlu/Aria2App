@@ -7,8 +7,8 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.BuildConfig;
+import com.gianlu.aria2app.Prefs;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +84,7 @@ public class ProfilesManager {
     }
 
     public void setLastProfile(Context context, MultiProfile profile) {
-        Prefs.editString(context, Prefs.Keys.LAST_USED_PROFILE, profile.id);
+        Prefs.putString(context, Prefs.Keys.LAST_USED_PROFILE, profile.id);
     }
 
     public MultiProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {

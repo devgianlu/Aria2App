@@ -79,7 +79,8 @@ public class Prefs {
         A2_MAIN_SORTING("a2_mainSorting"),
         A2_NOTIFS_SOUND("a2_enableSound"),
         A2_SELECTED_NOTIFS_TYPE("a2_selectedNotifications"),
-        TRACKING_DISABLE("trackingDisable");
+        TRACKING_DISABLE("trackingDisable"),
+        LAST_USED_PROFILE("lastUsedProfile");
         public final String key;
 
         Keys(String key) {
