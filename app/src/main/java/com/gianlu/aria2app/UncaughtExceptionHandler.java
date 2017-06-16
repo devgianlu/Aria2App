@@ -2,11 +2,9 @@ package com.gianlu.aria2app;
 
 import android.content.Context;
 
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.UncaughtExceptionActivity;
 import com.google.android.gms.analytics.HitBuilders;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final Context context;
@@ -20,11 +18,8 @@ public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler
         if (BuildConfig.DEBUG) {
             throwable.printStackTrace();
         } else {
-            StringWriter writer = new StringWriter();
-            throwable.printStackTrace(new PrintWriter(writer));
-
             ThisApplication.sendAnalytics(context, new HitBuilders.ExceptionBuilder()
-                    .setDescription(writer.toString())
+                    .setDescription(Logging.getStackTrace(throwable))
                     .setFatal(true)
                     .build());
 
