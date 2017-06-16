@@ -47,11 +47,7 @@ public class ProfilesManager {
     public static MultiProfile createExternalProfile(Intent intent) {
         String token = intent.getStringExtra("token");
         int port = intent.getIntExtra("port", -1);
-
-        if (token == null || port == -1) {
-            return null;
-        }
-
+        if (token == null || port == -1) return null;
         return new MultiProfile(token, port);
     }
 
@@ -146,5 +142,10 @@ public class ProfilesManager {
 
     public void reloadCurrentProfile(Context context) throws IOException, JSONException {
         setCurrent(context, retrieveProfile(getCurrentAssert().id));
+    }
+
+    @Nullable
+    public MultiProfile getCurrent() {
+        return currentProfile;
     }
 }

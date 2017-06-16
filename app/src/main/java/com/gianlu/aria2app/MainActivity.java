@@ -270,7 +270,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 .addProfiles(ProfilesManager.get(this).getProfiles()));
 
         ProfilesManager manager = ProfilesManager.get(this);
-        MultiProfile currentProfile = manager.getCurrentAssert();
+        MultiProfile currentProfile = manager.getCurrent();
+        if (currentProfile == null) {
+            startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+            finishActivity(0);
+            return;
+        }
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
 

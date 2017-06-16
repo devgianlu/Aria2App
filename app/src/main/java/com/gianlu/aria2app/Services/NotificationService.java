@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.LoadingActivity;
-import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.Prefs;
@@ -78,7 +77,7 @@ public class NotificationService extends IntentService {
                                     new Intent(getApplicationContext(), NotificationService.class)
                                             .setAction("STOP"), 0)).build())
                     .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
-                    .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT)).build());
+                    .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT)).build());
         }
 
         if (intent != null) onHandleIntent(intent);

@@ -93,8 +93,14 @@ public class LoadingActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("external", false)) {
             MultiProfile profile = ProfilesManager.createExternalProfile(getIntent());
             if (profile != null) {
-                tryConnecting(manager, profile);
-                return;
+                try {
+                    manager.save(profile);
+                    tryConnecting(manager, profile);
+                    return;
+                } catch (IOException | JSONException ex) {
+                    CommonUtils.UIToast(this, Utils.ToastMessages.CANNOT_SAVE_PROFILE, ex);
+                    return;
+                }
             }
         }
 

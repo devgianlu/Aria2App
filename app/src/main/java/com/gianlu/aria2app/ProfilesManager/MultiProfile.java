@@ -496,7 +496,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         @Override
         public String getInitials(Context context) {
-            return getProfileName(context).substring(0, 2);
+            String name = getProfileName(context);
+            if (name.length() < 2) return name;
+            else return getProfileName(context).substring(0, 2);
         }
     }
 }
