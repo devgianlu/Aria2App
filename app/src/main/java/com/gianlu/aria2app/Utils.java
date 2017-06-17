@@ -8,12 +8,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -30,33 +28,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Objects;
 import java.util.Random;
 
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    static void renameOldProfiles(Context context) {
-        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("oldProfiles", true))
-            return;
-
-        for (File file : context.getFilesDir().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return s.toLowerCase().endsWith(".profile");
-            }
-        })) {
-            if (!file.renameTo(new File(file.getParent(), new String(Base64.encode(file.getName().trim().replace(".profile", "").getBytes(), Base64.NO_WRAP)) + ".profile"))) {
-                file.delete();
-            }
-        }
-
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("oldProfiles", false).apply();
-    }
 
     public static int indexOf(String[] items, String item) {
         for (int i = 0; i < items.length; i++)

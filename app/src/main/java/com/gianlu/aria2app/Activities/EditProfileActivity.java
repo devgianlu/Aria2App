@@ -314,9 +314,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
             MultiProfile profile = new MultiProfile(profileName, enableNotifs.isChecked());
             for (int i = 0; i < conditions.size(); i++) {
-                ConnectionFragment.Fields connFields = connectionFragments.get(i).getFields(false);
-                AuthenticationFragment.Fields authFields = authFragments.get(i).getFields();
-                DirectDownloadFragment.Fields ddFields = ddFragments.get(i).getFields();
+                ConnectionFragment.Fields connFields = connectionFragments.get(i).getFields(this, false);
+                AuthenticationFragment.Fields authFields = authFragments.get(i).getFields(this);
+                DirectDownloadFragment.Fields ddFields = ddFragments.get(i).getFields(this);
 
                 profile.add(conditions.get(i), connFields, authFields, ddFields);
             }

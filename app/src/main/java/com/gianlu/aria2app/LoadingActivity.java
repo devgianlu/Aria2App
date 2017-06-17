@@ -117,8 +117,10 @@ public class LoadingActivity extends AppCompatActivity {
             }
         }
 
-        if (getIntent().getBooleanExtra("showPicker", false)) displayPicker(manager, false);
-        else tryConnecting(manager, manager.getLastProfile(this));
+        if (getIntent().getBooleanExtra("showPicker", false))
+            displayPicker(manager, false);
+        else
+            tryConnecting(manager, manager.getLastProfile(this));
     }
 
     private boolean hasShareData() {

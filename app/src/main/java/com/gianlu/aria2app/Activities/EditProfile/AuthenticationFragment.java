@@ -148,7 +148,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public Fields getFields() throws InvalidFieldException {
+    public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
             return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);
@@ -172,7 +172,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
         if (authMethod == JTA2.AuthMethod.TOKEN) {
             token = this.token.getEditText().getText().toString().trim();
             if (token.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_token, getString(R.string.emptyToken));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_token, context.getString(R.string.emptyToken));
             }
         }
 
@@ -182,10 +182,10 @@ public class AuthenticationFragment extends FieldErrorFragment {
             username = this.username.getEditText().getText().toString().trim();
             password = this.password.getEditText().getText().toString().trim();
             if (username.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_username, getString(R.string.emptyUsername));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_username, context.getString(R.string.emptyUsername));
             }
             if (password.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_password, getString(R.string.emptyPassword));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_password, context.getString(R.string.emptyPassword));
             }
         }
 

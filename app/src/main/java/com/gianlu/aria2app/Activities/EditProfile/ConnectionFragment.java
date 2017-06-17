@@ -181,10 +181,11 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     private void updateCompleteAddress() {
+        if (!isAdded()) return;
         completeAddress.setVisibility(View.VISIBLE);
 
         try {
-            Fields fields = getFields(true);
+            Fields fields = getFields(getContext(), true);
 
             String protocol;
             switch (fields.connectionMethod) {
@@ -210,7 +211,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public Fields getFields(boolean partial) throws InvalidFieldException {
+    public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
             return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificatePath);
@@ -229,7 +230,7 @@ public class ConnectionFragment extends FieldErrorFragment {
 
         String address = this.address.getEditText().getText().toString().trim();
         if (address.isEmpty()) {
-            throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.addressEmpty));
+            throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.addressEmpty));
         }
 
         int port;
@@ -237,12 +238,12 @@ public class ConnectionFragment extends FieldErrorFragment {
             port = Integer.parseInt(this.port.getEditText().getText().toString().trim());
             if (port <= 0 || port > 65535) throw new Exception();
         } catch (Exception ex) {
-            throw new InvalidFieldException(getClass(), R.id.editProfile_port, getString(R.string.invalidPort));
+            throw new InvalidFieldException(getClass(), R.id.editProfile_port, context.getString(R.string.invalidPort));
         }
 
         String endpoint = this.endpoint.getEditText().getText().toString().trim();
         if (endpoint.isEmpty()) {
-            throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.endpointEmpty));
+            throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.endpointEmpty));
         }
 
         boolean encryption = this.encryption.isChecked();
@@ -253,12 +254,12 @@ public class ConnectionFragment extends FieldErrorFragment {
         if (encryption) {
             certificatePath = this.certificatePath.getEditText().getText().toString();
             if (certificatePath.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, getString(R.string.emptyCertificate));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, context.getString(R.string.emptyCertificate));
             }
 
             File cert = new File(certificatePath);
             if (!cert.exists() || !cert.canRead())
-                throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, getString(R.string.invalidCertificate));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, context.getString(R.string.invalidCertificate));
         }
 
         return new Fields(connectionMethod, address, port, endpoint, encryption, certificatePath);

@@ -133,7 +133,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public Fields getFields() throws InvalidFieldException {
+    public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
             return new Fields(edit.isDirectDownloadEnabled(), edit.directDownload);
@@ -146,7 +146,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             try {
                 new URL(address);
             } catch (Exception ex) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_dd_address, getString(R.string.invalidAddress));
+                throw new InvalidFieldException(getClass(), R.id.editProfile_dd_address, context.getString(R.string.invalidAddress));
             }
 
             String username = null;
@@ -155,12 +155,12 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             if (auth) {
                 username = this.username.getEditText().getText().toString().trim();
                 if (username.isEmpty()) {
-                    throw new InvalidFieldException(getClass(), R.id.editProfile_dd_username, getString(R.string.emptyUsername));
+                    throw new InvalidFieldException(getClass(), R.id.editProfile_dd_username, context.getString(R.string.emptyUsername));
                 }
 
                 password = this.password.getEditText().getText().toString().trim();
                 if (password.isEmpty()) {
-                    throw new InvalidFieldException(getClass(), R.id.editProfile_dd_password, getString(R.string.emptyPassword));
+                    throw new InvalidFieldException(getClass(), R.id.editProfile_dd_password, context.getString(R.string.emptyPassword));
                 }
             }
 

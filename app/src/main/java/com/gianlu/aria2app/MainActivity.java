@@ -253,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             Prefs.putString(this, Prefs.Keys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 
         Logging.clearLogs(this);
-        Utils.renameOldProfiles(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
