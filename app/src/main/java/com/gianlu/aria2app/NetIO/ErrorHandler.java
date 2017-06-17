@@ -24,7 +24,7 @@ public class ErrorHandler {
     }
 
     public static ErrorHandler get() {
-        return setup(-1, null);
+        return setup(0, null);
     }
 
     public static ErrorHandler setup(int updateInterval, IErrorHandler handler) {
@@ -39,6 +39,8 @@ public class ErrorHandler {
             if (handler != null) handler.onFatal(ex);
         } else if (errorCount >= 5) {
             if (handler != null) handler.onSubsequentExceptions();
+        } else {
+            if (handler != null) handler.onException(ex);
         }
 
         if (BuildConfig.DEBUG) ex.printStackTrace();
@@ -48,5 +50,7 @@ public class ErrorHandler {
         void onFatal(Throwable ex);
 
         void onSubsequentExceptions();
+
+        void onException(Throwable ex);
     }
 }

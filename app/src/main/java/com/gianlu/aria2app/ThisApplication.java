@@ -13,6 +13,7 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -100,5 +101,10 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     @Override
     public void onException(Throwable ex) {
         Logging.logMe(this, ex);
+
+        sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
+                .setDescription(Logging.getStackTrace(ex))
+                .setFatal(false)
+                .build());
     }
 }

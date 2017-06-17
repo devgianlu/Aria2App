@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         try {
             ProfilesManager.get(this).reloadCurrentProfile(this);
-        } catch (IOException | JSONException ex) {
+        } catch (IOException | JSONException | NullPointerException ex) {
             Logging.logMe(this, ex);
             WebSocketing.destroy();
             startActivity(new Intent(this, LoadingActivity.class)
