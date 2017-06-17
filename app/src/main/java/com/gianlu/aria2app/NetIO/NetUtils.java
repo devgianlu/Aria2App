@@ -90,6 +90,7 @@ public class NetUtils {
         factory.setConnectionTimeout(5000);
         if (profile.serverSSL) factory.setSSLContext(readySSLContext(readyCertificate(context)));
         WebSocket socket = factory.createSocket(profile.buildWebSocketUrl(), 5000);
+        socket.setFrameQueueSize(15);
 
         if (profile.authMethod == JTA2.AuthMethod.HTTP)
             socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
