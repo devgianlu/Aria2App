@@ -118,9 +118,9 @@
     <string name="writeExternalStorageRequest_title">Write permission required</string>
     <string name="writeExternalStorageRequest_message">In order to save files to your devices, Aria2App needs to write to your external storage.</string>
     <string name="readExternalStorageRequest_title">Read permission required</string>
-    <string name="readExternalStorageRequest_message">In order to load the certificate, Aria2App needs to read from your external storage.</string>
+    <string name="readExternalStorageRequest_certMessage">In order to load the certificate Aria2App needs to read from your external storage.</string>
+    <string name="readExternalStorageRequest_base64Message">In order to load the torrent/metalink file Aria2App needs to read from your external storage.</string>
     <string name="noDownloads">There are no downloads to display. Try changing the filters or start a download by tapping on the plus icon in the bottom corner.</string>
-
     <string name="certificate">CA certificate path</string>
     <string name="search">Search</string>
     <string name="addUri">Add URI</string>

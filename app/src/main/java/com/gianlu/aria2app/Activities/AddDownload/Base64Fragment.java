@@ -1,11 +1,14 @@
 package com.gianlu.aria2app.Activities.AddDownload;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +99,11 @@ public class Base64Fragment extends Fragment {
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFilePicker();
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_base64Message, 12);
+                } else {
+                    showFilePicker();
+                }
             }
         });
 

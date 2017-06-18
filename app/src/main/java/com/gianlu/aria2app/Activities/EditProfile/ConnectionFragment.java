@@ -118,7 +118,8 @@ public class ConnectionFragment extends FieldErrorFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 certificatePathContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 updateCompleteAddress();
-                if (isChecked) Utils.requestReadPermission(getActivity(), 11);
+                if (isChecked)
+                    Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_certMessage, 11);
             }
         });
         certificatePathContainer = (LinearLayout) layout.findViewById(R.id.editProfile_certificatePathContainer);

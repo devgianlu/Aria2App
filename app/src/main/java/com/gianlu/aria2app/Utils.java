@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -138,13 +139,13 @@ public class Utils {
         }
     }
 
-    public static void requestReadPermission(final Activity activity, final int code) {
+    public static void requestReadPermission(final Activity activity, @StringRes int message, final int code) {
         if (activity == null) return;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
                         .setTitle(R.string.readExternalStorageRequest_title)
-                        .setMessage(R.string.readExternalStorageRequest_message)
+                        .setMessage(message)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
