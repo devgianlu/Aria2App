@@ -22,6 +22,7 @@ public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.Connecti
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView text = (TextView) super.getDropDownView(position, convertView, parent);
         text.setTextColor(Color.WHITE);
@@ -31,6 +32,7 @@ public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.Connecti
 
     @NonNull
     @Override
+    @SuppressWarnings("ConstantConditions")
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView text = (TextView) super.getView(position, convertView, parent);
         text.setTextColor(Color.WHITE);

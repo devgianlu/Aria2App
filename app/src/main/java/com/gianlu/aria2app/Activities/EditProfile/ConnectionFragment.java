@@ -49,6 +49,7 @@ public class ConnectionFragment extends FieldErrorFragment {
         return fragment;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

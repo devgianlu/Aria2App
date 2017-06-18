@@ -5,11 +5,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
     private SearchView searchView;
+    private String _sharedPath;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -240,6 +244,27 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
+    private void processSharedPath(String path) {
+        File file = new File(path);
+        if (file.exists() && file.canRead()) {
+            String ext = MimeTypeMap.getFileExtensionFromUrl(path);
+            if (ext == null) {
+                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
+            } else {
+                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                if (Objects.equals(mime, "application/x-bittorrent")) {
+                    AddTorrentActivity.startAndAdd(this, file);
+                } else if (Objects.equals(mime, "application/metalink4+xml") || Objects.equals(mime, "application/metalink+xml")) {
+                    AddMetalinkActivity.startAndAdd(this, file);
+                } else {
+                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
+                }
+            }
+        } else {
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read!"));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -340,23 +365,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (shareData != null) {
             String path = Utils.resolveUri(this, shareData);
             if (path != null) {
-                File file = new File(path);
-                if (file.exists() && file.canRead()) {
-                    String ext = MimeTypeMap.getFileExtensionFromUrl(path);
-                    if (ext == null) {
-                        CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
-                    } else {
-                        String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-                        if (Objects.equals(mime, "application/x-bittorrent")) {
-                            AddTorrentActivity.startAndAdd(this, file);
-                        } else if (Objects.equals(mime, "application/metalink4+xml") || Objects.equals(mime, "application/metalink+xml")) {
-                            AddMetalinkActivity.startAndAdd(this, file);
-                        } else {
-                            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
-                        }
-                    }
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    _sharedPath = path;
+                    Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
                 } else {
-                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read!"));
+                    processSharedPath(path);
                 }
             } else {
                 URI uri;
@@ -404,6 +417,14 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 }
             });
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 12 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedPath != null)
+            processSharedPath(_sharedPath);
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void showOutdatedDialog(String latest, String current) {

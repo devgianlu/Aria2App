@@ -23,6 +23,7 @@ public class RadioConditionsAdapter extends ArrayAdapter<MultiProfile.Connectivi
 
     @NonNull
     @Override
+    @SuppressWarnings("ConstantConditions")
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         CheckedTextView text = (CheckedTextView) super.getView(position, convertView, parent);
         text.setText(getItem(position).getFormal(context));
