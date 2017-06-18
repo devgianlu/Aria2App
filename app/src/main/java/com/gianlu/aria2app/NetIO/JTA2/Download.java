@@ -82,7 +82,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
         if (obj.has("errorCode")) {
             errorCode = Integer.parseInt(obj.getString("errorCode"));
-            errorMessage = obj.getString("errorMessage");
+            errorMessage = obj.optString("errorMessage");
         } else {
             errorCode = -1;
             errorMessage = null;

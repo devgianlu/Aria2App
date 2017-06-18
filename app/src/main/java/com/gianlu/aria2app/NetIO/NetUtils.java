@@ -48,7 +48,7 @@ public class NetUtils {
 
     @Nullable
     public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
-        return readyCertificate(context, ProfilesManager.get(context).getCurrentAssert().getProfile(context));
+        return readyCertificate(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 
     @Nullable
@@ -84,7 +84,7 @@ public class NetUtils {
     }
 
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentAssert().getProfile(context);
+        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
 
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);

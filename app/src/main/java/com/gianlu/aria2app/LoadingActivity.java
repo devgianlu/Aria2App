@@ -77,6 +77,7 @@ public class LoadingActivity extends AppCompatActivity {
         }, 1000);
 
         Logging.clearLogs(this);
+        WebSocketing.clear();
 
         final ProfilesManager manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {

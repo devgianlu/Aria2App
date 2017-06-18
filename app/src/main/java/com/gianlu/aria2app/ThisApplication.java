@@ -79,7 +79,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     @Override
     public void onFatal(Throwable ex) {
         Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), ex);
-        WebSocketing.destroy();
+        WebSocketing.clear();
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -88,7 +88,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
     @Override
     public void onSubsequentExceptions() {
-        WebSocketing.destroy();
+        WebSocketing.clear();
         startActivity(new Intent(this, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("showPicker", true));

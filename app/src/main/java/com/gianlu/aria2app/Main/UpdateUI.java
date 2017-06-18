@@ -45,7 +45,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
     }
 
     @Override
-    public void onException(boolean queuing, Exception ex) {
+    public void onException(Exception ex) {
         ErrorHandler.get().notifyException(ex, false);
     }
 

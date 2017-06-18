@@ -66,13 +66,13 @@ public class DownloadsManager extends FileDownloadListener {
     }
 
     private static void setupAuth(Context context, BaseDownloadTask task) {
-        MultiProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().getProfile(context).directDownload;
+        MultiProfile.DirectDownload dd = ProfilesManager.get(context).getCurrent(context).getProfile(context).directDownload;
         if (dd.auth)
             task.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
     }
 
     private static URI createRemoteUrl(Context context, AFile file, String dir) throws URISyntaxException, MalformedURLException {
-        MultiProfile.DirectDownload dd = ProfilesManager.get(context).getCurrentAssert().getProfile(context).directDownload;
+        MultiProfile.DirectDownload dd = ProfilesManager.get(context).getCurrent(context).getProfile(context).directDownload;
         URL remoteAddr = dd.getURLAddress();
         return new URI(remoteAddr.getProtocol(), null, remoteAddr.getHost(), remoteAddr.getPort(), file.getRelativePath(dir), null, null);
     }

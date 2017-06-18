@@ -48,7 +48,6 @@ import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
-import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -269,12 +268,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 .addProfiles(ProfilesManager.get(this).getProfiles()));
 
         ProfilesManager manager = ProfilesManager.get(this);
-        MultiProfile currentProfile = manager.getCurrent();
-        if (currentProfile == null) {
-            startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-            finishActivity(0);
-            return;
-        }
+        MultiProfile currentProfile = manager.getCurrent(this);
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
 
@@ -442,11 +436,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             ProfilesManager.get(this).reloadCurrentProfile(this);
         } catch (IOException | JSONException | NullPointerException ex) {
-            Logging.logMe(this, ex);
-            WebSocketing.destroy();
-            startActivity(new Intent(this, LoadingActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .putExtra("showPicker", true));
+            Utils.damn(this, ex);
         }
     }
 

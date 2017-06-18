@@ -39,8 +39,13 @@ public class UpdateUI extends BaseUpdater implements JTA2.IFiles {
             }
 
             @Override
-            public void onException(Exception ex) {
-                if (listener != null) listener.onFatalException(ex);
+            public void onException(final Exception ex) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (listener != null) listener.onFatalException(ex);
+                    }
+                });
             }
         });
     }

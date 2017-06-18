@@ -113,7 +113,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
             selected.setEnabled(false);
         }
 
-        if (download.isMetadata() || !ProfilesManager.get(context).getCurrentAssert().getProfile(context).isDirectDownloadEnabled()) {
+        if (download.isMetadata() || !ProfilesManager.get(context).getCurrent(context).getProfile(context).isDirectDownloadEnabled()) {
             downloadFile.setVisibility(View.GONE);
         } else {
             downloadFile.setVisibility(View.VISIBLE);

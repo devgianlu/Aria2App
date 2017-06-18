@@ -114,7 +114,7 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         }
 
 
-        if (download.isMetadata() || !ProfilesManager.get(context).getCurrentAssert().getProfile(context).isDirectDownloadEnabled()) {
+        if (download.isMetadata() || !ProfilesManager.get(context).getCurrent(context).getProfile(context).isDirectDownloadEnabled()) {
             downloadDir.setVisibility(View.GONE);
         } else {
             downloadDir.setVisibility(View.VISIBLE);

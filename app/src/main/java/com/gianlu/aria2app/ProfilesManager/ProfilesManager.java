@@ -62,8 +62,9 @@ public class ProfilesManager {
     }
 
     @NonNull
-    public MultiProfile getCurrentAssert() throws NullPointerException {
-        if (currentProfile == null) throw new NullPointerException("currentProfile is null!");
+    public MultiProfile getCurrent(Context context) {
+        if (currentProfile == null) currentProfile = getLastProfile(context);
+        if (currentProfile == null) throw new NullPointerException("profile is null!");
         return currentProfile;
     }
 
@@ -81,6 +82,10 @@ public class ProfilesManager {
 
     public void setLastProfile(Context context, MultiProfile profile) {
         Prefs.putString(context, Prefs.Keys.LAST_USED_PROFILE, profile.id);
+    }
+
+    public void unsetLastProfile(Context context) {
+        Prefs.putString(context, Prefs.Keys.LAST_USED_PROFILE, null);
     }
 
     public MultiProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {
@@ -140,8 +145,8 @@ public class ProfilesManager {
         }
     }
 
-    public void reloadCurrentProfile(Context context) throws IOException, JSONException {
-        setCurrent(context, retrieveProfile(getCurrentAssert().id));
+    public void reloadCurrentProfile(Context context) throws IOException, JSONException, NullPointerException {
+        setCurrent(context, retrieveProfile(getCurrent(context).id));
     }
 
     @Nullable

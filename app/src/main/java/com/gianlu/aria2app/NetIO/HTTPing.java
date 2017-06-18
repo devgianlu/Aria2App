@@ -39,7 +39,7 @@ public class HTTPing extends AbstractClient {
     private final SSLContext sslContext;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        profile = ProfilesManager.get(context).getCurrentAssert().getProfile(context);
+        profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
         sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context));
     }
 
@@ -108,7 +108,7 @@ public class HTTPing extends AbstractClient {
                                     + "&id=" + request.getString("id")
                                     + "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8"));
                 } catch (JSONException | MalformedURLException | UnsupportedEncodingException ex) {
-                    handler.onException(false, ex);
+                    handler.onException(ex);
                     return;
                 }
 
@@ -121,20 +121,20 @@ public class HTTPing extends AbstractClient {
                         String rawResponse = reader.readLine();
 
                         if (rawResponse == null) {
-                            handler.onException(false, new NullPointerException("Empty response"));
+                            handler.onException(new NullPointerException("Empty response"));
                         } else {
                             JSONObject response = new JSONObject(rawResponse);
                             if (response.isNull("error")) {
                                 handler.onResponse(response);
                             } else {
-                                handler.onException(false, new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
+                                handler.onException(new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
                             }
                         }
                     } else {
-                        handler.onException(false, new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
+                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
                     }
                 } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                    handler.onException(false, ex);
+                    handler.onException(ex);
                 }
             }
         }).start();

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -14,9 +15,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.YAxis;
@@ -76,6 +79,15 @@ public class Utils {
         chart.invalidate();
     }
 
+    public static void damn(Context context, Throwable ex) {
+        Logging.logMe(context, ex);
+        WebSocketing.clear();
+        ProfilesManager.get(context).unsetLastProfile(context);
+        context.startActivity(new Intent(context, LoadingActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("showPicker", true));
+    }
+
     private static LineDataSet initDownloadSet(Context context) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -102,7 +114,7 @@ public class Utils {
 
     public static JSONArray readyParams(Context context) {
         JSONArray array = new JSONArray();
-        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentAssert().getProfile(context);
+        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
         if (profile.authMethod == JTA2.AuthMethod.TOKEN) array.put("token:" + profile.serverToken);
         return array;
     }

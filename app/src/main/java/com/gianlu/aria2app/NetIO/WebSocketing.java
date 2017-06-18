@@ -51,16 +51,19 @@ public class WebSocketing extends AbstractClient {
         }
     }
 
-    public static void destroy() {
+    public static void clear() {
         locked = true;
         if (webSocketing == null) return;
         webSocketing.socket.disconnect();
+        webSocketing.requests.clear();
+        webSocketing.connectionQueue.clear();
         webSocketing = null;
     }
 
     public static void unlock() {
         locked = false;
     }
+
 
     @Override
     public void send(JSONObject request, IReceived handler) {
@@ -79,12 +82,8 @@ public class WebSocketing extends AbstractClient {
             System.gc();
         }
 
-        if (socket.getState() == WebSocketState.CONNECTING || socket.getState() == WebSocketState.CREATED) {
+        if (socket.getState() != WebSocketState.OPEN) {
             connectionQueue.add(new Pair<>(request, handler));
-            handler.onException(true, null);
-            return;
-        } else if (socket.getState() != WebSocketState.OPEN) {
-            handler.onException(false, new Exception("socket isn't open!"));
             return;
         }
 
@@ -94,7 +93,7 @@ public class WebSocketing extends AbstractClient {
         } catch (OutOfMemoryError ex) {
             System.gc();
         } catch (Exception ex) {
-            handler.onException(false, ex);
+            handler.onException(ex);
         }
     }
 
@@ -123,7 +122,7 @@ public class WebSocketing extends AbstractClient {
             if (response.isNull("error")) {
                 handler.onResponse(response);
             } else {
-                handler.onException(false, new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
+                handler.onException(new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
             }
         }
 
@@ -135,7 +134,7 @@ public class WebSocketing extends AbstractClient {
 
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-            if (locked) return;
+            unlock();
             if (connectionListener != null) {
                 connectionListener.onConnected();
                 connectionListener = null;
@@ -144,7 +143,6 @@ public class WebSocketing extends AbstractClient {
 
         @Override
         public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
-            if (locked) return;
             if (connectionListener != null) {
                 connectionListener.onFailedConnecting(exception);
                 connectionListener = null;
