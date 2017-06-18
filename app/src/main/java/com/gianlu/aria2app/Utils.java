@@ -186,15 +186,19 @@ public class Utils {
                 if (cursor != null) {
                     int column_index = cursor.getColumnIndexOrThrow("_data");
                     if (cursor.moveToFirst()) return cursor.getString(column_index);
+                    else return null;
+                } else {
+                    return null;
                 }
             } catch (Exception ex) {
-                if (BuildConfig.DEBUG) ex.printStackTrace();
+                Logging.logMe(context, ex);
+                return null;
             }
         } else if (uri.getScheme().equalsIgnoreCase("file")) {
             return uri.getPath();
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     @Nullable
@@ -224,10 +228,9 @@ public class Utils {
             CommonUtils.copy(in, out);
             return new SharedFile(file, mime);
         } catch (IOException ex) {
-            if (BuildConfig.DEBUG) ex.printStackTrace();
+            Logging.logMe(context, ex);
+            return null;
         }
-
-        return null;
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -221,6 +221,8 @@
     <string name="deleteProfile">Delete profile</string>
     <string name="deleteCondition">Delete condition</string>
     <string name="setDefaultCondition">Set default condition</string>
+    <string name="removeMetdataName">Remove metadata for %s</string>
+    <string name="removeDownload_removeMetadata">Do you want to remove the metadata that generated this download?</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

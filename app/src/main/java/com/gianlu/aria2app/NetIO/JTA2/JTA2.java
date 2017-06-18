@@ -193,12 +193,26 @@ public class JTA2 {
         });
     }
 
-    public boolean remove(final String gid, Download.Status status, final IRemove handler) {
-        if (status == Download.Status.COMPLETE || status == Download.Status.ERROR || status == Download.Status.REMOVED) {
-            removeDownloadResult(gid, new JTA2.ISuccess() {
+    public boolean remove(final Download download, final boolean removeMetadata, final IRemove handler) {
+        if (download.status == Download.Status.COMPLETE || download.status == Download.Status.ERROR || download.status == Download.Status.REMOVED) {
+            removeDownloadResult(download.gid, new JTA2.ISuccess() {
                 @Override
                 public void onSuccess() {
-                    handler.onRemovedResult(gid);
+                    if (removeMetadata) {
+                        removeDownloadResult(download.following, new ISuccess() {
+                            @Override
+                            public void onSuccess() {
+                                handler.onRemovedResult(download.gid);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                handler.onException(ex);
+                            }
+                        });
+                    } else {
+                        handler.onRemovedResult(download.gid);
+                    }
                 }
 
                 @Override
@@ -208,7 +222,7 @@ public class JTA2 {
             });
             return true;
         } else {
-            remove(gid, new JTA2.IGID() {
+            remove(download.gid, new JTA2.IGID() {
                 @Override
                 public void onGID(String gid) {
                     handler.onRemoved(gid);
@@ -216,7 +230,7 @@ public class JTA2 {
 
                 @Override
                 public void onException(Exception ex) {
-                    if (forceAction) forceRemove(gid, handler);
+                    if (forceAction) forceRemove(download.gid, handler);
                     else handler.onException(ex);
                 }
             });
