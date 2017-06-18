@@ -206,12 +206,15 @@ public class Utils {
         if (uri == null) return null;
 
         String resolved = resolveUri(context, uri);
-        if (resolved != null)
-            return new SharedFile(new File(resolved), MimeTypeMap.getFileExtensionFromUrl(resolved));
+        if (resolved != null) {
+            String ext = MimeTypeMap.getFileExtensionFromUrl(resolved);
+            return new SharedFile(new File(resolved), MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext));
+        }
 
         if (Objects.equals(uri.getScheme(), "file")) {
             File file = new File(uri.getPath());
-            return new SharedFile(file, MimeTypeMap.getFileExtensionFromUrl(file.getAbsolutePath()));
+            String ext = MimeTypeMap.getFileExtensionFromUrl(file.getAbsolutePath());
+            return new SharedFile(file, MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext));
         }
 
         String mime = context.getContentResolver().getType(uri);

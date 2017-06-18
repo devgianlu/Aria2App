@@ -246,18 +246,18 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private void processSharedFile(SharedFile file) {
         if (file.file.exists() && file.file.canRead()) {
             if (file.mimeType == null) {
-                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
+                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type: " + file.file));
             } else {
                 if (Objects.equals(file.mimeType, "application/x-bittorrent")) {
                     AddTorrentActivity.startAndAdd(this, file.file);
                 } else if (Objects.equals(file.mimeType, "application/metalink4+xml") || Objects.equals(file.mimeType, "application/metalink+xml")) {
                     AddMetalinkActivity.startAndAdd(this, file.file);
                 } else {
-                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
+                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("File type not supported: " + file.mimeType));
                 }
             }
         } else {
-            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read!"));
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read: " + file.file));
         }
     }
 
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 try {
                     uri = new URI(shareData.toString());
                 } catch (URISyntaxException ex) {
-                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot identify shared file/url!", ex));
+                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot identify shared file/url: " + shareData, ex));
                     return;
                 }
 
