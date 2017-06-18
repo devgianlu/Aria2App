@@ -54,16 +54,15 @@ public class WebSocketing extends AbstractClient {
     public static void clear() {
         locked = true;
         if (webSocketing == null) return;
-        webSocketing.socket.disconnect();
-        webSocketing.requests.clear();
-        webSocketing.connectionQueue.clear();
+        if (webSocketing.socket != null) webSocketing.socket.disconnect();
+        if (webSocketing.requests != null) webSocketing.requests.clear();
+        if (webSocketing.connectionQueue != null) webSocketing.connectionQueue.clear();
         webSocketing = null;
     }
 
     public static void unlock() {
         locked = false;
     }
-
 
     @Override
     public void send(JSONObject request, IReceived handler) {

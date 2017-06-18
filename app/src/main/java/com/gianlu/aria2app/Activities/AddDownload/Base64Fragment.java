@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -73,11 +74,11 @@ public class Base64Fragment extends Fragment {
         switch (requestCode) {
             case FILE_SELECT_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    String filePath = Utils.resolveUri(getContext(), data.getData());
-                    if (filePath == null) {
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("Uri cannot be resolved!"));
+                    SharedFile file = Utils.accessUriFile(getContext(), data.getData());
+                    if (file == null) {
+                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("Uri cannot be resolved: " + data.getDataString()));
                     } else {
-                        setFile(new File(filePath));
+                        setFile(file.file);
                     }
                 }
                 break;

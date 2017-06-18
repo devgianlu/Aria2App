@@ -27,7 +27,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -43,6 +42,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Main.DrawerConst;
+import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
@@ -67,7 +67,6 @@ import com.gianlu.commonutils.SuperTextView;
 
 import org.json.JSONException;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
     private SearchView searchView;
-    private String _sharedPath;
+    private SharedFile _sharedFile;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -244,18 +243,15 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
-    private void processSharedPath(String path) {
-        File file = new File(path);
-        if (file.exists() && file.canRead()) {
-            String ext = MimeTypeMap.getFileExtensionFromUrl(path);
-            if (ext == null) {
+    private void processSharedFile(SharedFile file) {
+        if (file.file.exists() && file.file.canRead()) {
+            if (file.mimeType == null) {
                 CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
             } else {
-                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-                if (Objects.equals(mime, "application/x-bittorrent")) {
-                    AddTorrentActivity.startAndAdd(this, file);
-                } else if (Objects.equals(mime, "application/metalink4+xml") || Objects.equals(mime, "application/metalink+xml")) {
-                    AddMetalinkActivity.startAndAdd(this, file);
+                if (Objects.equals(file.mimeType, "application/x-bittorrent")) {
+                    AddTorrentActivity.startAndAdd(this, file.file);
+                } else if (Objects.equals(file.mimeType, "application/metalink4+xml") || Objects.equals(file.mimeType, "application/metalink+xml")) {
+                    AddMetalinkActivity.startAndAdd(this, file.file);
                 } else {
                     CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type!"));
                 }
@@ -363,13 +359,13 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         Uri shareData = getIntent().getParcelableExtra("shareData");
         if (shareData != null) {
-            String path = Utils.resolveUri(this, shareData);
-            if (path != null) {
+            SharedFile file = Utils.accessUriFile(this, shareData);
+            if (file != null) {
                 if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    _sharedPath = path;
+                    _sharedFile = file;
                     Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
                 } else {
-                    processSharedPath(path);
+                    processSharedFile(file);
                 }
             } else {
                 URI uri;
@@ -421,8 +417,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 12 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedPath != null)
-            processSharedPath(_sharedPath);
+        if (requestCode == 12 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedFile != null)
+            processSharedFile(_sharedFile);
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }

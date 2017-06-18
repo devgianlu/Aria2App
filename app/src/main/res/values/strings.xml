@@ -132,7 +132,7 @@
     <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
     <string name="connecting">Connecting…</string>
     <string name="completed">Completed</string>
-    <string name="directDownload_noItems">There no download running currently. You can add a download, from the \"Files\" tab, selecting a file. If you haven\'t set up DirectDownload you can do it by editing your profile.</string>
+    <string name="directDownload_noItems">There are no downloads running currently. You can add a download from the files tab selecting a file. If you haven\'t set up DirectDownload yet, you can do it by editing your profile.</string>
     <string name="error">Error</string>
     <string name="error_details">Error: %s</string>
     <string name="searchTorrent">Search for torrents</string>
@@ -195,8 +195,8 @@
     <string name="noUris">There are no uris.</string>
     <string name="torrentUris_disclaimer">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
     <string name="file">File</string>
-    <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
-    <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
+    <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>. The file path reported by Aria2App may change.</string>
+    <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>. The file path reported by Aria2App may change.</string>
     <string name="pickProfile_share">Choose a profile to start the download on:</string>
     <string name="outdated_aria2">Outdated aria2 version</string>
     <string name="outdated_aria2_message">Your version of aria2 is outdated. Aria2App is developed to run on the latest aria2 version and so you should update it. You can disable this message in the preferences. \n\nCurrent version: %1$s \nLatest version: %2$s</string>

@@ -14,7 +14,10 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
+import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -32,6 +35,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Random;
 
@@ -180,10 +187,44 @@ public class Utils {
                     int column_index = cursor.getColumnIndexOrThrow("_data");
                     if (cursor.moveToFirst()) return cursor.getString(column_index);
                 }
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                if (BuildConfig.DEBUG) ex.printStackTrace();
             }
         } else if (uri.getScheme().equalsIgnoreCase("file")) {
             return uri.getPath();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static SharedFile accessUriFile(Context context, Uri uri) {
+        if (uri == null) return null;
+
+        String resolved = resolveUri(context, uri);
+        if (resolved != null)
+            return new SharedFile(new File(resolved), MimeTypeMap.getFileExtensionFromUrl(resolved));
+
+        if (Objects.equals(uri.getScheme(), "file")) {
+            File file = new File(uri.getPath());
+            return new SharedFile(file, MimeTypeMap.getFileExtensionFromUrl(file.getAbsolutePath()));
+        }
+
+        String mime = context.getContentResolver().getType(uri);
+        File file;
+        if (mime == null) {
+            file = new File(context.getCacheDir(), Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP));
+        } else {
+            String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
+            file = new File(context.getCacheDir(), Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP) + (ext == null ? "" : ("." + ext)));
+        }
+
+        try (InputStream in = context.getContentResolver().openInputStream(uri);
+             FileOutputStream out = new FileOutputStream(file)) {
+            CommonUtils.copy(in, out);
+            return new SharedFile(file, mime);
+        } catch (IOException ex) {
+            if (BuildConfig.DEBUG) ex.printStackTrace();
         }
 
         return null;
