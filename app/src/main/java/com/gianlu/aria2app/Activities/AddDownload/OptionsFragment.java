@@ -71,13 +71,13 @@ public class OptionsFragment extends Fragment {
             public void onOptions(Map<String, String> optionsMap) {
                 List<Option> options = Option.fromOptionsMap(optionsMap, downloadOptions);
                 adapter = new OptionsAdapter(getContext(), options, false);
-                list.setAdapter(adapter);
 
                 Activity activity = getActivity();
                 if (activity != null) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            list.setAdapter(adapter);
                             list.setVisibility(View.VISIBLE);
                             loading.setVisibility(View.GONE);
                         }
