@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -116,8 +117,10 @@ public class Base64Fragment extends Fragment {
     }
 
     @Nullable
-    public String getBase64() {
+    public String getBase64() throws InvalidFieldException {
         File file = (File) path.getTag();
+        if (file == null)
+            throw new InvalidFieldException(Base64Fragment.class, R.id.base64Fragment_pick, getString(R.string.base64NotSelected));
 
         try (InputStream in = new FileInputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[4096];

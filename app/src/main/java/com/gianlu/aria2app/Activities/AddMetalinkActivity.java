@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.gianlu.aria2app.Activities.AddDownload.Base64Fragment;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
+import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -81,7 +82,16 @@ public class AddMetalinkActivity extends AppCompatActivity {
     }
 
     private void done() {
-        String base64 = base64Fragment.getBase64();
+        String base64 = null;
+        try {
+            base64 = base64Fragment.getBase64();
+        } catch (InvalidFieldException ex) {
+            if (ex.fragmentClass == Base64Fragment.class) {
+                pager.setCurrentItem(0, true);
+                return;
+            }
+        }
+
         if (base64 == null) {
             pager.setCurrentItem(0, true);
             return;

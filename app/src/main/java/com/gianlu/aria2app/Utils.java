@@ -217,17 +217,19 @@ public class Utils {
             return new SharedFile(file, MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext));
         }
 
+        String name = Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP);
+        if (name.length() > 64) name = name.substring(name.length() - 64);
         String mime = context.getContentResolver().getType(uri);
         File file;
         if (mime == null) {
-            file = new File(context.getCacheDir(), Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP));
+            file = new File(context.getCacheDir(), name);
         } else {
             String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
-            file = new File(context.getCacheDir(), Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP) + (ext == null ? "" : ("." + ext)));
+            file = new File(context.getCacheDir(), name + (ext == null ? "" : ("." + ext)));
         }
 
         try (InputStream in = context.getContentResolver().openInputStream(uri);
-             FileOutputStream out = new FileOutputStream(file)) {
+             FileOutputStream out = new FileOutputStream(file, false)) {
             CommonUtils.copy(in, out);
             return new SharedFile(file, mime);
         } catch (IOException ex) {
