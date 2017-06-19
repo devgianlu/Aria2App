@@ -161,7 +161,7 @@
     <string name="jsoup_details">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
-    <string name="fatalExceptionMessage">A fatal exception had been thrown!</string>
+    <string name="fatalExceptionMessage">A fatal exception has been thrown!</string>
     <string name="connection">Connection</string>
     <string name="invalidProfileName">Invalid profile name!</string>
     <string name="HTTP">HTTP</string>

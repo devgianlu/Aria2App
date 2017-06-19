@@ -78,12 +78,16 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
     @Override
     public void onFatal(Throwable ex) {
-        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), ex);
         WebSocketing.clear();
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("showPicker", true));
+
+        sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
+                .setDescription(Logging.getStackTrace(ex))
+                .setFatal(false)
+                .build());
     }
 
     @Override
@@ -102,9 +106,11 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public void onException(Throwable ex) {
         Logging.logMe(this, ex);
 
+        /*
         sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
                 .setDescription(Logging.getStackTrace(ex))
                 .setFatal(false)
                 .build());
+                */
     }
 }
