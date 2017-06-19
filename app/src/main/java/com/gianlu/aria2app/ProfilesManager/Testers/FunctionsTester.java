@@ -1,20 +1,28 @@
 package com.gianlu.aria2app.ProfilesManager.Testers;
 
+import android.util.Base64;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
-public class Aria2Tester implements Runnable {
+public class FunctionsTester implements Runnable {
     private final ITesting listener;
     private final long startTime;
     private final NetProfileTester tester;
+    private final MultiProfile.UserProfile profile;
 
-    public Aria2Tester(NetProfileTester tester) throws IllegalStateException {
+    public FunctionsTester(NetProfileTester tester) throws IllegalStateException {
         this.listener = tester.listener;
         this.startTime = tester.startTime;
         this.tester = tester;
+        this.profile = tester.profile;
     }
 
     private void publishUpdate(String message) {
@@ -51,8 +59,38 @@ public class Aria2Tester implements Runnable {
                             @Override
                             public void onVersion(List<String> rawFeatures, String version) {
                                 publishUpdate("Auth request was successful.");
-                                publishResult(true, "Everything is ok!");
-                                publishEnd();
+
+                                if (profile.isDirectDownloadEnabled()) {
+                                    MultiProfile.DirectDownload dd = profile.directDownload;
+                                    if (dd == null) return;
+
+                                    publishUpdate("Started DirectDownload test...");
+
+                                    try {
+                                        HttpURLConnection conn = (HttpURLConnection) new URL(dd.address).openConnection();
+                                        if (dd.auth)
+                                            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+
+                                        conn.connect();
+
+                                        if (conn.getResponseCode() == 200) {
+                                            publishUpdate("DirectDownload is set up properly.");
+                                            publishResult(true, "Everything is ok!");
+                                            publishEnd();
+                                        } else if (conn.getResponseCode() == 401) {
+                                            publishResult(false, "401: " + conn.getResponseMessage());
+                                            publishUpdate("Username and/or password are wrong.");
+                                        }
+
+                                        conn.disconnect();
+                                    } catch (IOException ex) {
+                                        publishResult(false, ex.getMessage());
+                                    }
+
+                                } else {
+                                    publishResult(true, "Everything is ok!");
+                                    publishEnd();
+                                }
                             }
 
                             @Override
@@ -73,7 +111,7 @@ public class Aria2Tester implements Runnable {
 
             @Override
             public void onFailedConnecting(Exception ex) {
-                // TODO
+                publishResult(false, "Connection failed! (" + ex.getMessage() + ")");
             }
         });
     }

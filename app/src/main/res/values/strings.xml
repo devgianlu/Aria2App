@@ -221,11 +221,12 @@
     <string name="deleteProfile">Delete profile</string>
     <string name="deleteCondition">Delete condition</string>
     <string name="setDefaultCondition">Set default condition</string>
-    <string name="removeMetdataName">Remove metadata for %s</string>
+    <string name="removeMetadataName">Remove metadata for %s</string>
     <string name="removeDownload_removeMetadata">Do you want to remove the metadata that generated this download?</string>
     <string name="base64NotSelected">You haven\'t selected a file!</string>
     <string name="certDisclaimer">The certificate file may be copied somewhere else.</string>
     <string name="test">Test</string>
+    <string name="test_help">Pressing the test button Ari2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

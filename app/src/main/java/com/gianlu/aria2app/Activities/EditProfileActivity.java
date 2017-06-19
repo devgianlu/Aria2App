@@ -35,7 +35,7 @@ import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.Testers.Aria2Tester;
+import com.gianlu.aria2app.ProfilesManager.Testers.FunctionsTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.HttpProfileTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.ITesting;
 import com.gianlu.aria2app.ProfilesManager.Testers.NetProfileTester;
@@ -511,7 +511,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                         testFragment.onFieldError(TestFragment.POSITIVE, when + ": Connected successfully!");
 
                         try {
-                            new Thread(new Aria2Tester(tester)).start();
+                            new Thread(new FunctionsTester(tester)).start();
                         } catch (IllegalStateException ex) {
                             onAria2Result(false, ex.getMessage());
                         }

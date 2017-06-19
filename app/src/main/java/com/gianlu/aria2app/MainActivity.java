@@ -770,7 +770,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private void removeDownload(final JTA2 jta2, final Download download) {
         if (download.following != null) {
             CommonUtils.showDialog(this, new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.removeMetdataName, download.getName()))
+                    .setTitle(getString(R.string.removeMetadataName, download.getName()))
                     .setMessage(R.string.removeDownload_removeMetadata)
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                         @Override
