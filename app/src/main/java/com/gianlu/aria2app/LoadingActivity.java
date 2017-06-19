@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -172,9 +174,9 @@ public class LoadingActivity extends AppCompatActivity {
             displayPicker(manager, hasShareData());
         } else {
             manager.setCurrent(this, profile);
-            WebSocketing.instantiate(this, new WebSocketing.IConnect() {
+            WebSocketing.instantiate(this, new IConnect() {
                 @Override
-                public void onConnected() {
+                public void onConnected(AbstractClient client) {
                     goTo(MainActivity.class);
                 }
 

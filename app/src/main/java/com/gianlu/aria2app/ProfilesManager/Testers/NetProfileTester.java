@@ -2,9 +2,8 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
 public abstract class NetProfileTester implements Runnable {
@@ -21,7 +20,8 @@ public abstract class NetProfileTester implements Runnable {
     }
 
     protected final void publishResult(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
-        if (listener != null) listener.onConnectionResult(this, profile, status);
+        if (listener != null)
+            listener.onConnectionResult(this, profile, System.currentTimeMillis() - startTime, status);
     }
 
     protected final void publishUpdate(String message) {
@@ -29,6 +29,5 @@ public abstract class NetProfileTester implements Runnable {
             listener.onUpdate(String.valueOf(System.currentTimeMillis() - startTime) + ": " + message);
     }
 
-    @Nullable
-    public abstract AbstractClient getClient();
+    public abstract void getClient(IConnect listener);
 }

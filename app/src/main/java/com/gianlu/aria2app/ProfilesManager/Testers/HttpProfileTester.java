@@ -1,10 +1,9 @@
 package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HTTPing;
+import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -18,25 +17,23 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 public class HttpProfileTester extends NetProfileTester implements Runnable {
-
     public HttpProfileTester(Context context, MultiProfile.UserProfile profile, ITesting listener) {
         super(context, profile, listener);
     }
 
     @Override
-    @Nullable
-    public AbstractClient getClient() {
+    public void getClient(IConnect listener) {
         try {
-            return new HTTPing(context, profile);
+            listener.onConnected(new HTTPing(context, profile));
         } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+            listener.onFailedConnecting(ex);
             Logging.logMe(context, ex);
-            return null;
         }
     }
 
     @Override
     public void run() {
-        publishUpdate("Started connection test");
+        publishUpdate("Started connection test...");
 
         try {
             HttpURLConnection conn;
@@ -49,7 +46,7 @@ public class HttpProfileTester extends NetProfileTester implements Runnable {
 
             if (conn.getResponseCode() == 400) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - startTime));
-                publishUpdate("Connection took " + (System.currentTimeMillis() - startTime) + "ms");
+                publishUpdate("Connection took " + (System.currentTimeMillis() - startTime) + "ms.");
             } else {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
                 publishUpdate(conn.getResponseCode() + ": " + conn.getResponseMessage());

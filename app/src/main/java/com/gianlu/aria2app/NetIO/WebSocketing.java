@@ -39,9 +39,10 @@ public class WebSocketing extends AbstractClient {
         this.connectionListener = listener;
     }
 
-    public WebSocketing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    public WebSocketing(Context context, MultiProfile.UserProfile profile, IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
         socket.addListener(new Adapter()).connectAsynchronously();
+        this.connectionListener = listener;
     }
 
     public static WebSocketing instantiate(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
@@ -106,12 +107,6 @@ public class WebSocketing extends AbstractClient {
         for (Pair<JSONObject, IReceived> pair : connectionQueue) send(pair.first, pair.second);
     }
 
-    public interface IConnect {
-        void onConnected();
-
-        void onFailedConnecting(Exception ex);
-    }
-
     private class Adapter extends WebSocketAdapter {
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
@@ -141,7 +136,7 @@ public class WebSocketing extends AbstractClient {
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             unlock();
             if (connectionListener != null) {
-                connectionListener.onConnected();
+                connectionListener.onConnected(WebSocketing.this);
                 connectionListener = null;
             }
         }

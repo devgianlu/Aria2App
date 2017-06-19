@@ -166,7 +166,7 @@ public class Utils {
     }
 
     public static JSONObject readyRequest() throws JSONException {
-        return new JSONObject().put("jsonrpc", "2.0").put("id", String.valueOf(new Random().nextInt(9999)));
+        return new JSONObject().put("jsonrpc", "2.0").put("id", new Random().nextInt(9999));
     }
 
     public static <T> int indexOf(T[] items, T item) {

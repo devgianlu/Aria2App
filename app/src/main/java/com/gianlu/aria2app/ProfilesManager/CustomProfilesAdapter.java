@@ -122,7 +122,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     }
 
     @Override
-    public void onConnectionResult(NetProfileTester tester, final MultiProfile.UserProfile profile, final MultiProfile.TestStatus status) {
+    public void onConnectionResult(NetProfileTester tester, final MultiProfile.UserProfile profile, final long when, final MultiProfile.TestStatus status) {
         handler.post(new Runnable() {
             @Override
             public void run() {

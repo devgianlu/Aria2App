@@ -1,9 +1,8 @@
 package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.NetIO.WebSocketing;
@@ -34,19 +33,18 @@ public class WsProfileTester extends NetProfileTester implements Runnable, WebSo
     }
 
     @Override
-    @Nullable
-    public AbstractClient getClient() {
+    public void getClient(IConnect listener) {
         try {
-            return new WebSocketing(context, profile);
+            new WebSocketing(context, profile, listener);
         } catch (CertificateException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException | IOException ex) {
+            listener.onFailedConnecting(ex);
             Logging.logMe(context, ex);
-            return null;
         }
     }
 
     @Override
     public void run() {
-        publishUpdate("Started connection test");
+        publishUpdate("Started connection test...");
 
         try {
             WebSocket webSocket;
@@ -64,7 +62,7 @@ public class WsProfileTester extends NetProfileTester implements Runnable, WebSo
 
     @Override
     public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
-        publishUpdate("State changed to " + newState.name().toLowerCase());
+        publishUpdate("State changed to " + newState.name().toLowerCase() + ".");
     }
 
     @Override
@@ -74,13 +72,13 @@ public class WsProfileTester extends NetProfileTester implements Runnable, WebSo
         pingTime = System.currentTimeMillis();
         websocket.sendPing();
 
-        publishUpdate("Sent ping");
+        publishUpdate("Sent ping.");
     }
 
     @Override
     public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
         publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - pingTime));
-        publishUpdate("Ping successful after " + (System.currentTimeMillis() - pingTime) + "ms");
+        publishUpdate("Ping successful after " + (System.currentTimeMillis() - pingTime) + "ms.");
     }
 
     @Override
@@ -170,7 +168,7 @@ public class WsProfileTester extends NetProfileTester implements Runnable, WebSo
         if (closedByServer)
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
         else publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-        publishUpdate("Connection closed by " + (closedByServer ? "server" : "client"));
+        publishUpdate("Connection closed by " + (closedByServer ? "server" : "client" + "."));
     }
 
     @Override

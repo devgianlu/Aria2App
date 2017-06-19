@@ -501,14 +501,14 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     }
 
     @Override
-    public void onConnectionResult(final NetProfileTester tester, final MultiProfile.UserProfile profile, final MultiProfile.TestStatus status) {
+    public void onConnectionResult(final NetProfileTester tester, final MultiProfile.UserProfile profile, final long when, final MultiProfile.TestStatus status) {
         if (testFragment == null) return;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (status.status == MultiProfile.Status.ONLINE) {
                     if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP || status.latency == -1) {
-                        testFragment.onFieldError(TestFragment.POSITIVE, "Connected successfully");
+                        testFragment.onFieldError(TestFragment.POSITIVE, when + ": Connected successfully!");
 
                         try {
                             new Thread(new Aria2Tester(tester)).start();
@@ -517,7 +517,8 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                         }
                     }
                 } else {
-                    testFragment.onFieldError(TestFragment.NEGATIVE, "Connection failed");
+                    testFragment.onFieldError(TestFragment.NEGATIVE, when + ": Connection failed!");
+                    onEnd();
                 }
             }
         });
@@ -532,6 +533,8 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                 testFragment.onFieldError(successful ? TestFragment.POSITIVE : TestFragment.NEGATIVE, message);
             }
         });
+
+        if (!successful) onEnd();
     }
 
     @Override
