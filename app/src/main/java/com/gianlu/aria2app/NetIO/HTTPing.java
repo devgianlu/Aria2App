@@ -2,8 +2,6 @@ package com.gianlu.aria2app.NetIO;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
@@ -25,7 +23,6 @@ import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 import javax.net.ssl.HostnameVerifier;
@@ -39,56 +36,17 @@ public class HTTPing extends AbstractClient {
     private final SSLContext sslContext;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
-        sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context));
+        this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
+    }
+
+    public HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        this.profile = profile;
+        this.sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context, profile));
     }
 
     public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException {
         if (httping == null) httping = new HTTPing(context);
         return httping;
-    }
-
-    @SuppressLint("BadHostnameVerifier")
-    public static HttpURLConnection readyHttpConnection(String url, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (ca != null) {
-            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-            conn.setHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
-            conn.setConnectTimeout(5000);
-            return conn;
-        } else {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setConnectTimeout(5000);
-            return conn;
-        }
-    }
-
-    @SuppressLint("BadHostnameVerifier")
-    public static HttpURLConnection readyHttpConnection(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (ca != null) {
-            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-            conn.setHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
-            conn.setConnectTimeout(5000);
-            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-            return conn;
-        } else {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setConnectTimeout(5000);
-            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-
-            return conn;
-        }
     }
 
     @Override
@@ -98,15 +56,19 @@ public class HTTPing extends AbstractClient {
             public void run() {
                 URL url;
                 try {
+                    String urlPath = profile.serverEndpoint +
+                            "?method="
+                            + request.getString("method")
+                            + "&id=" + request.getString("id");
+
+                    if (request.has("params"))
+                        urlPath += "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8");
+
                     url = new URL(
                             profile.serverSSL ? "https" : "http",
                             profile.serverAddr,
                             profile.serverPort,
-                            profile.serverEndpoint +
-                                    "?method="
-                                    + request.getString("method")
-                                    + "&id=" + request.getString("id")
-                                    + "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8"));
+                            urlPath);
                 } catch (JSONException | MalformedURLException | UnsupportedEncodingException ex) {
                     handler.onException(ex);
                     return;

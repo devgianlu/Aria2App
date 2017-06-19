@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.NetIO;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -17,6 +18,8 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -25,7 +28,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
 public class NetUtils {
@@ -96,5 +102,48 @@ public class NetUtils {
             socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
 
         return socket;
+    }
+
+    @SuppressLint("BadHostnameVerifier")
+    public static HttpURLConnection readyHttpConnection(String url, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+        if (ca != null) {
+            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+            conn.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
+            conn.setConnectTimeout(5000);
+            return conn;
+        } else {
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setConnectTimeout(5000);
+            return conn;
+        }
+    }
+
+    @SuppressLint("BadHostnameVerifier")
+    public static HttpURLConnection readyHttpConnection(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+        if (ca != null) {
+            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
+            conn.setHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
+            conn.setConnectTimeout(5000);
+            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+            return conn;
+        } else {
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setConnectTimeout(5000);
+            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+
+            return conn;
+        }
     }
 }

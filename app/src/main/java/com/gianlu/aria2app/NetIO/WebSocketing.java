@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Pair;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -36,6 +37,11 @@ public class WebSocketing extends AbstractClient {
     public WebSocketing(Context context, IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         this(context);
         this.connectionListener = listener;
+    }
+
+    public WebSocketing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
+        socket.addListener(new Adapter()).connectAsynchronously();
     }
 
     public static WebSocketing instantiate(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {

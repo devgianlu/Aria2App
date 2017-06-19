@@ -13,10 +13,11 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
-// TODO: Stop button
 public class TestFragment extends FieldErrorFragment {
-    public static final int RESULT_POSITIVE = 0;
-    public static final int RESULT_NEGATIVE = 1;
+    public static final int POSITIVE = 0;
+    public static final int NEGATIVE = 1;
+    public static final int UPDATE = 2;
+    public static final int END = 3;
     private ITestProfile handler;
     private LinearLayout testResults;
     private Button test;
@@ -55,13 +56,18 @@ public class TestFragment extends FieldErrorFragment {
         if (context == null) return;
 
         switch (id) {
-            case RESULT_POSITIVE:
-                testResults.addView(new SuperTextView(context, message, Color.GREEN));
+            case END:
                 test.setEnabled(true);
                 break;
-            case RESULT_NEGATIVE:
+            case POSITIVE:
+                testResults.addView(new SuperTextView(context, message, Color.GREEN));
+                break;
+            case NEGATIVE:
                 testResults.addView(new SuperTextView(context, message, Color.RED));
                 test.setEnabled(true);
+                break;
+            case UPDATE:
+                testResults.addView(new SuperTextView(context, message));
                 break;
         }
     }

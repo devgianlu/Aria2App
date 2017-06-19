@@ -35,8 +35,10 @@ import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.ProfilesManager.Testers.Aria2Tester;
 import com.gianlu.aria2app.ProfilesManager.Testers.HttpProfileTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.ProfileTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.ITesting;
+import com.gianlu.aria2app.ProfilesManager.Testers.NetProfileTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.WsProfileTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
@@ -51,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class EditProfileActivity extends AppCompatActivity implements TestFragment.ITestProfile, ProfileTester.IResult {
+public class EditProfileActivity extends AppCompatActivity implements TestFragment.ITestProfile, ITesting {
     private MultiProfile editProfile;
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
@@ -477,7 +479,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             return;
         }
 
-        ProfileTester tester;
+        NetProfileTester tester;
         MultiProfile.UserProfile profile = multi.getProfile(this);
         if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP)
             tester = new HttpProfileTester(this, profile, this);
@@ -488,16 +490,58 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     }
 
     @Override
-    public void onUpdate() {
-
+    public void onUpdate(final String message) {
+        if (testFragment == null) return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                testFragment.onFieldError(TestFragment.UPDATE, message);
+            }
+        });
     }
 
     @Override
-    public void onResult(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
+    public void onConnectionResult(final NetProfileTester tester, final MultiProfile.UserProfile profile, final MultiProfile.TestStatus status) {
         if (testFragment == null) return;
-        if (status.status == MultiProfile.Status.ONLINE)
-            testFragment.onFieldError(TestFragment.RESULT_POSITIVE, "WOAAAAAAAA");
-        else
-            testFragment.onFieldError(TestFragment.RESULT_NEGATIVE, "NOOOOOOOO");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (status.status == MultiProfile.Status.ONLINE) {
+                    if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP || status.latency == -1) {
+                        testFragment.onFieldError(TestFragment.POSITIVE, "Connected successfully");
+
+                        try {
+                            new Thread(new Aria2Tester(tester)).start();
+                        } catch (IllegalStateException ex) {
+                            onAria2Result(false, ex.getMessage());
+                        }
+                    }
+                } else {
+                    testFragment.onFieldError(TestFragment.NEGATIVE, "Connection failed");
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onAria2Result(final boolean successful, final String message) {
+        if (testFragment == null) return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                testFragment.onFieldError(successful ? TestFragment.POSITIVE : TestFragment.NEGATIVE, message);
+            }
+        });
+    }
+
+    @Override
+    public void onEnd() {
+        if (testFragment == null) return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                testFragment.onFieldError(TestFragment.END, null);
+            }
+        });
     }
 }

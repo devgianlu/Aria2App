@@ -38,13 +38,7 @@ public class JTA2 {
     private final Context context;
     private final boolean forceAction;
 
-    private JTA2(Context context, WebSocketing client) {
-        this.context = context;
-        this.client = client;
-        this.forceAction = Prefs.getBoolean(context, Prefs.Keys.A2_FORCE_ACTION, true);
-    }
-
-    private JTA2(Context context, HTTPing client) {
+    public JTA2(Context context, @NonNull AbstractClient client) {
         this.context = context;
         this.client = client;
         this.forceAction = Prefs.getBoolean(context, Prefs.Keys.A2_FORCE_ACTION, true);

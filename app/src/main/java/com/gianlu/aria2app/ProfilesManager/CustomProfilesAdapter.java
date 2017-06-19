@@ -6,7 +6,8 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.gianlu.aria2app.ProfilesManager.Testers.HttpProfileTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.ProfileTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.ITesting;
+import com.gianlu.aria2app.ProfilesManager.Testers.NetProfileTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.WsProfileTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
@@ -16,7 +17,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> implements ProfileTester.IResult {
+public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> implements ITesting {
     private final IEdit editListener;
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final Handler handler;
@@ -117,17 +118,25 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(String message) {
     }
 
     @Override
-    public void onResult(final MultiProfile.UserProfile profile, final MultiProfile.TestStatus status) {
+    public void onConnectionResult(NetProfileTester tester, final MultiProfile.UserProfile profile, final MultiProfile.TestStatus status) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 notifyItemChanged(profile, status);
             }
         });
+    }
+
+    @Override
+    public void onAria2Result(boolean successful, String message) {
+    }
+
+    @Override
+    public void onEnd() {
     }
 
     public interface IEdit {
