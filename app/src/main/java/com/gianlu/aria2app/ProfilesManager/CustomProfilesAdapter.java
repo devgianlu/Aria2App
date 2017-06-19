@@ -5,31 +5,18 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.gianlu.aria2app.NetIO.HTTPing;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.NetUtils;
+import com.gianlu.aria2app.ProfilesManager.Testers.HttpProfileTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.ProfileTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.WsProfileTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
-import com.neovisionaries.ws.client.WebSocketFrame;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
+public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> implements ProfileTester.IResult {
     private final IEdit editListener;
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final Handler handler;
@@ -102,12 +89,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
 
         final int pos = indexOf(profile);
         if (pos != -1) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    notifyItemChanged(pos);
-                }
-            });
+            notifyItemChanged(pos);
         }
     }
 
@@ -125,111 +107,30 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> {
 
         switch (profile.connectionMethod) {
             case HTTP:
-                service.execute(new HttpProfileTester(profile));
+                service.execute(new HttpProfileTester(context, profile, this));
                 break;
             default:
             case WEBSOCKET:
-                service.execute(new WsProfileTester(profile));
+                service.execute(new WsProfileTester(context, profile, this));
                 break;
         }
+    }
+
+    @Override
+    public void onUpdate() {
+    }
+
+    @Override
+    public void onResult(final MultiProfile.UserProfile profile, final MultiProfile.TestStatus status) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemChanged(profile, status);
+            }
+        });
     }
 
     public interface IEdit {
         void onEditProfile(MultiProfile profile);
-    }
-
-    private class HttpProfileTester implements Runnable {
-        private final MultiProfile.UserProfile profile;
-
-        public HttpProfileTester(MultiProfile.UserProfile profile) {
-            this.profile = profile;
-        }
-
-        @Override
-        public void run() {
-            try {
-                HttpURLConnection conn;
-                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                    conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
-                else
-                    conn = HTTPing.readyHttpConnection(profile.buildHttpUrl(), NetUtils.readyCertificate(context, profile));
-
-                long start = System.currentTimeMillis();
-                conn.connect();
-
-                if (conn.getResponseCode() == 400) {
-                    notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - start));
-                } else {
-                    notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-                }
-            } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-            }
-        }
-    }
-
-    private class WsProfileTester extends WebSocketAdapter implements Runnable {
-        private final MultiProfile.UserProfile profile;
-        private long pingTime;
-
-        public WsProfileTester(MultiProfile.UserProfile profile) {
-            this.profile = profile;
-        }
-
-        @Override
-        public void run() {
-            try {
-                WebSocket webSocket;
-                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
-                else
-                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), NetUtils.readyCertificate(context, profile));
-
-                webSocket.addListener(this).connectAsynchronously();
-            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-            }
-        }
-
-        @Override
-        public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE));
-
-            pingTime = System.currentTimeMillis();
-            websocket.sendPing();
-        }
-
-        @Override
-        public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - pingTime));
-        }
-
-        @Override
-        public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-        }
-
-        @Override
-        public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-            notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-        }
-
-        @Override
-        public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
-            if (exception.getCause() instanceof ConnectException)
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-            else if (exception.getCause() instanceof SocketTimeoutException)
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-            else
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-        }
-
-        @Override
-        public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
-            if (closedByServer)
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-            else
-                notifyItemChanged(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-        }
     }
 }

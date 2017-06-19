@@ -224,6 +224,8 @@
     <string name="removeMetdataName">Remove metadata for %s</string>
     <string name="removeDownload_removeMetadata">Do you want to remove the metadata that generated this download?</string>
     <string name="base64NotSelected">You haven\'t selected a file!</string>
+    <string name="certDisclaimer">The certificate file may be copied somewhere else.</string>
+    <string name="test">Test</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

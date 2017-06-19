@@ -318,16 +318,16 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
     }
 
-    static class TestStatus implements Serializable {
+    public static class TestStatus implements Serializable {
         public final Status status;
-        final long latency;
+        public final long latency;
 
-        TestStatus(Status status, long latency) {
+        public TestStatus(Status status, long latency) {
             this.latency = latency;
             this.status = status;
         }
 
-        TestStatus(Status status) {
+        public TestStatus(Status status) {
             this.latency = -1;
             this.status = status;
         }

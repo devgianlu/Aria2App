@@ -20,6 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -177,9 +178,13 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && certificatePath != null && isAdded())
-            certificatePath.getEditText().setText(Utils.resolveUri(getContext(), data.getData()));
+        Context context = getContext();
+        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && certificatePath != null && context != null) {
+            SharedFile file = Utils.accessUriFile(context, data.getData());
+            if (file != null) certificatePath.getEditText().setText(file.file.getAbsolutePath());
+        }
     }
 
     private void updateCompleteAddress() {
@@ -205,11 +210,6 @@ public class ConnectionFragment extends FieldErrorFragment {
         } catch (InvalidFieldException | URISyntaxException | NullPointerException ex) {
             completeAddress.setText(R.string.invalidCompleteAddress);
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        System.out.println("SAVE STATE NOW!");
     }
 
     @SuppressWarnings("ConstantConditions")

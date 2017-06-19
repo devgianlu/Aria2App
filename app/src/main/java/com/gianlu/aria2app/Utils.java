@@ -181,25 +181,23 @@ public class Utils {
     public static String resolveUri(Context context, Uri uri) {
         if (uri == null) return null;
 
+
         if (uri.getScheme().equalsIgnoreCase("content")) {
             try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
                 if (cursor != null) {
                     int column_index = cursor.getColumnIndexOrThrow("_data");
                     if (cursor.moveToFirst()) return cursor.getString(column_index);
-                    else return null;
-                } else {
-                    return null;
                 }
             } catch (Exception ex) {
                 Logging.logMe(context, ex);
-                return null;
             }
         } else if (uri.getScheme().equalsIgnoreCase("file")) {
             return uri.getPath();
-        } else {
-            return null;
         }
+
+        return null;
     }
+
 
     @Nullable
     public static SharedFile accessUriFile(Context context, Uri uri) {
