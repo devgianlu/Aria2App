@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -18,6 +19,8 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.DirBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FileBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
@@ -34,6 +37,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
@@ -56,6 +60,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private LinearLayout breadcrumbsContainer;
     private HorizontalScrollView breadcrumbs;
     private Download download;
+    private boolean isShowingHint;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
@@ -170,6 +175,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (adapter != null) adapter.update(files, commonRoot);
         if (fileSheet != null) fileSheet.update(files);
         if (dirSheet != null) dirSheet.update(files);
+
+        if (adapter != null) showTutorial(adapter.getCurrentNode());
     }
 
     @Override
@@ -190,6 +197,56 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         dirSheet.expand(new ADir(dir, download));
     }
 
+    private void showTutorial(TreeNode dir) {
+        if (isVisible() && !isShowingHint && dir.files != null && dir.dirs != null && dir.files.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FILES)) {
+            RecyclerView.ViewHolder holder = list.findViewHolderForLayoutPosition(dir.dirs.size());
+            if (holder != null) {
+                isShowingHint = true;
+
+                list.scrollToPosition(dir.dirs.size());
+
+                Rect rect = new Rect();
+                holder.itemView.getGlobalVisibleRect(rect);
+                rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
+
+                TapTargetView.showFor(getActivity(), TapTarget.forBounds(rect, getString(R.string.fileDetails), getString(R.string.fileDetails_desc))
+                                .tintTarget(false)
+                                .transparentTarget(true),
+                        new TapTargetView.Listener() {
+                            @Override
+                            public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                                TutorialManager.setHintShown(getContext(), TutorialManager.Discovery.FILES);
+                                isShowingHint = false;
+                            }
+                        });
+            }
+        }
+
+        if (isVisible() && !isShowingHint && dir.dirs != null && dir.dirs.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FOLDERS)) {
+            RecyclerView.ViewHolder holder = list.findViewHolderForLayoutPosition(0);
+            if (holder != null) {
+                isShowingHint = true;
+
+                list.scrollToPosition(0);
+
+                Rect rect = new Rect();
+                holder.itemView.getGlobalVisibleRect(rect);
+                rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
+
+                TapTargetView.showFor(getActivity(), TapTarget.forBounds(rect, getString(R.string.folderDetails), getString(R.string.folderDetails_desc))
+                                .tintTarget(false)
+                                .transparentTarget(true),
+                        new TapTargetView.Listener() {
+                            @Override
+                            public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                                TutorialManager.setHintShown(getContext(), TutorialManager.Discovery.FOLDERS);
+                                isShowingHint = false;
+                            }
+                        });
+            }
+        }
+    }
+
     @Override
     public void onDirectoryChanged(TreeNode dir) {
         breadcrumbsContainer.removeAllViews();
@@ -206,6 +263,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 breadcrumbs.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
             }
         });
+
+        showTutorial(dir);
     }
 
     private void addPathToBreadcrumbs(TreeNode dir) {

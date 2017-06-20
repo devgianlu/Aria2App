@@ -173,6 +173,10 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         for (AFile file : files) notifyItemChanged(file);
     }
 
+    public TreeNode getCurrentNode() {
+        return currentNode;
+    }
+
     public interface IAdapter {
         void onFileSelected(AFile file);
 

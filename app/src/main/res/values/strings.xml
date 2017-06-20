@@ -239,6 +239,10 @@
     <string name="evenMoreDetails">Even more details</string>
     <string name="evenMoreDetails_desc">Tap on the more button to show all the details</string>
     <string name="moreDetails_desc">Tap on the card to reveal more details</string>
+    <string name="fileDetails">File details</string>
+    <string name="fileDetails_desc">Tap on a file to reveal details or to download it</string>
+    <string name="folderDetails">Folder details</string>
+    <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

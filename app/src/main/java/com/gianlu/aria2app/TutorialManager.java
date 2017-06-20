@@ -23,6 +23,6 @@ public class TutorialManager {
 
     public enum Discovery {
         CARD,
-        PEERS_SERVERS, TOOLBAR
+        PEERS_SERVERS, FILES, FOLDERS, TOOLBAR
     }
 }
