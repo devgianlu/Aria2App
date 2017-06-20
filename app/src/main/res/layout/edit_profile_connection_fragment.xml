@@ -37,13 +37,13 @@
                 android:id="@+id/editProfile_connectionMethod_ws"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"
                 android:text="@string/ws" />
 
             <RadioButton
                 android:id="@+id/editProfile_connectionMethod_http"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/HTTP" />
         </RadioGroup>
 

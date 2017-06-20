@@ -2,6 +2,7 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -127,10 +128,11 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public UserProfile getProfile(Context context) {
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (connManager.getActiveNetworkInfo() == null) return getDefaultProfile();
+        NetworkInfo activeNet = connManager.getActiveNetworkInfo();
+        if (activeNet == null) return getDefaultProfile();
 
         UserProfile profile = null;
-        switch (connManager.getActiveNetworkInfo().getType()) {
+        switch (activeNet.getType()) {
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_WIFI:
                 profile = findForWifi(wifiManager.getConnectionInfo().getSSID().replace("\"", ""));
@@ -401,7 +403,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 directDownload = new DirectDownload(obj.getJSONObject("directDownload"));
             else directDownload = null;
 
-            connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.WEBSOCKET.name()));
+            connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.HTTP.name()));
 
             if (obj.isNull("connectivityCondition")) {
                 if (condition == null)
@@ -429,9 +431,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         public String getFullServerAddress() {
             switch (connectionMethod) {
+                default:
                 case HTTP:
                     return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
-                default:
                 case WEBSOCKET:
                     return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
             }

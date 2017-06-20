@@ -156,10 +156,10 @@ public class ConnectionFragment extends FieldErrorFragment {
         MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
         if (edit != null) {
             switch (edit.connectionMethod) {
+                default:
                 case HTTP:
                     connectionMethod.check(R.id.editProfile_connectionMethod_http);
                     break;
-                default:
                 case WEBSOCKET:
                     connectionMethod.check(R.id.editProfile_connectionMethod_ws);
                     break;
@@ -196,10 +196,10 @@ public class ConnectionFragment extends FieldErrorFragment {
 
             String protocol;
             switch (fields.connectionMethod) {
-                default:
                 case WEBSOCKET:
                     protocol = fields.encryption ? "wss" : "ws";
                     break;
+                default:
                 case HTTP:
                     protocol = fields.encryption ? "https" : "http";
                     break;
@@ -221,10 +221,10 @@ public class ConnectionFragment extends FieldErrorFragment {
 
         MultiProfile.ConnectionMethod connectionMethod;
         switch (this.connectionMethod.getCheckedRadioButtonId()) {
-            default:
             case R.id.editProfile_connectionMethod_ws:
                 connectionMethod = MultiProfile.ConnectionMethod.WEBSOCKET;
                 break;
+            default:
             case R.id.editProfile_connectionMethod_http:
                 connectionMethod = MultiProfile.ConnectionMethod.HTTP;
                 break;

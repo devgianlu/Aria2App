@@ -107,10 +107,10 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         final MultiProfile.UserProfile profile = getItem(pos).getProfile(context);
 
         switch (profile.connectionMethod) {
+            default:
             case HTTP:
                 service.execute(new HttpProfileTester(context, profile, this));
                 break;
-            default:
             case WEBSOCKET:
                 service.execute(new WsProfileTester(context, profile, this));
                 break;
