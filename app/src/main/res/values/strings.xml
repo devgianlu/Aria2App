@@ -243,6 +243,7 @@
     <string name="fileDetails_desc">Tap on a file to reveal details or to download it</string>
     <string name="folderDetails">Folder details</string>
     <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
+    <string name="tapTargetView_details">Copyright 2016 Keepsafe Software Inc.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

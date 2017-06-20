@@ -16,6 +16,11 @@
         android:title="FileDownloader" />
 
     <Preference
+        android:key="tapTargetView"
+        android:summary="@string/apacheLicense"
+        android:title="TapTargetView" />
+
+    <Preference
         android:key="jsoup"
         android:summary="@string/mitLicense"
         android:title="jsoup" />
