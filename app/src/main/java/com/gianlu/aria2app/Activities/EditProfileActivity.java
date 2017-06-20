@@ -487,6 +487,11 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             tester = new WsProfileTester(this, profile, this);
 
         new Thread(tester).start();
+
+        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
+                .setAction(ThisApplication.ACTION_STARTED_TEST)
+                .build());
     }
 
     @Override

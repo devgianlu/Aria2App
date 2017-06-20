@@ -56,12 +56,17 @@ public class Prefs {
 
     public static Set<String> getSet(Context context, Keys key, Set<String> fallback) {
         init(context);
-        return prefs.getStringSet(key.key, fallback);
+        return new HashSet<>(prefs.getStringSet(key.key, fallback));
     }
 
     public static void putSet(Context context, Keys key, Set<String> set) {
         init(context);
         prefs.edit().putStringSet(key.key, set).apply();
+    }
+
+    public static void remove(Context context, Keys key) {
+        init(context);
+        prefs.edit().remove(key.key).apply();
     }
 
     public enum Keys {
@@ -80,7 +85,8 @@ public class Prefs {
         A2_NOTIFS_SOUND("a2_enableSound"),
         A2_SELECTED_NOTIFS_TYPE("a2_selectedNotifications"),
         TRACKING_DISABLE("trackingDisable"),
-        LAST_USED_PROFILE("lastUsedProfile");
+        LAST_USED_PROFILE("lastUsedProfile"),
+        A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries");
         public final String key;
 
         Keys(String key) {

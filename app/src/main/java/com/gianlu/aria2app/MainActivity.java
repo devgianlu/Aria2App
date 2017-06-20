@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,6 +34,8 @@ import android.widget.SearchView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
@@ -86,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private UpdateUI updater;
     private SearchView searchView;
     private SharedFile _sharedFile;
+    private Toolbar toolbar;
+    private boolean isShowingHint = false;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -274,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         Logging.clearLogs(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         drawerManager = new DrawerManager<>(new Initializer<>(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this)
@@ -719,6 +724,67 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         } else {
             MessageLayout.hide((ViewGroup) findViewById(R.id.main_drawer));
             list.setVisibility(View.VISIBLE);
+        }
+
+        if (!isShowingHint && count >= 5 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.TOOLBAR)) {
+            isShowingHint = true;
+
+            new TapTargetSequence(this)
+                    .continueOnCancel(true)
+                    .targets(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, "Search", "Filter downloads by name or by GID"),
+                            TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, "Filter", "Filter downloads by their status"))
+                    .listener(new TapTargetSequence.Listener() {
+                        @Override
+                        public void onSequenceFinish() {
+                            TutorialManager.setHintShown(MainActivity.this, TutorialManager.Discovery.TOOLBAR);
+                            isShowingHint = false;
+                        }
+
+                        @Override
+                        public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                        }
+
+                        @Override
+                        public void onSequenceCanceled(TapTarget lastTarget) {
+                            onSequenceFinish();
+                        }
+                    }).start();
+        }
+
+        if (!isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.CARD)) {
+            DownloadCardsAdapter.DownloadViewHolder holder = (DownloadCardsAdapter.DownloadViewHolder) list.findViewHolderForLayoutPosition(0);
+            if (holder != null && !CommonUtils.isExpanded(holder.details)) {
+                isShowingHint = true;
+
+                list.scrollToPosition(0);
+
+                Rect rect = new Rect();
+                holder.itemView.getGlobalVisibleRect(rect);
+                rect.offset((int) (holder.itemView.getWidth() * 0.3), (int) (-holder.itemView.getHeight() * 0.2));
+
+                new TapTargetSequence(this)
+                        .continueOnCancel(true)
+                        .targets(TapTarget.forBounds(rect, "More details", "Tap on the card to reveal more details").tintTarget(false),
+                                TapTarget.forView(holder.more, "Even more details", "Tap on the more button to show all the details"))
+                        .listener(new TapTargetSequence.Listener() {
+                            @Override
+                            public void onSequenceFinish() {
+                                TutorialManager.setHintShown(MainActivity.this, TutorialManager.Discovery.CARD);
+                                isShowingHint = false;
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                            }
+
+                            @Override
+                            public void onSequenceCanceled(TapTarget lastTarget) {
+                                onSequenceFinish();
+                            }
+                        }).start();
+            }
         }
     }
 

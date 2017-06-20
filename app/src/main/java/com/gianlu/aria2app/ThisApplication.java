@@ -35,6 +35,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public static final String ACTION_SHARE = "Shared something with the app";
     public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
     public static final String ACTION_SEARCH = "Search torrent";
+    public static final String ACTION_STARTED_TEST = "Started profile test";
     private static Tracker tracker;
     private boolean checkedVersion = false;
 

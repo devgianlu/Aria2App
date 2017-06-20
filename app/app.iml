@@ -113,6 +113,7 @@
     <orderEntry type="library" exported="" name="support-core-utils-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-fragment-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-analytics-impl-11.0.1" level="project" />
+    <orderEntry type="library" exported="" name="taptargetview-1.9.1" level="project" />
     <orderEntry type="library" exported="" name="MPAndroidChart-v3.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-11.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-25.3.1" level="project" />

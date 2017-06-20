@@ -74,6 +74,15 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.general_pref);
             getActivity().setTitle(R.string.general);
             setHasOptionsMenu(true);
+
+            findPreference("restartTutorial").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    TutorialManager.restartTutorial(getActivity());
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                    return true;
+                }
+            });
         }
 
         @Override

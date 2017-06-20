@@ -28,4 +28,9 @@
         android:summaryOff="@string/disabledVersionCheck"
         android:summaryOn="@string/enabledVersionCheck"
         android:title="@string/versionCheck" />
+
+    <Preference
+        android:key="restartTutorial"
+        android:summary="@string/restartTutorialSummary"
+        android:title="@string/restartTutorial" />
 </PreferenceScreen>

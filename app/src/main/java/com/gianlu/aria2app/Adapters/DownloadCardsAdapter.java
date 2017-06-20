@@ -107,6 +107,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         } else {
             holder.update((Download) payloads.get(0));
         }
+
+
     }
 
     @Override
@@ -255,13 +257,14 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         RecyclerView getRecyclerView();
     }
 
-    class DownloadViewHolder extends RecyclerView.ViewHolder {
+    public class DownloadViewHolder extends RecyclerView.ViewHolder {
+        public final LinearLayout details;
+        public final Button more;
         final DonutProgress donutProgress;
         final SuperTextView downloadName;
         final SuperTextView downloadStatus;
         final SuperTextView downloadSpeed;
         final SuperTextView downloadMissingTime;
-        final LinearLayout details;
         final SuperTextView detailsGid;
         final SuperTextView detailsTotalLength;
         final SuperTextView detailsCompletedLength;
@@ -273,7 +276,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         final ImageButton remove;
         final ImageButton moveUp;
         final ImageButton moveDown;
-        final Button more;
         final LineChart detailsChart;
 
         DownloadViewHolder(ViewGroup parent) {
