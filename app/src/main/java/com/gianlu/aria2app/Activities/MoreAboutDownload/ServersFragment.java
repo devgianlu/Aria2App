@@ -117,11 +117,11 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     @Override
     public boolean canGoBack(int code) {
         if (code == CODE_CLOSE_SHEET) {
-            sheet.collapse();
+            if (sheet != null) sheet.collapse();
             return true;
         }
 
-        if (sheet.shouldUpdate()) {
+        if (sheet != null && sheet.shouldUpdate()) {
             sheet.collapse();
             return false;
         } else {
