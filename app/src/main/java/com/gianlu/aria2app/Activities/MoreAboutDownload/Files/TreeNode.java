@@ -157,7 +157,7 @@ public class TreeNode {
 
     public void addElement(AFile element, String commonRoot) {
         if (element.path.isEmpty()) return;
-        String[] list = element.path.replace(commonRoot, "").split("\\u005C" + SEPARATOR + "\\u005C");
+        String[] list = element.path.replace(commonRoot, "").split(SEPARATOR == "/" ? SEPARATOR : ("\\u005C" + SEPARATOR + "\\u005C"));
         addElement(incrementalPath, list, element);
     }
 
