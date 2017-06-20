@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeerBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.UpdateUI;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
@@ -24,6 +27,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
@@ -39,6 +43,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private RecyclerView list;
     private ProgressBar loading;
     private PeerBottomSheet sheet;
+    private boolean isShowingHint = false;
 
     public static PeersFragment getInstance(Context context, Download download) {
         PeersFragment fragment = new PeersFragment();
@@ -195,6 +200,30 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
             MessageLayout.hide(layout);
             list.setVisibility(View.VISIBLE);
             loading.setVisibility(View.GONE);
+        }
+
+        if (isVisible() && !isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.PEERS_SERVERS)) {
+            RecyclerView.ViewHolder holder = list.findViewHolderForLayoutPosition(0);
+            if (holder != null) {
+                isShowingHint = true;
+
+                list.scrollToPosition(0);
+
+                Rect rect = new Rect();
+                holder.itemView.getGlobalVisibleRect(rect);
+                rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
+
+                TapTargetView.showFor(getActivity(), TapTarget.forBounds(rect, getString(R.string.peerDetails), getString(R.string.peerDetails_desc))
+                                .tintTarget(false)
+                                .transparentTarget(true),
+                        new TapTargetView.Listener() {
+                            @Override
+                            public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                                TutorialManager.setHintShown(getContext(), TutorialManager.Discovery.PEERS_SERVERS);
+                                isShowingHint = false;
+                            }
+                        });
+            }
         }
     }
 

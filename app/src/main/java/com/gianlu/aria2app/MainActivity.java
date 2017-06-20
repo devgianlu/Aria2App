@@ -731,8 +731,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
             new TapTargetSequence(this)
                     .continueOnCancel(true)
-                    .targets(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, "Search", "Filter downloads by name or by GID"),
-                            TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, "Filter", "Filter downloads by their status"))
+                    .targets(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, getString(R.string.search), getString(R.string.search_desc)),
+                            TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, getString(R.string.filters), getString(R.string.filters_desc)))
                     .listener(new TapTargetSequence.Listener() {
                         @Override
                         public void onSequenceFinish() {
@@ -765,8 +765,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
                 new TapTargetSequence(this)
                         .continueOnCancel(true)
-                        .targets(TapTarget.forBounds(rect, "More details", "Tap on the card to reveal more details").tintTarget(false),
-                                TapTarget.forView(holder.more, "Even more details", "Tap on the more button to show all the details"))
+                        .targets(TapTarget.forBounds(rect, getString(R.string.moreDetails), getString(R.string.moreDetails_desc)).tintTarget(false),
+                                TapTarget.forView(holder.more, getString(R.string.evenMoreDetails), getString(R.string.evenMoreDetails_desc)))
                         .listener(new TapTargetSequence.Listener() {
                             @Override
                             public void onSequenceFinish() {

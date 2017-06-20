@@ -229,6 +229,16 @@
     <string name="test_help">Pressing the test button Ari2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
     <string name="restartTutorial">Restart tutorial</string>
     <string name="restartTutorialSummary">Show tutorial again</string>
+    <string name="peerDetails">Peer details</string>
+    <string name="peerDetails_desc">Tap on the item to reveal details about the peer</string>
+    <string name="serverDetails">Server details</string>
+    <string name="serverDetails_desc">Tap on the item to reveal details about the server</string>
+    <string name="search_desc">Filter downloads by name or by GID</string>
+    <string name="filters_desc">Filter downloads by their status</string>
+    <string name="moreDetails">More details</string>
+    <string name="evenMoreDetails">Even more details</string>
+    <string name="evenMoreDetails_desc">Tap on the more button to show all the details</string>
+    <string name="moreDetails_desc">Tap on the card to reveal more details</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

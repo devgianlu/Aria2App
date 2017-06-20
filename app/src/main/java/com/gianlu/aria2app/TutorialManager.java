@@ -8,6 +8,7 @@ import java.util.Set;
 public class TutorialManager {
 
     public static boolean shouldShowHintFor(Context context, Discovery discovery) {
+        if (context == null) return false;
         Set<String> set = Prefs.getSet(context, Prefs.Keys.A2_TUTORIAL_DISCOVERIES, new HashSet<String>());
         return !set.contains(discovery.name());
     }
@@ -22,6 +23,6 @@ public class TutorialManager {
 
     public enum Discovery {
         CARD,
-        TOOLBAR
+        PEERS_SERVERS, TOOLBAR
     }
 }
