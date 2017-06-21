@@ -56,7 +56,9 @@ public class Prefs {
 
     public static Set<String> getSet(Context context, Keys key, Set<String> fallback) {
         init(context);
-        return new HashSet<>(prefs.getStringSet(key.key, fallback));
+        Set<String> set = prefs.getStringSet(key.key, fallback);
+        if (set == null) return null;
+        else return new HashSet<>(set);
     }
 
     public static void putSet(Context context, Keys key, Set<String> set) {

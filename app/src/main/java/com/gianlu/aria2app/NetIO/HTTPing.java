@@ -95,6 +95,8 @@ public class HTTPing extends AbstractClient {
                     } else {
                         handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
                     }
+                } catch (OutOfMemoryError ex) {
+                    System.gc();
                 } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
                     handler.onException(ex);
                 }
