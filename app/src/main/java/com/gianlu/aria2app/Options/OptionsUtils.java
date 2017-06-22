@@ -353,6 +353,11 @@ public class OptionsUtils {
         jta2.getOption(gid, new JTA2.IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
+                if (activity == null) {
+                    pd.dismiss();
+                    return;
+                }
+
                 if (quick) {
                     Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {

@@ -3,6 +3,7 @@ package com.gianlu.aria2app;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class Prefs {
         return Integer.parseInt(prefs.getString(key.key, String.valueOf(fallback)));
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static void removeFromSet(Context context, Keys key, String value) {
         init(context);
         Set<String> set = new HashSet<>(getSet(context, key, new HashSet<String>()));
@@ -47,6 +49,7 @@ public class Prefs {
         prefs.edit().putStringSet(key.key, set).apply();
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static void addToSet(Context context, Keys key, String value) {
         init(context);
         Set<String> set = new HashSet<>(getSet(context, key, new HashSet<String>()));
@@ -54,11 +57,11 @@ public class Prefs {
         prefs.edit().putStringSet(key.key, set).apply();
     }
 
-    public static Set<String> getSet(Context context, Keys key, Set<String> fallback) {
+    public static Set<String> getSet(Context context, Keys key, @Nullable Set<String> fallback) {
         init(context);
         Set<String> set = prefs.getStringSet(key.key, fallback);
         if (set == null) return null;
-        else return new HashSet<>(set);
+        return new HashSet<>(set);
     }
 
     public static void putSet(Context context, Keys key, Set<String> set) {

@@ -7,8 +7,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 63
-        versionName "2.1.0"
+        versionCode 64
+        versionName "2.1.1"
     }
 
     buildTypes {
@@ -36,6 +36,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.getkeepsafe.taptargetview:taptargetview:1.9.1'
+    // compile 'org.jetbrains:annotations:15.0'
 }
 
 

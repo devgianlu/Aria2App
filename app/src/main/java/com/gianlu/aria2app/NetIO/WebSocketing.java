@@ -60,15 +60,20 @@ public class WebSocketing extends AbstractClient {
 
     public static void clear() {
         locked = true;
-        if (webSocketing == null) return;
-        if (webSocketing.socket != null) webSocketing.socket.disconnect();
-        if (webSocketing.requests != null) webSocketing.requests.clear();
-        if (webSocketing.connectionQueue != null) webSocketing.connectionQueue.clear();
-        webSocketing = null;
+        if (webSocketing != null) {
+            webSocketing.clearInternal();
+            webSocketing = null;
+        }
     }
 
     public static void unlock() {
         locked = false;
+    }
+
+    private void clearInternal() {
+        if (socket != null) socket.disconnect();
+        if (requests != null) requests.clear();
+        if (connectionQueue != null) connectionQueue.clear();
     }
 
     @Override

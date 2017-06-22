@@ -69,11 +69,11 @@ public class OptionsFragment extends Fragment {
         jta2.getGlobalOption(new JTA2.IOption() {
             @Override
             public void onOptions(Map<String, String> optionsMap) {
-                List<Option> options = Option.fromOptionsMap(optionsMap, downloadOptions);
-                adapter = new OptionsAdapter(getContext(), options, false);
-
                 Activity activity = getActivity();
                 if (activity != null) {
+                    List<Option> options = Option.fromOptionsMap(optionsMap, downloadOptions);
+                    adapter = new OptionsAdapter(activity, options, false);
+
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
