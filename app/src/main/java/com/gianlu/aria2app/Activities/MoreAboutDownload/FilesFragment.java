@@ -47,7 +47,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import java.util.Collections;
 import java.util.List;
 
-// FIXME: No folders
 public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
     private UpdateUI updater;
     private CoordinatorLayout layout;

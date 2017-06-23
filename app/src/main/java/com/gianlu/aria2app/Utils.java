@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
@@ -120,9 +121,12 @@ public class Utils {
         return set;
     }
 
-    public static JSONArray readyParams(Context context) {
+    public static JSONArray readyParams(@NonNull Context context) {
+        return readyParams(ProfilesManager.get(context).getCurrent(context).getProfile(context));
+    }
+
+    public static JSONArray readyParams(@NonNull MultiProfile.UserProfile profile) {
         JSONArray array = new JSONArray();
-        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
         if (profile.authMethod == JTA2.AuthMethod.TOKEN) array.put("token:" + profile.serverToken);
         return array;
     }

@@ -376,12 +376,12 @@ public class JTA2 {
 
     // Requests
     //aria2.getVersion
-    public void getVersion(final IVersion handler) {
+    public void getVersion(MultiProfile.UserProfile profile, final IVersion handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getVersion");
-            JSONArray params = Utils.readyParams(context);
+            JSONArray params = Utils.readyParams(profile);
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -399,6 +399,10 @@ public class JTA2 {
                 handler.onException(ex);
             }
         });
+    }
+
+    public void getVersion(IVersion handler) {
+        getVersion(ProfilesManager.get(context).getCurrent(context).getProfile(context), handler);
     }
 
     //aria2.saveSession

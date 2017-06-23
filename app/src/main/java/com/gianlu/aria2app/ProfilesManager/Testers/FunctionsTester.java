@@ -55,7 +55,7 @@ public class FunctionsTester implements Runnable {
                         publishUpdate("No-auth request was successful.");
 
                         publishUpdate("Trying auth request...");
-                        jta2.getVersion(new JTA2.IVersion() {
+                        jta2.getVersion(profile, new JTA2.IVersion() {
                             @Override
                             public void onVersion(List<String> rawFeatures, String version) {
                                 publishUpdate("Auth request was successful.");
