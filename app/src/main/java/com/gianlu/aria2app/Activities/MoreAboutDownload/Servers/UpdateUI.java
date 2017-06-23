@@ -33,7 +33,12 @@ public class UpdateUI extends BaseUpdater implements JTA2.IServers {
 
             @Override
             public void onException(Exception ex) {
-                listener.onNoServers("Cannot display, please try again!");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onNoServers("Cannot display, please try again!");
+                    }
+                });
             }
         });
     }
