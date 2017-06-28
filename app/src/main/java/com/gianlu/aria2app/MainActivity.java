@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
                 return false;
             case DrawerConst.SUPPORT:
-                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name));
+                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name), null);
                 return true;
             case DrawerConst.ABOUT_ARIA2:
                 showAboutDialog();
