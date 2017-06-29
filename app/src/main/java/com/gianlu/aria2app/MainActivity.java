@@ -538,7 +538,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         } else {
             for (String checkedFilter : checkedFiltersSet) {
                 Download.Status filter = Download.Status.valueOf(checkedFilter);
-                int pos = Utils.indexOf(filters, filter);
+                int pos = CommonUtils.indexOf(filters, filter);
                 if (pos != -1) checkedFilters[pos] = true;
             }
         }

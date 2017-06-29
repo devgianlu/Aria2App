@@ -107,8 +107,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         } else {
             holder.update((Download) payloads.get(0));
         }
-
-
     }
 
     @Override
@@ -204,9 +202,10 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     protected boolean matchQuery(Download item, @Nullable String query) {
-        return query == null
+        return (query == null
                 || item.getName().toLowerCase().contains(query.toLowerCase())
-                || item.gid.toLowerCase().contains(query.toLowerCase());
+                || item.gid.toLowerCase().contains(query.toLowerCase()))
+                && !filters.contains(item.getFilterable());
     }
 
     @Override

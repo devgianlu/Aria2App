@@ -173,14 +173,6 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", new Random().nextInt(9999));
     }
 
-    public static <T> int indexOf(T[] items, T item) {
-        for (int i = 0; i < items.length; i++)
-            if (items[i] == item)
-                return i;
-
-        return -1;
-    }
-
     @Nullable
     public static String resolveUri(Context context, Uri uri) {
         if (uri == null) return null;
