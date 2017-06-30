@@ -177,7 +177,6 @@ public class Utils {
     public static String resolveUri(Context context, Uri uri) {
         if (uri == null) return null;
 
-
         if (uri.getScheme().equalsIgnoreCase("content")) {
             try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
                 if (cursor != null) {
@@ -193,7 +192,6 @@ public class Utils {
 
         return null;
     }
-
 
     @Nullable
     public static SharedFile accessUriFile(Context context, Uri uri) {

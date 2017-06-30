@@ -362,29 +362,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
         }
 
-        Uri shareData = getIntent().getParcelableExtra("shareData");
-        if (shareData != null) {
-            SharedFile file = Utils.accessUriFile(this, shareData);
-            if (file != null) {
-                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    _sharedFile = file;
-                    Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
-                } else {
-                    processSharedFile(file);
-                }
-            } else {
-                URI uri;
-                try {
-                    uri = new URI(shareData.toString());
-                } catch (URISyntaxException ex) {
-                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot identify shared file/url: " + shareData, ex));
-                    return;
-                }
-
-                AddUriActivity.startAndAdd(this, uri);
-            }
-        }
-
         if (!((ThisApplication) getApplication()).hasCheckedVersion() && Prefs.getBoolean(this, Prefs.Keys.A2_CHECK_VERSION, true)) {
             GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
                 @Override
@@ -418,6 +395,40 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 }
             });
         }
+
+        Uri shareData = getIntent().getParcelableExtra("shareData");
+        if (shareData != null) {
+            String scheme = shareData.getScheme();
+            if (scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp")) {
+                processUrl(shareData);
+            } else {
+                SharedFile file = Utils.accessUriFile(this, shareData);
+                if (file != null) {
+                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        _sharedFile = file;
+                        Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
+                    } else {
+                        processSharedFile(file);
+                    }
+                } else {
+                    processUrl(shareData);
+                }
+            }
+        }
+
+        // Don't put nothing here!!
+    }
+
+    private void processUrl(Uri shareData) {
+        URI uri;
+        try {
+            uri = new URI(shareData.toString());
+        } catch (URISyntaxException ex) {
+            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot identify shared file/url: " + shareData, ex));
+            return;
+        }
+
+        AddUriActivity.startAndAdd(this, uri);
     }
 
     @Override

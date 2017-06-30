@@ -96,10 +96,10 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="play-services-analytics-11.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-basement-11.0.1" level="project" />
-    <orderEntry type="library" exported="" name="firebase-iid-11.0.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-tagmanager-v4-impl-11.0.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-analytics-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="play-services-basement-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="play-services-tagmanager-v4-impl-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="firebase-iid-11.0.2" level="project" />
     <orderEntry type="library" exported="" name="transition-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.10.3" level="project" />
     <orderEntry type="library" exported="" name="design-25.3.1" level="project" />
@@ -107,23 +107,23 @@
     <orderEntry type="library" exported="" name="cardview-v7-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="library-1.5.5" level="project" />
     <orderEntry type="library" exported="" name="support-v13-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-base-11.0.1" level="project" />
+    <orderEntry type="library" exported="" name="firebase-core-11.0.2" level="project" />
     <orderEntry type="library" exported="" name="nv-websocket-client-2.2" level="project" />
-    <orderEntry type="library" exported="" name="firebase-core-11.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-fragment-25.3.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-analytics-impl-11.0.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-analytics-impl-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="play-services-base-11.0.2" level="project" />
     <orderEntry type="library" exported="" name="taptargetview-1.9.1" level="project" />
     <orderEntry type="library" exported="" name="MPAndroidChart-v3.0.1" level="project" />
-    <orderEntry type="library" exported="" name="firebase-analytics-11.0.1" level="project" />
+    <orderEntry type="library" exported="" name="firebase-analytics-11.0.2" level="project" />
     <orderEntry type="library" exported="" name="support-v4-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-media-compat-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="materialdatetimepicker-3.2.2" level="project" />
-    <orderEntry type="library" exported="" name="firebase-analytics-impl-11.0.1" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="floatingactionbutton-1.10.1" level="project" />
-    <orderEntry type="library" exported="" name="play-services-tasks-11.0.1" level="project" />
-    <orderEntry type="library" exported="" name="firebase-common-11.0.1" level="project" />
+    <orderEntry type="library" exported="" name="firebase-common-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="play-services-tasks-11.0.2" level="project" />
+    <orderEntry type="library" exported="" name="firebase-analytics-impl-11.0.2" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-25.3.1" level="project" />
