@@ -51,7 +51,7 @@ public class AddMetalinkActivity extends AppCompatActivity {
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.addDownload_tabs);
 
         base64Fragment = Base64Fragment.getInstance(this, false, (File) getIntent().getSerializableExtra("file"));
-        optionsFragment = OptionsFragment.getInstance(this);
+        optionsFragment = OptionsFragment.getInstance(this, false);
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, optionsFragment));
         pager.setOffscreenPageLimit(2);

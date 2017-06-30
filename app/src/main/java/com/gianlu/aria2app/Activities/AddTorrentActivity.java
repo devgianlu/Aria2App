@@ -55,7 +55,7 @@ public class AddTorrentActivity extends AppCompatActivity {
 
         base64Fragment = Base64Fragment.getInstance(this, true, (File) getIntent().getSerializableExtra("file"));
         urisFragment = UrisFragment.getInstance(this, false, null);
-        optionsFragment = OptionsFragment.getInstance(this);
+        optionsFragment = OptionsFragment.getInstance(this, false);
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, urisFragment, optionsFragment));
         pager.setOffscreenPageLimit(2);

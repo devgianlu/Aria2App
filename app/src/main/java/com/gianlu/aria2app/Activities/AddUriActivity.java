@@ -51,7 +51,7 @@ public class AddUriActivity extends AppCompatActivity {
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.addDownload_tabs);
 
         urisFragment = UrisFragment.getInstance(this, true, (URI) getIntent().getSerializableExtra("uri"));
-        optionsFragment = OptionsFragment.getInstance(this);
+        optionsFragment = OptionsFragment.getInstance(this, true);
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), urisFragment, optionsFragment));
         pager.setOffscreenPageLimit(2);
@@ -91,6 +91,9 @@ public class AddUriActivity extends AppCompatActivity {
 
         Map<String, String> options = optionsFragment.getOptions();
         Integer position = optionsFragment.getPosition();
+        String filename = optionsFragment.getFilename();
+
+        if (filename != null) options.put("out", filename);
 
         JTA2 jta2;
         try {

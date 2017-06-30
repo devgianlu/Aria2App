@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Aria2App</string>
     <string name="nv_websocket_client_license"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
     <string name="mpAndroidChart_details">Copyright 2016 Philipp Jahoda</string>
@@ -244,6 +244,8 @@
     <string name="folderDetails">Folder details</string>
     <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
     <string name="tapTargetView_details">Copyright 2016 Keepsafe Software Inc.</string>
+    <string name="filename">Filename:</string>
+    <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

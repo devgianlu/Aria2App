@@ -33,13 +33,15 @@ import java.util.Map;
 
 public class OptionsFragment extends Fragment {
     private EditText position;
+    private EditText filename;
     private OptionsAdapter adapter;
     private RecyclerView list;
 
-    public static OptionsFragment getInstance(Context context) {
+    public static OptionsFragment getInstance(Context context, boolean isUri) {
         OptionsFragment fragment = new OptionsFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.options));
+        args.putBoolean("isUri", isUri);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,9 +52,13 @@ public class OptionsFragment extends Fragment {
         final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.options_fragment, container, false);
         final ProgressBar loading = (ProgressBar) layout.findViewById(R.id.optionsFragment_loading);
         position = (EditText) layout.findViewById(R.id.optionsFragment_position);
+        filename = (EditText) layout.findViewById(R.id.optionsFragment_filename);
         list = (RecyclerView) layout.findViewById(R.id.optionsFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
+        layout.findViewById(R.id.optionsFragment_filenameContainer)
+                .setVisibility(getArguments().getBoolean("isUri", false) ? View.VISIBLE : View.GONE);
 
         JTA2 jta2;
         final List<String> downloadOptions;
@@ -103,6 +109,13 @@ public class OptionsFragment extends Fragment {
         });
 
         return layout;
+    }
+
+    @Nullable
+    public String getFilename() {
+        String str = filename.getText().toString();
+        if (str.isEmpty()) return null;
+        else return str;
     }
 
     @NonNull
