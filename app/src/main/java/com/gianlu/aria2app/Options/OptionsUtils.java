@@ -228,7 +228,7 @@ public class OptionsUtils {
                 .build());
     }
 
-    private static void showEditOptionDialog(Activity activity, final OptionsAdapter adapter, final Option option) {
+    public static void showEditOptionDialog(Activity activity, final OptionsAdapter adapter, final Option option) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(option.name)
                 .setNegativeButton(android.R.string.cancel, null);
