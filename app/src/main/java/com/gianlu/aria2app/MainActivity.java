@@ -737,7 +737,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             list.setVisibility(View.VISIBLE);
         }
 
-        if (!isShowingHint && count >= 5 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.TOOLBAR)) {
+        if (!isShowingHint && count >= 5 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.TOOLBAR) && toolbar != null) {
             isShowingHint = true;
 
             new TapTargetSequence(this)

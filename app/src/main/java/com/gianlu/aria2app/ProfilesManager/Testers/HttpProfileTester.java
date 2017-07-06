@@ -51,7 +51,7 @@ public class HttpProfileTester extends NetProfileTester implements Runnable {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
                 publishUpdate(conn.getResponseCode() + ": " + conn.getResponseMessage());
             }
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException ex) {
+        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
             publishUpdate(ex.getMessage());
         }

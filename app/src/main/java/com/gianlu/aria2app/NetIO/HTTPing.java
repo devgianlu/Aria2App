@@ -24,6 +24,8 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -34,6 +36,7 @@ public class HTTPing extends AbstractClient {
     private static HTTPing httping;
     private final MultiProfile.UserProfile profile;
     private final SSLContext sslContext;
+    private final ExecutorService executorService;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
@@ -42,6 +45,7 @@ public class HTTPing extends AbstractClient {
     public HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this.profile = profile;
         this.sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context, profile));
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException {
@@ -51,7 +55,7 @@ public class HTTPing extends AbstractClient {
 
     @Override
     public void send(final JSONObject request, final IReceived handler) {
-        new Thread(new Runnable() {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 URL url;
@@ -101,7 +105,7 @@ public class HTTPing extends AbstractClient {
                     handler.onException(ex);
                 }
             }
-        }).start();
+        });
     }
 
     @SuppressLint("BadHostnameVerifier")
