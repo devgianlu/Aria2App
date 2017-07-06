@@ -86,6 +86,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         return false;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Aria2App</string>
-    <string name="nv_websocket_client_license"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
-    <string name="mpAndroidChart_details">Copyright 2016 Philipp Jahoda</string>
+    <string name="nv_websocket_client_license" translatable="false"><a>https://github.com/TakahikoKawasaki/nv-websocket-client</a></string>
+    <string name="mpAndroidChart_details" translatable="false">Copyright 2016 Philipp Jahoda</string>
     <string name="downloadStatus_waiting">Waiting in queue</string>
     <string name="downloadStatus_error">Error</string>
     <string name="downloadStatus_paused">Paused</string>
@@ -125,8 +125,8 @@
     <string name="search">Search</string>
     <string name="addUri">Add URI</string>
     <string name="directDownload">DirectDownload</string>
-    <string name="apacheLicense">Licensed under Apache License 2.0</string>
-    <string name="fileDownloader_details">Copyright 2015 LingoChamp Inc.</string>
+    <string name="apacheLicense" translatable="false">Licensed under Apache License 2.0</string>
+    <string name="fileDownloader_details" translatable="false">Copyright 2015 LingoChamp Inc.</string>
     <string name="quickGlobalOptions">Quick global options</string>
     <string name="dd_downloadPath">Download path</string>
     <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
@@ -158,7 +158,7 @@
     <string name="progress">Progress</string>
     <string name="connectionMethod">Connection method</string>
     <string name="mitLicense">Licensed under MIT license</string>
-    <string name="jsoup_details">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
+    <string name="jsoup_details" translatable="false">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
     <string name="fatalExceptionMessage">A fatal exception has been thrown!</string>
@@ -243,7 +243,7 @@
     <string name="fileDetails_desc">Tap on a file to reveal details or to download it</string>
     <string name="folderDetails">Folder details</string>
     <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
-    <string name="tapTargetView_details">Copyright 2016 Keepsafe Software Inc.</string>
+    <string name="tapTargetView_details" translatable="false">Copyright 2016 Keepsafe Software Inc.</string>
     <string name="filename">Filename:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
 

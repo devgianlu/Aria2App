@@ -303,6 +303,7 @@ public class OptionsUtils {
 
         jta2.getGlobalOption(new JTA2.IOption() {
             @Override
+            @SuppressWarnings("ConstantConditions")
             public void onOptions(Map<String, String> options) {
                 if (quick) {
                     Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
@@ -352,6 +353,7 @@ public class OptionsUtils {
 
         jta2.getOption(gid, new JTA2.IOption() {
             @Override
+            @SuppressWarnings("ConstantConditions")
             public void onOptions(Map<String, String> options) {
                 if (activity == null) {
                     pd.dismiss();
