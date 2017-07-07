@@ -14,6 +14,7 @@ import com.gianlu.commonutils.AppCompatPreferenceFragment;
 import com.gianlu.commonutils.BaseAboutFragment;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.LogsActivity;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.File;
@@ -104,12 +105,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     File path = new File(((String) o).trim());
                     if (!path.exists() || !path.isDirectory()) {
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_DOWNLOAD_PATH, (String) o);
+                        Toaster.show(getActivity(), Utils.Messages.INVALID_DOWNLOAD_PATH, (String) o);
                         return false;
                     }
 
                     if (!path.canWrite()) {
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_DOWNLOAD_PATH, (String) o);
+                        Toaster.show(getActivity(), Utils.Messages.INVALID_DOWNLOAD_PATH, (String) o);
                         return false;
                     }
 

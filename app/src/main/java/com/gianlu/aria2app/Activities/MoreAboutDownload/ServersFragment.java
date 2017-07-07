@@ -27,9 +27,9 @@ import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
                             updater = new UpdateUI(getContext(), gid, ServersFragment.this);
                             updater.start();
                         } catch (JTA2InitializingException ex) {
-                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_REFRESHING, ex);
+                            Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
                         } finally {
                             if (isAdded()) {
                                 getActivity().runOnUiThread(new Runnable() {

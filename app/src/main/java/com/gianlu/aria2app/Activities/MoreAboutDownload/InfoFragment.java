@@ -24,6 +24,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -166,37 +167,37 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
     @Override
     public void onPaused(String gid) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.PAUSED, gid);
+        Toaster.show(getActivity(), Utils.Messages.PAUSED, gid);
     }
 
     @Override
     public void onRestarted(String gid) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESTARTED, gid);
+        Toaster.show(getActivity(), Utils.Messages.RESTARTED, gid);
     }
 
     @Override
     public void onUnpaused(String gid) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESUMED, gid);
+        Toaster.show(getActivity(), Utils.Messages.RESUMED, gid);
     }
 
     @Override
     public void onMoved(String gid) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.MOVED, gid);
+        Toaster.show(getActivity(), Utils.Messages.MOVED, gid);
     }
 
     @Override
     public void onException(Exception ex) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_PERFORMING_ACTION, ex);
+        Toaster.show(getActivity(), Utils.Messages.FAILED_PERFORMING_ACTION, ex);
     }
 
     @Override
     public void onRemoved(String gid) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.REMOVED, gid);
+        Toaster.show(getActivity(), Utils.Messages.REMOVED, gid);
     }
 
     @Override
     public void onRemovedResult(String gid) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.RESULT_REMOVED, gid);
+        Toaster.show(getActivity(), Utils.Messages.RESULT_REMOVED, gid);
     }
 
     public interface IStatusChanged {

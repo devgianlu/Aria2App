@@ -42,6 +42,7 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.Collections;
@@ -136,7 +137,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                             updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
                             updater.start();
                         } catch (JTA2InitializingException ex) {
-                            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_REFRESHING, ex);
+                            Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
                         } finally {
                             if (isAdded()) {
                                 getActivity().runOnUiThread(new Runnable() {
@@ -277,35 +278,35 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onSelectedFile(AFile file) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_SELECTED, file.getName());
+        Toaster.show(getActivity(), Utils.Messages.FILE_SELECTED, file.getName());
         adapter.notifyItemChanged(file);
         if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override
     public void onDeselectedFile(AFile file) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FILE_DESELECTED, file.getName());
+        Toaster.show(getActivity(), Utils.Messages.FILE_DESELECTED, file.getName());
         adapter.notifyItemChanged(file);
         if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override
     public void onSelectedDir(ADir dir) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DIR_SELECTED, dir.name);
+        Toaster.show(getActivity(), Utils.Messages.DIR_SELECTED, dir.name);
         adapter.notifyItemsChanged(dir, true);
         if (dirSheet != null) dirSheet.collapse();
     }
 
     @Override
     public void onDeselectedDir(ADir dir) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DIR_DESELECTED, dir.name);
+        Toaster.show(getActivity(), Utils.Messages.DIR_DESELECTED, dir.name);
         adapter.notifyItemsChanged(dir, false);
         if (dirSheet != null) dirSheet.collapse();
     }
 
     @Override
     public void onExceptionChangingSelection(Exception ex) {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_CHANGE_FILE_SELECTION, ex);
+        Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
         if (fileSheet != null) fileSheet.collapse();
     }
 
@@ -315,7 +316,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         try {
             jta2 = JTA2.instantiate(getContext());
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_DIR, ex);
+            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
             return;
         }
 
@@ -331,7 +332,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+                Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
                 pd.dismiss();
             }
         });
@@ -344,7 +345,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onCantDeselectAll() {
-        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.CANT_DESELECT_ALL_FILES, download.gid);
+        Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES, download.gid);
         if (dirSheet != null) dirSheet.collapse();
     }
 
@@ -354,7 +355,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         try {
             jta2 = JTA2.instantiate(getContext());
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
             return;
         }
 
@@ -370,7 +371,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+                Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
                 pd.dismiss();
             }
         });
@@ -385,9 +386,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         try {
             for (AFile file : files)
                 DownloadsManager.get(getContext()).startDownload(getContext(), file, dir);
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.DOWNLOAD_STARTED);
+            Toaster.show(getActivity(), Utils.Messages.DOWNLOAD_STARTED);
         } catch (DownloadsManagerException ex) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.FAILED_DOWNLOAD_FILE, ex);
+            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
         }
     }
 

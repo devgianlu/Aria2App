@@ -21,7 +21,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.io.File;
@@ -109,14 +109,14 @@ public class AddTorrentActivity extends AppCompatActivity {
         try {
             jta2 = JTA2.instantiate(this);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+            Toaster.show(this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             return;
         }
 
         jta2.addTorrent(base64, uris, options, position, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.DOWNLOAD_ADDED, gid, new Runnable() {
+                Toaster.show(AddTorrentActivity.this, Utils.Messages.DOWNLOAD_ADDED, gid, new Runnable() {
                     @Override
                     public void run() {
                         onBackPressed();
@@ -126,7 +126,7 @@ public class AddTorrentActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(AddTorrentActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+                Toaster.show(AddTorrentActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             }
         });
 

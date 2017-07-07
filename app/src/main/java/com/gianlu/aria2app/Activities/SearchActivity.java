@@ -30,6 +30,7 @@ import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.Collections;
@@ -108,18 +109,18 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                         @Override
                                         public void onGID(String gid) {
                                             pd.dismiss();
-                                            CommonUtils.UIToast(SearchActivity.this, Utils.ToastMessages.DOWNLOAD_ADDED, gid);
+                                            Toaster.show(SearchActivity.this, Utils.Messages.DOWNLOAD_ADDED, gid);
                                         }
 
                                         @Override
                                         public void onException(Exception ex) {
                                             pd.dismiss();
-                                            CommonUtils.UIToast(SearchActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+                                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
                                         }
                                     });
                         } catch (JTA2InitializingException ex) {
                             pd.dismiss();
-                            CommonUtils.UIToast(SearchActivity.this, Utils.ToastMessages.WS_EXCEPTION, ex);
+                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
                         }
 
                         ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
@@ -177,7 +178,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                         @Override
                                         public void onException(Exception ex) {
                                             pd.dismiss();
-                                            CommonUtils.UIToast(SearchActivity.this, Utils.ToastMessages.SEARCH_FAILED, ex);
+                                            Toaster.show(SearchActivity.this, Utils.Messages.SEARCH_FAILED, ex);
                                         }
                                     });
                                 }
@@ -189,7 +190,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(SearchActivity.this, Utils.ToastMessages.SEARCH_FAILED, ex, new Runnable() {
+                Toaster.show(SearchActivity.this, Utils.Messages.SEARCH_FAILED, ex, new Runnable() {
                     @Override
                     public void run() {
                         loading.setVisibility(View.GONE);

@@ -1,5 +1,8 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Aria2Exception extends Exception {
     public final int code;
     public final String reason;
@@ -8,6 +11,10 @@ public class Aria2Exception extends Exception {
         super(detailMessage);
         this.reason = detailMessage;
         this.code = code;
+    }
+
+    public Aria2Exception(JSONObject error) throws JSONException {
+        this(error.getString("message"), error.getInt("code"));
     }
 
     @Override

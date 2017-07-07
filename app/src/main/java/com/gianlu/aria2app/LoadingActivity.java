@@ -20,9 +20,9 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
@@ -101,7 +101,7 @@ public class LoadingActivity extends AppCompatActivity {
                     tryConnecting(manager, profile);
                     return;
                 } catch (IOException | JSONException ex) {
-                    CommonUtils.UIToast(this, Utils.ToastMessages.CANNOT_SAVE_PROFILE, ex);
+                    Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
                     return;
                 }
             }
@@ -182,7 +182,7 @@ public class LoadingActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailedConnecting(Exception ex) {
-                    CommonUtils.UIToast(LoadingActivity.this, Utils.ToastMessages.FAILED_CONNECTING, ex, new Runnable() {
+                    Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
                         @Override
                         public void run() {
                             displayPicker(manager, hasShareData());

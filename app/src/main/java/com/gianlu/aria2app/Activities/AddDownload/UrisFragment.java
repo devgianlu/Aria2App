@@ -25,6 +25,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.Toaster;
 
 import java.net.URI;
 import java.net.URL;
@@ -60,7 +61,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
                     public void onClick(DialogInterface dialog, int which) {
                         if (uri.getText().toString().trim().startsWith("magnet:")) {
                             if (!adapter.getUris().isEmpty()) {
-                                CommonUtils.UIToast(getActivity(), Utils.ToastMessages.ONLY_ONE_TORRENT);
+                                Toaster.show(getContext(), Utils.Messages.ONLY_ONE_TORRENT);
                                 return;
                             }
                         }
@@ -85,7 +86,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
             @Override
             public void onClick(View v) {
                 if (adapter.canAddUri()) showAddUriDialog(-1, null);
-                else CommonUtils.UIToast(getActivity(), Utils.ToastMessages.ONLY_ONE_TORRENT);
+                else Toaster.show(getContext(), Utils.Messages.ONLY_ONE_TORRENT);
             }
         });
 

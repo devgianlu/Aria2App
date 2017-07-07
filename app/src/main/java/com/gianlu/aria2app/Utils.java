@@ -25,6 +25,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.YAxis;
@@ -231,45 +232,45 @@ public class Utils {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public static class ToastMessages {
-        public static final CommonUtils.ToastMessage WS_EXCEPTION = new CommonUtils.ToastMessage("WebSocket exception!", true);
-        public static final CommonUtils.ToastMessage FAILED_GATHERING_INFORMATION = new CommonUtils.ToastMessage("Failed on gathering information!", true);
-        public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_FILE = new CommonUtils.ToastMessage("Failed downloading file!", true);
-        public static final CommonUtils.ToastMessage DOWNLOAD_ADDED = new CommonUtils.ToastMessage("Download added.", false);
-        public static final CommonUtils.ToastMessage SESSION_SAVED = new CommonUtils.ToastMessage("Session saved correctly.", false);
-        public static final CommonUtils.ToastMessage FAILED_SAVE_SESSION = new CommonUtils.ToastMessage("Failed saving current session!", true);
-        public static final CommonUtils.ToastMessage NO_URIS = new CommonUtils.ToastMessage("Add at least one URI!", false);
-        public static final CommonUtils.ToastMessage FAILED_ADD_DOWNLOAD = new CommonUtils.ToastMessage("Failed to add new download!", true);
-        public static final CommonUtils.ToastMessage DOWNLOAD_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Download options successfully changed!", false);
-        public static final CommonUtils.ToastMessage FAILED_CHANGE_FILE_SELECTION = new CommonUtils.ToastMessage("Failed selecting/deselecting file(s)!", true);
-        public static final CommonUtils.ToastMessage NO_QUICK_OPTIONS = new CommonUtils.ToastMessage("You have no quick options!", false);
-        public static final CommonUtils.ToastMessage INVALID_DOWNLOAD_PATH = new CommonUtils.ToastMessage("Invalid download path.", false);
-        public static final CommonUtils.ToastMessage INVALID_FILE = new CommonUtils.ToastMessage("Invalid file!", false);
-        public static final CommonUtils.ToastMessage SEARCH_FAILED = new CommonUtils.ToastMessage("Search failed!", true);
-        public static final CommonUtils.ToastMessage FAILED_CONNECTING = new CommonUtils.ToastMessage("Failed connecting!", true);
-        public static final CommonUtils.ToastMessage FAILED_LOADING = new CommonUtils.ToastMessage("Failed loading!", true);
-        public static final CommonUtils.ToastMessage CANNOT_SAVE_PROFILE = new CommonUtils.ToastMessage("Cannot save profile!", true);
-        public static final CommonUtils.ToastMessage FAILED_PERFORMING_ACTION = new CommonUtils.ToastMessage("Failed performing the action!", true);
-        public static final CommonUtils.ToastMessage PAUSED = new CommonUtils.ToastMessage("Download paused!", false);
-        public static final CommonUtils.ToastMessage RESTARTED = new CommonUtils.ToastMessage("Download restarted!", false);
-        public static final CommonUtils.ToastMessage RESUMED = new CommonUtils.ToastMessage("Download resumed!", false);
-        public static final CommonUtils.ToastMessage MOVED = new CommonUtils.ToastMessage("Download moved in queue!", false);
-        public static final CommonUtils.ToastMessage REMOVED = new CommonUtils.ToastMessage("Download removed!", false);
-        public static final CommonUtils.ToastMessage RESULT_REMOVED = new CommonUtils.ToastMessage("Download result removed!", false);
-        public static final CommonUtils.ToastMessage FAILED_REFRESHING = new CommonUtils.ToastMessage("Failed refreshing!", true);
-        public static final CommonUtils.ToastMessage GLOBAL_OPTIONS_CHANGED = new CommonUtils.ToastMessage("Global options successfully changed!", false);
-        public static final CommonUtils.ToastMessage ONLY_ONE_TORRENT = new CommonUtils.ToastMessage("When adding torrent magnets only one link should be added at once.", false);
-        public static final CommonUtils.ToastMessage NO_FILE_MANAGER = new CommonUtils.ToastMessage("A file manager has not been found!", true);
-        public static final CommonUtils.ToastMessage FILE_DESELECTED = new CommonUtils.ToastMessage("File deselected for download.", false);
-        public static final CommonUtils.ToastMessage FILE_SELECTED = new CommonUtils.ToastMessage("File selected for download.", false);
-        public static final CommonUtils.ToastMessage DIR_DESELECTED = new CommonUtils.ToastMessage("All files in directory are deselected for download.", false);
-        public static final CommonUtils.ToastMessage DIR_SELECTED = new CommonUtils.ToastMessage("All files in directory are selected for download.", false);
-        public static final CommonUtils.ToastMessage DOWNLOAD_STARTED = new CommonUtils.ToastMessage("Download started!", false);
-        public static final CommonUtils.ToastMessage CANT_DESELECT_ALL_FILES = new CommonUtils.ToastMessage("Can't deselect all files!", false);
-        public static final CommonUtils.ToastMessage FAILED_DOWNLOAD_DIR = new CommonUtils.ToastMessage("Failed downloading directory!", true);
-        public static final CommonUtils.ToastMessage DUPLICATED_CONDITION = new CommonUtils.ToastMessage("This condition is already present in this profile.", false);
-        public static final CommonUtils.ToastMessage HAS_ALWAYS_CONDITION = new CommonUtils.ToastMessage("You cannot add a new condition if you already specified one to use every time.", false);
-        public static final CommonUtils.ToastMessage CANNOT_ADD_ALWAYS = new CommonUtils.ToastMessage("You cannot add an \"always\" condition if you already have others.", false);
+    public static class Messages {
+        // public static final Toaster.Message WS_EXCEPTION = new Toaster.Message(, true);
+        public static final Toaster.Message FAILED_GATHERING_INFORMATION = new Toaster.Message(R.string.failedGatheringInfo, true);
+        public static final Toaster.Message FAILED_DOWNLOAD_FILE = new Toaster.Message(R.string.failedDownloadingFile, true);
+        public static final Toaster.Message DOWNLOAD_ADDED = new Toaster.Message(R.string.downloadAdded, false);
+        public static final Toaster.Message SESSION_SAVED = new Toaster.Message(R.string.sessionSaved, false);
+        public static final Toaster.Message FAILED_SAVE_SESSION = new Toaster.Message(R.string.failedSavingSession, true);
+        public static final Toaster.Message NO_URIS = new Toaster.Message(R.string.atLeastOneUri, false);
+        public static final Toaster.Message FAILED_ADD_DOWNLOAD = new Toaster.Message(R.string.failedAddingDownload, true);
+        public static final Toaster.Message DOWNLOAD_OPTIONS_CHANGED = new Toaster.Message(R.string.downloadOptionsChanged, false);
+        public static final Toaster.Message FAILED_CHANGE_FILE_SELECTION = new Toaster.Message(R.string.failedFileChangeSelection, true);
+        public static final Toaster.Message NO_QUICK_OPTIONS = new Toaster.Message(R.string.noQuickOptions, false);
+        public static final Toaster.Message INVALID_DOWNLOAD_PATH = new Toaster.Message(R.string.invalidDownloadPath, false);
+        public static final Toaster.Message INVALID_FILE = new Toaster.Message(R.string.invalidFile, false);
+        public static final Toaster.Message SEARCH_FAILED = new Toaster.Message(R.string.searchFailed, true);
+        public static final Toaster.Message FAILED_CONNECTING = new Toaster.Message(R.string.failedConnecting, true);
+        public static final Toaster.Message FAILED_LOADING = new Toaster.Message(R.string.failedLoading, true);
+        public static final Toaster.Message CANNOT_SAVE_PROFILE = new Toaster.Message(R.string.cannotSaveProfile, true);
+        public static final Toaster.Message FAILED_PERFORMING_ACTION = new Toaster.Message(R.string.failedAction, true);
+        public static final Toaster.Message PAUSED = new Toaster.Message(R.string.downloadPaused, false);
+        public static final Toaster.Message RESTARTED = new Toaster.Message(R.string.downloadRestarted, false);
+        public static final Toaster.Message RESUMED = new Toaster.Message(R.string.downloadResumed, false);
+        public static final Toaster.Message MOVED = new Toaster.Message(R.string.downloadMoved, false);
+        public static final Toaster.Message REMOVED = new Toaster.Message(R.string.downloadRemoved, false);
+        public static final Toaster.Message RESULT_REMOVED = new Toaster.Message(R.string.downloadResultRemoved, false);
+        public static final Toaster.Message FAILED_REFRESHING = new Toaster.Message(R.string.failedRefreshing, true);
+        public static final Toaster.Message GLOBAL_OPTIONS_CHANGED = new Toaster.Message(R.string.globalOptionsChanged, false);
+        public static final Toaster.Message ONLY_ONE_TORRENT = new Toaster.Message(R.string.onlyOneTorrentUri, false);
+        public static final Toaster.Message NO_FILE_MANAGER = new Toaster.Message(R.string.noFilemanager, true);
+        public static final Toaster.Message FILE_DESELECTED = new Toaster.Message(R.string.fileDeselected, false);
+        public static final Toaster.Message FILE_SELECTED = new Toaster.Message(R.string.fileSelected, false);
+        public static final Toaster.Message DIR_DESELECTED = new Toaster.Message(R.string.dirFilesDeselected, false);
+        public static final Toaster.Message DIR_SELECTED = new Toaster.Message(R.string.dirFilesSelected, false);
+        public static final Toaster.Message DOWNLOAD_STARTED = new Toaster.Message(R.string.downloadStarted, false);
+        public static final Toaster.Message CANT_DESELECT_ALL_FILES = new Toaster.Message(R.string.cannotDeselectAllFiles, false);
+        public static final Toaster.Message FAILED_DOWNLOAD_DIR = new Toaster.Message(R.string.failedDownloadingDir, true);
+        public static final Toaster.Message DUPLICATED_CONDITION = new Toaster.Message(R.string.duplicatedCondition, false);
+        public static final Toaster.Message HAS_ALWAYS_CONDITION = new Toaster.Message(R.string.hasAlwaysCondition, false);
+        public static final Toaster.Message CANNOT_ADD_ALWAYS = new Toaster.Message(R.string.cannotAddAlwaysCondition, false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

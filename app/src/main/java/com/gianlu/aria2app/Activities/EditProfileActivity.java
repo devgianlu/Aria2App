@@ -44,6 +44,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
@@ -225,7 +226,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     @SuppressWarnings("ConstantConditions")
     private void createNewCondition(boolean compulsory) {
         if (hasAlwaysCondition()) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.HAS_ALWAYS_CONDITION);
+            Toaster.show(this, Utils.Messages.HAS_ALWAYS_CONDITION);
             return;
         }
 
@@ -299,12 +300,12 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                         }
 
                         if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
-                            CommonUtils.UIToast(EditProfileActivity.this, Utils.ToastMessages.CANNOT_ADD_ALWAYS);
+                            Toaster.show(EditProfileActivity.this, Utils.Messages.CANNOT_ADD_ALWAYS);
                             return;
                         }
 
                         if (conditions.contains(condition)) {
-                            CommonUtils.UIToast(EditProfileActivity.this, Utils.ToastMessages.DUPLICATED_CONDITION);
+                            Toaster.show(EditProfileActivity.this, Utils.Messages.DUPLICATED_CONDITION);
                             return;
                         }
 
@@ -360,7 +361,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
         } catch (JSONException | IOException ex) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.CANNOT_SAVE_PROFILE, ex);
+            Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
         }
 
         ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()

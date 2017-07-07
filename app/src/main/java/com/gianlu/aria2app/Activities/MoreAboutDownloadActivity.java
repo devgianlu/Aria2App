@@ -21,7 +21,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Toaster;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity implements InfoFragment.IStatusChanged {
     private PagerAdapter<BackPressedFragment> adapter;
@@ -77,7 +77,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
     protected void onCreate(Bundle savedInstanceState) {
         Download download = (Download) getIntent().getSerializableExtra("download");
         if (download == null) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_LOADING, new NullPointerException("download is null!"));
+            Toaster.show(this, Utils.Messages.FAILED_LOADING, new NullPointerException("download is null!"));
             onBackPressed();
             return;
         }

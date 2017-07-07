@@ -246,6 +246,42 @@
     <string name="tapTargetView_details" translatable="false">Copyright 2016 Keepsafe Software Inc.</string>
     <string name="filename">Filename:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
+    <string name="failedGatheringInfo">Failed gathering information!</string>
+    <string name="sessionSaved">Session saved correctly.</string>
+    <string name="downloadAdded">Download added.</string>
+    <string name="downloadPaused">Download paused.</string>
+    <string name="cannotSaveProfile">Cannot save profile!</string>
+    <string name="failedConnecting">Failed connecting!</string>
+    <string name="failedAction">Failed performing the action!</string>
+    <string name="downloadRestarted">Download restarted.</string>
+    <string name="downloadResumed">Download resumed.</string>
+    <string name="downloadRemoved">Download removed.</string>
+    <string name="downloadMoved">Download moved in queue.</string>
+    <string name="downloadResultRemoved">Download result removed.</string>
+    <string name="failedRefreshing">Failed refreshing!</string>
+    <string name="searchFailed">Search failed!</string>
+    <string name="invalidFile">Invalid file!</string>
+    <string name="invalidDownloadPath">Invalid download path.</string>
+    <string name="failedSavingSession">Failed saving current session!</string>
+    <string name="failedDownloadingFile">Failed downloading file!</string>
+    <string name="globalOptionsChanged">Global options has been successfully changed.</string>
+    <string name="fileSelected">File selected for download.</string>
+    <string name="downloadStarted">Download started.</string>
+    <string name="noQuickOptions">You have no quick options.</string>
+    <string name="failedAddingDownload">Failed adding the new download!</string>
+    <string name="atLeastOneUri">Add at least one URI!</string>
+    <string name="downloadOptionsChanged">Download options has been successfully changed.</string>
+    <string name="failedFileChangeSelection">Failed selecting/deselecting file(s)!</string>
+    <string name="cannotDeselectAllFiles">You cannot deselect all files!</string>
+    <string name="failedDownloadingDir">Failed downloading directory!</string>
+    <string name="duplicatedCondition">This condition is already present in this profile.</string>
+    <string name="fileDeselected">File deselected from download.</string>
+    <string name="noFilemanager">A file manager has not been found!</string>
+    <string name="onlyOneTorrentUri">When adding torrent magnets only one link should be added at once.</string>
+    <string name="dirFilesDeselected">All files in directory are deselected from download.</string>
+    <string name="dirFilesSelected">All files in directory are selected for download.</string>
+    <string name="hasAlwaysCondition">You cannot add a new condition if you already specified one to use every time.</string>
+    <string name="cannotAddAlwaysCondition">You cannot add an \"always\" condition if you already have others.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

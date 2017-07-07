@@ -15,9 +15,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
@@ -55,57 +53,7 @@ public class HTTPing extends AbstractClient {
 
     @Override
     public void send(final JSONObject request, final IReceived handler) {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                URL url;
-                try {
-                    String urlPath = profile.serverEndpoint +
-                            "?method="
-                            + request.getString("method")
-                            + "&id=" + request.getString("id");
-
-                    if (request.has("params"))
-                        urlPath += "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8");
-
-                    url = new URL(
-                            profile.serverSSL ? "https" : "http",
-                            profile.serverAddr,
-                            profile.serverPort,
-                            urlPath);
-                } catch (JSONException | MalformedURLException | UnsupportedEncodingException ex) {
-                    handler.onException(ex);
-                    return;
-                }
-
-                try {
-                    HttpURLConnection conn = readyHttpConnection(url);
-                    conn.connect();
-
-                    if (conn.getResponseCode() == 200) {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                        String rawResponse = reader.readLine();
-
-                        if (rawResponse == null) {
-                            handler.onException(new NullPointerException("Empty response"));
-                        } else {
-                            JSONObject response = new JSONObject(rawResponse);
-                            if (response.isNull("error")) {
-                                handler.onResponse(response);
-                            } else {
-                                handler.onException(new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
-                            }
-                        }
-                    } else {
-                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
-                    }
-                } catch (OutOfMemoryError ex) {
-                    System.gc();
-                } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
-                    handler.onException(ex);
-                }
-            }
-        });
+        executorService.execute(new RequestProcessor(request, handler));
     }
 
     @SuppressLint("BadHostnameVerifier")
@@ -133,6 +81,60 @@ public class HTTPing extends AbstractClient {
                 conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
 
             return conn;
+        }
+    }
+
+    private class RequestProcessor implements Runnable {
+        private final JSONObject request;
+        private final IReceived listener;
+
+        public RequestProcessor(JSONObject request, IReceived listener) {
+            this.request = request;
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String urlPath = profile.serverEndpoint +
+                        "?method="
+                        + request.getString("method")
+                        + "&id=" + request.getString("id");
+
+                if (request.has("params"))
+                    urlPath += "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8");
+
+                URL url = new URL(
+                        profile.serverSSL ? "https" : "http",
+                        profile.serverAddr,
+                        profile.serverPort,
+                        urlPath);
+
+                HttpURLConnection conn = readyHttpConnection(url);
+                conn.connect();
+
+                if (conn.getResponseCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    String rawResponse = reader.readLine();
+
+                    if (rawResponse == null) {
+                        listener.onException(new NullPointerException("Empty response"));
+                    } else {
+                        JSONObject response = new JSONObject(rawResponse);
+                        if (response.isNull("error")) {
+                            listener.onResponse(response);
+                        } else {
+                            listener.onException(new Aria2Exception(response.getJSONObject("error")));
+                        }
+                    }
+                } else {
+                    listener.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
+                }
+            } catch (OutOfMemoryError ex) {
+                System.gc();
+            } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                listener.onException(ex);
+            }
         }
     }
 }

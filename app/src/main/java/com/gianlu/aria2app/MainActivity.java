@@ -67,6 +67,7 @@ import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
 
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             jta2 = JTA2.instantiate(MainActivity.this);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+            Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
             return;
         }
 
@@ -210,12 +211,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                                         jta2.saveSession(new JTA2.ISuccess() {
                                             @Override
                                             public void onSuccess() {
-                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.SESSION_SAVED);
+                                                Toaster.show(MainActivity.this, Utils.Messages.SESSION_SAVED);
                                             }
 
                                             @Override
                                             public void onException(Exception exception) {
-                                                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_SAVE_SESSION, exception);
+                                                Toaster.show(MainActivity.this, Utils.Messages.FAILED_SAVE_SESSION, exception);
                                             }
                                         });
                                     }
@@ -225,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
                     @Override
                     public void onException(Exception ex) {
-                        CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                        Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
                         pd.dismiss();
                     }
                 });
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(MainActivity.this, Utils.ToastMessages.FAILED_GATHERING_INFORMATION, ex);
+                Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
                 pd.dismiss();
             }
         });
@@ -252,18 +253,18 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private void processSharedFile(SharedFile file) {
         if (file.file.exists() && file.file.canRead()) {
             if (file.mimeType == null) {
-                CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot determine file type: " + file.file));
+                Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + file.file));
             } else {
                 if (Objects.equals(file.mimeType, "application/x-bittorrent")) {
                     AddTorrentActivity.startAndAdd(this, file.file);
                 } else if (Objects.equals(file.mimeType, "application/metalink4+xml") || Objects.equals(file.mimeType, "application/metalink+xml")) {
                     AddMetalinkActivity.startAndAdd(this, file.file);
                 } else {
-                    CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("File type not supported: " + file.mimeType));
+                    Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("File type not supported: " + file.mimeType));
                 }
             }
         } else {
-            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read: " + file.file));
+            Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read: " + file.file));
         }
     }
 
@@ -425,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             uri = new URI(shareData.toString());
         } catch (URISyntaxException ex) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.INVALID_FILE, new Exception("Cannot identify shared file/url: " + shareData, ex));
+            Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot identify shared file/url: " + shareData, ex));
             return;
         }
 
@@ -875,37 +876,37 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onPaused(String gid) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.PAUSED, gid);
+        Toaster.show(this, Utils.Messages.PAUSED, gid);
     }
 
     @Override
     public void onRestarted(String gid) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.RESTARTED, gid);
+        Toaster.show(this, Utils.Messages.RESTARTED, gid);
     }
 
     @Override
     public void onUnpaused(String gid) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.RESUMED, gid);
+        Toaster.show(this, Utils.Messages.RESUMED, gid);
     }
 
     @Override
     public void onMoved(String gid) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.MOVED, gid);
+        Toaster.show(this, Utils.Messages.MOVED, gid);
     }
 
     @Override
     public void onException(Exception ex) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_PERFORMING_ACTION, ex);
+        Toaster.show(this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
     }
 
     @Override
     public void onRemoved(String gid) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.REMOVED, gid);
+        Toaster.show(this, Utils.Messages.REMOVED, gid);
     }
 
     @Override
     public void onRemovedResult(String gid) {
-        CommonUtils.UIToast(this, Utils.ToastMessages.RESULT_REMOVED, gid);
+        Toaster.show(this, Utils.Messages.RESULT_REMOVED, gid);
     }
 
     @Override

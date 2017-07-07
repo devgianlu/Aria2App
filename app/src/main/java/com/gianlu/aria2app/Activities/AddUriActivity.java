@@ -19,7 +19,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.net.URI;
@@ -84,7 +84,7 @@ public class AddUriActivity extends AppCompatActivity {
     private void done() {
         List<String> uris = urisFragment.getUris();
         if (uris.isEmpty()) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.NO_URIS);
+            Toaster.show(this, Utils.Messages.NO_URIS);
             pager.setCurrentItem(0, true);
             return;
         }
@@ -99,14 +99,14 @@ public class AddUriActivity extends AppCompatActivity {
         try {
             jta2 = JTA2.instantiate(this);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+            Toaster.show(this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             return;
         }
 
         jta2.addUri(uris, position, options, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                CommonUtils.UIToast(AddUriActivity.this, Utils.ToastMessages.DOWNLOAD_ADDED, gid, new Runnable() {
+                Toaster.show(AddUriActivity.this, Utils.Messages.DOWNLOAD_ADDED, gid, new Runnable() {
                     @Override
                     public void run() {
                         onBackPressed();
@@ -116,7 +116,7 @@ public class AddUriActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(AddUriActivity.this, Utils.ToastMessages.FAILED_ADD_DOWNLOAD, ex);
+                Toaster.show(AddUriActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             }
         });
 

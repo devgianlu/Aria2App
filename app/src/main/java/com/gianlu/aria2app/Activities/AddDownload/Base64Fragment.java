@@ -21,8 +21,8 @@ import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.Toaster;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,7 +54,7 @@ public class Base64Fragment extends Fragment {
         try {
             startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
         } catch (android.content.ActivityNotFoundException ex) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.NO_FILE_MANAGER, ex);
+            Toaster.show(getContext(), Utils.Messages.NO_FILE_MANAGER, ex);
             return;
         }
 
@@ -63,7 +63,7 @@ public class Base64Fragment extends Fragment {
 
     private void setFile(File file) {
         if (!file.exists() || !file.canRead()) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("File doesn't exist or can't be read."));
+            Toaster.show(getContext(), Utils.Messages.INVALID_FILE, new Exception("File doesn't exist or can't be read."));
         } else {
             path.setText(file.getAbsolutePath());
             path.setTag(file);
@@ -77,7 +77,7 @@ public class Base64Fragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     SharedFile file = Utils.accessUriFile(getContext(), data.getData());
                     if (file == null) {
-                        CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, new Exception("Uri cannot be resolved: " + data.getDataString()));
+                        Toaster.show(getContext(), Utils.Messages.INVALID_FILE, new Exception("Uri cannot be resolved: " + data.getDataString()));
                     } else {
                         setFile(file.file);
                     }
@@ -128,7 +128,7 @@ public class Base64Fragment extends Fragment {
             while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
             return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
         } catch (IOException ex) {
-            CommonUtils.UIToast(getActivity(), Utils.ToastMessages.INVALID_FILE, ex);
+            Toaster.show(getContext(), Utils.Messages.INVALID_FILE, ex);
             return null;
         }
     }

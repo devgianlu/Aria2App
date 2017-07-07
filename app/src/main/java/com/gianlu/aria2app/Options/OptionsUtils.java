@@ -28,6 +28,7 @@ import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
@@ -158,7 +159,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
             pd.dismiss();
             return;
         }
@@ -172,13 +173,13 @@ public class OptionsUtils {
         jta2.changeOption(gid, map, new JTA2.ISuccess() {
             @Override
             public void onSuccess() {
-                CommonUtils.UIToast(activity, Utils.ToastMessages.DOWNLOAD_OPTIONS_CHANGED);
+                Toaster.show(activity, Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
                 pd.dismiss();
             }
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
                 pd.dismiss();
             }
         });
@@ -197,7 +198,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
             pd.dismiss();
             return;
         }
@@ -211,13 +212,13 @@ public class OptionsUtils {
         jta2.changeGlobalOption(map, new JTA2.ISuccess() {
             @Override
             public void onSuccess() {
-                CommonUtils.UIToast(activity, Utils.ToastMessages.GLOBAL_OPTIONS_CHANGED);
+                Toaster.show(activity, Utils.Messages.GLOBAL_OPTIONS_CHANGED);
                 pd.dismiss();
             }
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
                 pd.dismiss();
             }
         });
@@ -287,7 +288,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
             pd.dismiss();
             return;
         }
@@ -296,7 +297,7 @@ public class OptionsUtils {
         try {
             allOptions = OptionsManager.get(activity).loadGlobalOptions();
         } catch (IOException | JSONException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
             pd.dismiss();
             return;
         }
@@ -308,7 +309,7 @@ public class OptionsUtils {
                 if (quick) {
                     Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
-                        CommonUtils.UIToast(activity, Utils.ToastMessages.NO_QUICK_OPTIONS);
+                        Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
                         pd.dismiss();
                         return;
                     }
@@ -323,7 +324,7 @@ public class OptionsUtils {
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
                 pd.dismiss();
             }
         });
@@ -337,7 +338,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
             pd.dismiss();
             return;
         }
@@ -346,7 +347,7 @@ public class OptionsUtils {
         try {
             allOptions = OptionsManager.get(activity).loadDownloadOptions();
         } catch (IOException | JSONException ex) {
-            CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
             pd.dismiss();
             return;
         }
@@ -363,7 +364,7 @@ public class OptionsUtils {
                 if (quick) {
                     Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
-                        CommonUtils.UIToast(activity, Utils.ToastMessages.NO_QUICK_OPTIONS);
+                        Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
                         pd.dismiss();
                         return;
                     }
@@ -378,7 +379,7 @@ public class OptionsUtils {
 
             @Override
             public void onException(Exception ex) {
-                CommonUtils.UIToast(activity, Utils.ToastMessages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
                 pd.dismiss();
             }
         });
