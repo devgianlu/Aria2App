@@ -125,7 +125,7 @@
     <string name="search">Search</string>
     <string name="addUri">Add URI</string>
     <string name="directDownload">DirectDownload</string>
-    <string name="apacheLicense" translatable="false">Licensed under Apache License 2.0</string>
+    <string name="apacheLicense">Licensed under Apache License 2.0</string>
     <string name="fileDownloader_details" translatable="false">Copyright 2015 LingoChamp Inc.</string>
     <string name="quickGlobalOptions">Quick global options</string>
     <string name="dd_downloadPath">Download path</string>

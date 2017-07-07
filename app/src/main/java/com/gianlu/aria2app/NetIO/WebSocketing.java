@@ -127,7 +127,7 @@ public class WebSocketing extends AbstractClient {
             if (response.isNull("error")) {
                 handler.onResponse(response);
             } else {
-                handler.onException(new Aria2Exception(response.getJSONObject("error").getString("message"), response.getJSONObject("error").getInt("code")));
+                handler.onException(new Aria2Exception(response.getJSONObject("error")));
             }
         }
 
