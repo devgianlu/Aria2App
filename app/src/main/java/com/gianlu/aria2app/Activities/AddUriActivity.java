@@ -139,4 +139,12 @@ public class AddUriActivity extends AppCompatActivity {
 
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            super.onBackPressed();
+        } catch (IllegalStateException ignored) {
+        }
+    }
 }
