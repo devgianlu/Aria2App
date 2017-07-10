@@ -677,11 +677,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public int getRippleDark() {
-        return R.drawable.ripple_effect_dark;
-    }
-
-    @Override
     public int getDrawerBadge() {
         return R.drawable.drawer_badge;
     }

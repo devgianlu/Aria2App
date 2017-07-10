@@ -28,11 +28,6 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
     }
 
     @Override
-    protected int getRippleDark() {
-        return R.drawable.ripple_effect_dark;
-    }
-
-    @Override
     public void bindViews() {
         downloadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_downloadSpeed);
         uploadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_uploadSpeed);

@@ -20,7 +20,7 @@
         android:layout_height="36dp"
         android:adjustViewBounds="true"
         android:alpha="0.54"
-        android:background="@drawable/ripple_effect_dark"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="5dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_edit_black_48dp" />
@@ -31,7 +31,7 @@
         android:layout_height="36dp"
         android:adjustViewBounds="true"
         android:alpha="0.54"
-        android:background="@drawable/ripple_effect_dark"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="5dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_delete_black_48dp" />

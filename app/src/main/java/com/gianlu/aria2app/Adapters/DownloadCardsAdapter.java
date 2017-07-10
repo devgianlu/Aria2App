@@ -107,6 +107,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         } else {
             holder.update((Download) payloads.get(0));
         }
+
+        CommonUtils.setCardTopMargin(context, holder);
     }
 
     @Override

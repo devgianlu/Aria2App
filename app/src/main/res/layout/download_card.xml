@@ -4,9 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
-    android:layout_marginEnd="@dimen/activity_horizontal_margin"
-    android:layout_marginStart="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -23,8 +22,8 @@
 
             <com.gianlu.aria2app.DonutProgress
                 android:id="@+id/downloadCard_donutProgress"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:layout_marginEnd="8dp" />
 
             <LinearLayout
@@ -137,7 +136,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_pause_black_48dp" />
@@ -147,7 +146,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_play_arrow_black_48dp" />
@@ -157,7 +156,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_stop_black_48dp" />
@@ -167,7 +166,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_refresh_black_48dp" />
@@ -177,7 +176,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_clear_black_48dp" />
@@ -187,7 +186,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_upward_black_48dp" />
@@ -197,7 +196,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="@drawable/ripple_effect_dark"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_downward_black_48dp" />

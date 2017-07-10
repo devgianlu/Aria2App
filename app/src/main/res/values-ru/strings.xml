@@ -2,10 +2,10 @@
     <string name="app_name">Aria2App</string>
     <string name="downloadStatus_waiting">Ожидает в очереди</string>
     <string name="downloadStatus_error">Ошибка</string>
-    <string name="downloadStatus_paused">Приостановлено</string>
+    <string name="downloadStatus_paused">Приостановлена</string>
     <string name="downloadStatus_unknown">Неизвестно</string>
-    <string name="downloadStatus_complete">Завершено</string>
-    <string name="downloadStatus_removed">Удалено</string>
+    <string name="downloadStatus_complete">Завершена</string>
+    <string name="downloadStatus_removed">Удалена</string>
     <string name="downloadStatus_active">Загружается</string>
     <string name="completed_length"><![CDATA[<b>Загруженный размер:</b>]]> %s</string>
     <string name="total_length"><![CDATA[<b>Общий размер:</b>]]> %s</string>
@@ -81,8 +81,8 @@
     <string name="hideLinkedMetadata">Скрыть связанные метаданные</string>
     <string name="visibleMetadata">Показать связанные метаданные</string>
     <string name="hiddenMetadata">Скрытые метаданные</string>
-    <string name="refreshRate">Интервал обновления загрузки</string>
-    <string name="refreshRateSummary">Обновление информации загрузки в секундах</string>
+    <string name="refreshRate">Интервал обновления списка</string>
+    <string name="refreshRateSummary">Обновление информации списка загрузок в секундах</string>
     <string name="forceAction">Принудительное действие при сбое</string>
     <string name="forceActionOn">Если действие при загрузке не удастся, мы попробуем запустить его</string>
     <string name="forceActionOff">Если действие при загрузке не удается, мы ничего не будем делать</string>
@@ -250,7 +250,7 @@
     <string name="failedAction">Сбой при выполнении действия!</string>
     <string name="downloadRestarted">Загрузка перезапущена!</string>
     <string name="downloadResumed">Загрузка возобновлена!</string>
-    <string name="downloadRemoved">Загрузка удалено!</string>
+    <string name="downloadRemoved">Загрузка удалена!</string>
     <string name="downloadMoved">Загрузка перенесена в очередь.</string>
     <string name="downloadResultRemoved">Результат загрузки удален.</string>
     <string name="failedRefreshing">Не удалось обновить!</string>
@@ -278,7 +278,7 @@
     <string name="hasAlwaysCondition">Нельзя добавить новое условие, если оно уже было задано для использования каждый раз.</string>
     <string name="cannotAddAlwaysCondition">Невозможно добавить условие \"Любое\", если у вас уже есть другие.</string>
     <string name="log_activity_title">Логи</string>
-    <string name="deleteAllLogs">Удалить все лог</string>
+    <string name="deleteAllLogs">Удалить все логи</string>
     <string name="emptyLogs">Список логов пуст.</string>
     <string name="ooops">Упс!</string>
     <string name="somethingWentWrong">Что-то пошло не так! Отчет уже отправлен разработчику.</string>
@@ -299,12 +299,13 @@
     <string name="noMailClients">Не установлено ни одного почтового клиента!</string>
     <string name="offline">Вы не в сети!</string>
     <string name="copiedToClipboard">Скопировано в буфер обмена!</string>
-    <string name="logDeleted">Все журналы удалены.</string>
+    <string name="logDeleted">Все логи удалены.</string>
     <string name="purchaseCanceled">Покупка отменена.</string>
     <string name="userCancelled">Вы отменили операцию.</string>
     <string name="thankYou">Спасибо!</string>
     <string name="failedBuying">Не удалось купить этот товар! Пожалуйста свяжись со мной.</string>
     <string name="failedBillingConnection">Не удалось подключиться к службе выставления счетов!</string>
+    <string name="noLogs">Список логов пуст.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

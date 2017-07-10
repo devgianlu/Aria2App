@@ -23,7 +23,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     private final Handler handler;
 
     public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, IAdapter<MultiProfile> listener, boolean black, @Nullable IEdit editListener) {
-        super(context, profiles, R.drawable.ripple_effect_dark, R.color.colorAccent, black, listener);
+        super(context, profiles, R.color.colorAccent, black, listener);
         this.editListener = editListener;
         this.handler = new Handler(context.getMainLooper());
     }

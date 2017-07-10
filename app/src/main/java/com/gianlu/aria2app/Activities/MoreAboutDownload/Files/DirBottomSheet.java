@@ -36,11 +36,6 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     }
 
     @Override
-    protected int getRippleDark() {
-        return R.drawable.ripple_effect_dark;
-    }
-
-    @Override
     public void bindViews() {
         indexes = (SuperTextView) content.findViewById(R.id.dirSheet_indexes);
         path = (SuperTextView) content.findViewById(R.id.dirSheet_path);

@@ -28,11 +28,6 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
     }
 
     @Override
-    protected int getRippleDark() {
-        return R.drawable.ripple_effect_dark;
-    }
-
-    @Override
     public void bindViews() {
         downloadSpeed = (SuperTextView) content.findViewById(R.id.serverSheet_downloadSpeed);
         chart = (LineChart) content.findViewById(R.id.serverSheet_chart);

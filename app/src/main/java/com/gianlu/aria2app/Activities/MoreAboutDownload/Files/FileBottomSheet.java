@@ -39,11 +39,6 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     }
 
     @Override
-    protected int getRippleDark() {
-        return R.drawable.ripple_effect_dark;
-    }
-
-    @Override
     public void bindViews() {
         index = (SuperTextView) content.findViewById(R.id.fileSheet_index);
         path = (SuperTextView) content.findViewById(R.id.fileSheet_path);
