@@ -2,6 +2,8 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -28,10 +30,14 @@ import java.util.List;
 public class ProfilesManager {
     private static ProfilesManager instance;
     private final File PROFILES_PATH;
+    private final WifiManager wifiManager;
+    private final ConnectivityManager connectivityManager;
     private MultiProfile currentProfile;
 
     private ProfilesManager(Context context) {
         PROFILES_PATH = context.getFilesDir();
+        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     public static ProfilesManager get(Context context) {
@@ -152,5 +158,13 @@ public class ProfilesManager {
     @Nullable
     public MultiProfile getCurrent() {
         return currentProfile;
+    }
+
+    public WifiManager getWifiManager() {
+        return wifiManager;
+    }
+
+    public ConnectivityManager getConnectivityManager() {
+        return connectivityManager;
     }
 }

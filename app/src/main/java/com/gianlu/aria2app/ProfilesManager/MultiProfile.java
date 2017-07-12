@@ -126,8 +126,11 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     }
 
     public UserProfile getProfile(Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        ProfilesManager manager = ProfilesManager.get(context);
+        return getProfile(manager.getConnectivityManager(), manager.getWifiManager());
+    }
+
+    private UserProfile getProfile(ConnectivityManager connManager, WifiManager wifiManager) {
         NetworkInfo activeNet = connManager.getActiveNetworkInfo();
         if (activeNet == null) return getDefaultProfile();
 
