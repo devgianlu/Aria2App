@@ -69,8 +69,8 @@
     </LinearLayout>
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/optionsFragment_list"
+    <com.gianlu.aria2app.Options.OptionsView
+        android:id="@+id/optionsFragment_options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

@@ -5,18 +5,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
@@ -46,10 +39,8 @@ public class OptionsUtils {
         builder.setTitle(R.string.globalOptions)
                 .setNegativeButton(android.R.string.cancel, null);
 
-        LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.options_dialog, null, false);
-        RecyclerView list = (RecyclerView) layout.findViewById(R.id.optionsDialog_list);
-        list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
+        OptionsView optionsView = new OptionsView(activity);
+        optionsView.setIsDialog(true);
 
         final OptionsAdapter adapter = new OptionsAdapter(activity, options, true);
         adapter.setHandler(new OptionsAdapter.IAdapter() {
@@ -58,34 +49,9 @@ public class OptionsUtils {
                 showEditOptionDialog(activity, adapter, option);
             }
         });
-        list.setAdapter(adapter);
+        optionsView.setAdapter(adapter);
 
-        final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
-        query.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                adapter.filter(s.toString());
-            }
-        });
-        ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                adapter.filter(query.getText().toString());
-            }
-        });
-
-        builder.setView(layout)
+        builder.setView(optionsView)
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -93,7 +59,7 @@ public class OptionsUtils {
                     }
                 });
 
-        _showDialog(activity, list, builder);
+        _showDialog(activity, optionsView, builder);
     }
 
     private static void showDownloadDialog(final Activity activity, final String gid, List<Option> options) {
@@ -101,10 +67,8 @@ public class OptionsUtils {
         builder.setTitle(R.string.options)
                 .setNegativeButton(android.R.string.cancel, null);
 
-        LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.options_dialog, null, false);
-        RecyclerView list = (RecyclerView) layout.findViewById(R.id.optionsDialog_list);
-        list.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL));
+        OptionsView optionsView = new OptionsView(activity);
+        optionsView.setIsDialog(true);
 
         final OptionsAdapter adapter = new OptionsAdapter(activity, options, false);
         adapter.setHandler(new OptionsAdapter.IAdapter() {
@@ -113,34 +77,9 @@ public class OptionsUtils {
                 showEditOptionDialog(activity, adapter, option);
             }
         });
-        list.setAdapter(adapter);
+        optionsView.setAdapter(adapter);
 
-        final EditText query = (EditText) layout.findViewById(R.id.optionsDialog_query);
-        query.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                adapter.filter(s.toString());
-            }
-        });
-        ImageButton search = (ImageButton) layout.findViewById(R.id.optionsDialog_search);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                adapter.filter(query.getText().toString());
-            }
-        });
-
-        builder.setView(layout)
+        builder.setView(optionsView)
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -148,7 +87,7 @@ public class OptionsUtils {
                     }
                 });
 
-        _showDialog(activity, list, builder);
+        _showDialog(activity, optionsView, builder);
     }
 
     private static void handleApplyDownloadOptions(final Activity activity, String gid, List<Option> options) {
@@ -251,7 +190,7 @@ public class OptionsUtils {
         CommonUtils.showDialog(activity, builder);
     }
 
-    private static void _showDialog(final Activity activity, final View layout, final AlertDialog.Builder builder) {
+    private static void _showDialog(final Activity activity, final OptionsView layout, final AlertDialog.Builder builder) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

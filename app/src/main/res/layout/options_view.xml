@@ -2,39 +2,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingBottom="8dp">
 
         <EditText
-            android:id="@+id/optionsDialog_query"
+            android:id="@+id/optionsView_query"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:hint="@string/search"
-            android:inputType="text" />
+            android:inputType="textNoSuggestions" />
 
         <ImageButton
-            android:id="@+id/optionsDialog_search"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical"
+            android:id="@+id/optionsView_search"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:adjustViewBounds="true"
+            android:alpha="0.54"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:hint="@string/search"
+            android:padding="4dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_search_black_48dp" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/optionsDialog_list"
+        android:id="@+id/optionsView_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>
-
-
