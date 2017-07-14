@@ -349,10 +349,10 @@ public class JTA2 {
                 if (indexes == null) {
                     getFiles(download.gid, new IFiles() {
                         @Override
-                        public void onFiles(List<AFile> files) {
-                            String[] indexes = new String[files.size()];
-                            for (int i = 0; i < files.size(); i++)
-                                indexes[i] = String.valueOf(files.get(i).index);
+                        public void onFiles(List<AFile> result) {
+                            String[] indexes = new String[result.size()];
+                            for (int i = 0; i < result.size(); i++)
+                                indexes[i] = String.valueOf(result.get(i).index);
 
                             performSelectIndexesOperation(download, indexes, files, select, handler);
                         }
