@@ -177,6 +177,7 @@
     <string name="removeName">Удалить %s</string>
     <string name="removeDownloadAlert">Если вы удалите загрузку, вы не сможете ее перезапустить. Вы хотите ее удалить?</string>
     <string name="failedLoading">Не удалось загрузить страницу!</string>
+    <string name="failedChangingOptions">Не удалось изменить параметры!</string>
     <string name="currentUri"><![CDATA[<b>Текущий URI:</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
     <string name="selectForDownload">Выбрать файл для загрузки</string>

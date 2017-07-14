@@ -98,7 +98,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
         }
@@ -118,7 +118,7 @@ public class OptionsUtils {
 
             @Override
             public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                 pd.dismiss();
             }
         });
@@ -137,7 +137,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
         }
@@ -157,7 +157,7 @@ public class OptionsUtils {
 
             @Override
             public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                 pd.dismiss();
             }
         });
@@ -227,7 +227,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
         }
@@ -236,7 +236,7 @@ public class OptionsUtils {
         try {
             allOptions = OptionsManager.get(activity).loadGlobalOptions();
         } catch (IOException | JSONException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
         }
@@ -263,7 +263,7 @@ public class OptionsUtils {
 
             @Override
             public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                 pd.dismiss();
             }
         });
@@ -277,7 +277,7 @@ public class OptionsUtils {
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
         }
@@ -286,7 +286,7 @@ public class OptionsUtils {
         try {
             allOptions = OptionsManager.get(activity).loadDownloadOptions();
         } catch (IOException | JSONException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
         }
@@ -318,7 +318,7 @@ public class OptionsUtils {
 
             @Override
             public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_LOADING, ex);
+                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                 pd.dismiss();
             }
         });

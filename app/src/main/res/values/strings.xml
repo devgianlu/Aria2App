@@ -282,6 +282,7 @@
     <string name="dirFilesSelected">All files in directory are selected for download.</string>
     <string name="hasAlwaysCondition">You cannot add a new condition if you already specified one to use every time.</string>
     <string name="cannotAddAlwaysCondition">You cannot add an \"always\" condition if you already have others.</string>
+    <string name="failedChangingOptions">Failed changing options!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
