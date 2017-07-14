@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -78,7 +79,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         return true;
     }
 
-    private void startDownload(final SearchResult which, final String magnet) {
+    private void startDownload(final SearchResult which, @NonNull final String magnet) {
         LinearLayout layout = new LinearLayout(SearchActivity.this);
         int padding = getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
         layout.setPadding(padding, padding, padding, padding);
@@ -120,7 +121,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                     });
                         } catch (JTA2InitializingException ex) {
                             pd.dismiss();
-                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
+                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
                         }
 
                         ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
@@ -172,7 +173,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                                         @Override
                                         public void onMagnetLink(@Nullable final String magnet) {
                                             pd.dismiss();
-                                            startDownload(which, magnet);
+
+                                            if (magnet == null) {
+                                                Toaster.show(SearchActivity.this, Utils.Messages.SEARCH_FAILED, new Exception("magnet is null!"));
+                                            } else {
+                                                startDownload(which, magnet);
+                                            }
                                         }
 
                                         @Override
