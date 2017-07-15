@@ -125,8 +125,7 @@ public class SearchUtils {
                     conn.disconnect();
 
                     Document doc = Jsoup.parse(html);
-                    Elements magnet = doc.select("a.btn.btn-cdaaddee[href]");
-                    if (magnet.isEmpty()) magnet = doc.select("a.btn.btn-eccdfcae[href]");
+                    Elements magnet = doc.select("a[href^='magnet:']");
 
                     if (magnet.isEmpty()) {
                         handler.onMagnetLink(null);
