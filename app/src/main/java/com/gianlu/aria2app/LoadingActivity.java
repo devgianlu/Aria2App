@@ -1,14 +1,17 @@
 package com.gianlu.aria2app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
@@ -39,6 +43,7 @@ public class LoadingActivity extends AppCompatActivity {
     private boolean finished = false;
     private Uri shareData;
     private String fromNotifGid;
+    private Button seeError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,7 @@ public class LoadingActivity extends AppCompatActivity {
         picker = (LinearLayout) findViewById(R.id.loading_picker);
         pickerHint = (TextView) findViewById(R.id.loading_pickerHint);
         pickerList = (RecyclerView) findViewById(R.id.loading_pickerList);
+        seeError = (Button) findViewById(R.id.loading_seeError);
         pickerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         ImageButton pickerAdd = (ImageButton) findViewById(R.id.loading_pickerAdd);
         pickerAdd.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +175,7 @@ public class LoadingActivity extends AppCompatActivity {
     private void tryConnecting(final ProfilesManager manager, MultiProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
+        seeError.setVisibility(View.GONE);
 
         if (profile == null) {
             displayPicker(manager, hasShareData());
@@ -181,16 +188,40 @@ public class LoadingActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailedConnecting(Exception ex) {
+                public void onFailedConnecting(final Exception ex) {
                     Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
                         @Override
                         public void run() {
                             displayPicker(manager, hasShareData());
+                            seeError.setVisibility(View.VISIBLE);
+                            seeError.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    showErrorDialog(ex);
+                                }
+                            });
                         }
                     });
+
+                    Logging.logMe(LoadingActivity.this, ex);
                 }
             });
         }
+    }
+
+    private void showErrorDialog(final Exception ex) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.failedConnecting)
+                .setPositiveButton(android.R.string.ok, null)
+                .setNeutralButton(R.string.contactMe, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CommonUtils.sendEmail(LoadingActivity.this, getString(R.string.app_name), ex);
+                    }
+                })
+                .setMessage(ex.getLocalizedMessage());
+
+        CommonUtils.showDialog(this, builder);
     }
 
     private void displayPicker(final ProfilesManager manager, boolean share) {

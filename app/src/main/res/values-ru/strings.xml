@@ -221,7 +221,7 @@
     <string name="removeMetadataName">Удалить метаданные для %s</string>
     <string name="removeDownload_removeMetadata">Удалить метаданные, которые были созданы для этого загружаемого файла?</string>
     <string name="base64NotSelected">Вы не выбрали файл!</string>
-    <string name="certDisclaimer">Файл сертификата может быть скопирован в другое место.</string>
+    <string name="certDisclaimer">Оставьте пустым для использования общесистемного сертификата (вы все равно должны установить действительный сертификат). Если указано, файл сертификата может быть скопирован где-то еще.</string>
     <string name="test">Тест</string>
     <string name="test_help">Нажатием кнопки \"ТЕСТ\", Ari2App проверит вашу конфигурацию и поможет вам продиагностировать сетевые проблемы. Чтобы получить дополнительную помощь, свяжитесь со мной по адресу altomanigianluca@gmail.com.</string>
     <string name="restartTutorial">Перезапустить обучение</string>
@@ -307,6 +307,8 @@
     <string name="failedBuying">Не удалось купить этот товар! Пожалуйста свяжись со мной.</string>
     <string name="failedBillingConnection">Не удалось подключиться к службе выставления счетов!</string>
     <string name="noLogs">Список логов пуст.</string>
+    <string name="seeError">См. Ошибку</string>
+    <string name="contactMe">Свяжитесь со мной</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

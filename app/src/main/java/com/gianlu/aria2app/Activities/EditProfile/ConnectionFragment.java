@@ -252,13 +252,8 @@ public class ConnectionFragment extends FieldErrorFragment {
 
         if (partial) return new Fields(connectionMethod, address, port, endpoint, encryption, null);
 
-        String certificatePath = null;
-        if (encryption) {
-            certificatePath = this.certificatePath.getEditText().getText().toString();
-            if (certificatePath.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, context.getString(R.string.emptyCertificate));
-            }
-
+        String certificatePath = this.certificatePath.getEditText().getText().toString(); // The certificate path can be empty
+        if (encryption && certificatePath != null && !certificatePath.isEmpty()) {
             File cert = new File(certificatePath);
             if (!cert.exists() || !cert.canRead())
                 throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, context.getString(R.string.invalidCertificate));

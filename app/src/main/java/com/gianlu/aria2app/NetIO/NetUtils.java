@@ -36,7 +36,10 @@ import javax.net.ssl.TrustManagerFactory;
 
 public class NetUtils {
 
-    public static SSLContext readySSLContext(Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+    @NonNull
+    public static SSLContext readySSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+        if (ca == null) return SSLContext.getDefault();
+
         String keyStoreType = KeyStore.getDefaultType();
         KeyStore keyStore = KeyStore.getInstance(keyStoreType);
         keyStore.load(null, null);
@@ -50,11 +53,6 @@ public class NetUtils {
         context.init(null, tmf.getTrustManagers(), null);
 
         return context;
-    }
-
-    @Nullable
-    public static Certificate readyCertificate(Context context) throws CertificateException, FileNotFoundException {
-        return readyCertificate(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 
     @Nullable
@@ -94,7 +92,8 @@ public class NetUtils {
 
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);
-        if (profile.serverSSL) factory.setSSLContext(readySSLContext(readyCertificate(context)));
+        if (profile.serverSSL)
+            factory.setSSLContext(readySSLContext(readyCertificate(context, profile)));
 
         try {
             WebSocket socket = factory.createSocket(profile.buildWebSocketUrl(), 5000);
