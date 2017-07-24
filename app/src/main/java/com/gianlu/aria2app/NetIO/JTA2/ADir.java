@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// FIXME: #calcTotalLength and #calcCompletedLength not working right
 public class ADir extends TreeNode {
     public final long totalLength;
     public final long completedLength;

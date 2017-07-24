@@ -444,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private void showOutdatedDialog(String latest, String current) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.outdated_aria2)
-                .setMessage(getString(R.string.outdated_aria2_message, latest, current))
+                .setMessage(getString(R.string.outdated_aria2_message, current, latest))
                 .setPositiveButton(android.R.string.ok, null);
 
         CommonUtils.showDialog(this, builder);
