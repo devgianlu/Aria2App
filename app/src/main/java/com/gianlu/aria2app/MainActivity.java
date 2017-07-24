@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public void onProfileSelected(final MultiProfile profile) {
         ProfilesManager.get(this).setLastProfile(this, profile);
-        startActivity(new Intent(this, LoadingActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+        LoadingActivity.startActivity(this);
     }
 
     @Override

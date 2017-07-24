@@ -38,11 +38,17 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         this.context = context;
         this.handler = handler;
         this.inflater = LayoutInflater.from(context);
+        setHasStableIds(true);
     }
 
     @Override
     public DownloadCardsAdapter.DownloadViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new DownloadViewHolder(parent);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return objs.get(position).gid.hashCode();
     }
 
     private void setupActions(DownloadViewHolder holder, final Download download) {

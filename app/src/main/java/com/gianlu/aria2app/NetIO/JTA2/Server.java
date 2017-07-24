@@ -19,7 +19,7 @@ public class Server {
     public Server(JSONObject obj) throws JSONException {
         uri = obj.getString("uri");
         currentUri = obj.getString("currentUri");
-        downloadSpeed = Integer.parseInt(obj.getString("downloadSpeed"));
+        downloadSpeed = obj.getInt("downloadSpeed");
     }
 
     @Nullable

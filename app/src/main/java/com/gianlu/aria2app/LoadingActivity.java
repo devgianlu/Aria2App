@@ -1,10 +1,12 @@
 package com.gianlu.aria2app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +46,18 @@ public class LoadingActivity extends AppCompatActivity {
     private Uri shareData;
     private String fromNotifGid;
     private Button seeError;
+
+    public static void startActivity(Context context) {
+        context.startActivity(new Intent(context, LoadingActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+    }
+
+    public static void startActivity(Context context, @Nullable Throwable ex) {
+        context.startActivity(new Intent(context, LoadingActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra("showPicker", true)
+                .putExtra("ex", ex));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +138,19 @@ public class LoadingActivity extends AppCompatActivity {
                     Logging.logMe(this, ex);
                 }
             }
+        }
+
+        final Throwable ex = (Throwable) getIntent().getSerializableExtra("ex");
+        if (ex != null) {
+            seeError.setVisibility(View.VISIBLE);
+            seeError.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showErrorDialog(ex);
+                }
+            });
+        } else {
+            seeError.setVisibility(View.GONE);
         }
 
         if (getIntent().getBooleanExtra("showPicker", false))
@@ -209,7 +236,7 @@ public class LoadingActivity extends AppCompatActivity {
         }
     }
 
-    private void showErrorDialog(final Exception ex) {
+    private void showErrorDialog(final Throwable ex) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)

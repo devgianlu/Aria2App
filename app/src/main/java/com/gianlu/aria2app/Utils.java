@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -93,9 +92,7 @@ public class Utils {
         Logging.logMe(context, ex);
         WebSocketing.clear();
         ProfilesManager.get(context).unsetLastProfile(context);
-        context.startActivity(new Intent(context, LoadingActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .putExtra("showPicker", true));
+        LoadingActivity.startActivity(context, ex);
     }
 
     private static LineDataSet initDownloadSet(Context context) {

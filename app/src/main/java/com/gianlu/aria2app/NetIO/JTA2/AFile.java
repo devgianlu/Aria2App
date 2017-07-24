@@ -20,11 +20,11 @@ public class AFile implements Serializable {
     public boolean selected;
 
     public AFile(JSONObject obj) throws JSONException {
-        index = Integer.parseInt(obj.getString("index"));
+        index = obj.getInt("index");
         path = obj.getString("path");
-        length = Long.parseLong(obj.getString("length"));
-        completedLength = Long.parseLong(obj.getString("completedLength"));
-        selected = Boolean.parseBoolean(obj.getString("selected"));
+        length = obj.getLong("length");
+        completedLength = obj.getLong("completedLength");
+        selected = obj.getBoolean("selected");
         uris = new HashMap<>();
 
         if (obj.has("uris")) {

@@ -2,7 +2,6 @@ package com.gianlu.aria2app;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -81,9 +80,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public void onFatal(Throwable ex) {
         WebSocketing.clear();
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
-        startActivity(new Intent(this, LoadingActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .putExtra("showPicker", true));
+        LoadingActivity.startActivity(this, ex);
 
         sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
                 .setDescription(Logging.getStackTrace(ex))
@@ -94,9 +91,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     @Override
     public void onSubsequentExceptions() {
         WebSocketing.clear();
-        startActivity(new Intent(this, LoadingActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .putExtra("showPicker", true));
+        LoadingActivity.startActivity(this, null);
     }
 
     public void setHasCheckedVersion(boolean checkedVersion) {

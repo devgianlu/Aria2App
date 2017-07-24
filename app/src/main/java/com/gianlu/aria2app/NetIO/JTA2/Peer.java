@@ -26,13 +26,13 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
     public Peer(JSONObject obj) {
         peerId = obj.optString("peerId", null);
         ip = obj.optString("ip", null);
-        port = Integer.parseInt(obj.optString("port", "-1"));
+        port = obj.optInt("port", -1);
         bitfield = obj.optString("bitfield", null);
-        amChoking = Boolean.parseBoolean(obj.optString("amChoking", "false"));
-        peerChoking = Boolean.parseBoolean(obj.optString("peerChoking", "false"));
-        downloadSpeed = Integer.parseInt(obj.optString("downloadSpeed", "0"));
-        uploadSpeed = Integer.parseInt(obj.optString("uploadSpeed", "0"));
-        seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
+        amChoking = obj.optBoolean("amChoking", false);
+        peerChoking = obj.optBoolean("peerChoking", false);
+        downloadSpeed = obj.optInt("downloadSpeed", 0);
+        uploadSpeed = obj.optInt("uploadSpeed", 0);
+        seeder = obj.optBoolean("seeder", false);
     }
 
     @Nullable

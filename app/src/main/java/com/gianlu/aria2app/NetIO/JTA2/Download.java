@@ -46,21 +46,21 @@ public class Download implements Serializable, Filterable<Download.Status> {
     public Download(JSONObject obj) throws JSONException {
         gid = obj.getString("gid");
         status = Status.parse(obj.getString("status"));
-        length = Long.parseLong(obj.getString("totalLength"));
-        completedLength = Long.parseLong(obj.getString("completedLength"));
-        uploadLength = Long.parseLong(obj.getString("uploadLength"));
+        length = obj.getLong("totalLength");
+        completedLength = obj.getLong("completedLength");
+        uploadLength = obj.getLong("uploadLength");
         bitfield = obj.optString("bitfield", null);
-        downloadSpeed = Integer.parseInt(obj.getString("downloadSpeed"));
-        uploadSpeed = Integer.parseInt(obj.getString("uploadSpeed"));
-        pieceLength = Long.parseLong(obj.getString("pieceLength"));
-        numPieces = Integer.parseInt(obj.getString("numPieces"));
-        connections = Integer.parseInt(obj.getString("connections"));
+        downloadSpeed = obj.getInt("downloadSpeed");
+        uploadSpeed = obj.getInt("uploadSpeed");
+        pieceLength = obj.getLong("pieceLength");
+        numPieces = obj.getInt("numPieces");
+        connections = obj.getInt("connections");
         followedBy = obj.optString("followedBy", null);
         following = obj.optString("following", null);
         belongsTo = obj.optString("belongsTo", null);
         dir = obj.optString("dir", null);
-        verifiedLength = Long.parseLong(obj.optString("verifiedLength", "0"));
-        verifyIntegrityPending = Boolean.parseBoolean(obj.optString("verifyIntegrityPending", "false"));
+        verifiedLength = obj.optLong("verifiedLength", 0);
+        verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
         files = new ArrayList<>();
 
         if (obj.has("files")) {
@@ -70,8 +70,8 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
         if (obj.has("bittorrent")) {
             infoHash = obj.optString("infoHash", null);
-            numSeeders = Integer.parseInt(obj.getString("numSeeders"));
-            seeder = Boolean.parseBoolean(obj.optString("seeder", "false"));
+            numSeeders = obj.getInt("numSeeders");
+            seeder = obj.optBoolean("seeder", false);
             torrent = new BitTorrent(obj.getJSONObject("bittorrent"));
         } else {
             infoHash = null;
@@ -81,7 +81,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
         }
 
         if (obj.has("errorCode")) {
-            errorCode = Integer.parseInt(obj.getString("errorCode"));
+            errorCode = obj.getInt("errorCode");
             errorMessage = obj.optString("errorMessage");
         } else {
             errorCode = -1;
