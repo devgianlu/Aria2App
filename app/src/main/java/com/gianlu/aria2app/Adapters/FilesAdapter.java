@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
+import com.gianlu.aria2app.FileTypeImageView;
 import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.R;
@@ -114,6 +115,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             TreeNode file = currentNodes.get(position);
 
             castHolder.name.setText(file.name);
+            castHolder.formatIcon.setFileName(file.name);
             castHolder.progressBar.setProgress((int) file.obj.getProgress());
             castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", file.obj.getProgress()));
             castHolder.updateStatus(file.obj);
@@ -200,6 +202,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final ProgressBar progressBar;
         final SuperTextView percentage;
         final ImageView status;
+        final FileTypeImageView formatIcon;
 
         FileViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.file_item, parent, false));
@@ -209,6 +212,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             progressBar.setProgressTintList(ColorStateList.valueOf(color));
             percentage = (SuperTextView) itemView.findViewById(R.id.fileItem_percentage);
             status = (ImageView) itemView.findViewById(R.id.fileItem_status);
+            formatIcon = (FileTypeImageView) itemView.findViewById(R.id.fileItem_formatIcon);
         }
 
         public void updateStatus(AFile file) {

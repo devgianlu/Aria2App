@@ -7,7 +7,8 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <ImageView
+    <com.gianlu.aria2app.FileTypeImageView
+        android:id="@+id/fileItem_formatIcon"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_gravity="center_vertical"
