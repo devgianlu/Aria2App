@@ -230,7 +230,6 @@ public class Utils {
 
     @SuppressWarnings("WeakerAccess")
     public static class Messages {
-        // public static final Toaster.Message WS_EXCEPTION = new Toaster.Message(, true);
         public static final Toaster.Message FAILED_GATHERING_INFORMATION = new Toaster.Message(R.string.failedGatheringInfo, true);
         public static final Toaster.Message FAILED_DOWNLOAD_FILE = new Toaster.Message(R.string.failedDownloadingFile, true);
         public static final Toaster.Message DOWNLOAD_ADDED = new Toaster.Message(R.string.downloadAdded, false);

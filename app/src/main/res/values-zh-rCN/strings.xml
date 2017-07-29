@@ -7,7 +7,7 @@
     <string name="downloadStatus_unknown">未知</string>
     <string name="downloadStatus_complete">完成</string>
     <string name="downloadStatus_removed">已移除</string>
-    <string name="downloadStatus_active">活动的</string>
+    <string name="downloadStatus_active">活动</string>
     <string name="completed_length"><![CDATA[<b>完成长度：</b>]]>%s</string>
     <string name="total_length"><![CDATA[<b>总长度：</b>]]>%s</string>
     <string name="uploaded_length"><![CDATA[<b>已上传长度：</b>]]>%s</string>
@@ -49,7 +49,7 @@
     <string name="servers">服务器</string>
     <string name="addProfile">添加配置</string>
     <string name="home">主界面</string>
-    <string name="announceList">Announce list</string>
+    <string name="announceList">Announce列表</string>
     <string name="port">端口</string>
     <string name="endpoint">终端</string>
     <string name="endpoint_default">/jsonrpc</string>
@@ -70,7 +70,7 @@
     <string name="uploadSpeed">上传速度</string>
     <string name="none">无</string>
     <string name="enableDirectDownload">启用直接下载</string>
-    <string name="directDownload_help">直接下载为通过一次点击直接从aria2服务器下载文件到您的设备！您仅需要一个合适的配置：地址必须指向一个aria2下载文件夹列表，地址以外的路径将被忽略。这需要外部存储的写入权限。您可以照着这个帮助来设置它：http://gianlu.xyz/aria2app/setup-directdownload/.</string>
+    <string name="directDownload_help">直接下载通过一次点击直接从aria2服务器下载文件到您的设备！您仅需要一个合适的配置：地址必须指向一个aria2下载文件夹列表，地址以外的路径将被忽略。这需要外部存储的写入权限。您可以照着这个帮助来设置它：http://gianlu.xyz/aria2app/setup-directdownload/.</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="more">更多</string>
@@ -119,7 +119,7 @@
     <string name="readExternalStorageRequest_title">需要读取权限</string>
     <string name="readExternalStorageRequest_certMessage">为了加载证书，Aria2App需要读取外部存储。</string>
     <string name="readExternalStorageRequest_base64Message">为了加载种子或Metalink，Aria2App需要读取外部存储。</string>
-    <string name="noDownloads">没有可显示的下载。尝试改变过滤器或通过底角的添加图标开始一个下载任务。</string>
+    <string name="noDownloads">没有可显示的下载。尝试更改过滤器或通过底角的添加图标开始一个下载任务。</string>
     <string name="certificate">CA证书路径</string>
     <string name="search">搜索</string>
     <string name="addUri">添加网址</string>
@@ -188,7 +188,7 @@
     <string name="noUris_help">没有网址，请通过下面按钮添加至少一个网址。</string>
     <string name="editUri">编辑网址</string>
     <string name="queuePosition_help">留空将添加下载到队列末尾。</string>
-    <string name="uris_disclaimer">必须只添加指向相同资源的HTTP/FTP/SFTP/BT的网址。如果您添加指向不同资源的网址，下载可能aria2无法识别的失败或损坏。</string>
+    <string name="uris_disclaimer">必须只添加指向相同资源的HTTP/FTP/SFTP/BT的网址。如果您添加指向不同资源的网址，下载可能有aria2无法识别的失败或损坏。</string>
     <string name="noUris">没有网址。</string>
     <string name="torrentUris_disclaimer">网址是为了网络做种。对于单个文件种子，网址可以是指向资源的完整网址；如果网址以/结尾，会添加种子文件中的名字。对于多个种子，会添加种子中的名字和路径形成每个文件的网址。</string>
     <string name="file">文件</string>
@@ -279,7 +279,7 @@
     <string name="hasAlwaysCondition">您不能添加一个新的条件如果您已经指定了一个每次都会使用的条件。</string>
     <string name="cannotAddAlwaysCondition">您不能添加一个“总是”运行的条件如果您已经有其它的条件。</string>
     <string name="failedChangingOptions">更改选项失败！</string>
-    <string name="seeError">看错误</string>
+    <string name="seeError">查看错误</string>
     <string name="contactMe">联系我</string>
 
     <!-- String-arrays -->
