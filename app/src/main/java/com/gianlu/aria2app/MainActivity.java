@@ -667,16 +667,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     }
 
     @Override
-    public int getOpenDrawerDesc() {
-        return R.string.openDrawer;
-    }
-
-    @Override
-    public int getCloseDrawerDesc() {
-        return R.string.closeDrawer;
-    }
-
-    @Override
     public int getDrawerBadge() {
         return R.drawable.drawer_badge;
     }
