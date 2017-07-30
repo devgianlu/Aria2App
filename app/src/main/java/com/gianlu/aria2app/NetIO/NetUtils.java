@@ -80,11 +80,15 @@ public class NetUtils {
         }
     }
 
-    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException, IllegalArgumentException {
-        WebSocketFactory factory = new WebSocketFactory();
-        factory.setConnectionTimeout(5000);
-        if (ca != null) factory.setSSLContext(readySSLContext(ca));
-        return factory.createSocket(url, 5000);
+    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException {
+        try {
+            WebSocketFactory factory = new WebSocketFactory();
+            factory.setConnectionTimeout(5000);
+            if (ca != null) factory.setSSLContext(readySSLContext(ca));
+            return factory.createSocket(url, 5000);
+        } catch (IllegalArgumentException ex) {
+            throw new IOException("Just a wrapper for the real exception", ex);
+        }
     }
 
     public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {

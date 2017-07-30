@@ -269,7 +269,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     private void addPathToBreadcrumbs(TreeNode dir) {
-        breadcrumbsContainer.addView(new BreadcrumbSegment(getContext(), dir, this), 0);
+        Context context = getContext();
+        if (context != null)
+            breadcrumbsContainer.addView(new BreadcrumbSegment(context, dir, this), 0);
     }
 
     @Override
