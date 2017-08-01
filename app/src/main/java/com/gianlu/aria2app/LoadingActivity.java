@@ -69,13 +69,13 @@ public class LoadingActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.hide();
 
-        connecting = (LinearLayout) findViewById(R.id.loading_connecting);
-        picker = (LinearLayout) findViewById(R.id.loading_picker);
-        pickerHint = (TextView) findViewById(R.id.loading_pickerHint);
-        pickerList = (RecyclerView) findViewById(R.id.loading_pickerList);
-        seeError = (Button) findViewById(R.id.loading_seeError);
+        connecting = findViewById(R.id.loading_connecting);
+        picker = findViewById(R.id.loading_picker);
+        pickerHint = findViewById(R.id.loading_pickerHint);
+        pickerList = findViewById(R.id.loading_pickerList);
+        seeError = findViewById(R.id.loading_seeError);
         pickerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        ImageButton pickerAdd = (ImageButton) findViewById(R.id.loading_pickerAdd);
+        ImageButton pickerAdd = findViewById(R.id.loading_pickerAdd);
         pickerAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +149,7 @@ public class LoadingActivity extends AppCompatActivity {
                     showErrorDialog(ex);
                 }
             });
+            getIntent().removeExtra("ex");
         } else {
             seeError.setVisibility(View.GONE);
         }
@@ -261,7 +262,6 @@ public class LoadingActivity extends AppCompatActivity {
         CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<MultiProfile>() {
             @Override
             public void onProfileSelected(MultiProfile profile) {
-                WebSocketing.unlock();
                 tryConnecting(manager, profile);
             }
         }, false, new CustomProfilesAdapter.IEdit() {

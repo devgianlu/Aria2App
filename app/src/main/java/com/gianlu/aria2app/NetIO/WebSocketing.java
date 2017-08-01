@@ -52,6 +52,7 @@ public class WebSocketing extends AbstractClient {
 
     public static void instantiate(Context context, IConnect listener) {
         try {
+            unlock();
             webSocketing = new WebSocketing(context, listener);
         } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
@@ -89,12 +90,18 @@ public class WebSocketing extends AbstractClient {
         }
 
         if (connectionQueue.size() > 10) {
-            connectionQueue.clear();
+            synchronized (connectionQueue) {
+                connectionQueue.clear();
+            }
+
             System.gc();
         }
 
         if (socket.getState() != WebSocketState.OPEN) {
-            connectionQueue.add(new Pair<>(request, handler));
+            synchronized (connectionQueue) {
+                connectionQueue.add(new Pair<>(request, handler));
+            }
+
             return;
         }
 
@@ -109,7 +116,9 @@ public class WebSocketing extends AbstractClient {
     }
 
     private void processQueue() {
-        for (Pair<JSONObject, IReceived> pair : connectionQueue) send(pair.first, pair.second);
+        synchronized (connectionQueue) {
+            for (Pair<JSONObject, IReceived> pair : connectionQueue) send(pair.first, pair.second);
+        }
     }
 
     private class Adapter extends WebSocketAdapter {
@@ -139,7 +148,6 @@ public class WebSocketing extends AbstractClient {
 
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-            unlock();
             if (connectionListener != null) {
                 connectionListener.onConnected(WebSocketing.this);
                 connectionListener = null;
