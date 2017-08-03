@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+// This is a test
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -281,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         Logging.clearLogs(this);
 
-        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         drawerManager = new DrawerManager<>(new Initializer<>(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this)
@@ -302,10 +303,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
 
-        list = (RecyclerView) findViewById(R.id.main_list);
+        list = findViewById(R.id.main_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.main_swipeLayout);
+        swipeRefresh = findViewById(R.id.main_swipeLayout);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -314,31 +315,31 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
         });
 
-        fabMenu = (FloatingActionsMenu) findViewById(R.id.main_fab);
+        fabMenu = findViewById(R.id.main_fab);
         fabMenu.setOnFloatingActionsMenuUpdateListener(this);
 
-        FloatingActionButton fabSearch = (FloatingActionButton) findViewById(R.id.mainFab_search);
+        FloatingActionButton fabSearch = findViewById(R.id.mainFab_search);
         fabSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, SearchActivity.class));
             }
         });
-        FloatingActionButton fabAddURI = (FloatingActionButton) findViewById(R.id.mainFab_addURI);
+        FloatingActionButton fabAddURI = findViewById(R.id.mainFab_addURI);
         fabAddURI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AddUriActivity.class));
             }
         });
-        final FloatingActionButton fabAddTorrent = (FloatingActionButton) findViewById(R.id.mainFab_addTorrent);
+        final FloatingActionButton fabAddTorrent = findViewById(R.id.mainFab_addTorrent);
         fabAddTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AddTorrentActivity.class));
             }
         });
-        final FloatingActionButton fabAddMetalink = (FloatingActionButton) findViewById(R.id.mainFab_addMetalink);
+        final FloatingActionButton fabAddMetalink = findViewById(R.id.mainFab_addMetalink);
         fabAddMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
