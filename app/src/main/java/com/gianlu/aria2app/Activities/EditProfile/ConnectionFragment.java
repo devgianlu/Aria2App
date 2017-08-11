@@ -55,15 +55,15 @@ public class ConnectionFragment extends FieldErrorFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.edit_profile_connection_fragment, container, false);
-        completeAddress = (TextView) layout.findViewById(R.id.editProfile_completeAddress);
-        connectionMethod = (RadioGroup) layout.findViewById(R.id.editProfile_connectionMethod);
+        completeAddress = layout.findViewById(R.id.editProfile_completeAddress);
+        connectionMethod = layout.findViewById(R.id.editProfile_connectionMethod);
         connectionMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 updateCompleteAddress();
             }
         });
-        address = (TextInputLayout) layout.findViewById(R.id.editProfile_address);
+        address = layout.findViewById(R.id.editProfile_address);
         address.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -80,7 +80,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                 updateCompleteAddress();
             }
         });
-        port = (TextInputLayout) layout.findViewById(R.id.editProfile_port);
+        port = layout.findViewById(R.id.editProfile_port);
         port.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,7 +97,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                 updateCompleteAddress();
             }
         });
-        endpoint = (TextInputLayout) layout.findViewById(R.id.editProfile_endpoint);
+        endpoint = layout.findViewById(R.id.editProfile_endpoint);
         endpoint.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -114,7 +114,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                 updateCompleteAddress();
             }
         });
-        encryption = (CheckBox) layout.findViewById(R.id.editProfile_encryption);
+        encryption = layout.findViewById(R.id.editProfile_encryption);
         encryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -124,8 +124,8 @@ public class ConnectionFragment extends FieldErrorFragment {
                     Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_certMessage, 11);
             }
         });
-        certificatePathContainer = (LinearLayout) layout.findViewById(R.id.editProfile_certificatePathContainer);
-        certificatePath = (TextInputLayout) layout.findViewById(R.id.editProfile_certificatePath);
+        certificatePathContainer = layout.findViewById(R.id.editProfile_certificatePathContainer);
+        certificatePath = layout.findViewById(R.id.editProfile_certificatePath);
         certificatePath.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -143,7 +143,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
 
-        ImageButton pickCertificatePath = (ImageButton) layout.findViewById(R.id.editProfile_pickCertificatePath);
+        ImageButton pickCertificatePath = layout.findViewById(R.id.editProfile_pickCertificatePath);
         pickCertificatePath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,10 +245,18 @@ public class ConnectionFragment extends FieldErrorFragment {
 
         String endpoint = this.endpoint.getEditText().getText().toString().trim();
         if (endpoint.isEmpty()) {
-            throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.endpointEmpty));
+            throw new InvalidFieldException(getClass(), R.id.editProfile_endpoint, context.getString(R.string.endpointEmpty));
         }
 
         boolean encryption = this.encryption.isChecked();
+
+        try {
+            new URI(connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET ?
+                    MultiProfile.buildWebSocketUrl(address, port, endpoint, encryption)
+                    : MultiProfile.buildHttpUrl(address, port, endpoint, encryption));
+        } catch (URISyntaxException ex) {
+            throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.invalidCompleteAddress));
+        }
 
         if (partial) return new Fields(connectionMethod, address, port, endpoint, encryption, null);
 
@@ -264,7 +272,7 @@ public class ConnectionFragment extends FieldErrorFragment {
 
     @Override
     public void onFieldError(@IdRes int fieldId, String reason) {
-        TextInputLayout inputLayout = (TextInputLayout) layout.findViewById(fieldId);
+        TextInputLayout inputLayout = layout.findViewById(fieldId);
         if (inputLayout != null) {
             inputLayout.setErrorEnabled(true);
             inputLayout.setError(reason);

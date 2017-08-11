@@ -99,6 +99,14 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         profiles.add(new UserProfile(token, port));
     }
 
+    public static String buildWebSocketUrl(String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL) {
+        return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+    }
+
+    public static String buildHttpUrl(String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL) {
+        return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+    }
+
     private UserProfile getDefaultProfile() {
         for (UserProfile profile : profiles)
             if (profile.connectivityCondition.isDefault)
@@ -425,11 +433,11 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public String buildWebSocketUrl() {
-            return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+            return MultiProfile.buildWebSocketUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
         }
 
         public String buildHttpUrl() {
-            return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+            return MultiProfile.buildHttpUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
         }
 
         public String getFullServerAddress() {
