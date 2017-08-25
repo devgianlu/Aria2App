@@ -11,6 +11,7 @@ import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Prefs;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -67,8 +68,8 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
         CommonUtils.setDebug(BuildConfig.DEBUG);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
-        FileDownloader.init(getApplicationContext());
-        ErrorHandler.setup(Prefs.getFakeInt(this, Prefs.Keys.A2_UPDATE_INTERVAL, 1000), this);
+        FileDownloader.setup(getApplicationContext());
+        ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1000), this);
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         tracker = getTracker(this);

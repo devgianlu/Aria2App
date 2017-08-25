@@ -15,11 +15,12 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
-import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
@@ -174,9 +175,9 @@ public class OptionsUtils {
                 .setNegativeButton(android.R.string.cancel, null);
 
         LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.edit_option_dialog, null, false);
-        SuperTextView value = (SuperTextView) layout.findViewById(R.id.editOptionDialog_value);
+        SuperTextView value = layout.findViewById(R.id.editOptionDialog_value);
         value.setHtml(R.string.currentValue, option.value == null ? "not set" : option.value);
-        final EditText edit = (EditText) layout.findViewById(R.id.editOptionDialog_edit);
+        final EditText edit = layout.findViewById(R.id.editOptionDialog_edit);
 
         builder.setView(layout)
                 .setPositiveButton(R.string.set, new DialogInterface.OnClickListener() {
@@ -246,7 +247,7 @@ public class OptionsUtils {
             @SuppressWarnings("ConstantConditions")
             public void onOptions(Map<String, String> options) {
                 if (quick) {
-                    Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
+                    Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
                         Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
                         pd.dismiss();
@@ -301,7 +302,7 @@ public class OptionsUtils {
                 }
 
                 if (quick) {
-                    Set<String> quickOptions = Prefs.getSet(activity, Prefs.Keys.A2_QUICK_OPTIONS, new HashSet<String>());
+                    Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
                         Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
                         pd.dismiss();

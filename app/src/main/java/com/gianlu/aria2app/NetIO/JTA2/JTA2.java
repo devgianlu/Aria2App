@@ -9,11 +9,12 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IReceived;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +42,7 @@ public class JTA2 {
     public JTA2(Context context, @NonNull AbstractClient client) {
         this.context = context;
         this.client = client;
-        this.forceAction = Prefs.getBoolean(context, Prefs.Keys.A2_FORCE_ACTION, true);
+        this.forceAction = Prefs.getBoolean(context, PKeys.A2_FORCE_ACTION, true);
     }
 
     public static JTA2 instantiate(Context context) throws JTA2InitializingException {

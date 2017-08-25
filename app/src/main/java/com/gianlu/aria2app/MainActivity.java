@@ -14,7 +14,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -66,6 +65,7 @@ import com.gianlu.commonutils.Drawer.Initializer;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
@@ -81,7 +81,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItemCompat.OnActionExpandListener {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -243,11 +243,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @SuppressWarnings("ConstantConditions")
     private void setupAdapterFiltersAndSorting() {
         List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
-        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
+        Set<String> checkedFiltersSet = Prefs.getSet(this, PKeys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
 
-        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
+        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PKeys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
     private void processSharedFile(SharedFile file) {
@@ -276,8 +276,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
-        if (Prefs.getString(this, Prefs.Keys.DD_DOWNLOAD_PATH, null) == null)
-            Prefs.putString(this, Prefs.Keys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+        if (Prefs.getString(this, PKeys.DD_DOWNLOAD_PATH, null) == null)
+            Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 
         Logging.clearLogs(this);
 
@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         DownloadsManager.get(this).setListener(this);
 
-        if (Prefs.getBoolean(this, Prefs.Keys.A2_ENABLE_NOTIFS, true))
+        if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
         else NotificationService.stop(this);
 
@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
         }
 
-        if (!((ThisApplication) getApplication()).hasCheckedVersion() && Prefs.getBoolean(this, Prefs.Keys.A2_CHECK_VERSION, true)) {
+        if (!((ThisApplication) getApplication()).hasCheckedVersion() && Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true)) {
             GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
                 @Override
                 public void onRelease(final String latestVersion) {
@@ -482,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         MenuItem searchItem = menu.findItem(R.id.main_search);
-        MenuItemCompat.setOnActionExpandListener(searchItem, this);
+        searchItem.setOnActionExpandListener(this);
         searchView = (SearchView) searchItem.getActionView();
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -498,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (sortingMenu != null) {
             sortingMenu.setGroupCheckable(0, true, true);
 
-            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, Prefs.Keys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
+            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PKeys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
             MenuItem item;
             switch (sorting) {
                 case NAME:
@@ -544,7 +544,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             stringFilters[i] = filters[i].getFormal(this, true);
 
         final boolean[] checkedFilters = new boolean[filters.length];
-        Set<String> checkedFiltersSet = Prefs.getSet(this, Prefs.Keys.A2_MAIN_FILTERS, null);
+        Set<String> checkedFiltersSet = Prefs.getSet(this, PKeys.A2_MAIN_FILTERS, null);
 
         if (checkedFiltersSet == null) {
             for (int i = 0; i < checkedFilters.length; i++) checkedFilters[i] = true;
@@ -576,7 +576,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         for (int i = 0; i < checkedFilters.length; i++)
                             if (checkedFilters[i]) set.add(filters[i].name());
 
-                        Prefs.putSet(MainActivity.this, Prefs.Keys.A2_MAIN_FILTERS, set);
+                        Prefs.putSet(MainActivity.this, PKeys.A2_MAIN_FILTERS, set);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
@@ -633,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {
         if (adapter != null) adapter.sort(sorting);
-        Prefs.putString(this, Prefs.Keys.A2_MAIN_SORTING, sorting.name());
+        Prefs.putString(this, PKeys.A2_MAIN_SORTING, sorting.name());
     }
 
     @Override

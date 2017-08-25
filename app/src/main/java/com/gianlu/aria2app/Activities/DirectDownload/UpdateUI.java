@@ -6,7 +6,8 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.PKeys;
+import com.gianlu.commonutils.Prefs;
 
 public class UpdateUI extends Thread {
     protected final Handler handler;
@@ -17,7 +18,7 @@ public class UpdateUI extends Thread {
 
     public UpdateUI(Context context, IUI listener) {
         this.handler = new Handler(context.getMainLooper());
-        this.updateInterval = Prefs.getFakeInt(context, Prefs.Keys.A2_UPDATE_INTERVAL, 1) * 1000;
+        this.updateInterval = Prefs.getFakeInt(context, PKeys.A2_UPDATE_INTERVAL, 1) * 1000;
         this.listener = listener;
     }
 

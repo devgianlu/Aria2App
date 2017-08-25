@@ -7,9 +7,10 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
-import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.commonutils.Prefs;
 import com.liulishuo.filedownloader.BaseDownloadTask;
 import com.liulishuo.filedownloader.DownloadTask;
 import com.liulishuo.filedownloader.FileDownloadListener;
@@ -49,7 +50,7 @@ public class DownloadsManager extends FileDownloadListener {
 
     private DownloadsManager(Context context) {
         downloader = FileDownloader.getImpl();
-        downloadPath = new File(Prefs.getString(context, Prefs.Keys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()));
+        downloadPath = new File(Prefs.getString(context, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()));
         runningTasks = new ArrayList<>();
         ddJournal = new File(context.getFilesDir(), "dd.journal");
 

@@ -13,11 +13,12 @@ import android.support.v4.content.ContextCompat;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
-import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Prefs;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 
@@ -36,6 +37,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class NotificationService extends IntentService {
+    private static final String CHANNEL_ID = "aria2app";
+
     public NotificationService() {
         super("Aria2App notification service");
     }
@@ -46,7 +49,7 @@ public class NotificationService extends IntentService {
             if (profile.notificationsEnabled) profiles.add(profile);
 
         return new Intent(context, NotificationService.class)
-                .putExtra("foreground", Prefs.getBoolean(context, Prefs.Keys.A2_PERSISTENT_NOTIFS, true))
+                .putExtra("foreground", Prefs.getBoolean(context, PKeys.A2_PERSISTENT_NOTIFS, true))
                 .putExtra("profiles", profiles);
     }
 
@@ -62,9 +65,8 @@ public class NotificationService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && !Objects.equals(intent.getAction(), "STOP") && intent.getBooleanExtra("foreground", true)) {
-            startForeground(new Random().nextInt(10000), new NotificationCompat.Builder(this)
+            startForeground(new Random().nextInt(10000), new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setShowWhen(false)
-                    .setPriority(Notification.PRIORITY_MIN)
                     .setContentTitle(getString(R.string.notificationService))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setContentText(CommonUtils.join((ArrayList<MultiProfile>) intent.getSerializableExtra("profiles"), ", "))
@@ -151,8 +153,8 @@ public class NotificationService extends IntentService {
             this.profile = profile;
             this.profileId = profileId;
 
-            selectedNotifications = Prefs.getSet(getApplicationContext(), Prefs.Keys.A2_SELECTED_NOTIFS_TYPE, new HashSet<String>());
-            soundEnabled = Prefs.getBoolean(getApplicationContext(), Prefs.Keys.A2_NOTIFS_SOUND, true);
+            selectedNotifications = Prefs.getSet(getApplicationContext(), PKeys.A2_SELECTED_NOTIFS_TYPE, new HashSet<String>());
+            soundEnabled = Prefs.getBoolean(getApplicationContext(), PKeys.A2_NOTIFS_SOUND, true);
         }
 
         @Override
@@ -161,7 +163,7 @@ public class NotificationService extends IntentService {
             String gid = eventBody.getJSONArray("params").getJSONObject(0).getString("gid");
 
             int reqCode = new Random().nextInt(10000);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)
                     .setContentIntent(
                             PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, LoadingActivity.class)
                                     .putExtra("fromNotification", true)

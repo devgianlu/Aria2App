@@ -4,7 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.Prefs;
+import com.gianlu.aria2app.PKeys;
+import com.gianlu.commonutils.Prefs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,14 +72,14 @@ public class Option implements Comparable<Option> {
 
     @SuppressWarnings("ConstantConditions")
     public boolean isQuick(Context context, boolean global) {
-        return Prefs.getSet(context, global ? Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS : Prefs.Keys.A2_QUICK_OPTIONS, new HashSet<String>()).contains(name);
+        return Prefs.getSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, new HashSet<String>()).contains(name);
     }
 
     public void setQuick(Context context, boolean global, boolean quick) {
         if (quick)
-            Prefs.addToSet(context, global ? Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS : Prefs.Keys.A2_QUICK_OPTIONS, name);
+            Prefs.addToSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, name);
         else
-            Prefs.removeFromSet(context, global ? Prefs.Keys.A2_GLOBAL_QUICK_OPTIONS : Prefs.Keys.A2_QUICK_OPTIONS, name);
+            Prefs.removeFromSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, name);
     }
 
     @Override

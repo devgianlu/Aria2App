@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.BuildConfig;
-import com.gianlu.aria2app.Prefs;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Prefs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
