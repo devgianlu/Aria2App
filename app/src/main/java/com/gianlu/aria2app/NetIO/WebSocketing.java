@@ -53,6 +53,7 @@ public class WebSocketing extends AbstractClient {
     public static void instantiate(Context context, IConnect listener) {
         try {
             unlock();
+            ErrorHandler.get().unlock();
             webSocketing = new WebSocketing(context, listener);
         } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);

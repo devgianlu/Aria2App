@@ -10,6 +10,9 @@ buildscript {
 
 allprojects {
     repositories {
+        flatDir {
+            dirs project(':CommonUtils').file('libs')
+        }
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url "https://maven.google.com" }

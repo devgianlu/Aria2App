@@ -11,6 +11,7 @@ public class ErrorHandler {
     private static ErrorHandler instance;
     private final IErrorHandler handler;
     private int errorCount = 0;
+    private volatile boolean locked = false;
 
     private ErrorHandler(int updateInterval, @Nullable IErrorHandler handler) {
         this.handler = handler;
@@ -20,7 +21,7 @@ public class ErrorHandler {
             public void run() {
                 errorCount = 0;
             }
-        }, 0, (updateInterval + 1000) * 5);
+        }, 0, (updateInterval + 1000) * 3);
     }
 
     public static ErrorHandler get() {
@@ -32,12 +33,24 @@ public class ErrorHandler {
         return instance;
     }
 
+    private void lock() {
+        locked = true;
+    }
+
+    public void unlock() {
+        locked = false;
+    }
+
     public void notifyException(Throwable ex, boolean fatal) {
+        if (locked) return;
         errorCount++;
 
         if (fatal) {
+            lock();
             if (handler != null) handler.onFatal(ex);
+
         } else if (errorCount >= 5) {
+            lock();
             if (handler != null) handler.onSubsequentExceptions();
         } else {
             if (handler != null) handler.onException(ex);
