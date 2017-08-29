@@ -134,11 +134,11 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.option_item, parent, false));
 
-            name = (SuperTextView) itemView.findViewById(R.id.optionItem_name);
-            value = (SuperTextView) itemView.findViewById(R.id.optionItem_value);
-            edit = (ImageButton) itemView.findViewById(R.id.optionItem_edit);
-            toggleFavourite = (ImageButton) itemView.findViewById(R.id.optionItem_toggleFavourite);
-            info = (ImageButton) itemView.findViewById(R.id.optionItem_info);
+            name = itemView.findViewById(R.id.optionItem_name);
+            value = itemView.findViewById(R.id.optionItem_value);
+            edit = itemView.findViewById(R.id.optionItem_edit);
+            toggleFavourite = itemView.findViewById(R.id.optionItem_toggleFavourite);
+            info = itemView.findViewById(R.id.optionItem_info);
         }
     }
 }

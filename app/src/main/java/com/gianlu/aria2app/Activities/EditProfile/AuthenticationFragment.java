@@ -40,7 +40,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.edit_profile_authentication_fragment, container, false);
-        authMethod = (RadioGroup) layout.findViewById(R.id.editProfile_authenticationMethod);
+        authMethod = layout.findViewById(R.id.editProfile_authenticationMethod);
         authMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int id) {
@@ -61,7 +61,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
                 }
             }
         });
-        token = (TextInputLayout) layout.findViewById(R.id.editProfile_token);
+        token = layout.findViewById(R.id.editProfile_token);
         token.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -78,8 +78,8 @@ public class AuthenticationFragment extends FieldErrorFragment {
                 token.setErrorEnabled(false);
             }
         });
-        userAndPasswd = (LinearLayout) layout.findViewById(R.id.editProfile_userAndPasswd);
-        username = (TextInputLayout) layout.findViewById(R.id.editProfile_username);
+        userAndPasswd = layout.findViewById(R.id.editProfile_userAndPasswd);
+        username = layout.findViewById(R.id.editProfile_username);
         username.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -96,7 +96,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
                 username.setErrorEnabled(false);
             }
         });
-        password = (TextInputLayout) layout.findViewById(R.id.editProfile_password);
+        password = layout.findViewById(R.id.editProfile_password);
         password.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -140,7 +140,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
 
     @Override
     public void onFieldError(@IdRes int fieldId, String reason) {
-        TextInputLayout inputLayout = (TextInputLayout) layout.findViewById(fieldId);
+        TextInputLayout inputLayout = layout.findViewById(fieldId);
         if (inputLayout != null) {
             inputLayout.setErrorEnabled(true);
             inputLayout.setError(reason);

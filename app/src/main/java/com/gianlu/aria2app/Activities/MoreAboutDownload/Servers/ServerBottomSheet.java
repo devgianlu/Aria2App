@@ -29,10 +29,10 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
 
     @Override
     public void bindViews() {
-        downloadSpeed = (SuperTextView) content.findViewById(R.id.serverSheet_downloadSpeed);
-        chart = (LineChart) content.findViewById(R.id.serverSheet_chart);
-        currentUri = (SuperTextView) content.findViewById(R.id.serverSheet_currentUri);
-        uri = (SuperTextView) content.findViewById(R.id.serverSheet_uri);
+        downloadSpeed = content.findViewById(R.id.serverSheet_downloadSpeed);
+        chart = content.findViewById(R.id.serverSheet_chart);
+        currentUri = content.findViewById(R.id.serverSheet_currentUri);
+        uri = content.findViewById(R.id.serverSheet_uri);
     }
 
     @Override

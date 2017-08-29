@@ -193,7 +193,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         DirViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.directory_item, parent, false));
 
-            name = (SuperTextView) itemView.findViewById(R.id.directoryItem_name);
+            name = itemView.findViewById(R.id.directoryItem_name);
         }
     }
 
@@ -207,12 +207,12 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         FileViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.file_item, parent, false));
 
-            name = (SuperTextView) itemView.findViewById(R.id.fileItem_name);
-            progressBar = (ProgressBar) itemView.findViewById(R.id.fileItem_progressBar);
+            name = itemView.findViewById(R.id.fileItem_name);
+            progressBar = itemView.findViewById(R.id.fileItem_progressBar);
             progressBar.setProgressTintList(ColorStateList.valueOf(color));
-            percentage = (SuperTextView) itemView.findViewById(R.id.fileItem_percentage);
-            status = (ImageView) itemView.findViewById(R.id.fileItem_status);
-            formatIcon = (FileTypeImageView) itemView.findViewById(R.id.fileItem_formatIcon);
+            percentage = itemView.findViewById(R.id.fileItem_percentage);
+            status = itemView.findViewById(R.id.fileItem_status);
+            formatIcon = itemView.findViewById(R.id.fileItem_formatIcon);
         }
 
         public void updateStatus(AFile file) {

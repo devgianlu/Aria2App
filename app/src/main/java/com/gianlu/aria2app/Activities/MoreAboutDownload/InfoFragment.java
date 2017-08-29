@@ -245,42 +245,42 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         ViewHolder(ViewGroup rootView) {
             this.rootView = rootView;
 
-            container = (LinearLayout) rootView.findViewById(R.id.infoFragment_container);
-            loading = (ProgressBar) rootView.findViewById(R.id.infoFragment_loading);
-            progress = (SuperTextView) rootView.findViewById(R.id.infoFragment_progress);
-            downloadSpeed = (SuperTextView) rootView.findViewById(R.id.infoFragment_downloadSpeed);
-            uploadSpeed = (SuperTextView) rootView.findViewById(R.id.infoFragment_uploadSpeed);
-            remainingTime = (SuperTextView) rootView.findViewById(R.id.infoFragment_remainingTime);
-            chart = (LineChart) rootView.findViewById(R.id.infoFragment_chart);
-            pause = (ImageButton) rootView.findViewById(R.id.infoFragment_pause);
-            start = (ImageButton) rootView.findViewById(R.id.infoFragment_start);
-            stop = (ImageButton) rootView.findViewById(R.id.infoFragment_stop);
-            restart = (ImageButton) rootView.findViewById(R.id.infoFragment_restart);
-            remove = (ImageButton) rootView.findViewById(R.id.infoFragment_remove);
-            moveUp = (ImageButton) rootView.findViewById(R.id.infoFragment_moveUp);
-            moveDown = (ImageButton) rootView.findViewById(R.id.infoFragment_moveDown);
-            gid = (SuperTextView) rootView.findViewById(R.id.infoFragment_gid);
-            totalLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_totalLength);
-            completedLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_completedLength);
-            uploadLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_uploadLength);
-            pieceLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_pieceLength);
-            numPieces = (SuperTextView) rootView.findViewById(R.id.infoFragment_numPieces);
-            connections = (SuperTextView) rootView.findViewById(R.id.infoFragment_connections);
-            directory = (SuperTextView) rootView.findViewById(R.id.infoFragment_directory);
-            verifiedLength = (SuperTextView) rootView.findViewById(R.id.infoFragment_verifiedLength);
-            verifyIntegrityPending = (SuperTextView) rootView.findViewById(R.id.infoFragment_verifyIntegrityPending);
-            bitfield = (BitfieldVisualizer) rootView.findViewById(R.id.infoFragment_bitfield);
+            container = rootView.findViewById(R.id.infoFragment_container);
+            loading = rootView.findViewById(R.id.infoFragment_loading);
+            progress = rootView.findViewById(R.id.infoFragment_progress);
+            downloadSpeed = rootView.findViewById(R.id.infoFragment_downloadSpeed);
+            uploadSpeed = rootView.findViewById(R.id.infoFragment_uploadSpeed);
+            remainingTime = rootView.findViewById(R.id.infoFragment_remainingTime);
+            chart = rootView.findViewById(R.id.infoFragment_chart);
+            pause = rootView.findViewById(R.id.infoFragment_pause);
+            start = rootView.findViewById(R.id.infoFragment_start);
+            stop = rootView.findViewById(R.id.infoFragment_stop);
+            restart = rootView.findViewById(R.id.infoFragment_restart);
+            remove = rootView.findViewById(R.id.infoFragment_remove);
+            moveUp = rootView.findViewById(R.id.infoFragment_moveUp);
+            moveDown = rootView.findViewById(R.id.infoFragment_moveDown);
+            gid = rootView.findViewById(R.id.infoFragment_gid);
+            totalLength = rootView.findViewById(R.id.infoFragment_totalLength);
+            completedLength = rootView.findViewById(R.id.infoFragment_completedLength);
+            uploadLength = rootView.findViewById(R.id.infoFragment_uploadLength);
+            pieceLength = rootView.findViewById(R.id.infoFragment_pieceLength);
+            numPieces = rootView.findViewById(R.id.infoFragment_numPieces);
+            connections = rootView.findViewById(R.id.infoFragment_connections);
+            directory = rootView.findViewById(R.id.infoFragment_directory);
+            verifiedLength = rootView.findViewById(R.id.infoFragment_verifiedLength);
+            verifyIntegrityPending = rootView.findViewById(R.id.infoFragment_verifyIntegrityPending);
+            bitfield = rootView.findViewById(R.id.infoFragment_bitfield);
 
-            bitTorrentOnly = (LinearLayout) rootView.findViewById(R.id.infoFragment_bitTorrentOnly);
-            btMode = (SuperTextView) rootView.findViewById(R.id.infoFragment_btMode);
-            btSeeders = (SuperTextView) rootView.findViewById(R.id.infoFragment_btSeeders);
-            btSeeder = (SuperTextView) rootView.findViewById(R.id.infoFragment_btSeeder);
-            shareRatio = (SuperTextView) rootView.findViewById(R.id.infoFragment_shareRatio);
-            btComment = (SuperTextView) rootView.findViewById(R.id.infoFragment_btComment);
-            btCreationDate = (SuperTextView) rootView.findViewById(R.id.infoFragment_btCreationDate);
-            btAnnounceListContainer = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceListContainer);
-            toggleBtAnnounceList = (ImageButton) rootView.findViewById(R.id.infoFragment_toggleBtAnnounceList);
-            btAnnounceList = (LinearLayout) rootView.findViewById(R.id.infoFragment_btAnnounceList);
+            bitTorrentOnly = rootView.findViewById(R.id.infoFragment_bitTorrentOnly);
+            btMode = rootView.findViewById(R.id.infoFragment_btMode);
+            btSeeders = rootView.findViewById(R.id.infoFragment_btSeeders);
+            btSeeder = rootView.findViewById(R.id.infoFragment_btSeeder);
+            shareRatio = rootView.findViewById(R.id.infoFragment_shareRatio);
+            btComment = rootView.findViewById(R.id.infoFragment_btComment);
+            btCreationDate = rootView.findViewById(R.id.infoFragment_btCreationDate);
+            btAnnounceListContainer = rootView.findViewById(R.id.infoFragment_btAnnounceListContainer);
+            toggleBtAnnounceList = rootView.findViewById(R.id.infoFragment_toggleBtAnnounceList);
+            btAnnounceList = rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
         void setup(final Download download) {

@@ -96,9 +96,9 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.uri_item, parent, false));
 
-            uri = (TextView) itemView.findViewById(R.id.uriItem_uri);
-            edit = (ImageButton) itemView.findViewById(R.id.uriItem_edit);
-            remove = (ImageButton) itemView.findViewById(R.id.uriItem_remove);
+            uri = itemView.findViewById(R.id.uriItem_uri);
+            edit = itemView.findViewById(R.id.uriItem_edit);
+            remove = itemView.findViewById(R.id.uriItem_remove);
         }
     }
 }

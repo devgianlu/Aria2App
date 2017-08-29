@@ -60,9 +60,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.searchResult_name);
-            seeders = (TextView) itemView.findViewById(R.id.searchResult_seeders);
-            leeches = (TextView) itemView.findViewById(R.id.searchResult_leeches);
+            name = itemView.findViewById(R.id.searchResult_name);
+            seeders = itemView.findViewById(R.id.searchResult_seeders);
+            leeches = itemView.findViewById(R.id.searchResult_leeches);
         }
     }
 }

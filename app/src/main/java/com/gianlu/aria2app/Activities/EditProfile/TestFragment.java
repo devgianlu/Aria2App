@@ -35,7 +35,7 @@ public class TestFragment extends FieldErrorFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.edit_profile_test_fragment, container, false);
-        test = (Button) layout.findViewById(R.id.editProfile_test);
+        test = layout.findViewById(R.id.editProfile_test);
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +45,7 @@ public class TestFragment extends FieldErrorFragment {
             }
         });
 
-        testResults = (LinearLayout) layout.findViewById(R.id.editProfile_testResults);
+        testResults = layout.findViewById(R.id.editProfile_testResults);
 
         return layout;
     }

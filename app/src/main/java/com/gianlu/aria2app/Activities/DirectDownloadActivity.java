@@ -29,8 +29,8 @@ public class DirectDownloadActivity extends AppCompatActivity implements UpdateU
         setContentView(R.layout.activity_direct_download);
         setTitle(R.string.directDownload);
 
-        layout = (FrameLayout) findViewById(R.id.directDownload_container);
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.directDownload_swipeRefresh);
+        layout = findViewById(R.id.directDownload_container);
+        swipeRefresh = findViewById(R.id.directDownload_swipeRefresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -46,7 +46,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements UpdateU
             }
         });
 
-        list = (RecyclerView) findViewById(R.id.directDownload_list);
+        list = findViewById(R.id.directDownload_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 

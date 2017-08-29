@@ -93,7 +93,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.editProfile_toolbar);
+        Toolbar toolbar = findViewById(R.id.editProfile_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar bar = getSupportActionBar();
@@ -107,7 +107,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         if (editProfile == null) setTitle(R.string.addProfile);
         else setTitle(R.string.editProfile);
 
-        profileName = (TextInputLayout) findViewById(R.id.editProfile_profileName);
+        profileName = findViewById(R.id.editProfile_profileName);
         profileName.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -124,7 +124,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                 profileName.setErrorEnabled(false);
             }
         });
-        enableNotifs = (CheckBox) findViewById(R.id.editProfile_enableNotifs);
+        enableNotifs = findViewById(R.id.editProfile_enableNotifs);
 
         if (editProfile != null) {
             //noinspection ConstantConditions
@@ -132,7 +132,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             enableNotifs.setChecked(editProfile.notificationsEnabled);
         }
 
-        conditionsSpinner = (Spinner) findViewById(R.id.editProfile_conditionsSpinner);
+        conditionsSpinner = findViewById(R.id.editProfile_conditionsSpinner);
         conditionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -145,10 +145,10 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             }
         });
 
-        pager = (ViewPager) findViewById(R.id.editProfile_pager);
+        pager = findViewById(R.id.editProfile_pager);
         pager.setOffscreenPageLimit(4);
 
-        tabLayout = (TabLayout) findViewById(R.id.editProfile_tabs);
+        tabLayout = findViewById(R.id.editProfile_tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -231,8 +231,8 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         }
 
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null, false);
-        final RadioGroup connectivityCondition = (RadioGroup) layout.findViewById(R.id.editProfile_connectivityCondition);
-        final TextInputLayout ssid = (TextInputLayout) layout.findViewById(R.id.editProfile_ssid);
+        final RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
+        final TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
         ssid.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -372,7 +372,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
 
     private void handleInvalidFieldException(InvalidFieldException ex) {
         if (ex.fragmentClass == MainActivity.class) {
-            TextInputLayout field = ((TextInputLayout) findViewById(ex.fieldId));
+            TextInputLayout field = findViewById(ex.fieldId);
             field.clearFocus();
             field.setErrorEnabled(true);
             field.setError(ex.reason);

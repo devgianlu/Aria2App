@@ -80,7 +80,7 @@ public class DownloadsManager extends FileDownloadListener {
 
     @NonNull
     private static String createFileName(AFile file) {
-        return file.getName().replaceAll("(#|%|&|\\{|\\}|\\\\|<|>|\\*|\\?|/|\\$|!|'|:|@)", "");
+        return file.getName().replaceAll("(#|%|&|\\{|}|\\\\|<|>|\\*|\\?|/|\\$|!|'|:|@)", "");
     }
 
     private static JSONObject taskToJSON(DownloadTask task) throws JSONException {

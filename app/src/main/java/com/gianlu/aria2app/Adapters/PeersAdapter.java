@@ -108,9 +108,9 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
         ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.peer_item, parent, false));
-            address = (SuperTextView) itemView.findViewById(R.id.peerItem_address);
-            downloadSpeed = (SuperTextView) itemView.findViewById(R.id.peerItem_downloadSpeed);
-            uploadSpeed = (SuperTextView) itemView.findViewById(R.id.peerItem_uploadSpeed);
+            address = itemView.findViewById(R.id.peerItem_address);
+            downloadSpeed = itemView.findViewById(R.id.peerItem_downloadSpeed);
+            uploadSpeed = itemView.findViewById(R.id.peerItem_uploadSpeed);
         }
     }
 }

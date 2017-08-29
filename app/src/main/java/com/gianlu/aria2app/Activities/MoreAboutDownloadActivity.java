@@ -89,14 +89,14 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
         setContentView(R.layout.activity_more_about_download);
         setTitle(download.getName());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.moreAboutDownload_toolbar);
+        Toolbar toolbar = findViewById(R.id.moreAboutDownload_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
-        final ViewPager pager = (ViewPager) findViewById(R.id.moreAboutDownload_pager);
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.moreAboutDownload_tabs);
+        final ViewPager pager = findViewById(R.id.moreAboutDownload_pager);
+        final TabLayout tabLayout = findViewById(R.id.moreAboutDownload_tabs);
 
         adapter = new PagerAdapter<>(getSupportFragmentManager(),
                 InfoFragment.getInstance(this, download, this),

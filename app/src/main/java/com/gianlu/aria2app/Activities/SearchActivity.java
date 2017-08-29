@@ -50,17 +50,17 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         setContentView(R.layout.activity_search);
         setTitle(R.string.searchTorrent);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.search_toolbar);
+        Toolbar toolbar = findViewById(R.id.search_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-        loading = (ProgressBar) findViewById(R.id.search_loading);
-        list = (RecyclerView) findViewById(R.id.search_list);
+        loading = findViewById(R.id.search_loading);
+        list = findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        label = (TextView) findViewById(R.id.search_label);
-        noData = (TextView) findViewById(R.id.search_noData);
+        label = findViewById(R.id.search_label);
+        noData = findViewById(R.id.search_noData);
 
         onQueryTextSubmit(SearchUtils.TRENDING_WEEK);
     }

@@ -78,10 +78,10 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (LinearLayout) inflater.inflate(R.layout.uris_fragment, container, false);
-        list = (RecyclerView) layout.findViewById(R.id.urisFragment_list);
+        list = layout.findViewById(R.id.urisFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        Button addNew = (Button) layout.findViewById(R.id.urisFragment_addNew);
+        Button addNew = layout.findViewById(R.id.urisFragment_addNew);
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +90,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
             }
         });
 
-        TextView disclaimer = (TextView) layout.findViewById(R.id.urisFragment_disclaimer);
+        TextView disclaimer = layout.findViewById(R.id.urisFragment_disclaimer);
         if (getArguments().getBoolean("compulsory", false))
             disclaimer.setText(R.string.uris_disclaimer);
         else

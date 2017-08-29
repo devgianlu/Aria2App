@@ -55,10 +55,10 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (CoordinatorLayout) inflater.inflate(R.layout.servers_fragment, container, false);
-        final SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) layout.findViewById(R.id.serversFragment_swipeRefresh);
+        final SwipeRefreshLayout swipeRefresh = layout.findViewById(R.id.serversFragment_swipeRefresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        loading = (ProgressBar) layout.findViewById(R.id.serversFragment_loading);
-        list = (RecyclerView) layout.findViewById(R.id.serversFragment_list);
+        loading = layout.findViewById(R.id.serversFragment_loading);
+        list = layout.findViewById(R.id.serversFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = new ServersAdapter(getContext(), this);
         list.setAdapter(adapter);

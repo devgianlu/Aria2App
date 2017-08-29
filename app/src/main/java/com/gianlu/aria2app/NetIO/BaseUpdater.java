@@ -14,7 +14,7 @@ public abstract class BaseUpdater extends Thread {
     protected final Handler handler;
     private final int updateInterval;
     private IThread stopListener;
-    private boolean _shouldStop = false;
+    private volatile boolean _shouldStop = false;
 
     public BaseUpdater(Context context) throws JTA2InitializingException {
         this.jta2 = JTA2.instantiate(context);

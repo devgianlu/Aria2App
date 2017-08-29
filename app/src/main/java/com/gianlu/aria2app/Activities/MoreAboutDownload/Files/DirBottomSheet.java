@@ -37,12 +37,12 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
 
     @Override
     public void bindViews() {
-        indexes = (SuperTextView) content.findViewById(R.id.dirSheet_indexes);
-        path = (SuperTextView) content.findViewById(R.id.dirSheet_path);
-        length = (SuperTextView) content.findViewById(R.id.dirSheet_length);
-        completedLength = (SuperTextView) content.findViewById(R.id.dirSheet_completedLength);
-        selected = (CheckBox) content.findViewById(R.id.dirSheet_selected);
-        downloadDir = (Button) content.findViewById(R.id.dirSheet_downloadDir);
+        indexes = content.findViewById(R.id.dirSheet_indexes);
+        path = content.findViewById(R.id.dirSheet_path);
+        length = content.findViewById(R.id.dirSheet_length);
+        completedLength = content.findViewById(R.id.dirSheet_completedLength);
+        selected = content.findViewById(R.id.dirSheet_selected);
+        downloadDir = content.findViewById(R.id.dirSheet_downloadDir);
     }
 
     public void update(List<AFile> files) {

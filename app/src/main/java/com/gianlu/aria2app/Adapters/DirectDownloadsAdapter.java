@@ -119,19 +119,19 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.direct_download_item, parent, false));
 
-            status = (TextView) itemView.findViewById(R.id.ddItem_status);
-            name = (TextView) itemView.findViewById(R.id.ddItem_name);
-            progress = (ProgressBar) itemView.findViewById(R.id.ddItem_progress);
+            status = itemView.findViewById(R.id.ddItem_status);
+            name = itemView.findViewById(R.id.ddItem_name);
+            progress = itemView.findViewById(R.id.ddItem_progress);
             progress.setMax(100);
-            percentage = (TextView) itemView.findViewById(R.id.ddItem_percentage);
-            downloadSpeed = (TextView) itemView.findViewById(R.id.ddItem_downloadSpeed);
-            missingTime = (TextView) itemView.findViewById(R.id.ddItem_missingTime);
+            percentage = itemView.findViewById(R.id.ddItem_percentage);
+            downloadSpeed = itemView.findViewById(R.id.ddItem_downloadSpeed);
+            missingTime = itemView.findViewById(R.id.ddItem_missingTime);
 
-            pause = (ImageButton) itemView.findViewById(R.id.ddItem_pause);
-            resume = (ImageButton) itemView.findViewById(R.id.ddItem_resume);
-            stop = (ImageButton) itemView.findViewById(R.id.ddItem_stop);
-            remove = (ImageButton) itemView.findViewById(R.id.ddItem_remove);
-            restart = (ImageButton) itemView.findViewById(R.id.ddItem_restart);
+            pause = itemView.findViewById(R.id.ddItem_pause);
+            resume = itemView.findViewById(R.id.ddItem_resume);
+            stop = itemView.findViewById(R.id.ddItem_stop);
+            remove = itemView.findViewById(R.id.ddItem_remove);
+            restart = itemView.findViewById(R.id.ddItem_restart);
         }
 
         private void updateStatus(DDDownload.Status status) {

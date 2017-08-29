@@ -87,10 +87,10 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (CoordinatorLayout) inflater.inflate(R.layout.peers_fragment, container, false);
-        final SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) layout.findViewById(R.id.peersFragment_swipeRefresh);
+        final SwipeRefreshLayout swipeRefresh = layout.findViewById(R.id.peersFragment_swipeRefresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        loading = (ProgressBar) layout.findViewById(R.id.peersFragment_loading);
-        list = (RecyclerView) layout.findViewById(R.id.peersFragment_list);
+        loading = layout.findViewById(R.id.peersFragment_loading);
+        list = layout.findViewById(R.id.peersFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), this);

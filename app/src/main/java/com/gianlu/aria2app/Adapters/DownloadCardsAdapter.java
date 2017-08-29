@@ -285,26 +285,26 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         DownloadViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.download_card, parent, false));
 
-            donutProgress = (DonutProgress) itemView.findViewById(R.id.downloadCard_donutProgress);
-            downloadName = (SuperTextView) itemView.findViewById(R.id.downloadCard_name);
-            downloadStatus = (SuperTextView) itemView.findViewById(R.id.downloadCard_status);
-            downloadSpeed = (SuperTextView) itemView.findViewById(R.id.downloadCard_downloadSpeed);
-            downloadMissingTime = (SuperTextView) itemView.findViewById(R.id.downloadCard_missingTime);
-            details = (LinearLayout) itemView.findViewById(R.id.downloadCard_details);
-            pause = (ImageButton) itemView.findViewById(R.id.downloadCard_pause);
-            start = (ImageButton) itemView.findViewById(R.id.downloadCard_start);
-            stop = (ImageButton) itemView.findViewById(R.id.downloadCard_stop);
-            restart = (ImageButton) itemView.findViewById(R.id.downloadCard_restart);
-            remove = (ImageButton) itemView.findViewById(R.id.downloadCard_remove);
-            moveUp = (ImageButton) itemView.findViewById(R.id.downloadCard_moveUp);
-            moveDown = (ImageButton) itemView.findViewById(R.id.downloadCard_moveDown);
-            more = (Button) itemView.findViewById(R.id.downloadCard_actionMore);
+            donutProgress = itemView.findViewById(R.id.downloadCard_donutProgress);
+            downloadName = itemView.findViewById(R.id.downloadCard_name);
+            downloadStatus = itemView.findViewById(R.id.downloadCard_status);
+            downloadSpeed = itemView.findViewById(R.id.downloadCard_downloadSpeed);
+            downloadMissingTime = itemView.findViewById(R.id.downloadCard_missingTime);
+            details = itemView.findViewById(R.id.downloadCard_details);
+            pause = itemView.findViewById(R.id.downloadCard_pause);
+            start = itemView.findViewById(R.id.downloadCard_start);
+            stop = itemView.findViewById(R.id.downloadCard_stop);
+            restart = itemView.findViewById(R.id.downloadCard_restart);
+            remove = itemView.findViewById(R.id.downloadCard_remove);
+            moveUp = itemView.findViewById(R.id.downloadCard_moveUp);
+            moveDown = itemView.findViewById(R.id.downloadCard_moveDown);
+            more = itemView.findViewById(R.id.downloadCard_actionMore);
 
-            detailsChart = (LineChart) itemView.findViewById(R.id.downloadCard_detailsChart);
-            detailsGid = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsGid);
-            detailsTotalLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsTotalLength);
-            detailsCompletedLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsCompletedLength);
-            detailsUploadLength = (SuperTextView) itemView.findViewById(R.id.downloadCard_detailsUploadLength);
+            detailsChart = itemView.findViewById(R.id.downloadCard_detailsChart);
+            detailsGid = itemView.findViewById(R.id.downloadCard_detailsGid);
+            detailsTotalLength = itemView.findViewById(R.id.downloadCard_detailsTotalLength);
+            detailsCompletedLength = itemView.findViewById(R.id.downloadCard_detailsCompletedLength);
+            detailsUploadLength = itemView.findViewById(R.id.downloadCard_detailsUploadLength);
         }
 
         public void update(Download item) {

@@ -45,7 +45,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.edit_profile_dd_fragment, parent, false);
-        enableDirectDownload = (CheckBox) layout.findViewById(R.id.editProfile_enableDirectDownload);
+        enableDirectDownload = layout.findViewById(R.id.editProfile_enableDirectDownload);
         enableDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -53,8 +53,8 @@ public class DirectDownloadFragment extends FieldErrorFragment {
                 if (isChecked) Utils.requestWritePermission(getActivity(), 10);
             }
         });
-        container = (LinearLayout) layout.findViewById(R.id.editProfile_dd_container);
-        address = (TextInputLayout) layout.findViewById(R.id.editProfile_dd_address);
+        container = layout.findViewById(R.id.editProfile_dd_container);
+        address = layout.findViewById(R.id.editProfile_dd_address);
         address.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -71,15 +71,15 @@ public class DirectDownloadFragment extends FieldErrorFragment {
                 address.setErrorEnabled(false);
             }
         });
-        auth = (CheckBox) layout.findViewById(R.id.editProfile_dd_auth);
+        auth = layout.findViewById(R.id.editProfile_dd_auth);
         auth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 authContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             }
         });
-        authContainer = (LinearLayout) layout.findViewById(R.id.editProfile_dd_authContainer);
-        username = (TextInputLayout) layout.findViewById(R.id.editProfile_dd_username);
+        authContainer = layout.findViewById(R.id.editProfile_dd_authContainer);
+        username = layout.findViewById(R.id.editProfile_dd_username);
         username.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -96,7 +96,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
                 username.setErrorEnabled(false);
             }
         });
-        password = (TextInputLayout) layout.findViewById(R.id.editProfile_dd_password);
+        password = layout.findViewById(R.id.editProfile_dd_password);
         password.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -172,7 +172,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
 
     @Override
     public void onFieldError(@IdRes int fieldId, String reason) {
-        TextInputLayout inputLayout = (TextInputLayout) layout.findViewById(fieldId);
+        TextInputLayout inputLayout = layout.findViewById(fieldId);
         if (inputLayout != null) {
             inputLayout.setErrorEnabled(true);
             inputLayout.setError(reason);

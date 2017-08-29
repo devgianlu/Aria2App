@@ -40,12 +40,12 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
 
     @Override
     public void bindViews() {
-        index = (SuperTextView) content.findViewById(R.id.fileSheet_index);
-        path = (SuperTextView) content.findViewById(R.id.fileSheet_path);
-        length = (SuperTextView) content.findViewById(R.id.fileSheet_length);
-        completedLength = (SuperTextView) content.findViewById(R.id.fileSheet_completedLength);
-        selected = (CheckBox) content.findViewById(R.id.fileSheet_selected);
-        downloadFile = (Button) content.findViewById(R.id.fileSheet_downloadFile);
+        index = content.findViewById(R.id.fileSheet_index);
+        path = content.findViewById(R.id.fileSheet_path);
+        length = content.findViewById(R.id.fileSheet_length);
+        completedLength = content.findViewById(R.id.fileSheet_completedLength);
+        selected = content.findViewById(R.id.fileSheet_selected);
+        downloadFile = content.findViewById(R.id.fileSheet_downloadFile);
     }
 
     @Override

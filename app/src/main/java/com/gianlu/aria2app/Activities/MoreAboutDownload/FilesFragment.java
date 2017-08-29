@@ -100,13 +100,13 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
-        final SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) layout.findViewById(R.id.filesFragment_swipeRefresh);
+        final SwipeRefreshLayout swipeRefresh = layout.findViewById(R.id.filesFragment_swipeRefresh);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        loading = (ProgressBar) layout.findViewById(R.id.filesFragment_loading);
-        container = (LinearLayout) layout.findViewById(R.id.filesFragment_container);
-        breadcrumbsContainer = (LinearLayout) layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
-        breadcrumbs = (HorizontalScrollView) layout.findViewById(R.id.filesFragment_breadcrumbs);
-        list = (RecyclerView) layout.findViewById(R.id.filesFragment_list);
+        loading = layout.findViewById(R.id.filesFragment_loading);
+        container = layout.findViewById(R.id.filesFragment_container);
+        breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
+        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
+        list = layout.findViewById(R.id.filesFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 

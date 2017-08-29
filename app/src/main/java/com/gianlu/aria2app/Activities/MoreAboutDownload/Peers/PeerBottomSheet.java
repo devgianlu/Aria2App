@@ -29,12 +29,12 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
 
     @Override
     public void bindViews() {
-        downloadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_downloadSpeed);
-        uploadSpeed = (SuperTextView) content.findViewById(R.id.peerSheet_uploadSpeed);
-        chart = (LineChart) content.findViewById(R.id.peerSheet_chart);
-        seeder = (SuperTextView) content.findViewById(R.id.peerSheet_seeder);
-        peerChoking = (SuperTextView) content.findViewById(R.id.peerSheet_peerChoking);
-        amChoking = (SuperTextView) content.findViewById(R.id.peerSheet_amChoking);
+        downloadSpeed = content.findViewById(R.id.peerSheet_downloadSpeed);
+        uploadSpeed = content.findViewById(R.id.peerSheet_uploadSpeed);
+        chart = content.findViewById(R.id.peerSheet_chart);
+        seeder = content.findViewById(R.id.peerSheet_seeder);
+        peerChoking = content.findViewById(R.id.peerSheet_peerChoking);
+        amChoking = content.findViewById(R.id.peerSheet_amChoking);
     }
 
     @Override

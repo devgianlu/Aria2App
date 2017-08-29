@@ -96,8 +96,8 @@ public class Base64Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.base64_fragment, container, false);
-        path = (TextView) layout.findViewById(R.id.base64Fragment_path);
-        Button pick = (Button) layout.findViewById(R.id.base64Fragment_pick);
+        path = layout.findViewById(R.id.base64Fragment_path);
+        Button pick = layout.findViewById(R.id.base64Fragment_pick);
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +109,7 @@ public class Base64Fragment extends Fragment {
             }
         });
 
-        SuperTextView help = (SuperTextView) layout.findViewById(R.id.base64Fragment_help);
+        SuperTextView help = layout.findViewById(R.id.base64Fragment_help);
         if (getArguments().getBoolean("torrent", true)) help.setHtml(R.string.pickTorrent_help);
         else help.setHtml(R.string.pickMetalink_help);
 

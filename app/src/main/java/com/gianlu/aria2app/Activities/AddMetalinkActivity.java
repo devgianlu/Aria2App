@@ -41,14 +41,14 @@ public class AddMetalinkActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_download);
         setTitle(R.string.addMetalink);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.addDownload_toolbar);
+        Toolbar toolbar = findViewById(R.id.addDownload_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
-        pager = (ViewPager) findViewById(R.id.addDownload_pager);
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.addDownload_tabs);
+        pager = findViewById(R.id.addDownload_pager);
+        final TabLayout tabLayout = findViewById(R.id.addDownload_tabs);
 
         base64Fragment = Base64Fragment.getInstance(this, false, (File) getIntent().getSerializableExtra("file"));
         optionsFragment = OptionsFragment.getInstance(this, false);

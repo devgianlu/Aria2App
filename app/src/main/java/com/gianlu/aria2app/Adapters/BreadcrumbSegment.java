@@ -21,7 +21,7 @@ public class BreadcrumbSegment extends LinearLayout {
         setGravity(Gravity.CENTER_VERTICAL);
         LayoutInflater.from(context).inflate(R.layout.breadcrumb_segment, this, true);
 
-        Button name = (Button) findViewById(R.id.breadcrumbSegment_name);
+        Button name = findViewById(R.id.breadcrumbSegment_name);
         name.setText(node.name);
         name.setOnClickListener(new OnClickListener() {
             @Override
@@ -30,7 +30,7 @@ public class BreadcrumbSegment extends LinearLayout {
             }
         });
 
-        ImageView arrow = (ImageView) findViewById(R.id.breadcrumbSegment_arrow);
+        ImageView arrow = findViewById(R.id.breadcrumbSegment_arrow);
         arrow.setVisibility(node.isRoot() ? GONE : VISIBLE);
     }
 
