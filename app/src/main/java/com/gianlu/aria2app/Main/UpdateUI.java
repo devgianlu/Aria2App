@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
+    private static final String[] KEYS = new String[]{"gid", "status", "totalLength", "completedLength", "uploadLength", "downloadSpeed", "uploadSpeed", "errorCode", "errorMessage", "bittorrent", "files"};
     private final IUI listener;
     private final boolean hideMetadata;
 
@@ -25,7 +26,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
 
     @Override
     public void loop() {
-        jta2.tellAll(this);
+        jta2.tellAll(KEYS, this);
     }
 
     @Override

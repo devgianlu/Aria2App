@@ -46,15 +46,15 @@ public class Download implements Serializable, Filterable<Download.Status> {
     public Download(JSONObject obj) throws JSONException {
         gid = obj.getString("gid");
         status = Status.parse(obj.getString("status"));
-        length = obj.getLong("totalLength");
-        completedLength = obj.getLong("completedLength");
-        uploadLength = obj.getLong("uploadLength");
+        length = obj.optLong("totalLength", 0);
+        completedLength = obj.optLong("completedLength", 0);
+        uploadLength = obj.optLong("uploadLength", 0);
         bitfield = obj.optString("bitfield", null);
-        downloadSpeed = obj.getInt("downloadSpeed");
-        uploadSpeed = obj.getInt("uploadSpeed");
-        pieceLength = obj.getLong("pieceLength");
-        numPieces = obj.getInt("numPieces");
-        connections = obj.getInt("connections");
+        downloadSpeed = obj.optInt("downloadSpeed", 0);
+        uploadSpeed = obj.optInt("uploadSpeed", 0);
+        pieceLength = obj.optLong("pieceLength", 0);
+        numPieces = obj.optInt("numPieces", 0);
+        connections = obj.optInt("connections", 0);
         followedBy = obj.optString("followedBy", null);
         following = obj.optString("following", null);
         belongsTo = obj.optString("belongsTo", null);
@@ -70,7 +70,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
         if (obj.has("bittorrent")) {
             infoHash = obj.optString("infoHash", null);
-            numSeeders = obj.getInt("numSeeders");
+            numSeeders = obj.optInt("numSeeders");
             seeder = obj.optBoolean("seeder", false);
             torrent = new BitTorrent(obj.getJSONObject("bittorrent"));
         } else {

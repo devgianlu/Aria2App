@@ -20,7 +20,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownload {
 
     @Override
     public void loop() {
-        jta2.tellStatus(gid, this);
+        jta2.tellStatus(gid, null, this);
     }
 
     @Override

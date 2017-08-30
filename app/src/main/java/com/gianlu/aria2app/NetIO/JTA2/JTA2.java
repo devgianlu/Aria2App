@@ -120,17 +120,17 @@ public class JTA2 {
     /// Utility methods
     ///////////////////////////////////////////////////
 
-    public void tellAll(final IDownloadList handler) {
+    public void tellAll(@Nullable final String[] keys, final IDownloadList handler) {
         final List<Download> allDownloads = new ArrayList<>();
-        tellActive(new IDownloadList() {
+        tellActive(keys, new IDownloadList() {
             @Override
             public void onDownloads(List<Download> downloads) {
                 allDownloads.addAll(downloads);
-                tellWaiting(new IDownloadList() {
+                tellWaiting(keys, new IDownloadList() {
                     @Override
                     public void onDownloads(List<Download> downloads) {
                         allDownloads.addAll(downloads);
-                        tellStopped(new IDownloadList() {
+                        tellStopped(keys, new IDownloadList() {
                             @Override
                             public void onDownloads(List<Download> downloads) {
                                 allDownloads.addAll(downloads);
@@ -157,7 +157,7 @@ public class JTA2 {
             }
         });
     }
-    
+
     public void pause(final String gid, final IPause handler) {
         pause(gid, new JTA2.IGID() {
             @Override
@@ -230,7 +230,7 @@ public class JTA2 {
     }
 
     public void remove(String gid, final boolean removeMetadata, final IRemove handler) {
-        tellStatus(gid, new IDownload() {
+        tellStatus(gid, new String[]{"gid", "status"}, new IDownload() {
             @Override
             public void onDownload(final Download download) {
                 if (download.status == Download.Status.COMPLETE || download.status == Download.Status.ERROR || download.status == Download.Status.REMOVED) {
@@ -297,7 +297,7 @@ public class JTA2 {
     }
 
     public void restart(final String gid, final IRestart handler) {
-        tellStatus(gid, new JTA2.IDownload() {
+        tellStatus(gid, new String[]{"files"}, new JTA2.IDownload() {
             @Override
             public void onDownload(final Download download) {
                 getOption(gid, new JTA2.IOption() {
@@ -427,7 +427,7 @@ public class JTA2 {
     ///////////////////////////////////////////////////
     /// Actual aria2 RPC methods
     ///////////////////////////////////////////////////
-    
+
     public void getVersion(MultiProfile.UserProfile profile, final IVersion handler) {
         JSONObject request;
         try {
@@ -628,14 +628,14 @@ public class JTA2 {
         });
     }
 
-    // TODO: Implement request shrinking
-    public void tellStatus(String gid, final IDownload handler) {
+    public void tellStatus(String gid, @Nullable String[] keys, final IDownload handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.tellStatus");
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
+            if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -679,45 +679,13 @@ public class JTA2 {
         });
     }
 
-    public void tellActive(final IDownloadList handler) {
+    public void tellActive(@Nullable String[] keys, final IDownloadList handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.tellActive");
-            request.put("params", Utils.readyParams(context));
-        } catch (JSONException ex) {
-            handler.onException(ex);
-            return;
-        }
-
-        client.send(request, new IReceived() {
-            @Override
-            public void onResponse(JSONObject response) throws JSONException {
-                List<Download> downloads = new ArrayList<>();
-                JSONArray jResult = response.getJSONArray("result");
-
-                for (int c = 0; c < jResult.length(); c++) {
-                    downloads.add(new Download(jResult.getJSONObject(c)));
-                }
-
-                handler.onDownloads(downloads);
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
-            }
-        });
-    }
-
-    public void tellWaiting(final IDownloadList handler) {
-        JSONObject request;
-        try {
-            request = Utils.readyRequest();
-            request.put("method", "aria2.tellWaiting");
             JSONArray params = Utils.readyParams(context);
-            params.put(0);
-            params.put(100);
+            if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -743,14 +711,15 @@ public class JTA2 {
         });
     }
 
-    public void tellStopped(final IDownloadList handler) {
+    public void tellWaiting(@Nullable String[] keys, final IDownloadList handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
-            request.put("method", "aria2.tellStopped");
+            request.put("method", "aria2.tellWaiting");
             JSONArray params = Utils.readyParams(context);
             params.put(0);
             params.put(100);
+            if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException ex) {
             handler.onException(ex);
@@ -763,9 +732,42 @@ public class JTA2 {
                 List<Download> downloads = new ArrayList<>();
                 JSONArray jResult = response.getJSONArray("result");
 
-                for (int c = 0; c < jResult.length(); c++) {
+                for (int c = 0; c < jResult.length(); c++)
                     downloads.add(new Download(jResult.getJSONObject(c)));
-                }
+
+                handler.onDownloads(downloads);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+
+    public void tellStopped(@Nullable String[] keys, final IDownloadList handler) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.tellStopped");
+            JSONArray params = Utils.readyParams(context);
+            params.put(0);
+            params.put(100);
+            if (keys != null) params.put(CommonUtils.toJSONArray(keys));
+            request.put("params", params);
+        } catch (JSONException ex) {
+            handler.onException(ex);
+            return;
+        }
+
+        client.send(request, new IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                List<Download> downloads = new ArrayList<>();
+                JSONArray jResult = response.getJSONArray("result");
+
+                for (int c = 0; c < jResult.length(); c++)
+                    downloads.add(new Download(jResult.getJSONObject(c)));
 
                 handler.onDownloads(downloads);
             }
