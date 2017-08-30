@@ -839,17 +839,17 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            jta2.remove(download, false, MainActivity.this);
+                            jta2.remove(download.gid, false, MainActivity.this);
                         }
                     })
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            jta2.remove(download, true, MainActivity.this);
+                            jta2.remove(download.gid, true, MainActivity.this);
                         }
                     }));
         } else {
-            jta2.remove(download, false, this);
+            jta2.remove(download.gid, false, this);
         }
     }
 

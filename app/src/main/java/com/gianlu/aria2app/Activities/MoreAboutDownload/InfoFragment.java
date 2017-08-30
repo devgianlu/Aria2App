@@ -100,20 +100,17 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (jta2.remove(download, false, InfoFragment.this) && listener != null)
-                                listener.onStatusChanged(Download.Status.UNKNOWN);
+                            jta2.remove(download.gid, false, InfoFragment.this);
                         }
                     })
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (jta2.remove(download, true, InfoFragment.this) && listener != null)
-                                listener.onStatusChanged(Download.Status.UNKNOWN);
+                            jta2.remove(download.gid, true, InfoFragment.this);
                         }
                     }));
         } else {
-            if (jta2.remove(download, false, InfoFragment.this) && listener != null)
-                listener.onStatusChanged(Download.Status.UNKNOWN);
+            jta2.remove(download.gid, false, InfoFragment.this);
         }
     }
 
@@ -198,6 +195,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     @Override
     public void onRemovedResult(String gid) {
         Toaster.show(getActivity(), Utils.Messages.RESULT_REMOVED, gid);
+        if (listener != null) listener.onStatusChanged(Download.Status.UNKNOWN);
     }
 
     public interface IStatusChanged {

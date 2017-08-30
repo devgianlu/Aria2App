@@ -116,7 +116,48 @@ public class JTA2 {
         return list;
     }
 
-    // Utils
+    ///////////////////////////////////////////////////
+    /// Utility methods
+    ///////////////////////////////////////////////////
+
+    public void tellAll(final IDownloadList handler) {
+        final List<Download> allDownloads = new ArrayList<>();
+        tellActive(new IDownloadList() {
+            @Override
+            public void onDownloads(List<Download> downloads) {
+                allDownloads.addAll(downloads);
+                tellWaiting(new IDownloadList() {
+                    @Override
+                    public void onDownloads(List<Download> downloads) {
+                        allDownloads.addAll(downloads);
+                        tellStopped(new IDownloadList() {
+                            @Override
+                            public void onDownloads(List<Download> downloads) {
+                                allDownloads.addAll(downloads);
+                                handler.onDownloads(allDownloads);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                handler.onException(ex);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        handler.onException(ex);
+                    }
+                });
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
+    }
+    
     public void pause(final String gid, final IPause handler) {
         pause(gid, new JTA2.IGID() {
             @Override
@@ -188,49 +229,57 @@ public class JTA2 {
         });
     }
 
-    public boolean remove(final Download download, final boolean removeMetadata, final IRemove handler) {
-        if (download.status == Download.Status.COMPLETE || download.status == Download.Status.ERROR || download.status == Download.Status.REMOVED) {
-            removeDownloadResult(download.gid, new JTA2.ISuccess() {
-                @Override
-                public void onSuccess() {
-                    if (removeMetadata) {
-                        removeDownloadResult(download.following, new ISuccess() {
-                            @Override
-                            public void onSuccess() {
+    public void remove(String gid, final boolean removeMetadata, final IRemove handler) {
+        tellStatus(gid, new IDownload() {
+            @Override
+            public void onDownload(final Download download) {
+                if (download.status == Download.Status.COMPLETE || download.status == Download.Status.ERROR || download.status == Download.Status.REMOVED) {
+                    removeDownloadResult(download.gid, new JTA2.ISuccess() {
+                        @Override
+                        public void onSuccess() {
+                            if (removeMetadata) {
+                                removeDownloadResult(download.following, new ISuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        handler.onRemovedResult(download.gid);
+                                    }
+
+                                    @Override
+                                    public void onException(Exception ex) {
+                                        handler.onException(ex);
+                                    }
+                                });
+                            } else {
                                 handler.onRemovedResult(download.gid);
                             }
+                        }
 
-                            @Override
-                            public void onException(Exception ex) {
-                                handler.onException(ex);
-                            }
-                        });
-                    } else {
-                        handler.onRemovedResult(download.gid);
-                    }
-                }
+                        @Override
+                        public void onException(Exception ex) {
+                            handler.onException(ex);
+                        }
+                    });
+                } else {
+                    remove(download.gid, new JTA2.IGID() {
+                        @Override
+                        public void onGID(String gid) {
+                            handler.onRemoved(gid);
+                        }
 
-                @Override
-                public void onException(Exception ex) {
-                    handler.onException(ex);
+                        @Override
+                        public void onException(Exception ex) {
+                            if (forceAction) forceRemove(download.gid, handler);
+                            else handler.onException(ex);
+                        }
+                    });
                 }
-            });
-            return true;
-        } else {
-            remove(download.gid, new JTA2.IGID() {
-                @Override
-                public void onGID(String gid) {
-                    handler.onRemoved(gid);
-                }
+            }
 
-                @Override
-                public void onException(Exception ex) {
-                    if (forceAction) forceRemove(download.gid, handler);
-                    else handler.onException(ex);
-                }
-            });
-            return false;
-        }
+            @Override
+            public void onException(Exception ex) {
+                handler.onException(ex);
+            }
+        });
     }
 
     private void forceRemove(String gid, final IRemove handler) {
@@ -375,8 +424,10 @@ public class JTA2 {
         });
     }
 
-    // Requests
-    //aria2.getVersion
+    ///////////////////////////////////////////////////
+    /// Actual aria2 RPC methods
+    ///////////////////////////////////////////////////
+    
     public void getVersion(MultiProfile.UserProfile profile, final IVersion handler) {
         JSONObject request;
         try {
@@ -406,7 +457,6 @@ public class JTA2 {
         getVersion(ProfilesManager.get(context).getCurrent(context).getProfile(context), handler);
     }
 
-    //aria2.saveSession
     public void saveSession(final ISuccess handler) {
         JSONObject request;
         try {
@@ -435,7 +485,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.getSessionInfo
     public void getSessionInfo(final ISession handler) {
         JSONObject request;
         try {
@@ -461,7 +510,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.addUri
     public void addUri(List<String> uris, @Nullable Integer position, @Nullable Map<String, String> options, final IGID handler) {
         JSONObject request;
         try {
@@ -503,7 +551,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.addTorrent
     public void addTorrent(String base64, @Nullable List<String> uris, @Nullable Map<String, String> options, @Nullable Integer position, final IGID handler) {
         JSONObject request;
         try {
@@ -546,7 +593,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.addMetalink
     public void addMetalink(String base64, @Nullable Map<String, String> options, @Nullable Integer position, final IGID handler) {
         JSONObject request;
         try {
@@ -582,7 +628,7 @@ public class JTA2 {
         });
     }
 
-    //aria2.tellStatus
+    // TODO: Implement request shrinking
     public void tellStatus(String gid, final IDownload handler) {
         JSONObject request;
         try {
@@ -609,7 +655,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.getGlobalStat
     public void getGlobalStat(final IStats handler) {
         JSONObject request;
         try {
@@ -634,7 +679,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.tellActive
     public void tellActive(final IDownloadList handler) {
         JSONObject request;
         try {
@@ -666,7 +710,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.tellWaiting
     public void tellWaiting(final IDownloadList handler) {
         JSONObject request;
         try {
@@ -700,7 +743,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.tellStopped
     public void tellStopped(final IDownloadList handler) {
         JSONObject request;
         try {
@@ -735,46 +777,6 @@ public class JTA2 {
         });
     }
 
-    //not an aria2 RPC method
-    public void tellAll(final IDownloadList handler) {
-        final List<Download> allDownloads = new ArrayList<>();
-        tellActive(new IDownloadList() {
-            @Override
-            public void onDownloads(List<Download> downloads) {
-                allDownloads.addAll(downloads);
-                tellWaiting(new IDownloadList() {
-                    @Override
-                    public void onDownloads(List<Download> downloads) {
-                        allDownloads.addAll(downloads);
-                        tellStopped(new IDownloadList() {
-                            @Override
-                            public void onDownloads(List<Download> downloads) {
-                                allDownloads.addAll(downloads);
-                                handler.onDownloads(allDownloads);
-                            }
-
-                            @Override
-                            public void onException(Exception ex) {
-                                handler.onException(ex);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onException(Exception ex) {
-                        handler.onException(ex);
-                    }
-                });
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
-            }
-        });
-    }
-
-    //aria2.pause
     public void pause(String gid, final IGID handler) {
         JSONObject request;
         try {
@@ -801,7 +803,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.unpause
     public void unpause(String gid, final IGID handler) {
         JSONObject request;
         try {
@@ -828,7 +829,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.remove
     public void remove(final String gid, final IGID handler) {
         JSONObject request;
         try {
@@ -855,7 +855,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.removeDownloadResult
     public void removeDownloadResult(String gid, final ISuccess handler) {
         JSONObject request;
         try {
@@ -885,7 +884,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.forcePause
     public void forcePause(String gid, final IGID handler) {
         JSONObject request;
         try {
@@ -912,7 +910,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.forceRemove
     public void forceRemove(String gid, final IGID handler) {
         JSONObject request;
         try {
@@ -939,7 +936,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.getOption
     public void getOption(String gid, final IOption handler) {
         JSONObject request;
         try {
@@ -966,7 +962,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.getGlobalOption
     public void getGlobalOption(final IOption handler) {
         JSONObject request;
         try {
@@ -991,7 +986,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.changeOption
     public void changeOption(String gid, Map<String, String> options, final ISuccess handler) {
         JSONObject request;
         try {
@@ -1025,7 +1019,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.changePosition
     public void changePosition(String gid, int pos, final ISuccess handler) {
         final JSONObject request;
         try {
@@ -1057,7 +1050,6 @@ public class JTA2 {
         });
     }
 
-    //aria2.changeGlobalOption
     public void changeGlobalOption(Map<String, String> options, final ISuccess handler) {
         JSONObject request;
         try {
@@ -1090,7 +1082,6 @@ public class JTA2 {
         });
     }
 
-    // aria2.getServers
     public void getServers(String gid, final IServers handler) {
         JSONObject request;
         try {
@@ -1123,7 +1114,6 @@ public class JTA2 {
         });
     }
 
-    // aria2.getPeers
     public void getPeers(String gid, final IPeers handler) {
         JSONObject request;
         try {
@@ -1156,7 +1146,6 @@ public class JTA2 {
         });
     }
 
-    // aria2.getFiles
     public void getFiles(String gid, final IFiles handler) {
         JSONObject request;
         try {
@@ -1181,7 +1170,6 @@ public class JTA2 {
         });
     }
 
-    // system.listMethods
     public void listMethods(final IMethod handler) {
         JSONObject request;
         try {
