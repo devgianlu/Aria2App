@@ -38,6 +38,7 @@ public class ErrorHandler {
     }
 
     public void unlock() {
+        errorCount = 0;
         locked = false;
     }
 
