@@ -16,23 +16,99 @@
             android:layout_height="24dp"
             android:background="@color/colorPrimaryDark" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/main_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/main_overallChart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="144dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="36dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_play_circle_filled_white_48dp" />
+
+                <TextView
+                    android:id="@+id/main_active"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_pause_circle_filled_white_48dp" />
+
+                <TextView
+                    android:id="@+id/main_paused"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_clear_circle_filled_white_48dp" />
+
+                <TextView
+                    android:id="@+id/main_stopped"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/main_toggleChart"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
+            </LinearLayout>
+
+        </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_gravity="top"
-                android:background="@drawable/shadow_bottom" />
 
             <android.support.design.widget.CoordinatorLayout
                 android:layout_width="match_parent"

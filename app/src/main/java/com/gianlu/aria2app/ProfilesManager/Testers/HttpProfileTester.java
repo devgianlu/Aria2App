@@ -16,7 +16,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
-public class HttpProfileTester extends NetProfileTester implements Runnable {
+public class HttpProfileTester extends NetProfileTester {
     public HttpProfileTester(Context context, MultiProfile.UserProfile profile, ITesting listener) {
         super(context, profile, listener);
     }

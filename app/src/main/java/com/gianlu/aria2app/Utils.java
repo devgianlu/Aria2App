@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -27,6 +28,7 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -55,22 +57,24 @@ public class Utils {
         return -1;
     }
 
-    public static void setupChart(LineChart chart, boolean isCardView) {
+    public static void setupChart(LineChart chart, boolean isCardView, @ColorRes int textColor) {
         chart.clear();
 
         chart.setDescription(null);
         chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.alpha(0));
         chart.setTouchEnabled(false);
-        chart.getLegend().setEnabled(true);
+        Legend legend = chart.getLegend();
+        legend.setTextColor(ContextCompat.getColor(chart.getContext(), textColor));
+        legend.setEnabled(true);
 
         LineData data = new LineData();
-        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
+        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), textColor));
         chart.setData(data);
 
         YAxis ya = chart.getAxisLeft();
-        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
-        ya.setTextColor(ContextCompat.getColor(chart.getContext(), R.color.colorPrimaryDark));
+        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), textColor));
+        ya.setTextColor(ContextCompat.getColor(chart.getContext(), textColor));
         ya.setTextSize(isCardView ? 8 : 9);
         ya.setAxisMinimum(0);
         ya.setDrawAxisLine(false);

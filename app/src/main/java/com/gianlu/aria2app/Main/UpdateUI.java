@@ -5,6 +5,7 @@ import android.content.Context;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.PKeys;
@@ -13,7 +14,7 @@ import com.gianlu.commonutils.Prefs;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
+public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList, JTA2.IStats {
     private static final String[] KEYS = new String[]{"gid", "status", "totalLength", "completedLength", "uploadLength", "downloadSpeed", "uploadSpeed", "errorCode", "errorMessage", "bittorrent", "files"};
     private final IUI listener;
     private final boolean hideMetadata;
@@ -27,6 +28,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
     @Override
     public void loop() {
         jta2.tellAll(KEYS, this);
+        jta2.getGlobalStat(this);
     }
 
     @Override
@@ -47,11 +49,25 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList {
     }
 
     @Override
+    public void onStats(final GlobalStats stats) {
+        if (listener == null) return;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onUpdateGlobalStats(stats);
+            }
+        });
+    }
+
+    @Override
     public void onException(Exception ex) {
         ErrorHandler.get().notifyException(ex, false);
     }
 
     public interface IUI {
         void onUpdateAdapter(List<Download> downloads);
+
+        void onUpdateGlobalStats(GlobalStats stats);
     }
 }

@@ -123,7 +123,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
         else color = ContextCompat.getColor(context, R.color.colorAccent);
 
-        Utils.setupChart(holder.detailsChart, true);
+        Utils.setupChart(holder.detailsChart, true, R.color.colorPrimaryDark);
         holder.detailsChart.setNoDataTextColor(color);
         holder.donutProgress.setFinishedStrokeColor(color);
 
@@ -311,7 +311,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             if (item.status == Download.Status.ACTIVE) {
                 LineData data = detailsChart.getData();
                 if (data == null) {
-                    Utils.setupChart(detailsChart, true);
+                    Utils.setupChart(detailsChart, true, R.color.colorPrimaryDark);
                     data = detailsChart.getData();
                 }
 

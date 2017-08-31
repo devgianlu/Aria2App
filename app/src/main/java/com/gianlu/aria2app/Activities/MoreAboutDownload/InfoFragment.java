@@ -282,7 +282,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         }
 
         void setup(final Download download) {
-            Utils.setupChart(chart, false);
+            Utils.setupChart(chart, false, R.color.colorPrimaryDark);
             int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
             bitfield.setColor(colorRes);
@@ -416,7 +416,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             if (setChartState(download)) {
                 LineData data = chart.getLineData();
                 if (data == null) {
-                    Utils.setupChart(chart, true);
+                    Utils.setupChart(chart, true, R.color.colorPrimaryDark);
                     data = chart.getLineData();
                 }
 

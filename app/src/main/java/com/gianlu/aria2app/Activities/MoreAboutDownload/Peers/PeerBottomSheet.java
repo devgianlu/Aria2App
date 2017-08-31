@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -37,10 +38,11 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
         amChoking = content.findViewById(R.id.peerSheet_amChoking);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void setupView(@NonNull Peer peer) {
         title.setText(peer.ip + ":" + peer.port);
-        Utils.setupChart(chart, true);
+        Utils.setupChart(chart, true, R.color.colorPrimaryDark);
     }
 
     @Override

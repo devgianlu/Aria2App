@@ -38,7 +38,7 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
     @Override
     protected void setupView(@NonNull Server server) {
         title.setText(server.currentUri);
-        Utils.setupChart(chart, true);
+        Utils.setupChart(chart, true, R.color.colorPrimaryDark);
     }
 
     @Override

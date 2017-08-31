@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -28,8 +29,10 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -51,6 +54,7 @@ import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.Options.OptionsUtils;
@@ -68,6 +72,9 @@ import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
 
 import org.json.JSONException;
 
@@ -92,6 +99,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private SharedFile _sharedFile;
     private Toolbar toolbar;
     private boolean isShowingHint = false;
+    private TextView active;
+    private TextView paused;
+    private ImageButton toggleChart;
+    private LineChart overallChart;
+    private TextView stopped;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -302,6 +314,20 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
 
+        active = findViewById(R.id.main_active);
+        paused = findViewById(R.id.main_paused);
+        stopped = findViewById(R.id.main_stopped);
+        overallChart = findViewById(R.id.main_overallChart);
+        toggleChart = findViewById(R.id.main_toggleChart);
+        toggleChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CommonUtils.animateCollapsingArrowBellows(toggleChart, CommonUtils.isExpanded(overallChart));
+                if (CommonUtils.isExpanded(overallChart)) CommonUtils.collapse(overallChart);
+                else CommonUtils.expand(overallChart);
+            }
+        });
+
         list = findViewById(R.id.main_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -485,10 +511,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         searchItem.setOnActionExpandListener(this);
         searchView = (SearchView) searchItem.getActionView();
 
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false);
-        searchView.setOnCloseListener(this);
-        searchView.setOnQueryTextListener(this);
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setIconifiedByDefault(false);
+            searchView.setOnCloseListener(this);
+            searchView.setOnQueryTextListener(this);
+        }
         return true;
     }
 
@@ -704,6 +732,31 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     onMoreClick(download);
 
             getIntent().removeExtra("gid");
+        }
+    }
+
+    @Override
+    @SuppressLint("SetTextI18n")
+    public void onUpdateGlobalStats(GlobalStats stats) {
+        active.setText(String.valueOf(stats.numActive));
+        paused.setText(String.valueOf(stats.numWaiting));
+        stopped.setText(stats.numStopped + " (" + stats.numStoppedTotal + ")");
+
+        LineData data = overallChart.getData();
+        if (data == null) {
+            Utils.setupChart(overallChart, true, R.color.white);
+            data = overallChart.getData();
+        }
+
+        if (data != null) {
+            int pos = data.getEntryCount() / 2 + 1;
+            data.addEntry(new Entry(pos, stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+            data.addEntry(new Entry(pos, stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
+            data.notifyDataChanged();
+            overallChart.notifyDataSetChanged();
+
+            overallChart.setVisibleXRangeMaximum(90);
+            overallChart.moveViewToX(pos - 91);
         }
     }
 

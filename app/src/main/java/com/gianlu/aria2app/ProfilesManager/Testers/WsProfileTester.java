@@ -25,7 +25,7 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
 
-public class WsProfileTester extends NetProfileTester implements Runnable, WebSocketListener {
+public class WsProfileTester extends NetProfileTester implements WebSocketListener {
     private long pingTime;
 
     public WsProfileTester(Context context, MultiProfile.UserProfile profile, ITesting listener) {
