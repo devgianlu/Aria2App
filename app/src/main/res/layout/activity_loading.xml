@@ -43,6 +43,16 @@
                 android:text="@string/connecting"
                 android:textAlignment="center"
                 android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/loading_cancel"
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:text="@android:string/cancel"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout

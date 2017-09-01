@@ -35,6 +35,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoadingActivity extends AppCompatActivity {
     private Intent goTo;
@@ -46,6 +48,8 @@ public class LoadingActivity extends AppCompatActivity {
     private Uri shareData;
     private String fromNotifGid;
     private Button seeError;
+    private Button cancel;
+    private ProfilesManager manager;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -74,6 +78,7 @@ public class LoadingActivity extends AppCompatActivity {
         pickerHint = findViewById(R.id.loading_pickerHint);
         pickerList = findViewById(R.id.loading_pickerList);
         seeError = findViewById(R.id.loading_seeError);
+        cancel = findViewById(R.id.loading_cancel);
         pickerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         ImageButton pickerAdd = findViewById(R.id.loading_pickerAdd);
         pickerAdd.setOnClickListener(new View.OnClickListener() {
@@ -101,14 +106,14 @@ public class LoadingActivity extends AppCompatActivity {
         Logging.clearLogs(this);
         WebSocketing.clear();
 
-        final ProfilesManager manager = ProfilesManager.get(this);
+        manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {
             EditProfileActivity.start(this, true);
             return;
         }
 
         if (hasShareData()) {
-            displayPicker(manager, true);
+            displayPicker(true);
             shareData = getShareData();
             return;
         }
@@ -118,7 +123,7 @@ public class LoadingActivity extends AppCompatActivity {
             if (profile != null) {
                 try {
                     manager.save(profile);
-                    tryConnecting(manager, profile);
+                    tryConnecting(profile);
                     return;
                 } catch (IOException | JSONException ex) {
                     Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
@@ -132,7 +137,7 @@ public class LoadingActivity extends AppCompatActivity {
             if (manager.profileExists(profileId)) {
                 try {
                     fromNotifGid = getIntent().getStringExtra("gid");
-                    tryConnecting(manager, manager.retrieveProfile(profileId));
+                    tryConnecting(manager.retrieveProfile(profileId));
                     return;
                 } catch (IOException | JSONException ex) {
                     Logging.logMe(this, ex);
@@ -155,9 +160,9 @@ public class LoadingActivity extends AppCompatActivity {
         }
 
         if (getIntent().getBooleanExtra("showPicker", false))
-            displayPicker(manager, false);
+            displayPicker(false);
         else
-            tryConnecting(manager, manager.getLastProfile(this));
+            tryConnecting(manager.getLastProfile(this));
     }
 
     private boolean hasShareData() {
@@ -197,16 +202,16 @@ public class LoadingActivity extends AppCompatActivity {
             return;
         }
 
-        displayPicker(manager, hasShareData());
+        displayPicker(hasShareData());
     }
 
-    private void tryConnecting(final ProfilesManager manager, MultiProfile profile) {
+    private void tryConnecting(MultiProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
         seeError.setVisibility(View.GONE);
 
         if (profile == null) {
-            displayPicker(manager, hasShareData());
+            displayPicker(hasShareData());
         } else {
             manager.setCurrent(this, profile);
             WebSocketing.instantiate(this, new IConnect() {
@@ -220,7 +225,7 @@ public class LoadingActivity extends AppCompatActivity {
                     Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
                         @Override
                         public void run() {
-                            displayPicker(manager, hasShareData());
+                            displayPicker(hasShareData());
                             seeError.setVisibility(View.VISIBLE);
                             seeError.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -234,7 +239,31 @@ public class LoadingActivity extends AppCompatActivity {
                     Logging.logMe(LoadingActivity.this, ex);
                 }
             });
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            cancel.setVisibility(View.VISIBLE);
+                            cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cancelConnection();
+                                }
+                            });
+                        }
+                    });
+                }
+            }, 2000);
         }
+    }
+
+    private void cancelConnection() {
+        WebSocketing.clear();
+        displayPicker(hasShareData());
+        seeError.setVisibility(View.GONE);
     }
 
     private void showErrorDialog(final Throwable ex) {
@@ -252,7 +281,7 @@ public class LoadingActivity extends AppCompatActivity {
         CommonUtils.showDialog(this, builder);
     }
 
-    private void displayPicker(final ProfilesManager manager, boolean share) {
+    private void displayPicker(boolean share) {
         connecting.setVisibility(View.GONE);
         picker.setVisibility(View.VISIBLE);
 
@@ -262,7 +291,7 @@ public class LoadingActivity extends AppCompatActivity {
         CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<MultiProfile>() {
             @Override
             public void onProfileSelected(MultiProfile profile) {
-                tryConnecting(manager, profile);
+                tryConnecting(profile);
             }
         }, false, new CustomProfilesAdapter.IEdit() {
             @Override
