@@ -167,7 +167,6 @@
     <string name="invalidPort">无效的端口号！</string>
     <string name="endpointEmpty">终端项为空！</string>
     <string name="invalidCertificate">无效的证书路径！</string>
-    <string name="emptyCertificate">证书路径项为空！</string>
     <string name="invalidCompleteAddress">用这些选项无法创建一个地址！</string>
     <string name="usernameAndPassword">用户名和密码</string>
     <string name="emptyToken">令牌项为空！</string>

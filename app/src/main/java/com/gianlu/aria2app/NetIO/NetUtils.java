@@ -11,7 +11,6 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
@@ -91,9 +90,7 @@ public class NetUtils {
         }
     }
 
-    public static WebSocket readyWebSocket(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
-
+    public static WebSocket readyWebSocket(Context context, MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);
         if (profile.serverSSL)

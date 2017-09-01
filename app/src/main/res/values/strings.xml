@@ -170,7 +170,6 @@
     <string name="invalidPort">Invalid port number!</string>
     <string name="endpointEmpty">The endpoint field is empty!</string>
     <string name="invalidCertificate">Invalid certificate path!</string>
-    <string name="emptyCertificate">The certificate path field is empty!</string>
     <string name="invalidCompleteAddress">An address cannot be created with these settings!</string>
     <string name="usernameAndPassword">Username and password</string>
     <string name="emptyToken">The token field is empty!</string>

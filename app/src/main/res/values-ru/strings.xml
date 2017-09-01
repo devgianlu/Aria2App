@@ -166,7 +166,6 @@
     <string name="invalidPort">Недопустимый номер порта!</string>
     <string name="endpointEmpty">Поле конечной точки пусто!</string>
     <string name="invalidCertificate">Недопустимый путь к сертификату!</string>
-    <string name="emptyCertificate">Поле пути сертификата пусто!</string>
     <string name="invalidCompleteAddress">Невозможно создать адрес с этими параметрами!</string>
     <string name="usernameAndPassword">Имя пользователя и пароль</string>
     <string name="emptyToken">Поле токена пусто!</string>
@@ -280,7 +279,6 @@
     <string name="cannotAddAlwaysCondition">Невозможно добавить условие \"Любое\", если у вас уже есть другие.</string>
     <string name="log_activity_title">Логи</string>
     <string name="deleteAllLogs">Удалить все логи</string>
-    <string name="emptyLogs">Список логов пуст.</string>
     <string name="ooops">Упс!</string>
     <string name="somethingWentWrong">Что-то пошло не так! Отчет уже отправлен разработчику.</string>
     <string name="emailMe">Если вы хотите оставить свое мнение о том, что произошло, напишите мне по адресу altomanigianluca@gmail.com, нажав кнопку ниже.</string>

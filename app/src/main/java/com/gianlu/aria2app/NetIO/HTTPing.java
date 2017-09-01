@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
@@ -27,13 +28,10 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 
 public class HTTPing extends AbstractClient {
     private static HTTPing httping;
-    private final MultiProfile.UserProfile profile;
-    private final SSLContext sslContext;
     private final ExecutorService executorService;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
@@ -41,9 +39,9 @@ public class HTTPing extends AbstractClient {
     }
 
     public HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        this.profile = profile;
-        this.sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context, profile));
+        super(context, profile);
         this.executorService = Executors.newCachedThreadPool();
+        ErrorHandler.get().unlock();
     }
 
     public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException {
@@ -54,6 +52,11 @@ public class HTTPing extends AbstractClient {
     @Override
     public void send(final JSONObject request, final IReceived handler) {
         executorService.execute(new RequestProcessor(request, handler));
+    }
+
+    @Override
+    public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
+        this.sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context, profile));
     }
 
     @SuppressLint("BadHostnameVerifier")

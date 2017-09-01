@@ -1,10 +1,13 @@
 package com.gianlu.aria2app.NetIO;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Pair;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -31,18 +34,20 @@ public class WebSocketing extends AbstractClient {
     private WebSocket socket;
 
     private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        socket = NetUtils.readyWebSocket(context).addListener(new Adapter()).connectAsynchronously();
+        super(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
+        socket = NetUtils.readyWebSocket(context, profile).addListener(new Adapter()).connectAsynchronously();
     }
 
-    public WebSocketing(Context context, IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+    public WebSocketing(Context context, @Nullable IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         this(context);
         this.connectionListener = listener;
     }
 
-    public WebSocketing(Context context, MultiProfile.UserProfile profile, IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    public WebSocketing(Context context, MultiProfile.UserProfile profile, @Nullable IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        super(context, profile);
         socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
         socket.addListener(new Adapter()).connectAsynchronously();
-        this.connectionListener = listener;
+        connectionListener = listener;
     }
 
     public static WebSocketing instantiate(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
@@ -114,6 +119,11 @@ public class WebSocketing extends AbstractClient {
         } catch (Exception ex) {
             handler.onException(ex);
         }
+    }
+
+    @Override
+    public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
+        webSocketing = new WebSocketing(context, profile, null);
     }
 
     private void processQueue() {

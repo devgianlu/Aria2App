@@ -138,12 +138,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return getProfile(manager.getConnectivityManager(), manager.getWifiManager());
     }
 
-    private UserProfile getProfile(ConnectivityManager connManager, WifiManager wifiManager) {
-        NetworkInfo activeNet = connManager.getActiveNetworkInfo();
-        if (activeNet == null) return getDefaultProfile();
-
+    public UserProfile getProfile(int networkType, WifiManager wifiManager) {
         UserProfile profile = null;
-        switch (activeNet.getType()) {
+        switch (networkType) {
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_WIFI:
                 profile = findForWifi(wifiManager.getConnectionInfo().getSSID().replace("\"", ""));
@@ -162,6 +159,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         if (profile == null) return getDefaultProfile();
         else return profile;
+    }
+
+    private UserProfile getProfile(ConnectivityManager connManager, WifiManager wifiManager) {
+        NetworkInfo activeNet = connManager.getActiveNetworkInfo();
+        if (activeNet == null) return getDefaultProfile();
+        return getProfile(activeNet.getType(), wifiManager);
     }
 
     @Override
