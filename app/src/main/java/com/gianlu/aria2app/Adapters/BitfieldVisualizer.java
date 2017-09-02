@@ -41,7 +41,9 @@ public class BitfieldVisualizer extends View {
         init();
     }
 
-    private static int[] hexToBinary(String hex, int num) {
+    @Nullable
+    private static int[] hexToBinary(@Nullable String hex, int num) {
+        if (hex == null) return null;
         hex = hex.toLowerCase();
         int[] array = new int[hex.length()];
         for (int i = 0; i < hex.length(); i++) {
