@@ -195,7 +195,7 @@
     <string name="pickMetalink_help">Выберите файл Metalink. Поддерживаемые типы <![CDATA[<b>application/metalink4+xml</b>]]> и <![CDATA[<b>application/metalink+xml</b>]]>. Путь к файлу, сообщенный Aria2App, может измениться.</string>
     <string name="pickProfile_share">Выберите профиль, чтобы начать загрузку:</string>
     <string name="outdated_aria2">Устаревшая версия Aria2</string>
-    <string name="outdated_aria2_message">Ваша версия Aria2 устарела. Обновите его до последней версии, чтобы избежать ошибок или проблем.\nВы можете отключить эту функцию в настройках.\n\nБолее новая версия: %1$s\nВаша версия: %2$s</string>
+    <string name="outdated_aria2_message">Ваша версия Aria2 устарела. Обновите его до последней версии, чтобы избежать ошибок или проблем.\nВы можете отключить эту функцию в настройках.\n\nВаша версия: %1$s\nБолее новая версия: %2$s</string>
     <string name="selectFile_help">Файл может быть выбран или отменен при загрузке только в многофайловых торрентах.</string>
     <string name="enableNotificationsAtBoot">Служба уведомлений при загрузке</string>
     <string name="notificationsAtBootOn">Служба уведомлений будет запущена при загрузке</string>
