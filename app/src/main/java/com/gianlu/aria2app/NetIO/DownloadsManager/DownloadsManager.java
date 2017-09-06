@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+// TODO: Use URIBuilder
 public class DownloadsManager extends FileDownloadListener {
     private static DownloadsManager instance;
     private static IGlobalMonitor monitor;

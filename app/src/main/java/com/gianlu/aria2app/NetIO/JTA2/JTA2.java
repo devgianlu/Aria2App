@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -51,7 +52,7 @@ public class JTA2 {
                 return new JTA2(context, WebSocketing.instantiate(context));
             else
                 return new JTA2(context, HTTPing.newInstance(context));
-        } catch (IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
+        } catch (IOException | NoSuchAlgorithmException | URISyntaxException | KeyStoreException | CertificateException | KeyManagementException ex) {
             throw new JTA2InitializingException(ex);
         }
     }

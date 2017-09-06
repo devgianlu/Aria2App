@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.NetIO;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -14,11 +13,15 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -27,11 +30,15 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
+
+import cz.msebera.android.httpclient.client.config.RequestConfig;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.utils.URIBuilder;
+import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 public class NetUtils {
 
@@ -109,46 +116,40 @@ public class NetUtils {
         }
     }
 
-    @SuppressLint("BadHostnameVerifier")
-    public static HttpURLConnection readyHttpConnection(String url, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (ca != null) {
-            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-            conn.setHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
-            conn.setConnectTimeout(5000);
-            return conn;
-        } else {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setConnectTimeout(5000);
-            return conn;
-        }
+    public static CloseableHttpClient buildHttpClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        return HttpClients.custom()
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(5000)
+                        .setSocketTimeout(5000)
+                        .setConnectionRequestTimeout(5000)
+                        .build())
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))))
+                .build();
     }
 
-    @SuppressLint("BadHostnameVerifier")
-    public static HttpURLConnection readyHttpConnection(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (ca != null) {
-            HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
-            conn.setHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-            conn.setSSLSocketFactory(NetUtils.readySSLContext(ca).getSocketFactory());
-            conn.setConnectTimeout(5000);
-            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-            return conn;
-        } else {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setConnectTimeout(5000);
-            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+    public static URI createBaseURI(MultiProfile.UserProfile profile) throws URISyntaxException {
+        return new URIBuilder()
+                .setScheme(profile.serverSSL ? "https" : "http")
+                .setHost(profile.serverAddr)
+                .setPort(profile.serverPort)
+                .setPath(profile.serverEndpoint).build();
+    }
 
-            return conn;
+    public static HttpGet createGetRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException, UnsupportedEncodingException {
+        if (defaultUri == null) defaultUri = createBaseURI(profile);
+        URIBuilder builder = new URIBuilder(defaultUri);
+        if (request != null) {
+            builder.addParameter("method", request.getString("method"))
+                    .addParameter("id", request.getString("id"));
+
+            if (request.has("params"))
+                builder.addParameter("params", Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP));
         }
+
+        HttpGet get = new HttpGet(builder.build());
+        if (profile.authMethod == JTA2.AuthMethod.HTTP)
+            get.addHeader("Authorization", "Basic " + profile.getEncodedCredentials());
+
+        return get;
     }
 }

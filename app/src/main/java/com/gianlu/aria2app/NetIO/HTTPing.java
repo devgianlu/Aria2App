@@ -1,24 +1,18 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -26,25 +20,32 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class HTTPing extends AbstractClient {
     private static HTTPing httping;
     private final ExecutorService executorService;
+    private final CloseableHttpClient client;
+    private final URI defaultUri;
 
-    private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 
-    public HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    public HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
         super(context, profile);
-        this.executorService = Executors.newCachedThreadPool();
         ErrorHandler.get().unlock();
+        this.executorService = Executors.newCachedThreadPool();
+        this.client = NetUtils.buildHttpClient(context, profile);
+        this.defaultUri = NetUtils.createBaseURI(profile);
     }
 
-    public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException {
+    public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
         if (httping == null) httping = new HTTPing(context);
         return httping;
     }
@@ -56,42 +57,15 @@ public class HTTPing extends AbstractClient {
 
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        this.sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context, profile));
-    }
-
-    @SuppressLint("BadHostnameVerifier")
-    public HttpURLConnection readyHttpConnection(URL url) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (profile.serverSSL) {
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            conn.setHostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-            conn.setSSLSocketFactory(sslContext.getSocketFactory());
-            conn.setConnectTimeout(5000);
-
-            if (profile.authMethod == JTA2.AuthMethod.HTTP)
-                conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
-
-            return conn;
-        } else {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(5000);
-
-            if (profile.authMethod == JTA2.AuthMethod.HTTP)
-                conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
-
-            return conn;
-        }
+        if (httping != null) httping.client.close();
+        httping = new HTTPing(context, profile);
     }
 
     private class RequestProcessor implements Runnable {
         private final JSONObject request;
         private final IReceived listener;
 
-        public RequestProcessor(JSONObject request, IReceived listener) {
+        RequestProcessor(JSONObject request, IReceived listener) {
             this.request = request;
             this.listener = listener;
         }
@@ -99,43 +73,29 @@ public class HTTPing extends AbstractClient {
         @Override
         public void run() {
             try {
-                String urlPath = profile.serverEndpoint +
-                        "?method="
-                        + request.getString("method")
-                        + "&id=" + request.getString("id");
-
-                if (request.has("params"))
-                    urlPath += "&params=" + URLEncoder.encode(Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP), "UTF-8");
-
-                URL url = new URL(
-                        profile.serverSSL ? "https" : "http",
-                        profile.serverAddr,
-                        profile.serverPort,
-                        urlPath);
-
-                HttpURLConnection conn = readyHttpConnection(url);
-                conn.connect();
-
-                if (conn.getResponseCode() == 200) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    String rawResponse = reader.readLine();
+                HttpGet get = NetUtils.createGetRequest(profile, defaultUri, request);
+                HttpResponse resp = client.execute(get);
+                StatusLine sl = resp.getStatusLine();
+                if (sl.getStatusCode() == HttpStatus.SC_OK) {
+                    String rawResponse = EntityUtils.toString(resp.getEntity());
 
                     if (rawResponse == null) {
                         listener.onException(new NullPointerException("Empty response"));
                     } else {
                         JSONObject response = new JSONObject(rawResponse);
-                        if (response.isNull("error")) {
-                            listener.onResponse(response);
-                        } else {
+                        if (response.has("error"))
                             listener.onException(new Aria2Exception(response.getJSONObject("error")));
-                        }
+                        else
+                            listener.onResponse(response);
                     }
                 } else {
-                    listener.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
+                    listener.onException(new StatusCodeException(sl)); // FIXME: WHY THE FUCK SOME REQUESTS RETURN 400
                 }
+
+                get.releaseConnection();
             } catch (OutOfMemoryError ex) {
                 System.gc();
-            } catch (JSONException | IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            } catch (JSONException | IOException | URISyntaxException ex) {
                 listener.onException(ex);
             }
         }

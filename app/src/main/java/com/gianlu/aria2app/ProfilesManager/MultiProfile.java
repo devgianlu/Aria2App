@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
@@ -358,7 +359,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
     }
 
-    public class UserProfile implements BaseDrawerProfile, Serializable {
+    public class UserProfile implements BaseDrawerProfile, Serializable { // TODO: Do some caching
         public final String serverAddr;
         public final int serverPort;
         public final String serverEndpoint;
@@ -372,6 +373,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final ConnectionMethod connectionMethod;
         public final ConnectivityCondition connectivityCondition;
         public TestStatus status;
+        private String encodedCredentials;
 
         public UserProfile(JSONObject obj) throws JSONException {
             this(obj, null);
@@ -438,6 +440,14 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             status = new TestStatus(Status.UNKNOWN);
+        }
+
+        @Nullable
+        public String getEncodedCredentials() {
+            if (authMethod != JTA2.AuthMethod.HTTP) return null;
+            if (encodedCredentials == null)
+                encodedCredentials = Base64.encodeToString((serverUsername + ":" + serverPassword).getBytes(), Base64.NO_WRAP);
+            return encodedCredentials;
         }
 
         public MultiProfile getParent() {

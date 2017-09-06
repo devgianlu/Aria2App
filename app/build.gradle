@@ -24,6 +24,7 @@ android {
 
 dependencies {
     compile project(':CommonUtils')
+    compile 'cz.msebera.android:httpclient:4.4.1.2'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     compile 'com.neovisionaries:nv-websocket-client:2.3'
     compile 'com.google.android.gms:play-services-analytics:11.2.0'

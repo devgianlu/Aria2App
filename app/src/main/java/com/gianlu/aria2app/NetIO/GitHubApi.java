@@ -3,35 +3,31 @@ package com.gianlu.aria2app.NetIO;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class GitHubApi {
     public static void getLatestVersion(final IRelease handler) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL("https://api.github.com/repos/aria2/aria2/releases/latest").openConnection();
-                    conn.connect();
+                try (CloseableHttpClient client = HttpClients.createDefault()) {
+                    HttpGet get = new HttpGet("https://api.github.com/repos/aria2/aria2/releases/latest");
+                    HttpResponse resp = client.execute(get);
+                    StatusLine sl = resp.getStatusLine();
+                    if (sl.getStatusCode() != HttpStatus.SC_OK) throw new StatusCodeException(sl);
 
-                    if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                        throw new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage());
-                    }
+                    String json = EntityUtils.toString(resp.getEntity());
+                    get.releaseConnection();
 
-                    StringBuilder builder = new StringBuilder();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) builder.append(line);
-
-                    reader.close();
-                    conn.disconnect();
-
-                    handler.onRelease(new JSONObject(builder.toString()).getString("name").replace("aria2 ", ""));
+                    handler.onRelease(new JSONObject(json).getString("name").replace("aria2 ", ""));
                 } catch (IOException | StatusCodeException | JSONException | NullPointerException ex) {
                     handler.onException(ex);
                 }

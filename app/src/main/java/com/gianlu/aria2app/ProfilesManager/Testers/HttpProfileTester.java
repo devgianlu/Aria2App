@@ -4,17 +4,24 @@ import android.content.Context;
 
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IConnect;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Logging;
 
+import org.json.JSONException;
+
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 
 public class HttpProfileTester extends NetProfileTester {
     public HttpProfileTester(Context context, MultiProfile.UserProfile profile, ITesting listener) {
@@ -25,7 +32,7 @@ public class HttpProfileTester extends NetProfileTester {
     public void getClient(IConnect listener) {
         try {
             listener.onConnected(new HTTPing(context, profile));
-        } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+        } catch (CertificateException | IOException | URISyntaxException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
             listener.onFailedConnecting(ex);
             Logging.logMe(context, ex);
         }
@@ -35,23 +42,21 @@ public class HttpProfileTester extends NetProfileTester {
     public void run() {
         publishUpdate("Started connection test...");
 
-        try {
-            HttpURLConnection conn;
-            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                conn = NetUtils.readyHttpConnection(profile.buildHttpUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
-            else
-                conn = NetUtils.readyHttpConnection(profile.buildHttpUrl(), NetUtils.readyCertificate(context, profile));
+        try (CloseableHttpClient client = NetUtils.buildHttpClient(context, profile)) {
+            HttpGet get = NetUtils.createGetRequest(profile, null, null);
+            HttpResponse resp = client.execute(get);
+            StatusLine sl = resp.getStatusLine();
 
-            conn.connect();
-
-            if (conn.getResponseCode() == 400) {
+            if (sl.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - startTime));
                 publishUpdate("Connection took " + (System.currentTimeMillis() - startTime) + "ms.");
             } else {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-                publishUpdate(conn.getResponseCode() + ": " + conn.getResponseMessage());
+                publishUpdate(sl.getStatusCode() + ": " + sl.getReasonPhrase());
             }
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
+
+            get.releaseConnection();
+        } catch (IOException | CertificateException | URISyntaxException | JSONException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
             publishUpdate(ex.getMessage());
         }
