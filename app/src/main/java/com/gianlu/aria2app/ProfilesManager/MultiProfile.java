@@ -359,7 +359,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
     }
 
-    public class UserProfile implements BaseDrawerProfile, Serializable { // TODO: Do some caching
+    public class UserProfile implements BaseDrawerProfile, Serializable {
         public final String serverAddr;
         public final int serverPort;
         public final String serverEndpoint;
@@ -374,6 +374,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final ConnectivityCondition connectivityCondition;
         public TestStatus status;
         private String encodedCredentials;
+        private String fullServerAddress;
 
         public UserProfile(JSONObject obj) throws JSONException {
             this(obj, null);
@@ -462,18 +463,18 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return MultiProfile.buildWebSocketUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
         }
 
-        public String buildHttpUrl() {
-            return MultiProfile.buildHttpUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
-        }
-
         public String getFullServerAddress() {
-            switch (connectionMethod) {
-                default:
-                case HTTP:
-                    return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
-                case WEBSOCKET:
-                    return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+            if (fullServerAddress == null) {
+                switch (connectionMethod) {
+                    default:
+                    case HTTP:
+                        fullServerAddress = (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+                    case WEBSOCKET:
+                        fullServerAddress = (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+                }
             }
+
+            return fullServerAddress;
         }
 
         public boolean isDirectDownloadEnabled() {
