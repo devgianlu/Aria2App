@@ -145,7 +145,7 @@ public class DownloadsManager extends FileDownloadListener {
         if (listener != null) listener.onDownloadsCountChanged(runningTasks.size());
     }
 
-    public void startDownload(Context context, AFile file, String dir) throws DownloadsManagerException {
+    public void startDownload(Context context, AFile file, @NonNull String dir) throws DownloadsManagerException {
         URI fileUrl;
         try {
             fileUrl = createRemoteUrl(context, file, dir);

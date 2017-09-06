@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -314,7 +315,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final Download download, final ADir dir) {
+    public void onWantsToDownload(final Download download, @NonNull final ADir dir) {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
@@ -353,7 +354,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final Download download, final AFile file) {
+    public void onWantsToDownload(final Download download, @NonNull final AFile file) {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
@@ -385,7 +386,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 .build());
     }
 
-    private void realStartDownload(List<AFile> files, String dir) {
+    private void realStartDownload(List<AFile> files, @NonNull String dir) {
         try {
             for (AFile file : files)
                 DownloadsManager.get(getContext()).startDownload(getContext(), file, dir);
@@ -396,6 +397,11 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     private void startDownload(final AFile file, final String dir) {
+        if (dir == null) {
+            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, new NullPointerException("dir is null!"));
+            return;
+        }
+
         if (file.completed()) {
             realStartDownload(Collections.singletonList(file), dir);
         } else {

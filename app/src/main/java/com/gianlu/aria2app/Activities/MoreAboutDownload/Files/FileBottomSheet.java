@@ -148,6 +148,6 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
 
         void onCantDeselectAll();
 
-        void onWantsToDownload(Download download, AFile file);
+        void onWantsToDownload(Download download, @NonNull AFile file);
     }
 }
