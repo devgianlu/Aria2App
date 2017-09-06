@@ -37,7 +37,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public static final String ACTION_SEARCH = "Search torrent";
     public static final String ACTION_STARTED_TEST = "Started profile test";
     private static Tracker tracker;
-    private boolean checkedVersion = false;
+    private boolean firstStart = true;
 
     @NonNull
     private static Tracker getTracker(Application application) {
@@ -58,8 +58,8 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
                 tracker.send(map);
     }
 
-    public boolean hasCheckedVersion() {
-        return checkedVersion;
+    public boolean isFirstStart() {
+        return firstStart;
     }
 
     @Override
@@ -95,8 +95,8 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
         LoadingActivity.startActivity(this, null);
     }
 
-    public void setHasCheckedVersion(boolean checkedVersion) {
-        this.checkedVersion = checkedVersion;
+    public void setIsFirstStart(boolean firstStart) {
+        this.firstStart = firstStart;
     }
 
     @Override

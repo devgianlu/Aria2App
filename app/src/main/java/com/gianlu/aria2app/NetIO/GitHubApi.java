@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class GitHubApi {
+public class GitHubApi { // TODO: Improve
     public static void getLatestVersion(final IRelease handler) {
         new Thread(new Runnable() {
             @Override
