@@ -1,38 +1,61 @@
 package com.gianlu.aria2app.Activities;
 
 import android.app.SearchManager;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import com.gianlu.aria2app.Activities.Search.SearchEngine;
+import com.gianlu.aria2app.Activities.Search.SearchResult;
+import com.gianlu.aria2app.Activities.Search.SearchUtils;
+import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.MessageLayout;
 
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+import java.util.List;
+
+public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter {
     private RecyclerView list;
     private ProgressBar loading;
+    private FrameLayout layout;
+    private LinearLayout message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.recycler_view_layout);
+        setContentView(R.layout.activity_search);
         setTitle(R.string.searchTorrent);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
-        loading = findViewById(R.id.recyclerViewLayout_loading);
-        SwipeRefreshLayout layout = findViewById(R.id.recyclerViewLayout_swipeRefresh);
-        layout.setVisibility(View.VISIBLE);
-        layout.setEnabled(false);
-        list = findViewById(R.id.recyclerViewLayout_list);
+        layout = findViewById(R.id.search);
+        loading = findViewById(R.id.search_loading);
+        message = findViewById(R.id.search_message);
+        list = findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        Button messageMore = findViewById(R.id.search_messageMore);
+        messageMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://gianlu.xyz/torrent-search-engine/")));
+            }
+        });
     }
 
     @Override
@@ -52,18 +75,51 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public boolean onQueryTextSubmit(final String query) { // TODO
+    public boolean onQueryTextSubmit(final String query) {
+        loading.setVisibility(View.VISIBLE);
+        list.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+        MessageLayout.hide(layout);
+
+        SearchUtils.get(this).search(query, 10, null, this);
         return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (newText.length() >= 3) onQueryTextSubmit(newText); // FIXME
-        return true;
+        return false;
     }
 
     @Override
-    public boolean onClose() { // TODO
+    public boolean onClose() {
+        message.setVisibility(View.VISIBLE);
+        loading.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        MessageLayout.hide(layout);
         return false;
+    }
+
+    @Override
+    public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines) {
+        loading.setVisibility(View.GONE);
+        list.setVisibility(View.VISIBLE);
+        message.setVisibility(View.GONE);
+        MessageLayout.hide(layout);
+
+        list.setAdapter(new SearchResultsAdapter(this, results, this));
+    }
+
+    @Override
+    public void onException(Exception ex) {
+        loading.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        MessageLayout.show(layout, getString(R.string.failedLoading_reason, ex.getLocalizedMessage()), R.drawable.ic_error_outline_black_48dp);
+        Logging.logMe(this, ex);
+    }
+
+    @Override
+    public void onResultSelected(SearchResult result) { // TODO
+
     }
 }
