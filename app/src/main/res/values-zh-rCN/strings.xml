@@ -280,6 +280,7 @@
     <string name="failedChangingOptions">更改选项失败！</string>
     <string name="seeError">查看错误</string>
     <string name="contactMe">联系我</string>
+    <string name="connectivityChanged">连接更改，切换配置文件。</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

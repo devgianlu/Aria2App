@@ -307,6 +307,7 @@
     <string name="noLogs">Список логов пуст.</string>
     <string name="seeError">См. Ошибку</string>
     <string name="contactMe">Свяжитесь со мной</string>
+    <string name="connectivityChanged">Изменены возможности подключения, профиль переключения.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
