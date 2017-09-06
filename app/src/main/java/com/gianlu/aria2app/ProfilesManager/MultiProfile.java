@@ -274,6 +274,15 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return obj;
         }
 
+        @Override
+        public String toString() {
+            return "ConnectivityCondition{" +
+                    "type=" + type +
+                    ", ssid='" + ssid + '\'' +
+                    ", isDefault=" + isDefault +
+                    '}';
+        }
+
         public String getFormal(Context context) {
             return type.getFormal(context) + (type == Type.WIFI ? ": " + ssid : "");
         }
@@ -429,6 +438,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             status = new TestStatus(Status.UNKNOWN);
+        }
+
+        public MultiProfile getParent() {
+            return MultiProfile.this;
         }
 
         public void setStatus(TestStatus status) {

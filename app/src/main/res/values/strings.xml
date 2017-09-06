@@ -284,6 +284,7 @@
     <string name="failedChangingOptions">Failed changing options!</string>
     <string name="seeError">See error</string>
     <string name="contactMe">Contact me</string>
+    <string name="connectivityChanged">Connectivity changed, switching profile.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

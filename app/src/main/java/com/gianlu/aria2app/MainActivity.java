@@ -49,6 +49,7 @@ import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.Main.UpdateUI;
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
@@ -88,7 +89,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -311,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         MultiProfile currentProfile = manager.getCurrent(this);
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
+        AbstractClient.addConnectivityListener(this);
 
         setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
 
@@ -445,6 +447,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         // Don't put nothing here!!
+    }
+
+    @Override
+    protected void onDestroy() {
+        AbstractClient.removeConnectivityListener(this);
+        super.onDestroy();
     }
 
     private void processUrl(Uri shareData) {
@@ -978,5 +986,22 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     public boolean onMenuItemActionCollapse(MenuItem item) {
         onClose();
         return true;
+    }
+
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public void connectivityChanged(@NonNull final MultiProfile.UserProfile profile) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (drawerManager != null)
+                    drawerManager.setCurrentProfile(profile.getParent());
+            }
+        });
+
+        List<MultiProfile.UserProfile> profiles = profile.getParent().profiles;
+        if (!(profiles.size() == 1 && profiles.get(0).connectivityCondition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)) {
+            Toaster.show(this, Utils.Messages.CONNECTIVITY_CHANGED, profile.connectivityCondition.toString());
+        }
     }
 }

@@ -79,6 +79,7 @@ public class WebSocketing extends AbstractClient {
 
     private void clearInternal() {
         connectionListener = null;
+        clearConnectivityListener();
         if (socket != null) socket.disconnect();
         if (requests != null) requests.clear();
         if (connectionQueue != null) connectionQueue.clear();

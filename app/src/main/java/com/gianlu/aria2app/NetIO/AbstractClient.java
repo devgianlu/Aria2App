@@ -18,11 +18,14 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.net.ssl.SSLContext;
 
 public abstract class AbstractClient {
+    private static final List<OnConnectivityChanged> listeners = new ArrayList<>();
     private final WifiManager wifiManager;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
@@ -34,9 +37,25 @@ public abstract class AbstractClient {
         context.getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
+    public static void addConnectivityListener(OnConnectivityChanged listener) {
+        listeners.add(listener);
+    }
+
+    public static void removeConnectivityListener(OnConnectivityChanged listener) {
+        listeners.remove(listener);
+    }
+
+    public static void clearConnectivityListener() {
+        listeners.clear();
+    }
+
     public abstract void send(JSONObject request, IReceived handler);
 
-    public abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception; // TODO: Test on emulator
+    public abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;
+
+    public interface OnConnectivityChanged {
+        void connectivityChanged(@NonNull MultiProfile.UserProfile profile);
+    }
 
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
 
@@ -51,6 +70,9 @@ public abstract class AbstractClient {
                         try {
                             connectivityChanged(context, profile);
                             AbstractClient.this.profile = profile;
+
+                            for (OnConnectivityChanged listener : listeners)
+                                listener.connectivityChanged(profile);
                         } catch (Exception ex) {
                             ErrorHandler.get().notifyException(ex, true);
                         }
