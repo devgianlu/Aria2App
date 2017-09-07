@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
+import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
@@ -80,6 +81,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     @Override
     public void onFatal(Throwable ex) {
         WebSocketing.clear();
+        HTTPing.clear();
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
         LoadingActivity.startActivity(this, ex);
 
@@ -92,6 +94,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     @Override
     public void onSubsequentExceptions() {
         WebSocketing.clear();
+        HTTPing.clear();
         LoadingActivity.startActivity(this, null);
     }
 

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
@@ -105,6 +106,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         Logging.clearLogs(this);
         WebSocketing.clear();
+        HTTPing.clear();
 
         manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {
@@ -262,6 +264,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     private void cancelConnection() {
         WebSocketing.clear();
+        HTTPing.clear();
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
     }

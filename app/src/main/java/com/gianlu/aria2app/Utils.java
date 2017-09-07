@@ -19,6 +19,7 @@ import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
 import com.gianlu.aria2app.Main.SharedFile;
+import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -95,6 +96,7 @@ public class Utils {
     public static void damn(Context context, Throwable ex) {
         Logging.logMe(context, ex);
         WebSocketing.clear();
+        HTTPing.clear();
         ProfilesManager.get(context).unsetLastProfile(context);
         LoadingActivity.startActivity(context, ex);
     }

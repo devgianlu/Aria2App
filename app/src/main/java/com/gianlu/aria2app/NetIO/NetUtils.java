@@ -39,6 +39,7 @@ import cz.msebera.android.httpclient.client.utils.URIBuilder;
 import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
+import cz.msebera.android.httpclient.impl.conn.PoolingHttpClientConnectionManager;
 
 public class NetUtils {
 
@@ -118,11 +119,13 @@ public class NetUtils {
 
     public static CloseableHttpClient buildHttpClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         return HttpClients.custom()
+                .setUserAgent("Aria2App")
                 .setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectTimeout(5000)
                         .setSocketTimeout(5000)
                         .setConnectionRequestTimeout(5000)
                         .build())
+                .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))))
                 .build();
     }

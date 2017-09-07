@@ -49,6 +49,8 @@ public abstract class AbstractClient {
         listeners.clear();
     }
 
+    protected abstract void clearInternal();
+
     public abstract void send(JSONObject request, IReceived handler);
 
     public abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;

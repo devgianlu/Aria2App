@@ -142,7 +142,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     @Override
     public void onItemCountUpdated(int count) {
         if (count == 0) {
-            MessageLayout.show(layout, R.string.noPeers, R.drawable.ic_info_outline_black_48dp);
+            MessageLayout.show(layout, R.string.noServers, R.drawable.ic_info_outline_black_48dp);
             list.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             if (sheet != null) sheet.collapse();

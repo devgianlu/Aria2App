@@ -281,6 +281,7 @@
     <string name="contactMe">Свяжитесь со мной</string>
     <string name="connectivityChanged">Изменены возможности подключения, профиль переключения.</string>
     <string name="failedLoading_reason">Не удалось загрузить страницу: %s</string>
+    <string name="noServers">Нет серверов</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

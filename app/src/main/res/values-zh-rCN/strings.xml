@@ -282,6 +282,7 @@
     <string name="contactMe">联系我</string>
     <string name="connectivityChanged">连接更改，切换配置文件。</string>
     <string name="failedLoading_reason">加载本页失败: %s</string>
+    <string name="noServers">沒有服務器</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

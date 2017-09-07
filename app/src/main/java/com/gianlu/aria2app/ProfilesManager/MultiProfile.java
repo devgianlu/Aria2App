@@ -469,8 +469,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     default:
                     case HTTP:
                         fullServerAddress = (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+                        break;
                     case WEBSOCKET:
                         fullServerAddress = (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+                        break;
                 }
             }
 

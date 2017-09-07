@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+// TODO: Remove redundant code
 public class JTA2 {
     private final AbstractClient client;
     private final Context context;
@@ -46,6 +47,7 @@ public class JTA2 {
         this.forceAction = Prefs.getBoolean(context, PKeys.A2_FORCE_ACTION, true);
     }
 
+    @NonNull
     public static JTA2 instantiate(Context context) throws JTA2InitializingException {
         try {
             if (ProfilesManager.get(context).getCurrent(context).getProfile(context).connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)

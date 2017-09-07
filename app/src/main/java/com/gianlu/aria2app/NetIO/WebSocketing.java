@@ -67,6 +67,7 @@ public class WebSocketing extends AbstractClient {
 
     public static void clear() {
         locked = true;
+        clearConnectivityListener();
         if (webSocketing != null) {
             webSocketing.clearInternal();
             webSocketing = null;
@@ -77,9 +78,9 @@ public class WebSocketing extends AbstractClient {
         locked = false;
     }
 
-    private void clearInternal() {
+    @Override
+    protected void clearInternal() {
         connectionListener = null;
-        clearConnectivityListener();
         if (socket != null) socket.disconnect();
         if (requests != null) requests.clear();
         if (connectionQueue != null) connectionQueue.clear();

@@ -20,8 +20,8 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
@@ -50,9 +50,24 @@ public class HTTPing extends AbstractClient {
         return httping;
     }
 
+    public static void clear() {
+        clearConnectivityListener();
+        if (httping != null) httping.clearInternal();
+    }
+
+    @Override
+    protected void clearInternal() {
+        executorService.shutdownNow();
+        try {
+            client.close();
+        } catch (IOException ignored) {
+        }
+    }
+
     @Override
     public void send(final JSONObject request, final IReceived handler) {
-        executorService.execute(new RequestProcessor(request, handler));
+        if (!executorService.isShutdown())
+            executorService.execute(new RequestProcessor(request, handler));
     }
 
     @Override
@@ -76,20 +91,22 @@ public class HTTPing extends AbstractClient {
                 HttpGet get = NetUtils.createGetRequest(profile, defaultUri, request);
                 HttpResponse resp = client.execute(get);
                 StatusLine sl = resp.getStatusLine();
-                if (sl.getStatusCode() == HttpStatus.SC_OK) {
-                    String rawResponse = EntityUtils.toString(resp.getEntity());
 
-                    if (rawResponse == null) {
+                HttpEntity entity = resp.getEntity();
+                if (entity != null) {
+                    String json = EntityUtils.toString(resp.getEntity());
+                    if (json == null || json.isEmpty()) {
                         listener.onException(new NullPointerException("Empty response"));
                     } else {
-                        JSONObject response = new JSONObject(rawResponse);
-                        if (response.has("error"))
-                            listener.onException(new Aria2Exception(response.getJSONObject("error")));
-                        else
-                            listener.onResponse(response);
+                        JSONObject obj = new JSONObject(json);
+                        if (obj.has("error")) {
+                            listener.onException(new Aria2Exception(obj.getJSONObject("error")));
+                        } else {
+                            listener.onResponse(obj);
+                        }
                     }
                 } else {
-                    listener.onException(new StatusCodeException(sl)); // FIXME: WHY THE FUCK SOME REQUESTS RETURN 400
+                    listener.onException(new StatusCodeException(sl));
                 }
 
                 get.releaseConnection();
