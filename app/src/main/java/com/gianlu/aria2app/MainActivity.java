@@ -44,6 +44,7 @@ import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
+import com.gianlu.aria2app.Activities.Search.SearchUtils;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Main.DrawerConst;
@@ -392,38 +393,41 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
         }
 
-        if (!((ThisApplication) getApplication()).hasCheckedVersion() && Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true)) {
-            GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
-                @Override
-                public void onRelease(final String latestVersion) {
-                    JTA2 jta2;
-                    try {
-                        jta2 = JTA2.instantiate(MainActivity.this);
-                    } catch (JTA2InitializingException ex) {
-                        Logging.logMe(MainActivity.this, ex);
-                        return;
+        if (((ThisApplication) getApplication()).isFirstStart()) {
+            SearchUtils.get(this).cacheSearchEngines(this);
+            ((ThisApplication) getApplication()).setIsFirstStart(false);
+            if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true)) {
+                GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
+                    @Override
+                    public void onRelease(final String latestVersion) {
+                        JTA2 jta2;
+                        try {
+                            jta2 = JTA2.instantiate(MainActivity.this);
+                        } catch (JTA2InitializingException ex) {
+                            Logging.logMe(MainActivity.this, ex);
+                            return;
+                        }
+
+                        jta2.getVersion(new JTA2.IVersion() {
+                            @Override
+                            public void onVersion(List<String> rawFeatures, String version) {
+                                if (!Objects.equals(version, latestVersion))
+                                    showOutdatedDialog(latestVersion, version);
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                Logging.logMe(MainActivity.this, ex);
+                            }
+                        });
                     }
 
-                    jta2.getVersion(new JTA2.IVersion() {
-                        @Override
-                        public void onVersion(List<String> rawFeatures, String version) {
-                            ((ThisApplication) getApplication()).setHasCheckedVersion(true);
-                            if (!Objects.equals(version, latestVersion))
-                                showOutdatedDialog(latestVersion, version);
-                        }
-
-                        @Override
-                        public void onException(Exception ex) {
-                            Logging.logMe(MainActivity.this, ex);
-                        }
-                    });
-                }
-
-                @Override
-                public void onException(Exception ex) {
-                    Logging.logMe(MainActivity.this, ex);
-                }
-            });
+                    @Override
+                    public void onException(Exception ex) {
+                        Logging.logMe(MainActivity.this, ex);
+                    }
+                });
+            }
         }
 
         Uri shareData = getIntent().getParcelableExtra("shareData");

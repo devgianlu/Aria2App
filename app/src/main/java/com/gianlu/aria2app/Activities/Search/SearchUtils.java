@@ -1,152 +1,179 @@
 package com.gianlu.aria2app.Activities.Search;
 
+
+import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
+import com.gianlu.commonutils.Logging;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.utils.URIBuilder;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class SearchUtils {
-    public static final String TRENDING_WEEK = "trending-week";
-    static final String BASE_URL = "http://1337x.to";
+    private static final String BASE_URL = "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
+    private static SearchUtils instance;
+    private final HttpClient client;
+    private final ExecutorService executorService;
+    private final Handler handler;
+    private List<SearchEngine> cachedEngines = null;
 
-    public static void search(final String query, final ISearch handler) {
-        if (Objects.equals(query, TRENDING_WEEK)) {
-            fetchTrendingThisWeek(handler);
-            return;
-        }
+    private SearchUtils(Context context) {
+        client = HttpClients.createDefault();
+        executorService = Executors.newSingleThreadExecutor();
+        handler = new Handler(context.getMainLooper());
+    }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + "/search/" + query + "/1/").openConnection();
-                    conn.connect();
-
-                    if (conn.getResponseCode() != 200) {
-                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
-                        return;
-                    }
-
-                    String html = read(conn.getInputStream());
-                    conn.disconnect();
-
-                    Document doc = Jsoup.parse(html);
-                    Element table = doc.select("div.box-info-detail table.table-list tbody").first();
-                    if (table == null) {
-                        handler.onResults(new ArrayList<SearchResult>());
-                    } else {
-                        Elements items = table.children();
-                        List<SearchResult> results = new ArrayList<>();
-                        for (int i = 0; i < items.size(); i++)
-                            results.add(new SearchResult(items.get(i)));
-
-                        handler.onResults(results);
-                    }
-                } catch (IOException | NullPointerException ex) {
-                    handler.onException(ex);
-                }
-            }
-        }).start();
+    public static SearchUtils get(Context context) {
+        if (instance == null) instance = new SearchUtils(context);
+        return instance;
     }
 
     @NonNull
-    private static String read(InputStream in) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-
-        String line;
-        while ((line = reader.readLine()) != null)
-            builder.append(line);
-
-        reader.close();
-        return builder.toString();
+    private String request(HttpGet get) throws IOException, StatusCodeException {
+        HttpResponse resp = client.execute(get);
+        StatusLine sl = resp.getStatusLine();
+        if (sl.getStatusCode() != HttpStatus.SC_OK) throw new StatusCodeException(sl);
+        return EntityUtils.toString(resp.getEntity());
     }
 
-    private static void fetchTrendingThisWeek(final ISearch handler) {
-        new Thread(new Runnable() {
+    public void search(final String query, final int maxResults, @Nullable final List<SearchEngine> engines, final ISearch listener) {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + "/trending-week").openConnection();
-                    conn.connect();
+                    URIBuilder builder = new URIBuilder(BASE_URL + "search");
+                    builder.addParameter("q", query)
+                            .addParameter("m", String.valueOf(maxResults));
 
-                    if (conn.getResponseCode() != 200) {
-                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
-                        return;
+                    if (engines != null) {
+                        for (SearchEngine engine : engines)
+                            builder.addParameter("e", engine.id);
                     }
 
-                    String html = SearchUtils.read(conn.getInputStream());
-                    conn.disconnect();
+                    JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
+                    JSONArray resultsArray = obj.getJSONArray("result");
+                    final List<SearchResult> results = new ArrayList<>();
+                    for (int i = 0; i < resultsArray.length(); i++)
+                        results.add(new SearchResult(resultsArray.getJSONObject(i)));
 
-                    Document doc = Jsoup.parse(html);
-                    Elements items = doc.select("div.trending-torrent table.table-list tbody").first().children();
+                    getCachedEnginesBlocking();
+                    JSONArray missingEnginesArray = obj.getJSONArray("missing");
+                    final List<SearchEngine> missingEngines = new ArrayList<>();
+                    for (int i = 0; i < missingEnginesArray.length(); i++) {
+                        SearchEngine engine = findEngine(missingEnginesArray.getString(i));
+                        if (engine != null) missingEngines.add(engine);
+                    }
 
-                    List<SearchResult> results = new ArrayList<>();
-                    for (int i = 0; i < items.size(); i++)
-                        results.add(new SearchResult(items.get(i)));
-
-                    handler.onResults(results);
-                } catch (IOException | NullPointerException ex) {
-                    handler.onException(ex);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onResult(results, missingEngines);
+                        }
+                    });
+                } catch (IOException | StatusCodeException | URISyntaxException | JSONException ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onException(ex);
+                        }
+                    });
                 }
             }
-        }).start();
+        });
     }
 
-    public static void findMagnetLink(final SearchResult item, final IMagnetLink handler) {
-        new Thread(new Runnable() {
+    @Nullable
+    public SearchEngine findEngine(String id) {
+        if (cachedEngines == null) return null;
+        for (SearchEngine engine : cachedEngines)
+            if (Objects.equals(engine.id, id))
+                return engine;
+
+        return null;
+    }
+
+    public void listSearchEngines(final IResult<List<SearchEngine>> listener) {
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    HttpURLConnection conn = (HttpURLConnection) new URL(item.href).openConnection();
-                    conn.connect();
+                    final List<SearchEngine> engines = listSearchEnginesSync();
 
-                    if (conn.getResponseCode() != 200) {
-                        handler.onException(new StatusCodeException(conn.getResponseCode(), conn.getResponseMessage()));
-                        return;
-                    }
-
-                    String html = read(conn.getInputStream());
-                    conn.disconnect();
-
-                    Document doc = Jsoup.parse(html);
-                    Elements magnet = doc.select("a[href^='magnet:']");
-
-                    if (magnet.isEmpty()) {
-                        handler.onMagnetLink(null);
-                    } else {
-                        handler.onMagnetLink(magnet.first().attr("href"));
-                    }
-                } catch (IOException | NullPointerException ex) {
-                    handler.onException(ex);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onResult(engines);
+                        }
+                    });
+                } catch (IOException | StatusCodeException | JSONException ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onException(ex);
+                        }
+                    });
                 }
             }
-        }).start();
+        });
     }
 
-    public interface IMagnetLink {
-        void onMagnetLink(@Nullable String magnet);
+    private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
+        JSONArray array = new JSONArray(request(new HttpGet(BASE_URL + "listEngines")));
+        final List<SearchEngine> engines = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++)
+            engines.add(new SearchEngine(array.getJSONObject(i)));
+
+        cachedEngines = engines;
+        return engines;
+    }
+
+    public List<SearchEngine> getCachedEnginesBlocking() throws IOException, StatusCodeException, JSONException {
+        if (cachedEngines != null) return cachedEngines;
+        return listSearchEnginesSync();
+    }
+
+    public void cacheSearchEngines(final Context context) {
+        listSearchEngines(new IResult<List<SearchEngine>>() {
+            @Override
+            public void onResult(List<SearchEngine> result) {
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Logging.logMe(context, ex);
+            }
+        });
+    }
+
+    public interface ISearch {
+        void onResult(List<SearchResult> results, List<SearchEngine> missingEngines);
 
         void onException(Exception ex);
     }
 
-    public interface ISearch {
-        void onResults(List<SearchResult> results);
+    public interface IResult<E> {
+        void onResult(E result);
 
         void onException(Exception ex);
     }

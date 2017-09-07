@@ -4,19 +4,32 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:paddingBottom="4dp"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingTop="4dp">
+    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/searchResult_name"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:ellipsize="end"
-        android:maxLines="3" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/searchResult_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/searchResult_engine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="12sp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/searchResult_seeders"
