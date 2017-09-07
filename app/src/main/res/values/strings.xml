@@ -225,7 +225,7 @@
     <string name="base64NotSelected">You haven\'t selected a file!</string>
     <string name="certDisclaimer">Leave empty to use a system-wide certificate (you must install a valid certificate anyway). If specified, the certificate file may be copied somewhere else.</string>
     <string name="test">Test</string>
-    <string name="test_help">Pressing the test button Ari2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
+    <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
     <string name="restartTutorial">Restart tutorial</string>
     <string name="restartTutorialSummary">Show tutorial again</string>
     <string name="peerDetails">Peer details</string>

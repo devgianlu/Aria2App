@@ -62,12 +62,7 @@ public class JTA2 {
         SparseArray<List<Server>> list = new SparseArray<>();
         for (int i = 0; i < array.length(); i++) {
             JSONObject server = array.getJSONObject(i);
-            int index = server.getInt("index");
-            JSONArray serversArray = server.getJSONArray("servers");
-            List<Server> servers = new ArrayList<>();
-            for (int j = 0; j < serversArray.length(); j++)
-                servers.add(new Server(serversArray.getJSONObject(j)));
-            list.put(index, servers);
+            list.put(server.getInt("index"), CommonUtils.toTList(server.getJSONArray("servers"), Server.class));
         }
         return list;
     }

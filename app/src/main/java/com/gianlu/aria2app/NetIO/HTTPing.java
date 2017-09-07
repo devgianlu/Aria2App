@@ -58,10 +58,15 @@ public class HTTPing extends AbstractClient {
     @Override
     protected void clearInternal() {
         executorService.shutdownNow();
-        try {
-            client.close();
-        } catch (IOException ignored) {
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    client.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }).start();
     }
 
     @Override
