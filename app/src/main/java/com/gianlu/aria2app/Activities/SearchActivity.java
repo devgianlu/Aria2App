@@ -27,6 +27,7 @@ import com.gianlu.commonutils.MessageLayout;
 
 import java.util.List;
 
+// TODO: Should have tutorial (?)
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter {
     private RecyclerView list;
     private ProgressBar loading;
