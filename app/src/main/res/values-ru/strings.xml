@@ -282,6 +282,7 @@
     <string name="connectivityChanged">Изменены возможности подключения, профиль переключения.</string>
     <string name="failedLoading_reason">Не удалось загрузить страницу: %s</string>
     <string name="noServers">Нет серверов</string>
+    <string name="enableHostnameVerifier">Включить верификатор имени хоста</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

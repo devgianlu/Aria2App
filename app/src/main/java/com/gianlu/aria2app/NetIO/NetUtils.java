@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.NetIO;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -30,7 +31,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
 import cz.msebera.android.httpclient.client.config.RequestConfig;
@@ -38,6 +41,7 @@ import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.utils.URIBuilder;
 import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.impl.conn.PoolingHttpClientConnectionManager;
 
@@ -74,9 +78,10 @@ public class NetUtils {
         return factory.generateCertificate(new FileInputStream(profile.certificatePath));
     }
 
-    public static WebSocket readyWebSocket(String url, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+    public static WebSocket readyWebSocket(String url, boolean hostnameVerifier, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         if (ca != null) {
             WebSocketFactory factory = new WebSocketFactory();
+            factory.setVerifyHostname(hostnameVerifier);
             factory.setSSLContext(readySSLContext(ca));
 
             return factory.createSocket(url, 5000)
@@ -87,9 +92,10 @@ public class NetUtils {
         }
     }
 
-    public static WebSocket readyWebSocket(String url, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException {
+    public static WebSocket readyWebSocket(String url, boolean hostnameVerifier, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException {
         try {
             WebSocketFactory factory = new WebSocketFactory();
+            factory.setVerifyHostname(hostnameVerifier);
             factory.setConnectionTimeout(5000);
             if (ca != null) factory.setSSLContext(readySSLContext(ca));
             return factory.createSocket(url, 5000);
@@ -101,6 +107,7 @@ public class NetUtils {
     public static WebSocket readyWebSocket(Context context, MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);
+        factory.setVerifyHostname(profile.hostnameVerifier);
         if (profile.serverSSL)
             factory.setSSLContext(readySSLContext(readyCertificate(context, profile)));
 
@@ -118,7 +125,7 @@ public class NetUtils {
     }
 
     public static CloseableHttpClient buildHttpClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        return HttpClients.custom()
+        HttpClientBuilder builder = HttpClients.custom()
                 .setUserAgent("Aria2App")
                 .setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectTimeout(5000)
@@ -126,10 +133,19 @@ public class NetUtils {
                         .setConnectionRequestTimeout(5000)
                         .build())
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))))
-                .build();
+                .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))));
 
-        // TODO: Should request whether to add the "Bad hostname verifier"
+        if (!profile.hostnameVerifier) {
+            builder.setSSLHostnameVerifier(new HostnameVerifier() {
+                @SuppressLint("BadHostnameVerifier")
+                @Override
+                public boolean verify(String s, SSLSession sslSession) {
+                    return true;
+                }
+            });
+        }
+
+        return builder.build();
     }
 
     public static URI createBaseURI(MultiProfile.UserProfile profile) throws URISyntaxException {

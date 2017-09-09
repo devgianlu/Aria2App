@@ -49,9 +49,9 @@ public class WsProfileTester extends NetProfileTester implements WebSocketListen
         try {
             WebSocket webSocket;
             if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
+                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
             else
-                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), NetUtils.readyCertificate(context, profile));
+                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, NetUtils.readyCertificate(context, profile));
 
             webSocket.addListener(this).connectAsynchronously();
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {

@@ -45,7 +45,7 @@ public class WebSocketing extends AbstractClient {
 
     public WebSocketing(Context context, MultiProfile.UserProfile profile, @Nullable IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         super(context, profile);
-        socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
+        socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
         socket.addListener(new Adapter()).connectAsynchronously();
         connectionListener = listener;
     }

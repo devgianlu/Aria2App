@@ -144,6 +144,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/certDisclaimer"
                 android:textSize="12sp" />
+
+            <CheckBox
+                android:id="@+id/editProfile_hostnameVerifier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/enableHostnameVerifier" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hostnameVerifier_disclaimer"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -39,6 +39,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     private TextInputLayout endpoint;
     private CheckBox encryption;
     private LinearLayout certificatePathContainer;
+    private CheckBox hostnameVerifier;
     private TextInputLayout certificatePath;
 
     public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
@@ -143,6 +144,8 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
 
+        hostnameVerifier = layout.findViewById(R.id.editProfile_hostnameVerifier);
+
         ImageButton pickCertificatePath = layout.findViewById(R.id.editProfile_pickCertificatePath);
         pickCertificatePath.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +173,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             endpoint.getEditText().setText(edit.serverEndpoint);
             encryption.setChecked(edit.serverSSL);
             if (edit.serverSSL) certificatePath.getEditText().setText(edit.certificatePath);
+            hostnameVerifier.setChecked(edit.hostnameVerifier);
         }
 
         created = true;
@@ -216,7 +220,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificatePath);
+            return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificatePath, edit.hostnameVerifier);
         }
 
         MultiProfile.ConnectionMethod connectionMethod;
@@ -258,7 +262,8 @@ public class ConnectionFragment extends FieldErrorFragment {
             throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.invalidCompleteAddress));
         }
 
-        if (partial) return new Fields(connectionMethod, address, port, endpoint, encryption, null);
+        if (partial)
+            return new Fields(connectionMethod, address, port, endpoint, encryption, null, false);
 
         String certificatePath = this.certificatePath.getEditText().getText().toString(); // The certificate path can be empty
         if (encryption && certificatePath != null && !certificatePath.isEmpty()) {
@@ -267,7 +272,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                 throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, context.getString(R.string.invalidCertificate));
         }
 
-        return new Fields(connectionMethod, address, port, endpoint, encryption, certificatePath);
+        return new Fields(connectionMethod, address, port, endpoint, encryption, certificatePath, hostnameVerifier.isChecked());
     }
 
     @Override
@@ -286,14 +291,16 @@ public class ConnectionFragment extends FieldErrorFragment {
         public final String endpoint;
         public final boolean encryption;
         public final String certificatePath;
+        public final boolean hostnameVerifier;
 
-        public Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable String certificatePath) {
+        public Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable String certificatePath, boolean hostnameVerifier) {
             this.connectionMethod = connectionMethod;
             this.address = address;
             this.port = port;
             this.endpoint = endpoint;
             this.encryption = encryption;
             this.certificatePath = certificatePath;
+            this.hostnameVerifier = hostnameVerifier;
         }
     }
 }

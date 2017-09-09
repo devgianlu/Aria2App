@@ -288,6 +288,8 @@
     <string name="failedLoading_reason">Failed loading: %s</string>
     <string name="searchEngine_disclaimer">This search engine is powered by me (the developer). It combines results from various sources.</string>
     <string name="noServers">No servers</string>
+    <string name="enableHostnameVerifier">Enable hostname verifier</string>
+    <string name="hostnameVerifier_disclaimer">You should enable this option if your certificate contains Subject Alternative Names (SAN). It is recommended to add SANs to your certificate.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

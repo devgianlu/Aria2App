@@ -365,6 +365,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final String serverEndpoint;
         public final JTA2.AuthMethod authMethod;
         public final boolean serverSSL;
+        public final boolean hostnameVerifier;
         public final String certificatePath;
         public final String serverUsername;
         public final String serverPassword;
@@ -394,6 +395,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverPort = connFields.port;
             serverEndpoint = connFields.endpoint;
             directDownload = ddFields.dd;
+            hostnameVerifier = connFields.hostnameVerifier;
             this.status = new TestStatus(Status.UNKNOWN);
         }
 
@@ -410,6 +412,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             certificatePath = null;
             directDownload = null;
             connectivityCondition = ConnectivityCondition.newUniqueCondition();
+            hostnameVerifier = false;
             status = new TestStatus(Status.UNKNOWN);
         }
 
@@ -425,6 +428,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverPort = obj.getInt("serverPort");
             serverEndpoint = obj.getString("serverEndpoint");
             certificatePath = obj.optString("certificatePath", null);
+            hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
 
             if (obj.has("directDownload"))
                 directDownload = new DirectDownload(obj.getJSONObject("directDownload"));
