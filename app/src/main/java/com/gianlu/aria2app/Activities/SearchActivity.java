@@ -20,6 +20,7 @@ import android.widget.SearchView;
 import com.gianlu.aria2app.Activities.Search.SearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchResult;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
+import com.gianlu.aria2app.Activities.Search.Torrent;
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Logging;
@@ -28,7 +29,7 @@ import com.gianlu.commonutils.MessageLayout;
 import java.util.List;
 
 // TODO: Should have tutorial (?)
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter {
+public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, SearchUtils.ITorrent {
     private RecyclerView list;
     private ProgressBar loading;
     private FrameLayout layout;
@@ -111,6 +112,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
+    public void onDone(Torrent torrent) {
+        System.out.println(torrent); // TODO
+    }
+
+    @Override
     public void onException(Exception ex) {
         loading.setVisibility(View.GONE);
         message.setVisibility(View.GONE);
@@ -120,7 +126,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void onResultSelected(SearchResult result) { // TODO
-
+    public void onResultSelected(SearchResult result) {
+        SearchUtils.get(this).getTorrent(result, this);
     }
 }

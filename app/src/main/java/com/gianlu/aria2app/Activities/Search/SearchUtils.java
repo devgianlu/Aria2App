@@ -5,8 +5,10 @@ import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
@@ -103,6 +105,36 @@ public class SearchUtils {
         });
     }
 
+    public void getTorrent(final SearchResult result, final ITorrent listener) {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URIBuilder builder = new URIBuilder(BASE_URL + "getTorrent");
+                    builder.addParameter("e", result.engineId)
+                            .addParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP));
+
+                    JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
+                    final Torrent torrent = new Torrent(obj);
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onDone(torrent);
+                        }
+                    });
+                } catch (IOException | StatusCodeException | URISyntaxException | JSONException ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onException(ex);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     @Nullable
     public SearchEngine findEngine(String id) {
         if (cachedEngines == null) return null;
@@ -140,12 +172,7 @@ public class SearchUtils {
 
     private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
         JSONArray array = new JSONArray(request(new HttpGet(BASE_URL + "listEngines")));
-        final List<SearchEngine> engines = new ArrayList<>();
-        for (int i = 0; i < array.length(); i++)
-            engines.add(new SearchEngine(array.getJSONObject(i)));
-
-        cachedEngines = engines;
-        return engines;
+        return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
     }
 
     public List<SearchEngine> getCachedEnginesBlocking() throws IOException, StatusCodeException, JSONException {
@@ -164,6 +191,12 @@ public class SearchUtils {
                 Logging.logMe(context, ex);
             }
         });
+    }
+
+    public interface ITorrent {
+        void onDone(Torrent torrent);
+
+        void onException(Exception ex);
     }
 
     public interface ISearch {
