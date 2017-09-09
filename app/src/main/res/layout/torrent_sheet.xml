@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/torrentSheet_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/torrentSheet_seeders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/torrentSheet_leeches"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- TODO: Open in browser-->
+    <!-- TODO: Download torrent file -->
+    <!-- TODO: Copy/share magnet -->
+    <!-- TODO: Start download -->
+
+</LinearLayout>

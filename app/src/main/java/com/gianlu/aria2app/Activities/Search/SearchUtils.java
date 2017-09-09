@@ -52,9 +52,10 @@ public class SearchUtils {
     }
 
     @NonNull
-    private String request(HttpGet get) throws IOException, StatusCodeException {
+    private String request(HttpGet get) throws IOException, StatusCodeException, ServiceUnavailable {
         HttpResponse resp = client.execute(get);
         StatusLine sl = resp.getStatusLine();
+        if (sl.getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE) throw new ServiceUnavailable();
         if (sl.getStatusCode() != HttpStatus.SC_OK) throw new StatusCodeException(sl);
         return EntityUtils.toString(resp.getEntity());
     }
@@ -100,6 +101,13 @@ public class SearchUtils {
                             listener.onException(ex);
                         }
                     });
+                } catch (ServiceUnavailable ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.serviceUnavailable();
+                        }
+                    });
                 }
             }
         });
@@ -127,7 +135,14 @@ public class SearchUtils {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onException(ex);
+                            listener.onTorrentException(ex);
+                        }
+                    });
+                } catch (ServiceUnavailable ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.serviceUnavailable();
                         }
                     });
                 }
@@ -165,17 +180,24 @@ public class SearchUtils {
                             listener.onException(ex);
                         }
                     });
+                } catch (ServiceUnavailable ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.serviceUnavailable();
+                        }
+                    });
                 }
             }
         });
     }
 
-    private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
+    private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException, ServiceUnavailable {
         JSONArray array = new JSONArray(request(new HttpGet(BASE_URL + "listEngines")));
         return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
     }
 
-    public List<SearchEngine> getCachedEnginesBlocking() throws IOException, StatusCodeException, JSONException {
+    public List<SearchEngine> getCachedEnginesBlocking() throws IOException, StatusCodeException, JSONException, ServiceUnavailable {
         if (cachedEngines != null) return cachedEngines;
         return listSearchEnginesSync();
     }
@@ -184,6 +206,10 @@ public class SearchUtils {
         listSearchEngines(new IResult<List<SearchEngine>>() {
             @Override
             public void onResult(List<SearchEngine> result) {
+            }
+
+            @Override
+            public void serviceUnavailable() {
             }
 
             @Override
@@ -196,11 +222,15 @@ public class SearchUtils {
     public interface ITorrent {
         void onDone(Torrent torrent);
 
-        void onException(Exception ex);
+        void serviceUnavailable();
+
+        void onTorrentException(Exception ex);
     }
 
     public interface ISearch {
         void onResult(List<SearchResult> results, List<SearchEngine> missingEngines);
+
+        void serviceUnavailable();
 
         void onException(Exception ex);
     }
@@ -208,6 +238,11 @@ public class SearchUtils {
     public interface IResult<E> {
         void onResult(E result);
 
+        void serviceUnavailable();
+
         void onException(Exception ex);
+    }
+
+    private static class ServiceUnavailable extends Exception {
     }
 }

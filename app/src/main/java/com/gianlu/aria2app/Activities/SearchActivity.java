@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -12,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -21,10 +21,13 @@ import com.gianlu.aria2app.Activities.Search.SearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchResult;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
 import com.gianlu.aria2app.Activities.Search.Torrent;
+import com.gianlu.aria2app.Activities.Search.TorrentBottomSheet;
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
 
@@ -32,8 +35,9 @@ import java.util.List;
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, SearchUtils.ITorrent {
     private RecyclerView list;
     private ProgressBar loading;
-    private FrameLayout layout;
+    private CoordinatorLayout layout;
     private LinearLayout message;
+    private TorrentBottomSheet sheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         list = findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        sheet = new TorrentBottomSheet(layout);
 
         Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +89,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         message.setVisibility(View.GONE);
         MessageLayout.hide(layout);
 
-        SearchUtils.get(this).search(query, 10, null, this);
+        SearchUtils.get(this).search(query.trim(), 10, null, this); // TODO: Select engines to query
         return true;
     }
 
@@ -102,7 +108,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines) {
+    public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines) { // TODO: Notify missing engines
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
         message.setVisibility(View.GONE);
@@ -112,8 +118,22 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
+    public void serviceUnavailable() {
+        loading.setVisibility(View.GONE);
+        message.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        MessageLayout.show(layout, getString(R.string.searchEngine_offline), R.drawable.ic_error_outline_black_48dp);
+    }
+
+    @Override
     public void onDone(Torrent torrent) {
-        System.out.println(torrent); // TODO
+        sheet.update(torrent);
+    }
+
+    @Override
+    public void onTorrentException(Exception ex) {
+        sheet.collapse();
+        Toaster.show(this, Utils.Messages.FAILED_LOADING, ex);
     }
 
     @Override
@@ -127,6 +147,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public void onResultSelected(SearchResult result) {
+        sheet.expandLoading();
         SearchUtils.get(this).getTorrent(result, this);
     }
 }

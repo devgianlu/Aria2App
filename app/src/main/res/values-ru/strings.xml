@@ -283,6 +283,8 @@
     <string name="failedLoading_reason">Не удалось загрузить страницу: %s</string>
     <string name="noServers">Нет серверов</string>
     <string name="enableHostnameVerifier">Включить верификатор имени хоста</string>
+    <string name="hostnameVerifier_disclaimer">Вы должны включить эту опцию, если ваш сертификат содержит альтернативные имена объектов (SAN). Рекомендуется добавлять SAN в ваш сертификат</string>
+    <string name="numLeeches"><![CDATA[<b>Количество пиявок:</b>]]> %d</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
