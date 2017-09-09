@@ -55,6 +55,16 @@ public class WebSocketing extends AbstractClient {
         return webSocketing;
     }
 
+    public static void instantiate(Context context, MultiProfile.UserProfile profile, IConnect listener) {
+        try {
+            unlock();
+            ErrorHandler.get().unlock();
+            webSocketing = new WebSocketing(context, profile, listener);
+        } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
+            listener.onFailedConnecting(ex);
+        }
+    }
+
     public static void instantiate(Context context, IConnect listener) {
         try {
             unlock();

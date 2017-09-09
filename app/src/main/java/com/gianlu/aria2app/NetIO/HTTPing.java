@@ -50,6 +50,11 @@ public class HTTPing extends AbstractClient {
         return httping;
     }
 
+    public static HTTPing newInstance(Context context, MultiProfile.UserProfile profile) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
+        if (httping == null) httping = new HTTPing(context, profile);
+        return httping;
+    }
+
     public static void clear() {
         clearConnectivityListener();
         if (httping != null) httping.clearInternal();

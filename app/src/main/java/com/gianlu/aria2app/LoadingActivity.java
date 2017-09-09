@@ -35,6 +35,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -207,6 +212,24 @@ public class LoadingActivity extends AppCompatActivity {
         displayPicker(hasShareData());
     }
 
+    private void failedConnecting(final Exception ex) {
+        Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
+            @Override
+            public void run() {
+                displayPicker(hasShareData());
+                seeError.setVisibility(View.VISIBLE);
+                seeError.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showErrorDialog(ex);
+                    }
+                });
+            }
+        });
+
+        Logging.logMe(LoadingActivity.this, ex);
+    }
+
     private void tryConnecting(MultiProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
@@ -216,31 +239,27 @@ public class LoadingActivity extends AppCompatActivity {
             displayPicker(hasShareData());
         } else {
             manager.setCurrent(this, profile);
-            WebSocketing.instantiate(this, new IConnect() {
-                @Override
-                public void onConnected(AbstractClient client) {
+            MultiProfile.UserProfile single = profile.getProfile(this);
+            if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
+                WebSocketing.instantiate(this, single, new IConnect() {
+                    @Override
+                    public void onConnected(AbstractClient client) {
+                        goTo(MainActivity.class);
+                    }
+
+                    @Override
+                    public void onFailedConnecting(final Exception ex) {
+                        failedConnecting(ex);
+                    }
+                });
+            } else {
+                try {
+                    HTTPing.newInstance(this, single);
                     goTo(MainActivity.class);
+                } catch (NoSuchAlgorithmException | CertificateException | KeyManagementException | IOException | KeyStoreException | URISyntaxException ex) {
+                    failedConnecting(ex);
                 }
-
-                @Override
-                public void onFailedConnecting(final Exception ex) {
-                    Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
-                        @Override
-                        public void run() {
-                            displayPicker(hasShareData());
-                            seeError.setVisibility(View.VISIBLE);
-                            seeError.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    showErrorDialog(ex);
-                                }
-                            });
-                        }
-                    });
-
-                    Logging.logMe(LoadingActivity.this, ex);
-                }
-            });
+            }
 
             new Timer().schedule(new TimerTask() {
                 @Override
