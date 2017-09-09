@@ -58,7 +58,12 @@ public class HttpProfileTester extends NetProfileTester {
             get.releaseConnection();
         } catch (IOException | CertificateException | URISyntaxException | JSONException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-            publishUpdate(ex.getMessage());
+            if (ex.getMessage() == null) {
+                if (ex.getCause() != null) publishUpdate(ex.getCause().getMessage());
+                else publishUpdate(null);
+            } else {
+                publishUpdate(ex.getMessage());
+            }
         }
     }
 }

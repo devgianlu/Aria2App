@@ -2,6 +2,7 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -24,9 +25,9 @@ public abstract class NetProfileTester implements Runnable {
             listener.onConnectionResult(this, profile, System.currentTimeMillis() - startTime, status);
     }
 
-    protected final void publishUpdate(String message) {
+    protected final void publishUpdate(@Nullable String message) {
         if (listener != null)
-            listener.onUpdate(String.valueOf(System.currentTimeMillis() - startTime) + ": " + message);
+            listener.onUpdate(String.valueOf(System.currentTimeMillis() - startTime) + (message != null ? (": " + message) : ""));
     }
 
     public abstract void getClient(IConnect listener);

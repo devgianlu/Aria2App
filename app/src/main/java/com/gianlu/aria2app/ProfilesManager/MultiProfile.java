@@ -375,6 +375,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public TestStatus status;
         private String encodedCredentials;
         private String fullServerAddress;
+        private String websocketUrl;
 
         public UserProfile(JSONObject obj) throws JSONException {
             this(obj, null);
@@ -460,7 +461,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public String buildWebSocketUrl() {
-            return MultiProfile.buildWebSocketUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
+            if (websocketUrl == null)
+                websocketUrl = MultiProfile.buildWebSocketUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
+            return websocketUrl;
         }
 
         public String getFullServerAddress() {

@@ -128,6 +128,8 @@ public class NetUtils {
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))))
                 .build();
+
+        // TODO: Should request whether to add the "Bad hostname verifier"
     }
 
     public static URI createBaseURI(MultiProfile.UserProfile profile) throws URISyntaxException {
