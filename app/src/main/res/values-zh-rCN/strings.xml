@@ -285,8 +285,12 @@
     <string name="noServers">沒有服務器</string>
     <string name="enableHostnameVerifier">启用主机名验证器</string>
     <string name="hostnameVerifier_disclaimer">如果您的证书包含主题备用名称（SAN），则应启用此选项。 建议将SAN添加到证书中。</string>
-    <string name="numLeeches"><![CDATA[<b水蛭编号：</b>]]> %d</string>
+    <string name="numSeederShort"><![CDATA[<b>播种机:</b>]]> %d</string>
+    <string name="numLeechesShort"><![CDATA[<b>水蛭:</b>]]> %d</string>
+    <string name="searchEngine"><![CDATA[<b>搜索引擎:</b>]]> %s</string>
     <string name="show">显示</string>
+    <string name="getTorrent">获得洪流</string>
+    <string name="getMagnet">拿磁铁</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

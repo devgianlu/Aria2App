@@ -284,8 +284,12 @@
     <string name="noServers">Нет серверов</string>
     <string name="enableHostnameVerifier">Включить верификатор имени хоста</string>
     <string name="hostnameVerifier_disclaimer">Вы должны включить эту опцию, если ваш сертификат содержит альтернативные имена объектов (SAN). Рекомендуется добавлять SAN в ваш сертификат</string>
-    <string name="numLeeches"><![CDATA[<b>Количество пиявок:</b>]]> %d</string>
+    <string name="numSeederShort"><![CDATA[<b>сеялка:</b>]]> %d</string>
+    <string name="numLeechesShort"><![CDATA[<b>пиявки:</b>]]> %d</string>
+    <string name="searchEngine"><![CDATA[<b>Поисковый движок:</b>]]> %s</string>
     <string name="show">показать</string>
+    <string name="getTorrent">Получить торрент</string>
+    <string name="getMagnet">Получить магнит</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

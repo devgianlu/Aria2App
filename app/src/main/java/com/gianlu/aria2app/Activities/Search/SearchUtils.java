@@ -33,7 +33,7 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class SearchUtils {
-    private static final String BASE_URL = "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
+    private static final String BASE_URL = "http://192.168.1.25:8080/"; // "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
     private static SearchUtils instance;
     private final HttpClient client;
     private final ExecutorService executorService;
@@ -80,7 +80,7 @@ public class SearchUtils {
                     for (int i = 0; i < resultsArray.length(); i++)
                         results.add(new SearchResult(resultsArray.getJSONObject(i)));
 
-                    getCachedEnginesBlocking();
+                    cacheEnginesBlocking();
                     JSONArray missingEnginesArray = obj.getJSONArray("missing");
                     final List<SearchEngine> missingEngines = new ArrayList<>();
                     for (int i = 0; i < missingEnginesArray.length(); i++) {
@@ -135,7 +135,7 @@ public class SearchUtils {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onTorrentException(ex);
+                            listener.onException(ex);
                         }
                     });
                 } catch (ServiceUnavailable ex) {
@@ -197,7 +197,7 @@ public class SearchUtils {
         return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
     }
 
-    public List<SearchEngine> getCachedEnginesBlocking() throws IOException, StatusCodeException, JSONException, ServiceUnavailable {
+    public List<SearchEngine> cacheEnginesBlocking() throws IOException, StatusCodeException, JSONException, ServiceUnavailable {
         if (cachedEngines != null) return cachedEngines;
         return listSearchEnginesSync();
     }
@@ -224,7 +224,7 @@ public class SearchUtils {
 
         void serviceUnavailable();
 
-        void onTorrentException(Exception ex);
+        void onException(Exception ex);
     }
 
     public interface ISearch {

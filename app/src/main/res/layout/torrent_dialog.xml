@@ -6,6 +6,11 @@
     android:padding="?dialogPreferredPadding">
 
     <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/torrentDialog_engine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.gianlu.commonutils.SuperTextView
         android:id="@+id/torrentDialog_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -31,12 +31,14 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public static final String ACTION_NEW_TORRENT = "New Torrent download";
     public static final String ACTION_NEW_METALINK = "New Metalink download";
     public static final String ACTION_NEW_URI = "New URI download";
-    public static final String ACTION_NEW_URI_SEARCH = "New URI download with torrent search";
+    public static final String ACTION_SEARCH_DOWNLOAD = "New URI download with torrent search";
     public static final String ACTION_DONATE_OPEN = "Opened donation dialog";
     public static final String ACTION_SHARE = "Shared something with the app";
     public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
     public static final String ACTION_SEARCH = "Search torrent";
     public static final String ACTION_STARTED_TEST = "Started profile test";
+    public static final String ACTION_SEARCH_GET_TORRENT = "Download torrent file from search";
+    public static final String ACTION_SEARCH_GET_MAGNET = "Get torrent magnet from search";
     private static Tracker tracker;
     private boolean firstStart = true;
 
