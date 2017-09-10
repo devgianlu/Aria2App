@@ -286,7 +286,7 @@
     <string name="enableHostnameVerifier">启用主机名验证器</string>
     <string name="hostnameVerifier_disclaimer">如果您的证书包含主题备用名称（SAN），则应启用此选项。 建议将SAN添加到证书中。</string>
     <string name="numLeeches"><![CDATA[<b水蛭编号：</b>]]> %d</string>
-
+    <string name="show">显示</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

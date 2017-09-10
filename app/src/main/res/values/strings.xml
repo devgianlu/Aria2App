@@ -292,6 +292,8 @@
     <string name="hostnameVerifier_disclaimer">You should enable this option if your certificate contains Subject Alternative Names (SAN). It is recommended to add SANs to your certificate.</string>
     <string name="numLeeches"><![CDATA[<b>Leeches number:</b>]]> %d</string>
     <string name="searchEngine_offline">The service is temporary unavailable, it will be online again in a few minutes.</string>
+    <string name="see">See</string>
+    <string name="show">Show</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

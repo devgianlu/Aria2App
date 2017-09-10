@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,10 +57,12 @@ import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
+import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private ImageButton toggleChart;
     private LineChart overallChart;
     private TextView stopped;
+    private CoordinatorLayout coordinatorLayout;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -334,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         list = findViewById(R.id.main_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
+        coordinatorLayout = findViewById(R.id.main_coordinatorLayout);
         swipeRefresh = findViewById(R.id.main_swipeLayout);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -509,7 +515,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             ProfilesManager.get(this).reloadCurrentProfile(this);
         } catch (IOException | JSONException | NullPointerException ex) {
-            Utils.damn(this, ex);
+            Logging.logMe(this, ex);
+            WebSocketing.clear();
+            HTTPing.clear();
+            ProfilesManager.get(this).unsetLastProfile(this);
+            LoadingActivity.startActivity(this, ex);
         }
     }
 
@@ -926,22 +936,22 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onPaused(String gid) {
-        Toaster.show(this, Utils.Messages.PAUSED, gid);
+        Snackbar.make(coordinatorLayout, R.string.downloadPaused, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRestarted(String gid) {
-        Toaster.show(this, Utils.Messages.RESTARTED, gid);
+        Snackbar.make(coordinatorLayout, R.string.downloadRestarted, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUnpaused(String gid) {
-        Toaster.show(this, Utils.Messages.RESUMED, gid);
+        Snackbar.make(coordinatorLayout, R.string.downloadResumed, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void onMoved(String gid) {
-        Toaster.show(this, Utils.Messages.MOVED, gid);
+        Snackbar.make(coordinatorLayout, R.string.downloadMoved, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -951,12 +961,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onRemoved(String gid) {
-        Toaster.show(this, Utils.Messages.REMOVED, gid);
+        Snackbar.make(coordinatorLayout, R.string.downloadRemoved, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRemovedResult(String gid) {
-        Toaster.show(this, Utils.Messages.RESULT_REMOVED, gid);
+        Snackbar.make(coordinatorLayout, R.string.downloadResultRemoved, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

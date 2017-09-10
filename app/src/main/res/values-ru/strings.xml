@@ -285,6 +285,7 @@
     <string name="enableHostnameVerifier">Включить верификатор имени хоста</string>
     <string name="hostnameVerifier_disclaimer">Вы должны включить эту опцию, если ваш сертификат содержит альтернативные имена объектов (SAN). Рекомендуется добавлять SAN в ваш сертификат</string>
     <string name="numLeeches"><![CDATA[<b>Количество пиявок:</b>]]> %d</string>
+    <string name="show">показать</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

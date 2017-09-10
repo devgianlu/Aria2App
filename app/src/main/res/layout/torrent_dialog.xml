@@ -3,26 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="?dialogPreferredPadding">
 
     <com.gianlu.commonutils.SuperTextView
-        android:id="@+id/torrentSheet_size"
+        android:id="@+id/torrentDialog_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <com.gianlu.commonutils.SuperTextView
-        android:id="@+id/torrentSheet_seeders"
+        android:id="@+id/torrentDialog_seeders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <com.gianlu.commonutils.SuperTextView
-        android:id="@+id/torrentSheet_leeches"
+        android:id="@+id/torrentDialog_leeches"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <!-- TODO: Open in browser-->
-    <!-- TODO: Download torrent file -->
-    <!-- TODO: Copy/share magnet -->
-    <!-- TODO: Start download -->
 
 </LinearLayout>

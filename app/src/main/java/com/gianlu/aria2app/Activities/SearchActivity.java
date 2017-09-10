@@ -1,11 +1,14 @@
 package com.gianlu.aria2app.Activities;
 
 import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,14 +24,19 @@ import com.gianlu.aria2app.Activities.Search.SearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchResult;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
 import com.gianlu.aria2app.Activities.Search.Torrent;
-import com.gianlu.aria2app.Activities.Search.TorrentBottomSheet;
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
+import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
+import java.util.Collections;
 import java.util.List;
 
 // TODO: Should have tutorial (?)
@@ -37,7 +45,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     private ProgressBar loading;
     private CoordinatorLayout layout;
     private LinearLayout message;
-    private TorrentBottomSheet sheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +61,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         list = findViewById(R.id.search_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        sheet = new TorrentBottomSheet(layout);
 
         Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(new View.OnClickListener() {
@@ -127,12 +132,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public void onDone(Torrent torrent) {
-        sheet.update(torrent);
+        showTorrentDialog(torrent);
     }
 
     @Override
     public void onTorrentException(Exception ex) {
-        sheet.collapse();
         Toaster.show(this, Utils.Messages.FAILED_LOADING, ex);
     }
 
@@ -147,7 +151,67 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public void onResultSelected(SearchResult result) {
-        sheet.expandLoading();
         SearchUtils.get(this).getTorrent(result, this);
+    }
+
+    private void showTorrentDialog(final Torrent torrent) {
+        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.torrent_dialog, null, false);
+        SuperTextView size = layout.findViewById(R.id.torrentDialog_size);
+        SuperTextView seeders = layout.findViewById(R.id.torrentDialog_seeders);
+        SuperTextView leeches = layout.findViewById(R.id.torrentDialog_leeches);
+
+        size.setHtml(R.string.size, CommonUtils.dimensionFormatter(torrent.size, false));
+        seeders.setHtml(R.string.numSeeder, torrent.seeders);
+        leeches.setHtml(R.string.numLeeches, torrent.leeches);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(torrent.title)
+                .setView(layout)
+                .setPositiveButton(R.string.download, null);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialogInterface) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        JTA2 jta2;
+                        try {
+                            jta2 = JTA2.instantiate(SearchActivity.this);
+                        } catch (JTA2InitializingException ex) {
+                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                            return;
+                        }
+
+                        jta2.addUri(Collections.singletonList(torrent.magnet), null, null, new JTA2.IGID() {
+                            @Override
+                            public void onGID(String gid) {
+                                dialogInterface.dismiss();
+
+                                Snackbar.make(SearchActivity.this.layout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
+                                        .setAction(R.string.show, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                startActivity(new Intent(SearchActivity.this, MainActivity.class));
+                                            }
+                                        }).show();
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        CommonUtils.showDialog(this, dialog);
+
+        // TODO: Open in browser
+        // TODO: Download torrent file
+        // TODO: Copy/share magnet
     }
 }

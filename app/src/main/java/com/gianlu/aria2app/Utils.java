@@ -19,9 +19,7 @@ import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
 import com.gianlu.aria2app.Main.SharedFile;
-import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
@@ -91,14 +89,6 @@ public class Utils {
         data.addDataSet(initDownloadSet(chart.getContext()));
 
         chart.invalidate();
-    }
-
-    public static void damn(Context context, Throwable ex) {
-        Logging.logMe(context, ex);
-        WebSocketing.clear();
-        HTTPing.clear();
-        ProfilesManager.get(context).unsetLastProfile(context);
-        LoadingActivity.startActivity(context, ex);
     }
 
     private static LineDataSet initDownloadSet(Context context) {
@@ -248,7 +238,6 @@ public class Utils {
         public static final Toaster.Message NO_QUICK_OPTIONS = new Toaster.Message(R.string.noQuickOptions, false);
         public static final Toaster.Message INVALID_DOWNLOAD_PATH = new Toaster.Message(R.string.invalidDownloadPath, false);
         public static final Toaster.Message INVALID_FILE = new Toaster.Message(R.string.invalidFile, false);
-        public static final Toaster.Message SEARCH_FAILED = new Toaster.Message(R.string.searchFailed, true);
         public static final Toaster.Message FAILED_CONNECTING = new Toaster.Message(R.string.failedConnecting, true);
         public static final Toaster.Message FAILED_LOADING = new Toaster.Message(R.string.failedLoading, true);
         public static final Toaster.Message CANNOT_SAVE_PROFILE = new Toaster.Message(R.string.cannotSaveProfile, true);
