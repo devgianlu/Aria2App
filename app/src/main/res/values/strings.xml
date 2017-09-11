@@ -300,6 +300,8 @@
     <string name="searchEngine"><![CDATA[<b>Search engine:</b>]]> %s</string>
     <string name="missingEngines_message">Some engines couldn\'t complete the request.</string>
     <string name="missingEngines">Missing engines</string>
+    <string name="searchEngines">Search engines</string>
+    <string name="noEnginesSelected">Select at least one engine!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

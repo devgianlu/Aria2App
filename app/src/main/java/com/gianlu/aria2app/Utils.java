@@ -264,6 +264,7 @@ public class Utils {
         public static final Toaster.Message CANNOT_ADD_ALWAYS = new Toaster.Message(R.string.cannotAddAlwaysCondition, false);
         public static final Toaster.Message FAILED_CHANGE_OPTIONS = new Toaster.Message(R.string.failedChangingOptions, true);
         public static final Toaster.Message CONNECTIVITY_CHANGED = new Toaster.Message(R.string.connectivityChanged, false);
+        public static final Toaster.Message NO_ENGINES_SELECTED = new Toaster.Message(R.string.noEnginesSelected, false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

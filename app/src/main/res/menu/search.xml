@@ -6,5 +6,11 @@
         android:icon="@drawable/ic_search_white_48dp"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="collapseActionView|ifRoom" />
+        app:showAsAction="collapseActionView|always" />
+
+    <item
+        android:id="@+id/search_engines"
+        android:icon="@drawable/ic_filter_list_white_48dp"
+        android:title="@string/searchEngines"
+        app:showAsAction="ifRoom" />
 </menu>

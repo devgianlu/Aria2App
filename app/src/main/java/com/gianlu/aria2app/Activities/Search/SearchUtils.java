@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -65,7 +66,7 @@ public class SearchUtils {
         search(null, token, maxResults, null, listener);
     }
 
-    private void search(@Nullable final String query, @Nullable final String token, final int maxResults, @Nullable final List<SearchEngine> engines, final ISearch listener) {
+    private void search(@Nullable final String query, @Nullable final String token, final int maxResults, @Nullable final Collection<String> engines, final ISearch listener) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -77,8 +78,8 @@ public class SearchUtils {
                     } else {
                         builder.addParameter("q", query);
                         if (engines != null)
-                            for (SearchEngine engine : engines)
-                                builder.addParameter("e", engine.id);
+                            for (String engineId : engines)
+                                builder.addParameter("e", engineId);
                     }
 
                     JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
@@ -120,7 +121,7 @@ public class SearchUtils {
         });
     }
 
-    public void search(final String query, final int maxResults, @Nullable final List<SearchEngine> engines, final ISearch listener) {
+    public void search(final String query, final int maxResults, @Nullable final Collection<String> engines, final ISearch listener) {
         search(query, null, maxResults, engines, listener);
     }
 

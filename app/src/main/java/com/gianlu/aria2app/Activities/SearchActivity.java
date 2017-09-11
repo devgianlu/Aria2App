@@ -33,18 +33,23 @@ import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
     private RecyclerView list;
@@ -77,6 +82,52 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         });
     }
 
+    private void showEnginesDialog(final List<SearchEngine> engines) {
+        CharSequence[] enginesNames = new CharSequence[engines.size()];
+
+        for (int i = 0; i < engines.size(); i++) {
+            SearchEngine engine = engines.get(i);
+            enginesNames[i] = engine.name + (engine.proxyed ? " (proxyed)" : "");
+        }
+
+        final boolean[] checkedEngines = new boolean[engines.size()];
+        Set<String> checkedEnginesSet = Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null);
+
+        if (checkedEnginesSet == null) {
+            for (int i = 0; i < checkedEngines.length; i++) checkedEngines[i] = true;
+        } else {
+            for (String checkedEngine : checkedEnginesSet)
+                for (int i = 0; i < engines.size(); i++)
+                    if (Objects.equals(engines.get(i).id, checkedEngine))
+                        checkedEngines[i] = true;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.searchEngines)
+                .setMultiChoiceItems(enginesNames, checkedEngines, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checkedEngines[which] = isChecked;
+                    }
+                })
+                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Set<String> set = new HashSet<>();
+                        for (int i = 0; i < checkedEngines.length; i++)
+                            if (checkedEngines[i]) set.add(engines.get(i).id);
+
+                        if (set.isEmpty())
+                            Toaster.show(SearchActivity.this, Utils.Messages.NO_ENGINES_SELECTED);
+                        else
+                            Prefs.putSet(SearchActivity.this, PKeys.A2_SEARCH_ENGINES, set);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null);
+
+        CommonUtils.showDialog(this, builder);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search, menu);
@@ -102,7 +153,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         message.setVisibility(View.GONE);
         MessageLayout.hide(layout);
 
-        SearchUtils.get(this).search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, null, this); // TODO: Select engines to query
+        SearchUtils.get(this).search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
 
         ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
@@ -151,6 +202,37 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         list.setVisibility(View.GONE);
         MessageLayout.show(layout, getString(R.string.failedLoading_reason, ex.getLocalizedMessage()), R.drawable.ic_error_outline_black_48dp);
         Logging.logMe(this, ex);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search_engines:
+                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
+                CommonUtils.showDialog(this, pd);
+                SearchUtils.get(this).listSearchEngines(new SearchUtils.IResult<List<SearchEngine>>() {
+                    @Override
+                    public void onResult(List<SearchEngine> result) {
+                        pd.dismiss();
+                        showEnginesDialog(result);
+                    }
+
+                    @Override
+                    public void serviceUnavailable() {
+                        pd.dismiss();
+                        SearchActivity.this.serviceUnavailable();
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        pd.dismiss();
+                        Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
+                    }
+                });
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -17,7 +17,8 @@ public enum PKeys implements Prefs.PrefKey {
     A2_MAIN_SORTING("a2_mainSorting"),
     A2_NOTIFS_SOUND("a2_enableSound"),
     A2_SELECTED_NOTIFS_TYPE("a2_selectedNotifications"),
-    A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries");
+    A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries"),
+    A2_SEARCH_ENGINES("a2_searchEngines");
 
     private final String key;
 
