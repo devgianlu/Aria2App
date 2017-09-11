@@ -14,8 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -110,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private ImageButton toggleChart;
     private LineChart overallChart;
     private TextView stopped;
-    private CoordinatorLayout coordinatorLayout;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -339,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         list = findViewById(R.id.main_list);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        coordinatorLayout = findViewById(R.id.main_coordinatorLayout);
         swipeRefresh = findViewById(R.id.main_swipeLayout);
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -936,22 +932,22 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onPaused(String gid) {
-        Snackbar.make(coordinatorLayout, R.string.downloadPaused, Snackbar.LENGTH_SHORT).show();
+        Toaster.show(this, Utils.Messages.PAUSED, gid);
     }
 
     @Override
     public void onRestarted(String gid) {
-        Snackbar.make(coordinatorLayout, R.string.downloadRestarted, Snackbar.LENGTH_SHORT).show();
+        Toaster.show(this, Utils.Messages.RESTARTED, gid);
     }
 
     @Override
     public void onUnpaused(String gid) {
-        Snackbar.make(coordinatorLayout, R.string.downloadResumed, Snackbar.LENGTH_SHORT).show();
+        Toaster.show(this, Utils.Messages.RESUMED, gid);
     }
 
     @Override
     public void onMoved(String gid) {
-        Snackbar.make(coordinatorLayout, R.string.downloadMoved, Snackbar.LENGTH_SHORT).show();
+        Toaster.show(this, Utils.Messages.MOVED, gid);
     }
 
     @Override
@@ -961,12 +957,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onRemoved(String gid) {
-        Snackbar.make(coordinatorLayout, R.string.downloadRemoved, Snackbar.LENGTH_SHORT).show();
+        Toaster.show(this, Utils.Messages.REMOVED, gid);
     }
 
     @Override
     public void onRemovedResult(String gid) {
-        Snackbar.make(coordinatorLayout, R.string.downloadResultRemoved, Snackbar.LENGTH_SHORT).show();
+        Toaster.show(this, Utils.Messages.RESULT_REMOVED, gid);
     }
 
     @Override

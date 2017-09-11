@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
@@ -19,24 +18,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
-        return dependency instanceof RecyclerView || dependency instanceof Snackbar.SnackbarLayout;
-    }
-
-    @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
-        if (dependency instanceof Snackbar.SnackbarLayout) {
-            child.animate().translationY(-dependency.getHeight()).setDuration(200).start();
-            return false;
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
-        if (dependency instanceof Snackbar.SnackbarLayout && ((boolean) child.getTag())) {
-            child.animate().translationY(0).setDuration(200).start();
-        }
+        return dependency instanceof RecyclerView;
     }
 
     @Override
