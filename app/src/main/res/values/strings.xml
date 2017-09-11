@@ -298,6 +298,8 @@
     <string name="numSeederShort"><![CDATA[<b>Seeders:</b>]]> %d</string>
     <string name="numLeechesShort"><![CDATA[<b>Leeches:</b>]]> %d</string>
     <string name="searchEngine"><![CDATA[<b>Search engine:</b>]]> %s</string>
+    <string name="missingEngines_message">Some engines couldn\'t complete the request.</string>
+    <string name="missingEngines">Missing engines</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

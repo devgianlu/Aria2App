@@ -34,7 +34,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class SearchUtils {
     public static final int RESULTS_PER_REQUEST = 20;
-    private static final String BASE_URL = "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
+    private static final String BASE_URL = "http://192.168.1.25:8080/"; // "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
     private static SearchUtils instance;
     private final HttpClient client;
     private final ExecutorService executorService;
@@ -89,11 +89,9 @@ public class SearchUtils {
 
                     cacheEnginesBlocking();
                     JSONArray missingEnginesArray = obj.getJSONArray("missing");
-                    final List<SearchEngine> missingEngines = new ArrayList<>();
-                    for (int i = 0; i < missingEnginesArray.length(); i++) {
-                        SearchEngine engine = findEngine(missingEnginesArray.getString(i));
-                        if (engine != null) missingEngines.add(engine);
-                    }
+                    final List<MissingSearchEngine> missingEngines = new ArrayList<>();
+                    for (int i = 0; i < missingEnginesArray.length(); i++)
+                        missingEngines.add(new MissingSearchEngine(SearchUtils.this, missingEnginesArray.getJSONObject(i)));
 
                     final String token = obj.optString("token", null);
 
@@ -210,9 +208,8 @@ public class SearchUtils {
         return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
     }
 
-    public List<SearchEngine> cacheEnginesBlocking() throws IOException, StatusCodeException, JSONException, ServiceUnavailable {
-        if (cachedEngines != null) return cachedEngines;
-        return listSearchEnginesSync();
+    private void cacheEnginesBlocking() throws IOException, StatusCodeException, JSONException, ServiceUnavailable {
+        if (cachedEngines == null) listSearchEnginesSync();
     }
 
     public void cacheSearchEngines(final Context context) {
@@ -241,7 +238,7 @@ public class SearchUtils {
     }
 
     public interface ISearch {
-        void onResult(List<SearchResult> results, List<SearchEngine> missingEngines, @Nullable String nextPageToken);
+        void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
 
         void serviceUnavailable();
 

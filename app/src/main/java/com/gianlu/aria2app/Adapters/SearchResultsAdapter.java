@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.Activities.Search.MissingSearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchResult;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
@@ -76,9 +77,11 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         } else {
             utils.search(token, SearchUtils.RESULTS_PER_REQUEST, new SearchUtils.ISearch() {
                 @Override
-                public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines, @Nullable String nextPageToken) { // TODO: Missing engines
+                public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;
                     provider.onMoreContent(results);
+
+                    if (listener != null) listener.notifyMissingEngines(missingEngines);
                 }
 
                 @Override
@@ -102,6 +105,8 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
 
     public interface IAdapter {
         void onResultSelected(SearchResult result);
+
+        void notifyMissingEngines(List<MissingSearchEngine> missingEngines);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

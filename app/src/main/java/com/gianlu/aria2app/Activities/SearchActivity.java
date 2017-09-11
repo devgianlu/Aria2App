@@ -16,12 +16,15 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
+import com.gianlu.aria2app.Activities.Search.MissingSearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchResult;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
@@ -43,8 +46,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import java.util.Collections;
 import java.util.List;
 
-// TODO: Should have tutorial (?)
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter {
+public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
     private RecyclerView list;
     private ProgressBar loading;
     private CoordinatorLayout layout;
@@ -79,9 +81,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search, menu);
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) menu.findItem(R.id.search_search).getActionView();
+        MenuItem searchItem = menu.findItem(R.id.search_search);
+        searchItem.setOnActionExpandListener(this);
 
         if (searchManager != null) {
+            SearchView searchView = (SearchView) searchItem.getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setIconifiedByDefault(false);
             searchView.setOnCloseListener(this);
@@ -122,13 +126,14 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines, @Nullable String nextPageToken) { // TODO: Notify missing engines
+    public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
         message.setVisibility(View.GONE);
         MessageLayout.hide(layout);
 
         list.setAdapter(new SearchResultsAdapter(this, results, nextPageToken, this));
+        notifyMissingEngines(missingEngines);
     }
 
     @Override
@@ -171,6 +176,28 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
             }
         });
+    }
+
+    @Override
+    public void notifyMissingEngines(final List<MissingSearchEngine> missingEngines) {
+        if (missingEngines.isEmpty()) return;
+
+        Snackbar.make(layout, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
+                .setAction(R.string.show, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showMissingEnginesDialog(missingEngines);
+                    }
+                }).show();
+    }
+
+    private void showMissingEnginesDialog(List<MissingSearchEngine> missingEngines) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.missingEngines)
+                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, missingEngines), null)
+                .setPositiveButton(android.R.string.ok, null);
+
+        CommonUtils.showDialog(this, builder);
     }
 
     private void showTorrentDialog(final Torrent torrent) {
@@ -266,5 +293,16 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         });
 
         CommonUtils.showDialog(this, dialog);
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        onClose();
+        return true;
     }
 }
