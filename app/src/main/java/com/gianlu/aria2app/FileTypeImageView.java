@@ -14,7 +14,7 @@ import android.util.TypedValue;
 
 import java.util.Objects;
 
-public class FileTypeImageView extends AppCompatImageView { // FIXME
+public class FileTypeImageView extends AppCompatImageView {
     private final Rect textBounds = new Rect();
     private final int maxWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics());
     private String ext;
@@ -40,11 +40,10 @@ public class FileTypeImageView extends AppCompatImageView { // FIXME
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
+        textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 9, getResources().getDisplayMetrics()));
         textPaint.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Bold.ttf"));
 
-        if (isInEditMode())
-            setExtension("XML");
+        if (isInEditMode()) setExtension("XML");
     }
 
     public void setFileName(@NonNull String fileName) {
@@ -55,7 +54,7 @@ public class FileTypeImageView extends AppCompatImageView { // FIXME
 
     public void setExtension(@Nullable String ext) {
         if (Objects.equals(this.ext, ext)) return;
-        if (ext != null && ext.length() > 3) this.ext = "...";
+        if (ext != null && ext.length() > 4) this.ext = null;
         else this.ext = ext;
 
         invalidate();
@@ -65,13 +64,15 @@ public class FileTypeImageView extends AppCompatImageView { // FIXME
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        boolean nice = false;
-        while (!nice) {
-            textPaint.getTextBounds(ext, 0, ext.length(), textBounds);
-            nice = textBounds.width() < maxWidth;
-            if (!nice) textPaint.setTextSize(textPaint.getTextSize() - 1);
-        }
+        if (ext != null) {
+            boolean nice = false;
+            while (!nice) {
+                textPaint.getTextBounds(ext, 0, ext.length(), textBounds);
+                nice = textBounds.width() < maxWidth;
+                if (!nice) textPaint.setTextSize(textPaint.getTextSize() - 1);
+            }
 
-        canvas.drawText(ext, 0, ext.length(), (canvas.getWidth() - textBounds.width()) / 2, canvas.getHeight() / 2 + textBounds.height(), textPaint);
+            canvas.drawText(ext, 0, ext.length(), (canvas.getWidth() - textBounds.width()) / 2, canvas.getHeight() / 2 + textBounds.height(), textPaint);
+        }
     }
 }
