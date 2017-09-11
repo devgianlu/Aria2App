@@ -66,18 +66,18 @@ public abstract class AbstractClient {
             if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
                 if (!noConnectivity) {
-                    int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
-                    MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(networkType, wifiManager);
-                    if (!Objects.equals(AbstractClient.this.profile.connectivityCondition, profile.connectivityCondition)) {
-                        try {
+                    try {
+                        int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
+                        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(networkType, wifiManager);
+                        if (!Objects.equals(AbstractClient.this.profile.connectivityCondition, profile.connectivityCondition)) {
                             connectivityChanged(context, profile);
                             AbstractClient.this.profile = profile;
 
                             for (OnConnectivityChanged listener : listeners)
                                 listener.connectivityChanged(profile);
-                        } catch (Exception ex) {
-                            ErrorHandler.get().notifyException(ex, true);
                         }
+                    } catch (Exception ex) {
+                        ErrorHandler.get().notifyException(ex, true);
                     }
                 }
             }
