@@ -132,6 +132,7 @@ public class NetUtils {
                         .setSocketTimeout(5000)
                         .setConnectionRequestTimeout(5000)
                         .build())
+                .setConnectionManagerShared(true)
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))));
 

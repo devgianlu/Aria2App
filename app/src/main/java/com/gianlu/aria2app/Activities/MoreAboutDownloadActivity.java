@@ -160,6 +160,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
         currentStatus = newStatus;
         invalidateOptionsMenu();
 
-        if (currentStatus == Download.Status.UNKNOWN) onBackPressed();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentStatus == Download.Status.UNKNOWN) onBackPressed();
+            }
+        });
     }
 }

@@ -122,7 +122,7 @@ public class HTTPing extends AbstractClient {
                 get.releaseConnection();
             } catch (OutOfMemoryError ex) {
                 System.gc();
-            } catch (JSONException | IOException | URISyntaxException ex) {
+            } catch (JSONException | IOException | URISyntaxException | IllegalStateException ex) {
                 listener.onException(ex);
             }
         }
