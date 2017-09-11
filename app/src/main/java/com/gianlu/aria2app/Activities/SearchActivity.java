@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -97,7 +98,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         message.setVisibility(View.GONE);
         MessageLayout.hide(layout);
 
-        SearchUtils.get(this).search(query.trim(), 10, null, this); // TODO: Select engines to query
+        SearchUtils.get(this).search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, null, this); // TODO: Select engines to query
 
         ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
@@ -121,13 +122,13 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines) { // TODO: Notify missing engines
+    public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines, @Nullable String nextPageToken) { // TODO: Notify missing engines
         loading.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
         message.setVisibility(View.GONE);
         MessageLayout.hide(layout);
 
-        list.setAdapter(new SearchResultsAdapter(this, results, this));
+        list.setAdapter(new SearchResultsAdapter(this, results, nextPageToken, this));
     }
 
     @Override

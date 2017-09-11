@@ -14,7 +14,7 @@ import android.util.TypedValue;
 
 import java.util.Objects;
 
-public class FileTypeImageView extends AppCompatImageView {
+public class FileTypeImageView extends AppCompatImageView { // FIXME
     private final Rect textBounds = new Rect();
     private final int maxWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics());
     private String ext;

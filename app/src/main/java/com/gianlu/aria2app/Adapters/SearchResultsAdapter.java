@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,31 +12,31 @@ import com.gianlu.aria2app.Activities.Search.SearchEngine;
 import com.gianlu.aria2app.Activities.Search.SearchResult;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.InfiniteRecyclerView;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-// TODO: Should become an InfiniteAdapter
-public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {
-    private final List<SearchResult> results;
+public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<SearchResultsAdapter.ViewHolder, SearchResult> {
     private final LayoutInflater inflater;
     private final SearchUtils searchUtils;
     private final IAdapter listener;
+    private final SearchUtils utils;
+    private String token;
 
-    public SearchResultsAdapter(Context context, List<SearchResult> results, IAdapter listener) {
-        this.results = results;
+    public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, IAdapter listener) {
+        super(context, results, -1, -1, false);
         this.inflater = LayoutInflater.from(context);
         this.searchUtils = SearchUtils.get(context);
+        this.token = token;
+        this.utils = SearchUtils.get(context);
         this.listener = listener;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(parent);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        final SearchResult result = results.get(position);
+    protected void userBindViewHolder(ViewHolder holder, int position) {
+        final SearchResult result = items.get(position).getItem();
         SearchEngine engine = searchUtils.findEngine(result.engineId);
 
         holder.name.setText(result.title);
@@ -64,8 +65,39 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     }
 
     @Override
-    public int getItemCount() {
-        return results.size();
+    protected RecyclerView.ViewHolder createViewHolder(ViewGroup parent) {
+        return new ViewHolder(parent);
+    }
+
+    @Override
+    protected void moreContent(int page, final IContentProvider<SearchResult> provider) {
+        if (token == null) {
+            provider.onMoreContent(new ArrayList<SearchResult>());
+        } else {
+            utils.search(token, SearchUtils.RESULTS_PER_REQUEST, new SearchUtils.ISearch() {
+                @Override
+                public void onResult(List<SearchResult> results, List<SearchEngine> missingEngines, @Nullable String nextPageToken) { // TODO: Missing engines
+                    token = nextPageToken;
+                    provider.onMoreContent(results);
+                }
+
+                @Override
+                public void serviceUnavailable() {
+                    provider.onFailed(new Exception("Service unavailable."));
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    provider.onFailed(ex);
+                }
+            });
+        }
+    }
+
+    @Nullable
+    @Override
+    protected Date getDateFromItem(SearchResult item) {
+        return null;
     }
 
     public interface IAdapter {

@@ -33,6 +33,7 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class SearchUtils {
+    public static final int RESULTS_PER_REQUEST = 20;
     private static final String BASE_URL = "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
     private static SearchUtils instance;
     private final HttpClient client;
@@ -60,18 +61,24 @@ public class SearchUtils {
         return EntityUtils.toString(resp.getEntity());
     }
 
-    public void search(final String query, final int maxResults, @Nullable final List<SearchEngine> engines, final ISearch listener) {
+    public void search(final String token, final int maxResults, final ISearch listener) {
+        search(null, token, maxResults, null, listener);
+    }
+
+    private void search(@Nullable final String query, @Nullable final String token, final int maxResults, @Nullable final List<SearchEngine> engines, final ISearch listener) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     URIBuilder builder = new URIBuilder(BASE_URL + "search");
-                    builder.addParameter("q", query)
-                            .addParameter("m", String.valueOf(maxResults));
-
-                    if (engines != null) {
-                        for (SearchEngine engine : engines)
-                            builder.addParameter("e", engine.id);
+                    builder.addParameter("m", String.valueOf(maxResults));
+                    if (token != null) {
+                        builder.addParameter("t", token);
+                    } else {
+                        builder.addParameter("q", query);
+                        if (engines != null)
+                            for (SearchEngine engine : engines)
+                                builder.addParameter("e", engine.id);
                     }
 
                     JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
@@ -88,10 +95,12 @@ public class SearchUtils {
                         if (engine != null) missingEngines.add(engine);
                     }
 
+                    final String token = obj.optString("token", null);
+
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onResult(results, missingEngines);
+                            listener.onResult(results, missingEngines, token);
                         }
                     });
                 } catch (IOException | StatusCodeException | URISyntaxException | JSONException ex) {
@@ -111,6 +120,10 @@ public class SearchUtils {
                 }
             }
         });
+    }
+
+    public void search(final String query, final int maxResults, @Nullable final List<SearchEngine> engines, final ISearch listener) {
+        search(query, null, maxResults, engines, listener);
     }
 
     public void getTorrent(final SearchResult result, final ITorrent listener) {
@@ -228,7 +241,7 @@ public class SearchUtils {
     }
 
     public interface ISearch {
-        void onResult(List<SearchResult> results, List<SearchEngine> missingEngines);
+        void onResult(List<SearchResult> results, List<SearchEngine> missingEngines, @Nullable String nextPageToken);
 
         void serviceUnavailable();
 
