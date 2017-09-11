@@ -133,21 +133,8 @@
     <string name="error">Ошибка (см. Логи)</string>
     <string name="error_details">Ошибка: %s</string>
     <string name="searchTorrent">Поиск торрентов</string>
-    <string name="nothingFound">Ничего не найдено!</string>
-    <string name="fetching_information">Извлечение информации. Подождите…</string>
-    <string name="openInBrowser">Открыть в браузере</string>
     <string name="download">Загрузка</string>
     <string name="size"><![CDATA[<b>Размер:</b>]]> %s</string>
-    <string name="uploader"><![CDATA[<b>Разместил:</b>]]> %s</string>
-    <string name="uploaderType"><![CDATA[<b>Тип загрузки:</b>]]> %s</string>
-    <string name="administrator">Администратор</string>
-    <string name="moderator">Модератор</string>
-    <string name="vip">VIP</string>
-    <string name="trial_uploader">Пробная раздача</string>
-    <string name="user">Пользователь</string>
-    <string name="normal_uploader">Раздача</string>
-    <string name="searchFor">Результаты поиска для: %s</string>
-    <string name="trendingWeek">Популярное на этой неделе</string>
     <string name="sorting">Сортировать по</string>
     <string name="status">Статус</string>
     <string name="totalLengthMenu">Общий размер</string>
@@ -254,7 +241,6 @@
     <string name="downloadMoved">Загрузка перенесена в очередь.</string>
     <string name="downloadResultRemoved">Результат загрузки удален.</string>
     <string name="failedRefreshing">Не удалось обновить!</string>
-    <string name="searchFailed">Не удалось выполнить поиск!</string>
     <string name="invalidFile">Недопустимый файл!</string>
     <string name="invalidDownloadPath">Недопустимый путь для загрузки.</string>
     <string name="failedSavingSession">Не удалось сохранить текущий сеанс!</string>
@@ -290,6 +276,12 @@
     <string name="show">показать</string>
     <string name="getTorrent">Получить торрент</string>
     <string name="getMagnet">Получить магнит</string>
+    <string name="searchEngine_disclaimer">Эта поисковая система работает от меня (разработчика). Он объединяет результаты из разных источников.</string>
+    <string name="missingEngines_message">Некоторые двигатели не смогли выполнить запрос.</string>
+    <string name="missingEngines">Отсутствующие двигатели</string>
+    <string name="searchEngines">Поисковые системы</string>
+    <string name="noEnginesSelected">Выберите хотя бы одну поисковую систему!</string>
+    <string name="searchEngine_offline">Услуга временно недоступна, она будет доступна через несколько минут.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

@@ -134,21 +134,8 @@
     <string name="error">错误</string>
     <string name="error_details">错误：%s</string>
     <string name="searchTorrent">搜索种子</string>
-    <string name="nothingFound">没有找到任何东西！</string>
-    <string name="fetching_information">获取信息。请稍等……</string>
-    <string name="openInBrowser">在浏览器中打开</string>
     <string name="download">下载</string>
     <string name="size"><![CDATA[<b>大小：</b>]]>%s</string>
-    <string name="uploader"><![CDATA[<b>上传者：</b>]]>%s</string>
-    <string name="uploaderType"><![CDATA[<b>上传者类型：</b>]]>%s</string>
-    <string name="administrator">管理员</string>
-    <string name="moderator">版主</string>
-    <string name="vip">VIP</string>
-    <string name="trial_uploader">试上传者</string>
-    <string name="user">用户</string>
-    <string name="normal_uploader">上传者</string>
-    <string name="searchFor">搜索：%s的结果</string>
-    <string name="trendingWeek">本周趋势</string>
     <string name="sorting">排序方式</string>
     <string name="status">状态</string>
     <string name="totalLengthMenu">总长度</string>
@@ -254,7 +241,6 @@
     <string name="downloadMoved">下载已移到队列。</string>
     <string name="downloadResultRemoved">下载结果已移除。</string>
     <string name="failedRefreshing">刷新失败！</string>
-    <string name="searchFailed">搜索失败！</string>
     <string name="invalidFile">无效文件！</string>
     <string name="invalidDownloadPath">无效的下载路径。</string>
     <string name="failedSavingSession">保存当前会话失败！</string>
@@ -291,6 +277,12 @@
     <string name="show">显示</string>
     <string name="getTorrent">获得洪流</string>
     <string name="getMagnet">拿磁铁</string>
+    <string name="searchEngine_disclaimer">这个搜索引擎由我（开发者）提供支持。 它结合了各种来源的结果。</string>
+    <string name="missingEngines_message">有些引擎无法完成请求。</string>
+    <string name="missingEngines">缺少引擎</string>
+    <string name="searchEngines">搜索引擎</string>
+    <string name="noEnginesSelected">选择至少一个搜索引擎！</string>
+    <string name="searchEngine_offline">该服务暂时不可用，它将在几分钟后再次上线。</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

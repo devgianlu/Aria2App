@@ -136,21 +136,8 @@
     <string name="error">Error</string>
     <string name="error_details">Error: %s</string>
     <string name="searchTorrent">Search for torrents</string>
-    <string name="nothingFound">Nothing found!</string>
-    <string name="fetching_information">Fetching information. Please wait…</string>
-    <string name="openInBrowser">Open in browser</string>
     <string name="download">Download</string>
     <string name="size"><![CDATA[<b>Size:</b>]]> %s</string>
-    <string name="uploader"><![CDATA[<b>Uploader:</b>]]> %s</string>
-    <string name="uploaderType"><![CDATA[<b>Uploader type:</b>]]> %s</string>
-    <string name="administrator">Administrator</string>
-    <string name="moderator">Moderator</string>
-    <string name="vip">VIP</string>
-    <string name="trial_uploader">Trial uploader</string>
-    <string name="user">User</string>
-    <string name="normal_uploader">Uploader</string>
-    <string name="searchFor">Search results for: %s</string>
-    <string name="trendingWeek">Trending this week</string>
     <string name="sorting">Sort by</string>
     <string name="status">Status</string>
     <string name="totalLengthMenu">Total length</string>
@@ -258,7 +245,6 @@
     <string name="downloadMoved">Download moved in queue.</string>
     <string name="downloadResultRemoved">Download result removed.</string>
     <string name="failedRefreshing">Failed refreshing!</string>
-    <string name="searchFailed">Search failed!</string>
     <string name="invalidFile">Invalid file!</string>
     <string name="invalidDownloadPath">Invalid download path.</string>
     <string name="failedSavingSession">Failed saving current session!</string>
@@ -291,7 +277,6 @@
     <string name="enableHostnameVerifier">Enable hostname verifier</string>
     <string name="hostnameVerifier_disclaimer">You should enable this option if your certificate contains Subject Alternative Names (SAN). It is recommended to add SANs to your certificate.</string>
     <string name="searchEngine_offline">The service is temporary unavailable, it will be online again in a few minutes.</string>
-    <string name="see">See</string>
     <string name="show">Show</string>
     <string name="getTorrent">Get torrent</string>
     <string name="getMagnet">Get magnet</string>
@@ -301,7 +286,7 @@
     <string name="missingEngines_message">Some engines couldn\'t complete the request.</string>
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">Search engines</string>
-    <string name="noEnginesSelected">Select at least one engine!</string>
+    <string name="noEnginesSelected">Select at least one search engine!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
