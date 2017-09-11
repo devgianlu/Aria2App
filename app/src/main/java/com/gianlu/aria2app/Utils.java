@@ -187,20 +187,26 @@ public class Utils {
         return null;
     }
 
+    private static String getMimeType(String uri) {
+        String ext = MimeTypeMap.getFileExtensionFromUrl(uri);
+        if (ext == null || ext.isEmpty()) {
+            String[] split = uri.split("\\.");
+            ext = split[split.length - 1];
+        }
+
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+    }
+
     @Nullable
     public static SharedFile accessUriFile(Context context, Uri uri) {
         if (uri == null) return null;
 
         String resolved = resolveUri(context, uri);
-        if (resolved != null) {
-            String ext = MimeTypeMap.getFileExtensionFromUrl(resolved);
-            return new SharedFile(new File(resolved), MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext));
-        }
+        if (resolved != null) return new SharedFile(new File(resolved), getMimeType(resolved));
 
         if (Objects.equals(uri.getScheme(), "file")) {
             File file = new File(uri.getPath());
-            String ext = MimeTypeMap.getFileExtensionFromUrl(file.getAbsolutePath());
-            return new SharedFile(file, MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext));
+            return new SharedFile(file, getMimeType(file.getAbsolutePath()));
         }
 
         String name = Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP);

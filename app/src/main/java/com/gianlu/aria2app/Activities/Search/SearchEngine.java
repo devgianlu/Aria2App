@@ -14,7 +14,7 @@ public class SearchEngine {
         id = obj.getString("id");
         name = obj.getString("name");
         url = obj.getString("url");
-        alexaRank = obj.getInt("alexaRank");
+        alexaRank = obj.optInt("alexaRank", -1);
         proxyed = obj.getBoolean("proxyed");
     }
 }

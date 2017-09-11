@@ -451,13 +451,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 }
             }
         }
-
-        // Don't put nothing here!!
     }
 
     @Override
     protected void onDestroy() {
         AbstractClient.removeConnectivityListener(this);
+        updater.stopThread(null);
         super.onDestroy();
     }
 
