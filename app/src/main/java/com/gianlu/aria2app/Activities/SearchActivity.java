@@ -56,6 +56,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     private ProgressBar loading;
     private CoordinatorLayout layout;
     private LinearLayout message;
+    private String query = null;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +119,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                         for (int i = 0; i < checkedEngines.length; i++)
                             if (checkedEngines[i]) set.add(engines.get(i).id);
 
-                        if (set.isEmpty())
+                        if (set.isEmpty()) {
                             Toaster.show(SearchActivity.this, Utils.Messages.NO_ENGINES_SELECTED);
-                        else
+                        } else {
                             Prefs.putSet(SearchActivity.this, PKeys.A2_SEARCH_ENGINES, set);
+                            if (query != null) onQueryTextSubmit(query);
+                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
@@ -135,8 +139,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         MenuItem searchItem = menu.findItem(R.id.search_search);
         searchItem.setOnActionExpandListener(this);
 
+        searchView = (SearchView) searchItem.getActionView();
         if (searchManager != null) {
-            SearchView searchView = (SearchView) searchItem.getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setIconifiedByDefault(false);
             searchView.setOnCloseListener(this);
@@ -152,6 +156,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         list.setVisibility(View.GONE);
         message.setVisibility(View.GONE);
         MessageLayout.hide(layout);
+        this.query = query;
 
         SearchUtils.get(this).search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
 
@@ -173,6 +178,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         loading.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         MessageLayout.hide(layout);
+        searchView.setQuery(null, false);
+        this.query = null;
         return false;
     }
 
