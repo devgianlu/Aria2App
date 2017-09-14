@@ -132,7 +132,7 @@ public class SearchUtils {
                 try {
                     URIBuilder builder = new URIBuilder(BASE_URL + "getTorrent");
                     builder.addParameter("e", result.engineId)
-                            .addParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP));
+                            .addParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
 
                     JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
                     final Torrent torrent = new Torrent(obj);
