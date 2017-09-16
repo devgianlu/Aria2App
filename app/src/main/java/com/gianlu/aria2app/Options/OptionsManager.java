@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class OptionsManager {
@@ -54,5 +55,25 @@ public class OptionsManager {
         if (options != null) return;
         BufferedReader reader = new BufferedReader(new InputStreamReader(manager.open("options.json"), Charset.forName("UTF-8")));
         options = new JSONObject(reader.readLine());
+    }
+
+    public static final class IsQuickComparator implements Comparator<Option> {
+        private final Context context;
+        private final boolean global;
+
+        public IsQuickComparator(Context context, boolean global) {
+            this.context = context;
+            this.global = global;
+        }
+
+        @Override
+        public int compare(Option o1, Option o2) {
+            boolean b1 = o1.isQuick(context, global);
+            boolean b2 = o2.isQuick(context, global);
+            if (b1 && b2) return 0; // b1 && b2
+            else if (b1) return -1; // b1 && !b2
+            else if (b2) return 1; // !b1 && b2
+            else return 0; // !b1 && !b2
+        }
     }
 }

@@ -43,7 +43,7 @@ public class OptionsUtils {
         OptionsView optionsView = new OptionsView(activity);
         optionsView.setIsDialog(true);
 
-        final OptionsAdapter adapter = new OptionsAdapter(activity, options, true);
+        final OptionsAdapter adapter = new OptionsAdapter(activity, options, true, false);
         adapter.setHandler(new OptionsAdapter.IAdapter() {
             @Override
             public void onEditOption(Option option) {
@@ -71,7 +71,7 @@ public class OptionsUtils {
         OptionsView optionsView = new OptionsView(activity);
         optionsView.setIsDialog(true);
 
-        final OptionsAdapter adapter = new OptionsAdapter(activity, options, false);
+        final OptionsAdapter adapter = new OptionsAdapter(activity, options, false, false);
         adapter.setHandler(new OptionsAdapter.IAdapter() {
             @Override
             public void onEditOption(Option option) {

@@ -12,10 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.gianlu.aria2app.Options.Option;
+import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder> {
@@ -26,12 +28,15 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final Context context;
     private IAdapter handler;
 
-    public OptionsAdapter(Context context, List<Option> options, boolean global) {
+    public OptionsAdapter(Context context, List<Option> options, boolean global, boolean quickOnTop) {
         this.context = context;
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);
         this.global = global;
+
+        if (quickOnTop)
+            Collections.sort(this.options, new OptionsManager.IsQuickComparator(context, global)); // Assumes that options are already ordered alphabetically
     }
 
     @Override
@@ -98,8 +103,17 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         holder.toggleFavourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                option.setQuick(context, global, !option.isQuick(context, global));
-                notifyItemChanged(holder.getAdapterPosition());
+                boolean isQuick = !option.isQuick(context, global);
+                option.setQuick(context, global, isQuick);
+
+                int oldIndex = holder.getAdapterPosition();
+                notifyItemChanged(oldIndex);
+
+                if (!isQuick) Collections.sort(options);  // Order alphabetically
+                Collections.sort(options, new OptionsManager.IsQuickComparator(context, global));
+
+                int newIndex = options.indexOf(option);
+                if (newIndex != -1) notifyItemMoved(oldIndex, newIndex);
             }
         });
 

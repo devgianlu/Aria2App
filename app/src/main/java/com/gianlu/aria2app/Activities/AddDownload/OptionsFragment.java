@@ -76,7 +76,7 @@ public class OptionsFragment extends Fragment {
                 final Activity activity = getActivity();
                 if (activity != null) {
                     List<Option> options = Option.fromOptionsMap(optionsMap, downloadOptions);
-                    adapter = new OptionsAdapter(activity, options, false);
+                    adapter = new OptionsAdapter(activity, options, false, true);
                     adapter.setHandler(new OptionsAdapter.IAdapter() {
                         @Override
                         public void onEditOption(Option option) {
