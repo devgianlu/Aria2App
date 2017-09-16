@@ -178,6 +178,7 @@ public class OptionsUtils {
         SuperTextView value = layout.findViewById(R.id.editOptionDialog_value);
         value.setHtml(R.string.currentValue, option.value == null ? "not set" : option.value);
         final EditText edit = layout.findViewById(R.id.editOptionDialog_edit);
+        edit.setText(option.value);
 
         builder.setView(layout)
                 .setPositiveButton(R.string.set, new DialogInterface.OnClickListener() {
