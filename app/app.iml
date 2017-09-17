@@ -85,6 +85,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaPrecompile" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
@@ -100,36 +101,39 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="support-core-ui-26.0.2" level="project" />
-    <orderEntry type="library" name="cardview-v7-26.0.2" level="project" />
+    <orderEntry type="library" name="cardview-v7-26.1.0" level="project" />
+    <orderEntry type="library" name="support-core-ui-26.1.0" level="project" />
+    <orderEntry type="library" name="support-media-compat-26.1.0" level="project" />
     <orderEntry type="library" name="play-services-tagmanager-v4-impl-11.2.2" level="project" />
     <orderEntry type="library" name="firebase-core-11.2.2" level="project" />
-    <orderEntry type="library" name="support-media-compat-26.0.2" level="project" />
     <orderEntry type="library" name="play-services-analytics-11.2.2" level="project" />
-    <orderEntry type="library" name="recyclerview-v7-26.0.2" level="project" />
+    <orderEntry type="library" name="recyclerview-v7-26.1.0" level="project" />
     <orderEntry type="library" name="firebase-iid-11.2.2" level="project" />
-    <orderEntry type="library" name="support-vector-drawable-26.0.2" level="project" />
-    <orderEntry type="library" name="support-core-utils-26.0.2" level="project" />
+    <orderEntry type="library" name="support-vector-drawable-26.1.0" level="project" />
+    <orderEntry type="library" name="support-core-utils-26.1.0" level="project" />
     <orderEntry type="library" name="jsoup-1.10.3" level="project" />
     <orderEntry type="library" name="play-services-analytics-impl-11.2.2" level="project" />
     <orderEntry type="library" name="library-1.6.4" level="project" />
     <orderEntry type="library" name="httpclient-4.4.1.2" level="project" />
     <orderEntry type="library" name="play-services-basement-11.2.2" level="project" />
+    <orderEntry type="library" name="transition-26.1.0" level="project" />
     <orderEntry type="library" name="play-services-base-11.2.2" level="project" />
-    <orderEntry type="library" name="transition-26.0.2" level="project" />
     <orderEntry type="library" name="taptargetview-1.9.1" level="project" />
-    <orderEntry type="library" name="support-compat-26.0.2" level="project" />
     <orderEntry type="library" name="nv-websocket-client-2.3" level="project" />
+    <orderEntry type="library" name="support-compat-26.1.0" level="project" />
     <orderEntry type="library" name="MPAndroidChart-v3.0.1" level="project" />
-    <orderEntry type="library" name="support-fragment-26.0.2" level="project" />
-    <orderEntry type="library" name="animated-vector-drawable-26.0.2" level="project" />
-    <orderEntry type="library" name="support-annotations-26.0.2" level="project" />
-    <orderEntry type="library" name="support-v4-26.0.2" level="project" />
-    <orderEntry type="library" name="appcompat-v7-26.0.2" level="project" />
+    <orderEntry type="library" name="support-annotations-26.1.0" level="project" />
+    <orderEntry type="library" name="support-v4-26.1.0" level="project" />
+    <orderEntry type="library" name="animated-vector-drawable-26.1.0" level="project" />
+    <orderEntry type="library" name="support-fragment-26.1.0" level="project" />
+    <orderEntry type="library" name="runtime-1.0.0" level="project" />
+    <orderEntry type="library" name="common-1.0.0" level="project" />
+    <orderEntry type="library" name="1_common-1.0.0" level="project" />
+    <orderEntry type="library" name="appcompat-v7-26.1.0" level="project" />
     <orderEntry type="library" name="firebase-analytics-impl-11.2.2" level="project" />
     <orderEntry type="library" name="firebase-analytics-11.2.2" level="project" />
     <orderEntry type="library" name="floatingactionbutton-1.10.1" level="project" />
-    <orderEntry type="library" name="design-26.0.2" level="project" />
+    <orderEntry type="library" name="design-26.1.0" level="project" />
     <orderEntry type="library" name="play-services-tasks-11.2.2" level="project" />
     <orderEntry type="library" name="firebase-common-11.2.2" level="project" />
     <orderEntry type="module" module-name="CommonUtils" />

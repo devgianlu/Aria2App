@@ -68,7 +68,13 @@ public abstract class AbstractClient {
                 if (!noConnectivity) {
                     try {
                         int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
-                        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(networkType, wifiManager);
+                        MultiProfile.UserProfile profile;
+                        try {
+                            profile = ProfilesManager.get(context).getCurrent(context).getProfile(networkType, wifiManager);
+                        } catch (NullPointerException ignored) {
+                            return;
+                        }
+
                         if (!Objects.equals(AbstractClient.this.profile.connectivityCondition, profile.connectivityCondition)) {
                             connectivityChanged(context, profile);
                             AbstractClient.this.profile = profile;

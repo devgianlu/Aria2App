@@ -74,7 +74,7 @@ public class OptionsView extends FrameLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
-                adapter.filter(s.toString());
+                if (adapter != null) adapter.filter(s.toString());
             }
         });
 
