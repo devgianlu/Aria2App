@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         if (((ThisApplication) getApplication()).isFirstStart()) {
-            SearchUtils.get(this).cacheSearchEngines(this);
+            SearchUtils.get().cacheSearchEngines(this);
             ((ThisApplication) getApplication()).setIsFirstStart(false);
             if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true)) {
                 GitHubApi.getLatestVersion(new GitHubApi.IRelease() {

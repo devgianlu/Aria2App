@@ -29,9 +29,9 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, IAdapter listener) {
         super(context, results, -1, -1, false);
         this.inflater = LayoutInflater.from(context);
-        this.searchUtils = SearchUtils.get(context);
+        this.searchUtils = SearchUtils.get();
         this.token = token;
-        this.utils = SearchUtils.get(context);
+        this.utils = SearchUtils.get();
         this.listener = listener;
     }
 

@@ -158,7 +158,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         MessageLayout.hide(layout);
         this.query = query;
 
-        SearchUtils.get(this).search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
+        SearchUtils.get().search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
 
         ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
@@ -217,7 +217,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
             case R.id.search_engines:
                 final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
                 CommonUtils.showDialog(this, pd);
-                SearchUtils.get(this).listSearchEngines(new SearchUtils.IResult<List<SearchEngine>>() {
+                SearchUtils.get().listSearchEngines(new SearchUtils.IResult<List<SearchEngine>>() {
                     @Override
                     public void onResult(List<SearchEngine> result) {
                         pd.dismiss();
@@ -246,7 +246,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public void onResultSelected(SearchResult result) {
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
         CommonUtils.showDialog(this, pd);
-        SearchUtils.get(this).getTorrent(result, new SearchUtils.ITorrent() {
+        SearchUtils.get().getTorrent(result, new SearchUtils.ITorrent() {
             @Override
             public void onDone(Torrent torrent) {
                 pd.dismiss();
@@ -296,7 +296,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         SuperTextView seeders = layout.findViewById(R.id.torrentDialog_seeders);
         SuperTextView leeches = layout.findViewById(R.id.torrentDialog_leeches);
 
-        SearchEngine searchEngine = SearchUtils.get(this).findEngine(torrent.engineId);
+        SearchEngine searchEngine = SearchUtils.get().findEngine(torrent.engineId);
         if (searchEngine != null) engine.setHtml(R.string.searchEngine, searchEngine.name);
         else engine.setVisibility(View.GONE);
         size.setHtml(R.string.size, CommonUtils.dimensionFormatter(torrent.size, false));
