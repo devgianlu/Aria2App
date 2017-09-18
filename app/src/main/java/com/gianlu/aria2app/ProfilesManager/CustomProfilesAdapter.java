@@ -2,6 +2,7 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -25,7 +26,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, IAdapter<MultiProfile> listener, boolean black, @Nullable IEdit editListener) {
         super(context, profiles, R.color.colorAccent, black, listener);
         this.editListener = editListener;
-        this.handler = new Handler(context.getMainLooper());
+        this.handler = new Handler(Looper.getMainLooper());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Activities.DirectDownload;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.BaseUpdater;
@@ -17,7 +18,7 @@ public class UpdateUI extends Thread {
     private boolean _shouldStop = false;
 
     public UpdateUI(Context context, IUI listener) {
-        this.handler = new Handler(context.getMainLooper());
+        this.handler = new Handler(Looper.getMainLooper());
         this.updateInterval = Prefs.getFakeInt(context, PKeys.A2_UPDATE_INTERVAL, 1) * 1000;
         this.listener = listener;
     }

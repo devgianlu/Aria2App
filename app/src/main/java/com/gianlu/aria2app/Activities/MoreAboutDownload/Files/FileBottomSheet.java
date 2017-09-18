@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +36,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
         super(parent, R.layout.file_sheet, true);
         this.download = download;
         this.handler = handler;
-        this.mainHandler = new Handler(context.getMainLooper());
+        this.mainHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override

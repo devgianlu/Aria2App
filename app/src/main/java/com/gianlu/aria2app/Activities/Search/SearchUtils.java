@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.Search;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -42,14 +43,14 @@ public class SearchUtils {
     private final Handler handler;
     private List<SearchEngine> cachedEngines = null;
 
-    private SearchUtils(Context context) {
+    private SearchUtils() {
         client = HttpClients.createDefault();
         executorService = Executors.newSingleThreadExecutor();
-        handler = new Handler(context.getMainLooper());
+        handler = new Handler(Looper.getMainLooper());
     }
 
-    public static SearchUtils get(Context context) {
-        if (instance == null) instance = new SearchUtils(context);
+    public static SearchUtils get() {
+        if (instance == null) instance = new SearchUtils();
         return instance;
     }
 
