@@ -42,7 +42,7 @@
     <string name="info">信息</string>
     <string name="files">文件</string>
     <string name="profileName">配置名称</string>
-    <string name="profile_help">如果您不知道正确地创建一个配置，请参考网站： http://gianlu.xyz/aria2app/create-profile/</string>
+    <string name="profile_help">如果您不知道正确地创建一个配置，请参考网站： http://gianlu.xyz/apps/docs/aria2app/create-profile.html</string>
     <string name="address">地址</string>
     <string name="downloadIs">下载的是%s.</string>
     <string name="peers">同伴</string>

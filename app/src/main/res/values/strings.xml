@@ -43,7 +43,7 @@
     <string name="info">Info</string>
     <string name="files">Files</string>
     <string name="profileName">Profile name</string>
-    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: http://gianlu.xyz/aria2app/create-profile/</string>
+    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: http://gianlu.xyz/apps/docs/aria2app/create-profile.html</string>
     <string name="address">Address</string>
     <string name="downloadIs">Download is %s.</string>
     <string name="peers">Peers</string>

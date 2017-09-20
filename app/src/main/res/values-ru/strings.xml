@@ -41,7 +41,7 @@
     <string name="info">Информация</string>
     <string name="files">Файлы</string>
     <string name="profileName">Имя профиля:</string>
-    <string name="profile_help">Aria2App использует Aria2 JSON-RPC интерфейс! Смотри больше на <a>https://aria2.github.io/manual/ru/html/aria2c.html#rpc-interface</a></string>
+    <string name="profile_help">Если вы не знаете, как правильно настроить профиль, проверьте это руководство на моем веб-сайте: http://gianlu.xyz/apps/docs/aria2app/create-profile.html</string>
     <string name="address">Адрес:</string>
     <string name="downloadIs">Загрузка %s</string>
     <string name="peers">Пиры</string>

@@ -79,7 +79,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         messageMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://gianlu.xyz/torrent-search-engine/")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://gianlu.xyz/projects/?id=torrent-search-engine")));
             }
         });
     }
