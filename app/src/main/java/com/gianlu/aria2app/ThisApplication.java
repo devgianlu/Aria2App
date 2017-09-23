@@ -75,7 +75,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1000), this);
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
-        tracker = getTracker(this);
+        if (!BuildConfig.DEBUG) tracker = getTracker(this);
 
         DownloadsManager.setGlobalMonitor(this);
     }
