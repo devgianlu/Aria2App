@@ -29,6 +29,7 @@ import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         loading = layout.findViewById(R.id.serversFragment_loading);
         list = layout.findViewById(R.id.serversFragment_list);
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        list.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = new ServersAdapter(getContext(), this);
         list.setAdapter(adapter);
 
