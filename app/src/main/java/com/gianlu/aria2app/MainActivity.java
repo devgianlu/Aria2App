@@ -797,27 +797,32 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (!isShowingHint && toolbar != null && count >= 5 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.TOOLBAR)) {
             isShowingHint = true;
 
-            new TapTargetSequence(this)
-                    .continueOnCancel(true)
-                    .targets(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, getString(R.string.search), getString(R.string.search_desc)),
-                            TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, getString(R.string.filters), getString(R.string.filters_desc)))
-                    .listener(new TapTargetSequence.Listener() {
-                        @Override
-                        public void onSequenceFinish() {
-                            TutorialManager.setHintShown(MainActivity.this, TutorialManager.Discovery.TOOLBAR);
-                            isShowingHint = false;
-                        }
+            TapTargetSequence sequence = new TapTargetSequence(this)
+                    .continueOnCancel(true);
 
-                        @Override
-                        public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+            if (toolbar.findViewById(R.id.main_search) != null)
+                sequence.target(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, getString(R.string.search), getString(R.string.search_desc)));
 
-                        }
+            if (toolbar.findViewById(R.id.main_filter) != null)
+                sequence.target(TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, getString(R.string.filters), getString(R.string.filters_desc)));
 
-                        @Override
-                        public void onSequenceCanceled(TapTarget lastTarget) {
-                            onSequenceFinish();
-                        }
-                    }).start();
+            sequence.listener(new TapTargetSequence.Listener() {
+                @Override
+                public void onSequenceFinish() {
+                    TutorialManager.setHintShown(MainActivity.this, TutorialManager.Discovery.TOOLBAR);
+                    isShowingHint = false;
+                }
+
+                @Override
+                public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
+
+                }
+
+                @Override
+                public void onSequenceCanceled(TapTarget lastTarget) {
+                    onSequenceFinish();
+                }
+            }).start();
         }
 
         if (!isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.CARD)) {
