@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.WebSocketing;
@@ -17,11 +16,10 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.Map;
 
-public class ThisApplication extends Application implements ErrorHandler.IErrorHandler, DownloadsManager.IGlobalMonitor {
+public class ThisApplication extends Application implements ErrorHandler.IErrorHandler {
     public static final String CATEGORY_USER_INPUT = "User input";
     public static final String ACTION_DOWNLOAD_FILE = "Download file";
     public static final String ACTION_NEW_PROFILE = "New profile";
@@ -32,7 +30,6 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     public static final String ACTION_NEW_METALINK = "New Metalink download";
     public static final String ACTION_NEW_URI = "New URI download";
     public static final String ACTION_SEARCH_DOWNLOAD = "New URI download with torrent search";
-    public static final String ACTION_DONATE_OPEN = "Opened donation dialog";
     public static final String ACTION_SHARE = "Shared something with the app";
     public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
     public static final String ACTION_SEARCH = "Search torrent";
@@ -71,13 +68,10 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
         CommonUtils.setDebug(BuildConfig.DEBUG);
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
-        FileDownloader.setup(getApplicationContext());
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1000), this);
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         if (!BuildConfig.DEBUG) tracker = getTracker(this);
-
-        DownloadsManager.setGlobalMonitor(this);
     }
 
     @Override

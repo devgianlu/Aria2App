@@ -112,22 +112,24 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
             return;
         } else {
             ClipboardManager manager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = manager.getPrimaryClip();
-            if (clip != null) {
-                for (int i = 0; i < clip.getItemCount(); i++) {
-                    ClipData.Item item = clip.getItemAt(i);
-                    String clipUri = item.coerceToText(getContext()).toString();
+            if (manager != null) {
+                ClipData clip = manager.getPrimaryClip();
+                if (clip != null) {
+                    for (int i = 0; i < clip.getItemCount(); i++) {
+                        ClipData.Item item = clip.getItemAt(i);
+                        String clipUri = item.coerceToText(getContext()).toString();
 
-                    try {
-                        new URL(clipUri);
-                        showAddUriDialog(-1, clipUri);
-                        return;
-                    } catch (Exception ignored) {
-                    }
+                        try {
+                            new URL(clipUri);
+                            showAddUriDialog(-1, clipUri);
+                            return;
+                        } catch (Exception ignored) {
+                        }
 
-                    if (clipUri.startsWith("magnet:")) {
-                        showAddUriDialog(-1, clipUri);
-                        return;
+                        if (clipUri.startsWith("magnet:")) {
+                            showAddUriDialog(-1, clipUri);
+                            return;
+                        }
                     }
                 }
             }

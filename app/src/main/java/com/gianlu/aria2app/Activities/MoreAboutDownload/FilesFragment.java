@@ -1,15 +1,12 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,24 +26,20 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.UpdateUI;
 import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
-import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManagerException;
 import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
-import java.util.Collections;
 import java.util.List;
 
 public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
@@ -315,32 +308,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final Download download, @NonNull final ADir dir) {
-        JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2InitializingException ex) {
-            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
-            return;
-        }
-
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
-        CommonUtils.showDialog(getActivity(), pd);
-
-        jta2.getFiles(download.gid, new JTA2.IFiles() {
-            @Override
-            public void onFiles(List<AFile> files) {
-                realStartDownload(ADir.find(dir, files), download.dir);
-                pd.dismiss();
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
-                pd.dismiss();
-            }
-        });
-
+    public void onWantsToDownload(MultiProfile profile, Download download, @NonNull ADir dir) { // TODO
         ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_DOWNLOAD_DIRECTORY)
@@ -354,69 +322,10 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final Download download, @NonNull final AFile file) {
-        JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2InitializingException ex) {
-            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
-            return;
-        }
-
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
-        CommonUtils.showDialog(getActivity(), pd);
-
-        jta2.getFiles(download.gid, new JTA2.IFiles() {
-            @Override
-            public void onFiles(List<AFile> files) {
-                startDownload(AFile.find(files, file), download.dir);
-                pd.dismiss();
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
-                pd.dismiss();
-            }
-        });
-
+    public void onWantsToDownload(MultiProfile profile, Download download, @NonNull AFile file) { // TODO
         ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
                 .build());
-    }
-
-    private void realStartDownload(List<AFile> files, @NonNull String dir) {
-        try {
-            for (AFile file : files)
-                DownloadsManager.get(getContext()).startDownload(getContext(), file, dir);
-            Toaster.show(getActivity(), Utils.Messages.DOWNLOAD_STARTED);
-        } catch (DownloadsManagerException ex) {
-            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
-        }
-    }
-
-    private void startDownload(final AFile file, final String dir) {
-        if (dir == null) {
-            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, new NullPointerException("dir is null!"));
-            return;
-        }
-
-        if (file.completed()) {
-            realStartDownload(Collections.singletonList(file), dir);
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.downloadIncomplete)
-                    .setMessage(R.string.downloadIncompleteMessage)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            realStartDownload(Collections.singletonList(file), dir);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, null);
-
-            CommonUtils.showDialog(getActivity(), builder);
-        }
     }
 }

@@ -82,10 +82,10 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check-manifest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes-jar" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaPrecompile" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
@@ -113,7 +113,6 @@
     <orderEntry type="library" name="support-core-utils-26.1.0" level="project" />
     <orderEntry type="library" name="jsoup-1.10.3" level="project" />
     <orderEntry type="library" name="play-services-analytics-impl-11.4.0" level="project" />
-    <orderEntry type="library" name="library-1.6.4" level="project" />
     <orderEntry type="library" name="httpclient-4.4.1.2" level="project" />
     <orderEntry type="library" name="play-services-basement-11.4.0" level="project" />
     <orderEntry type="library" name="transition-26.1.0" level="project" />

@@ -169,16 +169,6 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            findPreference("fileDownloader").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    CommonUtils.showDialog(getActivity(), builder
-                            .setTitle("FileDownloader")
-                            .setMessage(R.string.fileDownloader_details));
-                    return true;
-                }
-            });
-
             findPreference("jsoup").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {

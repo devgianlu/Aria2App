@@ -12,6 +12,7 @@ import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BaseBottomSheet;
@@ -109,7 +110,9 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
             selected.setEnabled(false);
         }
 
-        if (download.isMetadata() || !ProfilesManager.get(context).getCurrent(context).getProfile(context).isDirectDownloadEnabled()) {
+        final MultiProfile profile = ProfilesManager.get(context).getCurrent(context);
+
+        if (download.isMetadata() || !profile.getProfile(context).isDirectDownloadEnabled()) {
             downloadFile.setVisibility(View.GONE);
         } else {
             downloadFile.setVisibility(View.VISIBLE);
@@ -119,7 +122,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (handler != null) handler.onWantsToDownload(download, item);
+                            if (handler != null) handler.onWantsToDownload(profile, download, item);
                         }
                     });
                 }
@@ -149,6 +152,6 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
 
         void onCantDeselectAll();
 
-        void onWantsToDownload(Download download, @NonNull AFile file);
+        void onWantsToDownload(MultiProfile profile, Download download, @NonNull AFile file);
     }
 }

@@ -52,7 +52,6 @@ import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.DownloadsManager.DownloadsManager;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.HTTPing;
@@ -92,7 +91,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, DownloadsManager.IListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -376,8 +375,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class));
             }
         });
-
-        DownloadsManager.get(this).setListener(this);
 
         if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
@@ -969,10 +966,12 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Toaster.show(this, Utils.Messages.RESULT_REMOVED, gid);
     }
 
+    /*
     @Override
-    public void onDownloadsCountChanged(int count) {
+    public void onDownloadsCountChanged(int count) { TODO
         if (drawerManager != null) drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, count);
     }
+    */
 
     @Override
     public boolean onQueryTextSubmit(String query) {
