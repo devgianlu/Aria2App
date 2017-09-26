@@ -45,14 +45,33 @@ public class HTTPing extends AbstractClient {
         this.defaultUri = NetUtils.createBaseURI(profile);
     }
 
-    public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
+    public static HTTPing instantiate(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
         if (httping == null) httping = new HTTPing(context);
         return httping;
     }
 
-    public static HTTPing newInstance(Context context, MultiProfile.UserProfile profile) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
+    public static HTTPing instantiate(Context context, MultiProfile.UserProfile profile) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
         if (httping == null) httping = new HTTPing(context, profile);
         return httping;
+    }
+
+    public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull final IConnect listener) {
+        try {
+            httping = new HTTPing(context, profile);
+            httping.send(null, new IReceived() {
+                @Override
+                public void onResponse(JSONObject response) throws JSONException {
+                    listener.onConnected(httping);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    listener.onFailedConnecting(ex);
+                }
+            });
+        } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | URISyntaxException | KeyStoreException ex) {
+            listener.onFailedConnecting(ex);
+        }
     }
 
     public static void clear() {

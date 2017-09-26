@@ -35,16 +35,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoadingActivity extends AppCompatActivity {
+public class LoadingActivity extends AppCompatActivity implements IConnect {
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
@@ -53,7 +48,7 @@ public class LoadingActivity extends AppCompatActivity {
     private boolean finished = false;
     private Uri shareData;
     private String fromNotifGid;
-    private Button seeError;
+    private Button seeError; // FIXME: Sometimes isn't shown (!!)
     private Button cancel;
     private ProfilesManager manager;
 
@@ -241,24 +236,9 @@ public class LoadingActivity extends AppCompatActivity {
             manager.setCurrent(this, profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
-                WebSocketing.instantiate(this, single, new IConnect() {
-                    @Override
-                    public void onConnected(AbstractClient client) {
-                        goTo(MainActivity.class);
-                    }
-
-                    @Override
-                    public void onFailedConnecting(final Exception ex) {
-                        failedConnecting(ex);
-                    }
-                });
+                WebSocketing.instantiate(this, single, this);
             } else {
-                try {
-                    HTTPing.newInstance(this, single);
-                    goTo(MainActivity.class);
-                } catch (NoSuchAlgorithmException | CertificateException | KeyManagementException | IOException | KeyStoreException | URISyntaxException ex) {
-                    failedConnecting(ex);
-                }
+                HTTPing.instantiate(this, single, this);
             }
 
             new Timer().schedule(new TimerTask() {
@@ -332,5 +312,15 @@ public class LoadingActivity extends AppCompatActivity {
         if (fromNotifGid != null) intent.putExtra("gid", fromNotifGid);
         if (finished) startActivity(intent);
         else this.goTo = intent;
+    }
+
+    @Override
+    public void onConnected(AbstractClient client) {
+        goTo(MainActivity.class);
+    }
+
+    @Override
+    public void onFailedConnecting(final Exception ex) {
+        failedConnecting(ex);
     }
 }
