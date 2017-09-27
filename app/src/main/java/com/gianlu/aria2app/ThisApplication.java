@@ -13,6 +13,7 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.UncaughtExceptionActivity;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -21,7 +22,7 @@ import com.liulishuo.filedownloader.FileDownloader;
 
 import java.util.Map;
 
-public class ThisApplication extends Application implements ErrorHandler.IErrorHandler, DownloadsManager.IGlobalMonitor {
+public class ThisApplication extends Application implements ErrorHandler.IErrorHandler, DownloadsManager.IGlobalMonitor, Thread.UncaughtExceptionHandler {
     public static final String CATEGORY_USER_INPUT = "User input";
     public static final String ACTION_DOWNLOAD_FILE = "Download file";
     public static final String ACTION_NEW_PROFILE = "New profile";
@@ -66,11 +67,25 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
     }
 
     @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
+        if (BuildConfig.DEBUG) {
+            throwable.printStackTrace();
+        } else {
+            sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
+                    .setDescription(Logging.getStackTrace(throwable))
+                    .setFatal(true)
+                    .build());
+
+            UncaughtExceptionActivity.startActivity(getApplicationContext(), getApplicationContext().getString(R.string.app_name), throwable);
+        }
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
 
         CommonUtils.setDebug(BuildConfig.DEBUG);
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
+        Thread.setDefaultUncaughtExceptionHandler(this);
         FileDownloader.setup(getApplicationContext());
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1000), this);
 

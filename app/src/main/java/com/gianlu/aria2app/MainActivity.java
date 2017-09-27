@@ -290,8 +290,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
-
         if (Prefs.getString(this, PKeys.DD_DOWNLOAD_PATH, null) == null)
             Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 
