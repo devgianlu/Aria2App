@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -48,7 +49,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
     private boolean finished = false;
     private Uri shareData;
     private String fromNotifGid;
-    private Button seeError; // FIXME: Sometimes isn't shown (!!)
+    private Button seeError;
     private Button cancel;
     private ProfilesManager manager;
 
@@ -205,7 +206,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
         displayPicker(hasShareData());
     }
 
-    private void failedConnecting(final Exception ex) {
+    private void failedConnecting(@NonNull final Exception ex) {
         Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
             @Override
             public void run() {
@@ -266,7 +267,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
         seeError.setVisibility(View.GONE);
     }
 
-    private void showErrorDialog(final Throwable ex) {
+    private void showErrorDialog(@NonNull final Throwable ex) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
@@ -318,7 +319,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
     }
 
     @Override
-    public void onFailedConnecting(final Exception ex) {
+    public void onFailedConnecting(Exception ex) {
         failedConnecting(ex);
     }
 }
