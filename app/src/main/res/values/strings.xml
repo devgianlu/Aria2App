@@ -287,6 +287,7 @@
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">Search engines</string>
     <string name="noEnginesSelected">Select at least one search engine!</string>
+    <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

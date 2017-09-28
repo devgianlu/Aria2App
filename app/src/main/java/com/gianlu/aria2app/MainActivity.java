@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
                 layout.setPadding(padding, padding, padding, padding);
                 layout.addView(new SuperTextView(MainActivity.this, R.string.version, version));
-                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(rawFeatures, ",")));
+                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(rawFeatures, ", ")));
 
                 jta2.getSessionInfo(new JTA2.ISession() {
                     @Override

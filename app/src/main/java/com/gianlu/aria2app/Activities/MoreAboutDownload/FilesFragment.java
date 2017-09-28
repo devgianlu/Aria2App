@@ -170,10 +170,15 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onUpdateHierarchy(List<AFile> files, String commonRoot) {
-        if (files.size() == 0) return;
-        MessageLayout.hide(layout);
         loading.setVisibility(View.GONE);
         container.setVisibility(View.VISIBLE);
+
+        if (files.size() == 0 || files.get(0).path.isEmpty()) {
+            MessageLayout.show(layout, R.string.noFiles, R.drawable.ic_info_outline_black_48dp);
+            return;
+        }
+
+        MessageLayout.hide(layout);
         if (adapter != null) adapter.update(files, commonRoot);
         if (fileSheet != null) fileSheet.update(files);
         if (dirSheet != null) dirSheet.update(files);
