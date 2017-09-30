@@ -3,67 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/filesFragment_swipeRefresh"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <HorizontalScrollView
+            android:id="@+id/filesFragment_breadcrumbs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/filesFragment_breadcrumbsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingStart="@dimen/activity_horizontal_margin" />
+        </HorizontalScrollView>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/filesFragment_container"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:layout_height="2dp"
+                android:layout_gravity="top"
+                android:background="@drawable/shadow_bottom" />
 
-                <HorizontalScrollView
-                    android:id="@+id/filesFragment_breadcrumbs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/filesFragment_breadcrumbsContainer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:paddingEnd="@dimen/activity_horizontal_margin"
-                        android:paddingStart="@dimen/activity_horizontal_margin" />
-                </HorizontalScrollView>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_gravity="top"
-                        android:background="@drawable/shadow_bottom" />
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/filesFragment_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scrollbars="vertical" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/filesFragment_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="48dp" />
-
-            <include
-                layout="@layout/message_layout"
-                android:visibility="gone" />
+            <com.gianlu.commonutils.RecyclerViewLayout
+                android:id="@+id/filesFragment_recyclerViewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
         </FrameLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/bottomSheet_mask"
