@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Downloader;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
@@ -37,7 +38,7 @@ public class DownloadStartConfig {
         builder.setPath(file.getRelativePath(download.dir));
 
         DownloadStartConfig config = new DownloadStartConfig(context);
-        config.addTask(builder.build(), destFile);
+        config.addTask(builder.build(), destFile, dd.username, dd.password);
         return config;
     }
 
@@ -45,19 +46,27 @@ public class DownloadStartConfig {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    private void addTask(URI uri, File destFile) {
-        tasks.add(new Task(uri, destFile));
+    private void addTask(URI uri, File destFile, String username, String password) {
+        tasks.add(new Task(uri, destFile, username, password));
     }
 
     public class Task {
         public final URI uri;
         public final File destFile;
         public final int id;
+        public final String username;
+        public final String password;
 
-        public Task(URI uri, File destFile) {
+        public Task(URI uri, File destFile, @Nullable String username, @Nullable String password) {
             this.uri = uri;
             this.destFile = destFile;
+            this.username = username;
+            this.password = password;
             this.id = random.nextInt();
+        }
+
+        public boolean hasAuth() {
+            return username != null && password != null;
         }
 
         public File getCacheDir() {

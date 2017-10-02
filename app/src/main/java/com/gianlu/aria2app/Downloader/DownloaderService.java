@@ -8,13 +8,13 @@ import android.os.Message;
 import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,12 +50,12 @@ public class DownloaderService extends Service {
     }
 
     private static class DownloaderRunnable implements Runnable {
-        private final URI uri;
+        private final HttpGet get;
         private final File tempFile;
         private final File destFile;
 
-        private DownloaderRunnable(URI uri, File tempFile, File destFile) {
-            this.uri = uri;
+        private DownloaderRunnable(HttpGet get, File tempFile, File destFile) {
+            this.get = get;
             this.tempFile = tempFile;
             this.destFile = destFile;
         }
@@ -67,13 +67,14 @@ public class DownloaderService extends Service {
         @NonNull
         public static DownloaderRunnable start(DownloadStartConfig.Task task) {
             File tempFile = new File(task.getCacheDir(), String.valueOf(task.id));
-            return new DownloaderRunnable(task.uri, tempFile, task.destFile);
+            HttpGet get = new HttpGet(task.uri);
+            if (task.hasAuth())
+                get.addHeader("Authorization", "Basic " + Base64.encodeToString((task.username + ":" + task.password).getBytes(), Base64.NO_WRAP));
+            return new DownloaderRunnable(get, tempFile, task.destFile);
         }
 
         @Override
         public void run() {
-            HttpGet get = new HttpGet(uri);
-
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpResponse resp = client.execute(get);
 
