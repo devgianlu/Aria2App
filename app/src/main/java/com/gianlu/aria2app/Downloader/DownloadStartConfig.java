@@ -42,8 +42,8 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(Download download, MultiProfile.UserProfile profile, ADir dir, boolean includeSubdirectories) {
-        throw new UnsupportedOperationException(); // TODO
+    public static DownloadStartConfig create(Download download, MultiProfile.UserProfile profile, ADir dir, boolean includeSubdirectories) { // TODO
+        throw new UnsupportedOperationException();
     }
 
     private void addTask(URI uri, File destFile, String username, String password) {
