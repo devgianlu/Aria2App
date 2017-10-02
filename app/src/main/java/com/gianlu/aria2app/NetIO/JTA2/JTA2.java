@@ -620,7 +620,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onStats(new GlobalStats(response.getJSONObject("result")));
+                handler.onStats(new GlobalStats(response.getJSONObject("result"))); // FIXME: Value [] at result of type org.json.JSONArray cannot be converted to JSONObject
             }
 
             @Override

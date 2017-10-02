@@ -36,11 +36,13 @@ public class DownloaderService extends Service {
     private static final int MAX_SIMULTANEOUS_DOWNLOADS = 3; // TODO: Should be selectable
     private final ExecutorService executorService = Executors.newFixedThreadPool(MAX_SIMULTANEOUS_DOWNLOADS);
     private final DownloadTasks downloads = new DownloadTasks();
-    private final LocalBroadcastManager broadcastManager;
+    private LocalBroadcastManager broadcastManager;
     private Messenger messenger;
 
-    public DownloaderService() {
+    @Override
+    public void onCreate() {
         broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        downloads.notifyCountChanged();
     }
 
     @Nullable

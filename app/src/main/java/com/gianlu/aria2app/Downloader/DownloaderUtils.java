@@ -54,7 +54,9 @@ public class DownloaderUtils {
     }
 
     public static void registerReceiver(Context context, BroadcastReceiver receiver) {
-        IntentFilter filter = new IntentFilter(ACTION_LIST_DOWNLOADS);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_LIST_DOWNLOADS);
+        filter.addAction(ACTION_COUNT_CHANGED);
         LocalBroadcastManager.getInstance(context.getApplicationContext()).registerReceiver(receiver, filter);
     }
 
