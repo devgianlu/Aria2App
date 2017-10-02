@@ -122,7 +122,8 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (handler != null) handler.onWantsToDownload(profile, download, item);
+                            if (handler != null)
+                                handler.onWantsToDownload(profile, download.gid, item);
                         }
                     });
                 }
@@ -152,6 +153,6 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
 
         void onCantDeselectAll();
 
-        void onWantsToDownload(MultiProfile profile, Download download, @NonNull AFile file);
+        void onWantsToDownload(MultiProfile profile, String gid, @NonNull AFile file);
     }
 }

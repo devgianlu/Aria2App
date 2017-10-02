@@ -20,8 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -339,8 +339,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return obj;
         }
 
-        public URL getURLAddress() throws MalformedURLException {
-            return new URL(address);
+        public URI getURLAddress() throws URISyntaxException {
+            return new URI(address);
         }
     }
 
@@ -499,6 +499,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("serverToken", serverToken)
                     .put("serverUsername", serverUsername)
                     .put("serverPassword", serverPassword)
+                    .put("hostnameVerifier", hostnameVerifier)
                     .put("serverSSL", serverSSL)
                     .put("connectionMethod", connectionMethod.name())
                     .put("certificatePath", certificatePath)

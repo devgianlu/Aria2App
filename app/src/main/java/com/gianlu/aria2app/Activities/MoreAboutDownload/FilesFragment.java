@@ -1,11 +1,19 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
+import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,30 +27,36 @@ import android.widget.ProgressBar;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.DirBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FileBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.UpdateUI;
 import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
+import com.gianlu.aria2app.Downloader.DownloadStartConfig;
+import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet, ServiceConnection {
     private UpdateUI updater;
     private CoordinatorLayout layout;
     private RecyclerView list;
@@ -55,6 +69,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private HorizontalScrollView breadcrumbs;
     private Download download;
     private boolean isShowingHint;
+    private Messenger downloaderMessenger = null;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
@@ -157,6 +172,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             Logging.logMe(getContext(), ex);
             return layout;
         }
+
+        DownloaderUtils.bindService(getContext(), this);
 
         return layout;
     }
@@ -308,7 +325,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(MultiProfile profile, Download download, @NonNull ADir dir) { // TODO
+    public void onWantsToDownload(MultiProfile profile, String gid, @NonNull ADir dir) { // TODO
         ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_DOWNLOAD_DIRECTORY)
@@ -322,10 +339,61 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(MultiProfile profile, Download download, @NonNull AFile file) { // TODO
+    public void onWantsToDownload(final MultiProfile profile, String gid, @NonNull final AFile file) {
+        JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(getContext());
+        } catch (JTA2InitializingException ex) {
+            Toaster.show(getActivity(), Utils.Messages.FAILED_LOADING, ex);
+            return;
+        }
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
+        CommonUtils.showDialog(getActivity(), pd);
+
+        jta2.tellStatus(gid, new String[]{"gid", "status", "dir"}, new JTA2.IDownload() {
+            @Override
+            public void onDownload(Download download) {
+                pd.dismiss();
+
+                try {
+                    DownloaderUtils.addDownload(downloaderMessenger, DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
+                } catch (RemoteException | DownloaderUtils.InvalidPathException | URISyntaxException ex) {
+                    onException(ex);
+                    return;
+                }
+
+                Snackbar.make(layout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.show, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(getContext(), DirectDownloadActivity.class));
+                            }
+                        }).show();
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                pd.dismiss();
+                Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
+            }
+        });
+
+        // FIXME: Service may not be bound yet!
+
         ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
                 .build());
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        downloaderMessenger = new Messenger(service);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        downloaderMessenger = null;
     }
 }

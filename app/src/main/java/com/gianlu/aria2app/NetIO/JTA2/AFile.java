@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -60,7 +61,7 @@ public class AFile implements Serializable {
         return ((float) completedLength) / ((float) length) * 100;
     }
 
-    public String getRelativePath(String dir) {
+    public String getRelativePath(@NonNull String dir) {
         String relPath = path.replace(dir, "");
         if (relPath.startsWith("/")) return relPath;
         else return "/" + relPath;

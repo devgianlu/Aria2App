@@ -47,6 +47,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.Search.SearchUtils;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
+import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.Main.UpdateUI;
@@ -448,6 +449,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 }
             }
         }
+
+        DownloaderUtils.startService(this);
     }
 
     @Override

@@ -121,7 +121,8 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (handler != null) handler.onWantsToDownload(profile, download, item);
+                            if (handler != null)
+                                handler.onWantsToDownload(profile, download.gid, item);
                         }
                     });
                 }
@@ -146,6 +147,6 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
 
         void onExceptionChangingSelection(Exception ex);
 
-        void onWantsToDownload(MultiProfile profile, Download download, @NonNull ADir dir);
+        void onWantsToDownload(MultiProfile profile, String gid, @NonNull ADir dir);
     }
 }
