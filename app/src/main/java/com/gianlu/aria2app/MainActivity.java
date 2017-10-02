@@ -3,6 +3,7 @@ package com.gianlu.aria2app;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -451,6 +452,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         DownloaderUtils.startService(this);
+        DownloaderUtils.registerReceiver(this, new InternalBroadcastReceiver());
     }
 
     @Override
@@ -969,13 +971,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Toaster.show(this, Utils.Messages.RESULT_REMOVED, gid);
     }
 
-    /*
-    @Override
-    public void onDownloadsCountChanged(int count) { TODO
-        if (drawerManager != null) drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, count);
-    }
-    */
-
     @Override
     public boolean onQueryTextSubmit(String query) {
         adapter.filterWithQuery(query);
@@ -1018,6 +1013,20 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         List<MultiProfile.UserProfile> profiles = profile.getParent().profiles;
         if (!(profiles.size() == 1 && profiles.get(0).connectivityCondition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)) {
             Toaster.show(this, Utils.Messages.CONNECTIVITY_CHANGED, profile.connectivityCondition.toString());
+        }
+    }
+
+    private class InternalBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() == null) return;
+
+            switch (intent.getAction()) {
+                case DownloaderUtils.ACTION_COUNT_CHANGED:
+                    if (drawerManager != null)
+                        drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
+                    break;
+            }
         }
     }
 }

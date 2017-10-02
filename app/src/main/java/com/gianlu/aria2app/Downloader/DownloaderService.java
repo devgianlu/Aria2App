@@ -2,11 +2,13 @@ package com.gianlu.aria2app.Downloader;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
@@ -15,9 +17,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,17 +36,18 @@ public class DownloaderService extends Service {
     private static final int MAX_SIMULTANEOUS_DOWNLOADS = 3; // TODO: Should be selectable
     private final ExecutorService executorService = Executors.newFixedThreadPool(MAX_SIMULTANEOUS_DOWNLOADS);
     private final DownloadTasks downloads = new DownloadTasks();
+    private final LocalBroadcastManager broadcastManager;
     private Messenger messenger;
+
+    public DownloaderService() {
+        broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         if (messenger == null) messenger = new Messenger(new ServiceHandler(this));
         return messenger.getBinder();
-    }
-
-    public List<DownloadTask> getDownloads() {
-        return downloads;
     }
 
     private void startDownload(DownloadStartConfig config) {
@@ -71,6 +74,10 @@ public class DownloaderService extends Service {
         downloads.add(new DownloadTask(task));
     }
 
+    private void sendBroadcast(String action, Bundle bundle) {
+        broadcastManager.sendBroadcast(new Intent(action).putExtras(bundle));
+    }
+
     public static class DownloaderException extends Exception {
         DownloaderException(Throwable cause) {
             super(cause);
@@ -88,26 +95,48 @@ public class DownloaderService extends Service {
             this.service = new WeakReference<>(service);
         }
 
-        @Nullable
-        public DownloaderService getService() {
-            return service.get();
-        }
-
         @Override
         public void handleMessage(Message msg) {
+            DownloaderService service = this.service.get();
+            if (service == null) {
+                super.handleMessage(msg);
+                return;
+            }
+
             switch (msg.what) {
                 case DownloaderUtils.START_DOWNLOAD:
-                    DownloaderService service = this.service.get();
-                    if (service != null)
-                        service.startDownload((DownloadStartConfig) msg.obj);
+                    service.startDownload((DownloadStartConfig) msg.obj);
                     break;
+                case DownloaderUtils.LIST_DOWNLOADS:
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("downloads", service.downloads);
+                    service.sendBroadcast(DownloaderUtils.ACTION_LIST_DOWNLOADS, bundle);
                 default:
                     super.handleMessage(msg);
             }
         }
     }
 
-    private class DownloadTasks extends ArrayList<DownloadTask> {
+    public class DownloadTasks extends ArrayList<DownloadTask> implements Serializable {
+
+        @Override
+        public void add(int index, DownloadTask element) {
+            super.add(index, element);
+            notifyCountChanged();
+        }
+
+        private void notifyCountChanged() {
+            Bundle bundle = new Bundle();
+            bundle.putInt("count", size());
+            sendBroadcast(DownloaderUtils.ACTION_COUNT_CHANGED, bundle);
+        }
+
+        @Override
+        public boolean add(DownloadTask downloadTask) {
+            boolean a = super.add(downloadTask);
+            notifyCountChanged();
+            return a;
+        }
 
         private void updateStatus(int id, DownloaderException ex) {
             updateStatus(id, DownloadTask.Status.FAILED, ex);
