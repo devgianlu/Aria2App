@@ -65,6 +65,10 @@ public class DownloadStartConfig {
             this.id = random.nextInt();
         }
 
+        public String getName() {
+            return destFile.getName();
+        }
+
         public boolean hasAuth() {
             return username != null && password != null;
         }

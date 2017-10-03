@@ -1022,7 +1022,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             if (intent.getAction() == null) return;
 
             switch (intent.getAction()) {
-                case DownloaderUtils.ACTION_COUNT_CHANGED:
+                case DownloaderUtils.ACTION_COUNT_CHANGED: // FIXME: Not updated when resuming activity
                     if (drawerManager != null)
                         drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
                     break;

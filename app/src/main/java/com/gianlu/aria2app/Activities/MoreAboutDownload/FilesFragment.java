@@ -348,6 +348,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             return;
         }
 
+        if (fileSheet != null) fileSheet.collapse();
+
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
         CommonUtils.showDialog(getActivity(), pd);
 

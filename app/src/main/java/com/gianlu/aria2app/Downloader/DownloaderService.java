@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 
+import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 
 import java.io.File;
@@ -142,6 +143,8 @@ public class DownloaderService extends Service {
 
         private void updateStatus(int id, DownloaderException ex) {
             updateStatus(id, DownloadTask.Status.FAILED, ex);
+
+            if (BuildConfig.DEBUG) ex.printStackTrace();
         }
 
         private void updateStatus(int id, DownloadTask.Status status) {

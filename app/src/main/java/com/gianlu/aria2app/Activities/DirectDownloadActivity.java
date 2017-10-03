@@ -10,6 +10,8 @@ import android.os.IBinder;
 import android.os.Messenger;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 
 import com.gianlu.aria2app.Adapters.DownloadTasksAdapter;
 import com.gianlu.aria2app.Downloader.DownloaderService;
@@ -30,6 +32,8 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         setContentView(layout);
         setTitle(R.string.directDownload);
 
+        layout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        layout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         layout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         layout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
