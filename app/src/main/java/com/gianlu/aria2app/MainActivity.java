@@ -4,15 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
+import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -93,7 +97,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged {
+public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private SwipeRefreshLayout swipeRefresh;
@@ -109,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private ImageButton toggleChart;
     private LineChart overallChart;
     private TextView stopped;
+    private InternalBroadcastReceiver broadcastReceiver;
+    private Messenger downloaderMessenger = null;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
@@ -452,7 +458,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         DownloaderUtils.startService(this);
-        DownloaderUtils.registerReceiver(this, new InternalBroadcastReceiver());
     }
 
     @Override
@@ -517,7 +522,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             HTTPing.clear();
             ProfilesManager.get(this).unsetLastProfile(this);
             LoadingActivity.startActivity(this, ex);
+            return;
         }
+
+        if (downloaderMessenger != null) DownloaderUtils.listDownloads(downloaderMessenger);
     }
 
     @Override
@@ -930,6 +938,26 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        DownloaderUtils.bindService(this, this);
+
+        broadcastReceiver = new InternalBroadcastReceiver();
+        DownloaderUtils.registerReceiver(this, broadcastReceiver);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        DownloaderUtils.unregisterReceiver(this, broadcastReceiver);
+        broadcastReceiver = null;
+
+        DownloaderUtils.unbindServer(this, this);
+    }
+
     @Nullable
     @Override
     public RecyclerView getRecyclerView() {
@@ -1016,13 +1044,24 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
     }
 
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        downloaderMessenger = new Messenger(service);
+        DownloaderUtils.refreshCount(downloaderMessenger);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        downloaderMessenger = null;
+    }
+
     private class InternalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() == null) return;
 
             switch (intent.getAction()) {
-                case DownloaderUtils.ACTION_COUNT_CHANGED: // FIXME: Not updated when resuming activity
+                case DownloaderUtils.ACTION_COUNT_CHANGED:
                     if (drawerManager != null)
                         drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
                     break;

@@ -110,6 +110,9 @@ public class DownloaderService extends Service {
                 case DownloaderUtils.START_DOWNLOAD:
                     service.startDownload((DownloadStartConfig) msg.obj);
                     break;
+                case DownloaderUtils.REFRESH_COUNT:
+                    service.downloads.notifyCountChanged();
+                    break;
                 case DownloaderUtils.LIST_DOWNLOADS:
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("downloads", service.downloads);

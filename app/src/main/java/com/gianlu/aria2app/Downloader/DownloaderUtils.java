@@ -22,6 +22,7 @@ public class DownloaderUtils {
     public static final String ACTION_COUNT_CHANGED = "com.gianlu.aria2app.dd.COUNT_CHANGED";
     final static int START_DOWNLOAD = 0;
     final static int LIST_DOWNLOADS = 1;
+    static final int REFRESH_COUNT = 2;
 
     public static void bindService(Context context, ServiceConnection conn) {
         context.getApplicationContext().bindService(new Intent(context, DownloaderService.class), conn, 0);
@@ -58,6 +59,21 @@ public class DownloaderUtils {
         filter.addAction(ACTION_LIST_DOWNLOADS);
         filter.addAction(ACTION_COUNT_CHANGED);
         LocalBroadcastManager.getInstance(context.getApplicationContext()).registerReceiver(receiver, filter);
+    }
+
+    public static void unregisterReceiver(Context context, BroadcastReceiver receiver) {
+        LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(receiver);
+    }
+
+    public static void unbindServer(Context context, ServiceConnection conn) {
+        context.getApplicationContext().unbindService(conn);
+    }
+
+    public static void refreshCount(Messenger messenger) {
+        try {
+            messenger.send(Message.obtain(null, REFRESH_COUNT, 0, 0, null));
+        } catch (RemoteException ignored) {
+        }
     }
 
     public static class InvalidPathException extends Exception {
