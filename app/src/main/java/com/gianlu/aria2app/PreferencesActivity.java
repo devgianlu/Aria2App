@@ -117,6 +117,19 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
+
+            findPreference("dd_maxSimultaneousDownloads").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Integer val = Integer.parseInt((String) newValue);
+                    if (val > 10 || val <= 0) {
+                        Toaster.show(getActivity(), Utils.Messages.INVALID_MAX_SIMULTANEOUS_DOWNLOADS, String.valueOf(val));
+                        return false;
+                    }
+
+                    return true;
+                }
+            });
         }
 
         @Override

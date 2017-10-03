@@ -287,6 +287,9 @@
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">Search engines</string>
     <string name="noEnginesSelected">Select at least one search engine!</string>
+    <string name="dd_maxSimultaneousDownloads_summary">Maximum number of downloads running at the same time</string>
+    <string name="dd_maxSimultaneousDownloads">Max simultaneous downloads</string>
+    <string name="invalidMaxSimultaneousDownloads">Value must be higher than 0 and lower or equal to 10</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

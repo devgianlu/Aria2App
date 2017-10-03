@@ -13,6 +13,8 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
+import com.gianlu.aria2app.PKeys;
+import com.gianlu.commonutils.Prefs;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,16 +36,20 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class DownloaderService extends Service {
-    private static final int MAX_SIMULTANEOUS_DOWNLOADS = 3; // TODO: Should be selectable
-    private final ExecutorService executorService = Executors.newFixedThreadPool(MAX_SIMULTANEOUS_DOWNLOADS);
     private final DownloadTasks downloads = new DownloadTasks();
+    private ExecutorService executorService;
     private LocalBroadcastManager broadcastManager;
     private Messenger messenger;
 
     @Override
     public void onCreate() {
-        broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        broadcastManager = LocalBroadcastManager.getInstance(this);
         downloads.notifyCountChanged();
+
+        int maxSimultaneousDownloads = Prefs.getFakeInt(this, PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
+        if (maxSimultaneousDownloads <= 0) maxSimultaneousDownloads = 3;
+        else if (maxSimultaneousDownloads > 10) maxSimultaneousDownloads = 10;
+        executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);
     }
 
     @Nullable
