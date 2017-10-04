@@ -23,13 +23,48 @@ public class DownloaderUtils {
     final static int START_DOWNLOAD = 0;
     final static int LIST_DOWNLOADS = 1;
     static final int REFRESH_COUNT = 2;
+    static final int PAUSE_DOWNLOAD = 3;
+    static final int REMOVE_DOWNLOAD = 4;
+    static final int RESUME_DOWNLOAD = 5;
+    static final int RESTART_DOWNLOAD = 6;
 
     public static void bindService(Context context, ServiceConnection conn) {
         context.getApplicationContext().bindService(new Intent(context, DownloaderService.class), conn, 0);
     }
 
-    public static void addDownload(@NonNull Messenger messenger, DownloadStartConfig config) throws RemoteException {
-        messenger.send(Message.obtain(null, START_DOWNLOAD, 0, 0, config));
+    public static void startDownload(@NonNull Messenger messenger, DownloadStartConfig config) {
+        try {
+            messenger.send(Message.obtain(null, START_DOWNLOAD, 0, 0, config));
+        } catch (RemoteException ignored) {
+        }
+    }
+
+    public static void resumeDownload(@NonNull Messenger messenger, int id) {
+        try {
+            messenger.send(Message.obtain(null, RESUME_DOWNLOAD, id, 0, null));
+        } catch (RemoteException ignored) {
+        }
+    }
+
+    public static void pauseDownload(@NonNull Messenger messenger, int id) {
+        try {
+            messenger.send(Message.obtain(null, PAUSE_DOWNLOAD, id, 0, null));
+        } catch (RemoteException ignored) {
+        }
+    }
+
+    public static void removeDownload(@NonNull Messenger messenger, int id) {
+        try {
+            messenger.send(Message.obtain(null, REMOVE_DOWNLOAD, id, 0, null));
+        } catch (RemoteException ignored) {
+        }
+    }
+
+    public static void restartDownload(Messenger messenger, int id) {
+        try {
+            messenger.send(Message.obtain(null, RESTART_DOWNLOAD, id, 0, null));
+        } catch (RemoteException ignored) {
+        }
     }
 
     public static void listDownloads(@NonNull Messenger messenger) {

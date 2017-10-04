@@ -68,10 +68,6 @@ public class DownloaderService extends Service {
         }
     }
 
-    private DownloaderRunnable resumeInternal() {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     private void startInternal(DownloadStartConfig.Task task) {
         File tempFile = new File(task.getCacheDir(), String.valueOf(task.id));
         HttpGet get = new HttpGet(task.uri);
@@ -84,6 +80,22 @@ public class DownloaderService extends Service {
 
     private void sendBroadcast(String action, Bundle bundle) {
         broadcastManager.sendBroadcast(new Intent(action).putExtras(bundle));
+    }
+
+    private void removeDownload(int id) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    private void pauseDownload(int id) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    private void resumeDownload(int id) {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    private void restartDownload(int id) {
+        throw new UnsupportedOperationException(); // TODO
     }
 
     public static class DownloaderException extends Exception {
@@ -122,6 +134,18 @@ public class DownloaderService extends Service {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("downloads", service.downloads);
                     service.sendBroadcast(DownloaderUtils.ACTION_LIST_DOWNLOADS, bundle);
+                    break;
+                case DownloaderUtils.PAUSE_DOWNLOAD:
+                    service.pauseDownload(msg.arg1);
+                    break;
+                case DownloaderUtils.REMOVE_DOWNLOAD:
+                    service.removeDownload(msg.arg1);
+                    break;
+                case DownloaderUtils.RESUME_DOWNLOAD:
+                    service.resumeDownload(msg.arg1);
+                    break;
+                case DownloaderUtils.RESTART_DOWNLOAD:
+                    service.restartDownload(msg.arg1);
                     break;
                 default:
                     super.handleMessage(msg);

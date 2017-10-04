@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -19,11 +20,13 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     private final Context context;
     private final DownloaderService.DownloadTasks tasks;
     private final LayoutInflater inflater;
+    private final IAdapter listener;
 
-    public DownloadTasksAdapter(Context context, DownloaderService.DownloadTasks tasks) {
+    public DownloadTasksAdapter(Context context, DownloaderService.DownloadTasks tasks, IAdapter listener) {
         this.context = context;
         this.tasks = tasks;
         this.inflater = LayoutInflater.from(context);
+        this.listener = listener;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        DownloadTask task = tasks.get(position);
+        final DownloadTask task = tasks.get(position);
 
         holder.status.setText(task.status.getFormal(context));
         holder.status.setTextColor(task.status.getColor(context));
@@ -50,11 +53,83 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
             holder.progress.setIndeterminate(true);
             holder.percentage.setVisibility(View.GONE);
         }
+
+        holder.start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onResume(task.task.id);
+            }
+        });
+
+        holder.pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onPause(task.task.id);
+            }
+        });
+
+        holder.restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onRestart(task.task.id);
+            }
+        });
+
+        holder.remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onRemove(task.task.id);
+            }
+        });
+
+        switch (task.status) {
+            case STARTED:
+                holder.start.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.VISIBLE);
+                break;
+            case RUNNING:
+                holder.start.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.VISIBLE);
+                holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.VISIBLE);
+                break;
+            case PAUSED:
+                holder.start.setVisibility(View.VISIBLE);
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.VISIBLE);
+                break;
+            case FAILED:
+                holder.start.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.VISIBLE);
+                holder.remove.setVisibility(View.VISIBLE);
+                break;
+            case PENDING:
+            case COMPLETED:
+                holder.start.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
         return tasks.size();
+    }
+
+    public interface IAdapter {
+        void onResume(int id);
+
+        void onPause(int id);
+
+        void onRestart(int id);
+
+        void onRemove(int id);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -63,6 +138,10 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         final TextView uri;
         final ProgressBar progress;
         final TextView percentage;
+        final ImageButton start;
+        final ImageButton pause;
+        final ImageButton restart;
+        final ImageButton remove;
 
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.direct_download_item, parent, false));
@@ -73,6 +152,10 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
             uri = itemView.findViewById(R.id.directDownloadItem_uri);
             progress = itemView.findViewById(R.id.directDownloadItem_progress);
             percentage = itemView.findViewById(R.id.directDownloadItem_percentage);
+            start = itemView.findViewById(R.id.directDownloadItem_start);
+            pause = itemView.findViewById(R.id.directDownloadItem_pause);
+            restart = itemView.findViewById(R.id.directDownloadItem_restart);
+            remove = itemView.findViewById(R.id.directDownloadItem_remove);
         }
     }
 }

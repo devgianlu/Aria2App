@@ -23,6 +23,7 @@ public class DownloadTask {
         PENDING,
         STARTED,
         RUNNING,
+        PAUSED,
         FAILED,
         COMPLETED;
 
@@ -34,6 +35,8 @@ public class DownloadTask {
                     return context.getString(R.string.started);
                 case RUNNING:
                     return context.getString(R.string.running);
+                case PAUSED:
+                    return context.getString(R.string.paused);
                 case FAILED:
                     return context.getString(R.string.failed);
                 case COMPLETED:
@@ -52,6 +55,8 @@ public class DownloadTask {
                     return ContextCompat.getColor(context, R.color.downloadStarted);
                 case RUNNING:
                     return ContextCompat.getColor(context, R.color.downloadRunning);
+                case PAUSED:
+                    return ContextCompat.getColor(context, R.color.downloadPaused);
                 case FAILED:
                     return ContextCompat.getColor(context, R.color.downloadFailed);
                 case COMPLETED:

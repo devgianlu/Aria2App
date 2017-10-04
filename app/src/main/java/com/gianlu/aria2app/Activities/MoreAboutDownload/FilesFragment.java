@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -355,8 +354,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 pd.dismiss();
 
                 try {
-                    DownloaderUtils.addDownload(downloaderMessenger, DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
-                } catch (RemoteException | DownloaderUtils.InvalidPathException | URISyntaxException ex) {
+                    DownloaderUtils.startDownload(downloaderMessenger, DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
+                } catch (DownloaderUtils.InvalidPathException | URISyntaxException ex) {
                     onException(ex);
                     return;
                 }

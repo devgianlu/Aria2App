@@ -24,7 +24,7 @@ import com.gianlu.commonutils.Toaster;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class DirectDownloadActivity extends AppCompatActivity implements ServiceConnection {
+public class DirectDownloadActivity extends AppCompatActivity implements ServiceConnection, DownloadTasksAdapter.IAdapter {
     private Messenger downloaderMessenger;
     private RecyclerViewLayout layout;
     private TimerTask updater;
@@ -79,6 +79,26 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         });
     }
 
+    @Override
+    public void onResume(int id) {
+        if (downloaderMessenger != null) DownloaderUtils.resumeDownload(downloaderMessenger, id);
+    }
+
+    @Override
+    public void onPause(int id) {
+        if (downloaderMessenger != null) DownloaderUtils.pauseDownload(downloaderMessenger, id);
+    }
+
+    @Override
+    public void onRestart(int id) {
+        if (downloaderMessenger != null) DownloaderUtils.restartDownload(downloaderMessenger, id);
+    }
+
+    @Override
+    public void onRemove(int id) {
+        if (downloaderMessenger != null) DownloaderUtils.removeDownload(downloaderMessenger, id);
+    }
+
     private class InternalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -88,7 +108,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
             switch (intent.getAction()) {
                 case DownloaderUtils.ACTION_LIST_DOWNLOADS:
                     DownloaderService.DownloadTasks downloads = (DownloaderService.DownloadTasks) intent.getSerializableExtra("downloads");
-                    layout.loadListData(new DownloadTasksAdapter(DirectDownloadActivity.this, downloads));
+                    layout.loadListData(new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this));
                     break;
             }
         }
