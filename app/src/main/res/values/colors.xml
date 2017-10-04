@@ -21,4 +21,10 @@
     <color name="green">#4caf50</color>
     <color name="red">#f44336</color>
     <color name="white">#ffffff</color>
+
+    <color name="downloadFailed">#C62828</color>
+    <color name="downloadPending">#283593</color>
+    <color name="downloadCompleted">#2E7D32</color>
+    <color name="downloadStarted">#CDDC39</color>
+    <color name="downloadRunning">#EF6C00</color>
 </resources>

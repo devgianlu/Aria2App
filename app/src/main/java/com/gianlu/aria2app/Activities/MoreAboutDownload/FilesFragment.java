@@ -70,6 +70,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private Download download;
     private boolean isShowingHint;
     private Messenger downloaderMessenger = null;
+    private IWaitBinder boundWaiter;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
@@ -338,20 +339,15 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (dirSheet != null) dirSheet.collapse();
     }
 
-    @Override
-    public void onWantsToDownload(final MultiProfile profile, String gid, @NonNull final AFile file) {
+    private void startDownloadInternal(final ProgressDialog pd, String gid, final MultiProfile profile, final AFile file) {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
         } catch (JTA2InitializingException ex) {
+            pd.dismiss();
             Toaster.show(getActivity(), Utils.Messages.FAILED_LOADING, ex);
             return;
         }
-
-        if (fileSheet != null) fileSheet.collapse();
-
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
-        CommonUtils.showDialog(getActivity(), pd);
 
         jta2.tellStatus(gid, new String[]{"gid", "status", "dir"}, new JTA2.IDownload() {
             @Override
@@ -380,8 +376,25 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
             }
         });
+    }
 
-        // FIXME: Service may not be bound yet!
+    @Override
+    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AFile file) {
+        if (fileSheet != null) fileSheet.collapse();
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
+        CommonUtils.showDialog(getActivity(), pd);
+
+        if (downloaderMessenger != null) {
+            startDownloadInternal(pd, gid, profile, file);
+        } else {
+            boundWaiter = new IWaitBinder() {
+                @Override
+                public void onBound() {
+                    startDownloadInternal(pd, gid, profile, file);
+                }
+            };
+        }
 
         ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
@@ -392,10 +405,16 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         downloaderMessenger = new Messenger(service);
+        if (boundWaiter != null) boundWaiter.onBound();
+        boundWaiter = null;
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
         downloaderMessenger = null;
+    }
+
+    private interface IWaitBinder {
+        void onBound();
     }
 }

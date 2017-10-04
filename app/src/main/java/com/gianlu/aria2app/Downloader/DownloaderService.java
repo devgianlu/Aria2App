@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 
-import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.commonutils.Prefs;
@@ -79,8 +78,8 @@ public class DownloaderService extends Service {
         if (task.hasAuth())
             get.addHeader("Authorization", "Basic " + Base64.encodeToString((task.username + ":" + task.password).getBytes(), Base64.NO_WRAP));
 
-        executorService.execute(new DownloaderRunnable(task, get, tempFile));
         downloads.add(new DownloadTask(task));
+        executorService.execute(new DownloaderRunnable(task, get, tempFile));
     }
 
     private void sendBroadcast(String action, Bundle bundle) {
@@ -123,6 +122,7 @@ public class DownloaderService extends Service {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("downloads", service.downloads);
                     service.sendBroadcast(DownloaderUtils.ACTION_LIST_DOWNLOADS, bundle);
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -150,25 +150,13 @@ public class DownloaderService extends Service {
             return a;
         }
 
-        private void updateStatus(int id, DownloaderException ex) {
-            updateStatus(id, DownloadTask.Status.FAILED, ex);
+        @Nullable
+        DownloadTask find(int id) {
+            for (DownloadTask task : this)
+                if (task.task.id == id)
+                    return task;
 
-            if (BuildConfig.DEBUG) ex.printStackTrace();
-        }
-
-        private void updateStatus(int id, DownloadTask.Status status) {
-            updateStatus(id, status, null);
-        }
-
-        private void updateStatus(int id, DownloadTask.Status status, @Nullable DownloaderException ex) {
-            synchronized (this) {
-                for (DownloadTask task : this) {
-                    if (task.task.id == id) {
-                        task.status = status;
-                        task.ex = ex;
-                    }
-                }
-            }
+            return null;
         }
     }
 
@@ -187,19 +175,27 @@ public class DownloaderService extends Service {
 
         @Override
         public void run() {
-            downloads.updateStatus(id, DownloadTask.Status.STARTED);
+            DownloadTask task = downloads.find(id);
+            if (task == null) return; // What?
+
+            task.status = DownloadTask.Status.STARTED;
 
             try (CloseableHttpClient client = HttpClients.createDefault()) {
                 HttpResponse resp = client.execute(get);
 
                 StatusLine sl = resp.getStatusLine();
                 if (sl.getStatusCode() != HttpStatus.SC_OK) {
-                    downloads.updateStatus(id, new DownloaderException(new StatusCodeException(sl)));
+                    task.status = DownloadTask.Status.FAILED;
+                    task.ex = new DownloaderException(new StatusCodeException(sl));
                     return;
                 }
 
                 HttpEntity entity = resp.getEntity();
                 InputStream in = entity.getContent();
+
+                task.length = entity.getContentLength();
+
+                long downloaded = 0;
                 try (FileOutputStream out = new FileOutputStream(tempFile, false)) {
                     byte[] buffer = new byte[4096];
 
@@ -207,21 +203,27 @@ public class DownloaderService extends Service {
                     while ((count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
                         out.flush();
+
+                        downloaded += count;
+                        task.status = DownloadTask.Status.RUNNING;
+                        task.downloaded = downloaded;
                     }
                 }
 
                 EntityUtils.consumeQuietly(entity);
 
                 if (!tempFile.renameTo(destFile)) {
-                    downloads.updateStatus(id, new DownloaderException("Couldn't move completed download!"));
+                    task.status = DownloadTask.Status.FAILED;
+                    task.ex = new DownloaderException("Couldn't move completed download!");
                     return;
                 }
 
                 if (!tempFile.delete()) tempFile.deleteOnExit();
 
-                downloads.updateStatus(id, DownloadTask.Status.COMPLETED);
+                task.status = DownloadTask.Status.COMPLETED;
             } catch (IOException ex) {
-                downloads.updateStatus(id, new DownloaderException(ex));
+                task.status = DownloadTask.Status.FAILED;
+                task.ex = new DownloaderException(ex);
             }
         }
     }

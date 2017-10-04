@@ -290,6 +290,10 @@
     <string name="dd_maxSimultaneousDownloads_summary">Maximum number of downloads running at the same time</string>
     <string name="dd_maxSimultaneousDownloads">Max simultaneous downloads</string>
     <string name="invalidMaxSimultaneousDownloads">Value must be higher than 0 and lower or equal to 10</string>
+    <string name="pending">Pending</string>
+    <string name="started">Started</string>
+    <string name="failed">Failed</string>
+    <string name="running">Running</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

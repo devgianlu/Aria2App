@@ -21,9 +21,13 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class DirectDownloadActivity extends AppCompatActivity implements ServiceConnection {
     private Messenger downloaderMessenger;
     private RecyclerViewLayout layout;
+    private TimerTask updater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +53,22 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         downloaderMessenger = new Messenger(service);
-        DownloaderUtils.listDownloads(downloaderMessenger);
+
+        updater = new TimerTask() {
+            @Override
+            public void run() {
+                if (downloaderMessenger != null) DownloaderUtils.listDownloads(downloaderMessenger);
+            }
+        };
+
+        new Timer().scheduleAtFixedRate(updater, 0, 1000);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
+        updater.cancel();
+        updater = null;
+
         downloaderMessenger = null;
 
         Toaster.show(this, Utils.Messages.FAILED_LOADING, new Runnable() {
