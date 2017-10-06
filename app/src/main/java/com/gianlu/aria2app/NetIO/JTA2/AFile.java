@@ -44,6 +44,12 @@ public class AFile implements Serializable {
         return null;
     }
 
+    public static String getRelativePath(String path, @NonNull String dir) {
+        String relPath = path.replace(dir, "");
+        if (relPath.startsWith("/")) return relPath;
+        else return "/" + relPath;
+    }
+
     public String getName() {
         String[] splitted = path.split("/");
         return splitted[splitted.length - 1];
@@ -62,9 +68,7 @@ public class AFile implements Serializable {
     }
 
     public String getRelativePath(@NonNull String dir) {
-        String relPath = path.replace(dir, "");
-        if (relPath.startsWith("/")) return relPath;
-        else return "/" + relPath;
+        return getRelativePath(path, dir);
     }
 
     public boolean completed() {

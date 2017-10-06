@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -82,8 +82,18 @@ public class DownloaderService extends Service {
         if (task.hasAuth())
             get.addHeader("Authorization", "Basic " + Base64.encodeToString((task.username + ":" + task.password).getBytes(), Base64.NO_WRAP));
 
+        downloads.removeById(task.id);
         downloads.add(new DownloadTask(task));
         executorService.execute(new DownloaderRunnable(task, get, tempFile));
+    }
+
+    private void resumeInternal(SavedDownloadsManager.SavedState state) {
+        try {
+            DownloadStartConfig config = DownloadStartConfig.createForSavedState(this, state);
+            startDownload(config);
+        } catch (DownloadStartConfig.CannotCreateStartConfigException | DownloaderUtils.InvalidPathException | URISyntaxException e) {
+            e.printStackTrace(); // TODO
+        }
     }
 
     private void sendBroadcast(@NonNull String action, @NonNull Bundle bundle) {
@@ -92,7 +102,7 @@ public class DownloaderService extends Service {
 
     private void removeDownload(int id) {
         for (DownloaderRunnable runnable : activeRunnables) {
-            if (runnable != null && runnable.id == id) {
+            if (runnable != null && runnable.singleTask.id == id) {
                 runnable.stop();
                 return;
             }
@@ -103,7 +113,7 @@ public class DownloaderService extends Service {
 
     private void pauseDownload(int id) {
         for (DownloaderRunnable runnable : activeRunnables) {
-            if (runnable != null && runnable.id == id) {
+            if (runnable != null && runnable.singleTask.id == id) {
                 runnable.pause();
                 return;
             }
@@ -111,7 +121,9 @@ public class DownloaderService extends Service {
     }
 
     private void resumeDownload(int id) {
-        throw new UnsupportedOperationException(); // TODO
+        SavedDownloadsManager.SavedState state = savedDownloadsManager.getSavedState(id);
+        if (state != null) resumeInternal(state);
+        else throw new RuntimeException("THIS SHOULD BE HANDLED!!"); // TODO
     }
 
     private void restartDownload(int id) {
@@ -152,7 +164,7 @@ public class DownloaderService extends Service {
                     break;
                 case DownloaderUtils.LIST_DOWNLOADS:
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("downloads", service.downloads);
+                    bundle.putSerializable("downloads", new ArrayList<>(service.downloads));
                     service.sendBroadcast(DownloaderUtils.ACTION_LIST_DOWNLOADS, bundle);
                     break;
                 case DownloaderUtils.PAUSE_DOWNLOAD:
@@ -173,7 +185,7 @@ public class DownloaderService extends Service {
         }
     }
 
-    public class DownloadTasks extends ArrayList<DownloadTask> implements Serializable {
+    private class DownloadTasks extends ArrayList<DownloadTask> implements Serializable {
 
         @Override
         public void add(int index, DownloadTask element) {
@@ -221,6 +233,10 @@ public class DownloaderService extends Service {
         public DownloadTask remove(int index) {
             DownloadTask a = super.remove(index);
             notifyItemRemoved(index);
+
+            if (a.task.resumable)
+                savedDownloadsManager.removeState(DownloaderService.this, a.task.id);
+
             return a;
         }
 
@@ -250,37 +266,35 @@ public class DownloaderService extends Service {
     }
 
     private class DownloaderRunnable implements Runnable {
-        private final int id;
         private final HttpGet get;
         private final File tempFile;
-        private final File destFile;
-        private volatile AtomicBoolean shouldStop = new AtomicBoolean(false);
+        private final DownloadStartConfig.Task singleTask;
+        private volatile boolean shouldStop = false;
         private volatile boolean saveState = false;
 
         private DownloaderRunnable(DownloadStartConfig.Task task, HttpGet get, File tempFile) {
-            this.id = task.id;
+            this.singleTask = task;
             this.get = get;
             this.tempFile = tempFile;
-            this.destFile = task.destFile;
         }
 
         private void saveState() {
-            savedDownloadsManager.saveState(DownloaderService.this, id, get.getURI(), tempFile);
+            savedDownloadsManager.saveState(DownloaderService.this, singleTask.id, singleTask.uri, tempFile, singleTask.destFile, singleTask.getProfileId());
         }
 
-        private void pause() { // TODO: Must be tested
-            shouldStop.set(true);
+        private void pause() {
+            shouldStop = true;
             saveState = true;
         }
 
         private void stop() {
-            shouldStop.set(true);
+            shouldStop = true;
             saveState = false;
         }
 
         @Override
         public void run() {
-            DownloadTask task = downloads.find(id);
+            DownloadTask task = downloads.find(singleTask.id);
             if (task == null) return; // What?
 
             task.status = DownloadTask.Status.STARTED;
@@ -311,11 +325,37 @@ public class DownloaderService extends Service {
                 downloads.notifyItemChanged(task);
 
                 long downloaded = 0;
-                try (FileOutputStream out = new FileOutputStream(tempFile, false)) {
+                if (singleTask.resumable && tempFile.exists()) {
+                    long toSkip = tempFile.length();
+                    if (toSkip <= 0) {
+                        saveState();
+
+                        task.status = DownloadTask.Status.PAUSED;
+                        task.ex = new DownloaderException("File length is lower than 0: " + toSkip);
+                        downloads.notifyItemChanged(task);
+                        DownloaderService.this.activeRunnables.remove(this);
+                        return;
+                    }
+
+                    long skipped = in.skip(toSkip); // TODO: THIS IS NOT HOW TO DO THAT: #skip reads all the bytes (!!)
+                    if (toSkip != skipped) {
+                        saveState();
+
+                        task.status = DownloadTask.Status.PAUSED;
+                        task.ex = new DownloaderException("Couldn't skip the whole file length: " + skipped);
+                        downloads.notifyItemChanged(task);
+                        DownloaderService.this.activeRunnables.remove(this);
+                        return;
+                    }
+
+                    downloaded = skipped;
+                }
+
+                try (FileOutputStream out = new FileOutputStream(tempFile, singleTask.resumable)) {
                     byte[] buffer = new byte[4096];
 
                     int count;
-                    while (!shouldStop.get() && (count = in.read(buffer)) != -1) {
+                    while (!shouldStop && (count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
                         out.flush();
 
@@ -326,7 +366,7 @@ public class DownloaderService extends Service {
                     }
                 }
 
-                if (shouldStop.get()) {
+                if (shouldStop) {
                     get.releaseConnection();
 
                     if (saveState) {
@@ -337,10 +377,10 @@ public class DownloaderService extends Service {
                         DownloaderService.this.activeRunnables.remove(this);
                         return; // IMPORTANT: Won't delete the cache file
                     } else {
-                        downloads.removeById(id);
+                        downloads.removeById(singleTask.id);
                     }
                 } else {
-                    if (!tempFile.renameTo(destFile)) {
+                    if (!tempFile.renameTo(singleTask.destFile)) {
                         task.status = DownloadTask.Status.FAILED;
                         task.ex = new DownloaderException("Couldn't move completed download!");
                         downloads.notifyItemChanged(task);

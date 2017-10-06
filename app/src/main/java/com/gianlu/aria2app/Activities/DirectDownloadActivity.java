@@ -15,12 +15,13 @@ import android.support.v7.widget.LinearLayoutManager;
 
 import com.gianlu.aria2app.Adapters.DownloadTasksAdapter;
 import com.gianlu.aria2app.Downloader.DownloadTask;
-import com.gianlu.aria2app.Downloader.DownloaderService;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
+
+import java.util.List;
 
 public class DirectDownloadActivity extends AppCompatActivity implements ServiceConnection, DownloadTasksAdapter.IAdapter {
     private Messenger downloaderMessenger;
@@ -89,18 +90,19 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
     private class InternalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
+        @SuppressWarnings("unchecked")
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() == null) return;
 
             switch (intent.getAction()) {
                 case DownloaderUtils.ACTION_LIST_DOWNLOADS:
-                    DownloaderService.DownloadTasks downloads = (DownloaderService.DownloadTasks) intent.getSerializableExtra("downloads");
+                    List<DownloadTask> downloads = (List<DownloadTask>) intent.getSerializableExtra("downloads");
                     adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
                     layout.loadListData(adapter);
                     break;
                 case DownloaderUtils.ACTION_ITEM_INSERTED:
                     if (adapter != null)
-                        adapter.addItemAndnotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                        adapter.addItemAndNotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
                     break;
                 case DownloaderUtils.ACTION_ITEM_REMOVED:
                     if (adapter != null)

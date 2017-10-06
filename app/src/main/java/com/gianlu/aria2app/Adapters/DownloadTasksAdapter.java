@@ -10,11 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Downloader.DownloadTask;
-import com.gianlu.aria2app.Downloader.DownloaderService;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,9 +22,9 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     private final LayoutInflater inflater;
     private final IAdapter listener;
 
-    public DownloadTasksAdapter(Context context, DownloaderService.DownloadTasks tasks, IAdapter listener) {
+    public DownloadTasksAdapter(Context context, List<DownloadTask> tasks, IAdapter listener) {
         this.context = context;
-        this.tasks = new ArrayList<>(tasks);
+        this.tasks = tasks;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
         setHasStableIds(true);
@@ -152,7 +150,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         return tasks.size();
     }
 
-    public void addItemAndnotifyItemInserted(DownloadTask task) {
+    public void addItemAndNotifyItemInserted(DownloadTask task) {
         tasks.add(task);
         notifyItemInserted(tasks.size() - 1);
     }
