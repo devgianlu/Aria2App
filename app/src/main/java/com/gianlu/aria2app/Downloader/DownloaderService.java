@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
@@ -82,7 +83,7 @@ public class DownloaderService extends Service {
         executorService.execute(new DownloaderRunnable(task, get, tempFile));
     }
 
-    private void sendBroadcast(String action, Bundle bundle) {
+    private void sendBroadcast(@NonNull String action, @NonNull Bundle bundle) {
         broadcastManager.sendBroadcast(new Intent(action).putExtras(bundle));
     }
 

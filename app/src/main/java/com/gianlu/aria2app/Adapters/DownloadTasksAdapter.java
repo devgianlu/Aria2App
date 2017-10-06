@@ -14,18 +14,19 @@ import com.gianlu.aria2app.Downloader.DownloaderService;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdapter.ViewHolder> {
     private final Context context;
-    private final DownloaderService.DownloadTasks tasks;
+    private final List<DownloadTask> tasks;
     private final LayoutInflater inflater;
     private final IAdapter listener;
 
     public DownloadTasksAdapter(Context context, DownloaderService.DownloadTasks tasks, IAdapter listener) {
         this.context = context;
-        this.tasks = tasks;
+        this.tasks = new ArrayList<>(tasks);
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
         setHasStableIds(true);

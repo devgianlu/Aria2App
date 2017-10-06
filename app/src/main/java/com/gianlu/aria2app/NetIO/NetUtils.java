@@ -39,11 +39,9 @@ import javax.net.ssl.TrustManagerFactory;
 import cz.msebera.android.httpclient.client.config.RequestConfig;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.utils.URIBuilder;
-import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
-import cz.msebera.android.httpclient.impl.conn.PoolingHttpClientConnectionManager;
 
 public class NetUtils {
 
@@ -133,8 +131,7 @@ public class NetUtils {
                         .setConnectionRequestTimeout(5000)
                         .build())
                 .setConnectionManagerShared(true)
-                .setConnectionManager(new PoolingHttpClientConnectionManager())
-                .setSSLSocketFactory(new SSLConnectionSocketFactory(NetUtils.readySSLContext(readyCertificate(context, profile))));
+                .setSslcontext(NetUtils.readySSLContext(readyCertificate(context, profile)));
 
         if (!profile.hostnameVerifier) {
             builder.setSSLHostnameVerifier(new HostnameVerifier() {
