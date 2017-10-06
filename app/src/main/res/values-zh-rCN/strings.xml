@@ -283,6 +283,7 @@
     <string name="searchEngines">搜索引擎</string>
     <string name="noEnginesSelected">选择至少一个搜索引擎！</string>
     <string name="searchEngine_offline">该服务暂时不可用，它将在几分钟后再次上线。</string>
+    <string name="noFiles">没有文件可以显示。 当下载被添加到\"pause=true\"时可能会出现这种情况</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

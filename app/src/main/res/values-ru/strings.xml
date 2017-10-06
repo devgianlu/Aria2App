@@ -282,6 +282,7 @@
     <string name="searchEngines">Поисковые системы</string>
     <string name="noEnginesSelected">Выберите хотя бы одну поисковую систему!</string>
     <string name="searchEngine_offline">Услуга временно недоступна, она будет доступна через несколько минут.</string>
+    <string name="noFiles">Нет файлов для отображения. Это может произойти, когда загрузка будет добавлена с \"pause=true\"</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
