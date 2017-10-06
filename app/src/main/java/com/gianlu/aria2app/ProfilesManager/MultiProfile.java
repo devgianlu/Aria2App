@@ -497,6 +497,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("serverEndpoint", serverEndpoint)
                     .put("authMethod", authMethod.name())
                     .put("serverToken", serverToken)
+                    .put("hostnameVerifier", hostnameVerifier)
                     .put("serverUsername", serverUsername)
                     .put("serverPassword", serverPassword)
                     .put("serverSSL", serverSSL)
