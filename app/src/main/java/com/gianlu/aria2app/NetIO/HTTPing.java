@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
@@ -58,7 +59,7 @@ public class HTTPing extends AbstractClient {
     public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull final IConnect listener) {
         try {
             httping = new HTTPing(context, profile);
-            httping.send(null, new IReceived() {
+            httping.sendConnectionTest(new IReceived() {
                 @Override
                 public void onResponse(JSONObject response) throws JSONException {
                     listener.onConnected(httping);
@@ -94,9 +95,14 @@ public class HTTPing extends AbstractClient {
     }
 
     @Override
-    public void send(final JSONObject request, final IReceived handler) {
+    public void send(@NonNull final JSONObject request, final IReceived handler) {
         if (!executorService.isShutdown())
             executorService.execute(new RequestProcessor(request, handler));
+    }
+
+    public void sendConnectionTest(IReceived handler) {
+        if (!executorService.isShutdown())
+            executorService.execute(new RequestProcessor(null, handler));
     }
 
     @Override
@@ -120,6 +126,12 @@ public class HTTPing extends AbstractClient {
                 HttpGet get = NetUtils.createGetRequest(profile, defaultUri, request);
                 HttpResponse resp = client.execute(get);
                 StatusLine sl = resp.getStatusLine();
+
+                if (request == null) {
+                    if (sl.getStatusCode() == HttpStatus.SC_BAD_REQUEST) listener.onResponse(null);
+                    else listener.onException(new StatusCodeException(sl));
+                    return;
+                }
 
                 HttpEntity entity = resp.getEntity();
                 if (entity != null) {
