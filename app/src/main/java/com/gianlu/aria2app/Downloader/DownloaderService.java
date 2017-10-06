@@ -23,9 +23,12 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -35,11 +38,11 @@ import cz.msebera.android.httpclient.client.config.RequestConfig;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
-import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class DownloaderService extends Service {
     private final DownloadTasks downloads = new DownloadTasks();
-    private ThreadPoolExecutor executorService;
+    private final List<DownloaderRunnable> activeRunnables = Collections.synchronizedList(new ArrayList<DownloaderRunnable>());
+    private ExecutorService executorService;
     private LocalBroadcastManager broadcastManager;
     private Messenger messenger;
     private SavedDownloadsManager savedDownloadsManager;
@@ -53,7 +56,7 @@ public class DownloaderService extends Service {
         int maxSimultaneousDownloads = Prefs.getFakeInt(this, PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
         if (maxSimultaneousDownloads <= 0) maxSimultaneousDownloads = 3;
         else if (maxSimultaneousDownloads > 10) maxSimultaneousDownloads = 10;
-        executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxSimultaneousDownloads);
+        executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);
     }
 
     @Nullable
@@ -88,9 +91,9 @@ public class DownloaderService extends Service {
     }
 
     private void removeDownload(int id) {
-        for (Runnable runnable : executorService.getQueue()) { // FIXME: Not working with running downloads
-            if (runnable instanceof DownloaderRunnable && ((DownloaderRunnable) runnable).id == id) {
-                ((DownloaderRunnable) runnable).stop();
+        for (DownloaderRunnable runnable : activeRunnables) {
+            if (runnable != null && runnable.id == id) {
+                runnable.stop();
                 return;
             }
         }
@@ -99,9 +102,9 @@ public class DownloaderService extends Service {
     }
 
     private void pauseDownload(int id) {
-        for (Runnable runnable : executorService.getQueue()) {
-            if (runnable instanceof DownloaderRunnable && ((DownloaderRunnable) runnable).id == id) {
-                ((DownloaderRunnable) runnable).pause();
+        for (DownloaderRunnable runnable : activeRunnables) {
+            if (runnable != null && runnable.id == id) {
+                runnable.pause();
                 return;
             }
         }
@@ -251,7 +254,7 @@ public class DownloaderService extends Service {
         private final HttpGet get;
         private final File tempFile;
         private final File destFile;
-        private volatile boolean shouldStop = false;
+        private volatile AtomicBoolean shouldStop = new AtomicBoolean(false);
         private volatile boolean saveState = false;
 
         private DownloaderRunnable(DownloadStartConfig.Task task, HttpGet get, File tempFile) {
@@ -266,12 +269,12 @@ public class DownloaderService extends Service {
         }
 
         private void pause() { // TODO: Must be tested
-            shouldStop = true;
+            shouldStop.set(true);
             saveState = true;
         }
 
         private void stop() {
-            shouldStop = true;
+            shouldStop.set(true);
             saveState = false;
         }
 
@@ -299,6 +302,8 @@ public class DownloaderService extends Service {
                     return;
                 }
 
+                DownloaderService.this.activeRunnables.add(this);
+
                 HttpEntity entity = resp.getEntity();
                 InputStream in = entity.getContent();
 
@@ -310,7 +315,7 @@ public class DownloaderService extends Service {
                     byte[] buffer = new byte[4096];
 
                     int count;
-                    while (!shouldStop && (count = in.read(buffer)) != -1) {
+                    while (!shouldStop.get() && (count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
                         out.flush();
 
@@ -321,14 +326,15 @@ public class DownloaderService extends Service {
                     }
                 }
 
-                EntityUtils.consumeQuietly(entity);
+                if (shouldStop.get()) {
+                    get.releaseConnection();
 
-                if (shouldStop) {
                     if (saveState) {
                         saveState();
 
                         task.status = DownloadTask.Status.PAUSED;
                         downloads.notifyItemChanged(task);
+                        DownloaderService.this.activeRunnables.remove(this);
                         return; // IMPORTANT: Won't delete the cache file
                     } else {
                         downloads.removeById(id);
@@ -338,6 +344,7 @@ public class DownloaderService extends Service {
                         task.status = DownloadTask.Status.FAILED;
                         task.ex = new DownloaderException("Couldn't move completed download!");
                         downloads.notifyItemChanged(task);
+                        DownloaderService.this.activeRunnables.remove(this);
                         return;
                     }
 
@@ -346,6 +353,8 @@ public class DownloaderService extends Service {
                 }
 
                 if (!tempFile.delete()) tempFile.deleteOnExit();
+
+                DownloaderService.this.activeRunnables.remove(this);
             } catch (IOException ex) {
                 task.status = DownloadTask.Status.FAILED;
                 task.ex = new DownloaderException(ex);

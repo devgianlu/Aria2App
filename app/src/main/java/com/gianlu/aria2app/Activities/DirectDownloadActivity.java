@@ -100,11 +100,11 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                     break;
                 case DownloaderUtils.ACTION_ITEM_INSERTED:
                     if (adapter != null)
-                        adapter.notifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                        adapter.addItemAndnotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
                     break;
                 case DownloaderUtils.ACTION_ITEM_REMOVED:
                     if (adapter != null)
-                        adapter.notifyItemRemoved(intent.getIntExtra("pos", -1));
+                        adapter.removeItemAndNotifyItemRemoved(intent.getIntExtra("pos", -1));
                     break;
                 case DownloaderUtils.ACTION_ITEM_CHANGED:
                     if (adapter != null)

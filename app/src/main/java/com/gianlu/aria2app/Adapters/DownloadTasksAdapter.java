@@ -152,9 +152,14 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         return tasks.size();
     }
 
-    public void notifyItemInserted(DownloadTask task) {
+    public void addItemAndnotifyItemInserted(DownloadTask task) {
         tasks.add(task);
         notifyItemInserted(tasks.size() - 1);
+    }
+
+    public void removeItemAndNotifyItemRemoved(int pos) {
+        tasks.remove(pos);
+        notifyItemRemoved(pos);
     }
 
     public interface IAdapter {
