@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +20,7 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cz.msebera.android.httpclient.Consts;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
@@ -136,7 +136,7 @@ public class HTTPing extends AbstractClient {
 
                 HttpEntity entity = resp.getEntity();
                 if (entity != null) {
-                    String json = EntityUtils.toString(entity, Charset.forName("UTF-8"));
+                    String json = EntityUtils.toString(entity, Consts.UTF_8);
                     if (json == null || json.isEmpty()) {
                         listener.onException(new NullPointerException("Empty response"));
                     } else {
