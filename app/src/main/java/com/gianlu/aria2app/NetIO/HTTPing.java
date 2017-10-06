@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -100,7 +101,7 @@ public class HTTPing extends AbstractClient {
             executorService.execute(new RequestProcessor(request, handler));
     }
 
-    public void sendConnectionTest(IReceived handler) {
+    private void sendConnectionTest(IReceived handler) {
         if (!executorService.isShutdown())
             executorService.execute(new RequestProcessor(null, handler));
     }
@@ -135,7 +136,7 @@ public class HTTPing extends AbstractClient {
 
                 HttpEntity entity = resp.getEntity();
                 if (entity != null) {
-                    String json = EntityUtils.toString(resp.getEntity());
+                    String json = EntityUtils.toString(entity, Charset.forName("UTF-8"));
                     if (json == null || json.isEmpty()) {
                         listener.onException(new NullPointerException("Empty response"));
                     } else {
