@@ -6,7 +6,9 @@ import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.R;
 
-public class DownloadTask {
+import java.io.Serializable;
+
+public class DownloadTask implements Serializable {
     public final DownloadStartConfig.Task task;
     public Status status;
     public DownloaderService.DownloaderException ex;
@@ -17,6 +19,14 @@ public class DownloadTask {
         this.task = task;
         this.status = Status.PENDING;
         this.ex = null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DownloadTask task1 = (DownloadTask) o;
+        return task.equals(task1.task);
     }
 
     public enum Status {

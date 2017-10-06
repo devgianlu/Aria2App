@@ -22,13 +22,15 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
+import java.util.ListIterator;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.config.RequestConfig;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
@@ -36,19 +38,21 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class DownloaderService extends Service {
     private final DownloadTasks downloads = new DownloadTasks();
-    private ExecutorService executorService;
+    private ThreadPoolExecutor executorService;
     private LocalBroadcastManager broadcastManager;
     private Messenger messenger;
+    private SavedDownloadsManager savedDownloadsManager;
 
     @Override
     public void onCreate() {
         broadcastManager = LocalBroadcastManager.getInstance(this);
+        savedDownloadsManager = SavedDownloadsManager.get(this);
         downloads.notifyCountChanged();
 
         int maxSimultaneousDownloads = Prefs.getFakeInt(this, PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
         if (maxSimultaneousDownloads <= 0) maxSimultaneousDownloads = 3;
         else if (maxSimultaneousDownloads > 10) maxSimultaneousDownloads = 10;
-        executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);
+        executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(maxSimultaneousDownloads);
     }
 
     @Nullable
@@ -83,11 +87,23 @@ public class DownloaderService extends Service {
     }
 
     private void removeDownload(int id) {
-        throw new UnsupportedOperationException(); // TODO
+        for (Runnable runnable : executorService.getQueue()) { // FIXME: Not working with running downloads
+            if (runnable instanceof DownloaderRunnable && ((DownloaderRunnable) runnable).id == id) {
+                ((DownloaderRunnable) runnable).stop();
+                return;
+            }
+        }
+
+        downloads.removeById(id);
     }
 
     private void pauseDownload(int id) {
-        throw new UnsupportedOperationException(); // TODO
+        for (Runnable runnable : executorService.getQueue()) {
+            if (runnable instanceof DownloaderRunnable && ((DownloaderRunnable) runnable).id == id) {
+                ((DownloaderRunnable) runnable).pause();
+                return;
+            }
+        }
     }
 
     private void resumeDownload(int id) {
@@ -158,7 +174,37 @@ public class DownloaderService extends Service {
         @Override
         public void add(int index, DownloadTask element) {
             super.add(index, element);
+            notifyItemAdded(element);
+        }
+
+        @Override
+        public boolean add(DownloadTask element) {
+            boolean a = super.add(element);
+            notifyItemAdded(element);
+            return a;
+        }
+
+        private void notifyItemAdded(DownloadTask item) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("item", item);
+            sendBroadcast(DownloaderUtils.ACTION_ITEM_INSERTED, bundle);
+
             notifyCountChanged();
+        }
+
+        private void notifyItemRemoved(int pos) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("pos", pos);
+            sendBroadcast(DownloaderUtils.ACTION_ITEM_REMOVED, bundle);
+
+            notifyCountChanged();
+        }
+
+        private void notifyItemChanged(DownloadTask item) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("pos", indexOf(item));
+            bundle.putSerializable("item", item);
+            sendBroadcast(DownloaderUtils.ACTION_ITEM_CHANGED, bundle);
         }
 
         private void notifyCountChanged() {
@@ -168,9 +214,17 @@ public class DownloaderService extends Service {
         }
 
         @Override
-        public boolean add(DownloadTask downloadTask) {
-            boolean a = super.add(downloadTask);
-            notifyCountChanged();
+        public DownloadTask remove(int index) {
+            DownloadTask a = super.remove(index);
+            notifyItemRemoved(index);
+            return a;
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            int pos = indexOf(o);
+            boolean a = super.remove(o);
+            notifyItemRemoved(pos);
             return a;
         }
 
@@ -182,6 +236,13 @@ public class DownloaderService extends Service {
 
             return null;
         }
+
+        void removeById(int id) {
+            ListIterator<DownloadTask> iterator = listIterator();
+            while (iterator.hasNext())
+                if (iterator.next().task.id == id)
+                    iterator.remove();
+        }
     }
 
     private class DownloaderRunnable implements Runnable {
@@ -189,6 +250,8 @@ public class DownloaderService extends Service {
         private final HttpGet get;
         private final File tempFile;
         private final File destFile;
+        private volatile boolean shouldStop = false;
+        private volatile boolean saveState = false;
 
         private DownloaderRunnable(DownloadStartConfig.Task task, HttpGet get, File tempFile) {
             this.id = task.id;
@@ -197,20 +260,41 @@ public class DownloaderService extends Service {
             this.destFile = task.destFile;
         }
 
+        private void saveState() {
+            savedDownloadsManager.saveState(DownloaderService.this, id, get.getURI(), tempFile);
+        }
+
+        private void pause() { // TODO: Must be tested
+            shouldStop = true;
+            saveState = true;
+        }
+
+        private void stop() {
+            shouldStop = true;
+            saveState = false;
+        }
+
         @Override
         public void run() {
             DownloadTask task = downloads.find(id);
             if (task == null) return; // What?
 
             task.status = DownloadTask.Status.STARTED;
+            downloads.notifyItemChanged(task);
 
-            try (CloseableHttpClient client = HttpClients.createDefault()) {
+            try (CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(RequestConfig.custom()
+                    .setConnectTimeout(5000)
+                    .setConnectionRequestTimeout(5000)
+                    .setSocketTimeout(5000)
+                    .build()).build()) {
+
                 HttpResponse resp = client.execute(get);
 
                 StatusLine sl = resp.getStatusLine();
                 if (sl.getStatusCode() != HttpStatus.SC_OK) {
                     task.status = DownloadTask.Status.FAILED;
                     task.ex = new DownloaderException(new StatusCodeException(sl));
+                    downloads.notifyItemChanged(task);
                     return;
                 }
 
@@ -218,36 +302,53 @@ public class DownloaderService extends Service {
                 InputStream in = entity.getContent();
 
                 task.length = entity.getContentLength();
+                downloads.notifyItemChanged(task);
 
                 long downloaded = 0;
                 try (FileOutputStream out = new FileOutputStream(tempFile, false)) {
                     byte[] buffer = new byte[4096];
 
                     int count;
-                    while ((count = in.read(buffer)) != -1) {
+                    while (!shouldStop && (count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
                         out.flush();
 
                         downloaded += count;
                         task.status = DownloadTask.Status.RUNNING;
                         task.downloaded = downloaded;
+                        downloads.notifyItemChanged(task); // FIXME: Refreshing too fast
                     }
                 }
 
                 EntityUtils.consumeQuietly(entity);
 
-                if (!tempFile.renameTo(destFile)) {
-                    task.status = DownloadTask.Status.FAILED;
-                    task.ex = new DownloaderException("Couldn't move completed download!");
-                    return;
+                if (shouldStop) {
+                    if (saveState) {
+                        saveState();
+
+                        task.status = DownloadTask.Status.PAUSED;
+                        downloads.notifyItemChanged(task);
+                        return; // IMPORTANT: Won't delete the cache file
+                    } else {
+                        downloads.removeById(id);
+                    }
+                } else {
+                    if (!tempFile.renameTo(destFile)) {
+                        task.status = DownloadTask.Status.FAILED;
+                        task.ex = new DownloaderException("Couldn't move completed download!");
+                        downloads.notifyItemChanged(task);
+                        return;
+                    }
+
+                    task.status = DownloadTask.Status.COMPLETED;
+                    downloads.notifyItemChanged(task);
                 }
 
                 if (!tempFile.delete()) tempFile.deleteOnExit();
-
-                task.status = DownloadTask.Status.COMPLETED;
             } catch (IOException ex) {
                 task.status = DownloadTask.Status.FAILED;
                 task.ex = new DownloaderException(ex);
+                downloads.notifyItemChanged(task);
             }
         }
     }

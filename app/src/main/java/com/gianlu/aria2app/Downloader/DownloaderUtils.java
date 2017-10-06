@@ -20,6 +20,9 @@ import java.io.File;
 public class DownloaderUtils {
     public static final String ACTION_LIST_DOWNLOADS = "com.gianlu.aria2app.dd.LIST_DOWNLOADS";
     public static final String ACTION_COUNT_CHANGED = "com.gianlu.aria2app.dd.COUNT_CHANGED";
+    public static final String ACTION_ITEM_INSERTED = "com.gianlu.aria2app.dd.ITEM_INSERTED";
+    public static final String ACTION_ITEM_REMOVED = "com.gianlu.aria2app.dd.ITEM_REMOVED";
+    public static final String ACTION_ITEM_CHANGED = "com.gianlu.aria2app.dd.ITEM_CHANGED";
     final static int START_DOWNLOAD = 0;
     final static int LIST_DOWNLOADS = 1;
     static final int REFRESH_COUNT = 2;
@@ -89,10 +92,16 @@ public class DownloaderUtils {
         context.startService(new Intent(context, DownloaderService.class));
     }
 
-    public static void registerReceiver(Context context, BroadcastReceiver receiver) {
+    public static void registerReceiver(Context context, BroadcastReceiver receiver, boolean notifyItemActions) {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_LIST_DOWNLOADS);
         filter.addAction(ACTION_COUNT_CHANGED);
+        if (notifyItemActions) {
+            filter.addAction(ACTION_ITEM_CHANGED);
+            filter.addAction(ACTION_ITEM_REMOVED);
+            filter.addAction(ACTION_ITEM_INSERTED);
+        }
+
         LocalBroadcastManager.getInstance(context.getApplicationContext()).registerReceiver(receiver, filter);
     }
 

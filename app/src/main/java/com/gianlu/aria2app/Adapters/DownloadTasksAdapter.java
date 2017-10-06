@@ -14,6 +14,7 @@ import com.gianlu.aria2app.Downloader.DownloaderService;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.List;
 import java.util.Locale;
 
 public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdapter.ViewHolder> {
@@ -27,6 +28,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         this.tasks = tasks;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
+        setHasStableIds(true);
     }
 
     @Override
@@ -37,22 +39,6 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final DownloadTask task = tasks.get(position);
-
-        holder.status.setText(task.status.getFormal(context));
-        holder.status.setTextColor(task.status.getColor(context));
-        holder.title.setText(task.task.getName());
-        holder.uri.setText(task.task.uri.toString());
-
-        if (task.length > 0) {
-            float percentage = (float) task.downloaded / (float) task.length * 100;
-            holder.progress.setIndeterminate(false);
-            holder.progress.setProgress((int) percentage);
-
-            holder.percentage.setText(String.format(Locale.getDefault(), "%.2f %%", percentage));
-        } else {
-            holder.progress.setIndeterminate(true);
-            holder.percentage.setVisibility(View.GONE);
-        }
 
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,30 +68,66 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
             }
         });
 
+        holder.title.setText(task.task.getName());
+        holder.uri.setText(task.task.uri.toString());
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            tasks.set(position, (DownloadTask) payloads.get(0));
+        }
+
+        DownloadTask task = tasks.get(position);
+
+        holder.status.setText(task.status.getFormal(context));
+        holder.status.setTextColor(task.status.getColor(context));
+
+        if (task.length > 0) {
+            float percentage = (float) task.downloaded / (float) task.length * 100;
+            holder.progress.setIndeterminate(false);
+            holder.progress.setProgress((int) percentage);
+
+            holder.percentage.setText(String.format(Locale.getDefault(), "%.2f %%", percentage));
+        } else {
+            holder.progress.setIndeterminate(true);
+            holder.percentage.setVisibility(View.GONE);
+        }
+
         switch (task.status) {
             case STARTED:
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.VISIBLE);
+                holder.percentage.setVisibility(View.VISIBLE);
                 break;
             case RUNNING:
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.VISIBLE);
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.VISIBLE);
+                holder.percentage.setVisibility(View.VISIBLE);
                 break;
             case PAUSED:
                 holder.start.setVisibility(View.VISIBLE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.VISIBLE);
+                holder.percentage.setVisibility(View.VISIBLE);
                 break;
             case FAILED:
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.VISIBLE);
                 holder.remove.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.GONE);
+                holder.percentage.setVisibility(View.GONE);
                 break;
             case PENDING:
             case COMPLETED:
@@ -113,13 +135,25 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
                 holder.remove.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.GONE);
+                holder.percentage.setVisibility(View.GONE);
                 break;
         }
     }
 
     @Override
+    public long getItemId(int position) {
+        return tasks.get(position).task.id;
+    }
+
+    @Override
     public int getItemCount() {
         return tasks.size();
+    }
+
+    public void notifyItemInserted(DownloadTask task) {
+        tasks.add(task);
+        notifyItemInserted(tasks.size() - 1);
     }
 
     public interface IAdapter {

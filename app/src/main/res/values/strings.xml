@@ -295,6 +295,7 @@
     <string name="failed">Failed</string>
     <string name="running">Running</string>
     <string name="paused">Paused</string>
+    <string name="removed">Removed</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

@@ -14,6 +14,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 
 import com.gianlu.aria2app.Adapters.DownloadTasksAdapter;
+import com.gianlu.aria2app.Downloader.DownloadTask;
 import com.gianlu.aria2app.Downloader.DownloaderService;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.R;
@@ -21,13 +22,10 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class DirectDownloadActivity extends AppCompatActivity implements ServiceConnection, DownloadTasksAdapter.IAdapter {
     private Messenger downloaderMessenger;
     private RecyclerViewLayout layout;
-    private TimerTask updater;
+    private DownloadTasksAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,29 +44,18 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
             }
         });
 
-        DownloaderUtils.registerReceiver(this, new InternalBroadcastReceiver());
+        DownloaderUtils.registerReceiver(this, new InternalBroadcastReceiver(), true);
         DownloaderUtils.bindService(this, this);
     }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         downloaderMessenger = new Messenger(service);
-
-        updater = new TimerTask() {
-            @Override
-            public void run() {
-                if (downloaderMessenger != null) DownloaderUtils.listDownloads(downloaderMessenger);
-            }
-        };
-
-        new Timer().scheduleAtFixedRate(updater, 0, 1000);
+        DownloaderUtils.listDownloads(downloaderMessenger);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        updater.cancel();
-        updater = null;
-
         downloaderMessenger = null;
 
         Toaster.show(this, Utils.Messages.FAILED_LOADING, new Runnable() {
@@ -108,7 +95,20 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
             switch (intent.getAction()) {
                 case DownloaderUtils.ACTION_LIST_DOWNLOADS:
                     DownloaderService.DownloadTasks downloads = (DownloaderService.DownloadTasks) intent.getSerializableExtra("downloads");
-                    layout.loadListData(new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this));
+                    adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
+                    layout.loadListData(adapter);
+                    break;
+                case DownloaderUtils.ACTION_ITEM_INSERTED:
+                    if (adapter != null)
+                        adapter.notifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                    break;
+                case DownloaderUtils.ACTION_ITEM_REMOVED:
+                    if (adapter != null)
+                        adapter.notifyItemRemoved(intent.getIntExtra("pos", -1));
+                    break;
+                case DownloaderUtils.ACTION_ITEM_CHANGED:
+                    if (adapter != null)
+                        adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
                     break;
             }
         }

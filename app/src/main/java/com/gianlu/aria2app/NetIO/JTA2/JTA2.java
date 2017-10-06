@@ -394,7 +394,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onVersion(CommonUtils.toStringsList(response.getJSONObject("result").getJSONArray("enabledFeatures")), response.getJSONObject("result").getString("version"));
+                handler.onVersion(CommonUtils.toStringsList(response.getJSONObject("result").getJSONArray("enabledFeatures"), false), response.getJSONObject("result").getString("version"));
             }
 
             @Override
@@ -1136,7 +1136,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onMethods(CommonUtils.toStringsList((response.getJSONArray("result"))));
+                handler.onMethods(CommonUtils.toStringsList(response.getJSONArray("result"), false));
             }
 
             @Override

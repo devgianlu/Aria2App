@@ -47,6 +47,7 @@ import java.util.Random;
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
+    private static final Random random = new Random();
 
     public static int indexOf(String[] items, String item) {
         for (int i = 0; i < items.length; i++)
@@ -164,7 +165,7 @@ public class Utils {
     }
 
     public static JSONObject readyRequest() throws JSONException {
-        return new JSONObject().put("jsonrpc", "2.0").put("id", new Random().nextInt(9999));
+        return new JSONObject().put("jsonrpc", "2.0").put("id", random.nextInt());
     }
 
     @Nullable

@@ -945,7 +945,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         DownloaderUtils.bindService(this, this);
 
         broadcastReceiver = new InternalBroadcastReceiver();
-        DownloaderUtils.registerReceiver(this, broadcastReceiver);
+        DownloaderUtils.registerReceiver(this, broadcastReceiver, false);
     }
 
     @Override

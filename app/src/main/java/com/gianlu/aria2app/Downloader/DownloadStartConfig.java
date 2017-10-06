@@ -9,6 +9,7 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class DownloadStartConfig {
         tasks.add(new Task(uri, destFile, username, password));
     }
 
-    public class Task {
+    public class Task implements Serializable {
         public final URI uri;
         public final File destFile;
         public final int id;
@@ -63,6 +64,14 @@ public class DownloadStartConfig {
             this.username = username;
             this.password = password;
             this.id = random.nextInt();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Task task = (Task) o;
+            return id == task.id;
         }
 
         public String getName() {
