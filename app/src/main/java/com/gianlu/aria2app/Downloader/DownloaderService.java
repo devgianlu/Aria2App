@@ -306,24 +306,6 @@ public class DownloaderService extends Service {
                     .setSocketTimeout(5000)
                     .build()).build()) {
 
-                HttpResponse resp = client.execute(get);
-
-                StatusLine sl = resp.getStatusLine();
-                if (sl.getStatusCode() != HttpStatus.SC_OK) {
-                    task.status = DownloadTask.Status.FAILED;
-                    task.ex = new DownloaderException(new StatusCodeException(sl));
-                    downloads.notifyItemChanged(task);
-                    return;
-                }
-
-                DownloaderService.this.activeRunnables.add(this);
-
-                HttpEntity entity = resp.getEntity();
-                InputStream in = entity.getContent();
-
-                task.length = entity.getContentLength();
-                downloads.notifyItemChanged(task);
-
                 long downloaded = 0;
                 if (singleTask.resumable && tempFile.exists()) {
                     long toSkip = tempFile.length();
@@ -337,19 +319,36 @@ public class DownloaderService extends Service {
                         return;
                     }
 
-                    long skipped = in.skip(toSkip); // TODO: THIS IS NOT HOW TO DO THAT: #skip reads all the bytes (!!)
-                    if (toSkip != skipped) {
-                        saveState();
+                    get.addHeader("Range", "bytes=" + toSkip + "-");
+                    downloaded = toSkip;
+                }
 
-                        task.status = DownloadTask.Status.PAUSED;
-                        task.ex = new DownloaderException("Couldn't skip the whole file length: " + skipped);
+                HttpResponse resp = client.execute(get);
+
+                StatusLine sl = resp.getStatusLine();
+                if (singleTask.resumable) {
+                    if (sl.getStatusCode() != HttpStatus.SC_PARTIAL_CONTENT) {
+                        task.status = DownloadTask.Status.FAILED;
+                        task.ex = new DownloaderException("Server doesn't support partial content.");
                         downloads.notifyItemChanged(task);
-                        DownloaderService.this.activeRunnables.remove(this);
                         return;
                     }
-
-                    downloaded = skipped;
+                } else {
+                    if (sl.getStatusCode() != HttpStatus.SC_OK) {
+                        task.status = DownloadTask.Status.FAILED;
+                        task.ex = new DownloaderException(new StatusCodeException(sl));
+                        downloads.notifyItemChanged(task);
+                        return;
+                    }
                 }
+
+                DownloaderService.this.activeRunnables.add(this);
+
+                HttpEntity entity = resp.getEntity();
+                InputStream in = entity.getContent();
+
+                task.length = entity.getContentLength() + downloaded;
+                downloads.notifyItemChanged(task);
 
                 try (FileOutputStream out = new FileOutputStream(tempFile, singleTask.resumable)) {
                     byte[] buffer = new byte[4096];
