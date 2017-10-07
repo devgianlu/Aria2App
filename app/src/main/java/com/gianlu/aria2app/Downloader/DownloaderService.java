@@ -130,6 +130,13 @@ public class DownloaderService extends Service {
         throw new UnsupportedOperationException(); // TODO
     }
 
+    private void getDownload(int id) {
+        DownloadTask task = downloads.find(id);
+        Bundle bundle = new Bundle();
+        if (task != null) bundle.putSerializable("task", task);
+        sendBroadcast(DownloaderUtils.ACTION_GET_DOWNLOAD, bundle);
+    }
+
     public static class DownloaderException extends Exception {
         DownloaderException(Throwable cause) {
             super(cause);
@@ -178,6 +185,9 @@ public class DownloaderService extends Service {
                     break;
                 case DownloaderUtils.RESTART_DOWNLOAD:
                     service.restartDownload(msg.arg1);
+                    break;
+                case DownloaderUtils.GET_DOWNLOAD:
+                    service.getDownload(msg.arg1);
                     break;
                 default:
                     super.handleMessage(msg);

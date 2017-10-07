@@ -67,6 +67,13 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
             }
         });
 
+        holder.open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onOpen(task.task.id);
+            }
+        });
+
         holder.title.setText(task.task.getName());
         holder.uri.setText(task.task.uri.toString());
     }
@@ -97,6 +104,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
 
         switch (task.status) {
             case STARTED:
+                holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
@@ -105,6 +113,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.percentage.setVisibility(View.VISIBLE);
                 break;
             case RUNNING:
+                holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.VISIBLE);
                 holder.restart.setVisibility(View.GONE);
@@ -113,6 +122,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.percentage.setVisibility(View.VISIBLE);
                 break;
             case PAUSED:
+                holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.VISIBLE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
@@ -121,6 +131,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.percentage.setVisibility(View.VISIBLE);
                 break;
             case FAILED:
+                holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.VISIBLE);
@@ -128,8 +139,17 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.progress.setVisibility(View.GONE);
                 holder.percentage.setVisibility(View.GONE);
                 break;
-            case PENDING:
             case COMPLETED:
+                holder.open.setVisibility(View.VISIBLE);
+                holder.start.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.GONE);
+                holder.restart.setVisibility(View.GONE);
+                holder.remove.setVisibility(View.VISIBLE);
+                holder.progress.setVisibility(View.GONE);
+                holder.percentage.setVisibility(View.GONE);
+                break;
+            case PENDING:
+                holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
                 holder.restart.setVisibility(View.GONE);
@@ -168,6 +188,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         void onRestart(int id);
 
         void onRemove(int id);
+
+        void onOpen(int id);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -176,6 +198,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         final TextView uri;
         final ProgressBar progress;
         final TextView percentage;
+        final ImageButton open;
         final ImageButton start;
         final ImageButton pause;
         final ImageButton restart;
@@ -194,6 +217,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
             pause = itemView.findViewById(R.id.directDownloadItem_pause);
             restart = itemView.findViewById(R.id.directDownloadItem_restart);
             remove = itemView.findViewById(R.id.directDownloadItem_remove);
+            open = itemView.findViewById(R.id.directDownloadItem_open);
         }
     }
 }

@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import com.gianlu.aria2app.Adapters.DownloadTasksAdapter;
 import com.gianlu.aria2app.Downloader.DownloadTask;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
+import com.gianlu.aria2app.GeneralFileProvider;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.RecyclerViewLayout;
@@ -87,6 +88,11 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         if (downloaderMessenger != null) DownloaderUtils.removeDownload(downloaderMessenger, id);
     }
 
+    @Override
+    public void onOpen(int id) {
+        if (downloaderMessenger != null) DownloaderUtils.getDownload(downloaderMessenger, id);
+    }
+
     private class InternalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -111,6 +117,13 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                 case DownloaderUtils.ACTION_ITEM_CHANGED:
                     if (adapter != null)
                         adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
+                    break;
+                case DownloaderUtils.ACTION_GET_DOWNLOAD:
+                    DownloadTask task = (DownloadTask) intent.getSerializableExtra("task");
+                    if (task == null)
+                        Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD);
+                    else
+                        startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
                     break;
             }
         }

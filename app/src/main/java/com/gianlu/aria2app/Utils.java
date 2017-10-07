@@ -273,6 +273,7 @@ public class Utils {
         public static final Toaster.Message CONNECTIVITY_CHANGED = new Toaster.Message(R.string.connectivityChanged, false);
         public static final Toaster.Message NO_ENGINES_SELECTED = new Toaster.Message(R.string.noEnginesSelected, false);
         public static final Toaster.Message INVALID_MAX_SIMULTANEOUS_DOWNLOADS = new Toaster.Message(R.string.invalidMaxSimultaneousDownloads, false);
+        public static final Toaster.Message FAILED_OPENING_DOWNLOAD = new Toaster.Message(R.string.failedOpeningDownload, true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

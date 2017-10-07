@@ -25,6 +25,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- General files provider -->
+        <provider
+            android:name=".GeneralFileProvider"
+            android:authorities="com.gianlu.aria2app"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <!-- Loading activity -->
         <activity
             android:name=".LoadingActivity"

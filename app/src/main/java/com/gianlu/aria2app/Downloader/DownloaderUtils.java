@@ -23,13 +23,15 @@ public class DownloaderUtils {
     public static final String ACTION_ITEM_INSERTED = "com.gianlu.aria2app.dd.ITEM_INSERTED";
     public static final String ACTION_ITEM_REMOVED = "com.gianlu.aria2app.dd.ITEM_REMOVED";
     public static final String ACTION_ITEM_CHANGED = "com.gianlu.aria2app.dd.ITEM_CHANGED";
-    final static int START_DOWNLOAD = 0;
-    final static int LIST_DOWNLOADS = 1;
+    public static final String ACTION_GET_DOWNLOAD = "com.gianlu.aria2app.dd.GET_DOWNLOAD";
+    static final int START_DOWNLOAD = 0;
+    static final int LIST_DOWNLOADS = 1;
     static final int REFRESH_COUNT = 2;
     static final int PAUSE_DOWNLOAD = 3;
     static final int REMOVE_DOWNLOAD = 4;
     static final int RESUME_DOWNLOAD = 5;
     static final int RESTART_DOWNLOAD = 6;
+    static final int GET_DOWNLOAD = 7;
 
     public static void bindService(Context context, ServiceConnection conn) {
         context.getApplicationContext().bindService(new Intent(context, DownloaderService.class), conn, 0);
@@ -63,9 +65,16 @@ public class DownloaderUtils {
         }
     }
 
-    public static void restartDownload(Messenger messenger, int id) {
+    public static void restartDownload(@NonNull Messenger messenger, int id) {
         try {
             messenger.send(Message.obtain(null, RESTART_DOWNLOAD, id, 0, null));
+        } catch (RemoteException ignored) {
+        }
+    }
+
+    public static void getDownload(@NonNull Messenger messenger, int id) {
+        try {
+            messenger.send(Message.obtain(null, GET_DOWNLOAD, id, 0, null));
         } catch (RemoteException ignored) {
         }
     }
@@ -96,6 +105,7 @@ public class DownloaderUtils {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_LIST_DOWNLOADS);
         filter.addAction(ACTION_COUNT_CHANGED);
+        filter.addAction(ACTION_GET_DOWNLOAD);
         if (notifyItemActions) {
             filter.addAction(ACTION_ITEM_CHANGED);
             filter.addAction(ACTION_ITEM_REMOVED);

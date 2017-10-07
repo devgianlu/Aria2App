@@ -296,6 +296,7 @@
     <string name="running">Running</string>
     <string name="paused">Paused</string>
     <string name="removed">Removed</string>
+    <string name="failedOpeningDownload">Failed opening the download!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

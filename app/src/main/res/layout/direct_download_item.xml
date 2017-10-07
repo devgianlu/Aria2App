@@ -23,6 +23,8 @@
             android:id="@+id/directDownloadItem_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
             android:textColor="@android:color/primary_text_light"
             android:textSize="18sp" />
 
@@ -62,6 +64,16 @@
         android:layout_marginTop="4dp"
         android:gravity="end"
         android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/directDownloadItem_open"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:alpha="0.54"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_open_in_new_black_48dp" />
 
         <ImageButton
             android:id="@+id/directDownloadItem_pause"
