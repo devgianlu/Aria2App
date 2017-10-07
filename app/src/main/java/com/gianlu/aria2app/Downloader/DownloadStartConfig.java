@@ -8,6 +8,8 @@ import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
 
@@ -100,6 +102,21 @@ public class DownloadStartConfig {
 
         public CannotCreateStartConfigException(Cause cause) {
             this.cause = cause;
+        }
+
+        public void showAppropriateToast(Context context) {
+            switch (cause) {
+                default:
+                case INTERNAL:
+                    Toaster.show(context, Utils.Messages.FAILED_DOWNLOAD_FILE, this);
+                    break;
+                case DD_NOT_ENABLED:
+                    Toaster.show(context, Utils.Messages.DD_NOT_ENABLED, this);
+                    break;
+                case PROFILE_DOES_NOT_EXIST:
+                    Toaster.show(context, Utils.Messages.PROFILE_DOES_NOT_EXIST, this);
+                    break;
+            }
         }
 
         public enum Cause {

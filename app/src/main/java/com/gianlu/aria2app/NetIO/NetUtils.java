@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -154,7 +153,7 @@ public class NetUtils {
                 .setPath(profile.serverEndpoint).build();
     }
 
-    public static HttpGet createGetRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException, UnsupportedEncodingException {
+    public static HttpGet createGetRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException {
         if (defaultUri == null) defaultUri = createBaseURI(profile);
         URIBuilder builder = new URIBuilder(defaultUri);
         if (request != null) {

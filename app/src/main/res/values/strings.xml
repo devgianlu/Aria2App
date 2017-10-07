@@ -297,6 +297,8 @@
     <string name="paused">Paused</string>
     <string name="removed">Removed</string>
     <string name="failedOpeningDownload">Failed opening the download!</string>
+    <string name="ddNotEnabled">DirectDownload isn\'t enabled on this profile!</string>
+    <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

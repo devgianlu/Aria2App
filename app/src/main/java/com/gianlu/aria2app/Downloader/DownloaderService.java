@@ -91,8 +91,10 @@ public class DownloaderService extends Service {
         try {
             DownloadStartConfig config = DownloadStartConfig.createForSavedState(this, state);
             startDownload(config);
-        } catch (DownloadStartConfig.CannotCreateStartConfigException | DownloaderUtils.InvalidPathException | URISyntaxException e) {
-            e.printStackTrace(); // TODO
+        } catch (DownloadStartConfig.CannotCreateStartConfigException | DownloaderUtils.InvalidPathException | URISyntaxException ex) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("ex", ex);
+            sendBroadcast(DownloaderUtils.ACTION_FAILED_RESUMING, bundle);
         }
     }
 
@@ -123,7 +125,7 @@ public class DownloaderService extends Service {
     private void resumeDownload(int id) {
         SavedDownloadsManager.SavedState state = savedDownloadsManager.getSavedState(id);
         if (state != null) resumeInternal(state);
-        else throw new RuntimeException("THIS SHOULD BE HANDLED!!"); // TODO
+        else removeDownload(id);
     }
 
     private void restartDownload(int id) {

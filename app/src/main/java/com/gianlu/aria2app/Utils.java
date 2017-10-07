@@ -274,6 +274,8 @@ public class Utils {
         public static final Toaster.Message NO_ENGINES_SELECTED = new Toaster.Message(R.string.noEnginesSelected, false);
         public static final Toaster.Message INVALID_MAX_SIMULTANEOUS_DOWNLOADS = new Toaster.Message(R.string.invalidMaxSimultaneousDownloads, false);
         public static final Toaster.Message FAILED_OPENING_DOWNLOAD = new Toaster.Message(R.string.failedOpeningDownload, true);
+        public static final Toaster.Message DD_NOT_ENABLED = new Toaster.Message(R.string.ddNotEnabled, false);
+        public static final Toaster.Message PROFILE_DOES_NOT_EXIST = new Toaster.Message(R.string.profileDoesntExist, false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

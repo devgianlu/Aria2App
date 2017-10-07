@@ -24,6 +24,7 @@ public class DownloaderUtils {
     public static final String ACTION_ITEM_REMOVED = "com.gianlu.aria2app.dd.ITEM_REMOVED";
     public static final String ACTION_ITEM_CHANGED = "com.gianlu.aria2app.dd.ITEM_CHANGED";
     public static final String ACTION_GET_DOWNLOAD = "com.gianlu.aria2app.dd.GET_DOWNLOAD";
+    public static final String ACTION_FAILED_RESUMING = "com.gianlu.aria2app.dd.FAILED_RESUMING";
     static final int START_DOWNLOAD = 0;
     static final int LIST_DOWNLOADS = 1;
     static final int REFRESH_COUNT = 2;
