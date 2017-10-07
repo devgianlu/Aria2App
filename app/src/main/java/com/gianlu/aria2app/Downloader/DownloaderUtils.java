@@ -25,6 +25,7 @@ public class DownloaderUtils {
     public static final String ACTION_ITEM_CHANGED = "com.gianlu.aria2app.dd.ITEM_CHANGED";
     public static final String ACTION_GET_DOWNLOAD = "com.gianlu.aria2app.dd.GET_DOWNLOAD";
     public static final String ACTION_FAILED_RESUMING = "com.gianlu.aria2app.dd.FAILED_RESUMING";
+    public static final String ACTION_FAILED_RESTARTING = "com.gianlu.aria2app.dd.FAILED_RESTARTING";
     static final int START_DOWNLOAD = 0;
     static final int LIST_DOWNLOADS = 1;
     static final int REFRESH_COUNT = 2;
@@ -107,6 +108,8 @@ public class DownloaderUtils {
         filter.addAction(ACTION_LIST_DOWNLOADS);
         filter.addAction(ACTION_COUNT_CHANGED);
         filter.addAction(ACTION_GET_DOWNLOAD);
+        filter.addAction(ACTION_FAILED_RESTARTING);
+        filter.addAction(ACTION_FAILED_RESUMING);
         if (notifyItemActions) {
             filter.addAction(ACTION_ITEM_CHANGED);
             filter.addAction(ACTION_ITEM_REMOVED);

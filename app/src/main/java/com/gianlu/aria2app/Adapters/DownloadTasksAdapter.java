@@ -176,7 +176,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     }
 
     public void removeItemAndNotifyItemRemoved(int pos) {
-        tasks.remove(pos);
+        if (pos >= 0 && pos < tasks.size()) tasks.remove(pos);
         notifyItemRemoved(pos);
     }
 

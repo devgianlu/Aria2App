@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Downloader;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -80,8 +79,10 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(Download download, MultiProfile.UserProfile profile, ADir dir, boolean includeSubdirectories) { // TODO
-        throw new UnsupportedOperationException();
+    public static DownloadStartConfig recreate(Context context, DownloadTask task) throws DownloaderUtils.InvalidPathException, URISyntaxException, CannotCreateStartConfigException {
+        DownloadStartConfig config = new DownloadStartConfig(context, task.task.getProfileId());
+        config.addTask(task.task.uri, task.task.destFile, task.task.username, task.task.password);
+        return config;
     }
 
     private void addTask(URI uri, File destFile, String username, String password) {

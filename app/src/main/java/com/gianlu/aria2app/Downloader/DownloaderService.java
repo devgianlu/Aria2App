@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -129,7 +130,16 @@ public class DownloaderService extends Service {
     }
 
     private void restartDownload(int id) {
-        throw new UnsupportedOperationException(); // TODO
+        DownloadTask task = downloads.find(id);
+        if (task != null) {
+            try {
+                startDownload(DownloadStartConfig.recreate(this, task));
+            } catch (DownloaderUtils.InvalidPathException | URISyntaxException | DownloadStartConfig.CannotCreateStartConfigException ex) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ex", ex);
+                sendBroadcast(DownloaderUtils.ACTION_FAILED_RESTARTING, bundle);
+            }
+        }
     }
 
     private void getDownload(int id) {
@@ -281,8 +291,8 @@ public class DownloaderService extends Service {
         private final HttpGet get;
         private final File tempFile;
         private final DownloadStartConfig.Task singleTask;
-        private volatile boolean shouldStop = false;
-        private volatile boolean saveState = false;
+        private AtomicBoolean shouldStop = new AtomicBoolean(false);
+        private AtomicBoolean saveState = new AtomicBoolean(false);
 
         private DownloaderRunnable(DownloadStartConfig.Task task, HttpGet get, File tempFile) {
             this.singleTask = task;
@@ -295,13 +305,13 @@ public class DownloaderService extends Service {
         }
 
         private void pause() {
-            shouldStop = true;
-            saveState = true;
+            shouldStop.set(true);
+            saveState.set(true);
         }
 
         private void stop() {
-            shouldStop = true;
-            saveState = false;
+            shouldStop.set(true);
+            saveState.set(false);
         }
 
         @Override
@@ -357,16 +367,16 @@ public class DownloaderService extends Service {
                 DownloaderService.this.activeRunnables.add(this);
 
                 HttpEntity entity = resp.getEntity();
-                InputStream in = entity.getContent();
-
                 task.length = entity.getContentLength() + downloaded;
                 downloads.notifyItemChanged(task);
+
+                InputStream in = entity.getContent(); // Don't close this
 
                 try (FileOutputStream out = new FileOutputStream(tempFile, singleTask.resumable)) {
                     byte[] buffer = new byte[4096];
 
                     int count;
-                    while (!shouldStop && (count = in.read(buffer)) != -1) {
+                    while (!shouldStop.get() && (count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
                         out.flush();
 
@@ -377,10 +387,10 @@ public class DownloaderService extends Service {
                     }
                 }
 
-                if (shouldStop) {
+                if (shouldStop.get()) {
                     get.releaseConnection();
 
-                    if (saveState) {
+                    if (saveState.get()) {
                         saveState();
 
                         task.status = DownloadTask.Status.PAUSED;

@@ -81,7 +81,8 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
 
     @Override
     public void onRestart(int id) {
-        if (downloaderMessenger != null) DownloaderUtils.restartDownload(downloaderMessenger, id);
+        if (downloaderMessenger != null)
+            DownloaderUtils.restartDownload(downloaderMessenger, id); // FIXME: This messes up items in the RecyclerView
     }
 
     @Override
@@ -119,6 +120,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                     if (adapter != null)
                         adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
                     break;
+                case DownloaderUtils.ACTION_FAILED_RESTARTING:
                 case DownloaderUtils.ACTION_FAILED_RESUMING:
                     Exception ex = (Exception) intent.getSerializableExtra("ex");
                     if (ex instanceof DownloadStartConfig.CannotCreateStartConfigException)
