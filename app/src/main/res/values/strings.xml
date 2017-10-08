@@ -301,6 +301,7 @@
     <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>
     <string name="dd_resume">Resume downloads</string>
     <string name="dd_resume_summary">Resume paused downloads when the app is opened</string>
+    <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

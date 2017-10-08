@@ -47,6 +47,8 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
             }
         });
 
+        layout.showMessage(R.string.noDirectDownloads, false);
+
         DownloaderUtils.registerReceiver(this, new InternalBroadcastReceiver(), true);
         DownloaderUtils.bindService(this, this);
     }
@@ -102,10 +104,18 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
             if (intent.getAction() == null) return;
 
             switch (intent.getAction()) {
+                case DownloaderUtils.ACTION_COUNT_CHANGED:
+                    if (intent.getIntExtra("count", 0) <= 0)
+                        layout.showMessage(R.string.noDirectDownloads, false);
+                    break;
                 case DownloaderUtils.ACTION_LIST_DOWNLOADS:
                     List<DownloadTask> downloads = (List<DownloadTask>) intent.getSerializableExtra("downloads");
-                    adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
-                    layout.loadListData(adapter);
+                    if (downloads.isEmpty()) {
+                        layout.showMessage(R.string.noDirectDownloads, false);
+                    } else {
+                        adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
+                        layout.loadListData(adapter);
+                    }
                     break;
                 case DownloaderUtils.ACTION_ITEM_INSERTED:
                     runOnUiThread(new Runnable() {
