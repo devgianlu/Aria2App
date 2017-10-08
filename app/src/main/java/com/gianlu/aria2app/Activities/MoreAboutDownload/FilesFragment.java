@@ -54,7 +54,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet, ServiceConnection {
     private UpdateUI updater;
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
@@ -360,7 +360,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                     return;
                 }
 
-                Snackbar.make(layout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
                         .setAction(R.string.show, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
