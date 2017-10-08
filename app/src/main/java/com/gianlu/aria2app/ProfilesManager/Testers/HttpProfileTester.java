@@ -21,6 +21,8 @@ import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
+import cz.msebera.android.httpclient.conn.HttpHostConnectException;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 
 public class HttpProfileTester extends NetProfileTester {
@@ -57,7 +59,12 @@ public class HttpProfileTester extends NetProfileTester {
 
             get.releaseConnection();
         } catch (IOException | CertificateException | URISyntaxException | JSONException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
-            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
+            if (ex instanceof HttpHostConnectException || ex instanceof ConnectTimeoutException) {
+                publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
+            } else {
+                publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
+            }
+
             if (ex.getMessage() == null) {
                 if (ex.getCause() != null) publishUpdate(ex.getCause().getMessage());
                 else publishUpdate(null);

@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
@@ -103,9 +105,12 @@ public class AddUriActivity extends AppCompatActivity {
             return;
         }
 
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
+        CommonUtils.showDialog(this, pd);
         jta2.addUri(uris, position, options, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
+                pd.dismiss();
                 Toaster.show(AddUriActivity.this, Utils.Messages.DOWNLOAD_ADDED, gid, new Runnable() {
                     @Override
                     public void run() {
@@ -116,6 +121,7 @@ public class AddUriActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception ex) {
+                pd.dismiss();
                 Toaster.show(AddUriActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             }
         });

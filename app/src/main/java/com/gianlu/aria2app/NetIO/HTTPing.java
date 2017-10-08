@@ -20,8 +20,10 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cz.msebera.android.httpclient.Consts;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
@@ -45,14 +47,33 @@ public class HTTPing extends AbstractClient {
         this.defaultUri = NetUtils.createBaseURI(profile);
     }
 
-    public static HTTPing newInstance(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
+    public static HTTPing instantiate(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
         if (httping == null) httping = new HTTPing(context);
         return httping;
     }
 
-    public static HTTPing newInstance(Context context, MultiProfile.UserProfile profile) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
+    public static HTTPing instantiate(Context context, MultiProfile.UserProfile profile) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
         if (httping == null) httping = new HTTPing(context, profile);
         return httping;
+    }
+
+    public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull final IConnect listener) {
+        try {
+            httping = new HTTPing(context, profile);
+            httping.sendConnectionTest(new IReceived() {
+                @Override
+                public void onResponse(JSONObject response) throws JSONException {
+                    listener.onConnected(httping);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    listener.onFailedConnecting(ex);
+                }
+            });
+        } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | URISyntaxException | KeyStoreException ex) {
+            listener.onFailedConnecting(ex);
+        }
     }
 
     public static void clear() {
@@ -75,9 +96,14 @@ public class HTTPing extends AbstractClient {
     }
 
     @Override
-    public void send(final JSONObject request, final IReceived handler) {
+    public void send(@NonNull final JSONObject request, final IReceived handler) {
         if (!executorService.isShutdown())
             executorService.execute(new RequestProcessor(request, handler));
+    }
+
+    private void sendConnectionTest(IReceived handler) {
+        if (!executorService.isShutdown())
+            executorService.execute(new RequestProcessor(null, handler));
     }
 
     @Override
@@ -102,9 +128,15 @@ public class HTTPing extends AbstractClient {
                 HttpResponse resp = client.execute(get);
                 StatusLine sl = resp.getStatusLine();
 
+                if (request == null) {
+                    if (sl.getStatusCode() == HttpStatus.SC_BAD_REQUEST) listener.onResponse(null);
+                    else listener.onException(new StatusCodeException(sl));
+                    return;
+                }
+
                 HttpEntity entity = resp.getEntity();
                 if (entity != null) {
-                    String json = EntityUtils.toString(resp.getEntity());
+                    String json = EntityUtils.toString(entity, Consts.UTF_8);
                     if (json == null || json.isEmpty()) {
                         listener.onException(new NullPointerException("Empty response"));
                     } else {

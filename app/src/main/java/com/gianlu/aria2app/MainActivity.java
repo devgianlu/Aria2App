@@ -32,7 +32,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -77,8 +76,8 @@ import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.Initializer;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
@@ -101,8 +100,6 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
-    private SwipeRefreshLayout swipeRefresh;
-    private RecyclerView list;
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
     private SearchView searchView;
@@ -116,13 +113,15 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private TextView stopped;
     private InternalBroadcastReceiver broadcastReceiver;
     private Messenger downloaderMessenger = null;
+    private RecyclerViewLayout recyclerViewLayout;
 
     private void refresh() {
         updater.stopThread(new BaseUpdater.IThread() {
             @Override
             public void onStopped() {
                 adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<Download>(), MainActivity.this);
-                list.setAdapter(adapter);
+                recyclerViewLayout.loadListData(adapter);
+                recyclerViewLayout.startLoading();
                 setupAdapterFiltersAndSorting();
 
                 try {
@@ -130,10 +129,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     updater.start();
                 } catch (JTA2InitializingException ex) {
                     ErrorHandler.get().notifyException(ex, true);
-                    MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
+                    recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
                 }
-
-                swipeRefresh.setRefreshing(false);
             }
         });
     }
@@ -218,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
                 layout.setPadding(padding, padding, padding, padding);
                 layout.addView(new SuperTextView(MainActivity.this, R.string.version, version));
-                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(rawFeatures, ",")));
+                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(rawFeatures, ", ")));
 
                 jta2.getSessionInfo(new JTA2.ISession() {
                     @Override
@@ -298,8 +295,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
-
         if (Prefs.getString(this, PKeys.DD_DOWNLOAD_PATH, null) == null)
             Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 
@@ -341,12 +336,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
         });
 
-        list = findViewById(R.id.main_list);
-        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout = findViewById(R.id.main_recyclerViewLayout);
+        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        swipeRefresh = findViewById(R.id.main_swipeLayout);
-        swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refresh();
@@ -390,7 +384,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         else NotificationService.stop(this);
 
         adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
-        list.setAdapter(adapter);
+        recyclerViewLayout.loadListData(adapter);
+        recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
 
         try {
@@ -398,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             updater.start();
         } catch (JTA2InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
-            MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.failedLoadingDownloads, R.drawable.ic_error_black_48dp);
+            recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
         }
 
         if (((ThisApplication) getApplication()).isFirstStart()) {
@@ -751,7 +746,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onUpdateAdapter(List<Download> downloads) {
-        if (adapter != null) adapter.notifyItemsChanged(downloads);
+        if (adapter != null) {
+            adapter.notifyItemsChanged(downloads);
+            recyclerViewLayout.stopLoading();
+        }
 
         String gid = getIntent().getStringExtra("gid");
         if (gid != null) {
@@ -798,11 +796,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (drawerManager != null) drawerManager.updateBadge(DrawerConst.HOME, count);
 
         if (count == 0) {
-            MessageLayout.show((ViewGroup) findViewById(R.id.main_drawer), R.string.noDownloads, R.drawable.ic_info_outline_black_48dp);
-            list.setVisibility(View.GONE);
+            if (!recyclerViewLayout.isLoading())
+                recyclerViewLayout.showMessage(R.string.noDownloads, false);
         } else {
-            MessageLayout.hide((ViewGroup) findViewById(R.id.main_drawer));
-            list.setVisibility(View.VISIBLE);
+            recyclerViewLayout.showList();
         }
 
         if (!isShowingHint && toolbar != null && count >= 5 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.TOOLBAR)) {
@@ -837,11 +834,11 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         if (!isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.CARD)) {
-            DownloadCardsAdapter.DownloadViewHolder holder = (DownloadCardsAdapter.DownloadViewHolder) list.findViewHolderForLayoutPosition(0);
+            DownloadCardsAdapter.DownloadViewHolder holder = (DownloadCardsAdapter.DownloadViewHolder) recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
             if (holder != null && !CommonUtils.isExpanded(holder.details)) {
                 isShowingHint = true;
 
-                list.scrollToPosition(0);
+                recyclerViewLayout.getList().scrollToPosition(0);
 
                 Rect rect = new Rect();
                 holder.itemView.getGlobalVisibleRect(rect);
@@ -962,7 +959,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Nullable
     @Override
     public RecyclerView getRecyclerView() {
-        return list;
+        return recyclerViewLayout.getList();
     }
 
     @Override

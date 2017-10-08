@@ -55,7 +55,7 @@ public class WebSocketing extends AbstractClient {
         return webSocketing;
     }
 
-    public static void instantiate(Context context, MultiProfile.UserProfile profile, IConnect listener) {
+    public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull IConnect listener) {
         try {
             unlock();
             ErrorHandler.get().unlock();
@@ -65,7 +65,7 @@ public class WebSocketing extends AbstractClient {
         }
     }
 
-    public static void instantiate(Context context, IConnect listener) {
+    public static void instantiate(Context context, @NonNull IConnect listener) {
         try {
             unlock();
             ErrorHandler.get().unlock();

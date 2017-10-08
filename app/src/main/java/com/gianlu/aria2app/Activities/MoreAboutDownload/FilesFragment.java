@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -48,26 +47,23 @@ import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet, ServiceConnection {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
     private UpdateUI updater;
-    private CoordinatorLayout layout;
-    private RecyclerView list;
-    private ProgressBar loading;
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
     private DirBottomSheet dirSheet;
-    private LinearLayout container;
     private LinearLayout breadcrumbsContainer;
     private HorizontalScrollView breadcrumbs;
     private Download download;
     private boolean isShowingHint;
+    private RecyclerViewLayout recyclerViewLayout;
     private Messenger downloaderMessenger = null;
     private IWaitBinder boundWaiter;
 
@@ -108,33 +104,30 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
-        final SwipeRefreshLayout swipeRefresh = layout.findViewById(R.id.filesFragment_swipeRefresh);
-        swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        loading = layout.findViewById(R.id.filesFragment_loading);
-        container = layout.findViewById(R.id.filesFragment_container);
+        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
         breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
-        list = layout.findViewById(R.id.filesFragment_list);
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
+        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         download = (Download) getArguments().getSerializable("download");
         if (download == null) {
-            MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
-            loading.setVisibility(View.GONE);
+            recyclerViewLayout.showMessage(R.string.failedLoading, true);
             return layout;
         }
 
         final int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
 
         adapter = new FilesAdapter(getContext(), colorRes, this);
-        list.setAdapter(adapter);
+        recyclerViewLayout.loadListData(adapter);
+        recyclerViewLayout.startLoading();
 
         fileSheet = new FileBottomSheet(layout, download, this);
         dirSheet = new DirBottomSheet(layout, download, this);
 
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 updater.stopThread(new BaseUpdater.IThread() {
@@ -142,21 +135,13 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                     public void onStopped() {
                         try {
                             adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
-                            list.setAdapter(adapter);
+                            recyclerViewLayout.loadListData(adapter);
+                            recyclerViewLayout.startLoading();
 
                             updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
                             updater.start();
                         } catch (JTA2InitializingException ex) {
                             Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
-                        } finally {
-                            if (isAdded()) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        swipeRefresh.setRefreshing(false);
-                                    }
-                                });
-                            }
                         }
                     }
                 });
@@ -167,8 +152,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             updater = new UpdateUI(getContext(), download.gid, this);
             updater.start();
         } catch (JTA2InitializingException ex) {
-            MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
-            loading.setVisibility(View.GONE);
+            recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.logMe(getContext(), ex);
             return layout;
         }
@@ -180,22 +164,22 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onUpdateHierarchy(List<AFile> files, String commonRoot) {
-        if (files.size() == 0) return;
-        MessageLayout.hide(layout);
-        loading.setVisibility(View.GONE);
-        container.setVisibility(View.VISIBLE);
-        if (adapter != null) adapter.update(files, commonRoot);
-        if (fileSheet != null) fileSheet.update(files);
-        if (dirSheet != null) dirSheet.update(files);
+        if (files.size() == 0 || files.get(0).path.isEmpty()) {
+            recyclerViewLayout.showMessage(R.string.noFiles, false);
+        } else {
+            recyclerViewLayout.showList();
 
-        if (adapter != null) showTutorial(adapter.getCurrentNode());
+            if (adapter != null) adapter.update(files, commonRoot);
+            if (fileSheet != null) fileSheet.update(files);
+            if (dirSheet != null) dirSheet.update(files);
+
+            if (adapter != null) showTutorial(adapter.getCurrentNode());
+        }
     }
 
     @Override
     public void onFatalException(Exception ex) {
-        MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
-        loading.setVisibility(View.GONE);
-        container.setVisibility(View.GONE);
+        recyclerViewLayout.showMessage(R.string.failedLoading, true);
         Logging.logMe(getContext(), ex);
     }
 
@@ -211,11 +195,11 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     private void showTutorial(TreeNode dir) {
         if (isVisible() && !isShowingHint && dir.files != null && dir.dirs != null && dir.files.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FILES)) {
-            RecyclerView.ViewHolder holder = list.findViewHolderForLayoutPosition(dir.dirs.size());
+            RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(dir.dirs.size());
             if (holder != null) {
                 isShowingHint = true;
 
-                list.scrollToPosition(dir.dirs.size());
+                recyclerViewLayout.getList().scrollToPosition(dir.dirs.size());
 
                 Rect rect = new Rect();
                 holder.itemView.getGlobalVisibleRect(rect);
@@ -235,11 +219,11 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         }
 
         if (isVisible() && !isShowingHint && dir.dirs != null && dir.dirs.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FOLDERS)) {
-            RecyclerView.ViewHolder holder = list.findViewHolderForLayoutPosition(0);
+            RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
             if (holder != null) {
                 isShowingHint = true;
 
-                list.scrollToPosition(0);
+                recyclerViewLayout.getList().scrollToPosition(0);
 
                 Rect rect = new Rect();
                 holder.itemView.getGlobalVisibleRect(rect);

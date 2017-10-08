@@ -51,7 +51,7 @@ public class JTA2 {
             if (ProfilesManager.get(context).getCurrent(context).getProfile(context).connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
                 return new JTA2(context, WebSocketing.instantiate(context));
             else
-                return new JTA2(context, HTTPing.newInstance(context));
+                return new JTA2(context, HTTPing.instantiate(context));
         } catch (IOException | NoSuchAlgorithmException | URISyntaxException | KeyStoreException | CertificateException | KeyManagementException ex) {
             throw new JTA2InitializingException(ex);
         }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -35,16 +36,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoadingActivity extends AppCompatActivity {
+public class LoadingActivity extends AppCompatActivity implements IConnect {
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
@@ -72,8 +68,6 @@ public class LoadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
 
         setContentView(R.layout.activity_loading);
         ActionBar actionBar = getSupportActionBar();
@@ -212,7 +206,7 @@ public class LoadingActivity extends AppCompatActivity {
         displayPicker(hasShareData());
     }
 
-    private void failedConnecting(final Exception ex) {
+    private void failedConnecting(@NonNull final Exception ex) {
         Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
             @Override
             public void run() {
@@ -241,24 +235,9 @@ public class LoadingActivity extends AppCompatActivity {
             manager.setCurrent(this, profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
-                WebSocketing.instantiate(this, single, new IConnect() {
-                    @Override
-                    public void onConnected(AbstractClient client) {
-                        goTo(MainActivity.class);
-                    }
-
-                    @Override
-                    public void onFailedConnecting(final Exception ex) {
-                        failedConnecting(ex);
-                    }
-                });
+                WebSocketing.instantiate(this, single, this);
             } else {
-                try {
-                    HTTPing.newInstance(this, single);
-                    goTo(MainActivity.class);
-                } catch (NoSuchAlgorithmException | CertificateException | KeyManagementException | IOException | KeyStoreException | URISyntaxException ex) {
-                    failedConnecting(ex);
-                }
+                HTTPing.instantiate(this, single, this);
             }
 
             new Timer().schedule(new TimerTask() {
@@ -288,7 +267,7 @@ public class LoadingActivity extends AppCompatActivity {
         seeError.setVisibility(View.GONE);
     }
 
-    private void showErrorDialog(final Throwable ex) {
+    private void showErrorDialog(@NonNull final Throwable ex) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
@@ -332,5 +311,15 @@ public class LoadingActivity extends AppCompatActivity {
         if (fromNotifGid != null) intent.putExtra("gid", fromNotifGid);
         if (finished) startActivity(intent);
         else this.goTo = intent;
+    }
+
+    @Override
+    public void onConnected(AbstractClient client) {
+        goTo(MainActivity.class);
+    }
+
+    @Override
+    public void onFailedConnecting(Exception ex) {
+        failedConnecting(ex);
     }
 }

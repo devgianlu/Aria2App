@@ -7,21 +7,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.gianlu.aria2app.Activities.Search.MissingSearchEngine;
@@ -39,8 +36,8 @@ import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
@@ -52,9 +49,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
-    private RecyclerView list;
-    private ProgressBar loading;
-    private CoordinatorLayout layout;
+    private RecyclerViewLayout recyclerViewLayout;
     private LinearLayout message;
     private String query = null;
     private SearchView searchView;
@@ -68,12 +63,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
-        layout = findViewById(R.id.search);
-        loading = findViewById(R.id.search_loading);
         message = findViewById(R.id.search_message);
-        list = findViewById(R.id.search_list);
-        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerViewLayout = findViewById(R.id.search_recyclerViewLayout);
+        recyclerViewLayout.stopLoading();
+        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(new View.OnClickListener() {
@@ -152,10 +146,8 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public boolean onQueryTextSubmit(final String query) {
-        loading.setVisibility(View.VISIBLE);
-        list.setVisibility(View.GONE);
         message.setVisibility(View.GONE);
-        MessageLayout.hide(layout);
+        recyclerViewLayout.startLoading();
         this.query = query;
 
         SearchUtils.get().search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
@@ -175,9 +167,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     public boolean onClose() {
         message.setVisibility(View.VISIBLE);
-        loading.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
-        MessageLayout.hide(layout);
+        recyclerViewLayout.stopLoading();
+        recyclerViewLayout.hideList();
+        recyclerViewLayout.hideMessage();
         searchView.setQuery(null, false);
         this.query = null;
         return false;
@@ -185,29 +177,22 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
-        loading.setVisibility(View.GONE);
-        list.setVisibility(View.VISIBLE);
         message.setVisibility(View.GONE);
-        MessageLayout.hide(layout);
 
-        list.setAdapter(new SearchResultsAdapter(this, results, nextPageToken, this));
+        recyclerViewLayout.loadListData(new SearchResultsAdapter(this, results, nextPageToken, this));
         notifyMissingEngines(missingEngines);
     }
 
     @Override
     public void serviceUnavailable() {
-        loading.setVisibility(View.GONE);
         message.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
-        MessageLayout.show(layout, getString(R.string.searchEngine_offline), R.drawable.ic_error_outline_black_48dp);
+        recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
     }
 
     @Override
     public void onException(Exception ex) {
-        loading.setVisibility(View.GONE);
         message.setVisibility(View.GONE);
-        list.setVisibility(View.GONE);
-        MessageLayout.show(layout, getString(R.string.failedLoading_reason, ex.getLocalizedMessage()), R.drawable.ic_error_outline_black_48dp);
+        recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
         Logging.logMe(this, ex);
     }
 
@@ -271,7 +256,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public void notifyMissingEngines(final List<MissingSearchEngine> missingEngines) {
         if (missingEngines.isEmpty()) return;
 
-        Snackbar.make(layout, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
+        Snackbar.make(recyclerViewLayout, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
                 .setAction(R.string.show, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -357,7 +342,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                             public void onGID(String gid) {
                                 dialogInterface.dismiss();
 
-                                Snackbar.make(SearchActivity.this.layout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
+                                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
                                         .setAction(R.string.show, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {

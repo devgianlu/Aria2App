@@ -109,5 +109,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="8dp"
-        android:text="@string/seeError" />
+        android:text="@string/seeError"
+        android:visibility="gone" />
 </FrameLayout>

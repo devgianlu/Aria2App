@@ -115,23 +115,10 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="false">
 
-                <android.support.v4.widget.SwipeRefreshLayout
-                    android:id="@+id/main_swipeLayout"
+                <com.gianlu.commonutils.RecyclerViewLayout
+                    android:id="@+id/main_recyclerViewLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/main_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scrollbars="vertical" />
-                </android.support.v4.widget.SwipeRefreshLayout>
-
-                <include
-                    layout="@layout/message_layout"
-                    android:visibility="gone" />
+                    android:layout_height="match_parent" />
 
                 <View
                     android:id="@+id/main_mask"
