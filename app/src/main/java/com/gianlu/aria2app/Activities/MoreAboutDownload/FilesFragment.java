@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -61,17 +62,17 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private DirBottomSheet dirSheet;
     private LinearLayout breadcrumbsContainer;
     private HorizontalScrollView breadcrumbs;
-    private Download download;
     private boolean isShowingHint;
     private RecyclerViewLayout recyclerViewLayout;
     private Messenger downloaderMessenger = null;
     private IWaitBinder boundWaiter;
+    private Download download;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.files));
-        args.putSerializable("download", download);
+        args.putSerializable("gid", download.gid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -101,31 +102,15 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (updater != null) updater.stopThread(null);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
-        breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
-        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
-        recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
-        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-
-        download = (Download) getArguments().getSerializable("download");
-        if (download == null) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            return layout;
-        }
-
+    private void setupView(CoordinatorLayout layout) {
         final int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
 
-        adapter = new FilesAdapter(getContext(), colorRes, this);
+        adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
-        fileSheet = new FileBottomSheet(layout, download, this);
-        dirSheet = new DirBottomSheet(layout, download, this);
+        fileSheet = new FileBottomSheet(layout, download, FilesFragment.this);
+        dirSheet = new DirBottomSheet(layout, download, FilesFragment.this);
 
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -149,22 +134,74 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         });
 
         try {
-            updater = new UpdateUI(getContext(), download.gid, this);
+            updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
             updater.start();
         } catch (JTA2InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.logMe(getContext(), ex);
+            return;
+        }
+
+        DownloaderUtils.bindService(getContext(), FilesFragment.this);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
+        final CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
+        breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
+        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
+        recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
+        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+
+        String gid = getArguments().getString("gid", null);
+        if (gid == null) {
+            recyclerViewLayout.showMessage(R.string.failedLoading, true);
             return layout;
         }
 
-        DownloaderUtils.bindService(getContext(), this);
+        JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(getContext());
+        } catch (JTA2InitializingException ex) {
+            Logging.logMe(getContext(), ex);
+            recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
+            return layout;
+        }
+
+        recyclerViewLayout.startLoading();
+
+        jta2.tellStatus(gid, null, new JTA2.IDownload() {
+            @Override
+            public void onDownload(final Download download) {
+                FilesFragment.this.download = download;
+
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setupView(layout);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Logging.logMe(getContext(), ex);
+                recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
+            }
+        });
 
         return layout;
     }
 
     @Override
     public void onUpdateHierarchy(List<AFile> files, String commonRoot) {
-        if (files.size() == 0 || files.get(0).path.isEmpty()) {
+        if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {
             recyclerViewLayout.showList();
@@ -316,12 +353,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         CommonUtils.showDialog(getActivity(), pd);
 
         if (downloaderMessenger != null) {
-            startDownloadInternal(pd, gid, profile, null, dir);
+            startDownloadInternal(profile, null, dir);
         } else {
             boundWaiter = new IWaitBinder() {
                 @Override
                 public void onBound() {
-                    startDownloadInternal(pd, gid, profile, null, dir);
+                    startDownloadInternal(profile, null, dir);
                 }
             };
         }
@@ -338,63 +375,43 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (dirSheet != null) dirSheet.collapse();
     }
 
-    private void startDownloadInternal(final ProgressDialog pd, String gid, final MultiProfile profile, @Nullable final AFile file, @Nullable final ADir dir) {
-        JTA2 jta2;
+    private void startDownloadInternal(final MultiProfile profile, @Nullable final AFile file, @Nullable final ADir dir) {
         try {
-            jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2InitializingException ex) {
-            pd.dismiss();
-            Toaster.show(getActivity(), Utils.Messages.FAILED_LOADING, ex);
+            DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
+        } catch (DownloaderUtils.InvalidPathException | URISyntaxException ex) {
+            if (file == null) Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
+            else Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
             return;
         }
 
-        jta2.tellStatus(gid, new String[]{"gid", "status", "dir"}, new JTA2.IDownload() {
-            @Override
-            public void onDownload(Download download) {
-                pd.dismiss();
+        Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                .setAction(R.string.show, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(getContext(), DirectDownloadActivity.class));
+                    }
+                }).show();
 
-                try {
-                    DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
-                } catch (DownloaderUtils.InvalidPathException | URISyntaxException ex) {
-                    onException(ex);
-                    return;
-                }
-
-                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.show, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startActivity(new Intent(getContext(), DirectDownloadActivity.class));
-                            }
-                        }).show();
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                pd.dismiss();
-
-                if (file == null)
-                    Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
-                else
-                    Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
-            }
-        });
+        Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                .setAction(R.string.show, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(getContext(), DirectDownloadActivity.class));
+                    }
+                }).show();
     }
 
     @Override
     public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AFile file) {
         if (fileSheet != null) fileSheet.collapse();
 
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
-        CommonUtils.showDialog(getActivity(), pd);
-
         if (downloaderMessenger != null) {
-            startDownloadInternal(pd, gid, profile, file, null);
+            startDownloadInternal(profile, file, null);
         } else {
             boundWaiter = new IWaitBinder() {
                 @Override
                 public void onBound() {
-                    startDownloadInternal(pd, gid, profile, file, null);
+                    startDownloadInternal(profile, file, null);
                 }
             };
         }
