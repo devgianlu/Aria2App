@@ -100,7 +100,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig recreate(Context context, DownloadTask task) throws DownloaderUtils.InvalidPathException, URISyntaxException, CannotCreateStartConfigException {
+    public static DownloadStartConfig recreate(Context context, DownloadTask task) {
         DownloadStartConfig config = new DownloadStartConfig(context, task.task.getProfileId());
         config.addTask(task.task.uri, task.task.destFile, task.task.username, task.task.password);
         return config;
@@ -115,14 +115,14 @@ public class DownloadStartConfig {
     }
 
     public static class CannotCreateStartConfigException extends Exception {
-        public final Cause cause;
+        final Cause cause;
 
-        public CannotCreateStartConfigException(Exception ex) {
+        CannotCreateStartConfigException(Exception ex) {
             super(ex);
             this.cause = Cause.INTERNAL;
         }
 
-        public CannotCreateStartConfigException(Cause cause) {
+        CannotCreateStartConfigException(Cause cause) {
             this.cause = cause;
         }
 
@@ -156,7 +156,7 @@ public class DownloadStartConfig {
         public final String password;
         public final boolean resumable;
 
-        public Task(int id, URI uri, File destFile, @Nullable String username, @Nullable String password, boolean resumable) {
+        Task(int id, URI uri, File destFile, @Nullable String username, @Nullable String password, boolean resumable) {
             this.uri = uri;
             this.destFile = destFile;
             this.username = username;
@@ -165,7 +165,7 @@ public class DownloadStartConfig {
             this.resumable = resumable;
         }
 
-        public Task(URI uri, File destFile, @Nullable String username, @Nullable String password) {
+        Task(URI uri, File destFile, @Nullable String username, @Nullable String password) {
             this(random.nextInt(), uri, destFile, username, password, false);
         }
 

@@ -96,7 +96,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-// FIXME: Issues loading downloads when some DirectDownloads are resumed
+// FIXME: Issues loading downloads when some DirectDownloads are resumed (and notifications are enabled)
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;

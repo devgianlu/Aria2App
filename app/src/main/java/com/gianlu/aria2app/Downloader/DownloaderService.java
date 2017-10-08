@@ -137,15 +137,7 @@ public class DownloaderService extends Service {
 
     private void restartDownload(int id) {
         DownloadTask task = downloads.find(id);
-        if (task != null) {
-            try {
-                startDownload(DownloadStartConfig.recreate(this, task));
-            } catch (DownloaderUtils.InvalidPathException | URISyntaxException | DownloadStartConfig.CannotCreateStartConfigException ex) {
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("ex", ex);
-                sendBroadcast(DownloaderUtils.ACTION_FAILED_RESTARTING, bundle);
-            }
-        }
+        if (task != null) startDownload(DownloadStartConfig.recreate(this, task));
     }
 
     private void getDownload(int id) {
@@ -304,8 +296,8 @@ public class DownloaderService extends Service {
         private final HttpGet get;
         private final File tempFile;
         private final DownloadStartConfig.Task singleTask;
-        private AtomicBoolean shouldStop = new AtomicBoolean(false);
-        private AtomicBoolean saveState = new AtomicBoolean(false);
+        private final AtomicBoolean shouldStop = new AtomicBoolean(false);
+        private final AtomicBoolean saveState = new AtomicBoolean(false);
 
         private DownloaderRunnable(DownloadStartConfig.Task task, HttpGet get, File tempFile) {
             this.singleTask = task;
