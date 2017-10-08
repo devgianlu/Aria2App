@@ -77,6 +77,10 @@ public class SavedDownloadsManager {
         save(context);
     }
 
+    public List<SavedState> getAll() {
+        return new ArrayList<>(savedStates);
+    }
+
     @Nullable
     public SavedState getSavedState(int id) {
         for (SavedState state : savedStates)

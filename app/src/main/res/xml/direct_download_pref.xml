@@ -11,4 +11,10 @@
         android:key="dd_maxSimultaneousDownloads"
         android:summary="@string/dd_maxSimultaneousDownloads_summary"
         android:title="@string/dd_maxSimultaneousDownloads" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="dd_resume"
+        android:summary="@string/dd_resume_summary"
+        android:title="@string/dd_resume" />
 </PreferenceScreen>

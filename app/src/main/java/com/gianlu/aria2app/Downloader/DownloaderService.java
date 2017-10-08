@@ -60,6 +60,17 @@ public class DownloaderService extends Service {
         executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getBooleanExtra("resume", false)) resumeSavedStates();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void resumeSavedStates() {
+        for (SavedDownloadsManager.SavedState state : savedDownloadsManager.getAll())
+            resumeInternal(state);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -149,7 +160,7 @@ public class DownloaderService extends Service {
         sendBroadcast(DownloaderUtils.ACTION_GET_DOWNLOAD, bundle);
     }
 
-    public static class DownloaderException extends Exception {
+    static class DownloaderException extends Exception {
         DownloaderException(Throwable cause) {
             super(cause);
         }
@@ -267,6 +278,13 @@ public class DownloaderService extends Service {
             int pos = indexOf(o);
             boolean a = super.remove(o);
             notifyItemRemoved(pos);
+
+            if (o instanceof DownloadTask) {
+                DownloadTask task = (DownloadTask) o;
+                if (task.task.resumable)
+                    savedDownloadsManager.removeState(DownloaderService.this, task.task.id);
+            }
+
             return a;
         }
 
@@ -332,12 +350,11 @@ public class DownloaderService extends Service {
                 if (singleTask.resumable && tempFile.exists()) {
                     long toSkip = tempFile.length();
                     if (toSkip <= 0) {
-                        saveState();
+                        removeState();
 
-                        task.status = DownloadTask.Status.PAUSED;
+                        task.status = DownloadTask.Status.FAILED;
                         task.ex = new DownloaderException("File length is lower than 0: " + toSkip);
                         downloads.notifyItemChanged(task);
-                        DownloaderService.this.activeRunnables.remove(this);
                         return;
                     }
 
@@ -350,6 +367,8 @@ public class DownloaderService extends Service {
                 StatusLine sl = resp.getStatusLine();
                 if (singleTask.resumable) {
                     if (sl.getStatusCode() != HttpStatus.SC_PARTIAL_CONTENT) {
+                        removeState();
+
                         task.status = DownloadTask.Status.FAILED;
                         task.ex = new DownloaderException("Server doesn't support partial content.");
                         downloads.notifyItemChanged(task);
@@ -357,6 +376,8 @@ public class DownloaderService extends Service {
                     }
                 } else {
                     if (sl.getStatusCode() != HttpStatus.SC_OK) {
+                        removeState();
+
                         task.status = DownloadTask.Status.FAILED;
                         task.ex = new DownloaderException(new StatusCodeException(sl));
                         downloads.notifyItemChanged(task);
@@ -407,12 +428,14 @@ public class DownloaderService extends Service {
                         task.status = DownloadTask.Status.PAUSED;
                         downloads.notifyItemChanged(task);
                         DownloaderService.this.activeRunnables.remove(this);
-                        return; // IMPORTANT: Won't delete the cache file
+                        return; // IMPORTANT: Won't delete the cache file and the state
                     } else {
                         downloads.removeById(singleTask.id);
                     }
                 } else {
                     if (!tempFile.renameTo(singleTask.destFile)) {
+                        removeState();
+
                         task.status = DownloadTask.Status.FAILED;
                         task.ex = new DownloaderException("Couldn't move completed download!");
                         downloads.notifyItemChanged(task);
@@ -426,12 +449,17 @@ public class DownloaderService extends Service {
 
                 if (!tempFile.delete()) tempFile.deleteOnExit();
 
+                removeState();
                 DownloaderService.this.activeRunnables.remove(this);
             } catch (IOException ex) {
                 task.status = DownloadTask.Status.FAILED;
                 task.ex = new DownloaderException(ex);
                 downloads.notifyItemChanged(task);
             }
+        }
+
+        private void removeState() {
+            savedDownloadsManager.removeState(DownloaderService.this, singleTask.id);
         }
     }
 }

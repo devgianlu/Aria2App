@@ -299,6 +299,8 @@
     <string name="failedOpeningDownload">Failed opening the download!</string>
     <string name="ddNotEnabled">DirectDownload isn\'t enabled on this profile!</string>
     <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>
+    <string name="dd_resume">Resume downloads</string>
+    <string name="dd_resume_summary">Resume paused downloads when the app is opened</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

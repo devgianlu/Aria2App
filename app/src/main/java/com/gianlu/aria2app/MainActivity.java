@@ -457,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             }
         }
 
-        DownloaderUtils.startService(this);
+        DownloaderUtils.startService(this, Prefs.getBoolean(this, PKeys.DD_RESUME, true));
     }
 
     @Override

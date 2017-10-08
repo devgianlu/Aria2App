@@ -16,7 +16,7 @@ public class DownloadTask implements Serializable {
     public long length;
     public float speed;
 
-    public DownloadTask(DownloadStartConfig.Task task) {
+    DownloadTask(DownloadStartConfig.Task task) {
         this.task = task;
         this.status = Status.PENDING;
         this.ex = null;

@@ -99,8 +99,8 @@ public class DownloaderUtils {
         return path;
     }
 
-    public static void startService(Context context) {
-        context.startService(new Intent(context, DownloaderService.class));
+    public static void startService(Context context, boolean resumeSavedStates) {
+        context.startService(new Intent(context, DownloaderService.class).putExtra("resume", resumeSavedStates));
     }
 
     public static void registerReceiver(Context context, BroadcastReceiver receiver, boolean notifyItemActions) {
