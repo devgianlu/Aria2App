@@ -14,6 +14,7 @@ public class DownloadTask implements Serializable {
     public DownloaderService.DownloaderException ex;
     public long downloaded;
     public long length;
+    public float speed;
 
     public DownloadTask(DownloadStartConfig.Task task) {
         this.task = task;

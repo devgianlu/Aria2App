@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Downloader.DownloadTask;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.List;
@@ -78,6 +80,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         holder.uri.setText(task.task.uri.toString());
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
@@ -91,15 +94,20 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         holder.status.setText(task.status.getFormal(context));
         holder.status.setTextColor(task.status.getColor(context));
 
+        holder.downloaded.setText(CommonUtils.dimensionFormatter(task.downloaded, false) + "/" + CommonUtils.dimensionFormatter(task.length, false));
+        holder.speed.setText(CommonUtils.speedFormatter(task.speed, false));
+
         if (task.length > 0) {
             float percentage = (float) task.downloaded / (float) task.length * 100;
             holder.progress.setIndeterminate(false);
             holder.progress.setProgress((int) percentage);
 
             holder.percentage.setText(String.format(Locale.getDefault(), "%.2f %%", percentage));
+            holder.remainingTime.setText(CommonUtils.timeFormatter((long) ((task.length - task.downloaded) / task.speed)));
         } else {
             holder.progress.setIndeterminate(true);
             holder.percentage.setVisibility(View.GONE);
+            holder.remainingTime.setVisibility(View.GONE);
         }
 
         switch (task.status) {
@@ -111,6 +119,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.remove.setVisibility(View.VISIBLE);
                 holder.progress.setVisibility(View.VISIBLE);
                 holder.percentage.setVisibility(View.VISIBLE);
+                holder.speed.setVisibility(View.GONE);
+                holder.remainingTime.setVisibility(View.GONE);
                 break;
             case RUNNING:
                 holder.open.setVisibility(View.GONE);
@@ -120,6 +130,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.remove.setVisibility(View.VISIBLE);
                 holder.progress.setVisibility(View.VISIBLE);
                 holder.percentage.setVisibility(View.VISIBLE);
+                holder.speed.setVisibility(View.VISIBLE);
+                holder.remainingTime.setVisibility(View.VISIBLE);
                 break;
             case PAUSED:
                 holder.open.setVisibility(View.GONE);
@@ -129,6 +141,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.remove.setVisibility(View.VISIBLE);
                 holder.progress.setVisibility(View.VISIBLE);
                 holder.percentage.setVisibility(View.VISIBLE);
+                holder.speed.setVisibility(View.GONE);
+                holder.remainingTime.setVisibility(View.GONE);
                 break;
             case FAILED:
                 holder.open.setVisibility(View.GONE);
@@ -138,6 +152,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.remove.setVisibility(View.VISIBLE);
                 holder.progress.setVisibility(View.GONE);
                 holder.percentage.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
+                holder.remainingTime.setVisibility(View.GONE);
                 break;
             case COMPLETED:
                 holder.open.setVisibility(View.VISIBLE);
@@ -147,6 +163,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.remove.setVisibility(View.VISIBLE);
                 holder.progress.setVisibility(View.GONE);
                 holder.percentage.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
+                holder.remainingTime.setVisibility(View.GONE);
                 break;
             case PENDING:
                 holder.open.setVisibility(View.GONE);
@@ -156,6 +174,8 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
                 holder.remove.setVisibility(View.VISIBLE);
                 holder.progress.setVisibility(View.GONE);
                 holder.percentage.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
+                holder.remainingTime.setVisibility(View.GONE);
                 break;
         }
     }
@@ -203,6 +223,9 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         final ImageButton pause;
         final ImageButton restart;
         final ImageButton remove;
+        final TextView downloaded;
+        final TextView speed;
+        final TextView remainingTime;
 
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.direct_download_item, parent, false));
@@ -218,6 +241,9 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
             restart = itemView.findViewById(R.id.directDownloadItem_restart);
             remove = itemView.findViewById(R.id.directDownloadItem_remove);
             open = itemView.findViewById(R.id.directDownloadItem_open);
+            downloaded = itemView.findViewById(R.id.directDownloadItem_downloaded);
+            speed = itemView.findViewById(R.id.directDownloadItem_speed);
+            remainingTime = itemView.findViewById(R.id.directDownloadItem_remainingTime);
         }
     }
 }

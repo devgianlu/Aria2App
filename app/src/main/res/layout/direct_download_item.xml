@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -60,60 +61,96 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:gravity="end"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="DisableBaselineAlignment">
 
-        <ImageButton
-            android:id="@+id/directDownloadItem_open"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:alpha="0.54"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_open_in_new_black_48dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/directDownloadItem_pause"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:alpha="0.54"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_pause_black_48dp" />
+            <TextView
+                android:id="@+id/directDownloadItem_downloaded"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp" />
 
-        <ImageButton
-            android:id="@+id/directDownloadItem_start"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:alpha="0.54"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_play_arrow_black_48dp" />
+            <TextView
+                android:id="@+id/directDownloadItem_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="13sp" />
 
-        <ImageButton
-            android:id="@+id/directDownloadItem_restart"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:alpha="0.54"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_refresh_black_48dp" />
+            <TextView
+                android:id="@+id/directDownloadItem_remainingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp" />
 
-        <ImageButton
-            android:id="@+id/directDownloadItem_remove"
-            android:layout_width="48dp"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="48dp"
-            android:alpha="0.54"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_clear_black_48dp" />
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/directDownloadItem_open"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_open_in_new_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/directDownloadItem_pause"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pause_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/directDownloadItem_start"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_play_arrow_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/directDownloadItem_restart"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_refresh_black_48dp" />
+
+            <ImageButton
+                android:id="@+id/directDownloadItem_remove"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_clear_black_48dp" />
+        </LinearLayout>
+
     </LinearLayout>
+
 
 </LinearLayout>

@@ -376,14 +376,25 @@ public class DownloaderService extends Service {
                     byte[] buffer = new byte[4096];
 
                     int count;
+                    long lastUpdateCount = 0;
+                    long lastUpdate = System.currentTimeMillis();
+                    long period;
                     while (!shouldStop.get() && (count = in.read(buffer)) != -1) {
                         out.write(buffer, 0, count);
                         out.flush();
 
                         downloaded += count;
+                        lastUpdateCount += count;
                         task.status = DownloadTask.Status.RUNNING;
                         task.downloaded = downloaded;
-                        downloads.notifyItemChanged(task); // FIXME: Refreshing too fast
+
+                        period = System.currentTimeMillis() - lastUpdate;
+                        if (period >= 500) {
+                            task.speed = (float) lastUpdateCount / ((float) period / 1000f);
+                            downloads.notifyItemChanged(task);
+                            lastUpdate = System.currentTimeMillis();
+                            lastUpdateCount = 0;
+                        }
                     }
                 }
 
