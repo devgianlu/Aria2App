@@ -108,16 +108,31 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                     layout.loadListData(adapter);
                     break;
                 case DownloaderUtils.ACTION_ITEM_INSERTED:
-                    if (adapter != null)
-                        adapter.addItemAndNotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (adapter != null)
+                                adapter.addItemAndNotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                        }
+                    });
                     break;
                 case DownloaderUtils.ACTION_ITEM_REMOVED:
-                    if (adapter != null)
-                        adapter.removeItemAndNotifyItemRemoved(intent.getIntExtra("pos", -1));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (adapter != null)
+                                adapter.removeItemAndNotifyItemRemoved(intent.getIntExtra("pos", -1));
+                        }
+                    });
                     break;
                 case DownloaderUtils.ACTION_ITEM_CHANGED:
-                    if (adapter != null)
-                        adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (adapter != null)
+                                adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
+                        }
+                    });
                     break;
                 case DownloaderUtils.ACTION_FAILED_RESTARTING:
                 case DownloaderUtils.ACTION_FAILED_RESUMING:

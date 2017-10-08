@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,14 +21,12 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     private final List<DownloadTask> tasks;
     private final LayoutInflater inflater;
     private final IAdapter listener;
-    private final Handler handler;
 
     public DownloadTasksAdapter(Context context, List<DownloadTask> tasks, IAdapter listener) {
         this.context = context;
         this.tasks = tasks;
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
-        this.handler = new Handler(context.getMainLooper());
         setHasStableIds(true);
     }
 
@@ -174,23 +171,13 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     }
 
     public void addItemAndNotifyItemInserted(final DownloadTask task) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                tasks.add(task);
-                notifyItemInserted(tasks.size() - 1);
-            }
-        });
+        tasks.add(task);
+        notifyItemInserted(tasks.size() - 1);
     }
 
     public void removeItemAndNotifyItemRemoved(final int pos) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (pos >= 0 && pos < tasks.size()) tasks.remove(pos);
-                notifyItemRemoved(pos);
-            }
-        });
+        if (pos >= 0 && pos < tasks.size()) tasks.remove(pos);
+        notifyItemRemoved(pos);
     }
 
     public interface IAdapter {
