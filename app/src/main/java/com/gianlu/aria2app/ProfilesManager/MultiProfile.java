@@ -318,6 +318,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final boolean auth;
         public final String username;
         public final String password;
+        private URI cachedUri;
 
         public DirectDownload(JSONObject obj) throws JSONException {
             address = obj.getString("addr");
@@ -340,7 +341,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public URI getURLAddress() throws URISyntaxException {
-            return new URI(address);
+            if (cachedUri == null) cachedUri = new URI(address);
+            return cachedUri;
         }
     }
 

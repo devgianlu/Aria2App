@@ -325,7 +325,23 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(MultiProfile profile, String gid, @NonNull ADir dir) { // TODO
+    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final ADir dir) {
+        if (fileSheet != null) fileSheet.collapse();
+
+        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
+        CommonUtils.showDialog(getActivity(), pd);
+
+        if (downloaderMessenger != null) {
+            startDownloadInternal(pd, gid, profile, null, dir);
+        } else {
+            boundWaiter = new IWaitBinder() {
+                @Override
+                public void onBound() {
+                    startDownloadInternal(pd, gid, profile, null, dir);
+                }
+            };
+        }
+
         ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_DOWNLOAD_DIRECTORY)
@@ -338,7 +354,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (dirSheet != null) dirSheet.collapse();
     }
 
-    private void startDownloadInternal(final ProgressDialog pd, String gid, final MultiProfile profile, final AFile file) {
+    private void startDownloadInternal(final ProgressDialog pd, String gid, final MultiProfile profile, @Nullable final AFile file, @Nullable final ADir dir) {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
@@ -354,7 +370,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 pd.dismiss();
 
                 try {
-                    DownloaderUtils.startDownload(downloaderMessenger, DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
+                    DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
                 } catch (DownloaderUtils.InvalidPathException | URISyntaxException ex) {
                     onException(ex);
                     return;
@@ -372,7 +388,11 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             @Override
             public void onException(Exception ex) {
                 pd.dismiss();
-                Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
+
+                if (file == null)
+                    Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
+                else
+                    Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
             }
         });
     }
@@ -385,12 +405,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         CommonUtils.showDialog(getActivity(), pd);
 
         if (downloaderMessenger != null) {
-            startDownloadInternal(pd, gid, profile, file);
+            startDownloadInternal(pd, gid, profile, file, null);
         } else {
             boundWaiter = new IWaitBinder() {
                 @Override
                 public void onBound() {
-                    startDownloadInternal(pd, gid, profile, file);
+                    startDownloadInternal(pd, gid, profile, file, null);
                 }
             };
         }

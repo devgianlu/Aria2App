@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Downloader;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.NetIO.JTA2.ADir;
 import com.gianlu.aria2app.NetIO.JTA2.AFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -33,6 +34,26 @@ public class DownloadStartConfig {
         this.profileId = profileId;
         this.tasks = new ArrayList<>();
         this.cacheDir = context.getExternalCacheDir();
+    }
+
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, ADir dir) throws DownloaderUtils.InvalidPathException, URISyntaxException {
+        if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
+
+        File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
+        DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
+
+        for (AFile file : dir.allObjs()) {
+            String relativePath = file.getRelativePath(download.dir);
+            File destFile = new File(downloadPath, relativePath);
+
+            MultiProfile.DirectDownload dd = profile.directDownload;
+            URIBuilder builder = new URIBuilder(dd.getURLAddress());
+            builder.setPath(relativePath);
+
+            config.addTask(builder.build(), destFile, dd.username, dd.password);
+        }
+
+        return config;
     }
 
     public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AFile file) throws DownloaderUtils.InvalidPathException, URISyntaxException {

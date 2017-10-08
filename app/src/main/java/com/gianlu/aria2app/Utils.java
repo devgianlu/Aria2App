@@ -263,7 +263,6 @@ public class Utils {
         public static final Toaster.Message FILE_SELECTED = new Toaster.Message(R.string.fileSelected, false);
         public static final Toaster.Message DIR_DESELECTED = new Toaster.Message(R.string.dirFilesDeselected, false);
         public static final Toaster.Message DIR_SELECTED = new Toaster.Message(R.string.dirFilesSelected, false);
-        public static final Toaster.Message DOWNLOAD_STARTED = new Toaster.Message(R.string.downloadStarted, false);
         public static final Toaster.Message CANT_DESELECT_ALL_FILES = new Toaster.Message(R.string.cannotDeselectAllFiles, false);
         public static final Toaster.Message FAILED_DOWNLOAD_DIR = new Toaster.Message(R.string.failedDownloadingDir, true);
         public static final Toaster.Message DUPLICATED_CONDITION = new Toaster.Message(R.string.duplicatedCondition, false);

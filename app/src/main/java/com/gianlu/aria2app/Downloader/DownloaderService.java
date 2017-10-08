@@ -79,13 +79,8 @@ public class DownloaderService extends Service {
     }
 
     private void startDownload(DownloadStartConfig config) {
-        if (config.tasks.isEmpty()) return;
-
-        if (config.tasks.size() == 1) {
-            startInternal(config.tasks.get(0));
-        } else {
-            // TODO: Simultaneous/consecutive download of multiple files (aka directory)
-        }
+        for (DownloadStartConfig.Task task : config.tasks)
+            startInternal(task);
     }
 
     private void startInternal(DownloadStartConfig.Task task) {
