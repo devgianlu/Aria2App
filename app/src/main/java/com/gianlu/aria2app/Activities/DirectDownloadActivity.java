@@ -81,8 +81,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
 
     @Override
     public void onRestart(int id) {
-        if (downloaderMessenger != null)
-            DownloaderUtils.restartDownload(downloaderMessenger, id); // FIXME: This messes up items in the RecyclerView
+        if (downloaderMessenger != null) DownloaderUtils.restartDownload(downloaderMessenger, id);
     }
 
     @Override
@@ -99,7 +98,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
 
         @Override
         @SuppressWarnings("unchecked")
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             if (intent.getAction() == null) return;
 
             switch (intent.getAction()) {
