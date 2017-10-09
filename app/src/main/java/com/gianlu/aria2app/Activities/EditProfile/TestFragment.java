@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
@@ -32,7 +33,15 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
 
     @Override
     public void addView(View view) {
-        if (testResults != null) testResults.addView(view);
+        if (testResults != null) {
+            testResults.addView(view);
+            testResults.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((ScrollView) testResults.getParent()).fullScroll(ScrollView.FOCUS_DOWN);
+                }
+            }, 100);
+        }
     }
 
     @Override
