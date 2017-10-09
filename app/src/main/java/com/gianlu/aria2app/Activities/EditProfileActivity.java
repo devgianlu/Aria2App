@@ -517,11 +517,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                     if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP || status.latency == -1) {
                         testFragment.onFieldError(TestFragment.POSITIVE, when + ": Connected successfully!");
 
-                        try {
-                            new Thread(new FunctionsTester(tester)).start();
-                        } catch (IllegalStateException ex) {
-                            onAria2Result(false, ex.getMessage());
-                        }
+                        new Thread(new FunctionsTester(tester)).start();
                     }
                 } else {
                     testFragment.onFieldError(TestFragment.NEGATIVE, when + ": Connection failed!");
@@ -540,8 +536,6 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                 testFragment.onFieldError(successful ? TestFragment.POSITIVE : TestFragment.NEGATIVE, message);
             }
         });
-
-        if (!successful) onEnd();
     }
 
     @Override

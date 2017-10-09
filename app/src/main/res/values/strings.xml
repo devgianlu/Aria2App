@@ -71,14 +71,13 @@
     <string name="uploadSpeed">Upload speed</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration: the address must be pointing to a directory listing of the aria2 download directory, any path added to the address will be ignored. This will require the permission to write to the external storage. You can follow this guide to set it up: http://gianlu.xyz/aria2app/setup-directdownload/.</string>
+    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration: the address must be pointing to a directory listing of the aria2 download directory, any path added to the address will be ignored. This will require the permission to write to the external storage. You can follow this guide to set it up: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="more">More</string>
     <string name="globalOptions">Global options</string>
-    <string name="menu_downloadOptions">Download options</string>
-    <string name="menu_refreshPage">Refresh page</string>
-    <string name="menu_preferences">Preferences</string>
+    <string name="downloadOptions">Download options</string>
+    <string name="refreshPage">Refresh page</string>
     <string name="general">General</string>
     <string name="hideLinkedMetadata">Hide linked meta-data</string>
     <string name="visibleMetadata">Linked meta-data visible</string>
@@ -100,10 +99,6 @@
     <string name="enablePersistent">Enable persistent notification service</string>
     <string name="persistentOn">Notification service will never go off</string>
     <string name="persistentOff">Notification service may not be live or may go off</string>
-    <string name="logs">Log files</string>
-    <string name="third_part">Third-part projects</string>
-    <string name="openDrawer">Open drawer</string>
-    <string name="closeDrawer">Close drawer</string>
     <string name="about_aria2">About aria2</string>
     <string name="saveSession">Save session</string>
     <string name="editProfile">Edit or delete profile</string>
@@ -125,7 +120,6 @@
     <string name="search">Search</string>
     <string name="addUri">Add URI</string>
     <string name="directDownload">DirectDownload</string>
-    <string name="apacheLicense">Licensed under Apache License 2.0</string>
     <string name="fileDownloader_details" translatable="false">Copyright 2015 LingoChamp Inc.</string>
     <string name="quickGlobalOptions">Quick global options</string>
     <string name="dd_downloadPath">Download path</string>

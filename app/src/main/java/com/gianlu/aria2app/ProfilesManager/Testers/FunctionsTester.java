@@ -8,9 +8,16 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.List;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.config.RequestConfig;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 public class FunctionsTester implements Runnable {
     private final ITesting listener;
@@ -18,7 +25,7 @@ public class FunctionsTester implements Runnable {
     private final NetProfileTester tester;
     private final MultiProfile.UserProfile profile;
 
-    public FunctionsTester(NetProfileTester tester) throws IllegalStateException {
+    public FunctionsTester(NetProfileTester tester) {
         this.listener = tester.listener;
         this.startTime = tester.startTime;
         this.tester = tester;
@@ -66,27 +73,33 @@ public class FunctionsTester implements Runnable {
 
                                     publishUpdate("Started DirectDownload test...");
 
-                                    try {
-                                        HttpURLConnection conn = (HttpURLConnection) new URL(dd.address).openConnection();
+                                    try (CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(RequestConfig.custom()
+                                            .setConnectTimeout(5000)
+                                            .setConnectionRequestTimeout(5000)
+                                            .setSocketTimeout(5000)
+                                            .build()).build()) {
+
+                                        HttpGet get = new HttpGet(dd.getURLAddress());
                                         if (dd.auth)
-                                            conn.addRequestProperty("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+                                            get.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
 
-                                        conn.connect();
-
-                                        if (conn.getResponseCode() == 200) {
+                                        HttpResponse resp = client.execute(get);
+                                        StatusLine sl = resp.getStatusLine();
+                                        if (sl.getStatusCode() == HttpStatus.SC_OK) {
                                             publishUpdate("DirectDownload is set up properly.");
                                             publishResult(true, "Everything is ok!");
                                             publishEnd();
-                                        } else if (conn.getResponseCode() == 401) {
-                                            publishResult(false, "401: " + conn.getResponseMessage());
+                                        } else if (sl.getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
+                                            publishResult(false, "401: " + sl.getReasonPhrase());
                                             publishUpdate("Username and/or password are wrong.");
+                                        } else {
+                                            publishResult(false, sl.getStatusCode() + ": " + sl.getReasonPhrase());
                                         }
 
-                                        conn.disconnect();
-                                    } catch (IOException ex) {
+                                        get.releaseConnection();
+                                    } catch (IOException | URISyntaxException ex) {
                                         publishResult(false, ex.getMessage());
                                     }
-
                                 } else {
                                     publishResult(true, "Everything is ok!");
                                     publishEnd();
