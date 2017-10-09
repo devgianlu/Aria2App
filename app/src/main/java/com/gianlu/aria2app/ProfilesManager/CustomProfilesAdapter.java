@@ -6,19 +6,20 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.gianlu.aria2app.ProfilesManager.Testers.HttpProfileTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.ITesting;
-import com.gianlu.aria2app.ProfilesManager.Testers.NetProfileTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.WsProfileTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.HttpTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.NetTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.WebSocketTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> implements ITesting {
+
+public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> implements NetTester.IProfileTester {
     private final IEdit editListener;
     private final ExecutorService service = Executors.newCachedThreadPool();
     private final Handler handler;
@@ -43,21 +44,21 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         holder.name.setText(profile.getProfileName(context));
         holder.secondary.setText(profile.getFullServerAddress());
 
-        if (profile.status.latency != -1) {
+        if (multi.status.latency != -1) {
             holder.ping.setVisibility(View.VISIBLE);
-            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", profile.status.latency));
+            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", multi.status.latency));
         } else {
             holder.ping.setVisibility(View.GONE);
         }
 
-        if (profile.status.status == MultiProfile.Status.UNKNOWN) {
+        if (multi.status.status == MultiProfile.Status.UNKNOWN) {
             holder.loading.setVisibility(View.VISIBLE);
             holder.status.setVisibility(View.GONE);
         } else {
             holder.loading.setVisibility(View.GONE);
             holder.status.setVisibility(View.VISIBLE);
 
-            switch (profile.status.status) {
+            switch (multi.status.status) {
                 case ONLINE:
                     holder.status.setImageResource(black ? R.drawable.ic_done_black_48dp : R.drawable.ic_done_white_48dp);
                     break;
@@ -86,21 +87,30 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         });
     }
 
-    private void notifyItemChanged(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
-        profile.setStatus(status);
+    private int indexOf(String profileId) {
+        for (int i = 0; i < profiles.size(); i++)
+            if (Objects.equals(profiles.get(i).id, profileId))
+                return i;
 
-        final int pos = indexOf(profile);
+        return -1;
+    }
+
+    private void notifyItemChanged(String profileId, MultiProfile.TestStatus status) {
+        int pos = indexOf(profileId);
         if (pos != -1) {
+            MultiProfile profile = profiles.get(pos);
+            profile.setStatus(status);
             notifyItemChanged(pos);
         }
     }
 
-    private int indexOf(MultiProfile.UserProfile match) {
-        for (int i = 0; i < profiles.size(); i++)
-            if (profiles.get(i).profiles.contains(match))
-                return i;
-
-        return -1;
+    private void notifyItemChanged(String profileId, long ping) {
+        int pos = indexOf(profileId);
+        if (pos != -1) {
+            MultiProfile profile = profiles.get(pos);
+            profile.updateStatusPing(ping);
+            notifyItemChanged(pos);
+        }
     }
 
     @Override
@@ -110,34 +120,32 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         switch (profile.connectionMethod) {
             default:
             case HTTP:
-                service.execute(new HttpProfileTester(context, profile, this));
+                service.submit(new HttpTester(context, profile, this));
                 break;
             case WEBSOCKET:
-                service.execute(new WsProfileTester(context, profile, this));
+                service.submit(new WebSocketTester(context, profile, this));
                 break;
         }
     }
 
     @Override
-    public void onUpdate(String message) {
-    }
-
-    @Override
-    public void onConnectionResult(NetProfileTester tester, final MultiProfile.UserProfile profile, final long when, final MultiProfile.TestStatus status) {
+    public void statusUpdated(final String profileId, final MultiProfile.TestStatus status) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                notifyItemChanged(profile, status);
+                notifyItemChanged(profileId, status);
             }
         });
     }
 
     @Override
-    public void onAria2Result(boolean successful, String message) {
-    }
-
-    @Override
-    public void onEnd() {
+    public void pingUpdated(final String profileId, final long ping) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemChanged(profileId, ping);
+            }
+        });
     }
 
     public interface IEdit {

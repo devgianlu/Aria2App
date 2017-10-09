@@ -5,8 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -35,11 +37,6 @@ import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.ProfilesManager.Testers.FunctionsTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.HttpProfileTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.ITesting;
-import com.gianlu.aria2app.ProfilesManager.Testers.NetProfileTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.WsProfileTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
@@ -54,7 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class EditProfileActivity extends AppCompatActivity implements TestFragment.ITestProfile, ITesting {
+public class EditProfileActivity extends AppCompatActivity implements TestFragment.IGetProfile {
     private MultiProfile editProfile;
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
@@ -64,7 +61,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     private List<DirectDownloadFragment> ddFragments;
     private TestFragment testFragment;
     private ViewPager pager;
-    private PagerAdapter<FieldErrorFragment> pagerAdapter;
+    private PagerAdapter<Fragment> pagerAdapter;
     private Spinner conditionsSpinner;
     private TabLayout tabLayout;
 
@@ -382,7 +379,9 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         int pos = pagerAdapter.indexOf(ex.fragmentClass);
         if (pos != -1) {
             pager.setCurrentItem(pos, true);
-            pagerAdapter.getItem(pos).onFieldError(ex.fieldId, ex.reason);
+            Fragment fragment = pagerAdapter.getItem(pos);
+            if (fragment instanceof FieldErrorFragment)
+                ((FieldErrorFragment) fragment).onFieldError(ex.fieldId, ex.reason);
         }
     }
 
@@ -469,83 +468,19 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         return true;
     }
 
+    @Nullable
     @Override
-    public void onTestRequested() {
-        if (testFragment == null) return;
-
-        MultiProfile multi;
-        try {
-            multi = buildProfile();
-        } catch (InvalidFieldException ex) {
-            handleInvalidFieldException(ex);
-            return;
-        }
-
-        NetProfileTester tester;
-        MultiProfile.UserProfile profile = multi.getProfile(this);
-        if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP)
-            tester = new HttpProfileTester(this, profile, this);
-        else
-            tester = new WsProfileTester(this, profile, this);
-
-        new Thread(tester).start();
-
+    public MultiProfile.UserProfile getProfile() {
         ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
                 .setCategory(ThisApplication.CATEGORY_USER_INPUT)
                 .setAction(ThisApplication.ACTION_STARTED_TEST)
                 .build());
-    }
 
-    @Override
-    public void onUpdate(final String message) {
-        if (testFragment == null) return;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                testFragment.onFieldError(TestFragment.UPDATE, message);
-            }
-        });
-    }
-
-    @Override
-    public void onConnectionResult(final NetProfileTester tester, final MultiProfile.UserProfile profile, final long when, final MultiProfile.TestStatus status) {
-        if (testFragment == null) return;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (status.status == MultiProfile.Status.ONLINE) {
-                    if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP || status.latency == -1) {
-                        testFragment.onFieldError(TestFragment.POSITIVE, when + ": Connected successfully!");
-
-                        new Thread(new FunctionsTester(tester)).start();
-                    }
-                } else {
-                    testFragment.onFieldError(TestFragment.NEGATIVE, when + ": Connection failed!");
-                    onEnd();
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onAria2Result(final boolean successful, final String message) {
-        if (testFragment == null) return;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                testFragment.onFieldError(successful ? TestFragment.POSITIVE : TestFragment.NEGATIVE, message);
-            }
-        });
-    }
-
-    @Override
-    public void onEnd() {
-        if (testFragment == null) return;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                testFragment.onFieldError(TestFragment.END, null);
-            }
-        });
+        try {
+            return buildProfile().getProfile(this);
+        } catch (InvalidFieldException ex) {
+            handleInvalidFieldException(ex);
+            return null;
+        }
     }
 }

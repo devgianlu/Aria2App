@@ -1,34 +1,53 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
+
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.SuperTextView;
 
-public class TestFragment extends FieldErrorFragment {
-    public static final int POSITIVE = 0;
-    public static final int NEGATIVE = 1;
-    public static final int UPDATE = 2;
-    public static final int END = 3;
-    private ITestProfile handler;
+public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
+    private IGetProfile handler;
     private LinearLayout testResults;
     private Button test;
 
-    public static TestFragment getInstance(Context context, ITestProfile handler) {
+    public static TestFragment getInstance(Context context, IGetProfile handler) {
         TestFragment fragment = new TestFragment();
         fragment.handler = handler;
         Bundle bundle = new Bundle();
         bundle.putString("title", context.getString(R.string.test));
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void addView(View view) {
+        if (testResults != null) testResults.addView(view);
+    }
+
+    @Override
+    public void clearViews() {
+        if (testResults != null) testResults.removeAllViews();
+    }
+
+    @Override
+    public void setButtonEnabled(boolean enabled) {
+        if (test != null) test.setEnabled(enabled);
+    }
+
+    private void startTest(@NonNull MultiProfile.UserProfile profile) {
+        TestersFlow flow = new TestersFlow(getContext(), profile, this);
+        flow.start();
     }
 
     @Nullable
@@ -39,9 +58,10 @@ public class TestFragment extends FieldErrorFragment {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onTestRequested();
-                if (testResults != null) testResults.removeAllViews();
-                test.setEnabled(false);
+                if (handler != null) {
+                    MultiProfile.UserProfile profile = handler.getProfile();
+                    if (profile != null) startTest(profile);
+                }
             }
         });
 
@@ -50,29 +70,8 @@ public class TestFragment extends FieldErrorFragment {
         return layout;
     }
 
-    @Override
-    public void onFieldError(int id, String message) {
-        Context context = getContext();
-        if (context == null) return;
-
-        switch (id) {
-            case END:
-                test.setEnabled(true);
-                break;
-            case POSITIVE:
-                testResults.addView(new SuperTextView(context, message, Color.GREEN));
-                break;
-            case NEGATIVE:
-                testResults.addView(new SuperTextView(context, message, Color.RED));
-                test.setEnabled(true);
-                break;
-            case UPDATE:
-                testResults.addView(new SuperTextView(context, message));
-                break;
-        }
-    }
-
-    public interface ITestProfile {
-        void onTestRequested();
+    public interface IGetProfile {
+        @Nullable
+        MultiProfile.UserProfile getProfile();
     }
 }

@@ -31,18 +31,21 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final String id;
     public final String name;
     public boolean notificationsEnabled;
+    public TestStatus status;
 
     public MultiProfile(String name, boolean enableNotifs) {
         this.name = name;
         this.notificationsEnabled = enableNotifs;
         this.id = ProfilesManager.getId(name);
-        profiles = new ArrayList<>();
+        this.profiles = new ArrayList<>();
+        this.status = new TestStatus(Status.UNKNOWN, null);
     }
 
     MultiProfile(JSONObject obj) throws JSONException {
         this.name = obj.getString("name");
         this.notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
         this.id = ProfilesManager.getId(name);
+        this.status = new TestStatus(Status.UNKNOWN, null);
 
         profiles = new ArrayList<>();
         if (obj.has("serverAddr")) { // Needed for backward compatibility
@@ -95,6 +98,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public MultiProfile(@NonNull String token, int port) {
         this.name = "Local device";
         this.id = ProfilesManager.getId(name);
+        this.status = new TestStatus(Status.UNKNOWN, null);
 
         profiles = new ArrayList<>();
         profiles.add(new UserProfile(token, port));
@@ -203,6 +207,14 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     public void add(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
         profiles.add(new UserProfile(cond, connFields, authFields, ddFields));
+    }
+
+    public void setStatus(TestStatus status) {
+        this.status = status;
+    }
+
+    public void updateStatusPing(long ping) {
+        this.status = new TestStatus(status.status, ping);
     }
 
     public enum ConnectionMethod {
@@ -349,13 +361,16 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public static class TestStatus implements Serializable {
         public final Status status;
         public final long latency;
+        public final Throwable ex;
 
         public TestStatus(Status status, long latency) {
             this.latency = latency;
             this.status = status;
+            this.ex = null;
         }
 
-        public TestStatus(Status status) {
+        public TestStatus(Status status, @Nullable Throwable ex) {
+            this.ex = ex;
             this.latency = -1;
             this.status = status;
         }
@@ -375,7 +390,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final DirectDownload directDownload;
         public final ConnectionMethod connectionMethod;
         public final ConnectivityCondition connectivityCondition;
-        public TestStatus status;
         private String encodedCredentials;
         private String fullServerAddress;
         private String websocketUrl;
@@ -398,7 +412,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverEndpoint = connFields.endpoint;
             directDownload = ddFields.dd;
             hostnameVerifier = connFields.hostnameVerifier;
-            this.status = new TestStatus(Status.UNKNOWN);
         }
 
         private UserProfile(String token, int port) {
@@ -415,7 +428,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             directDownload = null;
             connectivityCondition = ConnectivityCondition.newUniqueCondition();
             hostnameVerifier = false;
-            status = new TestStatus(Status.UNKNOWN);
+            status = new TestStatus(Status.UNKNOWN, null);
         }
 
         public UserProfile(JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
@@ -447,7 +460,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 connectivityCondition = new ConnectivityCondition(obj.getJSONObject("connectivityCondition"));
             }
 
-            status = new TestStatus(Status.UNKNOWN);
+            status = new TestStatus(Status.UNKNOWN, null);
         }
 
         @Nullable
@@ -460,10 +473,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         public MultiProfile getParent() {
             return MultiProfile.this;
-        }
-
-        public void setStatus(TestStatus status) {
-            this.status = status;
         }
 
         public String buildWebSocketUrl() {

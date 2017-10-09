@@ -20,16 +20,17 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketing extends AbstractClient {
     private static WebSocketing webSocketing;
     private static boolean locked = false;
     private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
-    private final List<Pair<JSONObject, IReceived>> connectionQueue = new ArrayList<>();
+    private final Queue<Pair<JSONObject, IReceived>> connectionQueue = new LinkedList<>();
     private IConnect connectionListener;
     private WebSocket socket;
 
@@ -38,12 +39,12 @@ public class WebSocketing extends AbstractClient {
         socket = NetUtils.readyWebSocket(context, profile).addListener(new Adapter()).connectAsynchronously();
     }
 
-    public WebSocketing(Context context, @Nullable IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+    private WebSocketing(Context context, @Nullable IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
         this(context);
         this.connectionListener = listener;
     }
 
-    public WebSocketing(Context context, MultiProfile.UserProfile profile, @Nullable IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    private WebSocketing(Context context, MultiProfile.UserProfile profile, @Nullable IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         super(context, profile);
         socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
         socket.addListener(new Adapter()).connectAsynchronously();
@@ -84,7 +85,7 @@ public class WebSocketing extends AbstractClient {
         }
     }
 
-    public static void unlock() {
+    private static void unlock() {
         locked = false;
     }
 

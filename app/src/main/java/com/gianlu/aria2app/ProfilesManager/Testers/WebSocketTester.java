@@ -2,12 +2,9 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.NetIO.IConnect;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
-import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.commonutils.Logging;
 import com.neovisionaries.ws.client.ThreadType;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -24,28 +21,23 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class WsProfileTester extends NetProfileTester implements WebSocketListener {
+public class WebSocketTester extends NetTester implements WebSocketListener, Callable<Boolean> {
+    private final AtomicBoolean returnValue = new AtomicBoolean();
     private long pingTime;
 
-    public WsProfileTester(Context context, MultiProfile.UserProfile profile, ITesting listener) {
+    WebSocketTester(Context context, MultiProfile.UserProfile profile, IPublish listener) {
         super(context, profile, listener);
     }
 
-    @Override
-    public void getClient(IConnect listener) {
-        try {
-            new WebSocketing(context, profile, listener);
-        } catch (CertificateException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException | IOException ex) {
-            listener.onFailedConnecting(ex);
-            Logging.logMe(context, ex);
-        }
+    public WebSocketTester(Context context, MultiProfile.UserProfile profile, IProfileTester profileListener) {
+        super(context, profile, profileListener);
     }
 
     @Override
-    public void run() {
-        publishUpdate("Started connection test...");
-
+    public Boolean call() {
         try {
             WebSocket webSocket;
             if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
@@ -54,31 +46,48 @@ public class WsProfileTester extends NetProfileTester implements WebSocketListen
                 webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, NetUtils.readyCertificate(context, profile));
 
             webSocket.addListener(this).connectAsynchronously();
+
+            synchronized (returnValue) {
+                returnValue.wait();
+                return returnValue.get();
+            }
         } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
-            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-            publishUpdate(ex.getMessage());
+            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, ex));
+            return false;
+        } catch (InterruptedException ignored) {
+            return false;
         }
     }
 
     @Override
+    public String describe() {
+        return "WebSocket connection test";
+    }
+
+    @Override
     public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
-        publishUpdate("State changed to " + newState.name().toLowerCase() + ".");
+        publishMessage("State changed ti " + newState.name().toLowerCase(), android.R.color.tertiary_text_light);
     }
 
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
-        publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE));
+        publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, null));
 
         pingTime = System.currentTimeMillis();
         websocket.sendPing();
-
-        publishUpdate("Sent ping.");
     }
 
     @Override
     public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
-        publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - pingTime));
-        publishUpdate("Ping successful after " + (System.currentTimeMillis() - pingTime) + "ms.");
+        publishPing(profile, System.currentTimeMillis() - pingTime);
+        notifyReturnValue(true);
+    }
+
+    private void notifyReturnValue(boolean value) {
+        synchronized (returnValue) {
+            returnValue.set(value);
+            returnValue.notify();
+        }
     }
 
     @Override
@@ -139,8 +148,8 @@ public class WsProfileTester extends NetProfileTester implements WebSocketListen
 
     @Override
     public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
-        publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-        publishUpdate(cause.getMessage());
+        publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, cause));
+        notifyReturnValue(false);
     }
 
     @Override
@@ -153,22 +162,24 @@ public class WsProfileTester extends NetProfileTester implements WebSocketListen
 
     @Override
     public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
-        if (exception.getCause() instanceof ConnectException)
-            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-        else if (exception.getCause() instanceof SocketTimeoutException)
-            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-        else
-            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
+        Throwable cause = exception.getCause();
 
-        publishUpdate(exception.getMessage());
+        if (cause instanceof ConnectException || cause instanceof SocketTimeoutException)
+            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, cause));
+        else
+            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, cause));
+
+        notifyReturnValue(false);
     }
 
     @Override
     public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
         if (closedByServer)
-            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR));
-        else publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE));
-        publishUpdate("Connection closed by " + (closedByServer ? "server" : "client" + "."));
+            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, null));
+        else
+            publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, null));
+
+        notifyReturnValue(false);
     }
 
     @Override
