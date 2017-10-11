@@ -21,9 +21,4 @@
         app:showAsAction="never">
         <menu><!-- SubMenu placeholder --></menu>
     </item>
-
-    <item
-        android:id="@+id/main_refreshPage"
-        android:title="@string/menu_refreshPage"
-        app:showAsAction="never" />
 </menu>

@@ -102,15 +102,15 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (updater != null) updater.stopThread(null);
     }
 
-    private void setupView(CoordinatorLayout layout) {
+    private void setupView() {
         final int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
 
         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
-        fileSheet = new FileBottomSheet(layout, download, FilesFragment.this);
-        dirSheet = new DirBottomSheet(layout, download, FilesFragment.this);
+        fileSheet.setDownload(download);
+        dirSheet.setDownload(download);
 
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -156,6 +156,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
+        fileSheet = new FileBottomSheet(layout, FilesFragment.this);
+        dirSheet = new DirBottomSheet(layout, FilesFragment.this);
+
         String gid = getArguments().getString("gid", null);
         if (gid == null) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
@@ -183,7 +186,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            setupView(layout);
+                            setupView();
                         }
                     });
                 }

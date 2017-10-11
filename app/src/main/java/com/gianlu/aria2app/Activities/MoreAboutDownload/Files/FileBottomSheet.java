@@ -23,9 +23,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileBottomSheet extends BaseBottomSheet<AFile> {
-    private final Download download;
     private final ISheet handler;
     private final Handler mainHandler;
+    private Download download;
     private SuperTextView index;
     private SuperTextView path;
     private SuperTextView length;
@@ -33,11 +33,14 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     private Button downloadFile;
     private CheckBox selected;
 
-    public FileBottomSheet(View parent, Download download, ISheet handler) {
+    public FileBottomSheet(View parent, ISheet handler) {
         super(parent, R.layout.file_sheet, true);
-        this.download = download;
         this.handler = handler;
         this.mainHandler = new Handler(Looper.getMainLooper());
+    }
+
+    public void setDownload(Download download) {
+        this.download = download;
     }
 
     @Override
@@ -52,6 +55,8 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
 
     @Override
     protected void setupView(@NonNull final AFile item) {
+        if (download == null) return;
+
         title.setText(item.getName());
         selected.setChecked(item.selected);
 
@@ -140,7 +145,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     }
 
     public void update(List<AFile> files) {
-        if (current == null) return;
+        if (current == null || download == null) return;
         update(AFile.find(files, current));
     }
 

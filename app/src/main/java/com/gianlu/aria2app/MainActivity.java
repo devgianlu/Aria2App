@@ -638,9 +638,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.main_refreshPage:
-                refresh();
-                break;
             // Filters
             case R.id.main_filter:
                 showFilteringDialog();

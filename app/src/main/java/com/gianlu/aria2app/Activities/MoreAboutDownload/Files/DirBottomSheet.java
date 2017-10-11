@@ -21,8 +21,8 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.List;
 
 public class DirBottomSheet extends BaseBottomSheet<ADir> {
-    private final Download download;
     private final ISheet handler;
+    private Download download;
     private SuperTextView indexes;
     private SuperTextView path;
     private SuperTextView length;
@@ -30,9 +30,8 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     private CheckBox selected;
     private Button downloadDir;
 
-    public DirBottomSheet(View parent, Download download, ISheet handler) {
+    public DirBottomSheet(View parent, ISheet handler) {
         super(parent, R.layout.dir_sheet, true);
-        this.download = download;
         this.handler = handler;
     }
 
@@ -47,12 +46,14 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     }
 
     public void update(List<AFile> files) {
-        if (current == null) return;
+        if (current == null || download == null) return;
         update(current.update(download, files));
     }
 
     @Override
     protected void setupView(@NonNull final ADir item) {
+        if (download == null) return;
+
         title.setText(item.name);
         selected.setChecked(item.allSelected());
 
@@ -136,6 +137,10 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         path.setHtml(R.string.path, item.fullPath);
         length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(item.totalLength, false));
         completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength, false));
+    }
+
+    public void setDownload(Download download) {
+        this.download = download;
     }
 
     public interface ISheet {
