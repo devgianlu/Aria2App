@@ -29,6 +29,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
     private Messenger downloaderMessenger;
     private RecyclerViewLayout layout;
     private DownloadTasksAdapter adapter;
+    private InternalBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +49,6 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         });
 
         layout.showMessage(R.string.noDirectDownloads, false);
-
-        DownloaderUtils.registerReceiver(this, new InternalBroadcastReceiver(), true);
-        DownloaderUtils.bindService(this, this);
     }
 
     @Override
@@ -60,15 +58,30 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName name) {
-        downloaderMessenger = null;
+    protected void onStart() {
+        super.onStart();
 
-        Toaster.show(this, Utils.Messages.FAILED_LOADING, new Runnable() {
-            @Override
-            public void run() {
-                onBackPressed();
-            }
-        });
+        if (receiver == null) {
+            receiver = new InternalBroadcastReceiver();
+            DownloaderUtils.registerReceiver(this, receiver, true);
+        }
+
+        DownloaderUtils.bindService(this, this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        DownloaderUtils.unbindService(this, this);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        DownloaderUtils.unregisterReceiver(this, receiver);
+        receiver = null;
+
+        downloaderMessenger = null;
     }
 
     @Override

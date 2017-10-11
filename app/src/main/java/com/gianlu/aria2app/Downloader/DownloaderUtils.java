@@ -120,10 +120,11 @@ public class DownloaderUtils {
     }
 
     public static void unregisterReceiver(Context context, BroadcastReceiver receiver) {
+        if (receiver == null) return;
         LocalBroadcastManager.getInstance(context.getApplicationContext()).unregisterReceiver(receiver);
     }
 
-    public static void unbindServer(Context context, ServiceConnection conn) {
+    public static void unbindService(Context context, ServiceConnection conn) {
         context.getApplicationContext().unbindService(conn);
     }
 

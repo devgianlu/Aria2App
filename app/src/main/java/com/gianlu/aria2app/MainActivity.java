@@ -96,7 +96,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-// FIXME: Issues loading downloads when some DirectDownloads are resumed (and notifications are enabled)
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection {
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -521,7 +520,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             return;
         }
 
-        if (downloaderMessenger != null) DownloaderUtils.listDownloads(downloaderMessenger);
+        if (downloaderMessenger != null) DownloaderUtils.refreshCount(downloaderMessenger);
     }
 
     @Override
@@ -937,20 +936,19 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     protected void onStart() {
         super.onStart();
 
-        DownloaderUtils.bindService(this, this);
+        if (broadcastReceiver == null) {
+            broadcastReceiver = new InternalBroadcastReceiver();
+            DownloaderUtils.registerReceiver(this, broadcastReceiver, false);
+        }
 
-        broadcastReceiver = new InternalBroadcastReceiver();
-        DownloaderUtils.registerReceiver(this, broadcastReceiver, false);
+        DownloaderUtils.bindService(this, this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        DownloaderUtils.unregisterReceiver(this, broadcastReceiver);
-        broadcastReceiver = null;
-
-        DownloaderUtils.unbindServer(this, this);
+        DownloaderUtils.unbindService(this, this);
     }
 
     @Nullable
@@ -1047,6 +1045,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
+        DownloaderUtils.unregisterReceiver(this, broadcastReceiver);
+        broadcastReceiver = null;
+
         downloaderMessenger = null;
     }
 
