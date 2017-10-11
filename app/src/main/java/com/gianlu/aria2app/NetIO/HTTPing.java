@@ -3,7 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
+import com.gianlu.aria2app.NetIO.JTA2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 
@@ -142,7 +142,7 @@ public class HTTPing extends AbstractClient {
                     } else {
                         JSONObject obj = new JSONObject(json);
                         if (obj.has("error")) {
-                            listener.onException(new Aria2Exception(obj.getJSONObject("error")));
+                            listener.onException(new AriaException(obj.getJSONObject("error")));
                         } else {
                             listener.onResponse(obj);
                         }

@@ -426,7 +426,7 @@ public class JTA2 {
                 if (Objects.equals(response.optString("result"), "OK"))
                     handler.onSuccess();
                 else
-                    handler.onException(new Aria2Exception(response.toString(), -1));
+                    handler.onException(new AriaException(response.toString(), -1));
             }
 
             @Override
@@ -827,7 +827,7 @@ public class JTA2 {
                 if (Objects.equals(response.optString("result"), "OK"))
                     handler.onSuccess();
                 else
-                    handler.onException(new Aria2Exception(response.toString(), -1));
+                    handler.onException(new AriaException(response.toString(), -1));
             }
 
             @Override
@@ -962,7 +962,7 @@ public class JTA2 {
                 if (Objects.equals(response.optString("result"), "OK"))
                     handler.onSuccess();
                 else
-                    handler.onException(new Aria2Exception(response.toString(), -1));
+                    handler.onException(new AriaException(response.toString(), -1));
             }
 
             @Override
@@ -992,7 +992,7 @@ public class JTA2 {
                     response.getInt("result");
                     handler.onSuccess();
                 } catch (Exception ex) {
-                    handler.onException(new Aria2Exception(response.toString(), -1));
+                    handler.onException(new AriaException(response.toString(), -1));
                 }
             }
 
@@ -1025,7 +1025,7 @@ public class JTA2 {
                 if (Objects.equals(response.optString("result"), "OK"))
                     handler.onSuccess();
                 else
-                    handler.onException(new Aria2Exception(response.toString(), -1));
+                    handler.onException(new AriaException(response.toString(), -1));
             }
 
             @Override
@@ -1054,8 +1054,8 @@ public class JTA2 {
 
             @Override
             public void onException(Exception ex) {
-                if (ex instanceof Aria2Exception) {
-                    Aria2Exception exx = (Aria2Exception) ex;
+                if (ex instanceof AriaException) {
+                    AriaException exx = (AriaException) ex;
                     if (exx.code == 1 && exx.reason.startsWith("No active download")) {
                         handler.onDownloadNotActive(ex);
                         return;
@@ -1086,8 +1086,8 @@ public class JTA2 {
 
             @Override
             public void onException(Exception ex) {
-                if (ex instanceof Aria2Exception) {
-                    Aria2Exception exx = (Aria2Exception) ex;
+                if (ex instanceof AriaException) {
+                    AriaException exx = (AriaException) ex;
                     if (exx.code == 1 && exx.reason.startsWith("No peer data")) {
                         handler.onNoPeerData(ex);
                         return;

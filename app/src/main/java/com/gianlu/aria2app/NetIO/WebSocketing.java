@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 
-import com.gianlu.aria2app.NetIO.JTA2.Aria2Exception;
+import com.gianlu.aria2app.NetIO.JTA2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.neovisionaries.ws.client.WebSocket;
@@ -161,7 +161,7 @@ public class WebSocketing extends AbstractClient {
             if (response.isNull("error")) {
                 handler.onResponse(response);
             } else {
-                handler.onException(new Aria2Exception(response.getJSONObject("error")));
+                handler.onException(new AriaException(response.getJSONObject("error")));
             }
         }
 
