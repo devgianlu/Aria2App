@@ -75,9 +75,7 @@
     <string name="password">密码</string>
     <string name="more">更多</string>
     <string name="globalOptions">全局选项</string>
-    <string name="menu_downloadOptions">下载选项</string>
-    <string name="menu_refreshPage">刷新页面</string>
-    <string name="menu_preferences">偏好</string>
+    <string name="downloadOptions">下载选项</string>
     <string name="general">通用</string>
     <string name="hideLinkedMetadata">隐藏关联的媒体数据</string>
     <string name="visibleMetadata">关联的媒体数据可见</string>
@@ -99,10 +97,6 @@
     <string name="enablePersistent">启用持久化通知服务</string>
     <string name="persistentOn">通知服务永不关闭</string>
     <string name="persistentOff">通知服务可能不在线或被关闭</string>
-    <string name="logs">日志文件</string>
-    <string name="third_part">第三方项目</string>
-    <string name="openDrawer">打开抽屉</string>
-    <string name="closeDrawer">关闭抽屉</string>
     <string name="about_aria2">关于aria2</string>
     <string name="saveSession">保存会话</string>
     <string name="editProfile">编辑或删除配置</string>
@@ -124,7 +118,6 @@
     <string name="search">搜索</string>
     <string name="addUri">添加网址</string>
     <string name="directDownload">直接下载</string>
-    <string name="apacheLicense">Apache License 2.0许可</string>
     <string name="quickGlobalOptions">快捷全局选项</string>
     <string name="dd_downloadPath">下载路径</string>
     <string name="dd_downloadPath_summary">所有文件将必下载到这里。</string>
@@ -283,7 +276,22 @@
     <string name="searchEngines">搜索引擎</string>
     <string name="noEnginesSelected">选择至少一个搜索引擎！</string>
     <string name="searchEngine_offline">该服务暂时不可用，它将在几分钟后再次上线。</string>
+    <string name="dd_maxSimultaneousDownloads_summary">同时运行的最大下载次数</string>
+    <string name="dd_maxSimultaneousDownloads">最大同时下载</string>
+    <string name="pending">有待</string>
+    <string name="started">入门</string>
     <string name="noFiles">没有文件可以显示。 当下载被添加到\"pause=true\"时可能会出现这种情况</string>
+    <string name="failed">失败</string>
+    <string name="running">不断的</string>
+    <string name="paused">暂停</string>
+    <string name="removed">删除</string>
+    <string name="failedOpeningDownload">无法打开下载！</string>
+    <string name="ddNotEnabled">此配置文件上未启用DirectDownload功能！</string>
+    <string name="profileDoesntExist">此个人资料不再存在！</string>
+    <string name="dd_resume">恢复下载</string>
+    <string name="dd_resume_summary">打开应用程序时恢复暂停的下载</string>
+    <string name="noDirectDownloads">没有下载。 您可以从下载的“文件”选项卡开始下载文件。 请阅读更多关于DirectDownload的信息：http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="invalidMaxSimultaneousDownloads">值必须高于0且低于或等于10</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

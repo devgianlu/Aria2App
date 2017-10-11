@@ -10,6 +10,6 @@
 
     <item
         android:id="@+id/moreAboutDownload_options"
-        android:title="@string/menu_downloadOptions"
+        android:title="@string/downloadOptions"
         app:showAsAction="never" />
 </menu>

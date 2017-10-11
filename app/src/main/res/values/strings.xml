@@ -77,7 +77,6 @@
     <string name="more">More</string>
     <string name="globalOptions">Global options</string>
     <string name="downloadOptions">Download options</string>
-    <string name="refreshPage">Refresh page</string>
     <string name="general">General</string>
     <string name="hideLinkedMetadata">Hide linked meta-data</string>
     <string name="visibleMetadata">Linked meta-data visible</string>
@@ -286,6 +285,7 @@
     <string name="invalidMaxSimultaneousDownloads">Value must be higher than 0 and lower or equal to 10</string>
     <string name="pending">Pending</string>
     <string name="started">Started</string>
+    <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
     <string name="failed">Failed</string>
     <string name="running">Running</string>
     <string name="paused">Paused</string>

@@ -74,9 +74,7 @@
     <string name="password">Пароль:</string>
     <string name="more">Еще</string>
     <string name="globalOptions">Глобальные настройки</string>
-    <string name="menu_downloadOptions">Настройки загрузки</string>
-    <string name="menu_refreshPage">Обновить список</string>
-    <string name="menu_preferences">Настройки</string>
+    <string name="downloadOptions">Настройки загрузки</string>
     <string name="general">Общие</string>
     <string name="hideLinkedMetadata">Скрыть связанные метаданные</string>
     <string name="visibleMetadata">Показать связанные метаданные</string>
@@ -98,10 +96,6 @@
     <string name="enablePersistent">Включить службу постоянных уведомлений</string>
     <string name="persistentOn">Служба уведомлений работает всегда</string>
     <string name="persistentOff">Служба уведомлений может выключится со временем</string>
-    <string name="logs">Лог-файлы</string>
-    <string name="third_part">Третьи стороны проекта</string>
-    <string name="openDrawer">Открыть ящик</string>
-    <string name="closeDrawer">Закрыть ящик</string>
     <string name="about_aria2">Версия сервера Aria2</string>
     <string name="saveSession">Сохранить сеанс</string>
     <string name="editProfile">Редактировать или удалить профиль</string>
@@ -123,7 +117,6 @@
     <string name="search">Поиск</string>
     <string name="addUri">Добавить URI</string>
     <string name="directDownload">Прямая загрузка</string>
-    <string name="apacheLicense">Лицензия от Apache License 2.0</string>
     <string name="quickGlobalOptions">Быстрые глобальные настройки</string>
     <string name="dd_downloadPath">Путь к загрузке</string>
     <string name="dd_downloadPath_summary">Все файлы будут загружены сюда.</string>
@@ -282,7 +275,22 @@
     <string name="searchEngines">Поисковые системы</string>
     <string name="noEnginesSelected">Выберите хотя бы одну поисковую систему!</string>
     <string name="searchEngine_offline">Услуга временно недоступна, она будет доступна через несколько минут.</string>
+    <string name="dd_maxSimultaneousDownloads_summary">Максимальное количество загрузок одновременно.</string>
+    <string name="dd_maxSimultaneousDownloads">Максимальная одновременная загрузка</string>
+    <string name="pending">в ожидании</string>
+    <string name="started">Начал</string>
     <string name="noFiles">Нет файлов для отображения. Это может произойти, когда загрузка будет добавлена с \"pause=true\"</string>
+    <string name="failed">Не смогли</string>
+    <string name="running">работающий</string>
+    <string name="paused">Paused</string>
+    <string name="removed">Удалены</string>
+    <string name="failedOpeningDownload">Не удалось открыть загрузку!</string>
+    <string name="ddNotEnabled">\"Прямую загрузку\" не включен в этот профиль!</string>
+    <string name="profileDoesntExist">Этот профиль больше не существует!</string>
+    <string name="dd_resume">Возобновление загрузки</string>
+    <string name="dd_resume_summary">Возобновление приостановки загрузки при открытии приложения</string>
+    <string name="noDirectDownloads">Нет загрузок. Вы можете начать загрузку файла со вкладки «Файлы» загрузки. Подробнее о \"Прямую загрузку\" здесь: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="invalidMaxSimultaneousDownloads">Значение должно быть выше 0 и ниже или равно 10</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
