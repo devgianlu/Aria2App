@@ -13,8 +13,8 @@ import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import com.gianlu.aria2app.FileTypeImageView;
-import com.gianlu.aria2app.NetIO.JTA2.ADir;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
@@ -37,7 +37,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.handler = handler;
     }
 
-    public void update(List<AFile> files, String commonRoot) {
+    public void update(List<AriaFile> files, String commonRoot) {
         if (currentNode == null) {
             currentNode = TreeNode.create(files, commonRoot);
             notifyCurrentDirChanged();
@@ -45,10 +45,10 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         currentNode.updateHierarchy(files);
-        for (AFile file : files) notifyItemChanged(file);
+        for (AriaFile file : files) notifyItemChanged(file);
     }
 
-    public void notifyItemChanged(AFile file) {
+    public void notifyItemChanged(AriaFile file) {
         int pos = currentNode.indexOfObj(file);
         if (pos != -1) {
             currentNodes.get(pos + currentNode.dirs.size()).update(file);
@@ -73,7 +73,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         } else {
             if (holder instanceof FileViewHolder) {
                 FileViewHolder castHolder = (FileViewHolder) holder;
-                AFile payload = (AFile) payloads.get(0);
+                AriaFile payload = (AriaFile) payloads.get(0);
 
                 castHolder.progressBar.setProgress((int) payload.getProgress());
                 castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", payload.getProgress()));
@@ -168,11 +168,11 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return currentNode != null && !currentNode.isRoot();
     }
 
-    public void notifyItemsChanged(ADir dir, boolean selected) {
-        List<AFile> files = dir.objs();
-        for (AFile file : files) file.selected = selected;
+    public void notifyItemsChanged(AriaDirectory dir, boolean selected) {
+        List<AriaFile> files = dir.objs();
+        for (AriaFile file : files) file.selected = selected;
         currentNode.updateHierarchy(files);
-        for (AFile file : files) notifyItemChanged(file);
+        for (AriaFile file : files) notifyItemChanged(file);
     }
 
     public TreeNode getCurrentNode() {
@@ -180,7 +180,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public interface IAdapter {
-        void onFileSelected(AFile file);
+        void onFileSelected(AriaFile file);
 
         void onDirectoryChanged(TreeNode dir);
 
@@ -215,7 +215,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             formatIcon = itemView.findViewById(R.id.fileItem_formatIcon);
         }
 
-        public void updateStatus(AFile file) {
+        public void updateStatus(AriaFile file) {
             if (file.completed()) {
                 status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
             } else if (file.selected) {

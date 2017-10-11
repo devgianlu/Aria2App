@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 
@@ -61,7 +61,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IFiles {
     }
 
     @Override
-    public void onFiles(final List<AFile> files) {
+    public void onFiles(final List<AriaFile> files) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -76,7 +76,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IFiles {
     }
 
     public interface IUI {
-        void onUpdateHierarchy(List<AFile> files, String commonRoot);
+        void onUpdateHierarchy(List<AriaFile> files, String commonRoot);
 
         void onFatalException(Exception ex);
     }

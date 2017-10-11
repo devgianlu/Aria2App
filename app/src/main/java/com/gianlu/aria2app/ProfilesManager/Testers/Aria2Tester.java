@@ -11,12 +11,6 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,7 +21,7 @@ class Aria2Tester extends BaseTester {
     }
 
     @Nullable
-    private AbstractClient getClient() throws CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException, URISyntaxException {
+    private AbstractClient getClient() {
         final AtomicReference<AbstractClient> returnValue = new AtomicReference<>();
 
         IConnect listener = new IConnect() {
@@ -138,15 +132,9 @@ class Aria2Tester extends BaseTester {
 
     @Override
     protected Boolean call() {
-        JTA2 jta2;
-        try {
-            AbstractClient client = getClient();
-            if (client == null) return false;
-            jta2 = new JTA2(context, client);
-        } catch (URISyntaxException | KeyStoreException | KeyManagementException | IOException | CertificateException | NoSuchAlgorithmException ex) {
-            publishError(ex, false);
-            return false;
-        }
+        AbstractClient client = getClient();
+        if (client == null) return false;
+        JTA2 jta2 = new JTA2(context, client);
 
         publishMessage("Started not authenticated request...", android.R.color.tertiary_text_light);
         if (!listMethods(jta2)) return false;

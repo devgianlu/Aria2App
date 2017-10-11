@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
@@ -23,8 +22,8 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
     private SuperTextView currentUri;
     private SuperTextView uri;
 
-    public ServerBottomSheet(View parent, @LayoutRes int layoutRes) {
-        super(parent, layoutRes, false);
+    public ServerBottomSheet(View parent) {
+        super(parent, R.layout.server_sheet, false);
     }
 
     @Override

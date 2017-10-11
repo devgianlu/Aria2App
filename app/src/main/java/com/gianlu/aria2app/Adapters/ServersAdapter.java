@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
@@ -31,10 +31,10 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (listener != null) listener.onItemCountUpdated(objs.size());
     }
 
-    private void createObjs(SparseArray<List<Server>> servers, List<AFile> files) {
+    private void createObjs(SparseArray<List<Server>> servers, List<AriaFile> files) {
         objs.clear();
 
-        for (AFile file : files) {
+        for (AriaFile file : files) {
             List<Server> fileServers = servers.get(file.index, new ArrayList<Server>());
             if (!fileServers.isEmpty()) {
                 objs.add(file);
@@ -73,7 +73,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
         } else if (holder instanceof HeaderViewHolder) {
-            AFile file = (AFile) objs.get(position);
+            AriaFile file = (AriaFile) objs.get(position);
             HeaderViewHolder castHolder = (HeaderViewHolder) holder;
 
             castHolder.name.setText(file.getName());
@@ -92,7 +92,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 castHolder.address.setText(server.currentUri);
                 castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
             } else if (holder instanceof HeaderViewHolder) {
-                AFile file = (AFile) payloads.get(0);
+                AriaFile file = (AriaFile) payloads.get(0);
                 HeaderViewHolder castHolder = (HeaderViewHolder) holder;
 
                 castHolder.name.setText(file.getName());
@@ -107,8 +107,8 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private int indexOfHeader(int index) {
         for (int i = 0; i < objs.size(); i++)
-            if (objs.get(i) instanceof AFile)
-                if (((AFile) objs.get(i)).index == index)
+            if (objs.get(i) instanceof AriaFile)
+                if (((AriaFile) objs.get(i)).index == index)
                     return i;
 
         return -1;
@@ -128,12 +128,12 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (pos != -1) notifyItemChanged(pos, server);
     }
 
-    public void notifyItemsChanged(SparseArray<List<Server>> servers, List<AFile> files) {
+    public void notifyItemsChanged(SparseArray<List<Server>> servers, List<AriaFile> files) {
         createObjs(servers, files);
-        for (AFile file : files) notifyHeaderChanged(file, servers.get(file.index));
+        for (AriaFile file : files) notifyHeaderChanged(file, servers.get(file.index));
     }
 
-    private void notifyHeaderChanged(AFile file, List<Server> servers) {
+    private void notifyHeaderChanged(AriaFile file, List<Server> servers) {
         int pos = indexOfHeader(file.index);
         if (pos != -1) {
             notifyItemChanged(pos, file);

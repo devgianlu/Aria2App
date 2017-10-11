@@ -3,8 +3,8 @@ package com.gianlu.aria2app.Downloader;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.JTA2.ADir;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -36,13 +36,13 @@ public class DownloadStartConfig {
         this.cacheDir = context.getExternalCacheDir();
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, ADir dir) throws DownloaderUtils.InvalidPathException, URISyntaxException {
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, URISyntaxException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
 
-        for (AFile file : dir.allObjs()) {
+        for (AriaFile file : dir.allObjs()) {
             String relativePath = file.getRelativePath(download.dir);
             File destFile = new File(downloadPath, relativePath);
 
@@ -56,7 +56,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AFile file) throws DownloaderUtils.InvalidPathException, URISyntaxException {
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, URISyntaxException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);

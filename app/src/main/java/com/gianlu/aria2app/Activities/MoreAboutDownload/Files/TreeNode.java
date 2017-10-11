@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +15,9 @@ public class TreeNode {
     public final String incrementalPath;
     public final String name;
     public final TreeNode parent;
-    public AFile obj;
+    public AriaFile obj;
 
-    public TreeNode(TreeNode parent, String incrementalPath, AFile obj) {
+    public TreeNode(TreeNode parent, String incrementalPath, AriaFile obj) {
         this.parent = parent;
         this.incrementalPath = incrementalPath;
         this.obj = obj;
@@ -64,9 +64,9 @@ public class TreeNode {
         else SEPARATOR = "/";
     }
 
-    public static TreeNode create(List<AFile> files, String commonRoot) {
+    public static TreeNode create(List<AriaFile> files, String commonRoot) {
         TreeNode rootNode = new TreeNode(null, SEPARATOR, "");
-        for (AFile file : files) rootNode.addElement(file, commonRoot);
+        for (AriaFile file : files) rootNode.addElement(file, commonRoot);
         return rootNode;
     }
 
@@ -74,17 +74,17 @@ public class TreeNode {
         return allSelected(this);
     }
 
-    public List<AFile> allObjs() {
+    public List<AriaFile> allObjs() {
         if (isFile()) return Collections.singletonList(obj);
-        List<AFile> objs = new ArrayList<>();
+        List<AriaFile> objs = new ArrayList<>();
         objs.addAll(objs());
         for (TreeNode dir : dirs) objs.addAll(dir.allObjs());
         return objs;
     }
 
-    public List<AFile> objs() {
+    public List<AriaFile> objs() {
         if (isFile()) return Collections.singletonList(obj);
-        List<AFile> objs = new ArrayList<>();
+        List<AriaFile> objs = new ArrayList<>();
         for (TreeNode file : files) objs.add(file.obj);
         return objs;
     }
@@ -94,20 +94,20 @@ public class TreeNode {
         return parent.root();
     }
 
-    public void updateHierarchy(List<AFile> objs) {
+    public void updateHierarchy(List<AriaFile> objs) {
         TreeNode root = root();
         root.updateOrFall(new ArrayList<>(objs));
     }
 
-    private void updateOrFall(List<AFile> newFiles) {
+    private void updateOrFall(List<AriaFile> newFiles) {
         if (isFile()) {
-            update(AFile.find(newFiles, this.obj));
+            update(AriaFile.find(newFiles, this.obj));
             return;
         }
 
         for (TreeNode file : files) {
-            List<AFile> toRemove = new ArrayList<>();
-            for (AFile newFile : newFiles) {
+            List<AriaFile> toRemove = new ArrayList<>();
+            for (AriaFile newFile : newFiles) {
                 if (file.obj.equals(newFile)) {
                     file.obj = newFile;
                     toRemove.add(newFile);
@@ -120,11 +120,11 @@ public class TreeNode {
         for (TreeNode dir : dirs) dir.updateOrFall(newFiles);
     }
 
-    public void update(AFile file) {
+    public void update(AriaFile file) {
         this.obj = file;
     }
 
-    public int indexOfObj(AFile obj) {
+    public int indexOfObj(AriaFile obj) {
         if (isFile()) return -1;
         for (int i = 0; i < files.size(); i++) {
             if (Objects.equals(files.get(i).obj, obj))
@@ -155,13 +155,13 @@ public class TreeNode {
         return incrementalPath.equals(treeNode.incrementalPath) && name.equals(treeNode.name);
     }
 
-    public void addElement(AFile element, String commonRoot) {
+    public void addElement(AriaFile element, String commonRoot) {
         if (element.path.isEmpty()) return;
         String[] list = element.path.replace(commonRoot, "").split(Objects.equals(SEPARATOR, "/") ? SEPARATOR : ("\\u005C" + SEPARATOR + "\\u005C"));
         addElement(incrementalPath, list, element);
     }
 
-    public void addElement(String currentPath, String[] list, AFile file) {
+    public void addElement(String currentPath, String[] list, AriaFile file) {
         while (list[0] == null || list[0].isEmpty())
             list = Arrays.copyOfRange(list, 1, list.length);
 

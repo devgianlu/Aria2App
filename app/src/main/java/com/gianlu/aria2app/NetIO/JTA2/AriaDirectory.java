@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ADir extends TreeNode {
+public class AriaDirectory extends TreeNode {
     public final long totalLength;
     public final long completedLength;
     public final List<Integer> indexes;
     public final String fullPath;
 
-    public ADir(TreeNode node, Download download) {
+    public AriaDirectory(TreeNode node, Download download) {
         super(node);
 
         if (node.isFile()) throw new IllegalArgumentException("node is a file!");
@@ -27,8 +27,8 @@ public class ADir extends TreeNode {
         fullPath = download.dir + node.incrementalPath;
     }
 
-    public static void update(TreeNode node, List<AFile> files) {
-        for (TreeNode file : node.files) file.update(AFile.find(files, file.obj));
+    public static void update(TreeNode node, List<AriaFile> files) {
+        for (TreeNode file : node.files) file.update(AriaFile.find(files, file.obj));
         for (TreeNode dir : node.dirs) update(dir, files);
     }
 
@@ -49,15 +49,9 @@ public class ADir extends TreeNode {
         for (TreeNode dir : parent.dirs) findIndexes(indexes, dir);
     }
 
-    public static List<AFile> find(ADir dir, List<AFile> files) {
-        List<AFile> items = new ArrayList<>();
-        for (AFile file : dir.allObjs()) items.add(AFile.find(files, file));
-        return items;
-    }
-
-    public ADir update(Download download, List<AFile> files) {
+    public AriaDirectory update(Download download, List<AriaFile> files) {
         update(this, files);
-        return new ADir(this, download);
+        return new AriaDirectory(this, download);
     }
 
     public float getProgress() {

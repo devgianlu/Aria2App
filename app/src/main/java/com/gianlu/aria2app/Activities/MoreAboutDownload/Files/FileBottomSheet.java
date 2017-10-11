@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -22,7 +22,7 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.Collections;
 import java.util.List;
 
-public class FileBottomSheet extends BaseBottomSheet<AFile> {
+public class FileBottomSheet extends BaseBottomSheet<AriaFile> {
     private final ISheet handler;
     private final Handler mainHandler;
     private Download download;
@@ -54,7 +54,7 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     }
 
     @Override
-    protected void setupView(@NonNull final AFile item) {
+    protected void setupView(@NonNull final AriaFile item) {
         if (download == null) return;
 
         title.setText(item.getName());
@@ -137,27 +137,27 @@ public class FileBottomSheet extends BaseBottomSheet<AFile> {
     }
 
     @Override
-    protected void updateView(@NonNull AFile item) {
+    protected void updateView(@NonNull AriaFile item) {
         index.setHtml(R.string.index, item.index);
         path.setHtml(R.string.path, item.path);
         length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(item.length, false));
         completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength, false));
     }
 
-    public void update(List<AFile> files) {
+    public void update(List<AriaFile> files) {
         if (current == null || download == null) return;
-        update(AFile.find(files, current));
+        update(AriaFile.find(files, current));
     }
 
     public interface ISheet {
-        void onSelectedFile(AFile file);
+        void onSelectedFile(AriaFile file);
 
-        void onDeselectedFile(AFile file);
+        void onDeselectedFile(AriaFile file);
 
         void onExceptionChangingSelection(Exception ex);
 
         void onCantDeselectAll();
 
-        void onWantsToDownload(MultiProfile profile, String gid, @NonNull AFile file);
+        void onWantsToDownload(MultiProfile profile, String gid, @NonNull AriaFile file);
     }
 }

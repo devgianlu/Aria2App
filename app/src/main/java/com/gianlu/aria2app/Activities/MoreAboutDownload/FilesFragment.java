@@ -36,8 +36,8 @@ import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.JTA2.ADir;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -203,7 +203,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onUpdateHierarchy(List<AFile> files, String commonRoot) {
+    public void onUpdateHierarchy(List<AriaFile> files, String commonRoot) {
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {
@@ -224,13 +224,13 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onFileSelected(AFile file) {
+    public void onFileSelected(AriaFile file) {
         fileSheet.expand(file);
     }
 
     @Override
     public void onDirectorySelected(TreeNode dir) {
-        dirSheet.expand(new ADir(dir, download));
+        dirSheet.expand(new AriaDirectory(dir, download));
     }
 
     private void showTutorial(TreeNode dir) {
@@ -315,28 +315,28 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onSelectedFile(AFile file) {
+    public void onSelectedFile(AriaFile file) {
         Toaster.show(getActivity(), Utils.Messages.FILE_SELECTED, file.getName());
         adapter.notifyItemChanged(file);
         if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override
-    public void onDeselectedFile(AFile file) {
+    public void onDeselectedFile(AriaFile file) {
         Toaster.show(getActivity(), Utils.Messages.FILE_DESELECTED, file.getName());
         adapter.notifyItemChanged(file);
         if (fileSheet != null) fileSheet.collapse();
     }
 
     @Override
-    public void onSelectedDir(ADir dir) {
+    public void onSelectedDir(AriaDirectory dir) {
         Toaster.show(getActivity(), Utils.Messages.DIR_SELECTED, dir.name);
         adapter.notifyItemsChanged(dir, true);
         if (dirSheet != null) dirSheet.collapse();
     }
 
     @Override
-    public void onDeselectedDir(ADir dir) {
+    public void onDeselectedDir(AriaDirectory dir) {
         Toaster.show(getActivity(), Utils.Messages.DIR_DESELECTED, dir.name);
         adapter.notifyItemsChanged(dir, false);
         if (dirSheet != null) dirSheet.collapse();
@@ -349,7 +349,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final ADir dir) {
+    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AriaDirectory dir) {
         if (fileSheet != null) fileSheet.collapse();
 
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
@@ -378,7 +378,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (dirSheet != null) dirSheet.collapse();
     }
 
-    private void startDownloadInternal(final MultiProfile profile, @Nullable final AFile file, @Nullable final ADir dir) {
+    private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
             DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
         } catch (DownloaderUtils.InvalidPathException | URISyntaxException ex) {
@@ -405,7 +405,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AFile file) {
+    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AriaFile file) {
         if (fileSheet != null) fileSheet.collapse();
 
         if (downloaderMessenger != null) {

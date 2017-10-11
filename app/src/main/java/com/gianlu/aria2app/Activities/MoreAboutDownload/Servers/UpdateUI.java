@@ -5,7 +5,7 @@ import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
@@ -15,7 +15,7 @@ import java.util.List;
 public class UpdateUI extends BaseUpdater implements JTA2.IServers {
     private final String gid;
     private final IUI listener;
-    private List<AFile> files;
+    private List<AriaFile> files;
 
     public UpdateUI(Context context, String gid, IUI listener) throws JTA2InitializingException {
         super(context);
@@ -27,7 +27,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IServers {
     public synchronized void start() {
         jta2.getFiles(gid, new JTA2.IFiles() {
             @Override
-            public void onFiles(List<AFile> files) {
+            public void onFiles(List<AriaFile> files) {
                 start(files);
             }
 
@@ -43,7 +43,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IServers {
         });
     }
 
-    private void start(List<AFile> files) {
+    private void start(List<AriaFile> files) {
         this.files = files;
         super.start();
     }
@@ -81,7 +81,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IServers {
     }
 
     public interface IUI {
-        void onUpdateAdapter(SparseArray<List<Server>> servers, List<AFile> files);
+        void onUpdateAdapter(SparseArray<List<Server>> servers, List<AriaFile> files);
 
         void onNoServers(String reason);
     }

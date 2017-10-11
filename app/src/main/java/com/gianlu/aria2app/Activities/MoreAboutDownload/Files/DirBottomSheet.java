@@ -6,8 +6,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import com.gianlu.aria2app.NetIO.JTA2.ADir;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -20,7 +20,7 @@ import com.gianlu.commonutils.SuperTextView;
 
 import java.util.List;
 
-public class DirBottomSheet extends BaseBottomSheet<ADir> {
+public class DirBottomSheet extends BaseBottomSheet<AriaDirectory> {
     private final ISheet handler;
     private Download download;
     private SuperTextView indexes;
@@ -45,13 +45,13 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
         downloadDir = content.findViewById(R.id.dirSheet_downloadDir);
     }
 
-    public void update(List<AFile> files) {
+    public void update(List<AriaFile> files) {
         if (current == null || download == null) return;
         update(current.update(download, files));
     }
 
     @Override
-    protected void setupView(@NonNull final ADir item) {
+    protected void setupView(@NonNull final AriaDirectory item) {
         if (download == null) return;
 
         title.setText(item.name);
@@ -132,7 +132,7 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     }
 
     @Override
-    protected void updateView(@NonNull ADir item) {
+    protected void updateView(@NonNull AriaDirectory item) {
         indexes.setHtml(R.string.indexes, CommonUtils.join(item.indexes, ", "));
         path.setHtml(R.string.path, item.fullPath);
         length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(item.totalLength, false));
@@ -144,14 +144,14 @@ public class DirBottomSheet extends BaseBottomSheet<ADir> {
     }
 
     public interface ISheet {
-        void onSelectedDir(ADir dir);
+        void onSelectedDir(AriaDirectory dir);
 
-        void onDeselectedDir(ADir dir);
+        void onDeselectedDir(AriaDirectory dir);
 
         void onCantDeselectAll();
 
         void onExceptionChangingSelection(Exception ex);
 
-        void onWantsToDownload(MultiProfile profile, String gid, @NonNull ADir dir);
+        void onWantsToDownload(MultiProfile profile, String gid, @NonNull AriaDirectory dir);
     }
 }

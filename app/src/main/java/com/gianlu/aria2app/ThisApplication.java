@@ -109,8 +109,8 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
         LoadingActivity.startActivity(this, null);
     }
 
-    public void setIsFirstStart(boolean firstStart) {
-        this.firstStart = firstStart;
+    public void firstStarted() {
+        this.firstStart = true;
     }
 
     @Override

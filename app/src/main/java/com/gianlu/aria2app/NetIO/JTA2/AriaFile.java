@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class AFile implements Serializable {
+public class AriaFile implements Serializable {
     public final long completedLength;
     public final long length;
     public final String path;
@@ -20,7 +20,7 @@ public class AFile implements Serializable {
     public final HashMap<Status, String> uris;
     public boolean selected;
 
-    public AFile(JSONObject obj) throws JSONException {
+    public AriaFile(JSONObject obj) throws JSONException {
         index = obj.getInt("index");
         path = obj.getString("path");
         length = obj.getLong("length");
@@ -36,8 +36,8 @@ public class AFile implements Serializable {
     }
 
     @Nullable
-    public static AFile find(List<AFile> files, AFile item) {
-        for (AFile file : files)
+    public static AriaFile find(List<AriaFile> files, AriaFile item) {
+        for (AriaFile file : files)
             if (file.index == item.index && Objects.equals(file.path, item.path))
                 return file;
 
@@ -59,8 +59,8 @@ public class AFile implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AFile aFile = (AFile) o;
-        return index == aFile.index && path.equals(aFile.path);
+        AriaFile ariaFile = (AriaFile) o;
+        return index == ariaFile.index && path.equals(ariaFile.path);
     }
 
     public float getProgress() {

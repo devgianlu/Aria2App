@@ -29,7 +29,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
     public final Status status;
     public final int downloadSpeed;
     public final int uploadSpeed;
-    public final ArrayList<AFile> files;
+    public final ArrayList<AriaFile> files;
     public final int errorCode;
     public final String errorMessage;
     public final String followedBy;
@@ -65,7 +65,8 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
         if (obj.has("files")) {
             JSONArray array = obj.optJSONArray("files");
-            for (int i = 0; i < array.length(); i++) files.add(new AFile(array.optJSONObject(i)));
+            for (int i = 0; i < array.length(); i++)
+                files.add(new AriaFile(array.optJSONObject(i)));
         }
 
         if (obj.has("bittorrent")) {
@@ -122,10 +123,10 @@ public class Download implements Serializable, Filterable<Download.Status> {
             } else {
                 String[] splitted = files.get(0).path.split("/");
                 if (splitted.length == 1) {
-                    if (files.get(0).uris.get(AFile.Status.USED) != null) {
-                        return files.get(0).uris.get(AFile.Status.USED);
-                    } else if (files.get(0).uris.get(AFile.Status.WAITING) != null) {
-                        return files.get(0).uris.get(AFile.Status.WAITING);
+                    if (files.get(0).uris.get(AriaFile.Status.USED) != null) {
+                        return files.get(0).uris.get(AriaFile.Status.USED);
+                    } else if (files.get(0).uris.get(AriaFile.Status.WAITING) != null) {
+                        return files.get(0).uris.get(AriaFile.Status.WAITING);
                     } else {
                         return "Unknown";
                     }

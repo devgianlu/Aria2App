@@ -43,7 +43,7 @@ public class HTTPing extends AbstractClient {
         super(context, profile);
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
-        this.client = NetUtils.buildHttpClient(context, profile);
+        this.client = NetUtils.buildHttpClient(profile, sslContext);
         this.defaultUri = NetUtils.createBaseURI(profile);
     }
 

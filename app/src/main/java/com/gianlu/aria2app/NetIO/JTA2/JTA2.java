@@ -254,7 +254,7 @@ public class JTA2 {
                 getOption(gid, new JTA2.IOption() {
                     @Override
                     public void onOptions(Map<String, String> options) {
-                        String url = download.files.get(0).uris.get(AFile.Status.USED);
+                        String url = download.files.get(0).uris.get(AriaFile.Status.USED);
 
                         addUri(Collections.singletonList(url), null, options, new JTA2.IGID() {
                             @Override
@@ -293,10 +293,10 @@ public class JTA2 {
         });
     }
 
-    private void performSelectIndexesOperation(Download download, String[] indexes, final List<AFile> files, boolean select, final IChangeSelection handler) {
+    private void performSelectIndexesOperation(Download download, String[] indexes, final List<AriaFile> files, boolean select, final IChangeSelection handler) {
         if (select) {
             List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
-            for (AFile file : files)
+            for (AriaFile file : files)
                 if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1)
                     newIndexes.add(String.valueOf(file.index));
 
@@ -316,7 +316,7 @@ public class JTA2 {
             });
         } else {
             List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
-            for (AFile file : files)
+            for (AriaFile file : files)
                 if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1)
                     newIndexes.remove(String.valueOf(file.index));
 
@@ -342,7 +342,7 @@ public class JTA2 {
         }
     }
 
-    public void changeSelection(final Download download, final List<AFile> files, final boolean select, final IChangeSelection handler) {
+    public void changeSelection(final Download download, final List<AriaFile> files, final boolean select, final IChangeSelection handler) {
         getOption(download.gid, new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
@@ -350,7 +350,7 @@ public class JTA2 {
                 if (indexes == null) {
                     getFiles(download.gid, new IFiles() {
                         @Override
-                        public void onFiles(List<AFile> result) {
+                        public void onFiles(List<AriaFile> result) {
                             String[] indexes = new String[result.size()];
                             for (int i = 0; i < result.size(); i++)
                                 indexes[i] = String.valueOf(result.get(i).index);
@@ -1113,7 +1113,7 @@ public class JTA2 {
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onFiles(CommonUtils.toTList(response.getJSONArray("result"), AFile.class));
+                handler.onFiles(CommonUtils.toTList(response.getJSONArray("result"), AriaFile.class));
             }
 
             @Override
@@ -1214,7 +1214,7 @@ public class JTA2 {
     }
 
     public interface IFiles {
-        void onFiles(List<AFile> files);
+        void onFiles(List<AriaFile> files);
 
         void onException(Exception ex);
     }

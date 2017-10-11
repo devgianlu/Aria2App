@@ -122,6 +122,10 @@ public class NetUtils {
     }
 
     public static CloseableHttpClient buildHttpClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        return buildHttpClient(profile, NetUtils.readySSLContext(readyCertificate(context, profile)));
+    }
+
+    public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         HttpClientBuilder builder = HttpClients.custom()
                 .setUserAgent("Aria2App")
                 .setDefaultRequestConfig(RequestConfig.custom()
@@ -130,7 +134,7 @@ public class NetUtils {
                         .setConnectionRequestTimeout(5000)
                         .build())
                 .setConnectionManagerShared(true)
-                .setSslcontext(NetUtils.readySSLContext(readyCertificate(context, profile)));
+                .setSslcontext(sslContext);
 
         if (!profile.hostnameVerifier) {
             builder.setSSLHostnameVerifier(new HostnameVerifier() {

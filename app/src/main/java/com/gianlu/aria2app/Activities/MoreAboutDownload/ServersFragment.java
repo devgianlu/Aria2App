@@ -19,7 +19,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServerBottomShee
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.UpdateUI;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.JTA2.AFile;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
@@ -60,7 +60,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
-        sheet = new ServerBottomSheet(layout, R.layout.server_sheet);
+        sheet = new ServerBottomSheet(layout);
 
         final String gid = getArguments().getString("gid");
         if (gid == null) {
@@ -161,7 +161,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     }
 
     @Override
-    public void onUpdateAdapter(SparseArray<List<Server>> servers, List<AFile> files) {
+    public void onUpdateAdapter(SparseArray<List<Server>> servers, List<AriaFile> files) {
         if (servers.size() == 0) return;
         recyclerViewLayout.showList();
         if (adapter != null) adapter.notifyItemsChanged(servers, files);
