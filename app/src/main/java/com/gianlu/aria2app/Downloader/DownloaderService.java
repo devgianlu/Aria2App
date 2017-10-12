@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Downloader;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -47,11 +48,18 @@ public class DownloaderService extends Service {
     private LocalBroadcastManager broadcastManager;
     private Messenger messenger;
     private SavedDownloadsManager savedDownloadsManager;
+    private WifiManager.WifiLock wifiLock;
 
     @Override
     public void onCreate() {
-        broadcastManager = LocalBroadcastManager.getInstance(this);
         savedDownloadsManager = SavedDownloadsManager.get(this);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        if (wifiManager != null) {
+            wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "DownloaderService");
+            wifiLock.setReferenceCounted(false);
+        }
+
         downloads.notifyCountChanged();
 
         int maxSimultaneousDownloads = Prefs.getFakeInt(this, PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
@@ -79,6 +87,8 @@ public class DownloaderService extends Service {
     }
 
     private void startDownload(DownloadStartConfig config) {
+        wifiLock.acquire();
+
         for (DownloadStartConfig.Task task : config.tasks)
             startInternal(task);
     }
@@ -234,6 +244,9 @@ public class DownloaderService extends Service {
             sendBroadcast(DownloaderUtils.ACTION_ITEM_REMOVED, bundle);
 
             notifyCountChanged();
+
+            if (activeRunnables.size() == 1)
+                wifiLock.release(); // activeRunnables still contains the runnable after that call
         }
 
         private void notifyItemChanged(DownloadTask item) {
