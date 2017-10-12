@@ -5,6 +5,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class AriaDirectory extends TreeNode {
     public final long totalLength;
@@ -17,8 +18,8 @@ public class AriaDirectory extends TreeNode {
 
         if (node.isFile()) throw new IllegalArgumentException("node is a file!");
 
-        totalLength = calcTotalLength(this, 0);
-        completedLength = calcCompletedLength(this, 0);
+        totalLength = calcTotalLength(this, new AtomicLong(0));
+        completedLength = calcCompletedLength(this, new AtomicLong(0));
 
         indexes = new ArrayList<>();
         findIndexes(indexes, this);
@@ -32,16 +33,16 @@ public class AriaDirectory extends TreeNode {
         for (TreeNode dir : node.dirs) update(dir, files);
     }
 
-    private static long calcCompletedLength(TreeNode parent, long sum) {
-        for (TreeNode file : parent.files) sum += file.obj.completedLength;
+    private static long calcCompletedLength(TreeNode parent, AtomicLong sum) {
+        for (TreeNode file : parent.files) sum.addAndGet(file.obj.completedLength);
         for (TreeNode dir : parent.dirs) calcCompletedLength(dir, sum);
-        return sum;
+        return sum.get();
     }
 
-    private static long calcTotalLength(TreeNode parent, long sum) {
-        for (TreeNode file : parent.files) sum += file.obj.length;
+    private static long calcTotalLength(TreeNode parent, AtomicLong sum) {
+        for (TreeNode file : parent.files) sum.addAndGet(file.obj.length);
         for (TreeNode dir : parent.dirs) calcTotalLength(dir, sum);
-        return sum;
+        return sum.get();
     }
 
     private static void findIndexes(List<Integer> indexes, TreeNode parent) {
