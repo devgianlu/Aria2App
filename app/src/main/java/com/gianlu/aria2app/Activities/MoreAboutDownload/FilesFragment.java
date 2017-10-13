@@ -193,9 +193,18 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(final Exception ex) {
                 Logging.logMe(getContext(), ex);
-                recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
+
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
+                        }
+                    });
+                }
             }
         });
 
