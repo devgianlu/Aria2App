@@ -29,6 +29,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.Locale;
 
@@ -49,6 +50,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     }
 
     private void handleDownloadAction(final Download download, JTA2.DownloadActions action) {
+        if (download == null) return; // Garbage collected
+
         final JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
@@ -281,7 +284,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             btAnnounceList = rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
-        void setup(final Download download) {
+        void setup(Download download) {
             Utils.setupChart(chart, false, R.color.colorPrimaryDark);
             int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
@@ -291,34 +294,36 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
             uploadSpeed.setTypeface("fonts/Roboto-Light.ttf");
             remainingTime.setTypeface("fonts/Roboto-Light.ttf");
 
+            final WeakReference<Download> weakDownload = new WeakReference<>(download);
+
             pause.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.PAUSE);
+                    handleDownloadAction(weakDownload.get(), JTA2.DownloadActions.PAUSE);
                 }
             });
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.RESUME);
+                    handleDownloadAction(weakDownload.get(), JTA2.DownloadActions.RESUME);
                 }
             });
             stop.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
+                    handleDownloadAction(weakDownload.get(), JTA2.DownloadActions.REMOVE);
                 }
             });
             restart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.RESTART);
+                    handleDownloadAction(weakDownload.get(), JTA2.DownloadActions.RESTART);
                 }
             });
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
+                    handleDownloadAction(weakDownload.get(), JTA2.DownloadActions.REMOVE);
                 }
             });
 

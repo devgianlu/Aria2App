@@ -24,6 +24,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
+import java.lang.ref.WeakReference;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +52,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         return objs.get(position).gid.hashCode();
     }
 
-    private void setupActions(DownloadViewHolder holder, final Download download) {
+    private void setupActions(DownloadViewHolder holder, Download download) {
         holder.start.setVisibility(View.VISIBLE);
         holder.stop.setVisibility(View.VISIBLE);
         holder.restart.setVisibility(View.VISIBLE);
@@ -116,7 +117,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     public void onBindViewHolder(final DownloadCardsAdapter.DownloadViewHolder holder, int position) {
-        final Download item = objs.get(position);
+        Download item = objs.get(position);
 
         final int color;
         if (item.isTorrent())
@@ -143,53 +144,61 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             }
         });
 
+        final WeakReference<Download> weakItem = new WeakReference<>(item);
+
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (handler != null) handler.onMoreClick(item);
+                if (handler != null && weakItem.get() != null) handler.onMoreClick(weakItem.get());
             }
         });
         holder.pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.PAUSE);
             }
         });
         holder.restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.RESTART);
             }
         });
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.RESUME);
             }
         });
         holder.stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.REMOVE);
             }
         });
         holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.REMOVE);
             }
         });
         holder.moveUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.MOVE_UP);
             }
         });
         holder.moveDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null)
-                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
+                if (handler != null && weakItem.get() != null)
+                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.MOVE_DOWN);
             }
         });
 

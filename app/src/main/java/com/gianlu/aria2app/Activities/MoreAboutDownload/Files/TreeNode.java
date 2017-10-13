@@ -126,10 +126,10 @@ public class TreeNode {
 
     public int indexOfObj(AriaFile obj) {
         if (isFile()) return -1;
-        for (int i = 0; i < files.size(); i++) {
+
+        for (int i = 0; i < files.size(); i++)
             if (Objects.equals(files.get(i).obj, obj))
                 return i;
-        }
 
         return -1;
     }
