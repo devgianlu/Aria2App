@@ -47,43 +47,10 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <LinearLayout
+                <com.gianlu.aria2app.CustomDownloadInfo
+                    android:id="@+id/downloadCard_customInfo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="bottom"
-                        android:layout_marginEnd="2dp"
-                        android:src="@drawable/ic_file_download_white_48dp" />
-
-                    <com.gianlu.commonutils.SuperTextView
-                        android:id="@+id/downloadCard_downloadSpeed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginEnd="8dp"
-                        android:textSize="13sp" />
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="bottom"
-                        android:layout_marginEnd="2dp"
-                        android:src="@drawable/ic_access_time_white_48dp" />
-
-                    <com.gianlu.commonutils.SuperTextView
-                        android:id="@+id/downloadCard_missingTime"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:textSize="13sp" />
-                </LinearLayout>
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
 
@@ -135,7 +102,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_pause_black_48dp" />
@@ -145,7 +112,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_play_arrow_black_48dp" />
@@ -155,7 +122,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_stop_black_48dp" />
@@ -165,7 +132,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_refresh_black_48dp" />
@@ -175,7 +142,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_clear_black_48dp" />
@@ -185,7 +152,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_upward_black_48dp" />
@@ -195,7 +162,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_downward_black_48dp" />

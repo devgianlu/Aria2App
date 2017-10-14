@@ -12,20 +12,23 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.gianlu.aria2app.CustomDownloadInfo;
 import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-import java.lang.ref.WeakReference;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -117,7 +120,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     public void onBindViewHolder(final DownloadCardsAdapter.DownloadViewHolder holder, int position) {
-        Download item = objs.get(position);
+        final Download item = objs.get(position);
 
         final int color;
         if (item.isTorrent())
@@ -144,63 +147,57 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             }
         });
 
-        final WeakReference<Download> weakItem = new WeakReference<>(item);
-
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (handler != null && weakItem.get() != null) handler.onMoreClick(weakItem.get());
+                if (handler != null) handler.onMoreClick(item);
             }
         });
         holder.pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.PAUSE);
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.PAUSE);
             }
         });
         holder.restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.RESTART);
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.RESTART);
             }
         });
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.RESUME);
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.RESUME);
             }
         });
         holder.stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.REMOVE);
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
             }
         });
         holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.REMOVE);
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.REMOVE);
             }
         });
         holder.moveUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.MOVE_UP);
+                if (handler != null) handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_UP);
             }
         });
         holder.moveDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null && weakItem.get() != null)
-                    handler.onMenuItemSelected(weakItem.get(), JTA2.DownloadActions.MOVE_DOWN);
+                if (handler != null)
+                    handler.onMenuItemSelected(item, JTA2.DownloadActions.MOVE_DOWN);
             }
         });
+
+        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PKeys.A2_CUSTOM_INFO, new HashSet<String>()), item.isTorrent()));
 
         setupActions(holder, item);
 
@@ -276,8 +273,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         final DonutProgress donutProgress;
         final SuperTextView downloadName;
         final SuperTextView downloadStatus;
-        final SuperTextView downloadSpeed;
-        final SuperTextView downloadMissingTime;
+        final CustomDownloadInfo customInfo;
         final SuperTextView detailsGid;
         final SuperTextView detailsTotalLength;
         final SuperTextView detailsCompletedLength;
@@ -297,8 +293,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             donutProgress = itemView.findViewById(R.id.downloadCard_donutProgress);
             downloadName = itemView.findViewById(R.id.downloadCard_name);
             downloadStatus = itemView.findViewById(R.id.downloadCard_status);
-            downloadSpeed = itemView.findViewById(R.id.downloadCard_downloadSpeed);
-            downloadMissingTime = itemView.findViewById(R.id.downloadCard_missingTime);
+            customInfo = itemView.findViewById(R.id.downloadCard_customInfo);
             details = itemView.findViewById(R.id.downloadCard_details);
             pause = itemView.findViewById(R.id.downloadCard_pause);
             start = itemView.findViewById(R.id.downloadCard_start);
@@ -345,8 +340,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
             else
                 downloadStatus.setText(item.status.getFormal(context, true));
-            downloadSpeed.setText(CommonUtils.speedFormatter(item.downloadSpeed, false));
-            downloadMissingTime.setText(CommonUtils.timeFormatter(item.getMissingTime()));
+
+            customInfo.update(item);
 
             detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength, false));
             detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength, false));

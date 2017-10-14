@@ -18,7 +18,9 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ThisApplication extends Application implements ErrorHandler.IErrorHandler, Thread.UncaughtExceptionHandler {
     public static final String CATEGORY_USER_INPUT = "User input";
@@ -83,10 +85,18 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
         CommonUtils.setDebug(BuildConfig.DEBUG);
         Thread.setDefaultUncaughtExceptionHandler(this);
-        ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1000), this);
+        ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
 
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
         if (!BuildConfig.DEBUG) tracker = getTracker(this);
+
+        // Backward compatibility
+        if (!Prefs.has(getApplicationContext(), PKeys.A2_CUSTOM_INFO)) {
+            Set<String> defaultValues = new HashSet<>();
+            defaultValues.add(CustomDownloadInfo.Info.DOWNLOAD_SPEED.name());
+            defaultValues.add(CustomDownloadInfo.Info.REMAINING_TIME.name());
+            Prefs.putSet(getApplicationContext(), PKeys.A2_CUSTOM_INFO, defaultValues);
+        }
     }
 
     @Override

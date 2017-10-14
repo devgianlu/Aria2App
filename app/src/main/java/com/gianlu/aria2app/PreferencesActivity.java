@@ -3,6 +3,7 @@ package com.gianlu.aria2app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
@@ -76,6 +77,10 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             getActivity().setTitle(R.string.general);
             setHasOptionsMenu(true);
 
+            MultiSelectListPreference customInfo = ((MultiSelectListPreference) findPreference(PKeys.A2_CUSTOM_INFO.getKey()));
+            customInfo.setEntryValues(CustomDownloadInfo.Info.stringValues());
+            customInfo.setEntries(CustomDownloadInfo.Info.formalValues(getActivity()));
+
             findPreference("restartTutorial").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -100,7 +105,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             getActivity().setTitle(R.string.directDownload);
             setHasOptionsMenu(true);
 
-            findPreference("dd_downloadPath").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(PKeys.DD_DOWNLOAD_PATH.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     File path = new File(((String) o).trim());
@@ -118,7 +123,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            findPreference("dd_maxSimultaneousDownloads").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Integer val = Integer.parseInt((String) newValue);

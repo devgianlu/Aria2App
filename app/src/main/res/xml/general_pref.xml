@@ -8,12 +8,17 @@
         android:title="@string/hideLinkedMetadata" />
 
     <ListPreference
-        android:defaultValue="2"
+        android:defaultValue="1"
         android:entries="@array/updateRate"
         android:entryValues="@array/updateRateValue"
         android:key="a2_updateRate"
         android:summary="@string/refreshRateSummary"
         android:title="@string/refreshRate" />
+
+    <MultiSelectListPreference
+        android:key="a2_customInfo"
+        android:summary="@string/downloadDisplayedInfoSummary"
+        android:title="@string/downloadDisplayedInfo" />
 
     <CheckBoxPreference
         android:defaultValue="true"

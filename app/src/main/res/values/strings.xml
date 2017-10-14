@@ -134,7 +134,7 @@
     <string name="sorting">Sort by</string>
     <string name="status">Status</string>
     <string name="totalLengthMenu">Total length</string>
-    <string name="completedLengthMenu">Completed length</string>
+    <string name="completedLengthLabel">Completed length</string>
     <string name="progress">Progress</string>
     <string name="connectionMethod">Connection method</string>
     <string name="mitLicense">Licensed under MIT license</string>
@@ -296,6 +296,11 @@
     <string name="dd_resume">Resume downloads</string>
     <string name="dd_resume_summary">Resume paused downloads when the app is opened</string>
     <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="downloadDisplayedInfo">Download displayed info</string>
+    <string name="downloadDisplayedInfoSummary">Customize the info shown under the download name</string>
+    <string name="remainingTime">Remaining time</string>
+    <string name="connectionsLabel">Connections</string>
+    <string name="numSeederLabel">Seeders</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
