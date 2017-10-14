@@ -89,7 +89,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (fileSheet.shouldUpdate()) { // We don't need to do this for dirSheet too, it would be redundant
             fileSheet.collapse();
             return false;
-        } else if (adapter.canGoUp()) {
+        } else if (adapter != null && adapter.canGoUp()) {
             adapter.navigateUp();
             return false;
         } else {
