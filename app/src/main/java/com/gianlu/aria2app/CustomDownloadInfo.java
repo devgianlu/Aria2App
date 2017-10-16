@@ -13,7 +13,7 @@ import com.gianlu.commonutils.SuperTextView;
 
 import java.util.Collection;
 
-
+// TODO: Should handle overflow
 public class CustomDownloadInfo extends LinearLayout {
     private Info[] info = new Info[0];
 
@@ -29,10 +29,6 @@ public class CustomDownloadInfo extends LinearLayout {
         super(context, attrs, defStyleAttr);
 
         setOrientation(HORIZONTAL);
-    }
-
-    public void setDisplayInfo(Collection<Info> info) {
-        setDisplayInfo(info.toArray(new Info[0]));
     }
 
     public void setDisplayInfo(Info... info) {
@@ -148,18 +144,22 @@ public class CustomDownloadInfo extends LinearLayout {
         public static Info[] toArray(Collection<String> infos, boolean isTorrent) {
             if (infos == null || infos.isEmpty()) return new Info[]{DOWNLOAD_SPEED, REMAINING_TIME};
 
-            Info[] arr = new Info[infos.size()];
+            Info[] arr = new Info[infos.size() - (isTorrent && infos.contains(CONNECTIONS.name()) || !isTorrent && infos.contains(SEEDERS.name()) ? 1 : 0)];
 
             int i = 0;
             for (String infoStr : infos) {
                 Info info = valueOf(infoStr);
                 if (isTorrent) {
-                    if (info != CONNECTIONS) arr[i] = info;
+                    if (info != CONNECTIONS) {
+                        arr[i] = info;
+                        i++;
+                    }
                 } else {
-                    if (info != SEEDERS) arr[i] = info;
+                    if (info != SEEDERS) {
+                        arr[i] = info;
+                        i++;
+                    }
                 }
-
-                i++;
             }
 
             return arr;
