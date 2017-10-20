@@ -301,6 +301,7 @@
     <string name="remainingTime">Remaining time</string>
     <string name="connectionsLabel">Connections</string>
     <string name="numSeederLabel">Seeders</string>
+    <string name="flowLayout_details" translatable="false">Copyright 2011, Artem Votincev (apmem.org)</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

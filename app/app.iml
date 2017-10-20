@@ -139,6 +139,7 @@
     <orderEntry type="library" name="android.arch.core:common:1.0.0@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tasks-11.4.2" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-core-11.4.2" level="project" />
+    <orderEntry type="library" name="org.apmem.tools:layouts-1.10" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-common-license-11.4.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-26.1.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-analytics-impl-11.4.2" level="project" />

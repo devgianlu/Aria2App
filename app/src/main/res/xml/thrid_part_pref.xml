@@ -16,6 +16,11 @@
         android:title="TapTargetView" />
 
     <Preference
+        android:key="flowLayout"
+        android:summary="@string/apacheLicense"
+        android:title="Android flow layout" />
+
+    <Preference
         android:key="jsoup"
         android:summary="@string/mitLicense"
         android:title="jsoup" />

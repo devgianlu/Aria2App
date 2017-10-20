@@ -207,6 +207,16 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 }
             });
 
+            findPreference("flowLayout").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    CommonUtils.showDialog(getActivity(), builder
+                            .setTitle("Android flow layout")
+                            .setMessage(R.string.flowLayout_details));
+                    return true;
+                }
+            });
+
             findPreference("apacheLicense").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.apache.org/licenses/LICENSE-2.0")));

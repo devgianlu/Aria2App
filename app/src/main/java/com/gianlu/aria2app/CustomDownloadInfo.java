@@ -1,9 +1,10 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -11,10 +12,12 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 
+import org.apmem.tools.layouts.FlowLayout;
+
 import java.util.Collection;
 
-// TODO: Should handle overflow
-public class CustomDownloadInfo extends LinearLayout {
+public class CustomDownloadInfo extends FlowLayout {
+    private final int dp16;
     private Info[] info = new Info[0];
 
     public CustomDownloadInfo(Context context) {
@@ -29,6 +32,8 @@ public class CustomDownloadInfo extends LinearLayout {
         super(context, attrs, defStyleAttr);
 
         setOrientation(HORIZONTAL);
+
+        dp16 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources().getDisplayMetrics());
     }
 
     public void setDisplayInfo(Info... info) {
@@ -37,37 +42,12 @@ public class CustomDownloadInfo extends LinearLayout {
 
         removeAllViews();
 
-        for (int i = 0; i < this.info.length; i++) {
-            inflate(getContext(), R.layout.custom_download_info_item, this);
-            switch (this.info[i]) {
-                case DOWNLOAD_SPEED:
-                    setChildImage(i, R.drawable.ic_file_download_white_48dp);
-                    break;
-                case UPLOAD_SPEED:
-                    setChildImage(i, R.drawable.ic_file_upload_white_48dp);
-                    break;
-                case REMAINING_TIME:
-                    setChildImage(i, R.drawable.ic_access_time_white_48dp);
-                    break;
-                case COMPLETED_LENGTH:
-                    setChildImage(i, R.drawable.ic_folder_white_48dp);
-                    break;
-                case CONNECTIONS:
-                    setChildImage(i, R.drawable.ic_link_white_48dp);
-                    break;
-                case SEEDERS:
-                    setChildImage(i, R.drawable.ic_people_white_48dp);
-                    break;
-            }
-        }
-    }
-
-    private void setChildImage(int index, @DrawableRes int icon) {
-        ((ImageView) getChildAt(index * 2)).setImageResource(icon);
+        for (int i = 0; i < this.info.length; i++)
+            addView(new Item(getContext(), info[i]));
     }
 
     private void setChildText(int index, String text) {
-        ((SuperTextView) getChildAt(index * 2 + 1)).setText(text);
+        ((Item) getChildAt(index)).setText(text);
     }
 
     public void update(Download download) {
@@ -163,6 +143,53 @@ public class CustomDownloadInfo extends LinearLayout {
             }
 
             return arr;
+        }
+    }
+
+    private final class Item extends LinearLayout {
+        public Item(Context context, Info info) {
+            super(context);
+
+            setGravity(Gravity.CENTER_VERTICAL);
+
+            ImageView icon = new ImageView(context);
+            switch (info) {
+                case DOWNLOAD_SPEED:
+                    icon.setImageResource(R.drawable.ic_file_download_white_48dp);
+                    break;
+                case UPLOAD_SPEED:
+                    icon.setImageResource(R.drawable.ic_file_upload_white_48dp);
+                    break;
+                case REMAINING_TIME:
+                    icon.setImageResource(R.drawable.ic_access_time_white_48dp);
+                    break;
+                case COMPLETED_LENGTH:
+                    icon.setImageResource(R.drawable.ic_folder_white_48dp);
+                    break;
+                case CONNECTIONS:
+                    icon.setImageResource(R.drawable.ic_link_white_48dp);
+                    break;
+                case SEEDERS:
+                    icon.setImageResource(R.drawable.ic_people_white_48dp);
+                    break;
+            }
+
+            LayoutParams params = new LayoutParams(dp16, dp16);
+            params.rightMargin = dp16 / 8;
+            icon.setLayoutParams(params);
+            addView(icon);
+        }
+
+        public void setText(String text) {
+            SuperTextView textView = (SuperTextView) getChildAt(1);
+            if (textView == null) {
+                textView = new SuperTextView(getContext(), text);
+                textView.setPaddingRelative(0, 0, dp16 / 2, 0);
+                addView(textView);
+                return;
+            }
+
+            textView.setText(text);
         }
     }
 }
