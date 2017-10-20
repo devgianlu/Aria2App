@@ -131,8 +131,8 @@
     <string name="size"><![CDATA[<b>大小：</b>]]>%s</string>
     <string name="sorting">排序方式</string>
     <string name="status">状态</string>
-    <string name="totalLengthMenu">总长度</string>
-    <string name="completedLengthMenu">完成长度</string>
+    <string name="totalLengthLabel">总长度</string>
+    <string name="completedLengthLabel">完成长度</string>
     <string name="progress">进度</string>
     <string name="connectionMethod">连接方法</string>
     <string name="mitLicense">MIT license许可</string>
@@ -292,6 +292,11 @@
     <string name="dd_resume_summary">打开应用程序时恢复暂停的下载</string>
     <string name="noDirectDownloads">没有下载。 您可以从下载的“文件”选项卡开始下载文件。 请阅读更多关于DirectDownload的信息：http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
     <string name="invalidMaxSimultaneousDownloads">值必须高于0且低于或等于10</string>
+    <string name="connectionsLabel">连接数</string>
+    <string name="numSeederLabel">种子数量</string>
+    <string name="downloadDisplayInfo">下载显示信息</string>
+    <string name="downloadDisplayInfoSummary">自定义下载名称下显示的信息</string>
+    <string name="remainingTime">剩余时间</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

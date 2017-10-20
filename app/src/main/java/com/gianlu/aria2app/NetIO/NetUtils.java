@@ -125,7 +125,7 @@ public class NetUtils {
         return buildHttpClient(profile, NetUtils.readySSLContext(readyCertificate(context, profile)));
     }
 
-    public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) {
         HttpClientBuilder builder = HttpClients.custom()
                 .setUserAgent("Aria2App")
                 .setDefaultRequestConfig(RequestConfig.custom()

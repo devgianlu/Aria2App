@@ -17,8 +17,8 @@
 
     <MultiSelectListPreference
         android:key="a2_customInfo"
-        android:summary="@string/downloadDisplayedInfoSummary"
-        android:title="@string/downloadDisplayedInfo" />
+        android:summary="@string/downloadDisplayInfoSummary"
+        android:title="@string/downloadDisplayInfo" />
 
     <CheckBoxPreference
         android:defaultValue="true"

@@ -133,8 +133,7 @@
     <string name="size"><![CDATA[<b>Size:</b>]]> %s</string>
     <string name="sorting">Sort by</string>
     <string name="status">Status</string>
-    <string name="totalLengthMenu">Total length</string>
-    <string name="completedLengthLabel">Completed length</string>
+    <string name="totalLengthLabel">Total length</string>
     <string name="progress">Progress</string>
     <string name="connectionMethod">Connection method</string>
     <string name="mitLicense">Licensed under MIT license</string>
@@ -215,6 +214,7 @@
     <string name="search_desc">Filter downloads by name or by GID</string>
     <string name="filters_desc">Filter downloads by their status</string>
     <string name="moreDetails">More details</string>
+    <string name="completedLengthLabel">Completed length</string>
     <string name="evenMoreDetails">Even more details</string>
     <string name="evenMoreDetails_desc">Tap on the more button to show all the details</string>
     <string name="moreDetails_desc">Tap on the card to reveal more details</string>
@@ -296,8 +296,8 @@
     <string name="dd_resume">Resume downloads</string>
     <string name="dd_resume_summary">Resume paused downloads when the app is opened</string>
     <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
-    <string name="downloadDisplayedInfo">Download displayed info</string>
-    <string name="downloadDisplayedInfoSummary">Customize the info shown under the download name</string>
+    <string name="downloadDisplayInfo">Download display info</string>
+    <string name="downloadDisplayInfoSummary">Customize the info shown under the download name</string>
     <string name="remainingTime">Remaining time</string>
     <string name="connectionsLabel">Connections</string>
     <string name="numSeederLabel">Seeders</string>

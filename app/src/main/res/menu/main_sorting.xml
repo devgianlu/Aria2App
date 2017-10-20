@@ -23,9 +23,9 @@
 
     <item
         android:id="@+id/mainSort_length"
-        android:title="@string/totalLengthMenu" />
+        android:title="@string/totalLengthLabel" />
 
     <item
         android:id="@+id/mainSort_completedLength"
-        android:title="@string/completedLengthMenu" />
+        android:title="@string/completedLengthLabel" />
 </menu>

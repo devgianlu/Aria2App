@@ -130,8 +130,7 @@
     <string name="size"><![CDATA[<b>Размер:</b>]]> %s</string>
     <string name="sorting">Сортировать по</string>
     <string name="status">Статус</string>
-    <string name="totalLengthMenu">Общий размер</string>
-    <string name="completedLengthMenu">Загруженный размер</string>
+    <string name="totalLengthLabel">Общий размер</string>
     <string name="progress">Прогресс</string>
     <string name="connectionMethod">Способ подключения:</string>
     <string name="mitLicense">Лицензия от MIT</string>
@@ -291,6 +290,12 @@
     <string name="dd_resume_summary">Возобновление приостановки загрузки при открытии приложения</string>
     <string name="noDirectDownloads">Нет загрузок. Вы можете начать загрузку файла со вкладки «Файлы» загрузки. Подробнее о \"Прямую загрузку\" здесь: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
     <string name="invalidMaxSimultaneousDownloads">Значение должно быть выше 0 и ниже или равно 10</string>
+    <string name="connectionsLabel">Соединений</string>
+    <string name="numSeederLabel">Число сидеров</string>
+    <string name="downloadDisplayInfo">Загрузить информацию о показах</string>
+    <string name="downloadDisplayInfoSummary">Настроить информацию, показанную под именем загрузки</string>
+    <string name="remainingTime">Оставшееся время</string>
+    <string name="completedLengthLabel">Загруженный размер</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
