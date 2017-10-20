@@ -36,7 +36,7 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class SearchUtils {
     public static final int RESULTS_PER_REQUEST = 20;
-    private static final String BASE_URL = "http://torrent-search-engine-torrent-search-engine.a3c1.starter-us-west-1.openshiftapps.com/";
+    private static final String BASE_URL = "https://torrent-search-engine.herokuapp.com/";
     private static SearchUtils instance;
     private final HttpClient client;
     private final ExecutorService executorService;
