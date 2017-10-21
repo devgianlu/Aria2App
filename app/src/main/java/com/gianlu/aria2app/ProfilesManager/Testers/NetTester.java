@@ -42,7 +42,8 @@ public abstract class NetTester extends BaseTester {
         if (status.ex != null) {
             if (status.ex.getMessage() == null) {
                 Throwable cause = status.ex.getCause();
-                if (cause.getMessage() != null) publishMessage(cause.getMessage(), R.color.red);
+                if (cause != null && cause.getMessage() != null)
+                    publishMessage(cause.getMessage(), R.color.red);
             } else {
                 publishMessage(status.ex.getMessage(), R.color.red);
             }

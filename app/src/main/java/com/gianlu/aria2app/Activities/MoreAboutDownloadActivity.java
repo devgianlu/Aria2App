@@ -152,7 +152,10 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
                 fragment.onBackPressed();
         }
 
-        super.onBackPressed();
+        try {
+            super.onBackPressed();
+        } catch (NullPointerException ignored) {
+        }
     }
 
     @Override
