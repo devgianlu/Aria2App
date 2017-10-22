@@ -6,11 +6,12 @@ import com.gianlu.aria2app.BuildConfig;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ErrorHandler {
     private static ErrorHandler instance;
     private final IErrorHandler handler;
-    private int errorCount = 0;
+    private final AtomicInteger errorCount = new AtomicInteger(0);
     private volatile boolean locked = false;
 
     private ErrorHandler(int updateInterval, @Nullable IErrorHandler handler) {
@@ -19,7 +20,7 @@ public class ErrorHandler {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                errorCount = 0;
+                errorCount.set(0);
             }
         }, 0, (updateInterval + 1000) * 3);
     }
@@ -38,19 +39,19 @@ public class ErrorHandler {
     }
 
     public void unlock() {
-        errorCount = 0;
+        errorCount.set(0);
         locked = false;
     }
 
     public void notifyException(Throwable ex, boolean fatal) {
         if (locked) return;
-        errorCount++;
+        errorCount.incrementAndGet();
 
         if (fatal) {
             lock();
             if (handler != null) handler.onFatal(ex);
 
-        } else if (errorCount >= 5) {
+        } else if (errorCount.get() >= 5) {
             lock();
             if (handler != null) handler.onSubsequentExceptions();
         } else {

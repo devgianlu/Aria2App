@@ -123,7 +123,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return -1;
     }
 
-    public void notifyServerChanged(Server server) {
+    private void notifyServerChanged(Server server) {
         int pos = indexOfServer(server.uri);
         if (pos != -1) notifyItemChanged(pos, server);
     }

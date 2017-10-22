@@ -39,7 +39,7 @@ public class HTTPing extends AbstractClient {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 
-    public HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
+    private HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
         super(context, profile);
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
@@ -128,32 +128,31 @@ public class HTTPing extends AbstractClient {
                 HttpResponse resp = client.execute(get);
                 StatusLine sl = resp.getStatusLine();
 
-                if (request == null) {
+                if (request == null) { // Connection test
                     if (sl.getStatusCode() == HttpStatus.SC_BAD_REQUEST) listener.onResponse(null);
                     else listener.onException(new StatusCodeException(sl));
-                    return;
+                } else {
+                    HttpEntity entity = resp.getEntity();
+                    if (entity != null) {
+                        String json = EntityUtils.toString(entity, Consts.UTF_8);
+                        if (json == null || json.isEmpty()) {
+                            listener.onException(new NullPointerException("Empty response"));
+                        } else {
+                            JSONObject obj = new JSONObject(json);
+                            if (obj.has("error")) {
+                                listener.onException(new AriaException(obj.getJSONObject("error")));
+                            } else {
+                                listener.onResponse(obj);
+                            }
+                        }
+                    } else {
+                        listener.onException(new StatusCodeException(sl));
+                    }
                 }
 
-                HttpEntity entity = resp.getEntity();
-                if (entity != null) {
-                    String json = EntityUtils.toString(entity, Consts.UTF_8);
-                    if (json == null || json.isEmpty()) {
-                        listener.onException(new NullPointerException("Empty response"));
-                    } else {
-                        JSONObject obj = new JSONObject(json);
-                        if (obj.has("error")) {
-                            listener.onException(new AriaException(obj.getJSONObject("error")));
-                        } else {
-                            listener.onResponse(obj);
-                        }
-                    }
-                } else {
-                    listener.onException(new StatusCodeException(sl));
-                }
+                EntityUtils.consumeQuietly(resp.getEntity());
 
                 get.releaseConnection();
-            } catch (OutOfMemoryError ex) {
-                System.gc();
             } catch (JSONException | IOException | URISyntaxException | IllegalStateException ex) {
                 listener.onException(ex);
             }

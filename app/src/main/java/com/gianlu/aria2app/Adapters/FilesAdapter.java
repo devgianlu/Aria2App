@@ -18,6 +18,7 @@ import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +53,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         int pos = currentNode.indexOfObj(file);
         if (pos != -1) {
             currentNodes.get(pos + currentNode.dirs.size()).update(file);
-            notifyItemChanged(pos + currentNode.dirs.size(), file);
+            notifyItemChanged(pos + currentNode.dirs.size(), new WeakReference<>(file));
         }
     }
 
@@ -67,22 +68,26 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
             if (holder instanceof FileViewHolder) {
                 FileViewHolder castHolder = (FileViewHolder) holder;
-                AriaFile payload = (AriaFile) payloads.get(0);
+                WeakReference<AriaFile> ref = (WeakReference<AriaFile>) payloads.get(0);
+                if (ref.get() != null) {
+                    AriaFile payload = ref.get();
 
-                castHolder.progressBar.setProgress((int) payload.getProgress());
-                castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", payload.getProgress()));
-                castHolder.updateStatus(payload);
+                    castHolder.progressBar.setProgress((int) payload.getProgress());
+                    castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", payload.getProgress()));
+                    castHolder.updateStatus(payload);
+                }
             }
         }
     }
 
-    public void notifyCurrentDirChanged() {
+    private void notifyCurrentDirChanged() {
         if (currentNode == null) return;
         currentNodes.clear();
         currentNodes.addAll(currentNode.dirs);
@@ -92,7 +97,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (handler != null) handler.onDirectoryChanged(currentNode);
     }
 
-    public void navigateInto(TreeNode node) {
+    private void navigateInto(TreeNode node) {
         if (node != null && !node.isFile() && currentNode.indexOfDir(node) != -1) cd(node);
     }
 
@@ -215,7 +220,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             formatIcon = itemView.findViewById(R.id.fileItem_formatIcon);
         }
 
-        public void updateStatus(AriaFile file) {
+        void updateStatus(AriaFile file) {
             if (file.completed()) {
                 status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
             } else if (file.selected) {

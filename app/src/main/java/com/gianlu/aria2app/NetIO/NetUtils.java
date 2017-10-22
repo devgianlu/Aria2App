@@ -133,7 +133,6 @@ public class NetUtils {
                         .setSocketTimeout(5000)
                         .setConnectionRequestTimeout(5000)
                         .build())
-                .setConnectionManagerShared(true)
                 .setSslcontext(sslContext);
 
         if (!profile.hostnameVerifier) {

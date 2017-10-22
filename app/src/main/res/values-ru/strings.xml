@@ -292,7 +292,7 @@
     <string name="invalidMaxSimultaneousDownloads">Значение должно быть выше 0 и ниже или равно 10</string>
     <string name="connectionsLabel">Соединений</string>
     <string name="numSeederLabel">Число сидеров</string>
-    <string name="downloadDisplayInfo">Загрузить информацию о показах</string>
+    <string name="downloadDisplayInfo">Отображение информации загрузки</string>
     <string name="downloadDisplayInfoSummary">Настроить информацию, показанную под именем загрузки</string>
     <string name="remainingTime">Оставшееся время</string>
     <string name="completedLengthLabel">Загруженный размер</string>

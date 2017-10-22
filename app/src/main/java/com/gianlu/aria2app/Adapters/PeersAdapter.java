@@ -35,14 +35,9 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position);
-        } else {
-            Peer peer = (Peer) payloads.get(0);
-            holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
-            holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
-        }
+    protected void onBindViewHolder(ViewHolder holder, int position, @NonNull Peer payload) {
+        holder.downloadSpeed.setText(CommonUtils.speedFormatter(payload.downloadSpeed, false));
+        holder.uploadSpeed.setText(CommonUtils.speedFormatter(payload.uploadSpeed, false));
     }
 
     @SuppressLint("SetTextI18n")

@@ -111,10 +111,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
-    public void onBindViewHolder(DownloadCardsAdapter.DownloadViewHolder holder, int position, List<Object> payloads) {
-        if (payloads.isEmpty()) onBindViewHolder(holder, position);
-        else holder.update((Download) payloads.get(0));
-
+    protected void onBindViewHolder(DownloadViewHolder holder, int position, @NonNull Download payload) {
+        holder.update(payload);
         CommonUtils.setCardTopMargin(context, holder);
     }
 
@@ -198,10 +196,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         });
 
         holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PKeys.A2_CUSTOM_INFO, new HashSet<String>()), item.isTorrent()));
-
         setupActions(holder, item);
-
         holder.update(item);
+        CommonUtils.setCardTopMargin(context, holder);
     }
 
     @Nullable

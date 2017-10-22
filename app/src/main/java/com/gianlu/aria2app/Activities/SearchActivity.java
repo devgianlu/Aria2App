@@ -66,6 +66,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         message = findViewById(R.id.search_message);
         recyclerViewLayout = findViewById(R.id.search_recyclerViewLayout);
         recyclerViewLayout.stopLoading();
+        recyclerViewLayout.disableSwipeRefresh();
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
