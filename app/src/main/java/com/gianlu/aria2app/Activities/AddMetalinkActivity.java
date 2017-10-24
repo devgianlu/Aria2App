@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -25,7 +26,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
 
-import java.io.File;
 import java.util.Map;
 
 public class AddMetalinkActivity extends AppCompatActivity {
@@ -33,8 +33,8 @@ public class AddMetalinkActivity extends AppCompatActivity {
     private OptionsFragment optionsFragment;
     private Base64Fragment base64Fragment;
 
-    public static void startAndAdd(Context context, File file) {
-        context.startActivity(new Intent(context, AddMetalinkActivity.class).putExtra("file", file));
+    public static void startAndAdd(Context context, Uri uri) {
+        context.startActivity(new Intent(context, AddMetalinkActivity.class).putExtra("uri", uri));
     }
 
     @Override
@@ -52,7 +52,7 @@ public class AddMetalinkActivity extends AppCompatActivity {
         pager = findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = findViewById(R.id.addDownload_tabs);
 
-        base64Fragment = Base64Fragment.getInstance(this, false, (File) getIntent().getSerializableExtra("file"));
+        base64Fragment = Base64Fragment.getInstance(this, false, (Uri) getIntent().getParcelableExtra("uri"));
         optionsFragment = OptionsFragment.getInstance(this, false);
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, optionsFragment));

@@ -11,12 +11,14 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -53,7 +55,6 @@ import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.Main.DrawerConst;
-import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private DownloadCardsAdapter adapter;
     private UpdateUI updater;
     private SearchView searchView;
-    private SharedFile _sharedFile;
+    private Uri _sharedUri;
     private Toolbar toolbar;
     private boolean isShowingHint = false;
     private TextView active;
@@ -270,21 +271,22 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PKeys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
-    private void processSharedFile(SharedFile file) {
-        if (file.file.exists() && file.file.canRead()) {
-            if (file.mimeType == null) {
-                Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + file.file));
-            } else {
-                if (Objects.equals(file.mimeType, "application/x-bittorrent")) {
-                    AddTorrentActivity.startAndAdd(this, file.file);
-                } else if (Objects.equals(file.mimeType, "application/metalink4+xml") || Objects.equals(file.mimeType, "application/metalink+xml")) {
-                    AddMetalinkActivity.startAndAdd(this, file.file);
+    private void processFileUri(Uri uri) {
+        try (Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                String mimeType = cursor.getString(0);
+                if (mimeType != null) {
+                    if (Objects.equals(mimeType, "application/x-bittorrent")) {
+                        AddTorrentActivity.startAndAdd(this, uri);
+                    } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
+                        AddMetalinkActivity.startAndAdd(this, uri);
+                    } else {
+                        Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("File type not supported: " + mimeType));
+                    }
                 } else {
-                    Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("File type not supported: " + file.mimeType));
+                    Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + uri));
                 }
             }
-        } else {
-            Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Shared file doesn't exist or cannot be read: " + file.file));
         }
     }
 
@@ -435,19 +437,14 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Uri shareData = getIntent().getParcelableExtra("shareData");
         if (shareData != null) {
             String scheme = shareData.getScheme();
-            if (scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp")) {
+            if (scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
                 processUrl(shareData);
             } else {
-                SharedFile file = Utils.accessUriFile(this, shareData);
-                if (file != null) {
-                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        _sharedFile = file;
-                        Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
-                    } else {
-                        processSharedFile(file);
-                    }
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    _sharedUri = shareData;
+                    Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
                 } else {
-                    processUrl(shareData);
+                    processFileUri(shareData);
                 }
             }
         }
@@ -476,8 +473,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 12 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedFile != null)
-            processSharedFile(_sharedFile);
+        if (requestCode == 12 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedUri != null)
+            processFileUri(_sharedUri);
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
