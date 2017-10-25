@@ -92,7 +92,7 @@
                 android:layout_height="48dp"
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_add_circle_white_48dp" />
         </LinearLayout>
 

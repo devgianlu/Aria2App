@@ -104,7 +104,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_open_in_new_black_48dp" />
@@ -114,7 +114,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_pause_black_48dp" />
@@ -124,7 +124,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_play_arrow_black_48dp" />
@@ -134,7 +134,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_refresh_black_48dp" />
@@ -144,7 +144,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:alpha="0.54"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_clear_black_48dp" />

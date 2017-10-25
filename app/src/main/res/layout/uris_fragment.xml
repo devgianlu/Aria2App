@@ -33,7 +33,7 @@
 
     <Button
         android:id="@+id/urisFragment_addNew"
-        style="?buttonBarButtonStyle"
+        style="?android:buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
