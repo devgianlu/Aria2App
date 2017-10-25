@@ -3,8 +3,10 @@ package com.gianlu.aria2app.Activities.EditProfile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -20,14 +22,19 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Main.SharedFile;
+import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.Toaster;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 public class ConnectionFragment extends FieldErrorFragment {
     private final static int CODE_PICK_CERT = 1;
@@ -38,9 +45,13 @@ public class ConnectionFragment extends FieldErrorFragment {
     private TextInputLayout port;
     private TextInputLayout endpoint;
     private CheckBox encryption;
-    private LinearLayout certificatePathContainer;
+    private LinearLayout certificateSelectionContainer;
+    private LinearLayout pickCertificateContainer;
+    private LinearLayout certificateDetailsContainer;
+    private X509Certificate lastLoadedCertificate;
     private CheckBox hostnameVerifier;
-    private TextInputLayout certificatePath;
+    private SuperTextView certificateDetailsVersion;
+    private SuperTextView certificateDetailsSerialNumber;
 
     public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         ConnectionFragment fragment = new ConnectionFragment();
@@ -119,35 +130,24 @@ public class ConnectionFragment extends FieldErrorFragment {
         encryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                certificatePathContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                certificateSelectionContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 updateCompleteAddress();
                 if (isChecked)
                     Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_certMessage, 11);
             }
         });
-        certificatePathContainer = layout.findViewById(R.id.editProfile_certificatePathContainer);
-        certificatePath = layout.findViewById(R.id.editProfile_certificatePath);
-        certificatePath.getEditText().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                certificatePath.setErrorEnabled(false);
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+        certificateSelectionContainer = layout.findViewById(R.id.editProfile_certificateSelectionContainer);
+        pickCertificateContainer = layout.findViewById(R.id.editProfile_pickCertificateContainer);
+        certificateDetailsContainer = layout.findViewById(R.id.editProfile_certificateDetailsContainer);
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        certificateDetailsVersion = layout.findViewById(R.id.editProfile_certificateDetails_version);
+        certificateDetailsSerialNumber = layout.findViewById(R.id.editProfile_certificateDetails_serialNumber);
 
         hostnameVerifier = layout.findViewById(R.id.editProfile_hostnameVerifier);
 
-        ImageButton pickCertificatePath = layout.findViewById(R.id.editProfile_pickCertificatePath);
-        pickCertificatePath.setOnClickListener(new View.OnClickListener() {
+        ImageButton pickCertificateFile = layout.findViewById(R.id.editProfile_pickCertificateFile);
+        pickCertificateFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
@@ -172,8 +172,11 @@ public class ConnectionFragment extends FieldErrorFragment {
             port.getEditText().setText(String.valueOf(edit.serverPort));
             endpoint.getEditText().setText(edit.serverEndpoint);
             encryption.setChecked(edit.serverSSL);
-            if (edit.serverSSL) certificatePath.getEditText().setText(edit.certificatePath);
             hostnameVerifier.setChecked(edit.hostnameVerifier);
+            if (edit.serverSSL && edit.certificate != null)
+                showCertificateDetails(edit.certificate);
+
+            lastLoadedCertificate = edit.certificate;
         }
 
         created = true;
@@ -184,11 +187,37 @@ public class ConnectionFragment extends FieldErrorFragment {
     @Override
     @SuppressWarnings("ConstantConditions")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Context context = getContext();
-        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && certificatePath != null && context != null) {
-            SharedFile file = Utils.accessUriFile(context, data.getData());
-            if (file != null) certificatePath.getEditText().setText(file.file.getAbsolutePath());
+        if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && isAdded())
+            loadCertificateUri(data.getData());
+    }
+
+    private void showCertificateDetails(@NonNull X509Certificate certificate) {
+        pickCertificateContainer.setVisibility(View.GONE);
+        certificateDetailsContainer.setVisibility(View.VISIBLE);
+
+        certificateDetailsVersion.setHtml(R.string.version, String.valueOf(certificate.getVersion()));
+        certificateDetailsSerialNumber.setHtml(R.string.serialNumber, Utils.toHexString(certificate.getSerialNumber()));
+
+        // TODO: More details (!!)
+    }
+
+    private void loadCertificateUri(Uri path) {
+        X509Certificate certificate;
+        try {
+            InputStream in = getContext().getContentResolver().openInputStream(path);
+            if (in != null) {
+                certificate = CertUtils.loadCertificateFromStream(in);
+            } else {
+                Toaster.show(getContext(), Utils.Messages.FAILED_LOADING_CERTIFICATE, new NullPointerException("InputStream is null!"));
+                return;
+            }
+        } catch (FileNotFoundException | CertificateException ex) {
+            Toaster.show(getContext(), Utils.Messages.FAILED_LOADING_CERTIFICATE, ex);
+            return;
         }
+
+        lastLoadedCertificate = certificate;
+        showCertificateDetails(certificate);
     }
 
     private void updateCompleteAddress() {
@@ -220,7 +249,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificatePath, edit.hostnameVerifier);
+            return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificate, edit.hostnameVerifier);
         }
 
         MultiProfile.ConnectionMethod connectionMethod;
@@ -235,9 +264,9 @@ public class ConnectionFragment extends FieldErrorFragment {
         }
 
         String address = this.address.getEditText().getText().toString().trim();
-        if (address.isEmpty()) {
+        if (address.isEmpty())
             throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.addressEmpty));
-        }
+
 
         int port;
         try {
@@ -248,9 +277,9 @@ public class ConnectionFragment extends FieldErrorFragment {
         }
 
         String endpoint = this.endpoint.getEditText().getText().toString().trim();
-        if (endpoint.isEmpty()) {
+        if (endpoint.isEmpty())
             throw new InvalidFieldException(getClass(), R.id.editProfile_endpoint, context.getString(R.string.endpointEmpty));
-        }
+
 
         boolean encryption = this.encryption.isChecked();
 
@@ -265,14 +294,7 @@ public class ConnectionFragment extends FieldErrorFragment {
         if (partial)
             return new Fields(connectionMethod, address, port, endpoint, encryption, null, false);
 
-        String certificatePath = this.certificatePath.getEditText().getText().toString(); // The certificate path can be empty
-        if (encryption && certificatePath != null && !certificatePath.isEmpty()) {
-            File cert = new File(certificatePath);
-            if (!cert.exists() || !cert.canRead())
-                throw new InvalidFieldException(getClass(), R.id.editProfile_certificatePath, context.getString(R.string.invalidCertificate));
-        }
-
-        return new Fields(connectionMethod, address, port, endpoint, encryption, certificatePath, hostnameVerifier.isChecked());
+        return new Fields(connectionMethod, address, port, endpoint, encryption, lastLoadedCertificate, hostnameVerifier.isChecked());
     }
 
     @Override
@@ -290,16 +312,16 @@ public class ConnectionFragment extends FieldErrorFragment {
         public final int port;
         public final String endpoint;
         public final boolean encryption;
-        public final String certificatePath;
+        public final X509Certificate certificate;
         public final boolean hostnameVerifier;
 
-        public Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable String certificatePath, boolean hostnameVerifier) {
+        Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
             this.connectionMethod = connectionMethod;
             this.address = address;
             this.port = port;
             this.endpoint = endpoint;
             this.encryption = encryption;
-            this.certificatePath = certificatePath;
+            this.certificate = certificate;
             this.hostnameVerifier = hostnameVerifier;
         }
     }

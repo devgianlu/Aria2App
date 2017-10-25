@@ -11,6 +11,7 @@ import android.util.Base64;
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
+import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -383,7 +385,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final JTA2.AuthMethod authMethod;
         public final boolean serverSSL;
         public final boolean hostnameVerifier;
-        public final String certificatePath;
+        public final X509Certificate certificate;
         public final String serverUsername;
         public final String serverPassword;
         public final String serverToken;
@@ -406,7 +408,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverToken = authFields.token;
             connectionMethod = connFields.connectionMethod;
             serverSSL = connFields.encryption;
-            certificatePath = connFields.certificatePath;
+            certificate = connFields.certificate;
             serverAddr = connFields.address;
             serverPort = connFields.port;
             serverEndpoint = connFields.endpoint;
@@ -424,7 +426,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverPort = port;
             serverEndpoint = "/jsonrpc";
             serverSSL = false;
-            certificatePath = null;
+            certificate = null;
             directDownload = null;
             connectivityCondition = ConnectivityCondition.newUniqueCondition();
             hostnameVerifier = false;
@@ -442,7 +444,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverAddr = obj.getString("serverAddr");
             serverPort = obj.getInt("serverPort");
             serverEndpoint = obj.getString("serverEndpoint");
-            certificatePath = obj.optString("certificatePath", null);
             hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
 
             if (obj.has("directDownload"))
@@ -458,6 +459,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     connectivityCondition = condition;
             } else {
                 connectivityCondition = new ConnectivityCondition(obj.getJSONObject("connectivityCondition"));
+            }
+
+            if (obj.isNull("certificatePath")) {
+                certificate = CertUtils.decodeCertificate(obj.optString("certificate", null));
+            } else {
+                certificate = CertUtils.loadCertificateFromFile(obj.getString("certificatePath"));
             }
 
             status = new TestStatus(Status.UNKNOWN, null);
@@ -512,8 +519,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("serverPassword", serverPassword)
                     .put("hostnameVerifier", hostnameVerifier)
                     .put("serverSSL", serverSSL)
+                    .put("certificate", CertUtils.encodeCertificate(certificate))
                     .put("connectionMethod", connectionMethod.name())
-                    .put("certificatePath", certificatePath)
                     .put("connectivityCondition", connectivityCondition.toJSON());
 
             if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJSON());
@@ -533,7 +540,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             if (!serverAddr.equals(profile.serverAddr)) return false;
             if (!serverEndpoint.equals(profile.serverEndpoint)) return false;
             if (authMethod != profile.authMethod) return false;
-            if (certificatePath != null ? !certificatePath.equals(profile.certificatePath) : profile.certificatePath != null)
+            if (certificate != null ? !certificate.equals(profile.certificate) : profile.certificate != null)
                 return false;
             if (serverUsername != null ? !serverUsername.equals(profile.serverUsername) : profile.serverUsername != null)
                 return false;

@@ -41,7 +41,7 @@ public class HttpTester extends NetTester implements Callable<Boolean> {
 
     @Override
     public Boolean call() {
-        try (CloseableHttpClient client = NetUtils.buildHttpClient(context, profile)) {
+        try (CloseableHttpClient client = NetUtils.buildHttpClient(profile)) {
             HttpGet get = NetUtils.createGetRequest(profile, null, Utils.readyRequest().put("method", "system.listMethods"));
 
             long startTime = System.currentTimeMillis();

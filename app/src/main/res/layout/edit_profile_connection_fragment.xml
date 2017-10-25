@@ -101,7 +101,7 @@
             android:text="@string/encryption" />
 
         <LinearLayout
-            android:id="@+id/editProfile_certificatePathContainer"
+            android:id="@+id/editProfile_certificateSelectionContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -109,41 +109,68 @@
             android:visibility="gone">
 
             <LinearLayout
+                android:id="@+id/editProfile_pickCertificateContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/editProfile_certificatePath"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/certificate">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <android.support.design.widget.TextInputEditText
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="textUri" />
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/pickCertificate"
+                        android:textColor="@android:color/primary_text_light" />
 
-                <ImageButton
-                    android:id="@+id/editProfile_pickCertificatePath"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:adjustViewBounds="true"
-                    android:alpha="0.54"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_insert_drive_file_black_48dp" />
+                    <ImageButton
+                        android:id="@+id/editProfile_pickCertificateFile"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:adjustViewBounds="true"
+                        android:alpha="0.54"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:padding="4dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_insert_drive_file_black_48dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/certDisclaimer"
+                    android:textSize="12sp" />
+
             </LinearLayout>
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/editProfile_certificateDetailsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/certDisclaimer"
-                android:textSize="12sp" />
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/certificateDetails" />
+
+                <com.gianlu.commonutils.SuperTextView
+                    android:id="@+id/editProfile_certificateDetails_version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.gianlu.commonutils.SuperTextView
+                    android:id="@+id/editProfile_certificateDetails_serialNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
 
             <CheckBox
                 android:id="@+id/editProfile_hostnameVerifier"

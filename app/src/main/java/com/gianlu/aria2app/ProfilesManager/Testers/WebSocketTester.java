@@ -41,9 +41,9 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
         try {
             WebSocket webSocket;
             if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(context, profile));
+                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, profile.certificate);
             else
-                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, NetUtils.readyCertificate(context, profile));
+                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.certificate);
 
             webSocket.addListener(this).connectAsynchronously();
 

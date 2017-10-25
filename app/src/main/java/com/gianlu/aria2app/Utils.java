@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Random;
 
@@ -48,6 +49,7 @@ public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
     private static final Random random = new Random();
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static int indexOf(String[] items, String item) {
         for (int i = 0; i < items.length; i++)
@@ -231,6 +233,28 @@ public class Utils {
         }
     }
 
+    public static String toHexString(BigInteger b) {
+        String hexValue = b.toString(16);
+        StringBuilder buf = new StringBuilder(hexValue.length() * 2);
+        if (hexValue.startsWith("-")) {
+            buf.append("   -");
+            hexValue = hexValue.substring(1);
+        } else {
+            buf.append("    ");
+        }
+        if ((hexValue.length() % 2) != 0) hexValue = "0" + hexValue;
+        int i = 0;
+        while (i < hexValue.length()) {
+            buf.append(hexValue.substring(i, i + 2));
+            i += 2;
+            if (i != hexValue.length()) {
+                if ((i % 64) == 0) buf.append("\n    ");
+                else if (i % 8 == 0) buf.append(" ");
+            }
+        }
+        return buf.toString();
+    }
+
     @SuppressWarnings("WeakerAccess")
     public static class Messages {
         public static final Toaster.Message FAILED_GATHERING_INFORMATION = new Toaster.Message(R.string.failedGatheringInfo, true);
@@ -275,6 +299,7 @@ public class Utils {
         public static final Toaster.Message FAILED_OPENING_DOWNLOAD = new Toaster.Message(R.string.failedOpeningDownload, true);
         public static final Toaster.Message DD_NOT_ENABLED = new Toaster.Message(R.string.ddNotEnabled, false);
         public static final Toaster.Message PROFILE_DOES_NOT_EXIST = new Toaster.Message(R.string.profileDoesntExist, false);
+        public static final Toaster.Message FAILED_LOADING_CERTIFICATE = new Toaster.Message(R.string.invalidCertificate, true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

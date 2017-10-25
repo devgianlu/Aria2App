@@ -102,9 +102,9 @@ public class NotificationService extends IntentService {
             WebSocket webSocket;
             try {
                 if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, NetUtils.readyCertificate(getApplicationContext(), profile));
+                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, profile.certificate);
                 else
-                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, NetUtils.readyCertificate(getApplicationContext(), profile));
+                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.certificate);
             } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
                 stopSelf();
                 return;

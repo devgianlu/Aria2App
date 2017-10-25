@@ -1,12 +1,8 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -17,8 +13,6 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +22,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -45,7 +38,7 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 public class NetUtils {
 
     @NonNull
-    public static SSLContext readySSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+    public static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         if (ca == null) return SSLContext.getDefault();
 
         String keyStoreType = KeyStore.getDefaultType();
@@ -63,23 +56,11 @@ public class NetUtils {
         return context;
     }
 
-    @Nullable
-    public static Certificate readyCertificate(Context context, MultiProfile.UserProfile profile) throws CertificateException, FileNotFoundException {
-        if (!profile.serverSSL || profile.certificatePath == null || profile.certificatePath.isEmpty())
-            return null;
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            return null;
-
-        CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return factory.generateCertificate(new FileInputStream(profile.certificatePath));
-    }
-
     public static WebSocket readyWebSocket(String url, boolean hostnameVerifier, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         if (ca != null) {
             WebSocketFactory factory = new WebSocketFactory();
             factory.setVerifyHostname(hostnameVerifier);
-            factory.setSSLContext(readySSLContext(ca));
+            factory.setSSLContext(createSSLContext(ca));
 
             return factory.createSocket(url, 5000)
                     .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
@@ -94,19 +75,19 @@ public class NetUtils {
             WebSocketFactory factory = new WebSocketFactory();
             factory.setVerifyHostname(hostnameVerifier);
             factory.setConnectionTimeout(5000);
-            if (ca != null) factory.setSSLContext(readySSLContext(ca));
+            if (ca != null) factory.setSSLContext(createSSLContext(ca));
             return factory.createSocket(url, 5000);
         } catch (IllegalArgumentException ex) {
             throw new IOException("Just a wrapper for the real exception", ex);
         }
     }
 
-    public static WebSocket readyWebSocket(Context context, MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+    public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);
         factory.setVerifyHostname(profile.hostnameVerifier);
         if (profile.serverSSL)
-            factory.setSSLContext(readySSLContext(readyCertificate(context, profile)));
+            factory.setSSLContext(createSSLContext(profile.certificate));
 
         try {
             WebSocket socket = factory.createSocket(profile.buildWebSocketUrl(), 5000);
@@ -121,8 +102,8 @@ public class NetUtils {
         }
     }
 
-    public static CloseableHttpClient buildHttpClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        return buildHttpClient(profile, NetUtils.readySSLContext(readyCertificate(context, profile)));
+    public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        return buildHttpClient(profile, createSSLContext(profile.certificate));
     }
 
     public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) {

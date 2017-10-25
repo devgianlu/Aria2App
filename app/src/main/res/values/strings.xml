@@ -148,7 +148,7 @@
     <string name="addressEmpty">The address field is empty!</string>
     <string name="invalidPort">Invalid port number!</string>
     <string name="endpointEmpty">The endpoint field is empty!</string>
-    <string name="invalidCertificate">Invalid certificate path!</string>
+    <string name="invalidCertificate">Invalid certificate!</string>
     <string name="invalidCompleteAddress">An address cannot be created with these settings!</string>
     <string name="usernameAndPassword">Username and password</string>
     <string name="emptyToken">The token field is empty!</string>
@@ -202,7 +202,7 @@
     <string name="removeMetadataName">Remove metadata for %s</string>
     <string name="removeDownload_removeMetadata">Do you want to remove the metadata that generated this download?</string>
     <string name="base64NotSelected">You haven\'t selected a file!</string>
-    <string name="certDisclaimer">Leave empty to use a system-wide certificate (you must install a valid certificate anyway). If specified, the certificate file may be copied somewhere else.</string>
+    <string name="certDisclaimer">A certificate isn\'t required if your server is already trusted by this system (usually if you installed the certificate or if your certificate is signed by a trusted source)</string>
     <string name="test">Test</string>
     <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
     <string name="restartTutorial">Restart tutorial</string>
@@ -302,6 +302,9 @@
     <string name="connectionsLabel">Connections</string>
     <string name="numSeederLabel">Seeders</string>
     <string name="flowLayout_details" translatable="false">Copyright 2011, Artem Votincev (apmem.org)</string>
+    <string name="pickCertificate">Pick a certificate</string>
+    <string name="certificateDetails">Certificate details</string>
+    <string name="serialNumber"><![CDATA[<b>Serial number:</b>]]> %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

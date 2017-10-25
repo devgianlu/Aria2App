@@ -32,7 +32,7 @@ public abstract class AbstractClient {
 
     public AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        this.sslContext = NetUtils.readySSLContext(NetUtils.readyCertificate(context, profile));
+        this.sslContext = NetUtils.createSSLContext(profile.certificate);
         this.profile = profile;
         context.getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
