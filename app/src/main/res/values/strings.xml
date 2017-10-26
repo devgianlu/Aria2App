@@ -182,7 +182,7 @@
     <string name="enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="notificationsAtBootOn">Notification service will be started at boot</string>
     <string name="notificationsAtBootOff">Notification service won\'t be started at boot</string>
-    <string name="name">Name</string>
+    <string name="nameLabel">Name</string>
     <string name="searchDownloads">Search for download</string>
     <string name="failedLoadingDownloads">Failed loading downloads!</string>
     <string name="indexes"><![CDATA[<b>Indexes:</b>]]> %s</string>
@@ -302,9 +302,15 @@
     <string name="connectionsLabel">Connections</string>
     <string name="numSeederLabel">Seeders</string>
     <string name="flowLayout_details" translatable="false">Copyright 2011, Artem Votincev (apmem.org)</string>
-    <string name="pickCertificate">Pick a certificate</string>
+    <string name="selectCertificate">Select/change certificate</string>
     <string name="certificateDetails">Certificate details</string>
     <string name="serialNumber"><![CDATA[<b>Serial number:</b>]]> %s</string>
+    <string name="subject">Subject</string>
+    <string name="issuer">Issuer</string>
+    <string name="signatureAlgorithm">Signature algorithm</string>
+    <string name="name">Name: %s</string>
+    <string name="oid">OID: %s</string>
+    <string name="alternativeNames">Alternative names: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

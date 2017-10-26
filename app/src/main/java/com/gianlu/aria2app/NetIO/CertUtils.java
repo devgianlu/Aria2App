@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.BuildConfig;
+import com.gianlu.aria2app.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -14,6 +15,10 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class CertUtils {
     @Nullable
@@ -27,6 +32,12 @@ public class CertUtils {
             if (BuildConfig.DEBUG) ex.printStackTrace();
             return null;
         }
+    }
+
+    public static List<GeneralName> parseGeneralNames(Collection<List<?>> generalNames) {
+        List<GeneralName> generalNamesParsed = new ArrayList<>();
+        for (List<?> name : generalNames) generalNamesParsed.add(new GeneralName(name));
+        return generalNamesParsed;
     }
 
     @Nullable
@@ -56,6 +67,63 @@ public class CertUtils {
         } catch (FileNotFoundException | CertificateException ex) {
             if (BuildConfig.DEBUG) ex.printStackTrace();
             return null;
+        }
+    }
+
+    public static class GeneralName {
+        public final Type type;
+        public final String val;
+
+        public GeneralName(List<?> pair) {
+            type = Type.parse((Integer) pair.get(0));
+
+            Object valObj = pair.get(1);
+            Class<?> componentType = valObj.getClass().getComponentType();
+            if (componentType != null && Objects.equals(componentType, Byte.class))
+                val = Utils.toHexString((byte[]) valObj);
+            else
+                val = (String) valObj;
+        }
+
+        @Override
+        public String toString() {
+            return val + " (" + type.name() + ")";
+        }
+
+        public enum Type {
+            OTHER_NAME,
+            RFC822_NAME,
+            DNS_NAME,
+            X400_ADDRESS,
+            DIRECTORY_NAME,
+            EDIT_PARTY_NAME,
+            URI,
+            IP_ADDRESS,
+            REGISTERED_ID;
+
+            public static Type parse(Integer i) {
+                switch (i) {
+                    default:
+                    case 0:
+                        return OTHER_NAME;
+                    case 1:
+                        return RFC822_NAME;
+                    case 2:
+                        return DNS_NAME;
+                    case 3:
+                        return X400_ADDRESS;
+                    case 4:
+                        return DIRECTORY_NAME;
+                    case 5:
+                        return EDIT_PARTY_NAME;
+                    case 6:
+                        return URI;
+                    case 7:
+                        return IP_ADDRESS;
+                    case 8:
+                        return REGISTERED_ID;
+                }
+            }
         }
     }
 }

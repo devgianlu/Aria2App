@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/mainSort_name"
-        android:title="@string/name" />
+        android:title="@string/nameLabel" />
 
     <item
         android:id="@+id/mainSort_status"

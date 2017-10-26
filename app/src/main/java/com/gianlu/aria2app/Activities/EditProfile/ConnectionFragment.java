@@ -26,6 +26,8 @@ import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
@@ -34,7 +36,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
+import java.util.List;
+
+import javax.security.auth.x500.X500Principal;
 
 public class ConnectionFragment extends FieldErrorFragment {
     private final static int CODE_PICK_CERT = 1;
@@ -46,12 +53,17 @@ public class ConnectionFragment extends FieldErrorFragment {
     private TextInputLayout endpoint;
     private CheckBox encryption;
     private LinearLayout certificateSelectionContainer;
-    private LinearLayout pickCertificateContainer;
     private LinearLayout certificateDetailsContainer;
     private X509Certificate lastLoadedCertificate;
     private CheckBox hostnameVerifier;
     private SuperTextView certificateDetailsVersion;
     private SuperTextView certificateDetailsSerialNumber;
+    private SuperTextView certificateDetailsSigAlgName;
+    private SuperTextView certificateDetailsSigAlgOid;
+    private SuperTextView certificateDetailsIssuerName;
+    private SuperTextView certificateDetailsIssuerAns;
+    private SuperTextView certificateDetailsSubjectAns;
+    private SuperTextView certificateDetailsSubjectName;
 
     public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         ConnectionFragment fragment = new ConnectionFragment();
@@ -138,8 +150,13 @@ public class ConnectionFragment extends FieldErrorFragment {
         });
 
         certificateSelectionContainer = layout.findViewById(R.id.editProfile_certificateSelectionContainer);
-        pickCertificateContainer = layout.findViewById(R.id.editProfile_pickCertificateContainer);
         certificateDetailsContainer = layout.findViewById(R.id.editProfile_certificateDetailsContainer);
+        certificateDetailsSigAlgName = layout.findViewById(R.id.editProfile_certificateDetails_sigAlgName);
+        certificateDetailsSigAlgOid = layout.findViewById(R.id.editProfile_certificateDetails_sigAlgOid);
+        certificateDetailsIssuerName = layout.findViewById(R.id.editProfile_certificateDetails_issuerName);
+        certificateDetailsIssuerAns = layout.findViewById(R.id.editProfile_certificateDetails_issuerAns);
+        certificateDetailsSubjectName = layout.findViewById(R.id.editProfile_certificateDetails_subjectName);
+        certificateDetailsSubjectAns = layout.findViewById(R.id.editProfile_certificateDetails_subjectAns);
 
         certificateDetailsVersion = layout.findViewById(R.id.editProfile_certificateDetails_version);
         certificateDetailsSerialNumber = layout.findViewById(R.id.editProfile_certificateDetails_serialNumber);
@@ -192,13 +209,47 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     private void showCertificateDetails(@NonNull X509Certificate certificate) {
-        pickCertificateContainer.setVisibility(View.GONE);
         certificateDetailsContainer.setVisibility(View.VISIBLE);
 
         certificateDetailsVersion.setHtml(R.string.version, String.valueOf(certificate.getVersion()));
-        certificateDetailsSerialNumber.setHtml(R.string.serialNumber, Utils.toHexString(certificate.getSerialNumber()));
+        certificateDetailsSerialNumber.setHtml(R.string.serialNumber, Utils.toHexString(certificate.getSerialNumber().toByteArray()));
 
-        // TODO: More details (!!)
+        certificateDetailsSigAlgName.setHtml(R.string.name, certificate.getSigAlgName());
+        certificateDetailsSigAlgOid.setHtml(R.string.oid, certificate.getSigAlgOID());
+
+        certificateDetailsIssuerName.setHtml(R.string.name, certificate.getIssuerX500Principal().getName(X500Principal.RFC1779));
+
+        try {
+            Collection<List<?>> ians = certificate.getIssuerAlternativeNames();
+            if (ians == null) {
+                certificateDetailsIssuerAns.setVisibility(View.GONE);
+            } else {
+                certificateDetailsIssuerAns.setVisibility(View.VISIBLE);
+                List<CertUtils.GeneralName> names = CertUtils.parseGeneralNames(ians);
+                certificateDetailsIssuerAns.setHtml(R.string.alternativeNames, CommonUtils.join(names, ", "));
+            }
+        } catch (CertificateParsingException ex) {
+            certificateDetailsIssuerAns.setVisibility(View.GONE);
+            Logging.logMe(getContext(), ex);
+        }
+
+        certificateDetailsSubjectName.setHtml(R.string.name, certificate.getSubjectX500Principal().getName(X500Principal.RFC1779));
+
+        try {
+            Collection<List<?>> sans = certificate.getSubjectAlternativeNames();
+            if (sans == null) {
+                certificateDetailsSubjectAns.setVisibility(View.GONE);
+            } else {
+                certificateDetailsSubjectAns.setVisibility(View.VISIBLE);
+                List<CertUtils.GeneralName> names = CertUtils.parseGeneralNames(sans);
+                certificateDetailsSubjectAns.setHtml(R.string.alternativeNames, CommonUtils.join(names, ", "));
+            }
+        } catch (CertificateParsingException ex) {
+            certificateDetailsSubjectAns.setVisibility(View.GONE);
+            Logging.logMe(getContext(), ex);
+        }
+
+        System.out.println(certificate);
     }
 
     private void loadCertificateUri(Uri path) {

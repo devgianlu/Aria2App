@@ -5,25 +5,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
-import android.webkit.MimeTypeMap;
 
-import com.gianlu.aria2app.Main.SharedFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -37,11 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Random;
 
@@ -49,7 +37,6 @@ public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
     private static final Random random = new Random();
-    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static int indexOf(String[] items, String item) {
         for (int i = 0; i < items.length; i++)
@@ -170,89 +157,16 @@ public class Utils {
         return new JSONObject().put("jsonrpc", "2.0").put("id", random.nextInt());
     }
 
-    @Nullable
-    public static String resolveUri(Context context, Uri uri) {
-        if (uri == null) return null;
-
-        if (uri.getScheme().equalsIgnoreCase("content")) {
-            try (Cursor cursor = context.getContentResolver().query(uri, new String[]{"_data"}, null, null, null)) {
-                if (cursor != null) {
-                    int column_index = cursor.getColumnIndexOrThrow("_data");
-                    if (cursor.moveToFirst()) return cursor.getString(column_index);
-                }
-            } catch (Exception ex) {
-                Logging.logMe(context, ex);
-            }
-        } else if (uri.getScheme().equalsIgnoreCase("file")) {
-            return uri.getPath();
+    public static String toHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (byte b : bytes) {
+            if (first && b == 0) continue;
+            if (!first) sb.append(":");
+            sb.append(String.format("%02X", b));
+            first = false;
         }
-
-        return null;
-    }
-
-    private static String getMimeType(String uri) {
-        String ext = MimeTypeMap.getFileExtensionFromUrl(uri);
-        if (ext == null || ext.isEmpty()) {
-            String[] split = uri.split("\\.");
-            ext = split[split.length - 1];
-        }
-
-        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-    }
-
-    @Nullable
-    public static SharedFile accessUriFile(Context context, Uri uri) {
-        if (uri == null) return null;
-
-        String resolved = resolveUri(context, uri);
-        if (resolved != null) return new SharedFile(new File(resolved), getMimeType(resolved));
-
-        if (Objects.equals(uri.getScheme(), "file")) {
-            File file = new File(uri.getPath());
-            return new SharedFile(file, getMimeType(file.getAbsolutePath()));
-        }
-
-        String name = Base64.encodeToString(uri.toString().getBytes(), Base64.NO_WRAP);
-        if (name.length() > 64) name = name.substring(name.length() - 64);
-        String mime = context.getContentResolver().getType(uri);
-        File file;
-        if (mime == null) {
-            file = new File(context.getCacheDir(), name);
-        } else {
-            String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
-            file = new File(context.getCacheDir(), name + (ext == null ? "" : ("." + ext)));
-        }
-
-        try (InputStream in = context.getContentResolver().openInputStream(uri);
-             FileOutputStream out = new FileOutputStream(file, false)) {
-            CommonUtils.copy(in, out);
-            return new SharedFile(file, mime);
-        } catch (IOException ex) {
-            Logging.logMe(context, ex);
-            return null;
-        }
-    }
-
-    public static String toHexString(BigInteger b) {
-        String hexValue = b.toString(16);
-        StringBuilder buf = new StringBuilder(hexValue.length() * 2);
-        if (hexValue.startsWith("-")) {
-            buf.append("   -");
-            hexValue = hexValue.substring(1);
-        } else {
-            buf.append("    ");
-        }
-        if ((hexValue.length() % 2) != 0) hexValue = "0" + hexValue;
-        int i = 0;
-        while (i < hexValue.length()) {
-            buf.append(hexValue.substring(i, i + 2));
-            i += 2;
-            if (i != hexValue.length()) {
-                if ((i % 64) == 0) buf.append("\n    ");
-                else if (i % 8 == 0) buf.append(" ");
-            }
-        }
-        return buf.toString();
+        return sb.toString();
     }
 
     @SuppressWarnings("WeakerAccess")
