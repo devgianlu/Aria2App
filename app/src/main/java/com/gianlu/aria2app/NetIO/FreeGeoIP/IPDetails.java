@@ -27,4 +27,16 @@ public class IPDetails {
         zipCode = obj.optInt("zip_code", 0);
         timeZone = obj.getString("time_zone");
     }
+
+    public String getNiceLocalizationString() {
+        StringBuilder builder = new StringBuilder();
+        if (!city.isEmpty())
+            builder.append(city).append(", ");
+
+        if (!regionName.isEmpty() && !regionCode.isEmpty())
+            builder.append(regionName).append(" (").append(regionCode).append("), ");
+
+        builder.append(countryName).append(" (").append(countryCode).append(")");
+        return builder.toString();
+    }
 }

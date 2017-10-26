@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
 
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -21,6 +22,8 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
     private LineChart chart;
     private SuperTextView currentUri;
     private SuperTextView uri;
+    private boolean hasIpDetails = false;
+    private IPDetailsView ipDetails;
 
     public ServerBottomSheet(View parent) {
         super(parent, R.layout.server_sheet, false);
@@ -32,12 +35,22 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
         chart = content.findViewById(R.id.serverSheet_chart);
         currentUri = content.findViewById(R.id.serverSheet_currentUri);
         uri = content.findViewById(R.id.serverSheet_uri);
+        ipDetails = content.findViewById(R.id.serverSheet_ipDetails);
     }
 
     @Override
     protected void setupView(@NonNull Server server) {
         title.setText(server.currentUri);
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
+
+        if (server.ipDetails != null) {
+            ipDetails.setVisibility(View.VISIBLE);
+            ipDetails.setup(server.ipDetails);
+            hasIpDetails = true;
+        } else {
+            hasIpDetails = false;
+            ipDetails.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -56,6 +69,12 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
 
         currentUri.setHtml(R.string.currentUri, server.currentUri);
         uri.setHtml(R.string.uri, server.uri);
+
+        if (!hasIpDetails && server.ipDetails != null) {
+            ipDetails.setVisibility(View.VISIBLE);
+            ipDetails.setup(server.ipDetails);
+            hasIpDetails = true;
+        }
     }
 
     public void update(SparseArray<List<Server>> servers) {

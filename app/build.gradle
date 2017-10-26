@@ -30,6 +30,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'org.apmem.tools:layouts:1.10@aar'
     compile 'com.getkeepsafe.taptargetview:taptargetview:1.10.0'
+    compile 'com.michaelfotiadis:android-country-flags:1.0.3'
 }
 
 

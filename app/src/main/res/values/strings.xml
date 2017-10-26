@@ -311,6 +311,11 @@
     <string name="name">Name: %s</string>
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">Alternative names: %s</string>
+    <string name="uriDetails">URI details</string>
+    <string name="ip">IP address: %s</string>
+    <string name="timezone">Timezone: %s</string>
+    <string name="localization">Localization: %s</string>
+    <string name="ipDetails">IP details</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

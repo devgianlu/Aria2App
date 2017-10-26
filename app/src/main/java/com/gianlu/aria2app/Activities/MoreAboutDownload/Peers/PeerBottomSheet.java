@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.view.View;
 
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -23,6 +24,8 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
     private SuperTextView seeder;
     private SuperTextView peerChoking;
     private SuperTextView amChoking;
+    private boolean hasIpDetails = false;
+    private IPDetailsView ipDetails;
 
     public PeerBottomSheet(View sheet) {
         super(sheet, R.layout.peer_sheet, false);
@@ -36,6 +39,7 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
         seeder = content.findViewById(R.id.peerSheet_seeder);
         peerChoking = content.findViewById(R.id.peerSheet_peerChoking);
         amChoking = content.findViewById(R.id.peerSheet_amChoking);
+        ipDetails = content.findViewById(R.id.peerSheet_ipDetails);
     }
 
     @SuppressLint("SetTextI18n")
@@ -43,6 +47,15 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
     protected void setupView(@NonNull Peer peer) {
         title.setText(peer.ip + ":" + peer.port);
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
+
+        if (peer.ipDetails != null) {
+            ipDetails.setVisibility(View.VISIBLE);
+            ipDetails.setup(peer.ipDetails);
+            hasIpDetails = true;
+        } else {
+            hasIpDetails = false;
+            ipDetails.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -64,6 +77,12 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
         seeder.setHtml(R.string.seeder, String.valueOf(peer.seeder));
         peerChoking.setHtml(R.string.peerChoking, String.valueOf(peer.peerChoking));
         amChoking.setHtml(R.string.amChoking, String.valueOf(peer.amChoking));
+
+        if (!hasIpDetails && peer.ipDetails != null) {
+            ipDetails.setVisibility(View.VISIBLE);
+            ipDetails.setup(peer.ipDetails);
+            hasIpDetails = true;
+        }
     }
 
     public void update(List<Peer> peers) {

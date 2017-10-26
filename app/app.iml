@@ -135,6 +135,7 @@
     <orderEntry type="library" name="com.android.support:support-core-ui-26.1.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-iid-11.4.2" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-analytics-impl-license-11.4.2" level="project" />
+    <orderEntry type="library" name="com.michaelfotiadis:android-country-flags-1.0.3" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-analytics-license-11.4.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-compat-26.1.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-common-11.4.2" level="project" />

@@ -37,7 +37,7 @@ public class FreeGeoIPApi {
         return instance;
     }
 
-    public void getIPInfo(final String ip, final IIPDetails listener) {
+    public void getIPDetails(final String ip, final IIPDetails listener) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {

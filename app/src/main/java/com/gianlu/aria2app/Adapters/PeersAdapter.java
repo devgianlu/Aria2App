@@ -8,10 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Sorting.NotFilterable;
 import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.SuperTextView;
@@ -20,13 +25,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
+    private final Context context;
     private final IAdapter handler;
     private final LayoutInflater inflater;
+    private final FreeGeoIPApi freeGeoIPApi;
 
     public PeersAdapter(Context context, List<Peer> peers, IAdapter handler) {
         super(peers, SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
+        this.context = context;
         this.handler = handler;
+        this.freeGeoIPApi = FreeGeoIPApi.get();
     }
 
     @Override
@@ -40,17 +49,38 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(payload.uploadSpeed, false));
     }
 
+    @Override
+    protected void onBindViewHolder(ViewHolder holder, int position, Object payload) {
+        if (payload instanceof IPDetails) {
+            holder.flag.setImageDrawable(CountryFlags.loadFlag(context, ((IPDetails) payload).countryCode));
+            objs.get(position).setIpDetails((IPDetails) payload);
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Peer peer = objs.get(position);
         holder.address.setText(peer.ip + ":" + peer.port);
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
+        holder.flag.setImageResource(R.drawable.ic_list_country_unknown);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (handler != null) handler.onPeerSelected(peer);
+            }
+        });
+
+        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.IIPDetails() {
+            @Override
+            public void onDetails(IPDetails details) {
+                notifyItemChanged(holder.getAdapterPosition(), details);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Logging.logMe(context, ex);
             }
         });
     }
@@ -102,12 +132,14 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         final SuperTextView address;
         final SuperTextView downloadSpeed;
         final SuperTextView uploadSpeed;
+        final ImageView flag;
 
         ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.peer_item, parent, false));
             address = itemView.findViewById(R.id.peerItem_address);
             downloadSpeed = itemView.findViewById(R.id.peerItem_downloadSpeed);
             uploadSpeed = itemView.findViewById(R.id.peerItem_uploadSpeed);
+            flag = itemView.findViewById(R.id.peerItem_flag);
         }
     }
 }

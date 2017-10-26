@@ -6,11 +6,16 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
@@ -23,10 +28,14 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final List<Object> objs;
     private final LayoutInflater inflater;
     private final IAdapter listener;
+    private final Context context;
+    private final FreeGeoIPApi freeGeoIPApi;
 
     public ServersAdapter(Context context, IAdapter listener) {
+        this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();
+        this.freeGeoIPApi = FreeGeoIPApi.get();
         this.inflater = LayoutInflater.from(context);
         if (listener != null) listener.onItemCountUpdated(objs.size());
     }
@@ -58,11 +67,12 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
             final Server server = (Server) objs.get(position);
             ItemViewHolder castHolder = (ItemViewHolder) holder;
 
+            castHolder.flag.setImageResource(R.drawable.ic_list_country_unknown);
             castHolder.address.setText(server.currentUri);
             castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
 
@@ -70,6 +80,18 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
                     if (listener != null) listener.onServerSelected(server);
+                }
+            });
+
+            freeGeoIPApi.getIPDetails(server.getCurrentUri().getHost(), new FreeGeoIPApi.IIPDetails() {
+                @Override
+                public void onDetails(IPDetails details) {
+                    notifyItemChanged(holder.getAdapterPosition(), details);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    Logging.logMe(context, ex);
                 }
             });
         } else if (holder instanceof HeaderViewHolder) {
@@ -86,11 +108,16 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             onBindViewHolder(holder, position);
         } else {
             if (holder instanceof ItemViewHolder) {
-                final Server server = (Server) payloads.get(0);
                 ItemViewHolder castHolder = (ItemViewHolder) holder;
-
-                castHolder.address.setText(server.currentUri);
-                castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
+                Object payload = payloads.get(0);
+                if (payload instanceof Server) {
+                    final Server server = (Server) payloads.get(0);
+                    castHolder.address.setText(server.currentUri);
+                    castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
+                } else if (payload instanceof IPDetails) {
+                    castHolder.flag.setImageDrawable(CountryFlags.loadFlag(context, ((IPDetails) payload).countryCode));
+                    ((Server) objs.get(position)).setIpDetails((IPDetails) payload);
+                }
             } else if (holder instanceof HeaderViewHolder) {
                 AriaFile file = (AriaFile) payloads.get(0);
                 HeaderViewHolder castHolder = (HeaderViewHolder) holder;
@@ -160,12 +187,14 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class ItemViewHolder extends RecyclerView.ViewHolder {
         final SuperTextView address;
         final SuperTextView downloadSpeed;
+        final ImageView flag;
 
         ItemViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.server_item, parent, false));
 
             address = itemView.findViewById(R.id.serverItem_address);
             downloadSpeed = itemView.findViewById(R.id.serverItem_downloadSpeed);
+            flag = itemView.findViewById(R.id.serverItem_flag);
         }
     }
 }
