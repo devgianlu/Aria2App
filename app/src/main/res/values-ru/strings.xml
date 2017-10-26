@@ -179,7 +179,7 @@
     <string name="enableNotificationsAtBoot">Служба уведомлений при загрузке</string>
     <string name="notificationsAtBootOn">Служба уведомлений будет запущена при загрузке</string>
     <string name="notificationsAtBootOff">Служба уведомлений не будет запущена при загрузке</string>
-    <string name="name">Имя</string>
+    <string name="nameLabel">Имя</string>
     <string name="searchDownloads">Поиск загружаемых файлов</string>
     <string name="failedLoadingDownloads">Не удалось загрузить загружаемые файлы!</string>
     <string name="indexes"><![CDATA[<b>Индексы:</b>]]> %s</string>
@@ -296,6 +296,15 @@
     <string name="downloadDisplayInfoSummary">Настроить информацию, показанную под именем загрузки</string>
     <string name="remainingTime">Оставшееся время</string>
     <string name="completedLengthLabel">Загруженный размер</string>
+    <string name="name">Имя: %s</string>
+    <string name="selectCertificate">Выбрать / изменить сертификат</string>
+    <string name="certificateDetails">Сведения о сертификате</string>
+    <string name="serialNumber"><![CDATA[<b>Серийный номер:</b>]]> %s</string>
+    <string name="subject">тема</string>
+    <string name="issuer">эмитент</string>
+    <string name="signatureAlgorithm">Алгоритм подписи</string>
+    <string name="oid">OID: %s</string>
+    <string name="alternativeNames">Альтернативные названия: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

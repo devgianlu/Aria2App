@@ -180,7 +180,7 @@
     <string name="enableNotificationsAtBoot">启动时打开提醒服务</string>
     <string name="notificationsAtBootOn">提醒服务在启动时会打开</string>
     <string name="notificationsAtBootOff">提醒服务在启动时不会打开</string>
-    <string name="name">名称</string>
+    <string name="nameLabel">名称</string>
     <string name="searchDownloads">搜索下载</string>
     <string name="failedLoadingDownloads">加载下载任务失败!</string>
     <string name="indexes"><![CDATA[<b>索引：</b>]]>%s</string>
@@ -297,6 +297,15 @@
     <string name="downloadDisplayInfo">下载显示信息</string>
     <string name="downloadDisplayInfoSummary">自定义下载名称下显示的信息</string>
     <string name="remainingTime">剩余时间</string>
+    <string name="name">名称: %s</string>
+    <string name="selectCertificate">选择/更改证书</string>
+    <string name="certificateDetails">证书详情</string>
+    <string name="serialNumber"><![CDATA[<b>序列号:</b>]]> %s</string>
+    <string name="subject">主题</string>
+    <string name="issuer">发行者</string>
+    <string name="signatureAlgorithm">签名算法</string>
+    <string name="oid">OID: %s</string>
+    <string name="alternativeNames">替代名称: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
