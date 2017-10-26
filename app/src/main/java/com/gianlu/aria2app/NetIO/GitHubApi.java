@@ -14,7 +14,7 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class GitHubApi {
-    public static void getLatestVersion(final IRelease handler) {
+    public static void getLatestVersion(final IRelease listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -27,9 +27,9 @@ public class GitHubApi {
                     String json = EntityUtils.toString(resp.getEntity());
                     get.releaseConnection();
 
-                    handler.onRelease(new JSONObject(json).getString("name").replace("aria2 ", ""));
+                    listener.onRelease(new JSONObject(json).getString("name").replace("aria2 ", ""));
                 } catch (IOException | StatusCodeException | JSONException | NullPointerException ex) {
-                    handler.onException(ex);
+                    listener.onException(ex);
                 }
             }
         }).start();
