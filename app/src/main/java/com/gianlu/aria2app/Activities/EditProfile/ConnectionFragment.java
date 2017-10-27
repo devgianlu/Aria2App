@@ -17,12 +17,16 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.CertUtils;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -40,6 +44,8 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -64,6 +70,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     private SuperTextView certificateDetailsIssuerAns;
     private SuperTextView certificateDetailsSubjectAns;
     private SuperTextView certificateDetailsSubjectName;
+    private ImageView addressFlag;
 
     public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         ConnectionFragment fragment = new ConnectionFragment();
@@ -80,6 +87,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.edit_profile_connection_fragment, container, false);
         completeAddress = layout.findViewById(R.id.editProfile_completeAddress);
+        addressFlag = layout.findViewById(R.id.editProfile_addressFlag);
         connectionMethod = layout.findViewById(R.id.editProfile_connectionMethod);
         connectionMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -89,6 +97,10 @@ public class ConnectionFragment extends FieldErrorFragment {
         });
         address = layout.findViewById(R.id.editProfile_address);
         address.getEditText().addTextChangedListener(new TextWatcher() {
+            private final Timer timer = new Timer();
+            private TimerTask task;
+            private String lastAddress;
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 address.setErrorEnabled(false);
@@ -102,6 +114,31 @@ public class ConnectionFragment extends FieldErrorFragment {
             @Override
             public void afterTextChanged(Editable s) {
                 updateCompleteAddress();
+                lastAddress = s.toString();
+
+                if (task != null) task.cancel();
+                task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (lastAddress != null) {
+                            FreeGeoIPApi.get().getIPDetails(lastAddress, new FreeGeoIPApi.IIPDetails() {
+                                @Override
+                                public void onDetails(IPDetails details) {
+                                    if (isAdded())
+                                        addressFlag.setImageDrawable(CountryFlags.loadFlag(getContext(), details.countryCode));
+                                }
+
+                                @Override
+                                public void onException(Exception ex) {
+                                    addressFlag.setImageResource(R.drawable.ic_list_country_unknown);
+                                    Logging.logMe(getContext(), ex);
+                                }
+                            });
+                        }
+                    }
+                };
+
+                timer.schedule(task, 500);
             }
         });
         port = layout.findViewById(R.id.editProfile_port);
@@ -248,8 +285,6 @@ public class ConnectionFragment extends FieldErrorFragment {
             certificateDetailsSubjectAns.setVisibility(View.GONE);
             Logging.logMe(getContext(), ex);
         }
-
-        System.out.println(certificate);
     }
 
     private void loadCertificateUri(Uri path) {
@@ -273,7 +308,6 @@ public class ConnectionFragment extends FieldErrorFragment {
 
     private void updateCompleteAddress() {
         if (!isAdded()) return;
-        completeAddress.setVisibility(View.VISIBLE);
 
         try {
             Fields fields = getFields(getContext(), true);
@@ -291,8 +325,11 @@ public class ConnectionFragment extends FieldErrorFragment {
 
             URI url = new URI(protocol, null, fields.address, fields.port, fields.endpoint, null, null);
             completeAddress.setText(url.toString());
+            completeAddress.setVisibility(View.VISIBLE);
+
+
         } catch (InvalidFieldException | URISyntaxException | NullPointerException ex) {
-            completeAddress.setText(R.string.invalidCompleteAddress);
+            completeAddress.setVisibility(View.GONE);
         }
     }
 
