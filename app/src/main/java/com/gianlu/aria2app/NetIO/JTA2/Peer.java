@@ -2,7 +2,6 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.commonutils.Sorting.Filterable;
 import com.gianlu.commonutils.Sorting.NotFilterable;
 
@@ -23,7 +22,6 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
     public final String ip;
     public final int port;
     public final String bitfield;
-    public IPDetails ipDetails;
 
     public Peer(JSONObject obj) {
         peerId = obj.optString("peerId", null);
@@ -57,10 +55,6 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
     @Override
     public NotFilterable getFilterable() {
         return new NotFilterable();
-    }
-
-    public void setIpDetails(IPDetails ipDetails) {
-        this.ipDetails = ipDetails;
     }
 
     public static class DownloadSpeedComparator implements Comparator<Peer> {

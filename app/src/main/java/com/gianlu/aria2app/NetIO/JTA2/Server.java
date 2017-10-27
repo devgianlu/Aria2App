@@ -5,8 +5,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +16,6 @@ public class Server {
     public final String uri;
     public final String currentUri;
     public final int downloadSpeed;
-    public IPDetails ipDetails;
 
     public Server(JSONObject obj) throws JSONException {
         uri = obj.getString("uri");
@@ -34,10 +31,6 @@ public class Server {
                     return server;
 
         return null;
-    }
-
-    public void setIpDetails(IPDetails ipDetails) {
-        this.ipDetails = ipDetails;
     }
 
     public Uri getCurrentUri() {

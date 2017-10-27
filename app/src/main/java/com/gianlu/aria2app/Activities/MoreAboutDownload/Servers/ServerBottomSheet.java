@@ -4,12 +4,15 @@ import android.support.annotation.NonNull;
 import android.util.SparseArray;
 import android.view.View;
 
+import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -18,15 +21,16 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.List;
 
 public class ServerBottomSheet extends BaseBottomSheet<Server> {
+    private final FreeGeoIPApi freeGeoIPApi;
     private SuperTextView downloadSpeed;
     private LineChart chart;
     private SuperTextView currentUri;
     private SuperTextView uri;
-    private boolean hasIpDetails = false;
     private IPDetailsView ipDetails;
 
     public ServerBottomSheet(View parent) {
         super(parent, R.layout.server_sheet, false);
+        freeGeoIPApi = FreeGeoIPApi.get();
     }
 
     @Override
@@ -43,14 +47,19 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
         title.setText(server.currentUri);
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
 
-        if (server.ipDetails != null) {
-            ipDetails.setVisibility(View.VISIBLE);
-            ipDetails.setup(server.ipDetails);
-            hasIpDetails = true;
-        } else {
-            hasIpDetails = false;
-            ipDetails.setVisibility(View.GONE);
-        }
+        freeGeoIPApi.getIPDetails(server.getCurrentUri().getHost(), new FreeGeoIPApi.IIPDetails() {
+            @Override
+            public void onDetails(IPDetails details) {
+                ipDetails.setVisibility(View.VISIBLE);
+                ipDetails.setup(details);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Logging.logMe(context, ex);
+                ipDetails.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -69,12 +78,6 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
 
         currentUri.setHtml(R.string.currentUri, server.currentUri);
         uri.setHtml(R.string.uri, server.uri);
-
-        if (!hasIpDetails && server.ipDetails != null) {
-            ipDetails.setVisibility(View.VISIBLE);
-            ipDetails.setup(server.ipDetails);
-            hasIpDetails = true;
-        }
     }
 
     public void update(SparseArray<List<Server>> servers) {

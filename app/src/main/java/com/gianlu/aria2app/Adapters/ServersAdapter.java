@@ -30,6 +30,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final IAdapter listener;
     private final Context context;
     private final FreeGeoIPApi freeGeoIPApi;
+    private final CountryFlags flags = CountryFlags.get();
 
     public ServersAdapter(Context context, IAdapter listener) {
         this.context = context;
@@ -115,8 +116,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     castHolder.address.setText(server.currentUri);
                     castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
                 } else if (payload instanceof IPDetails) {
-                    castHolder.flag.setImageDrawable(CountryFlags.loadFlag(context, ((IPDetails) payload).countryCode));
-                    ((Server) objs.get(position)).setIpDetails((IPDetails) payload);
+                    castHolder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
                 }
             } else if (holder instanceof HeaderViewHolder) {
                 AriaFile file = (AriaFile) payloads.get(0);

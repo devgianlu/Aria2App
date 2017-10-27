@@ -29,6 +29,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     private final IAdapter handler;
     private final LayoutInflater inflater;
     private final FreeGeoIPApi freeGeoIPApi;
+    private final CountryFlags flags = CountryFlags.get();
 
     public PeersAdapter(Context context, List<Peer> peers, IAdapter handler) {
         super(peers, SortBy.DOWNLOAD_SPEED);
@@ -51,10 +52,8 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
     @Override
     protected void onBindViewHolder(ViewHolder holder, int position, Object payload) {
-        if (payload instanceof IPDetails) {
-            holder.flag.setImageDrawable(CountryFlags.loadFlag(context, ((IPDetails) payload).countryCode));
-            objs.get(position).setIpDetails((IPDetails) payload);
-        }
+        if (payload instanceof IPDetails)
+            holder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
     }
 
     @SuppressLint("SetTextI18n")

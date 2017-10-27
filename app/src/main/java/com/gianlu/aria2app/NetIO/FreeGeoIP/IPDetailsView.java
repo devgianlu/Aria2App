@@ -18,6 +18,7 @@ public class IPDetailsView extends LinearLayout {
     private final SuperTextView ip;
     private final SuperTextView localization;
     private final SuperTextView timezone;
+    private final CountryFlags flags = CountryFlags.get();
 
     public IPDetailsView(Context context) {
         this(context, null, 0);
@@ -39,7 +40,7 @@ public class IPDetailsView extends LinearLayout {
     }
 
     public void setup(@NonNull IPDetails details) {
-        flag.setImageDrawable(CountryFlags.loadFlag(getContext(), details.countryCode));
+        flag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
         ip.setHtml(R.string.ip, details.ip);
         localization.setHtml(R.string.localization, details.getNiceLocalizationString());
 

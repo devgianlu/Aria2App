@@ -51,6 +51,7 @@ import javax.security.auth.x500.X500Principal;
 
 public class ConnectionFragment extends FieldErrorFragment {
     private final static int CODE_PICK_CERT = 1;
+    private final CountryFlags flags = CountryFlags.get();
     private ScrollView layout;
     private TextView completeAddress;
     private RadioGroup connectionMethod;
@@ -125,7 +126,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                                 @Override
                                 public void onDetails(IPDetails details) {
                                     if (isAdded())
-                                        addressFlag.setImageDrawable(CountryFlags.loadFlag(getContext(), details.countryCode));
+                                        addressFlag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
                                 }
 
                                 @Override

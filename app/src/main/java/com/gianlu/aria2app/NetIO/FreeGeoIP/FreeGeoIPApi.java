@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO.FreeGeoIP;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.LruCache;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 
@@ -25,11 +26,13 @@ public class FreeGeoIPApi {
     private final ExecutorService executorService;
     private final Handler handler;
     private final HttpClient client;
+    private final LruCache<String, IPDetails> cache;
 
     private FreeGeoIPApi() {
         handler = new Handler(Looper.getMainLooper());
         client = HttpClients.createDefault();
         executorService = Executors.newSingleThreadExecutor();
+        cache = new LruCache<>(50);
     }
 
     public static FreeGeoIPApi get() {
@@ -38,36 +41,49 @@ public class FreeGeoIPApi {
     }
 
     public void getIPDetails(final String ip, final IIPDetails listener) {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    HttpGet get = new HttpGet("http://freegeoip.net/json/" + ip);
-                    HttpResponse resp = client.execute(get);
-                    StatusLine sl = resp.getStatusLine();
-                    if (sl.getStatusCode() != HttpStatus.SC_OK) throw new StatusCodeException(sl);
-
-                    String json = EntityUtils.toString(resp.getEntity());
-                    get.releaseConnection();
-
-                    final IPDetails details = new IPDetails(new JSONObject(json));
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onDetails(details);
-                        }
-                    });
-                } catch (IOException | StatusCodeException | JSONException | NullPointerException ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-
-                        }
-                    });
+        final IPDetails cachedDetails = cache.get(ip);
+        if (cachedDetails != null) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onDetails(cachedDetails);
                 }
-            }
-        });
+            });
+        } else {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HttpGet get = new HttpGet("http://freegeoip.net/json/" + ip);
+                        HttpResponse resp = client.execute(get);
+                        StatusLine sl = resp.getStatusLine();
+                        if (sl.getStatusCode() != HttpStatus.SC_OK)
+                            throw new StatusCodeException(sl);
+
+                        String json = EntityUtils.toString(resp.getEntity());
+                        get.releaseConnection();
+
+                        final IPDetails details = new IPDetails(new JSONObject(json));
+                        cache.put(ip, details);
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onDetails(details);
+                            }
+                        });
+                    } catch (IOException | StatusCodeException | JSONException | NullPointerException ex) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                listener.onException(ex);
+
+                            }
+                        });
+                    }
+                }
+            });
+        }
     }
 
     public interface IIPDetails {
