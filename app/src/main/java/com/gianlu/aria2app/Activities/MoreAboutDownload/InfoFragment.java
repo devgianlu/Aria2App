@@ -10,11 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.UpdateUI;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
+import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
+import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
@@ -29,14 +34,17 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.Locale;
 
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
+    private final CountryFlags flags = CountryFlags.get();
     private IStatusChanged listener;
     private UpdateUI updater;
     private ViewHolder holder;
     private Download.Status lastStatus = Download.Status.UNKNOWN;
+    private FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
 
     public static InfoFragment getInstance(Context context, Download download, IStatusChanged listener) {
         InfoFragment fragment = new InfoFragment();
@@ -335,6 +343,32 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                         CommonUtils.expand(btAnnounceList);
                 }
             });
+
+            if (download.torrent.announceList.isEmpty()) {
+                btAnnounceListContainer.setVisibility(View.GONE);
+            } else {
+                btAnnounceListContainer.setVisibility(View.VISIBLE);
+                btAnnounceList.removeAllViews();
+                for (String url : download.torrent.announceList) {
+                    final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.bt_announce_item, btAnnounceList, false);
+                    ((TextView) layout.getChildAt(0)).setText(url);
+                    ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_country_unknown);
+                    btAnnounceList.addView(layout);
+
+                    freeGeoIPApi.getIPDetails(URI.create(url).getHost(), new FreeGeoIPApi.IIPDetails() {
+                        @Override
+                        public void onDetails(IPDetails details) {
+                            if (isAdded())
+                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
+                        }
+
+                        @Override
+                        public void onException(Exception ex) {
+                            Logging.logMe(getContext(), ex);
+                        }
+                    });
+                }
+            }
         }
 
         void setActionsState(Download download) {
@@ -467,15 +501,6 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 } else {
                     btCreationDate.setVisibility(View.VISIBLE);
                     btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(download.torrent.creationDate)));
-                }
-
-                if (download.torrent.announceList.isEmpty()) {
-                    btAnnounceListContainer.setVisibility(View.GONE);
-                } else {
-                    btAnnounceListContainer.setVisibility(View.VISIBLE);
-                    btAnnounceList.removeAllViews();
-                    for (String url : download.torrent.announceList)
-                        btAnnounceList.addView(new SuperTextView(getContext(), url));
                 }
             }
         }
