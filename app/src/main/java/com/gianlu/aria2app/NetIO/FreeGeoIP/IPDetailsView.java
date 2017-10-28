@@ -13,6 +13,8 @@ import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.TimeZone;
+
 public class IPDetailsView extends LinearLayout {
     private final ImageView flag;
     private final SuperTextView ip;
@@ -47,7 +49,7 @@ public class IPDetailsView extends LinearLayout {
         if (details.timeZone.isEmpty()) {
             timezone.setVisibility(View.GONE);
         } else {
-            timezone.setHtml(R.string.timezone, details.timeZone); // TODO: Format better
+            timezone.setHtml(R.string.timezone, TimeZone.getTimeZone(details.timeZone).getDisplayName());
             timezone.setVisibility(View.VISIBLE);
         }
     }
