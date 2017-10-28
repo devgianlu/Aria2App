@@ -77,7 +77,7 @@ public class Base64Fragment extends Fragment {
 
     private void setFilename(@NonNull Uri uri) {
         try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null, null)) {
-            if (cursor != null && cursor.moveToFirst())
+            if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0)
                 path.setText(cursor.getString(0));
         }
     }

@@ -31,7 +31,7 @@ public class FreeGeoIPApi {
     private FreeGeoIPApi() {
         handler = new Handler(Looper.getMainLooper());
         client = HttpClients.createDefault();
-        executorService = Executors.newSingleThreadExecutor();
+        executorService = Executors.newCachedThreadPool();
         cache = new LruCache<>(50);
     }
 
@@ -57,8 +57,10 @@ public class FreeGeoIPApi {
                         HttpGet get = new HttpGet("http://freegeoip.net/json/" + ip);
                         HttpResponse resp = client.execute(get);
                         StatusLine sl = resp.getStatusLine();
-                        if (sl.getStatusCode() != HttpStatus.SC_OK)
+                        if (sl.getStatusCode() != HttpStatus.SC_OK) {
+                            get.releaseConnection();
                             throw new StatusCodeException(sl);
+                        }
 
                         String json = EntityUtils.toString(resp.getEntity());
                         get.releaseConnection();

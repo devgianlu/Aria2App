@@ -55,12 +55,17 @@ public class SearchUtils {
     }
 
     @NonNull
-    private String request(HttpGet get) throws IOException, StatusCodeException, ServiceUnavailable {
+    private String request(HttpGet get) throws IOException, StatusCodeException {
         HttpResponse resp = client.execute(get);
         StatusLine sl = resp.getStatusLine();
-        if (sl.getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE) throw new ServiceUnavailable();
-        if (sl.getStatusCode() != HttpStatus.SC_OK) throw new StatusCodeException(sl);
-        return EntityUtils.toString(resp.getEntity());
+        if (sl.getStatusCode() != HttpStatus.SC_OK) {
+            get.releaseConnection();
+            throw new StatusCodeException(sl);
+        }
+
+        String json = EntityUtils.toString(resp.getEntity());
+        get.releaseConnection();
+        return json;
     }
 
     public void search(final String token, final int maxResults, final ISearch listener) {
@@ -110,13 +115,6 @@ public class SearchUtils {
                             listener.onException(ex);
                         }
                     });
-                } catch (ServiceUnavailable ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.serviceUnavailable();
-                        }
-                    });
                 }
             }
         });
@@ -149,13 +147,6 @@ public class SearchUtils {
                         @Override
                         public void run() {
                             listener.onException(ex);
-                        }
-                    });
-                } catch (ServiceUnavailable ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.serviceUnavailable();
                         }
                     });
                 }
@@ -193,24 +184,17 @@ public class SearchUtils {
                             listener.onException(ex);
                         }
                     });
-                } catch (ServiceUnavailable ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.serviceUnavailable();
-                        }
-                    });
                 }
             }
         });
     }
 
-    private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException, ServiceUnavailable {
+    private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
         JSONArray array = new JSONArray(request(new HttpGet(BASE_URL + "listEngines")));
         return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
     }
 
-    private void cacheEnginesBlocking() throws IOException, StatusCodeException, JSONException, ServiceUnavailable {
+    private void cacheEnginesBlocking() throws IOException, StatusCodeException, JSONException {
         if (cachedEngines == null) listSearchEnginesSync();
     }
 
@@ -218,10 +202,6 @@ public class SearchUtils {
         listSearchEngines(new IResult<List<SearchEngine>>() {
             @Override
             public void onResult(List<SearchEngine> result) {
-            }
-
-            @Override
-            public void serviceUnavailable() {
             }
 
             @Override
@@ -234,15 +214,11 @@ public class SearchUtils {
     public interface ITorrent {
         void onDone(Torrent torrent);
 
-        void serviceUnavailable();
-
         void onException(Exception ex);
     }
 
     public interface ISearch {
         void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
-
-        void serviceUnavailable();
 
         void onException(Exception ex);
     }
@@ -250,11 +226,6 @@ public class SearchUtils {
     public interface IResult<E> {
         void onResult(E result);
 
-        void serviceUnavailable();
-
         void onException(Exception ex);
-    }
-
-    private static class ServiceUnavailable extends Exception {
     }
 }

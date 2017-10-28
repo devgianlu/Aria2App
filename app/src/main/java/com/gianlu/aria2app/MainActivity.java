@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     private void processFileUri(Uri uri) {
         try (Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                 String mimeType = cursor.getString(0);
                 if (mimeType != null) {
                     if (Objects.equals(mimeType, "application/x-bittorrent")) {

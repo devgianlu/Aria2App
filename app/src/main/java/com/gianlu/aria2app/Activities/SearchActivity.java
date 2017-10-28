@@ -185,12 +185,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void serviceUnavailable() {
-        message.setVisibility(View.GONE);
-        recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
-    }
-
-    @Override
     public void onException(Exception ex) {
         message.setVisibility(View.GONE);
         recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
@@ -208,12 +202,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                     public void onResult(List<SearchEngine> result) {
                         pd.dismiss();
                         showEnginesDialog(result);
-                    }
-
-                    @Override
-                    public void serviceUnavailable() {
-                        pd.dismiss();
-                        SearchActivity.this.serviceUnavailable();
                     }
 
                     @Override
@@ -237,12 +225,6 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
             public void onDone(Torrent torrent) {
                 pd.dismiss();
                 showTorrentDialog(torrent);
-            }
-
-            @Override
-            public void serviceUnavailable() {
-                pd.dismiss();
-                SearchActivity.this.serviceUnavailable();
             }
 
             @Override
