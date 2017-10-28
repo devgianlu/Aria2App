@@ -52,7 +52,6 @@ public class HttpTester extends NetTester implements Callable<Boolean> {
             if (sl.getStatusCode() == HttpStatus.SC_OK) {
                 a = true;
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - startTime));
-                // publishPing(profile, System.currentTimeMillis() - startTime);
             } else {
                 a = false;
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, new StatusCodeException(sl)));

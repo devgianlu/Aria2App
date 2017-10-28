@@ -419,9 +419,9 @@ public class DownloaderService extends Service {
                     }
                 }
 
-                if (shouldStop.get()) {
-                    get.releaseConnection();
+                get.releaseConnection();
 
+                if (shouldStop.get()) {
                     if (saveState.get()) {
                         saveState();
 

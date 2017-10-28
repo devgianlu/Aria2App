@@ -22,7 +22,10 @@ public class GitHubApi {
                     HttpGet get = new HttpGet("https://api.github.com/repos/aria2/aria2/releases/latest");
                     HttpResponse resp = client.execute(get);
                     StatusLine sl = resp.getStatusLine();
-                    if (sl.getStatusCode() != HttpStatus.SC_OK) throw new StatusCodeException(sl);
+                    if (sl.getStatusCode() != HttpStatus.SC_OK) {
+                        get.releaseConnection();
+                        throw new StatusCodeException(sl);
+                    }
 
                     String json = EntityUtils.toString(resp.getEntity());
                     get.releaseConnection();

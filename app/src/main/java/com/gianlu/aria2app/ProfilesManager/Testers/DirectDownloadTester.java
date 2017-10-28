@@ -53,6 +53,8 @@ class DirectDownloadTester extends BaseTester {
             HttpResponse resp = client.execute(get);
             StatusLine sl = resp.getStatusLine();
 
+            get.releaseConnection();
+
             if (sl.getStatusCode() == HttpStatus.SC_OK) {
                 publishMessage("Your DirectDownload configuration is working", R.color.green);
                 return true;
