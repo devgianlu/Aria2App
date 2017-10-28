@@ -14,23 +14,25 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import javax.net.ssl.SSLContext;
 
 public abstract class AbstractClient {
-    private static final List<OnConnectivityChanged> listeners = new ArrayList<>();
+    private static final List<WeakReference<OnConnectivityChanged>> listeners = new ArrayList<>();
     private final WifiManager wifiManager;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
 
-    public AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         this.sslContext = NetUtils.createSSLContext(profile.certificate);
         this.profile = profile;
@@ -38,14 +40,22 @@ public abstract class AbstractClient {
     }
 
     public static void addConnectivityListener(OnConnectivityChanged listener) {
-        listeners.add(listener);
+        for (WeakReference<OnConnectivityChanged> ref : listeners)
+            if (ref.get() == listener)
+                return;
+
+        listeners.add(new WeakReference<>(listener));
     }
 
     public static void removeConnectivityListener(OnConnectivityChanged listener) {
-        listeners.remove(listener);
+        Iterator<WeakReference<OnConnectivityChanged>> iterator = listeners.listIterator();
+        while (iterator.hasNext()) {
+            WeakReference<OnConnectivityChanged> ref = iterator.next();
+            if (ref.get() == null || ref.get() == listener) iterator.remove();
+        }
     }
 
-    public static void clearConnectivityListener() {
+    static void clearConnectivityListener() {
         listeners.clear();
     }
 
@@ -62,7 +72,7 @@ public abstract class AbstractClient {
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(final Context context, Intent intent) {
+        public void onReceive(final Context context, final Intent intent) {
             if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
                 if (!noConnectivity) {
@@ -83,8 +93,12 @@ public abstract class AbstractClient {
                                         connectivityChanged(context, profile);
                                         AbstractClient.this.profile = profile;
 
-                                        for (OnConnectivityChanged listener : listeners)
-                                            listener.connectivityChanged(profile);
+                                        Iterator<WeakReference<OnConnectivityChanged>> iterator = listeners.listIterator();
+                                        while (iterator.hasNext()) {
+                                            WeakReference<OnConnectivityChanged> ref = iterator.next();
+                                            if (ref.get() == null) iterator.remove();
+                                            else ref.get().connectivityChanged(profile);
+                                        }
                                     } catch (Exception ex) {
                                         ErrorHandler.get().notifyException(ex, true);
                                     }

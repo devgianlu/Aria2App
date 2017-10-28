@@ -3,7 +3,6 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Pair;
 
 import com.gianlu.aria2app.NetIO.JTA2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -16,21 +15,19 @@ import com.neovisionaries.ws.client.WebSocketState;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketing extends AbstractClient {
     private static WebSocketing webSocketing;
     private static boolean locked = false;
-    private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
-    private final Queue<Pair<JSONObject, IReceived>> connectionQueue = new LinkedList<>();
+    private final Map<Integer, WeakReference<IReceived>> requests = new ConcurrentHashMap<>();
     private IConnect connectionListener;
     private WebSocket socket;
 
@@ -59,7 +56,6 @@ public class WebSocketing extends AbstractClient {
     public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull IConnect listener) {
         try {
             unlock();
-            ErrorHandler.get().unlock();
             webSocketing = new WebSocketing(context, profile, listener);
         } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
@@ -69,7 +65,6 @@ public class WebSocketing extends AbstractClient {
     public static void instantiate(Context context, @NonNull IConnect listener) {
         try {
             unlock();
-            ErrorHandler.get().unlock();
             webSocketing = new WebSocketing(context, listener);
         } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
@@ -87,6 +82,7 @@ public class WebSocketing extends AbstractClient {
 
     private static void unlock() {
         locked = false;
+        ErrorHandler.get().unlock();
     }
 
     @Override
@@ -94,56 +90,25 @@ public class WebSocketing extends AbstractClient {
         connectionListener = null;
         if (socket != null) socket.disconnect();
         if (requests != null) requests.clear();
-        if (connectionQueue != null) connectionQueue.clear();
     }
 
     @Override
-    public void send(JSONObject request, IReceived handler) {
+    public void send(JSONObject request, IReceived listener) {
         if (locked) return;
-
-        if (requests.size() > 10) {
-            synchronized (requests) {
-                requests.clear();
-            }
-
-            System.gc();
-        }
-
-        if (connectionQueue.size() > 10) {
-            synchronized (connectionQueue) {
-                connectionQueue.clear();
-            }
-
-            System.gc();
-        }
-
-        if (socket.getState() != WebSocketState.OPEN) {
-            synchronized (connectionQueue) {
-                connectionQueue.add(new Pair<>(request, handler));
-            }
-
-            return;
-        }
+        if (requests.size() > 10) requests.clear();
+        if (socket.getState() != WebSocketState.OPEN) return;
 
         try {
-            requests.put(request.getInt("id"), handler);
+            requests.put(request.getInt("id"), new WeakReference<>(listener));
             socket.sendText(request.toString());
-        } catch (OutOfMemoryError ex) {
-            System.gc();
         } catch (Exception ex) {
-            handler.onException(ex);
+            listener.onException(ex);
         }
     }
 
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
         webSocketing = new WebSocketing(context, profile, null);
-    }
-
-    private void processQueue() {
-        synchronized (connectionQueue) {
-            for (Pair<JSONObject, IReceived> pair : connectionQueue) send(pair.first, pair.second);
-        }
     }
 
     private class Adapter extends WebSocketAdapter {
@@ -156,13 +121,12 @@ public class WebSocketing extends AbstractClient {
             String method = response.optString("method", null);
             if (method != null && method.startsWith("aria2.on")) return;
 
-            IReceived handler = requests.remove(response.getInt("id"));
-            if (handler == null) return;
-            if (response.isNull("error")) {
-                handler.onResponse(response);
-            } else {
-                handler.onException(new AriaException(response.getJSONObject("error")));
-            }
+            WeakReference<IReceived> ref = requests.remove(response.getInt("id"));
+            if (ref.get() == null) return;
+            IReceived listener = ref.get();
+            if (listener == null) return;
+            if (response.isNull("error")) listener.onResponse(response);
+            else listener.onException(new AriaException(response.getJSONObject("error")));
         }
 
         @Override
@@ -185,12 +149,6 @@ public class WebSocketing extends AbstractClient {
                 connectionListener.onFailedConnecting(exception);
                 connectionListener = null;
             }
-        }
-
-        @Override
-        public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
-            if (locked) return;
-            if (newState.equals(WebSocketState.OPEN) && connectionQueue.size() > 0) processQueue();
         }
     }
 }
