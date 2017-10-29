@@ -68,9 +68,9 @@ public class ProfilesManager {
     }
 
     @NonNull
-    public MultiProfile getCurrent(Context context) {
+    public MultiProfile getCurrent(Context context) throws NoCurrentProfileException {
         if (currentProfile == null) currentProfile = getLastProfile(context);
-        if (currentProfile == null) throw new NullPointerException("profile is null!");
+        if (currentProfile == null) throw new NoCurrentProfileException();
         return currentProfile;
     }
 
@@ -151,13 +151,8 @@ public class ProfilesManager {
         }
     }
 
-    public void reloadCurrentProfile(Context context) throws IOException, JSONException, NullPointerException {
+    public void reloadCurrentProfile(Context context) throws IOException, JSONException, NoCurrentProfileException {
         setCurrent(context, retrieveProfile(getCurrent(context).id));
-    }
-
-    @Nullable
-    public MultiProfile getCurrent() {
-        return currentProfile;
     }
 
     public WifiManager getWifiManager() {
@@ -166,5 +161,8 @@ public class ProfilesManager {
 
     public ConnectivityManager getConnectivityManager() {
         return connectivityManager;
+    }
+
+    public static class NoCurrentProfileException extends Exception {
     }
 }

@@ -136,12 +136,11 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            return new Fields(edit.isDirectDownloadEnabled(), edit.directDownload);
+            return new Fields(edit.directDownload);
         }
 
         MultiProfile.DirectDownload dd = null;
-        boolean enableDirectDownload = this.enableDirectDownload.isChecked();
-        if (enableDirectDownload) {
+        if (this.enableDirectDownload.isChecked()) {
             String address = this.address.getEditText().getText().toString().trim();
             try {
                 new URL(address);
@@ -167,7 +166,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             dd = new MultiProfile.DirectDownload(address, auth, username, password);
         }
 
-        return new Fields(enableDirectDownload, dd);
+        return new Fields(dd);
     }
 
     @Override
@@ -180,11 +179,9 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     }
 
     public class Fields {
-        public final boolean enableDirectDownload;
         public final MultiProfile.DirectDownload dd;
 
-        public Fields(boolean enableDirectDownload, @Nullable MultiProfile.DirectDownload dd) {
-            this.enableDirectDownload = enableDirectDownload;
+        Fields(@Nullable MultiProfile.DirectDownload dd) {
             this.dd = dd;
         }
     }

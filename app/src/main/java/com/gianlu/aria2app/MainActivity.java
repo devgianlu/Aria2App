@@ -316,7 +316,17 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 .addProfiles(ProfilesManager.get(this).getProfiles()));
 
         ProfilesManager manager = ProfilesManager.get(this);
-        MultiProfile currentProfile = manager.getCurrent(this);
+        MultiProfile currentProfile;
+        try {
+            currentProfile = manager.getCurrent(this);
+        } catch (ProfilesManager.NoCurrentProfileException ex) {
+            Logging.logMe(this, ex);
+            WebSocketing.clear();
+            HTTPing.clear();
+            manager.unsetLastProfile(this);
+            LoadingActivity.startActivity(this, ex);
+            return;
+        }
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
         AbstractClient.addConnectivityListener(this);
@@ -508,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         try {
             ProfilesManager.get(this).reloadCurrentProfile(this);
-        } catch (IOException | JSONException | NullPointerException ex) {
+        } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.logMe(this, ex);
             WebSocketing.clear();
             HTTPing.clear();
@@ -651,28 +661,28 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         switch (clicked.getItemId()) {
             case R.id.mainSort_name:
                 handleSortingReal(DownloadCardsAdapter.SortBy.NAME);
-                break;
+                return true;
             case R.id.mainSort_status:
                 handleSortingReal(DownloadCardsAdapter.SortBy.STATUS);
-                break;
+                return true;
             case R.id.mainSort_progress:
                 handleSortingReal(DownloadCardsAdapter.SortBy.PROGRESS);
-                break;
+                return true;
             case R.id.mainSort_downloadSpeed:
                 handleSortingReal(DownloadCardsAdapter.SortBy.DOWNLOAD_SPEED);
-                break;
+                return true;
             case R.id.mainSort_uploadSpeed:
                 handleSortingReal(DownloadCardsAdapter.SortBy.UPLOAD_SPEED);
-                break;
+                return true;
             case R.id.mainSort_length:
                 handleSortingReal(DownloadCardsAdapter.SortBy.LENGTH);
-                break;
+                return true;
             case R.id.mainSort_completedLength:
                 handleSortingReal(DownloadCardsAdapter.SortBy.COMPLETED_LENGTH);
-                break;
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {

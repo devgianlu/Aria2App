@@ -20,12 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,11 +42,12 @@ public class JTA2 {
     @NonNull
     public static JTA2 instantiate(Context context) throws JTA2InitializingException {
         try {
-            if (ProfilesManager.get(context).getCurrent(context).getProfile(context).connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
+            MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
+            if (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
                 return new JTA2(context, WebSocketing.instantiate(context));
             else
                 return new JTA2(context, HTTPing.instantiate(context));
-        } catch (IOException | NoSuchAlgorithmException | URISyntaxException | KeyStoreException | CertificateException | KeyManagementException ex) {
+        } catch (AbstractClient.InitializationException | ProfilesManager.NoCurrentProfileException ex) {
             throw new JTA2InitializingException(ex);
         }
     }
@@ -379,14 +374,16 @@ public class JTA2 {
     /// Actual aria2 RPC methods
     ///////////////////////////////////////////////////
 
-    public void getVersion(MultiProfile.UserProfile profile, final IVersion handler) {
+    public void getVersion(@Nullable MultiProfile.UserProfile profile, final IVersion handler) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getVersion");
-            JSONArray params = Utils.readyParams(profile);
+            JSONArray params;
+            if (profile != null) params = Utils.readyParams(profile);
+            else params = Utils.readyParams(context);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -405,7 +402,7 @@ public class JTA2 {
     }
 
     public void getVersion(IVersion handler) {
-        getVersion(ProfilesManager.get(context).getCurrent(context).getProfile(context), handler);
+        getVersion(null, handler);
     }
 
     public void saveSession(final ISuccess handler) {
@@ -415,7 +412,7 @@ public class JTA2 {
             request.put("method", "aria2.saveSession");
             JSONArray params = Utils.readyParams(context);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -443,7 +440,7 @@ public class JTA2 {
             request.put("method", "aria2.getSessionInfo");
             JSONArray params = Utils.readyParams(context);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -484,7 +481,7 @@ public class JTA2 {
 
             if (position != null) params.put(position);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -526,7 +523,7 @@ public class JTA2 {
 
             if (position != null) params.put(position);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -561,7 +558,7 @@ public class JTA2 {
 
             if (position != null) params.put(position);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -588,7 +585,7 @@ public class JTA2 {
             params.put(gid);
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -612,7 +609,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.getGlobalStat");
             request.put("params", Utils.readyParams(context));
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -638,7 +635,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -672,7 +669,7 @@ public class JTA2 {
             params.put(100);
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -706,7 +703,7 @@ public class JTA2 {
             params.put(100);
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -738,7 +735,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -764,7 +761,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -790,7 +787,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -816,7 +813,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -845,7 +842,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -871,7 +868,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -897,7 +894,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -921,7 +918,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.getGlobalOption");
             request.put("params", Utils.readyParams(context));
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -951,7 +948,7 @@ public class JTA2 {
                 jOptions.put(entry.getKey(), entry.getValue());
             params.put(jOptions);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -980,7 +977,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(gid).put(pos).put("POS_CUR");
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -1014,7 +1011,7 @@ public class JTA2 {
                 jOptions.put(entry.getKey(), entry.getValue());
             params.put(jOptions);
             request.put("params", params);
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -1041,7 +1038,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.getServers");
             request.put("params", Utils.readyParams(context).put(gid));
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -1073,7 +1070,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.getPeers");
             request.put("params", Utils.readyParams(context).put(gid));
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }
@@ -1105,7 +1102,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.getFiles");
             request.put("params", Utils.readyParams(context).put(gid));
-        } catch (JSONException ex) {
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             handler.onException(ex);
             return;
         }

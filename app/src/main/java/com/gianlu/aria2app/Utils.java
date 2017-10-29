@@ -105,7 +105,7 @@ public class Utils {
         return set;
     }
 
-    public static JSONArray readyParams(@NonNull Context context) {
+    public static JSONArray readyParams(@NonNull Context context) throws ProfilesManager.NoCurrentProfileException {
         return readyParams(ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 

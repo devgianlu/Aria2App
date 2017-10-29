@@ -16,6 +16,7 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.List;
@@ -110,24 +111,28 @@ public class DirBottomSheet extends BaseBottomSheet<AriaDirectory> {
             selected.setEnabled(false);
         }
 
-        final MultiProfile profile = ProfilesManager.get(context).getCurrent(context);
-
-        if (download.isMetadata() || !profile.getProfile(context).isDirectDownloadEnabled()) {
+        try {
+            final MultiProfile profile = ProfilesManager.get(context).getCurrent(context);
+            if (download.isMetadata() || !profile.getProfile(context).isDirectDownloadEnabled()) {
+                downloadDir.setVisibility(View.GONE);
+            } else {
+                downloadDir.setVisibility(View.VISIBLE);
+                downloadDir.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (handler != null)
+                                    handler.onWantsToDownload(profile, item);
+                            }
+                        });
+                    }
+                });
+            }
+        } catch (ProfilesManager.NoCurrentProfileException ex) {
+            Logging.logMe(context, ex);
             downloadDir.setVisibility(View.GONE);
-        } else {
-            downloadDir.setVisibility(View.VISIBLE);
-            downloadDir.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (handler != null)
-                                handler.onWantsToDownload(profile, download.gid, item);
-                        }
-                    });
-                }
-            });
         }
     }
 
@@ -152,6 +157,6 @@ public class DirBottomSheet extends BaseBottomSheet<AriaDirectory> {
 
         void onExceptionChangingSelection(Exception ex);
 
-        void onWantsToDownload(MultiProfile profile, String gid, @NonNull AriaDirectory dir);
+        void onWantsToDownload(MultiProfile profile, @NonNull AriaDirectory dir);
     }
 }

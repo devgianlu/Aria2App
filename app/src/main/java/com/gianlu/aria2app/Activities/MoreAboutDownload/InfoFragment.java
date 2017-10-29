@@ -40,11 +40,11 @@ import java.util.Locale;
 
 public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
     private final CountryFlags flags = CountryFlags.get();
+    private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private IStatusChanged listener;
     private UpdateUI updater;
     private ViewHolder holder;
     private Download.Status lastStatus = Download.Status.UNKNOWN;
-    private FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
 
     public static InfoFragment getInstance(Context context, Download download, IStatusChanged listener) {
         InfoFragment fragment = new InfoFragment();

@@ -17,6 +17,7 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.Collections;
@@ -115,24 +116,28 @@ public class FileBottomSheet extends BaseBottomSheet<AriaFile> {
             selected.setEnabled(false);
         }
 
-        final MultiProfile profile = ProfilesManager.get(context).getCurrent(context);
-
-        if (download.isMetadata() || !profile.getProfile(context).isDirectDownloadEnabled()) {
+        try {
+            final MultiProfile profile = ProfilesManager.get(context).getCurrent(context);
+            if (download.isMetadata() || !profile.getProfile(context).isDirectDownloadEnabled()) {
+                downloadFile.setVisibility(View.GONE);
+            } else {
+                downloadFile.setVisibility(View.VISIBLE);
+                downloadFile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (handler != null)
+                                    handler.onWantsToDownload(profile, item);
+                            }
+                        });
+                    }
+                });
+            }
+        } catch (ProfilesManager.NoCurrentProfileException ex) {
+            Logging.logMe(context, ex);
             downloadFile.setVisibility(View.GONE);
-        } else {
-            downloadFile.setVisibility(View.VISIBLE);
-            downloadFile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (handler != null)
-                                handler.onWantsToDownload(profile, download.gid, item);
-                        }
-                    });
-                }
-            });
         }
     }
 
@@ -158,6 +163,6 @@ public class FileBottomSheet extends BaseBottomSheet<AriaFile> {
 
         void onCantDeselectAll();
 
-        void onWantsToDownload(MultiProfile profile, String gid, @NonNull AriaFile file);
+        void onWantsToDownload(MultiProfile profile, @NonNull AriaFile file);
     }
 }

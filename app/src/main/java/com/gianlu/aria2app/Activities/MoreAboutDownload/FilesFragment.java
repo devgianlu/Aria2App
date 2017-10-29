@@ -358,7 +358,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AriaDirectory dir) {
+    public void onWantsToDownload(final MultiProfile profile, @NonNull final AriaDirectory dir) {
         if (fileSheet != null) fileSheet.collapse();
 
         final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
@@ -414,7 +414,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     }
 
     @Override
-    public void onWantsToDownload(final MultiProfile profile, final String gid, @NonNull final AriaFile file) {
+    public void onWantsToDownload(final MultiProfile profile, @NonNull final AriaFile file) {
         if (fileSheet != null) fileSheet.collapse();
 
         if (downloaderMessenger != null) {

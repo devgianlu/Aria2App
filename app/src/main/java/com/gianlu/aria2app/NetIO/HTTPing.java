@@ -35,7 +35,7 @@ public class HTTPing extends AbstractClient {
     private final CloseableHttpClient client;
     private final URI defaultUri;
 
-    private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
+    private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 
@@ -47,13 +47,15 @@ public class HTTPing extends AbstractClient {
         this.defaultUri = NetUtils.createBaseURI(profile);
     }
 
-    public static HTTPing instantiate(Context context) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
-        if (httping == null) httping = new HTTPing(context);
-        return httping;
-    }
+    public static HTTPing instantiate(Context context) throws InitializationException {
+        if (httping == null) {
+            try {
+                httping = new HTTPing(context);
+            } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyManagementException | URISyntaxException | KeyStoreException | ProfilesManager.NoCurrentProfileException ex) {
+                throw new InitializationException(ex);
+            }
+        }
 
-    public static HTTPing instantiate(Context context, MultiProfile.UserProfile profile) throws NoSuchAlgorithmException, CertificateException, KeyManagementException, KeyStoreException, IOException, URISyntaxException {
-        if (httping == null) httping = new HTTPing(context, profile);
         return httping;
     }
 

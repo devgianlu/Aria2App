@@ -31,12 +31,12 @@ public class WebSocketing extends AbstractClient {
     private IConnect connectionListener;
     private WebSocket socket;
 
-    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, ProfilesManager.NoCurrentProfileException {
         super(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
         socket = NetUtils.readyWebSocket(profile).addListener(new Adapter()).connectAsynchronously();
     }
 
-    private WebSocketing(Context context, @Nullable IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+    private WebSocketing(Context context, @Nullable IConnect listener) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException, ProfilesManager.NoCurrentProfileException {
         this(context);
         this.connectionListener = listener;
     }
@@ -48,8 +48,15 @@ public class WebSocketing extends AbstractClient {
         connectionListener = listener;
     }
 
-    public static WebSocketing instantiate(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
-        if (webSocketing == null) webSocketing = new WebSocketing(context);
+    public static WebSocketing instantiate(Context context) throws InitializationException {
+        if (webSocketing == null) {
+            try {
+                webSocketing = new WebSocketing(context);
+            } catch (ProfilesManager.NoCurrentProfileException | IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
+                throw new InitializationException(ex);
+            }
+        }
+
         return webSocketing;
     }
 
@@ -57,15 +64,6 @@ public class WebSocketing extends AbstractClient {
         try {
             unlock();
             webSocketing = new WebSocketing(context, profile, listener);
-        } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
-            listener.onFailedConnecting(ex);
-        }
-    }
-
-    public static void instantiate(Context context, @NonNull IConnect listener) {
-        try {
-            unlock();
-            webSocketing = new WebSocketing(context, listener);
         } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
         }

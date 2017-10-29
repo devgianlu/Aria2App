@@ -63,10 +63,16 @@ public abstract class AbstractClient {
 
     public abstract void send(JSONObject request, IReceived handler);
 
-    public abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;
+    protected abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;
 
     public interface OnConnectivityChanged {
         void connectivityChanged(@NonNull MultiProfile.UserProfile profile);
+    }
+
+    public static class InitializationException extends Exception {
+        InitializationException(Throwable cause) {
+            super(cause);
+        }
     }
 
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
