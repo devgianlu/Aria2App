@@ -171,8 +171,8 @@
     <string name="noUris">没有网址。</string>
     <string name="torrentUris_disclaimer">网址是为了网络做种。对于单个文件种子，网址可以是指向资源的完整网址；如果网址以/结尾，会添加种子文件中的名字。对于多个种子，会添加种子中的名字和路径形成每个文件的网址。</string>
     <string name="file">文件</string>
-    <string name="pickTorrent_help">选取种子文件。支持的MIME类型是<![CDATA[<b>application/x-bittorrent</b>]]>。Aria2App报告的路径可能会改变。</string>
-    <string name="pickMetalink_help">选取MetaLink文件。支持的MIME类型是<![CDATA[<b>application/metalink4+xml</b>]]>和<![CDATA[<b>application/metalink+xml</b>]]>。Aria2App报告的路径可能会改变。</string>
+    <string name="pickTorrent_help">选取种子文件。支持的MIME类型是<![CDATA[<b>application/x-bittorrent</b>]]>。</string>
+    <string name="pickMetalink_help">选取MetaLink文件。支持的MIME类型是<![CDATA[<b>application/metalink4+xml</b>]]>和<![CDATA[<b>application/metalink+xml</b>]]>。</string>
     <string name="pickProfile_share">选择用于下载的配置：</string>
     <string name="outdated_aria2">过期的aria2版本</string>
     <string name="outdated_aria2_message">您的aria2已过期。Aria2App基于最新版本aria2开始，因此您必须更新。您可以关闭此消息。 \n\n当前版本：%1$s \n最新版本：%2$s</string>

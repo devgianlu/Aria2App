@@ -170,8 +170,8 @@
     <string name="noUris">Нет uris.</string>
     <string name="torrentUris_disclaimer">URIs используются для веб-сидирования. Для одиночных файловых торрентов URI может быть полным URI, указывающим на ресурс; если URI заканчивается на /, добавляется имя в файле торрента. Для многофайловых торрентов имя и путь в торренте добавляются из URI для каждого файла.</string>
     <string name="file">Файл</string>
-    <string name="pickTorrent_help">Выберите torrent-файл. Поддерживаемый тип <![CDATA[<b>application/x-bittorrent</b>]]>. Путь к файлу, сообщенный Aria2App, может измениться.</string>
-    <string name="pickMetalink_help">Выберите файл Metalink. Поддерживаемые типы <![CDATA[<b>application/metalink4+xml</b>]]> и <![CDATA[<b>application/metalink+xml</b>]]>. Путь к файлу, сообщенный Aria2App, может измениться.</string>
+    <string name="pickTorrent_help">Выберите torrent-файл. Поддерживаемый тип <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
+    <string name="pickMetalink_help">Выберите файл Metalink. Поддерживаемые типы <![CDATA[<b>application/metalink4+xml</b>]]> и <![CDATA[<b>application/metalink+xml</b>]]>.</string>
     <string name="pickProfile_share">Выберите профиль, чтобы начать загрузку:</string>
     <string name="outdated_aria2">Устаревшая версия Aria2</string>
     <string name="outdated_aria2_message">Ваша версия Aria2 устарела. Обновите его до последней версии, чтобы избежать ошибок или проблем.\nВы можете отключить эту функцию в настройках.\n\nВаша версия: %1$s\nБолее новая версия: %2$s</string>
