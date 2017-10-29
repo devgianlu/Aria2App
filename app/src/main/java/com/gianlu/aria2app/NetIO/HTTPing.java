@@ -25,7 +25,7 @@ import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.methods.HttpRequestBase;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.util.EntityUtils;
 
@@ -126,8 +126,8 @@ public class HTTPing extends AbstractClient {
         @Override
         public void run() {
             try {
-                HttpGet get = NetUtils.createGetRequest(profile, defaultUri, request);
-                HttpResponse resp = client.execute(get);
+                HttpRequestBase req = NetUtils.createGetRequest(profile, defaultUri, request);
+                HttpResponse resp = client.execute(req);
                 StatusLine sl = resp.getStatusLine();
 
                 if (request == null) { // Connection test
@@ -154,7 +154,7 @@ public class HTTPing extends AbstractClient {
 
                 EntityUtils.consumeQuietly(resp.getEntity());
 
-                get.releaseConnection();
+                req.releaseConnection();
             } catch (JSONException | IOException | URISyntaxException | IllegalStateException ex) {
                 listener.onException(ex);
             }

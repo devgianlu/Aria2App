@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -31,6 +33,7 @@ import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
 import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Activities.EditProfile.TestFragment;
+import com.gianlu.aria2app.Activities.EditProfile.WifisAdapter;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.Adapters.RadioConditionsAdapter;
 import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
@@ -221,7 +224,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void createNewCondition(boolean compulsory) {
+    private void createNewCondition(final boolean compulsory) {
         if (hasAlwaysCondition()) {
             Toaster.show(this, Utils.Messages.HAS_ALWAYS_CONDITION);
             return;
@@ -230,7 +233,8 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null, false);
         final RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
         final TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
-        ssid.getEditText().addTextChangedListener(new TextWatcher() {
+        final AutoCompleteTextView ssidField = (AutoCompleteTextView) ssid.getEditText();
+        ssidField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -249,10 +253,25 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         connectivityCondition.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                if (checkedId == R.id.editProfile_connectivityCondition_wifi)
+                if (checkedId == R.id.editProfile_connectivityCondition_wifi) {
+                    WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                    ssidField.setAdapter(new WifisAdapter(EditProfileActivity.this, manager.getConfiguredNetworks()));
+                    ssidField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+                    ssidField.setThreshold(1);
                     ssid.setVisibility(View.VISIBLE);
-                else
+                } else {
                     ssid.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -262,7 +281,12 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                 .setCancelable(!compulsory)
                 .setPositiveButton(R.string.create, null);
 
-        if (!compulsory) builder.setNegativeButton(android.R.string.cancel, null);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (compulsory) onBackPressed();
+            }
+        });
 
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
