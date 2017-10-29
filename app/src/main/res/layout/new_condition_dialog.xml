@@ -63,9 +63,15 @@
         android:hint="@string/ssid"
         android:visibility="gone">
 
-        <AutoCompleteTextView
+        <MultiAutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lines="1" />
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ssids_help"
+            android:textAlignment="center" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

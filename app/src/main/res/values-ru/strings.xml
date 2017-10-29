@@ -305,6 +305,7 @@
     <string name="signatureAlgorithm">Алгоритм подписи</string>
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">Альтернативные названия: %s</string>
+    <string name="ssids_help">Вы можете предоставить список разделенных запятыми SSID.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

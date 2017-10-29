@@ -306,6 +306,7 @@
     <string name="signatureAlgorithm">签名算法</string>
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">替代名称: %s</string>
+    <string name="ssids_help">您可以提供逗号分隔的SSID列表。</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

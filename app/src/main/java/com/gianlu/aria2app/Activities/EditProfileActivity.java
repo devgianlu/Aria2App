@@ -21,9 +21,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
@@ -233,7 +233,8 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null, false);
         final RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
         final TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
-        final AutoCompleteTextView ssidField = (AutoCompleteTextView) ssid.getEditText();
+        final MultiAutoCompleteTextView ssidField = (MultiAutoCompleteTextView) ssid.getEditText();
+        ssidField.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         ssidField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -305,12 +306,14 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                                 condition = MultiProfile.ConnectivityCondition.newMobileCondition(!hasDefault());
                                 break;
                             case R.id.editProfile_connectivityCondition_wifi:
-                                if (ssid.getEditText().getText().toString().isEmpty()) {
+                                String[] ssidsArray = MultiProfile.ConnectivityCondition.parseSSIDs(ssid.getEditText().getText().toString());
+                                if (ssidsArray.length == 0) {
+                                    ssidField.setText("");
                                     ssid.setError(getString(R.string.emptySSID));
                                     return;
                                 }
 
-                                condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssid.getEditText().getText().toString(), !hasDefault());
+                                condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssidsArray, !hasDefault());
                                 break;
                             case R.id.editProfile_connectivityCondition_ethernet:
                                 condition = MultiProfile.ConnectivityCondition.newEthernetCondition(!hasDefault());
@@ -438,10 +441,10 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     private void setDefaultCondition(int pos) {
         int oldDefPos = findDefaultCondition();
         MultiProfile.ConnectivityCondition oldDefault = conditions.get(oldDefPos);
-        conditions.set(oldDefPos, new MultiProfile.ConnectivityCondition(oldDefault.type, oldDefault.ssid, false));
+        conditions.set(oldDefPos, new MultiProfile.ConnectivityCondition(oldDefault.type, oldDefault.ssids, false));
 
         MultiProfile.ConnectivityCondition newDefault = conditions.get(pos);
-        conditions.set(pos, new MultiProfile.ConnectivityCondition(newDefault.type, newDefault.ssid, true));
+        conditions.set(pos, new MultiProfile.ConnectivityCondition(newDefault.type, newDefault.ssids, true));
     }
 
     private void setDefaultCondition() {

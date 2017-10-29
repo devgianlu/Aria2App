@@ -14,6 +14,7 @@ import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 
 import org.json.JSONArray;
@@ -25,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,7 +71,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 ConnectivityCondition condition;
                 switch (type) {
                     case WIFI:
-                        condition = ConnectivityCondition.newWiFiCondition(conditionObj.getString("ssid"), isDefault);
+                        condition = ConnectivityCondition.newWiFiCondition(new String[]{conditionObj.getString("ssid")}, isDefault);
                         break;
                     case MOBILE:
                         condition = ConnectivityCondition.newMobileCondition(isDefault);
@@ -133,9 +135,13 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     @Nullable
     private UserProfile findForWifi(String ssid) {
-        for (UserProfile profile : profiles)
-            if (profile.connectivityCondition.type == ConnectivityCondition.Type.WIFI && Objects.equals(profile.connectivityCondition.ssid, ssid))
-                return profile;
+        for (UserProfile profile : profiles) {
+            if (profile.connectivityCondition.type == ConnectivityCondition.Type.WIFI) {
+                for (String profileSsid : profile.connectivityCondition.ssids)
+                    if (Objects.equals(profileSsid, ssid))
+                        return profile;
+            }
+        }
 
         return null;
     }
@@ -189,7 +195,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return getProfile(context).getInitials(context);
     }
 
-    public JSONObject toJSON() throws JSONException {
+    JSONObject toJSON() throws JSONException {
         if (profiles.isEmpty()) throw new IllegalStateException("profiles cannot be empty!");
 
         JSONObject obj = new JSONObject();
@@ -215,8 +221,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         this.status = status;
     }
 
-    public void updateStatusPing(long ping) {
-        this.status = new TestStatus(status.status, ping);
+    void updateStatusPing(long ping) {
+        if (status != null) this.status = new TestStatus(status.status, ping);
     }
 
     public enum ConnectionMethod {
@@ -233,29 +239,55 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     public static class ConnectivityCondition implements Serializable {
         public final Type type;
-        public final String ssid;
+        public final String[] ssids;
         public final boolean isDefault;
 
-        public ConnectivityCondition(Type type, boolean isDefault, @Nullable String ssid) {
+        ConnectivityCondition(Type type, boolean isDefault, @Nullable String[] ssids) {
             this.type = type;
             this.isDefault = isDefault;
-            this.ssid = ssid;
+            this.ssids = checkSSIDsArray(ssids);
         }
 
-        public ConnectivityCondition(JSONObject obj) throws JSONException {
+        ConnectivityCondition(JSONObject obj) throws JSONException {
             type = Type.valueOf(obj.getString("type"));
-            ssid = obj.optString("ssid", null);
             isDefault = obj.getBoolean("isDefault");
+
+            if (obj.has("ssids")) {
+                ssids = CommonUtils.toStringArray(obj.optJSONArray("ssids"));
+            } else if (obj.has("ssid")) {
+                ssids = new String[1];
+                ssids[0] = obj.getString("ssid");
+            } else {
+                ssids = null;
+            }
         }
 
-        public ConnectivityCondition(Type type, String ssid, boolean isDefault) {
+        public ConnectivityCondition(Type type, String[] ssids, boolean isDefault) {
             this.type = type;
-            this.ssid = ssid;
+            this.ssids = checkSSIDsArray(ssids);
             this.isDefault = isDefault;
         }
 
-        public static ConnectivityCondition newWiFiCondition(String ssid, boolean isDefault) {
-            return new ConnectivityCondition(Type.WIFI, isDefault, ssid);
+        @Nullable
+        public static String[] parseSSIDs(String rawSsids) {
+            if (rawSsids == null) return null;
+            return checkSSIDsArray(rawSsids.split(",\\s+"));
+        }
+
+        @Nullable
+        private static String[] checkSSIDsArray(String[] ssids) {
+            if (ssids == null) return null;
+
+            List<String> tmpList = new ArrayList<>();
+            for (String ssid : ssids)
+                if (!ssid.trim().isEmpty())
+                    tmpList.add(ssid.trim());
+
+            return tmpList.toArray(new String[0]);
+        }
+
+        public static ConnectivityCondition newWiFiCondition(String[] ssids, boolean isDefault) {
+            return new ConnectivityCondition(Type.WIFI, isDefault, ssids);
         }
 
         public static ConnectivityCondition newMobileCondition(boolean isDefault) {
@@ -279,27 +311,22 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ConnectivityCondition that = (ConnectivityCondition) o;
-            return type == that.type && (ssid != null ? ssid.equals(that.ssid) : that.ssid == null);
+            return type == that.type && (ssids != null ? Arrays.equals(ssids, that.ssids) : that.ssids == null);
         }
 
-        public JSONObject toJSON() throws JSONException {
+        JSONObject toJSON() throws JSONException {
             JSONObject obj = new JSONObject();
             obj.put("type", type.name()).put("isDefault", isDefault);
-            if (ssid != null) obj.put("ssid", ssid);
+            if (ssids != null) {
+                JSONArray ssidsArray = new JSONArray();
+                for (String ssid : ssids) ssidsArray.put(ssid);
+                obj.put("ssids", ssidsArray);
+            }
             return obj;
         }
 
-        @Override
-        public String toString() {
-            return "ConnectivityCondition{" +
-                    "type=" + type +
-                    ", ssid='" + ssid + '\'' +
-                    ", isDefault=" + isDefault +
-                    '}';
-        }
-
         public String getFormal(Context context) {
-            return type.getFormal(context) + (type == Type.WIFI ? ": " + ssid : "");
+            return type.getFormal(context) + (type == Type.WIFI ? ": " + CommonUtils.join(ssids, ", ") : "");
         }
 
         public enum Type {
@@ -348,7 +375,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             this.password = password;
         }
 
-        public JSONObject toJSON() throws JSONException {
+        JSONObject toJSON() throws JSONException {
             JSONObject obj = new JSONObject();
             obj.put("addr", address).put("auth", auth).put("username", username).put("password", password);
             return obj;
@@ -508,7 +535,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return directDownload != null;
         }
 
-        public JSONObject toJSON() throws JSONException {
+        JSONObject toJSON() throws JSONException {
             JSONObject profile = new JSONObject();
             profile.put("serverAddr", serverAddr)
                     .put("serverPort", serverPort)
