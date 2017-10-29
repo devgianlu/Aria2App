@@ -44,6 +44,7 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
         peerChoking = content.findViewById(R.id.peerSheet_peerChoking);
         amChoking = content.findViewById(R.id.peerSheet_amChoking);
         ipDetails = content.findViewById(R.id.peerSheet_ipDetails);
+        ipDetails.setVisibility(View.GONE);
     }
 
     @SuppressLint("SetTextI18n")
@@ -55,8 +56,8 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
         freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.IIPDetails() {
             @Override
             public void onDetails(IPDetails details) {
-                ipDetails.setVisibility(View.VISIBLE);
                 ipDetails.setup(details);
+                ipDetails.setVisibility(View.VISIBLE);
             }
 
             @Override

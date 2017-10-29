@@ -85,11 +85,6 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
                 }
 
                 @Override
-                public void serviceUnavailable() {
-                    provider.onFailed(new Exception("Service unavailable."));
-                }
-
-                @Override
                 public void onException(Exception ex) {
                     provider.onFailed(ex);
                 }

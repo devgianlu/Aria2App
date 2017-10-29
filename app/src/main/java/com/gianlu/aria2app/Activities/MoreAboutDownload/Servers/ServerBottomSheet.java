@@ -40,6 +40,7 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
         currentUri = content.findViewById(R.id.serverSheet_currentUri);
         uri = content.findViewById(R.id.serverSheet_uri);
         ipDetails = content.findViewById(R.id.serverSheet_ipDetails);
+        ipDetails.setVisibility(View.GONE);
     }
 
     @Override
@@ -50,8 +51,8 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
         freeGeoIPApi.getIPDetails(server.getCurrentUri().getHost(), new FreeGeoIPApi.IIPDetails() {
             @Override
             public void onDetails(IPDetails details) {
-                ipDetails.setVisibility(View.VISIBLE);
                 ipDetails.setup(details);
+                ipDetails.setVisibility(View.VISIBLE);
             }
 
             @Override
