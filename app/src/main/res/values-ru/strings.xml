@@ -306,6 +306,10 @@
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">Альтернативные названия: %s</string>
     <string name="ssids_help">Вы можете предоставить список разделенных запятыми SSID.</string>
+    <string name="ip">айпи адрес: %s</string>
+    <string name="timezone">Часовой пояс: %s</string>
+    <string name="localization">локализация: %s</string>
+    <string name="ipDetails">Сведения об IP</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

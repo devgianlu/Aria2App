@@ -307,6 +307,10 @@
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">替代名称: %s</string>
     <string name="ssids_help">您可以提供逗号分隔的SSID列表。</string>
+    <string name="ip">IP地址: %s</string>
+    <string name="timezone">时区: %s</string>
+    <string name="localization">本土化: %s</string>
+    <string name="ipDetails">IP详细信息</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
