@@ -17,30 +17,27 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManagerFactory;
 
-import cz.msebera.android.httpclient.NameValuePair;
 import cz.msebera.android.httpclient.client.config.RequestConfig;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.client.utils.URIBuilder;
+import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 public class NetUtils {
 
@@ -162,20 +159,12 @@ public class NetUtils {
         return get;
     }
 
-    // FIXME
     public static HttpPost createPostRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException, UnsupportedEncodingException {
         if (defaultUri == null) defaultUri = createBaseURI(profile);
         HttpPost post = new HttpPost(defaultUri);
 
-        if (request != null) {
-            List<NameValuePair> parameters = new ArrayList<>();
-            parameters.add(new BasicNameValuePair("method", request.getString("method")));
-            parameters.add(new BasicNameValuePair("id", request.getString("id")));
-            if (request.has("params"))
-                parameters.add(new BasicNameValuePair("params", Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP)));
-
-            post.setEntity(new UrlEncodedFormEntity(parameters));
-        }
+        if (request != null)
+            post.setEntity(new StringEntity(request.toString(), Charset.forName("UTF-8")));
 
         if (profile.authMethod == JTA2.AuthMethod.HTTP)
             post.addHeader("Authorization", "Basic " + profile.getEncodedCredentials());

@@ -126,7 +126,9 @@ public class HTTPing extends AbstractClient {
         @Override
         public void run() {
             try {
-                HttpRequestBase req = NetUtils.createGetRequest(profile, defaultUri, request);
+                HttpRequestBase req;
+                if (request == null) req = NetUtils.createGetRequest(profile, defaultUri, null);
+                else req = NetUtils.createPostRequest(profile, defaultUri, request);
                 HttpResponse resp = client.execute(req);
                 StatusLine sl = resp.getStatusLine();
 
