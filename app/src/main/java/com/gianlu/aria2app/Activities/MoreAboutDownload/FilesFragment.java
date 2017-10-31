@@ -40,7 +40,6 @@ import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
@@ -125,7 +124,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
                             updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
                             updater.start();
-                        } catch (JTA2InitializingException ex) {
+                        } catch (JTA2.InitializingException ex) {
                             Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
                         }
                     }
@@ -136,7 +135,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         try {
             updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
             updater.start();
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.logMe(getContext(), ex);
             return;
@@ -168,7 +167,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Logging.logMe(getContext(), ex);
             recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
             return layout;

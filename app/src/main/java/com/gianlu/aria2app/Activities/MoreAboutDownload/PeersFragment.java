@@ -23,7 +23,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.UpdateUI;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
 import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
+import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
@@ -113,7 +113,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
                             updater = new UpdateUI(getContext(), gid, PeersFragment.this);
                             updater.start();
-                        } catch (JTA2InitializingException ex) {
+                        } catch (JTA2.InitializingException ex) {
                             Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
                         }
                     }
@@ -124,7 +124,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         try {
             updater = new UpdateUI(getContext(), gid, this);
             updater.start();
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.logMe(getContext(), ex);
             return layout;

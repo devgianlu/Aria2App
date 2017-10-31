@@ -311,6 +311,13 @@
     <string name="localization">локализация: %s</string>
     <string name="ipDetails">Сведения об IP</string>
 
+    <string name="pauseAll">Приостановить все</string>
+    <string name="unpauseAll">Unpause all</string>
+    <string name="purgeDownloadResult">езультаты загрузки чистки</string>
+    <string name="pausedAll">Приостановил все загрузки.</string>
+    <string name="resumedAll">Возобновлено все загрузки.</string>
+    <string name="purgedDownloadResult">Удалил все результаты загрузки.</string>
+
     <!-- String-arrays -->
     <string-array name="updateRate">
         <item>1 секунда</item>

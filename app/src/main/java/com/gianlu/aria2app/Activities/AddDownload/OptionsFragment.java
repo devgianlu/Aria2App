@@ -15,7 +15,6 @@ import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.Options.Option;
 import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.Options.OptionsUtils;
@@ -63,7 +62,7 @@ public class OptionsFragment extends Fragment {
         try {
             jta2 = JTA2.instantiate(getContext());
             downloadOptions = OptionsManager.get(getContext()).loadDownloadOptions();
-        } catch (JTA2InitializingException | IOException | JSONException ex) {
+        } catch (JTA2.InitializingException | IOException | JSONException ex) {
             MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
             optionsView.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);

@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
@@ -98,7 +97,7 @@ public class OptionsUtils {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
@@ -137,7 +136,7 @@ public class OptionsUtils {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
@@ -228,7 +227,7 @@ public class OptionsUtils {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;
@@ -278,7 +277,7 @@ public class OptionsUtils {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             pd.dismiss();
             return;

@@ -13,7 +13,7 @@ public class BitTorrent implements Serializable {
     public final ArrayList<String> announceList;
     public final Mode mode;
     public final String comment;
-    public final int creationDate;
+    public final long creationDate;
     public final String name;
 
     public BitTorrent(@NonNull JSONObject obj) {

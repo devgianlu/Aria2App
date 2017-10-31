@@ -7,7 +7,6 @@ import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IServers {
     private final IUI listener;
     private List<AriaFile> files;
 
-    public UpdateUI(Context context, String gid, IUI listener) throws JTA2InitializingException {
+    public UpdateUI(Context context, String gid, IUI listener) throws JTA2.InitializingException {
         super(context);
         this.gid = gid;
         this.listener = listener;

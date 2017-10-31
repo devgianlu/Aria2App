@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.commonutils.Prefs;
 
@@ -17,7 +16,7 @@ public abstract class BaseUpdater extends Thread {
     private IThread stopListener;
     private volatile boolean _shouldStop = false;
 
-    public BaseUpdater(Context context) throws JTA2InitializingException {
+    public BaseUpdater(Context context) throws JTA2.InitializingException {
         this.jta2 = JTA2.instantiate(context);
         this.handler = new Handler(Looper.getMainLooper());
         this.updateInterval = Prefs.getFakeInt(context, PKeys.A2_UPDATE_INTERVAL, 1) * 1000;

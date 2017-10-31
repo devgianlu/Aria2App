@@ -16,7 +16,6 @@ import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
@@ -100,7 +99,7 @@ public class AddUriActivity extends AppCompatActivity {
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(this);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Toaster.show(this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             return;
         }

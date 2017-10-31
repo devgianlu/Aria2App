@@ -214,6 +214,9 @@ public class Utils {
         public static final Toaster.Message DD_NOT_ENABLED = new Toaster.Message(R.string.ddNotEnabled, false);
         public static final Toaster.Message PROFILE_DOES_NOT_EXIST = new Toaster.Message(R.string.profileDoesntExist, false);
         public static final Toaster.Message FAILED_LOADING_CERTIFICATE = new Toaster.Message(R.string.invalidCertificate, true);
+        public static final Toaster.Message PAUSED_ALL = new Toaster.Message(R.string.pausedAll, false);
+        public static final Toaster.Message RESUMED_ALL = new Toaster.Message(R.string.resumedAll, false);
+        public static final Toaster.Message PURGED_DOWNLOAD_RESULT = new Toaster.Message(R.string.purgedDownloadResult, false);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

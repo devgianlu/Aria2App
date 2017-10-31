@@ -316,6 +316,12 @@
     <string name="localization">Localization: %s</string>
     <string name="ipDetails">IP details</string>
     <string name="ssids_help">You can provide a list of comma separated SSIDs.</string>
+    <string name="pauseAll">Pause all</string>
+    <string name="unpauseAll">Resume all</string>
+    <string name="purgeDownloadResult">Purge download results</string>
+    <string name="pausedAll">Paused all downloads.</string>
+    <string name="resumedAll">Resumed all downloads.</string>
+    <string name="purgedDownloadResult">Purged all download results.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

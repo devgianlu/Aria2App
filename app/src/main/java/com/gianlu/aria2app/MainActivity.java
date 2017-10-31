@@ -64,7 +64,6 @@ import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
@@ -127,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 try {
                     updater = new UpdateUI(MainActivity.this, MainActivity.this);
                     updater.start();
-                } catch (JTA2InitializingException ex) {
+                } catch (JTA2.InitializingException ex) {
                     ErrorHandler.get().notifyException(ex, true);
                     recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
                 }
@@ -200,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         final JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(MainActivity.this);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
             return;
         }
@@ -402,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             updater = new UpdateUI(this, this);
             updater.start();
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
             recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
         }
@@ -417,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         JTA2 jta2;
                         try {
                             jta2 = JTA2.instantiate(MainActivity.this);
-                        } catch (JTA2InitializingException ex) {
+                        } catch (JTA2.InitializingException ex) {
                             Logging.logMe(MainActivity.this, ex);
                             return;
                         }
@@ -647,13 +646,90 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             // Filters
             case R.id.main_filter:
                 showFilteringDialog();
-                break;
+                return true;
+            case R.id.main_pauseAll:
+                pauseAll();
+                return true;
+            case R.id.main_unpauseAll:
+                unpauseAll();
+                return true;
+            case R.id.main_purgeDownloadResult:
+                purgeDownloadResult();
+                return true;
             // Sorting
             default:
                 return handleSorting(item);
         }
+    }
 
-        return true;
+    private void pauseAll() {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(this);
+        } catch (JTA2.InitializingException ex) {
+            onException(ex);
+            return;
+        }
+
+        jta2.pauseAll(new JTA2.ISuccess() {
+            boolean retried = false;
+
+            @Override
+            public void onSuccess() {
+                Toaster.show(MainActivity.this, Utils.Messages.PAUSED_ALL);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                if (!retried) jta2.forcePauseAll(this);
+                else MainActivity.this.onException(ex);
+                retried = true;
+            }
+        });
+    }
+
+    private void unpauseAll() {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(this);
+        } catch (JTA2.InitializingException ex) {
+            onException(ex);
+            return;
+        }
+
+        jta2.unpauseAll(new JTA2.ISuccess() {
+            @Override
+            public void onSuccess() {
+                Toaster.show(MainActivity.this, Utils.Messages.RESUMED_ALL);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                MainActivity.this.onException(ex);
+            }
+        });
+    }
+
+    private void purgeDownloadResult() {
+        final JTA2 jta2;
+        try {
+            jta2 = JTA2.instantiate(this);
+        } catch (JTA2.InitializingException ex) {
+            onException(ex);
+            return;
+        }
+
+        jta2.purgeDownloadResult(new JTA2.ISuccess() {
+            @Override
+            public void onSuccess() {
+                Toaster.show(MainActivity.this, Utils.Messages.PURGED_DOWNLOAD_RESULT);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                MainActivity.this.onException(ex);
+            }
+        });
     }
 
     private boolean handleSorting(MenuItem clicked) {
@@ -877,7 +953,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         final JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(this);
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             onException(ex);
             return;
         }

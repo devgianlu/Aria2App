@@ -21,4 +21,19 @@
         app:showAsAction="never">
         <menu><!-- SubMenu placeholder --></menu>
     </item>
+
+    <item
+        android:id="@+id/main_pauseAll"
+        android:title="@string/pauseAll"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/main_unpauseAll"
+        android:title="@string/unpauseAll"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/main_purgeDownloadResult"
+        android:title="@string/purgeDownloadResult"
+        app:showAsAction="never" />
 </menu>

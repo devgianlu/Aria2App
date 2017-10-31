@@ -7,7 +7,6 @@ import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.commonutils.Prefs;
 
@@ -19,7 +18,7 @@ public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList, JTA2.IS
     private final IUI listener;
     private final boolean hideMetadata;
 
-    public UpdateUI(Context context, IUI listener) throws JTA2InitializingException {
+    public UpdateUI(Context context, IUI listener) throws JTA2.InitializingException {
         super(context);
         this.listener = listener;
         this.hideMetadata = Prefs.getBoolean(context, PKeys.A2_HIDE_METADATA, false);

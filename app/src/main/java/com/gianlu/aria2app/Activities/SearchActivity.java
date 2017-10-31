@@ -29,7 +29,6 @@ import com.gianlu.aria2app.Activities.Search.Torrent;
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
@@ -315,7 +314,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                         JTA2 jta2;
                         try {
                             jta2 = JTA2.instantiate(SearchActivity.this);
-                        } catch (JTA2InitializingException ex) {
+                        } catch (JTA2.InitializingException ex) {
                             Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
                             return;
                         }

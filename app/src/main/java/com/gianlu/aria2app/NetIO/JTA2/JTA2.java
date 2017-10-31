@@ -40,7 +40,7 @@ public class JTA2 {
     }
 
     @NonNull
-    public static JTA2 instantiate(Context context) throws JTA2InitializingException {
+    public static JTA2 instantiate(Context context) throws InitializingException {
         try {
             MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrent(context).getProfile(context);
             if (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
@@ -48,7 +48,7 @@ public class JTA2 {
             else
                 return new JTA2(context, HTTPing.instantiate(context));
         } catch (AbstractClient.InitializationException | ProfilesManager.NoCurrentProfileException ex) {
-            throw new JTA2InitializingException(ex);
+            throw new InitializingException(ex);
         }
     }
 
@@ -66,7 +66,7 @@ public class JTA2 {
     /// Utility methods
     ///////////////////////////////////////////////////
 
-    public void tellAll(@Nullable final String[] keys, final IDownloadList handler) {
+    public void tellAll(@Nullable final String[] keys, final IDownloadList listener) {
         final List<Download> allDownloads = new ArrayList<>();
         tellActive(keys, new IDownloadList() {
             @Override
@@ -80,102 +80,102 @@ public class JTA2 {
                             @Override
                             public void onDownloads(List<Download> downloads) {
                                 allDownloads.addAll(downloads);
-                                handler.onDownloads(allDownloads);
+                                listener.onDownloads(allDownloads);
                             }
 
                             @Override
                             public void onException(Exception ex) {
-                                handler.onException(ex);
+                                listener.onException(ex);
                             }
                         });
                     }
 
                     @Override
                     public void onException(Exception ex) {
-                        handler.onException(ex);
+                        listener.onException(ex);
                     }
                 });
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void pause(final String gid, final IPause handler) {
+    public void pause(final String gid, final IPause listener) {
         pause(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onPaused(gid);
+                listener.onPaused(gid);
             }
 
             @Override
             public void onException(Exception ex) {
-                if (forceAction) forcePause(gid, handler);
-                else handler.onException(ex);
+                if (forceAction) forcePause(gid, listener);
+                else listener.onException(ex);
             }
         });
     }
 
-    private void forcePause(String gid, final IPause handler) {
+    private void forcePause(String gid, final IPause listener) {
         forcePause(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onPaused(gid);
+                listener.onPaused(gid);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void moveUp(final String gid, final IMove handler) {
+    public void moveUp(final String gid, final IMove listener) {
         changePosition(gid, -1, new JTA2.ISuccess() {
             @Override
             public void onSuccess() {
-                handler.onMoved(gid);
+                listener.onMoved(gid);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void moveDown(final String gid, final IMove handler) {
+    public void moveDown(final String gid, final IMove listener) {
         changePosition(gid, 1, new JTA2.ISuccess() {
             @Override
             public void onSuccess() {
-                handler.onMoved(gid);
+                listener.onMoved(gid);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void unpause(String gid, final IUnpause handler) {
+    public void unpause(String gid, final IUnpause listener) {
         unpause(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onUnpaused(gid);
+                listener.onUnpaused(gid);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void remove(String gid, final boolean removeMetadata, final IRemove handler) {
+    public void remove(String gid, final boolean removeMetadata, final IRemove listener) {
         tellStatus(gid, new String[]{"gid", "status"}, new IDownload() {
             @Override
             public void onDownload(final Download download) {
@@ -187,35 +187,35 @@ public class JTA2 {
                                 removeDownloadResult(download.following, new ISuccess() {
                                     @Override
                                     public void onSuccess() {
-                                        handler.onRemovedResult(download.gid);
+                                        listener.onRemovedResult(download.gid);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        handler.onException(ex);
+                                        listener.onException(ex);
                                     }
                                 });
                             } else {
-                                handler.onRemovedResult(download.gid);
+                                listener.onRemovedResult(download.gid);
                             }
                         }
 
                         @Override
                         public void onException(Exception ex) {
-                            handler.onException(ex);
+                            listener.onException(ex);
                         }
                     });
                 } else {
                     remove(download.gid, new JTA2.IGID() {
                         @Override
                         public void onGID(String gid) {
-                            handler.onRemoved(gid);
+                            listener.onRemoved(gid);
                         }
 
                         @Override
                         public void onException(Exception ex) {
-                            if (forceAction) forceRemove(download.gid, handler);
-                            else handler.onException(ex);
+                            if (forceAction) forceRemove(download.gid, listener);
+                            else listener.onException(ex);
                         }
                     });
                 }
@@ -223,26 +223,26 @@ public class JTA2 {
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    private void forceRemove(String gid, final IRemove handler) {
+    private void forceRemove(String gid, final IRemove listener) {
         forceRemove(gid, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                handler.onRemoved(gid);
+                listener.onRemoved(gid);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void restart(final String gid, final IRestart handler) {
+    public void restart(final String gid, final IRestart listener) {
         tellStatus(gid, new String[]{"files"}, new JTA2.IDownload() {
             @Override
             public void onDownload(final Download download) {
@@ -257,87 +257,38 @@ public class JTA2 {
                                 removeDownloadResult(gid, new JTA2.ISuccess() {
                                     @Override
                                     public void onSuccess() {
-                                        handler.onRestarted(newGid);
+                                        listener.onRestarted(newGid);
                                     }
 
                                     @Override
                                     public void onException(Exception ex) {
-                                        handler.onException(ex);
+                                        listener.onException(ex);
                                     }
                                 });
                             }
 
                             @Override
                             public void onException(Exception ex) {
-                                handler.onException(ex);
+                                listener.onException(ex);
                             }
                         });
                     }
 
                     @Override
                     public void onException(Exception ex) {
-                        handler.onException(ex);
+                        listener.onException(ex);
                     }
                 });
             }
 
             @Override
             public void onException(final Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    private void performSelectIndexesOperation(Download download, String[] indexes, final List<AriaFile> files, boolean select, final IChangeSelection handler) {
-        if (select) {
-            List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
-            for (AriaFile file : files)
-                if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1)
-                    newIndexes.add(String.valueOf(file.index));
-
-            Map<String, String> map = new HashMap<>();
-            map.put("select-file", CommonUtils.join(newIndexes, ","));
-
-            changeOption(download.gid, map, new ISuccess() {
-                @Override
-                public void onSuccess() {
-                    handler.onChangedSelection(true);
-                }
-
-                @Override
-                public void onException(Exception ex) {
-                    handler.onException(ex);
-                }
-            });
-        } else {
-            List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
-            for (AriaFile file : files)
-                if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1)
-                    newIndexes.remove(String.valueOf(file.index));
-
-            if (newIndexes.isEmpty()) {
-                handler.cantDeselectAll();
-                return;
-            }
-
-            Map<String, String> map = new HashMap<>();
-            map.put("select-file", CommonUtils.join(newIndexes, ","));
-
-            changeOption(download.gid, map, new ISuccess() {
-                @Override
-                public void onSuccess() {
-                    handler.onChangedSelection(false);
-                }
-
-                @Override
-                public void onException(Exception ex) {
-                    handler.onException(ex);
-                }
-            });
-        }
-    }
-
-    public void changeSelection(final Download download, final List<AriaFile> files, final boolean select, final IChangeSelection handler) {
+    public void changeSelection(final Download download, final List<AriaFile> files, final boolean select, final IChangeSelection listener) {
         getOption(download.gid, new IOption() {
             @Override
             public void onOptions(Map<String, String> options) {
@@ -350,22 +301,22 @@ public class JTA2 {
                             for (int i = 0; i < result.size(); i++)
                                 indexes[i] = String.valueOf(result.get(i).index);
 
-                            performSelectIndexesOperation(download, indexes, files, select, handler);
+                            performSelectIndexesOperation(download, indexes, files, select, listener);
                         }
 
                         @Override
                         public void onException(Exception ex) {
-                            handler.onException(ex);
+                            listener.onException(ex);
                         }
                     });
                 } else {
-                    performSelectIndexesOperation(download, indexes.replace(" ", "").split(","), files, select, handler);
+                    performSelectIndexesOperation(download, indexes.replace(" ", "").split(","), files, select, listener);
                 }
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
@@ -374,7 +325,7 @@ public class JTA2 {
     /// Actual aria2 RPC methods
     ///////////////////////////////////////////////////
 
-    public void getVersion(@Nullable MultiProfile.UserProfile profile, final IVersion handler) {
+    public void getVersion(@Nullable MultiProfile.UserProfile profile, final IVersion listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -384,28 +335,28 @@ public class JTA2 {
             else params = Utils.readyParams(context);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onVersion(CommonUtils.toStringsList(response.getJSONObject("result").getJSONArray("enabledFeatures"), false), response.getJSONObject("result").getString("version"));
+                listener.onVersion(CommonUtils.toStringsList(response.getJSONObject("result").getJSONArray("enabledFeatures"), false), response.getJSONObject("result").getString("version"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void getVersion(IVersion handler) {
-        getVersion(null, handler);
+    public void getVersion(IVersion listener) {
+        getVersion(null, listener);
     }
 
-    public void saveSession(final ISuccess handler) {
+    public void saveSession(final ISuccess listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -413,27 +364,14 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
-        client.send(request, new IReceived() {
-            @Override
-            public void onResponse(JSONObject response) throws JSONException {
-                if (Objects.equals(response.optString("result"), "OK"))
-                    handler.onSuccess();
-                else
-                    handler.onException(new AriaException(response.toString(), -1));
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
-            }
-        });
+        handleSuccessRequest(request, listener);
     }
 
-    public void getSessionInfo(final ISession handler) {
+    public void getSessionInfo(final ISession listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -441,24 +379,24 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onSessionInfo(response.getJSONObject("result").getString("sessionId"));
+                listener.onSessionInfo(response.getJSONObject("result").getString("sessionId"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void addUri(List<String> uris, @Nullable Integer position, @Nullable Map<String, String> options, final IGID handler) {
+    public void addUri(List<String> uris, @Nullable Integer position, @Nullable Map<String, String> options, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -482,24 +420,24 @@ public class JTA2 {
             if (position != null) params.put(position);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void addTorrent(String base64, @Nullable List<String> uris, @Nullable Map<String, String> options, @Nullable Integer position, final IGID handler) {
+    public void addTorrent(String base64, @Nullable List<String> uris, @Nullable Map<String, String> options, @Nullable Integer position, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -524,24 +462,24 @@ public class JTA2 {
             if (position != null) params.put(position);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void addMetalink(String base64, @Nullable Map<String, String> options, @Nullable Integer position, final IGID handler) {
+    public void addMetalink(String base64, @Nullable Map<String, String> options, @Nullable Integer position, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -559,24 +497,24 @@ public class JTA2 {
             if (position != null) params.put(position);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void tellStatus(String gid, @Nullable String[] keys, final IDownload handler) {
+    public void tellStatus(String gid, @Nullable String[] keys, final IDownload listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -586,48 +524,48 @@ public class JTA2 {
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onDownload(new Download(response.getJSONObject("result")));
+                listener.onDownload(new Download(response.getJSONObject("result")));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void getGlobalStat(final IStats handler) {
+    public void getGlobalStat(final IStats listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getGlobalStat");
             request.put("params", Utils.readyParams(context));
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onStats(new GlobalStats(response.getJSONObject("result")));
+                listener.onStats(new GlobalStats(response.getJSONObject("result")));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void tellActive(@Nullable String[] keys, final IDownloadList handler) {
+    public void tellActive(@Nullable String[] keys, final IDownloadList listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -636,7 +574,7 @@ public class JTA2 {
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
@@ -649,17 +587,17 @@ public class JTA2 {
                 for (int c = 0; c < jResult.length(); c++)
                     downloads.add(new Download(jResult.getJSONObject(c)));
 
-                handler.onDownloads(downloads);
+                listener.onDownloads(downloads);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void tellWaiting(@Nullable String[] keys, final IDownloadList handler) {
+    public void tellWaiting(@Nullable String[] keys, final IDownloadList listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -670,7 +608,7 @@ public class JTA2 {
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
@@ -683,17 +621,17 @@ public class JTA2 {
                 for (int c = 0; c < jResult.length(); c++)
                     downloads.add(new Download(jResult.getJSONObject(c)));
 
-                handler.onDownloads(downloads);
+                listener.onDownloads(downloads);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void tellStopped(@Nullable String[] keys, final IDownloadList handler) {
+    public void tellStopped(@Nullable String[] keys, final IDownloadList listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -704,7 +642,7 @@ public class JTA2 {
             if (keys != null) params.put(CommonUtils.toJSONArray(keys));
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
@@ -717,17 +655,17 @@ public class JTA2 {
                 for (int c = 0; c < jResult.length(); c++)
                     downloads.add(new Download(jResult.getJSONObject(c)));
 
-                handler.onDownloads(downloads);
+                listener.onDownloads(downloads);
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void pause(String gid, final IGID handler) {
+    public void pause(String gid, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -736,24 +674,24 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void unpause(String gid, final IGID handler) {
+    public void unpause(String gid, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -762,24 +700,24 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void remove(final String gid, final IGID handler) {
+    public void remove(final String gid, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -788,24 +726,24 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void removeDownloadResult(String gid, final ISuccess handler) {
+    public void removeDownloadResult(String gid, final ISuccess listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -814,27 +752,14 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
-        client.send(request, new IReceived() {
-            @Override
-            public void onResponse(JSONObject response) throws JSONException {
-                if (Objects.equals(response.optString("result"), "OK"))
-                    handler.onSuccess();
-                else
-                    handler.onException(new AriaException(response.toString(), -1));
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
-            }
-        });
+        handleSuccessRequest(request, listener);
     }
 
-    public void forcePause(String gid, final IGID handler) {
+    public void forcePause(String gid, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -843,24 +768,24 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void forceRemove(String gid, final IGID handler) {
+    public void forceRemove(String gid, final IGID listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -869,24 +794,24 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onGID(response.getString("result"));
+                listener.onGID(response.getString("result"));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void getOption(String gid, final IOption handler) {
+    public void getOption(String gid, final IOption listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -895,48 +820,48 @@ public class JTA2 {
             params.put(gid);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onOptions(CommonUtils.toMap(response.getJSONObject("result"), String.class));
+                listener.onOptions(CommonUtils.toMap(response.getJSONObject("result"), String.class));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void getGlobalOption(final IOption handler) {
+    public void getGlobalOption(final IOption listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getGlobalOption");
             request.put("params", Utils.readyParams(context));
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onOptions(CommonUtils.toMap(response.getJSONObject("result"), String.class));
+                listener.onOptions(CommonUtils.toMap(response.getJSONObject("result"), String.class));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void changeOption(String gid, Map<String, String> options, final ISuccess handler) {
+    public void changeOption(String gid, Map<String, String> options, final ISuccess listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -949,27 +874,14 @@ public class JTA2 {
             params.put(jOptions);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
-        client.send(request, new IReceived() {
-            @Override
-            public void onResponse(JSONObject response) throws JSONException {
-                if (Objects.equals(response.optString("result"), "OK"))
-                    handler.onSuccess();
-                else
-                    handler.onException(new AriaException(response.toString(), -1));
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
-            }
-        });
+        handleSuccessRequest(request, listener);
     }
 
-    public void changePosition(String gid, int pos, final ISuccess handler) {
+    public void changePosition(String gid, int pos, final ISuccess listener) {
         final JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -978,7 +890,7 @@ public class JTA2 {
             params.put(gid).put(pos).put("POS_CUR");
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
@@ -987,20 +899,20 @@ public class JTA2 {
             public void onResponse(JSONObject response) throws JSONException {
                 try {
                     response.getInt("result");
-                    handler.onSuccess();
+                    listener.onSuccess();
                 } catch (Exception ex) {
-                    handler.onException(new AriaException(response.toString(), -1));
+                    listener.onException(new AriaException(response.toString(), -1));
                 }
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void changeGlobalOption(Map<String, String> options, final ISuccess handler) {
+    public void changeGlobalOption(Map<String, String> options, final ISuccess listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
@@ -1012,41 +924,28 @@ public class JTA2 {
             params.put(jOptions);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
-        client.send(request, new IReceived() {
-            @Override
-            public void onResponse(JSONObject response) throws JSONException {
-                if (Objects.equals(response.optString("result"), "OK"))
-                    handler.onSuccess();
-                else
-                    handler.onException(new AriaException(response.toString(), -1));
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                handler.onException(ex);
-            }
-        });
+        handleSuccessRequest(request, listener);
     }
 
-    public void getServers(String gid, final IServers handler) {
+    public void getServers(String gid, final IServers listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getServers");
             request.put("params", Utils.readyParams(context).put(gid));
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onServers(parseServers(response.getJSONArray("result")));
+                listener.onServers(parseServers(response.getJSONArray("result")));
             }
 
             @Override
@@ -1054,31 +953,31 @@ public class JTA2 {
                 if (ex instanceof AriaException) {
                     AriaException exx = (AriaException) ex;
                     if (exx.code == 1 && exx.reason.startsWith("No active download")) {
-                        handler.onDownloadNotActive(ex);
+                        listener.onDownloadNotActive(ex);
                         return;
                     }
                 }
 
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void getPeers(String gid, final IPeers handler) {
+    public void getPeers(String gid, final IPeers listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getPeers");
             request.put("params", Utils.readyParams(context).put(gid));
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onPeers(CommonUtils.toTList(response.getJSONArray("result"), Peer.class));
+                listener.onPeers(CommonUtils.toTList(response.getJSONArray("result"), Peer.class));
             }
 
             @Override
@@ -1086,59 +985,187 @@ public class JTA2 {
                 if (ex instanceof AriaException) {
                     AriaException exx = (AriaException) ex;
                     if (exx.code == 1 && exx.reason.startsWith("No peer data")) {
-                        handler.onNoPeerData(ex);
+                        listener.onNoPeerData(ex);
                         return;
                     }
                 }
 
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void getFiles(String gid, final IFiles handler) {
+    public void getFiles(String gid, final IFiles listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "aria2.getFiles");
             request.put("params", Utils.readyParams(context).put(gid));
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onFiles(CommonUtils.toTList(response.getJSONArray("result"), AriaFile.class));
+                listener.onFiles(CommonUtils.toTList(response.getJSONArray("result"), AriaFile.class));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
             }
         });
     }
 
-    public void listMethods(final IMethod handler) {
+    public void listMethods(final IMethod listener) {
         JSONObject request;
         try {
             request = Utils.readyRequest();
             request.put("method", "system.listMethods");
         } catch (JSONException ex) {
-            handler.onException(ex);
+            listener.onException(ex);
             return;
         }
 
         client.send(request, new IReceived() {
             @Override
             public void onResponse(JSONObject response) throws JSONException {
-                handler.onMethods(CommonUtils.toStringsList(response.getJSONArray("result"), false));
+                listener.onMethods(CommonUtils.toStringsList(response.getJSONArray("result"), false));
             }
 
             @Override
             public void onException(Exception ex) {
-                handler.onException(ex);
+                listener.onException(ex);
+            }
+        });
+    }
+
+    public void pauseAll(final ISuccess listener) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.pauseAll");
+            request.put("params", Utils.readyParams(context));
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
+            listener.onException(ex);
+            return;
+        }
+
+        handleSuccessRequest(request, listener);
+    }
+
+    public void unpauseAll(final ISuccess listener) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.unpauseAll");
+            request.put("params", Utils.readyParams(context));
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
+            listener.onException(ex);
+            return;
+        }
+
+        handleSuccessRequest(request, listener);
+    }
+
+    public void forcePauseAll(final ISuccess listener) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.forcePauseAll");
+            request.put("params", Utils.readyParams(context));
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
+            listener.onException(ex);
+            return;
+        }
+
+        handleSuccessRequest(request, listener);
+    }
+
+    public void purgeDownloadResult(final ISuccess listener) {
+        JSONObject request;
+        try {
+            request = Utils.readyRequest();
+            request.put("method", "aria2.purgeDownloadResult");
+            request.put("params", Utils.readyParams(context));
+        } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
+            listener.onException(ex);
+            return;
+        }
+
+        handleSuccessRequest(request, listener);
+    }
+
+    ///////////////////////////////////////////////////
+    /// Private utility methods
+    ///////////////////////////////////////////////////
+
+    private void performSelectIndexesOperation(Download download, String[] indexes, final List<AriaFile> files, boolean select, final IChangeSelection listener) {
+        if (select) {
+            List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
+            for (AriaFile file : files)
+                if (Utils.indexOf(indexes, String.valueOf(file.index)) == -1)
+                    newIndexes.add(String.valueOf(file.index));
+
+            Map<String, String> map = new HashMap<>();
+            map.put("select-file", CommonUtils.join(newIndexes, ","));
+
+            changeOption(download.gid, map, new ISuccess() {
+                @Override
+                public void onSuccess() {
+                    listener.onChangedSelection(true);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    listener.onException(ex);
+                }
+            });
+        } else {
+            List<String> newIndexes = new ArrayList<>(Arrays.asList(indexes));
+            for (AriaFile file : files)
+                if (Utils.indexOf(indexes, String.valueOf(file.index)) != -1)
+                    newIndexes.remove(String.valueOf(file.index));
+
+            if (newIndexes.isEmpty()) {
+                listener.cantDeselectAll();
+                return;
+            }
+
+            Map<String, String> map = new HashMap<>();
+            map.put("select-file", CommonUtils.join(newIndexes, ","));
+
+            changeOption(download.gid, map, new ISuccess() {
+                @Override
+                public void onSuccess() {
+                    listener.onChangedSelection(false);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    listener.onException(ex);
+                }
+            });
+        }
+    }
+
+    private void handleSuccessRequest(JSONObject request, final ISuccess listener) {
+        client.send(request, new IReceived() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                if (response.has("error"))
+                    listener.onException(new AriaException(response.getJSONObject("error")));
+                else if (Objects.equals(response.optString("result"), "OK"))
+                    listener.onSuccess();
+                else
+                    listener.onException(new AriaException(response.toString(), -1));
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                listener.onException(ex);
             }
         });
     }
@@ -1272,5 +1299,11 @@ public class JTA2 {
         void onVersion(List<String> rawFeatures, String version);
 
         void onException(Exception ex);
+    }
+
+    public static class InitializingException extends Exception {
+        public InitializingException(Throwable cause) {
+            super(cause);
+        }
     }
 }

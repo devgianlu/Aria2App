@@ -6,13 +6,12 @@ import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 
 public class UpdateUI extends BaseUpdater implements JTA2.IDownload {
     private final String gid;
     private final IUI listener;
 
-    public UpdateUI(Context context, String gid, IUI listener) throws JTA2InitializingException {
+    public UpdateUI(Context context, String gid, IUI listener) throws JTA2.InitializingException {
         super(context);
         this.gid = gid;
         this.listener = listener;

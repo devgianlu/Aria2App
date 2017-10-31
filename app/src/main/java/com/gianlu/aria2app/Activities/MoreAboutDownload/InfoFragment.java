@@ -22,7 +22,6 @@ import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -62,7 +61,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         final JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             onException(ex);
             return;
         }
@@ -142,7 +141,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         try {
             updater = new UpdateUI(getContext(), download.gid, this);
             updater.start();
-        } catch (JTA2InitializingException ex) {
+        } catch (JTA2.InitializingException ex) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
             Logging.logMe(getContext(), ex);
@@ -500,7 +499,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                     btCreationDate.setVisibility(View.GONE);
                 } else {
                     btCreationDate.setVisibility(View.VISIBLE);
-                    btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(download.torrent.creationDate)));
+                    btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(download.torrent.creationDate * 1000)));
                 }
             }
         }

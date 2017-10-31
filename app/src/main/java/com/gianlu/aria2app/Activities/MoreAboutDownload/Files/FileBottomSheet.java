@@ -11,7 +11,6 @@ import android.widget.CompoundButton;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2InitializingException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
@@ -69,7 +68,7 @@ public class FileBottomSheet extends BaseBottomSheet<AriaFile> {
                     JTA2 jta2;
                     try {
                         jta2 = JTA2.instantiate(buttonView.getContext());
-                    } catch (JTA2InitializingException ex) {
+                    } catch (JTA2.InitializingException ex) {
                         if (handler != null) handler.onExceptionChangingSelection(ex);
                         return;
                     }
