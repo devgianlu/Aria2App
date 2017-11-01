@@ -21,18 +21,18 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
-import com.gianlu.aria2app.Activities.Search.MissingSearchEngine;
-import com.gianlu.aria2app.Activities.Search.SearchEngine;
-import com.gianlu.aria2app.Activities.Search.SearchResult;
-import com.gianlu.aria2app.Activities.Search.SearchUtils;
-import com.gianlu.aria2app.Activities.Search.Torrent;
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.Search.MissingSearchEngine;
+import com.gianlu.aria2app.NetIO.Search.SearchEngine;
+import com.gianlu.aria2app.NetIO.Search.SearchResult;
+import com.gianlu.aria2app.NetIO.Search.SearchUtils;
+import com.gianlu.aria2app.NetIO.Search.Torrent;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Prefs;
@@ -152,10 +152,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         SearchUtils.get().search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
 
-        ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_SEARCH)
-                .build());
+        AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_SEARCH));
         return true;
     }
 
@@ -282,10 +281,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
 
-                        ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                                .setAction(ThisApplication.ACTION_SEARCH_GET_MAGNET)
-                                .build());
+                        AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
+                                .setCategory(Utils.CATEGORY_USER_INPUT)
+                                .setAction(Utils.ACTION_SEARCH_GET_MAGNET));
                     }
                 })
                 .setPositiveButton(R.string.download, null);
@@ -296,10 +294,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 public void onClick(DialogInterface dialogInterface, int i) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(torrent.torrentFileUrl)));
 
-                    ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                            .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                            .setAction(ThisApplication.ACTION_SEARCH_GET_TORRENT)
-                            .build());
+                    AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
+                            .setCategory(Utils.CATEGORY_USER_INPUT)
+                            .setAction(Utils.ACTION_SEARCH_GET_TORRENT));
                 }
             });
         }
@@ -339,10 +336,9 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                             }
                         });
 
-                        ThisApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                                .setAction(ThisApplication.ACTION_SEARCH_DOWNLOAD)
-                                .build());
+                        AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
+                                .setCategory(Utils.CATEGORY_USER_INPUT)
+                                .setAction(Utils.ACTION_SEARCH_DOWNLOAD));
                     }
                 });
             }

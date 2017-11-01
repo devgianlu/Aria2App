@@ -19,8 +19,8 @@ import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
@@ -130,10 +130,9 @@ public class AddMetalinkActivity extends AppCompatActivity {
             }
         });
 
-        ThisApplication.sendAnalytics(AddMetalinkActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_NEW_METALINK)
-                .build());
+        AnalyticsApplication.sendAnalytics(AddMetalinkActivity.this, new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_NEW_METALINK));
     }
 
     @Override

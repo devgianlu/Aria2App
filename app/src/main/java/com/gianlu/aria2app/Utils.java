@@ -36,6 +36,22 @@ import java.util.Random;
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
+    public static final String CATEGORY_USER_INPUT = "User input";
+    public static final String ACTION_DOWNLOAD_FILE = "Download file";
+    public static final String ACTION_NEW_PROFILE = "New profile";
+    public static final String ACTION_DELETE_PROFILE = "Profile deleted";
+    public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "Global options changed";
+    public static final String ACTION_CHANGED_DOWNLOAD_OPTIONS = "Download options changed";
+    public static final String ACTION_NEW_TORRENT = "New Torrent download";
+    public static final String ACTION_NEW_METALINK = "New Metalink download";
+    public static final String ACTION_NEW_URI = "New URI download";
+    public static final String ACTION_SEARCH_DOWNLOAD = "New URI download with torrent search";
+    public static final String ACTION_SHARE = "Shared something with the app";
+    public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
+    public static final String ACTION_SEARCH = "Search torrent";
+    public static final String ACTION_STARTED_TEST = "Started profile test";
+    public static final String ACTION_SEARCH_GET_TORRENT = "Download torrent file from search";
+    public static final String ACTION_SEARCH_GET_MAGNET = "Get torrent magnet from search";
     private static final Random random = new Random();
 
     public static int indexOf(String[] items, String item) {

@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Activities.Search;
+package com.gianlu.aria2app.NetIO.Search;
 
 
 import android.content.Context;

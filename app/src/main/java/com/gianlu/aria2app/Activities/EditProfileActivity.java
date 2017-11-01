@@ -41,8 +41,8 @@ import com.gianlu.aria2app.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.gms.analytics.HitBuilders;
@@ -388,10 +388,9 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
         }
 
-        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_NEW_PROFILE)
-                .build());
+        AnalyticsApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_NEW_PROFILE));
     }
 
     private void handleInvalidFieldException(InvalidFieldException ex) {
@@ -415,10 +414,9 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     private void deleteProfile() {
         if (editProfile == null) return;
 
-        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_DELETE_PROFILE)
-                .build());
+        AnalyticsApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_DELETE_PROFILE));
 
         ProfilesManager.get(this).delete(editProfile);
         onBackPressed();
@@ -498,10 +496,9 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     @Nullable
     @Override
     public MultiProfile.UserProfile getProfile() {
-        ThisApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_STARTED_TEST)
-                .build());
+        AnalyticsApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_STARTED_TEST));
 
         try {
             return buildProfile().getProfile(this);

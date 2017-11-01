@@ -42,9 +42,9 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
@@ -374,10 +374,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             };
         }
 
-        ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_DOWNLOAD_DIRECTORY)
-                .build());
+        AnalyticsApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_DOWNLOAD_DIRECTORY));
     }
 
     @Override
@@ -427,10 +426,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             };
         }
 
-        ThisApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_DOWNLOAD_FILE)
-                .build());
+        AnalyticsApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_DOWNLOAD_FILE));
     }
 
     @Override

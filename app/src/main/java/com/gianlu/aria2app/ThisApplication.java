@@ -1,94 +1,42 @@
 package com.gianlu.aria2app;
 
-import android.app.Application;
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Prefs;
-import com.gianlu.commonutils.UncaughtExceptionActivity;
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-public class ThisApplication extends Application implements ErrorHandler.IErrorHandler, Thread.UncaughtExceptionHandler {
-    public static final String CATEGORY_USER_INPUT = "User input";
-    public static final String ACTION_DOWNLOAD_FILE = "Download file";
-    public static final String ACTION_NEW_PROFILE = "New profile";
-    public static final String ACTION_DELETE_PROFILE = "Profile deleted";
-    public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "Global options changed";
-    public static final String ACTION_CHANGED_DOWNLOAD_OPTIONS = "Download options changed";
-    public static final String ACTION_NEW_TORRENT = "New Torrent download";
-    public static final String ACTION_NEW_METALINK = "New Metalink download";
-    public static final String ACTION_NEW_URI = "New URI download";
-    public static final String ACTION_SEARCH_DOWNLOAD = "New URI download with torrent search";
-    public static final String ACTION_SHARE = "Shared something with the app";
-    public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
-    public static final String ACTION_SEARCH = "Search torrent";
-    public static final String ACTION_STARTED_TEST = "Started profile test";
-    public static final String ACTION_SEARCH_GET_TORRENT = "Download torrent file from search";
-    public static final String ACTION_SEARCH_GET_MAGNET = "Get torrent magnet from search";
-    private static Tracker tracker;
+public class ThisApplication extends AnalyticsApplication implements ErrorHandler.IErrorHandler {
     private boolean firstStart = true;
-
-    @NonNull
-    private static Tracker getTracker(Application application) {
-        if (tracker == null) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(application.getApplicationContext());
-            analytics.enableAutoActivityReports(application);
-            tracker = analytics.newTracker(R.xml.tracking);
-            tracker.enableAdvertisingIdCollection(true);
-            tracker.enableExceptionReporting(true);
-        }
-
-        return tracker;
-    }
-
-    public static void sendAnalytics(Context context, @Nullable Map<String, String> map) {
-        if (!Prefs.getBoolean(context, Prefs.Keys.TRACKING_DISABLE, false) && !BuildConfig.DEBUG)
-            if (tracker != null)
-                tracker.send(map);
-    }
 
     public boolean isFirstStart() {
         return firstStart;
     }
 
     @Override
-    public void uncaughtException(Thread thread, Throwable throwable) {
-        if (BuildConfig.DEBUG) {
-            throwable.printStackTrace();
-        } else {
-            sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
-                    .setDescription(Logging.getStackTrace(throwable))
-                    .setFatal(true)
-                    .build());
+    protected boolean isDebug() {
+        return BuildConfig.DEBUG;
+    }
 
-            UncaughtExceptionActivity.startActivity(getApplicationContext(), getApplicationContext().getString(R.string.app_name), throwable);
-        }
+    @Override
+    protected int getTrackerConfiguration() {
+        return R.xml.tracking;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        CommonUtils.setDebug(BuildConfig.DEBUG);
-        Thread.setDefaultUncaughtExceptionHandler(this);
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
-
         FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
-        if (!BuildConfig.DEBUG) tracker = getTracker(this);
 
         // Backward compatibility
         if (!Prefs.has(getApplicationContext(), PKeys.A2_CUSTOM_INFO)) {
@@ -108,8 +56,7 @@ public class ThisApplication extends Application implements ErrorHandler.IErrorH
 
         sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
                 .setDescription(Logging.getStackTrace(ex))
-                .setFatal(false)
-                .build());
+                .setFatal(false));
     }
 
     @Override

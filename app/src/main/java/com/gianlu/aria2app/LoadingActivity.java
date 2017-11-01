@@ -27,6 +27,7 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
@@ -185,10 +186,9 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
             return stream;
         }
 
-        ThisApplication.sendAnalytics(LoadingActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(ThisApplication.CATEGORY_USER_INPUT)
-                .setAction(ThisApplication.ACTION_SHARE)
-                .build());
+        AnalyticsApplication.sendAnalytics(LoadingActivity.this, new HitBuilders.EventBuilder()
+                .setCategory(Utils.CATEGORY_USER_INPUT)
+                .setAction(Utils.ACTION_SHARE));
 
         return null;
     }

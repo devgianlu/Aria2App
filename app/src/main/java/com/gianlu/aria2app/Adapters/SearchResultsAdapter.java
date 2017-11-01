@@ -8,10 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Activities.Search.MissingSearchEngine;
-import com.gianlu.aria2app.Activities.Search.SearchEngine;
-import com.gianlu.aria2app.Activities.Search.SearchResult;
-import com.gianlu.aria2app.Activities.Search.SearchUtils;
+import com.gianlu.aria2app.NetIO.Search.MissingSearchEngine;
+import com.gianlu.aria2app.NetIO.Search.SearchEngine;
+import com.gianlu.aria2app.NetIO.Search.SearchResult;
+import com.gianlu.aria2app.NetIO.Search.SearchUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.InfiniteRecyclerView;
 
