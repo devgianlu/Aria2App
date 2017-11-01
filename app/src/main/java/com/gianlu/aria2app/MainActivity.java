@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         Uri shareData = getIntent().getParcelableExtra("shareData");
         if (shareData != null) {
             String scheme = shareData.getScheme();
-            if (scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
+            if (scheme.equals("magnet") || scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
                 processUrl(shareData);
             } else {
                 if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
