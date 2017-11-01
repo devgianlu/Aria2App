@@ -343,7 +343,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 }
             });
 
-            if (download.torrent.announceList.isEmpty()) {
+            if (download.torrent == null || download.torrent.announceList.isEmpty()) {
                 btAnnounceListContainer.setVisibility(View.GONE);
             } else {
                 btAnnounceListContainer.setVisibility(View.VISIBLE);

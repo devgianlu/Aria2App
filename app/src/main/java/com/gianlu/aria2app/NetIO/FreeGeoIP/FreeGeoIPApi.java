@@ -41,6 +41,7 @@ public class FreeGeoIPApi {
     }
 
     public void getIPDetails(final String ip, final IIPDetails listener) {
+        if (ip == null) return;
         final IPDetails cachedDetails = cache.get(ip);
         if (cachedDetails != null) {
             handler.post(new Runnable() {
