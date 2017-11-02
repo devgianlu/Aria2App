@@ -116,6 +116,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
     }
 
+    @NonNull
     private UserProfile getDefaultProfile() {
         for (UserProfile profile : profiles)
             if (profile.connectivityCondition.isDefault)
@@ -138,8 +139,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         for (UserProfile profile : profiles) {
             if (profile.connectivityCondition.type == ConnectivityCondition.Type.WIFI) {
                 for (String profileSsid : profile.connectivityCondition.ssids)
-                    if (Objects.equals(profileSsid, ssid))
-                        return profile;
+                    if (Objects.equals(profileSsid, ssid)) return profile;
             }
         }
 
@@ -156,7 +156,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         switch (networkType) {
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_WIFI:
-                profile = findForWifi(wifiManager.getConnectionInfo().getSSID().replace("\"", ""));
+                String ssid = wifiManager.getConnectionInfo().getSSID();
+                profile = findForWifi(ssid.substring(1, ssid.length() - 1));
                 break;
             case ConnectivityManager.TYPE_MOBILE_DUN:
             case ConnectivityManager.TYPE_MOBILE:
