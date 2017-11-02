@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
-        targetSdkVersion 26
-        versionCode 90
-        versionName "3.2.0"
+        targetSdkVersion 27
+        versionCode 91
+        versionName "3.2.1"
     }
 
     buildTypes {
@@ -26,7 +26,7 @@ dependencies {
     compile 'com.neovisionaries:nv-websocket-client:2.3'
     compile 'com.google.android.gms:play-services-analytics:11.4.2'
     compile 'com.getbase:floatingactionbutton:1.10.1'
-    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:cardview-v7:27.0.0'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'org.apmem.tools:layouts:1.10@aar'
     compile 'com.getkeepsafe.taptargetview:taptargetview:1.10.0'
