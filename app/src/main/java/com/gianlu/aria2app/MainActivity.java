@@ -319,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             currentProfile = manager.getCurrent(this);
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(this, ex);
+            Logging.logMe(ex);
             WebSocketing.clear();
             HTTPing.clear();
             manager.unsetLastProfile(this);
@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         if (((ThisApplication) getApplication()).isFirstStart()) {
-            SearchUtils.get().cacheSearchEngines(this);
+            SearchUtils.get().cacheSearchEngines();
             ((ThisApplication) getApplication()).firstStarted();
             if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true)) {
                 GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                         try {
                             jta2 = JTA2.instantiate(MainActivity.this);
                         } catch (JTA2.InitializingException ex) {
-                            Logging.logMe(MainActivity.this, ex);
+                            Logging.logMe(ex);
                             return;
                         }
 
@@ -430,14 +430,14 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
                             @Override
                             public void onException(Exception ex) {
-                                Logging.logMe(MainActivity.this, ex);
+                                Logging.logMe(ex);
                             }
                         });
                     }
 
                     @Override
                     public void onException(Exception ex) {
-                        Logging.logMe(MainActivity.this, ex);
+                        Logging.logMe(ex);
                     }
                 });
             }
@@ -518,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         try {
             ProfilesManager.get(this).reloadCurrentProfile(this);
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(this, ex);
+            Logging.logMe(ex);
             WebSocketing.clear();
             HTTPing.clear();
             ProfilesManager.get(this).unsetLastProfile(this);

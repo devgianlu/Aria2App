@@ -57,7 +57,7 @@ public class ServerBottomSheet extends BaseBottomSheet<Server> {
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(context, ex);
+                Logging.logMe(ex);
                 ipDetails.setVisibility(View.GONE);
             }
         });

@@ -142,7 +142,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
                     tryConnecting(manager.retrieveProfile(profileId));
                     return;
                 } catch (IOException | JSONException ex) {
-                    Logging.logMe(this, ex);
+                    Logging.logMe(ex);
                 }
             }
         }
@@ -221,7 +221,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
             }
         });
 
-        Logging.logMe(LoadingActivity.this, ex);
+        Logging.logMe(ex);
     }
 
     private void tryConnecting(MultiProfile profile) {

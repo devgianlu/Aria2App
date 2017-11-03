@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -125,7 +126,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.info_fragment, container, false));
         MessageLayout.setPaddingTop(holder.rootView, 48);
 
@@ -144,7 +145,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         } catch (JTA2.InitializingException ex) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-            Logging.logMe(getContext(), ex);
+            Logging.logMe(ex);
             return holder.rootView;
         }
 
@@ -363,7 +364,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
                         @Override
                         public void onException(Exception ex) {
-                            Logging.logMe(getContext(), ex);
+                            Logging.logMe(ex);
                         }
                     });
                 }

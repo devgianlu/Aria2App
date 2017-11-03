@@ -186,7 +186,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public void onException(Exception ex) {
         message.setVisibility(View.GONE);
         recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
-        Logging.logMe(this, ex);
+        Logging.logMe(ex);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.NetIO.Search;
 
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -198,7 +197,7 @@ public class SearchUtils {
         if (cachedEngines == null) listSearchEnginesSync();
     }
 
-    public void cacheSearchEngines(final Context context) {
+    public void cacheSearchEngines() {
         listSearchEngines(new IResult<List<SearchEngine>>() {
             @Override
             public void onResult(List<SearchEngine> result) {
@@ -206,7 +205,7 @@ public class SearchUtils {
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(context, ex);
+                Logging.logMe(ex);
             }
         });
     }

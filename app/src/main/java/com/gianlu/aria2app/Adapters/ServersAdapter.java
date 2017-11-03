@@ -92,7 +92,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 @Override
                 public void onException(Exception ex) {
-                    Logging.logMe(context, ex);
+                    Logging.logMe(ex);
                 }
             });
         } else if (holder instanceof HeaderViewHolder) {

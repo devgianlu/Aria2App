@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -51,7 +52,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.peers_and_servers_fragment, container, false);
         recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
@@ -94,7 +95,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
             updater.start();
         } catch (JTA2.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(getContext(), ex);
+            Logging.logMe(ex);
             return layout;
         }
 

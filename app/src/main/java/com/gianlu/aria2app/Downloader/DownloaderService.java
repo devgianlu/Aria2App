@@ -268,7 +268,7 @@ public class DownloaderService extends Service {
             notifyItemRemoved(index);
 
             if (a.task.resumable)
-                savedDownloadsManager.removeState(DownloaderService.this, a.task.id);
+                savedDownloadsManager.removeState(a.task.id);
 
             return a;
         }
@@ -282,7 +282,7 @@ public class DownloaderService extends Service {
             if (o instanceof DownloadTask) {
                 DownloadTask task = (DownloadTask) o;
                 if (task.task.resumable)
-                    savedDownloadsManager.removeState(DownloaderService.this, task.task.id);
+                    savedDownloadsManager.removeState(task.task.id);
             }
 
             return a;
@@ -319,7 +319,7 @@ public class DownloaderService extends Service {
         }
 
         private void saveState() {
-            savedDownloadsManager.saveState(DownloaderService.this, singleTask.id, singleTask.uri, tempFile, singleTask.destFile, singleTask.getProfileId());
+            savedDownloadsManager.saveState(singleTask.id, singleTask.uri, tempFile, singleTask.destFile, singleTask.getProfileId());
         }
 
         private void pause() {
@@ -459,7 +459,7 @@ public class DownloaderService extends Service {
         }
 
         private void removeState() {
-            savedDownloadsManager.removeState(DownloaderService.this, singleTask.id);
+            savedDownloadsManager.removeState(singleTask.id);
         }
     }
 }

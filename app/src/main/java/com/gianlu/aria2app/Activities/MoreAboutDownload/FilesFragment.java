@@ -137,7 +137,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             updater.start();
         } catch (JTA2.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(getContext(), ex);
+            Logging.logMe(ex);
             return;
         }
 
@@ -146,7 +146,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         final CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
         breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
@@ -168,7 +168,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         try {
             jta2 = JTA2.instantiate(getContext());
         } catch (JTA2.InitializingException ex) {
-            Logging.logMe(getContext(), ex);
+            Logging.logMe(ex);
             recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
             return layout;
         }
@@ -193,7 +193,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
             @Override
             public void onException(final Exception ex) {
-                Logging.logMe(getContext(), ex);
+                Logging.logMe(ex);
 
                 Activity activity = getActivity();
                 if (activity != null) {
@@ -228,7 +228,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public void onFatalException(Exception ex) {
         recyclerViewLayout.showMessage(R.string.failedLoading, true);
-        Logging.logMe(getContext(), ex);
+        Logging.logMe(ex);
     }
 
     @Override

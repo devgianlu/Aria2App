@@ -130,7 +130,7 @@ public class DirBottomSheet extends BaseBottomSheet<AriaDirectory> {
                 });
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(context, ex);
+            Logging.logMe(ex);
             downloadDir.setVisibility(View.GONE);
         }
     }

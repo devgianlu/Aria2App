@@ -135,7 +135,7 @@ public class FileBottomSheet extends BaseBottomSheet<AriaFile> {
                 });
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(context, ex);
+            Logging.logMe(ex);
             downloadFile.setVisibility(View.GONE);
         }
     }

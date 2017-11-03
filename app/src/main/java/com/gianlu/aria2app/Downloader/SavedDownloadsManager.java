@@ -29,8 +29,7 @@ public class SavedDownloadsManager {
 
     private SavedDownloadsManager(Context context) {
         storeFile = new File(context.getFilesDir(), "savedDownloads.json");
-
-        load(context);
+        load();
     }
 
     public static SavedDownloadsManager get(Context context) {
@@ -38,7 +37,7 @@ public class SavedDownloadsManager {
         return instance;
     }
 
-    private void load(Context context) {
+    private void load() {
         try {
             if (!storeFile.exists()) //noinspection ResultOfMethodCallIgnored
                 storeFile.createNewFile();
@@ -50,31 +49,31 @@ public class SavedDownloadsManager {
                 savedStates = CommonUtils.toTList(new JSONArray(line), SavedState.class);
             }
         } catch (IOException | JSONException ex) {
-            Logging.logMe(context, ex);
+            Logging.logMe(ex);
             savedStates = new ArrayList<>();
         }
     }
 
-    private void save(Context context) {
+    private void save() {
         try (FileOutputStream out = new FileOutputStream(storeFile, false)) {
             JSONArray array = new JSONArray();
             for (SavedState state : savedStates) array.put(state.toJSON());
             out.write(array.toString().getBytes());
             out.flush();
         } catch (IOException | JSONException ex) {
-            Logging.logMe(context, ex);
+            Logging.logMe(ex);
         }
     }
 
-    public void saveState(Context context, int id, URI uri, File tempFile, File destFile, String profileId) {
-        if (savedStates == null) load(context);
+    public void saveState(int id, URI uri, File tempFile, File destFile, String profileId) {
+        if (savedStates == null) load();
 
         for (SavedState state : savedStates)
             if (state.id == id)
                 return;
 
         savedStates.add(new SavedState(id, uri.getPath(), tempFile, profileId, destFile.getName()));
-        save(context);
+        save();
     }
 
     public List<SavedState> getAll() {
@@ -90,15 +89,15 @@ public class SavedDownloadsManager {
         return null;
     }
 
-    public void removeState(Context context, int id) {
-        if (savedStates == null) load(context);
+    public void removeState(int id) {
+        if (savedStates == null) load();
 
         ListIterator<SavedState> iterator = savedStates.listIterator();
         while (iterator.hasNext())
             if (iterator.next().id == id)
                 iterator.remove();
 
-        save(context);
+        save();
     }
 
     public static class SavedState {

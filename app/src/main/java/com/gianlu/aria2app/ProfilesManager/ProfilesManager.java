@@ -81,7 +81,7 @@ public class ProfilesManager {
         try {
             return retrieveProfile(id);
         } catch (IOException | JSONException ex) {
-            Logging.logMe(context, ex);
+            Logging.logMe(ex);
             return null;
         }
     }

@@ -79,7 +79,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(context, ex);
+                Logging.logMe(ex);
             }
         });
     }

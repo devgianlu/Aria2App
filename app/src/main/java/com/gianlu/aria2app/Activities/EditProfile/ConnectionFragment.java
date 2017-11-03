@@ -85,7 +85,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.edit_profile_connection_fragment, container, false);
         completeAddress = layout.findViewById(R.id.editProfile_completeAddress);
         addressFlag = layout.findViewById(R.id.editProfile_addressFlag);
@@ -132,7 +132,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                                 @Override
                                 public void onException(Exception ex) {
                                     addressFlag.setImageResource(R.drawable.ic_list_country_unknown);
-                                    Logging.logMe(getContext(), ex);
+                                    Logging.logMe(ex);
                                 }
                             });
                         }
@@ -268,7 +268,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         } catch (CertificateParsingException ex) {
             certificateDetailsIssuerAns.setVisibility(View.GONE);
-            Logging.logMe(getContext(), ex);
+            Logging.logMe(ex);
         }
 
         certificateDetailsSubjectName.setHtml(R.string.name, certificate.getSubjectX500Principal().getName(X500Principal.RFC1779));
@@ -284,7 +284,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         } catch (CertificateParsingException ex) {
             certificateDetailsSubjectAns.setVisibility(View.GONE);
-            Logging.logMe(getContext(), ex);
+            Logging.logMe(ex);
         }
     }
 
