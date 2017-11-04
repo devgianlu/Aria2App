@@ -9,7 +9,6 @@ import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 
 import org.json.JSONObject;
 
@@ -82,37 +81,27 @@ public abstract class AbstractClient {
             if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
                 if (!noConnectivity) {
-                    try {
-                        int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
-                        final MultiProfile.UserProfile profile;
-                        try {
-                            profile = ProfilesManager.get(context).getCurrent(context).getProfile(networkType, wifiManager);
-                        } catch (NullPointerException ignored) {
-                            return;
-                        }
+                    int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
+                    final MultiProfile.UserProfile profile = AbstractClient.this.profile.getParent().getProfile(networkType, wifiManager);
+                    if (!Objects.equals(AbstractClient.this.profile.connectivityCondition, profile.connectivityCondition)) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    connectivityChanged(context, profile);
+                                    AbstractClient.this.profile = profile;
 
-                        if (!Objects.equals(AbstractClient.this.profile.connectivityCondition, profile.connectivityCondition)) {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        connectivityChanged(context, profile);
-                                        AbstractClient.this.profile = profile;
-
-                                        Iterator<WeakReference<OnConnectivityChanged>> iterator = listeners.listIterator();
-                                        while (iterator.hasNext()) {
-                                            WeakReference<OnConnectivityChanged> ref = iterator.next();
-                                            if (ref.get() == null) iterator.remove();
-                                            else ref.get().connectivityChanged(profile);
-                                        }
-                                    } catch (Exception ex) {
-                                        ErrorHandler.get().notifyException(ex, true);
+                                    Iterator<WeakReference<OnConnectivityChanged>> iterator = listeners.listIterator();
+                                    while (iterator.hasNext()) {
+                                        WeakReference<OnConnectivityChanged> ref = iterator.next();
+                                        if (ref.get() == null) iterator.remove();
+                                        else ref.get().connectivityChanged(profile);
                                     }
+                                } catch (Exception ex) {
+                                    ErrorHandler.get().notifyException(ex, true);
                                 }
-                            }).start();
-                        }
-                    } catch (Exception ex) {
-                        ErrorHandler.get().notifyException(ex, true);
+                            }
+                        }).start();
                     }
                 }
             }

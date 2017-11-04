@@ -50,7 +50,6 @@ public class ErrorHandler {
         if (fatal) {
             lock();
             if (handler != null) handler.onFatal(ex);
-
         } else if (errorCount.get() >= 5) {
             lock();
             if (handler != null) handler.onSubsequentExceptions();

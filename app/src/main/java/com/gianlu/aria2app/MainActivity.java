@@ -97,6 +97,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection {
+    private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private DownloadCardsAdapter adapter;
@@ -286,6 +287,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + uri));
                 }
             }
+        } catch (RuntimeException ex) {
+            Toaster.show(this, Utils.Messages.INVALID_FILE, ex);
         }
     }
 
@@ -451,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             } else {
                 if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     _sharedUri = shareData;
-                    Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, 12);
+                    Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, REQUEST_READ_CODE);
                 } else {
                     processFileUri(shareData);
                 }
@@ -482,10 +485,10 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 12 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedUri != null)
+        if (requestCode == REQUEST_READ_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedUri != null)
             processFileUri(_sharedUri);
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        else
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void showOutdatedDialog(String latest, String current) {
