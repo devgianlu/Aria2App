@@ -75,7 +75,7 @@ public class FreeGeoIPApi {
                                 listener.onDetails(details);
                             }
                         });
-                    } catch (IOException | StatusCodeException | JSONException | NullPointerException ex) {
+                    } catch (IOException | StatusCodeException | JSONException | NullPointerException | IllegalArgumentException ex) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {

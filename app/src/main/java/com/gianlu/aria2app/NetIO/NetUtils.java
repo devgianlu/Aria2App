@@ -39,6 +39,7 @@ import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 
+// FIXME: factory.setVerifyHostname(false); not working?
 public class NetUtils {
 
     @NonNull
