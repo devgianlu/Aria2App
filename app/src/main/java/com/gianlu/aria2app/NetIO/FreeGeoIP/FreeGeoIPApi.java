@@ -55,7 +55,11 @@ public class FreeGeoIPApi {
                 @Override
                 public void run() {
                     try {
-                        HttpGet get = new HttpGet("http://freegeoip.net/json/" + ip);
+                        String realIP = ip;
+                        if (ip.startsWith("[") && ip.endsWith("]"))
+                            realIP = realIP.substring(1, ip.length() - 1);
+
+                        HttpGet get = new HttpGet("http://freegeoip.net/json/" + realIP);
                         HttpResponse resp = client.execute(get);
                         StatusLine sl = resp.getStatusLine();
                         if (sl.getStatusCode() != HttpStatus.SC_OK) {
