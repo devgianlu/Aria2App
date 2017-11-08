@@ -39,7 +39,6 @@ import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 import cz.msebera.android.httpclient.impl.client.HttpClients;
 
-// FIXME: factory.setVerifyHostname(false); not working?
 public class NetUtils {
 
     @NonNull
@@ -62,24 +61,15 @@ public class NetUtils {
     }
 
     public static WebSocket readyWebSocket(String url, boolean hostnameVerifier, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, IllegalArgumentException {
-        if (ca != null) {
-            WebSocketFactory factory = new WebSocketFactory();
-            factory.setVerifyHostname(hostnameVerifier);
-            factory.setSSLContext(createSSLContext(ca));
+        WebSocketFactory factory = new WebSocketFactory();
+        factory.setVerifyHostname(hostnameVerifier);
+        factory.setSSLContext(createSSLContext(ca));
 
-            try {
-                return factory.createSocket(url, 5000)
-                        .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-            } catch (IllegalArgumentException ex) {
-                throw new IOException("Just a wrapper", ex);
-            }
-        } else {
-            try {
-                return new WebSocketFactory().createSocket(url, 5000)
-                        .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-            } catch (IllegalArgumentException ex) {
-                throw new IOException("Just a wrapper", ex);
-            }
+        try {
+            return factory.createSocket(url, 5000)
+                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
+        } catch (IllegalArgumentException ex) {
+            throw new IOException("Just a wrapper", ex);
         }
     }
 
