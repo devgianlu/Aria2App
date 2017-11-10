@@ -316,6 +316,7 @@
     <string name="pausedAll">Все загрузки приостановлены!</string>
     <string name="resumedAll">Все загрузки возобновлены!</string>
     <string name="purgedDownloadResult">Список загрузок очищен!</string>
+    <string name="skipThisVersion">пропустить эту версию</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

@@ -311,13 +311,13 @@
     <string name="timezone">时区: %s</string>
     <string name="localization">本土化: %s</string>
     <string name="ipDetails">IP详细信息</string>
-
     <string name="pauseAll">暂停所有</string>
     <string name="unpauseAll">恢复所有</string>
     <string name="purgeDownloadResult">清除下载结果</string>
     <string name="pausedAll">暂停所有下载。</string>
     <string name="resumedAll">恢复所有下载。</string>
     <string name="purgedDownloadResult">清除所有下载结果。</string>
+    <string name="skipThisVersion">跳过这个版本</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

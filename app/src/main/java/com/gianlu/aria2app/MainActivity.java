@@ -412,38 +412,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         if (((ThisApplication) getApplication()).isFirstStart()) {
             SearchUtils.get().cacheSearchEngines();
             ((ThisApplication) getApplication()).firstStarted();
-            if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true)) {
-                GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
-                    @Override
-                    public void onRelease(final String latestVersion) {
-                        JTA2 jta2;
-                        try {
-                            jta2 = JTA2.instantiate(MainActivity.this);
-                        } catch (JTA2.InitializingException ex) {
-                            Logging.logMe(ex);
-                            return;
-                        }
-
-                        jta2.getVersion(new JTA2.IVersion() {
-                            @Override
-                            public void onVersion(List<String> rawFeatures, String version) {
-                                if (!Objects.equals(version, latestVersion))
-                                    showOutdatedDialog(latestVersion, version);
-                            }
-
-                            @Override
-                            public void onException(Exception ex) {
-                                Logging.logMe(ex);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onException(Exception ex) {
-                        Logging.logMe(ex);
-                    }
-                });
-            }
+            if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true))
+                doVersionCheck();
         }
 
         Uri shareData = getIntent().getParcelableExtra("shareData");
@@ -462,6 +432,40 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         DownloaderUtils.startService(this, Prefs.getBoolean(this, PKeys.DD_RESUME, true));
+    }
+
+    private void doVersionCheck() {
+        GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
+            @Override
+            public void onRelease(final String latestVersion) {
+                JTA2 jta2;
+                try {
+                    jta2 = JTA2.instantiate(MainActivity.this);
+                } catch (JTA2.InitializingException ex) {
+                    Logging.logMe(ex);
+                    return;
+                }
+
+                jta2.getVersion(new JTA2.IVersion() {
+                    @Override
+                    public void onVersion(List<String> rawFeatures, String version) {
+                        String skipVersion = Prefs.getString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, null);
+                        if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(version, latestVersion))
+                            showOutdatedDialog(latestVersion, version);
+                    }
+
+                    @Override
+                    public void onException(Exception ex) {
+                        Logging.logMe(ex);
+                    }
+                });
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Logging.logMe(ex);
+            }
+        });
     }
 
     @Override
@@ -491,10 +495,16 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void showOutdatedDialog(String latest, String current) {
+    private void showOutdatedDialog(final String latest, String current) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.outdated_aria2)
                 .setMessage(getString(R.string.outdated_aria2_message, current, latest))
+                .setNeutralButton(R.string.skipThisVersion, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Prefs.putString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, latest);
+                    }
+                })
                 .setPositiveButton(android.R.string.ok, null);
 
         CommonUtils.showDialog(this, builder);

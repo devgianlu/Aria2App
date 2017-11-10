@@ -322,6 +322,7 @@
     <string name="pausedAll">Paused all downloads.</string>
     <string name="resumedAll">Resumed all downloads.</string>
     <string name="purgedDownloadResult">Purged all download results.</string>
+    <string name="skipThisVersion">Skip this version</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
