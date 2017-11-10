@@ -35,6 +35,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
@@ -355,18 +356,23 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                     ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_country_unknown);
                     btAnnounceList.addView(layout);
 
-                    freeGeoIPApi.getIPDetails(URI.create(url).getHost(), new FreeGeoIPApi.IIPDetails() {
-                        @Override
-                        public void onDetails(IPDetails details) {
-                            if (isAdded())
-                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
-                        }
+                    try {
+                        URI uri = new URI(url);
 
-                        @Override
-                        public void onException(Exception ex) {
-                            Logging.logMe(ex);
-                        }
-                    });
+                        freeGeoIPApi.getIPDetails(uri.getHost(), new FreeGeoIPApi.IIPDetails() {
+                            @Override
+                            public void onDetails(IPDetails details) {
+                                if (isAdded())
+                                    ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
+                            }
+
+                            @Override
+                            public void onException(Exception ex) {
+                                Logging.logMe(ex);
+                            }
+                        });
+                    } catch (URISyntaxException ignored) {
+                    }
                 }
             }
         }
