@@ -83,7 +83,7 @@ public class Base64Fragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Uri uri = getArguments().getParcelable("uri");
         if (uri != null) {
             this.data = uri;
@@ -93,7 +93,7 @@ public class Base64Fragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.base64_fragment, container, false);
         path = layout.findViewById(R.id.base64Fragment_path);
         Button pick = layout.findViewById(R.id.base64Fragment_pick);

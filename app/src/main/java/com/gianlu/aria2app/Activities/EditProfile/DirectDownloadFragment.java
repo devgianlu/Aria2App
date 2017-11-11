@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.EditProfile;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -43,7 +44,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.edit_profile_dd_fragment, parent, false);
         enableDirectDownload = layout.findViewById(R.id.editProfile_enableDirectDownload);
         enableDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

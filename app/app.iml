@@ -126,7 +126,6 @@
     <orderEntry type="library" name="android.arch.lifecycle:runtime-1.0.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-basement-license-11.4.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-compat-27.0.0" level="project" />
-    <orderEntry type="library" name="org.jsoup:jsoup:1.10.3@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-basement-11.4.2" level="project" />
     <orderEntry type="library" name="com.android.support:recyclerview-v7-27.0.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-vector-drawable-27.0.0" level="project" />

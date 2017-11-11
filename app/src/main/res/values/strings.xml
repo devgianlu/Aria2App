@@ -137,7 +137,6 @@
     <string name="progress">Progress</string>
     <string name="connectionMethod">Connection method</string>
     <string name="mitLicense">Licensed under MIT license</string>
-    <string name="jsoup_details" translatable="false">Copyright © 2009 – 2016 Jonathan Hedley (jonathan@hedley.net)</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
     <string name="fatalExceptionMessage">A fatal exception has been thrown!</string>

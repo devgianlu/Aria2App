@@ -21,11 +21,6 @@
         android:title="Android flow layout" />
 
     <Preference
-        android:key="jsoup"
-        android:summary="@string/mitLicense"
-        android:title="jsoup" />
-
-    <Preference
         android:key="apacheLicense"
         android:title="Apache License 2.0" />
 
