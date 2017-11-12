@@ -115,7 +115,7 @@ public class WebSocketing extends AbstractClient {
             if (method != null && method.startsWith("aria2.on")) return;
 
             WeakReference<IReceived> ref = requests.remove(response.getInt("id"));
-            if (ref.get() == null) return;
+            if (ref == null || ref.get() == null) return;
             IReceived listener = ref.get();
             if (listener == null) return;
             if (response.isNull("error")) listener.onResponse(response);
