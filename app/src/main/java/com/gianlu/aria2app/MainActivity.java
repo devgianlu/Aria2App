@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     protected void onDestroy() {
         AbstractClient.removeConnectivityListener(this);
-        updater.stopThread(null);
+        if (updater != null) updater.stopThread(null);
         super.onDestroy();
     }
 
