@@ -9,7 +9,6 @@ import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Prefs;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +35,6 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
         super.onCreate();
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
-        FirebaseAnalytics.getInstance(this).setAnalyticsCollectionEnabled(!BuildConfig.DEBUG);
 
         // Backward compatibility
         if (!Prefs.has(getApplicationContext(), PKeys.A2_CUSTOM_INFO)) {
