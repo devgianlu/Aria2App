@@ -45,7 +45,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
@@ -388,9 +387,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
         }
 
-        AnalyticsApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_NEW_PROFILE));
+        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_NEW_PROFILE);
     }
 
     private void handleInvalidFieldException(InvalidFieldException ex) {
@@ -414,9 +411,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     private void deleteProfile() {
         if (editProfile == null) return;
 
-        AnalyticsApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_DELETE_PROFILE));
+        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_DELETE_PROFILE);
 
         ProfilesManager.get(this).delete(editProfile);
         onBackPressed();
@@ -496,9 +491,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     @Nullable
     @Override
     public MultiProfile.UserProfile getProfile() {
-        AnalyticsApplication.sendAnalytics(this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_STARTED_TEST));
+        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_STARTED_TEST);
 
         try {
             return buildProfile().getProfile(this);

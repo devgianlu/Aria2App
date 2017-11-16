@@ -32,7 +32,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
@@ -115,6 +114,8 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
         }
 
         if (hasShareData()) {
+            AnalyticsApplication.sendAnalytics(LoadingActivity.this, Utils.ACTION_SHARE);
+
             displayPicker(true);
             shareData = getShareData();
             return;
@@ -185,10 +186,6 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
         } else {
             return stream;
         }
-
-        AnalyticsApplication.sendAnalytics(LoadingActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_SHARE));
 
         return null;
     }

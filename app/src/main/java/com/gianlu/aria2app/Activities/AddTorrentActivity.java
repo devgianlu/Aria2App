@@ -24,7 +24,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.List;
 import java.util.Map;
@@ -135,9 +134,7 @@ public class AddTorrentActivity extends AppCompatActivity {
             }
         });
 
-        AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_NEW_TORRENT));
+        AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);
     }
 
     @Override

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
@@ -30,3 +31,5 @@ dependencies {
     api 'com.getkeepsafe.taptargetview:taptargetview:1.10.0'
     api 'com.michaelfotiadis:android-country-flags:1.0.3'
 }
+
+apply plugin: 'com.google.gms.google-services'

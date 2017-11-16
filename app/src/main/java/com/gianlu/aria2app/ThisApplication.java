@@ -2,13 +2,13 @@ package com.gianlu.aria2app;
 
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Prefs;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,11 +23,6 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
     @Override
     protected boolean isDebug() {
         return BuildConfig.DEBUG;
-    }
-
-    @Override
-    protected int getTrackerConfiguration() {
-        return R.xml.tracking;
     }
 
     @Override
@@ -52,9 +47,7 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
         Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
         LoadingActivity.startActivity(this, ex);
 
-        sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
-                .setDescription(Logging.getStackTrace(ex))
-                .setFatal(false));
+        Crashlytics.logException(ex);
     }
 
     @Override

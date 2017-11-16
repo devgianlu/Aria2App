@@ -22,7 +22,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONException;
 
@@ -123,9 +122,7 @@ public class OptionsUtils {
             }
         });
 
-        AnalyticsApplication.sendAnalytics(activity, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS));
+        AnalyticsApplication.sendAnalytics(activity, Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
     }
 
     private static void handleApplyGlobalOptions(final Activity activity, List<Option> options) {
@@ -161,9 +158,7 @@ public class OptionsUtils {
             }
         });
 
-        AnalyticsApplication.sendAnalytics(activity, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_CHANGED_GLOBAL_OPTIONS));
+        AnalyticsApplication.sendAnalytics(activity, Utils.ACTION_CHANGED_GLOBAL_OPTIONS);
     }
 
     public static void showEditOptionDialog(Activity activity, final OptionsAdapter adapter, final Option option) {

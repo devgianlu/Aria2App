@@ -36,22 +36,21 @@ import java.util.Random;
 public class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
-    public static final String CATEGORY_USER_INPUT = "User input";
-    public static final String ACTION_DOWNLOAD_FILE = "Download file";
-    public static final String ACTION_NEW_PROFILE = "New profile";
-    public static final String ACTION_DELETE_PROFILE = "Profile deleted";
-    public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "Global options changed";
-    public static final String ACTION_CHANGED_DOWNLOAD_OPTIONS = "Download options changed";
-    public static final String ACTION_NEW_TORRENT = "New Torrent download";
-    public static final String ACTION_NEW_METALINK = "New Metalink download";
-    public static final String ACTION_NEW_URI = "New URI download";
-    public static final String ACTION_SEARCH_DOWNLOAD = "New URI download with torrent search";
-    public static final String ACTION_SHARE = "Shared something with the app";
-    public static final String ACTION_DOWNLOAD_DIRECTORY = "Download directory";
-    public static final String ACTION_SEARCH = "Search torrent";
-    public static final String ACTION_STARTED_TEST = "Started profile test";
-    public static final String ACTION_SEARCH_GET_TORRENT = "Download torrent file from search";
-    public static final String ACTION_SEARCH_GET_MAGNET = "Get torrent magnet from search";
+    public static final String ACTION_DOWNLOAD_FILE = "dd_download_file";
+    public static final String ACTION_NEW_PROFILE = "new_profile";
+    public static final String ACTION_DELETE_PROFILE = "deleted_profile";
+    public static final String ACTION_CHANGED_GLOBAL_OPTIONS = "changed_global_options";
+    public static final String ACTION_CHANGED_DOWNLOAD_OPTIONS = "changed_download_options";
+    public static final String ACTION_NEW_TORRENT = "new_torrent_download";
+    public static final String ACTION_NEW_METALINK = "new_metalink_download";
+    public static final String ACTION_NEW_URI = "new_uri_download";
+    public static final String ACTION_SEARCH_DOWNLOAD = "new_uri_from_search";
+    public static final String ACTION_SHARE = "received_share";
+    public static final String ACTION_DOWNLOAD_DIRECTORY = "dd_download_directory";
+    public static final String ACTION_SEARCH = "search_torrent";
+    public static final String ACTION_STARTED_TEST = "run_profile_test";
+    public static final String ACTION_SEARCH_GET_TORRENT = "new_torrent_from_search";
+    public static final String ACTION_SEARCH_GET_MAGNET = "new_magnet_from_search";
     private static final Random random = new Random();
 
     public static int indexOf(String[] items, String item) {

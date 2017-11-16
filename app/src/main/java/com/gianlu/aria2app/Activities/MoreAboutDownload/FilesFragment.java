@@ -49,7 +49,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -374,9 +373,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             };
         }
 
-        AnalyticsApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_DOWNLOAD_DIRECTORY));
+        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_DIRECTORY);
     }
 
     @Override
@@ -426,9 +423,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             };
         }
 
-        AnalyticsApplication.sendAnalytics(getContext(), new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_DOWNLOAD_FILE));
+        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_FILE);
     }
 
     @Override

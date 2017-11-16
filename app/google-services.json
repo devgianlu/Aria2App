@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "378266879057",
+    "firebase_url": "https://aria2app.firebaseio.com",
     "project_id": "aria2app"
   },
   "client": [
@@ -11,7 +12,24 @@
           "package_name": "com.gianlu.aria2app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "378266879057-5510oa71kpo11a7nmbninbamcnk14ipk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gianlu.aria2app",
+            "certificate_hash": "712dbb7dc3d903aa43d243554e76b663d4de174e"
+          }
+        },
+        {
+          "client_id": "378266879057-o8munqum14u7o0pck439la3jrfim27dt.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "378266879057-hap8s6ke9l2p03qbs4qln3lf2qa17h3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCvwHhkfQHCqxEWewpessVipm4GUcAQvA0"
@@ -29,7 +47,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

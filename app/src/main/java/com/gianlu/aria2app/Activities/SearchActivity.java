@@ -39,7 +39,6 @@ import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -152,9 +151,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
         SearchUtils.get().search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
 
-        AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_SEARCH));
+        AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH);
         return true;
     }
 
@@ -281,9 +278,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
 
-                        AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                                .setCategory(Utils.CATEGORY_USER_INPUT)
-                                .setAction(Utils.ACTION_SEARCH_GET_MAGNET));
+                        AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_GET_MAGNET);
                     }
                 })
                 .setPositiveButton(R.string.download, null);
@@ -294,9 +289,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 public void onClick(DialogInterface dialogInterface, int i) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(torrent.torrentFileUrl)));
 
-                    AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                            .setCategory(Utils.CATEGORY_USER_INPUT)
-                            .setAction(Utils.ACTION_SEARCH_GET_TORRENT));
+                    AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_GET_TORRENT);
                 }
             });
         }
@@ -336,9 +329,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                             }
                         });
 
-                        AnalyticsApplication.sendAnalytics(SearchActivity.this, new HitBuilders.EventBuilder()
-                                .setCategory(Utils.CATEGORY_USER_INPUT)
-                                .setAction(Utils.ACTION_SEARCH_DOWNLOAD));
+                        AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_DOWNLOAD);
                     }
                 });
             }

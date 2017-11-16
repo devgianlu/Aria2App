@@ -23,7 +23,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Toaster;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.Map;
 
@@ -130,9 +129,7 @@ public class AddMetalinkActivity extends AppCompatActivity {
             }
         });
 
-        AnalyticsApplication.sendAnalytics(AddMetalinkActivity.this, new HitBuilders.EventBuilder()
-                .setCategory(Utils.CATEGORY_USER_INPUT)
-                .setAction(Utils.ACTION_NEW_METALINK));
+        AnalyticsApplication.sendAnalytics(AddMetalinkActivity.this, Utils.ACTION_NEW_METALINK);
     }
 
     @Override
