@@ -124,22 +124,15 @@ public class CustomDownloadInfo extends FlowLayout {
         public static Info[] toArray(Collection<String> infos, boolean isTorrent) {
             if (infos == null || infos.isEmpty()) return new Info[]{DOWNLOAD_SPEED, REMAINING_TIME};
 
-            Info[] arr = new Info[infos.size() - (isTorrent && infos.contains(CONNECTIONS.name()) || !isTorrent && infos.contains(SEEDERS.name()) ? 1 : 0)];
+            Info[] arr = new Info[infos.size() - (!isTorrent && infos.contains(SEEDERS.name()) ? 1 : 0)];
 
             int i = 0;
             for (String infoStr : infos) {
                 Info info = valueOf(infoStr);
-                if (isTorrent) {
-                    if (info != CONNECTIONS) {
-                        arr[i] = info;
-                        i++;
-                    }
-                } else {
-                    if (info != SEEDERS) {
-                        arr[i] = info;
-                        i++;
-                    }
-                }
+                if (!isTorrent && info == SEEDERS) continue;
+
+                arr[i] = info;
+                i++;
             }
 
             return arr;

@@ -11,11 +11,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
+import com.crashlytics.android.Crashlytics;
 import com.gianlu.commonutils.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.AppCompatPreferenceFragment;
 import com.gianlu.commonutils.BaseAboutFragment;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.LogsActivity;
+import com.gianlu.commonutils.Prefs;
 import com.gianlu.commonutils.Toaster;
 
 import java.io.File;
@@ -77,9 +80,17 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             getActivity().setTitle(R.string.general);
             setHasOptionsMenu(true);
 
-            MultiSelectListPreference customInfo = ((MultiSelectListPreference) findPreference(PKeys.A2_CUSTOM_INFO.getKey()));
-            customInfo.setEntryValues(CustomDownloadInfo.Info.stringValues());
-            customInfo.setEntries(CustomDownloadInfo.Info.formalValues(getActivity()));
+            // FIXME: Some debugging
+
+            try {
+                MultiSelectListPreference customInfo = ((MultiSelectListPreference) findPreference(PKeys.A2_CUSTOM_INFO.getKey()));
+                customInfo.setEntryValues(CustomDownloadInfo.Info.stringValues());
+                customInfo.setEntries(CustomDownloadInfo.Info.formalValues(getActivity()));
+            } catch (Exception ex) {
+                Logging.logMe(ex);
+                Crashlytics.setString("custom_download_info", String.valueOf(Prefs.getSet(getActivity(), PKeys.A2_CUSTOM_INFO, null)));
+                Crashlytics.logException(ex);
+            }
 
             findPreference("restartTutorial").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
