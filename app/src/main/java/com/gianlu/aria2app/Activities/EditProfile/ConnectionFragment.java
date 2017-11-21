@@ -289,6 +289,8 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     private void loadCertificateUri(Uri path) {
+        if (getContext() == null) return;
+
         X509Certificate certificate;
         try {
             InputStream in = getContext().getContentResolver().openInputStream(path);
@@ -336,7 +338,7 @@ public class ConnectionFragment extends FieldErrorFragment {
 
     @SuppressWarnings("ConstantConditions")
     public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
-        if (!created) {
+        if (!created && getArguments().getSerializable("edit") != null) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
             return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificate, edit.hostnameVerifier);
         }

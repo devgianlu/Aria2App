@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.EditProfile;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,8 +19,9 @@ public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
     private final List<WifiConfiguration> originalWifis;
     private CustomFilter filter;
 
-    public WifisAdapter(Context context, List<WifiConfiguration> wifis) {
+    public WifisAdapter(Context context, @Nullable List<WifiConfiguration> wifis) {
         super(context, android.R.layout.simple_list_item_1);
+        if (wifis == null) wifis = new ArrayList<>();
         this.originalWifis = wifis;
         this.wifis = new ArrayList<>(wifis);
     }
