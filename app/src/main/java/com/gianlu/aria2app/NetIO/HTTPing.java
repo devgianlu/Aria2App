@@ -3,6 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.JTA2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -157,6 +158,15 @@ public class HTTPing extends AbstractClient {
                 EntityUtils.consumeQuietly(resp.getEntity());
 
                 req.releaseConnection();
+            } catch (IllegalArgumentException ex) {
+                String msg = ex.getMessage();
+                if (msg != null && msg.contains("port out of range")) {
+                    Crashlytics.setString("current_default_uri", defaultUri.toString());
+                    Crashlytics.setInt("current_profile_port", profile.serverPort);
+                    Crashlytics.logException(ex);
+                }
+
+                listener.onException(ex);
             } catch (JSONException | IOException | URISyntaxException | IllegalStateException ex) {
                 listener.onException(ex);
             }
