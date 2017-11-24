@@ -85,6 +85,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.peers_and_servers_fragment, container, false);
+        if (getContext() == null) return layout;
         recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -183,7 +184,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
         if (isVisible() && !isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.PEERS_SERVERS)) {
             RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
-            if (holder != null) {
+            if (holder != null && getActivity() != null) {
                 isShowingHint = true;
 
                 recyclerViewLayout.getList().scrollToPosition(0);

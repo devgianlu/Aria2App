@@ -138,7 +138,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
 
         if (isVisible() && !isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.PEERS_SERVERS)) {
             RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
-            if (holder != null) {
+            if (holder != null && getActivity() != null) {
                 isShowingHint = true;
 
                 recyclerViewLayout.getList().scrollToPosition(0);

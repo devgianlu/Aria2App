@@ -79,7 +79,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 jta2.pause(download.gid, this);
                 break;
             case REMOVE:
-                if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED || download.status == Download.Status.WAITING) {
+                if (getContext() != null && (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED || download.status == Download.Status.WAITING)) {
                     CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
                             .setTitle(getString(R.string.removeName, download.getName()))
                             .setMessage(R.string.removeDownloadAlert)
@@ -104,6 +104,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     }
 
     private void removeDownload(final JTA2 jta2, final Download download) {
+        if (getContext() == null) return;
+
         if (download.following != null) {
             CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
                     .setTitle(getString(R.string.removeMetadataName, download.getName()))
@@ -293,6 +295,8 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
         }
 
         void setup(final Download download) {
+            if (getContext() == null) return;
+
             Utils.setupChart(chart, false, R.color.colorPrimaryDark);
             int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));

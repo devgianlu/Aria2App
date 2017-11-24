@@ -21,9 +21,9 @@ public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
 
     public WifisAdapter(Context context, @Nullable List<WifiConfiguration> wifis) {
         super(context, android.R.layout.simple_list_item_1);
-        if (wifis == null) wifis = new ArrayList<>();
-        this.originalWifis = wifis;
-        this.wifis = new ArrayList<>(wifis);
+        if (wifis == null) originalWifis = new ArrayList<>();
+        else originalWifis = wifis;
+        this.wifis = new ArrayList<>(originalWifis);
     }
 
     @Override
@@ -61,6 +61,7 @@ public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
     private class CustomFilter extends Filter {
 
         @Override
+        @SuppressWarnings("ConstantConditions")
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
 

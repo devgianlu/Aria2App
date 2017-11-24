@@ -147,6 +147,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         final CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
+        if (getContext() == null) return layout;
         breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
         recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
@@ -243,7 +244,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     private void showTutorial(TreeNode dir) {
         if (isVisible() && !isShowingHint && dir.files != null && dir.dirs != null && dir.files.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FILES)) {
             RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(dir.dirs.size());
-            if (holder != null) {
+            if (holder != null && getActivity() != null) {
                 isShowingHint = true;
 
                 recyclerViewLayout.getList().scrollToPosition(dir.dirs.size());

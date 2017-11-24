@@ -50,7 +50,8 @@ public class Base64Fragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        if (getArguments().getBoolean("torrent", true)) intent.setType("application/x-bittorrent");
+        if (getArguments() == null || getArguments().getBoolean("torrent", true))
+            intent.setType("application/x-bittorrent");
         else intent.setType("application/metalink4+xml,application/metalink+xml");
 
         try {
@@ -76,6 +77,7 @@ public class Base64Fragment extends Fragment {
     }
 
     private void setFilename(@NonNull Uri uri) {
+        if (getContext() == null) return;
         try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0)
                 path.setText(cursor.getString(0));
@@ -84,6 +86,7 @@ public class Base64Fragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if (getArguments() == null) return;
         Uri uri = getArguments().getParcelable("uri");
         if (uri != null) {
             this.data = uri;
@@ -100,7 +103,7 @@ public class Base64Fragment extends Fragment {
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (isAdded() && (getContext() == null || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
                     Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_base64Message, 12);
                 } else {
                     showFilePicker();
@@ -109,7 +112,8 @@ public class Base64Fragment extends Fragment {
         });
 
         SuperTextView help = layout.findViewById(R.id.base64Fragment_help);
-        if (getArguments().getBoolean("torrent", true)) help.setHtml(R.string.pickTorrent_help);
+        if (getArguments() == null || getArguments().getBoolean("torrent", true))
+            help.setHtml(R.string.pickTorrent_help);
         else help.setHtml(R.string.pickMetalink_help);
 
         return layout;
@@ -117,7 +121,7 @@ public class Base64Fragment extends Fragment {
 
     @Nullable
     public String getBase64() throws InvalidFieldException {
-        if (data == null)
+        if (data == null || getContext() == null)
             throw new InvalidFieldException(Base64Fragment.class, R.id.base64Fragment_pick, getString(R.string.base64NotSelected));
 
         try (InputStream in = getContext().getContentResolver().openInputStream(data); ByteArrayOutputStream out = new ByteArrayOutputStream()) {

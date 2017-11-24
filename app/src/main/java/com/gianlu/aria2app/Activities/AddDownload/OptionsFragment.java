@@ -55,7 +55,7 @@ public class OptionsFragment extends Fragment {
         optionsView.setIsDialog(false);
 
         layout.findViewById(R.id.optionsFragment_filenameContainer)
-                .setVisibility(getArguments().getBoolean("isUri", false) ? View.VISIBLE : View.GONE);
+                .setVisibility(getArguments() != null && getArguments().getBoolean("isUri", false) ? View.VISIBLE : View.GONE);
 
         JTA2 jta2;
         final List<String> downloadOptions;

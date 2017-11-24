@@ -199,7 +199,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
         public final String username;
         public final String password;
 
-        public Fields(JTA2.AuthMethod authMethod, @Nullable String token, @Nullable String username, @Nullable String password) {
+        Fields(JTA2.AuthMethod authMethod, @Nullable String token, @Nullable String username, @Nullable String password) {
             this.authMethod = authMethod;
             this.token = token;
             this.username = username;
