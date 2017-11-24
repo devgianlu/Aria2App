@@ -83,7 +83,7 @@ public class AddUriActivity extends AppCompatActivity {
 
     private void done() {
         List<String> uris = urisFragment.getUris();
-        if (uris.isEmpty()) {
+        if (uris == null || uris.isEmpty()) {
             Toaster.show(this, Utils.Messages.NO_URIS);
             pager.setCurrentItem(0, true);
             return;

@@ -49,6 +49,8 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     }
 
     private void showAddUriDialog(final int oldPos, @Nullable String edit) {
+        if (getContext() == null) return;
+
         final EditText uri = new EditText(getContext());
         uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
         uri.setText(edit);
@@ -78,6 +80,8 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (getContext() == null) return null;
+
         layout = (LinearLayout) inflater.inflate(R.layout.uris_fragment, container, false);
         list = layout.findViewById(R.id.urisFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -92,7 +96,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
         });
 
         TextView disclaimer = layout.findViewById(R.id.urisFragment_disclaimer);
-        if (getArguments().getBoolean("compulsory", false))
+        if (getArguments() != null && getArguments().getBoolean("compulsory", false))
             disclaimer.setText(R.string.uris_disclaimer);
         else
             disclaimer.setText(R.string.torrentUris_disclaimer);
@@ -105,7 +109,8 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (!getArguments().getBoolean("compulsory", false)) return;
+        if (getContext() == null || getArguments() == null || !getArguments().getBoolean("compulsory", false))
+            return;
 
         URI uri = (URI) getArguments().getSerializable("uri");
         if (uri != null) {
@@ -139,15 +144,16 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
         showAddUriDialog(-1, null);
     }
 
+    @Nullable
     public List<String> getUris() {
-        return adapter.getUris();
+        return adapter != null ? adapter.getUris() : null;
     }
 
     @Override
     public void onUrisCountChanged(int count) {
         if (count == 0) {
             list.setVisibility(View.GONE);
-            if (getArguments().getBoolean("compulsory", false))
+            if (getArguments() != null && getArguments().getBoolean("compulsory", false))
                 MessageLayout.show(layout, R.string.noUris_help, R.drawable.ic_info_outline_black_48dp);
             else
                 MessageLayout.show(layout, R.string.noUris, R.drawable.ic_info_outline_black_48dp);
