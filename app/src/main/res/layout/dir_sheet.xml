@@ -25,24 +25,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp" />
-
-    <CheckBox
-        android:id="@+id/dirSheet_selected"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/selectForDownload" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/selectFile_help"
-        android:textSize="12sp" />
-
-    <Button
-        android:id="@+id/dirSheet_downloadDir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:text="@string/download" />
 </LinearLayout>

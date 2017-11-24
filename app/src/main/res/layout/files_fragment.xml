@@ -47,5 +47,5 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-    <include layout="@layout/bottom_sheet" />
+    <include layout="@layout/nice_bottom_sheet" />
 </android.support.design.widget.CoordinatorLayout>

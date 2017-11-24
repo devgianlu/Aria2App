@@ -9,7 +9,9 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -78,9 +80,17 @@ public class DonutProgress extends View {
         invalidate();
     }
 
+    public void setFinishedStrokeColorRes(@ColorRes int color) {
+        setFinishedStrokeColor(ContextCompat.getColor(getContext(), color));
+    }
+
     public void setTextColor(@ColorInt int color) {
         textPaint.setColor(color);
         invalidate();
+    }
+
+    public void setTextColorRes(@ColorRes int color) {
+        setTextColor(ContextCompat.getColor(getContext(), color));
     }
 
     @Override

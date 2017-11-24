@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -44,8 +43,6 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.AnalyticsApplication;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
@@ -53,7 +50,7 @@ import com.gianlu.commonutils.Toaster;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, FileBottomSheet.ISheet, DirBottomSheet.ISheet, ServiceConnection {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection {
     private UpdateUI updater;
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
@@ -84,7 +81,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             return true;
         }
 
-        if (fileSheet.shouldUpdate()) { // We don't need to do this for dirSheet too, it would be redundant
+        if (fileSheet.isExpanded()) { // We don't need to do this for dirSheet too, it would be redundant
             fileSheet.collapse();
             return false;
         } else if (adapter != null && adapter.canGoUp()) {
@@ -106,9 +103,6 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
-
-        fileSheet.setDownload(download);
-        dirSheet.setDownload(download);
 
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -146,7 +140,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        final CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
+        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
         if (getContext() == null) return layout;
         breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
@@ -155,8 +149,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
-        fileSheet = new FileBottomSheet(layout, FilesFragment.this);
-        dirSheet = new DirBottomSheet(layout, FilesFragment.this);
+        fileSheet = new FileBottomSheet(layout);
+        dirSheet = new DirBottomSheet(layout);
 
         String gid = getArguments().getString("gid", null);
         if (gid == null) {
@@ -218,8 +212,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             recyclerViewLayout.showList();
 
             if (adapter != null) adapter.update(files, commonRoot);
-            if (fileSheet != null) fileSheet.update(files);
-            if (dirSheet != null) dirSheet.update(files);
+            // TODO: if (fileSheet != null) fileSheet.update(files);
+            // TODO: if (dirSheet != null) dirSheet.update(files);
 
             if (adapter != null) showTutorial(adapter.getCurrentNode());
         }
@@ -233,12 +227,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onFileSelected(AriaFile file) {
-        fileSheet.expand(file);
+        fileSheet.expand(download, file);
     }
 
     @Override
     public void onDirectorySelected(TreeNode dir) {
-        dirSheet.expand(new AriaDirectory(dir, download));
+        dirSheet.expand(download, new AriaDirectory(dir, download));
     }
 
     private void showTutorial(TreeNode dir) {
@@ -322,6 +316,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         if (adapter != null) adapter.rebaseTo(node);
     }
 
+    /*
     @Override
     public void onSelectedFile(AriaFile file) {
         Toaster.show(getActivity(), Utils.Messages.FILE_SELECTED, file.getName());
@@ -335,7 +330,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         adapter.notifyItemChanged(file);
         if (fileSheet != null) fileSheet.collapse();
     }
+    */
 
+    /*
     @Override
     public void onSelectedDir(AriaDirectory dir) {
         Toaster.show(getActivity(), Utils.Messages.DIR_SELECTED, dir.name);
@@ -382,6 +379,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES, download.gid);
         if (dirSheet != null) dirSheet.collapse();
     }
+    */
 
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
@@ -409,6 +407,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 }).show();
     }
 
+    /*
     @Override
     public void onWantsToDownload(final MultiProfile profile, @NonNull final AriaFile file) {
         if (fileSheet != null) fileSheet.collapse();
@@ -426,6 +425,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
         AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_FILE);
     }
+    */
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
