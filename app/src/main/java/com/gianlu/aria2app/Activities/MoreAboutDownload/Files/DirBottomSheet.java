@@ -75,7 +75,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
     @SuppressWarnings("unchecked")
     protected void onUpdateViews(Object... payloads) {
         if (currentDir != null) {
-            currentDir.update((Download) payloads[0], (List<AriaFile>) payloads[1]);
+            currentDir = currentDir.update((Download) payloads[0], (List<AriaFile>) payloads[1]);
             updateContentViews(currentDir);
             updateHeaderViews(currentDir);
         }

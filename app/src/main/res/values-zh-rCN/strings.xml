@@ -318,6 +318,7 @@
     <string name="resumedAll">恢复所有下载。</string>
     <string name="purgedDownloadResult">清除所有下载结果。</string>
     <string name="skipThisVersion">跳过这个版本</string>
+    <string name="selectDirForDownload">选择目录下的所有文件进行下载</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

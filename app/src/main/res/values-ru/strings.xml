@@ -317,6 +317,7 @@
     <string name="resumedAll">Все загрузки возобновлены!</string>
     <string name="purgedDownloadResult">Список загрузок очищен!</string>
     <string name="skipThisVersion">пропустить эту версию</string>
+    <string name="selectDirForDownload">Выбрать все файлы в каталоге для загрузки</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
