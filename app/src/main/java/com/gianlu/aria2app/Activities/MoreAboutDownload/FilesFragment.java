@@ -51,7 +51,7 @@ import com.gianlu.commonutils.Toaster;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
     private UpdateUI updater;
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
@@ -155,7 +155,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         } catch (JTA2.InitializingException e) {
             e.printStackTrace();
         }
-        dirSheet = new DirBottomSheet(layout);
+        dirSheet = new DirBottomSheet(layout, this);
 
         String gid = getArguments().getString("gid", null);
         if (gid == null) {
@@ -360,23 +360,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onWantsToDownload(final MultiProfile profile, @NonNull final AriaDirectory dir) {
-        if (fileSheet != null) fileSheet.collapse();
 
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(getContext(), R.string.gathering_information);
-        CommonUtils.showDialog(getActivity(), pd);
-
-        if (downloaderMessenger != null) {
-            startDownloadInternal(profile, null, dir);
-        } else {
-            boundWaiter = new IWaitBinder() {
-                @Override
-                public void onBound() {
-                    startDownloadInternal(profile, null, dir);
-                }
-            };
-        }
-
-        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_DIRECTORY);
     }
 
     @Override
@@ -445,6 +429,24 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public void showToast(Toaster.Message message) {
         Toaster.show(getActivity(), message);
+    }
+
+    @Override
+    public void onDownloadDirectory(final MultiProfile profile, Download download, final AriaDirectory dir) {
+        if (dirSheet != null) dirSheet.collapse();
+
+        if (downloaderMessenger != null) {
+            startDownloadInternal(profile, null, dir);
+        } else {
+            boundWaiter = new IWaitBinder() {
+                @Override
+                public void onBound() {
+                    startDownloadInternal(profile, null, dir);
+                }
+            };
+        }
+
+        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_DIRECTORY);
     }
 
     private interface IWaitBinder {

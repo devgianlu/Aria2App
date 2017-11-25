@@ -54,4 +54,8 @@ public class AriaDirectory extends TreeNode {
         update(this, files);
         return new AriaDirectory(this, download);
     }
+
+    public float getProgress() {
+        return ((float) completedLength) / ((float) totalLength) * 100;
+    }
 }
