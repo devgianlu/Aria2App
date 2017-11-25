@@ -57,6 +57,6 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_file_download_white_48dp"
         android:visibility="gone"
-        app:layout_anchor="@+id/niceBottomSheet_sheet"
+        app:layout_anchor="@+id/niceBottomSheet_header"
         app:layout_anchorGravity="top|end" />
 </android.support.design.widget.CoordinatorLayout>
