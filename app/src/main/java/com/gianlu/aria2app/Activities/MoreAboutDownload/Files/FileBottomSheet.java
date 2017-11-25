@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +25,27 @@ import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class FileBottomSheet extends NiceBaseBottomSheet {
     private final ISheet listener;
     private final JTA2 jta2;
+    private int currentFileIndex = -1;
+    private SuperTextView completedLength;
+    private SuperTextView length;
+    private CheckBox selected;
+    private TextView percentage;
 
     public FileBottomSheet(ViewGroup parent, ISheet listener) throws JTA2.InitializingException {
         super(parent, R.layout.file_sheet_header, R.layout.file_sheet, true);
         this.listener = listener;
         this.jta2 = JTA2.instantiate(getContext());
+    }
+
+    @Override
+    protected void cleanUp() {
+        currentFileIndex = -1;
     }
 
     @Override
@@ -62,40 +74,68 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    protected void onUpdateViews(Object... payloads) {
+        AriaFile file = findCurrent((List<AriaFile>) payloads[0]);
+        if (file != null) {
+            updateHeaderViews(file);
+            updateContentViews(file);
+        }
+    }
+
+    private void updateHeaderViews(AriaFile file) {
+        percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) file.getProgress()));
+    }
+
+    private void updateContentViews(AriaFile file) {
+        selected.setChecked(file.selected);
+        length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(file.length, false));
+        completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(file.completedLength, false));
+    }
+
+    @Nullable
+    private AriaFile findCurrent(List<AriaFile> files) {
+        for (AriaFile file : files)
+            if (file.index == currentFileIndex)
+                return file;
+
+        return null;
+    }
+
+    @Override
     protected void onCreateHeaderView(@NonNull ViewGroup parent, Object... payloads) {
         FileTypeTextView fileType = parent.findViewById(R.id.fileSheet_fileType);
         fileType.setWidth(48);
-        TextView percentage = parent.findViewById(R.id.fileSheet_percentage);
+        percentage = parent.findViewById(R.id.fileSheet_percentage);
         percentage.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Medium.ttf"));
         TextView title = parent.findViewById(R.id.fileSheet_title);
 
         Download download = (Download) payloads[0];
         AriaFile file = (AriaFile) payloads[1];
+        currentFileIndex = file.index;
 
         int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
         parent.setBackgroundResource(colorAccent);
 
         fileType.setFilename(file.getName());
         title.setText(file.getName());
-        percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) file.getProgress()));
+        updateHeaderViews(file);
     }
 
     @Override
     protected void onCreateContentView(@NonNull ViewGroup parent, Object... payloads) {
         SuperTextView index = parent.findViewById(R.id.fileSheet_index);
         SuperTextView path = parent.findViewById(R.id.fileSheet_path);
-        SuperTextView length = parent.findViewById(R.id.fileSheet_length);
-        SuperTextView completedLength = parent.findViewById(R.id.fileSheet_completedLength);
-        CheckBox selected = parent.findViewById(R.id.fileSheet_selected);
+        length = parent.findViewById(R.id.fileSheet_length);
+        completedLength = parent.findViewById(R.id.fileSheet_completedLength);
+        selected = parent.findViewById(R.id.fileSheet_selected);
 
         final Download download = (Download) payloads[0];
         final AriaFile file = (AriaFile) payloads[1];
 
-        selected.setChecked(file.selected);
         index.setHtml(R.string.index, file.index);
         path.setHtml(R.string.path, file.path);
-        length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(file.length, false));
-        completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(file.completedLength, false));
+        updateContentViews(file);
 
         if (download.supportsDeselectingFiles()) {
             selected.setEnabled(true);

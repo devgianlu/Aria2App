@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -17,11 +18,16 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.List;
 import java.util.Locale;
 
 // TODO: Reimplement "selected"
 public class DirBottomSheet extends NiceBaseBottomSheet {
     private final ISheet listener;
+    private SuperTextView length;
+    private SuperTextView completedLength;
+    private TextView percentage;
+    private AriaDirectory currentDir = null;
 
     public DirBottomSheet(ViewGroup parent, ISheet listener) {
         super(parent, R.layout.dir_sheet_header, R.layout.dir_sheet, true);
@@ -54,8 +60,27 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
     }
 
     @Override
+    protected void cleanUp() {
+        currentDir = null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void onUpdateViews(Object... payloads) {
+        if (currentDir != null) {
+            currentDir.update((Download) payloads[0], (List<AriaFile>) payloads[1]);
+            updateContentViews(currentDir);
+            updateHeaderViews(currentDir);
+        }
+    }
+
+    private void updateHeaderViews(AriaDirectory dir) {
+        percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) dir.getProgress()));
+    }
+
+    @Override
     protected void onCreateHeaderView(@NonNull ViewGroup parent, Object... payloads) {
-        TextView percentage = parent.findViewById(R.id.dirSheet_percentage);
+        percentage = parent.findViewById(R.id.dirSheet_percentage);
         percentage.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Medium.ttf"));
         TextView title = parent.findViewById(R.id.dirSheet_title);
 
@@ -66,22 +91,28 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
         parent.setBackgroundResource(colorAccent);
 
         title.setText(dir.name);
-        percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) dir.getProgress()));
+        updateHeaderViews(dir);
+    }
+
+    private void updateContentViews(AriaDirectory dir) {
+        length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(dir.totalLength, false));
+        completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(dir.completedLength, false));
     }
 
     @Override
     protected void onCreateContentView(@NonNull ViewGroup parent, Object... payloads) {
         SuperTextView indexes = parent.findViewById(R.id.dirSheet_indexes);
         SuperTextView path = parent.findViewById(R.id.dirSheet_path);
-        SuperTextView length = parent.findViewById(R.id.dirSheet_length);
-        SuperTextView completedLength = parent.findViewById(R.id.dirSheet_completedLength);
+
+        length = parent.findViewById(R.id.dirSheet_length);
+
+        completedLength = parent.findViewById(R.id.dirSheet_completedLength);
 
         AriaDirectory dir = (AriaDirectory) payloads[1];
 
         indexes.setHtml(R.string.indexes, CommonUtils.join(dir.indexes, ", "));
         path.setHtml(R.string.path, dir.fullPath);
-        length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(dir.totalLength, false));
-        completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(dir.completedLength, false));
+        updateContentViews(dir);
     }
 
     public interface ISheet {

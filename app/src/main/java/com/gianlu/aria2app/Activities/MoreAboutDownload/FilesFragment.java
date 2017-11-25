@@ -152,10 +152,12 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
         try {
             fileSheet = new FileBottomSheet(layout, this);
-        } catch (JTA2.InitializingException e) {
-            e.printStackTrace();
+            dirSheet = new DirBottomSheet(layout, this);
+        } catch (JTA2.InitializingException ex) {
+            Logging.logMe(ex);
+            recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
+            return layout;
         }
-        dirSheet = new DirBottomSheet(layout, this);
 
         String gid = getArguments().getString("gid", null);
         if (gid == null) {
@@ -215,11 +217,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {
             recyclerViewLayout.showList();
-
             if (adapter != null) adapter.update(files, commonRoot);
-            // TODO: if (fileSheet != null) fileSheet.update(files);
-            // TODO: if (dirSheet != null) dirSheet.update(files);
-
+            if (fileSheet != null) fileSheet.update(files);
+            if (dirSheet != null) dirSheet.update(download, files);
             if (adapter != null) showTutorial(adapter.getCurrentNode());
         }
     }
@@ -320,55 +320,6 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     public void onDirSelected(TreeNode node) {
         if (adapter != null) adapter.rebaseTo(node);
     }
-
-    /*
-    @Override
-    public void onSelectedFile(AriaFile file) {
-        Toaster.show(getActivity(), Utils.Messages.FILE_SELECTED, file.getName());
-        adapter.notifyItemChanged(file);
-        if (fileSheet != null) fileSheet.collapse();
-    }
-
-    @Override
-    public void onDeselectedFile(AriaFile file) {
-        Toaster.show(getActivity(), Utils.Messages.FILE_DESELECTED, file.getName());
-        adapter.notifyItemChanged(file);
-        if (fileSheet != null) fileSheet.collapse();
-    }
-    */
-
-    /*
-    @Override
-    public void onSelectedDir(AriaDirectory dir) {
-        Toaster.show(getActivity(), Utils.Messages.DIR_SELECTED, dir.name);
-        adapter.notifyItemsChanged(dir, true);
-        if (dirSheet != null) dirSheet.collapse();
-    }
-
-    @Override
-    public void onDeselectedDir(AriaDirectory dir) {
-        Toaster.show(getActivity(), Utils.Messages.DIR_DESELECTED, dir.name);
-        adapter.notifyItemsChanged(dir, false);
-        if (dirSheet != null) dirSheet.collapse();
-    }
-
-    @Override
-    public void onExceptionChangingSelection(Exception ex) {
-        Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
-        if (fileSheet != null) fileSheet.collapse();
-    }
-
-    @Override
-    public void onWantsToDownload(final MultiProfile profile, @NonNull final AriaDirectory dir) {
-
-    }
-
-    @Override
-    public void onCantDeselectAll() {
-        Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES, download.gid);
-        if (dirSheet != null) dirSheet.collapse();
-    }
-    */
 
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
