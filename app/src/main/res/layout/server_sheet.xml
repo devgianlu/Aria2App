@@ -5,26 +5,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:alpha="0.54"
-            android:src="@drawable/ic_file_download_black_48dp" />
-
-        <com.gianlu.commonutils.SuperTextView
-            android:id="@+id/serverSheet_downloadSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/serverSheet_chart"
         android:layout_width="match_parent"

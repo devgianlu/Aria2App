@@ -3,6 +3,8 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
@@ -10,9 +12,9 @@ import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.BaseBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -20,7 +22,7 @@ import com.github.mikephil.charting.data.LineData;
 
 import java.util.List;
 
-public class PeerBottomSheet extends BaseBottomSheet<Peer> {
+public class PeerBottomSheet extends NiceBaseBottomSheet {
     private final FreeGeoIPApi freeGeoIPApi;
     private SuperTextView downloadSpeed;
     private SuperTextView uploadSpeed;
@@ -29,50 +31,30 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
     private SuperTextView peerChoking;
     private SuperTextView amChoking;
     private IPDetailsView ipDetails;
+    private Peer currentPeer = null;
 
-    public PeerBottomSheet(View sheet) {
-        super(sheet, R.layout.peer_sheet, false);
+    public PeerBottomSheet(ViewGroup parent) {
+        super(parent, R.layout.peer_sheet_header, R.layout.peer_sheet, false);
         freeGeoIPApi = FreeGeoIPApi.get();
     }
 
     @Override
-    public void bindViews() {
-        downloadSpeed = content.findViewById(R.id.peerSheet_downloadSpeed);
-        uploadSpeed = content.findViewById(R.id.peerSheet_uploadSpeed);
-        chart = content.findViewById(R.id.peerSheet_chart);
-        seeder = content.findViewById(R.id.peerSheet_seeder);
-        peerChoking = content.findViewById(R.id.peerSheet_peerChoking);
-        amChoking = content.findViewById(R.id.peerSheet_amChoking);
-        ipDetails = content.findViewById(R.id.peerSheet_ipDetails);
-        ipDetails.setVisibility(View.GONE);
+    @SuppressWarnings("unchecked")
+    protected void onUpdateViews(Object... payloads) {
+        if (currentPeer == null) return;
+        Peer peer = Peer.find((List<Peer>) payloads[0], currentPeer);
+        if (peer != null) {
+            updateContentViews(peer);
+            updateHeaderViews(peer);
+        }
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
-    protected void setupView(@NonNull Peer peer) {
-        title.setText(peer.ip + ":" + peer.port);
-        Utils.setupChart(chart, true, R.color.colorPrimaryDark);
-
-        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.IIPDetails() {
-            @Override
-            public void onDetails(IPDetails details) {
-                ipDetails.setup(details);
-                ipDetails.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                Logging.logMe(ex);
-                ipDetails.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    @Override
-    protected void updateView(@NonNull Peer peer) {
+    private void updateHeaderViews(Peer peer) {
         downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
+    }
 
+    private void updateContentViews(Peer peer) {
         LineData data = chart.getLineData();
         if (data != null) {
             int pos = data.getEntryCount() + 1;
@@ -89,8 +71,53 @@ public class PeerBottomSheet extends BaseBottomSheet<Peer> {
         amChoking.setHtml(R.string.amChoking, String.valueOf(peer.amChoking));
     }
 
-    public void update(List<Peer> peers) {
-        if (current == null) return;
-        update(Peer.find(peers, current));
+    @Override
+    protected void cleanUp() {
+        currentPeer = null;
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onCreateHeaderView(@NonNull ViewGroup parent, Object... payloads) {
+        TextView title = parent.findViewById(R.id.peerSheet_title);
+        downloadSpeed = parent.findViewById(R.id.peerSheet_downloadSpeed);
+        uploadSpeed = parent.findViewById(R.id.peerSheet_uploadSpeed);
+
+        parent.setBackgroundResource(R.color.colorTorrent);
+
+        Peer peer = (Peer) payloads[0];
+        currentPeer = peer;
+
+        title.setText(peer.ip + ":" + peer.port);
+        updateHeaderViews(peer);
+    }
+
+    @Override
+    protected void onCreateContentView(@NonNull ViewGroup parent, Object... payloads) {
+        chart = parent.findViewById(R.id.peerSheet_chart);
+        seeder = parent.findViewById(R.id.peerSheet_seeder);
+        peerChoking = parent.findViewById(R.id.peerSheet_peerChoking);
+        amChoking = parent.findViewById(R.id.peerSheet_amChoking);
+        ipDetails = parent.findViewById(R.id.peerSheet_ipDetails);
+        ipDetails.setVisibility(View.GONE);
+
+        Peer peer = (Peer) payloads[0];
+
+        Utils.setupChart(chart, true, R.color.colorPrimaryDark);
+        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.IIPDetails() {
+            @Override
+            public void onDetails(IPDetails details) {
+                ipDetails.setup(details);
+                ipDetails.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                Logging.logMe(ex);
+                ipDetails.setVisibility(View.GONE);
+            }
+        });
+
+        updateContentViews(peer);
     }
 }

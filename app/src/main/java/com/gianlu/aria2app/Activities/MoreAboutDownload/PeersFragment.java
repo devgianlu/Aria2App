@@ -142,7 +142,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
             return true;
         }
 
-        if (sheet != null && sheet.shouldUpdate()) {
+        if (sheet != null && sheet.isExpanded()) {
             sheet.collapse();
             return false;
         } else {
@@ -159,7 +159,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     public void onUpdateAdapter(List<Peer> peers) {
         recyclerViewLayout.showList();
         if (adapter != null) adapter.notifyItemsChanged(peers);
-        if (sheet != null && sheet.shouldUpdate()) sheet.update(peers);
+        if (sheet != null && sheet.isExpanded()) sheet.update(peers);
     }
 
     @Override

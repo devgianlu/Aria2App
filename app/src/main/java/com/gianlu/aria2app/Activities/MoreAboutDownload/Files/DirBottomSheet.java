@@ -87,7 +87,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
         Download download = (Download) payloads[0];
         AriaDirectory dir = (AriaDirectory) payloads[1];
 
-        int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
+        int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent_light;
         parent.setBackgroundResource(colorAccent);
 
         title.setText(dir.name);

@@ -114,7 +114,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         AriaFile file = (AriaFile) payloads[1];
         currentFileIndex = file.index;
 
-        int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
+        int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent_light;
         parent.setBackgroundResource(colorAccent);
 
         fileType.setFilename(file.getName());

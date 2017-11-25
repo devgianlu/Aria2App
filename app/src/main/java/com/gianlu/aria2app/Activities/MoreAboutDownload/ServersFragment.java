@@ -109,7 +109,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
             return true;
         }
 
-        if (sheet != null && sheet.shouldUpdate()) {
+        if (sheet != null && sheet.isExpanded()) {
             sheet.collapse();
             return false;
         } else {
@@ -166,7 +166,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         if (servers.size() == 0) return;
         recyclerViewLayout.showList();
         if (adapter != null) adapter.notifyItemsChanged(servers, files);
-        if (sheet != null && sheet.shouldUpdate()) sheet.update(servers);
+        if (sheet != null && sheet.isExpanded()) sheet.update(servers);
     }
 
     @Override
