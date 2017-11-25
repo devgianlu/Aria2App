@@ -7,13 +7,12 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
-    <com.gianlu.aria2app.FileTypeImageView
-        android:id="@+id/fileItem_formatIcon"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+    <com.gianlu.aria2app.FileTypeTextView
+        android:id="@+id/fileItem_fileType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_insert_drive_file_black_48dp" />
+        android:layout_marginEnd="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

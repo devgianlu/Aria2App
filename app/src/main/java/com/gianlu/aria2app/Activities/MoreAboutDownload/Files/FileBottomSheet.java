@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -62,6 +63,8 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
 
     @Override
     protected void onCreateHeaderView(@NonNull ViewGroup parent, Object... payloads) {
+        FileTypeTextView fileType = parent.findViewById(R.id.fileSheet_fileType);
+        fileType.setWidth(48);
         TextView percentage = parent.findViewById(R.id.fileSheet_percentage);
         percentage.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Medium.ttf"));
         TextView title = parent.findViewById(R.id.fileSheet_title);
@@ -72,6 +75,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
         parent.setBackgroundResource(colorAccent);
 
+        fileType.setFilename(file.getName());
         title.setText(file.getName());
         percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) file.getProgress()));
     }

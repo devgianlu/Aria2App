@@ -19,7 +19,7 @@ import com.gianlu.commonutils.SuperTextView;
 
 import java.util.Locale;
 
-
+// TODO: Reimplement "selected"
 public class DirBottomSheet extends NiceBaseBottomSheet {
     private final ISheet listener;
 
