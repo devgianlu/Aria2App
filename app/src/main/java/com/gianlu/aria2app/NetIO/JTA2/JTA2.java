@@ -243,7 +243,7 @@ public class JTA2 {
     }
 
     public void restart(final String gid, final IRestart listener) {
-        tellStatus(gid, new String[]{"files"}, new JTA2.IDownload() {
+        tellStatus(gid, new String[]{"gid", "status", "files"}, new JTA2.IDownload() {
             @Override
             public void onDownload(final Download download) {
                 getOption(gid, new JTA2.IOption() {
