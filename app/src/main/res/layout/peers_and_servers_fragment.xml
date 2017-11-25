@@ -9,7 +9,7 @@
         android:layout_height="match_parent" />
 
     <View
-        android:id="@+id/bottomSheet_mask"
+        android:id="@+id/niceBottomSheet_mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

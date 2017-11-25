@@ -43,6 +43,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
@@ -50,7 +51,7 @@ import com.gianlu.commonutils.Toaster;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection {
+public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet {
     private UpdateUI updater;
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
@@ -149,7 +150,11 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
-        fileSheet = new FileBottomSheet(layout);
+        try {
+            fileSheet = new FileBottomSheet(layout, this);
+        } catch (JTA2.InitializingException e) {
+            e.printStackTrace();
+        }
         dirSheet = new DirBottomSheet(layout);
 
         String gid = getArguments().getString("gid", null);
@@ -407,9 +412,20 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
                 }).show();
     }
 
-    /*
     @Override
-    public void onWantsToDownload(final MultiProfile profile, @NonNull final AriaFile file) {
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        downloaderMessenger = new Messenger(service);
+        if (boundWaiter != null) boundWaiter.onBound();
+        boundWaiter = null;
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        downloaderMessenger = null;
+    }
+
+    @Override
+    public void onDownloadFile(final MultiProfile profile, Download download, final AriaFile file) {
         if (fileSheet != null) fileSheet.collapse();
 
         if (downloaderMessenger != null) {
@@ -425,18 +441,10 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
         AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_FILE);
     }
-    */
 
     @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        downloaderMessenger = new Messenger(service);
-        if (boundWaiter != null) boundWaiter.onBound();
-        boundWaiter = null;
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        downloaderMessenger = null;
+    public void showToast(Toaster.Message message) {
+        Toaster.show(getActivity(), message);
     }
 
     private interface IWaitBinder {

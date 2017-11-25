@@ -21,27 +21,23 @@ public class FileTypeImageView extends AppCompatImageView {
     private Paint textPaint;
 
     public FileTypeImageView(Context context) {
-        super(context);
-        init();
+        this(context, null, 0);
     }
 
     public FileTypeImageView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public FileTypeImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-    }
 
-    private void init() {
         setImageResource(R.drawable.ic_insert_drive_file_black_48dp);
+
         textPaint = new Paint();
-        textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
         textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 9, getResources().getDisplayMetrics()));
         textPaint.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Bold.ttf"));
+        textPaint.setColor(Color.WHITE);
 
         if (isInEditMode()) setExtension("XML");
     }
