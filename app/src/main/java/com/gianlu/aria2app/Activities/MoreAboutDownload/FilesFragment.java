@@ -380,6 +380,8 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public void showToast(Toaster.Message message) {
         Toaster.show(getActivity(), message);
+        if (dirSheet != null)
+            dirSheet.collapse(); // We don't need to do this for dirSheet too, it would be redundant
     }
 
     @Override

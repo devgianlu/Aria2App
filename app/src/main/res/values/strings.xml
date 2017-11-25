@@ -322,6 +322,7 @@
     <string name="resumedAll">Resumed all downloads.</string>
     <string name="purgedDownloadResult">Purged all download results.</string>
     <string name="skipThisVersion">Skip this version</string>
+    <string name="selectDirForDownload">Select all files in directory for download</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

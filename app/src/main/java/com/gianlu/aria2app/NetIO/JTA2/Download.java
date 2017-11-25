@@ -149,7 +149,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
     }
 
     public boolean supportsDeselectingFiles() {
-        return isTorrent() && files.size() > 1;
+        return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR && status != Status.UNKNOWN;
     }
 
     @Override

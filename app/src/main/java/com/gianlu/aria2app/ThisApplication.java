@@ -64,12 +64,5 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
     @Override
     public void onException(Throwable ex) {
         Logging.logMe(ex);
-
-        /*
-        sendAnalytics(getApplicationContext(), new HitBuilders.ExceptionBuilder()
-                .setDescription(Logging.getStackTrace(ex))
-                .setFatal(false)
-                .build());
-                */
     }
 }
