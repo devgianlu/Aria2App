@@ -351,7 +351,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         conditionsSpinner.setAdapter(new SpinnerConditionsAdapter(this, conditions));
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @Nullable
     private MultiProfile buildProfile() throws InvalidFieldException {
         String profileName = this.profileName.getEditText().getText().toString().trim();
         if (profileName.isEmpty() ||
@@ -366,6 +366,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             AuthenticationFragment.Fields authFields = authFragments.get(i).getFields(this);
             DirectDownloadFragment.Fields ddFields = ddFragments.get(i).getFields(this);
 
+            if (connFields == null || authFields == null || ddFields == null) return null;
             profile.add(conditions.get(i), connFields, authFields, ddFields);
         }
 
@@ -375,6 +376,10 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
     private void doneAll() {
         try {
             MultiProfile profile = buildProfile();
+            if (profile == null) {
+                Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE);
+                return;
+            }
 
             ProfilesManager manager = ProfilesManager.get(this);
             manager.save(profile);

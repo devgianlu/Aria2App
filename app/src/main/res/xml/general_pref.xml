@@ -16,6 +16,7 @@
         android:title="@string/refreshRate" />
 
     <MultiSelectListPreference
+        android:defaultValue="@array/empty_array"
         android:key="a2_customInfo"
         android:summary="@string/downloadDisplayInfoSummary"
         android:title="@string/downloadDisplayInfo" />

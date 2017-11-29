@@ -329,18 +329,19 @@ public class ConnectionFragment extends FieldErrorFragment {
             URI url = new URI(protocol, null, fields.address, fields.port, fields.endpoint, null, null);
             completeAddress.setText(url.toString());
             completeAddress.setVisibility(View.VISIBLE);
-
-
         } catch (InvalidFieldException | URISyntaxException | NullPointerException ex) {
             completeAddress.setVisibility(View.GONE);
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
-        if (!created && getArguments().getSerializable("edit") != null) {
+        if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificate, edit.hostnameVerifier);
+            if (edit != null) {
+                return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificate, edit.hostnameVerifier);
+            } else {
+                return null;
+            }
         }
 
         MultiProfile.ConnectionMethod connectionMethod;

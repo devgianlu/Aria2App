@@ -214,7 +214,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return name;
     }
 
-    public void add(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
+    public void add(@NonNull ConnectivityCondition cond, @NonNull ConnectionFragment.Fields connFields, @NonNull AuthenticationFragment.Fields authFields, @NonNull DirectDownloadFragment.Fields ddFields) {
         profiles.add(new UserProfile(cond, connFields, authFields, ddFields));
     }
 
