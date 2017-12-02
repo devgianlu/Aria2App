@@ -5,7 +5,7 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_file_download_colored_48dp"
+        android:icon="@drawable/ic_playlist_add_colored_48dp"
         android:shortcutId="addUri"
         android:shortcutShortLabel="@string/addUri">
 

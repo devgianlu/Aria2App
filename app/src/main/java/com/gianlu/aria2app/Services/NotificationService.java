@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
+// FIXME
 public class NotificationService extends IntentService {
     private static final String CHANNEL_ID = "aria2app";
 
@@ -123,7 +124,7 @@ public class NotificationService extends IntentService {
         BTCOMPLETE,
         UNKNOWN;
 
-        private static Event parseEvent(String event) {
+        private static Event parse(String event) {
             switch (event.replace("aria2.", "")) {
                 case "onDownloadStart":
                     return Event.START;
@@ -179,7 +180,7 @@ public class NotificationService extends IntentService {
             if (soundEnabled)
                 builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
-            switch (Event.parseEvent(eventBody.getString("method"))) {
+            switch (Event.parse(eventBody.getString("method"))) {
                 case START:
                     if (!selectedNotifications.contains("START")) return;
                     builder.setContentTitle(getString(R.string.notificationStarted));

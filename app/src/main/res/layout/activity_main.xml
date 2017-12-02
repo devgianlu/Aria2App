@@ -183,7 +183,7 @@
                         android:layout_height="wrap_content"
                         fab:fab_colorNormal="@color/colorURI"
                         fab:fab_colorPressed="@color/colorURI_pressed"
-                        fab:fab_icon="@drawable/ic_file_download_white_48dp"
+                        fab:fab_icon="@drawable/ic_playlist_add_white_48dp"
                         fab:fab_size="mini"
                         fab:fab_title="@string/addUri" />
                 </com.getbase.floatingactionbutton.FloatingActionsMenu>
