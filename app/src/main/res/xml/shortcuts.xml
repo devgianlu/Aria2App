@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="n_mr1">
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_file_download_colored_48dp"
+        android:shortcutId="addUri"
+        android:shortcutShortLabel="@string/addUri">
+
+        <intent
+            android:action="com.gianlu.aria2app.ADD_URI"
+            android:targetClass="com.gianlu.aria2app.LoadingActivity"
+            android:targetPackage="com.gianlu.aria2app" />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_torrent_colored_48dp"
+        android:shortcutId="addTorrent"
+        android:shortcutShortLabel="@string/addTorrent">
+
+        <intent
+            android:action="com.gianlu.aria2app.ADD_TORRENT"
+            android:data="action://addTorrent"
+            android:targetClass="com.gianlu.aria2app.LoadingActivity"
+            android:targetPackage="com.gianlu.aria2app" />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_metalink_colored_48dp"
+        android:shortcutId="addMetalink"
+        android:shortcutShortLabel="@string/addMetalink">
+
+        <intent
+            android:action="com.gianlu.aria2app.ADD_METALINK"
+            android:targetClass="com.gianlu.aria2app.LoadingActivity"
+            android:targetPackage="com.gianlu.aria2app" />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

@@ -323,6 +323,7 @@
     <string name="purgedDownloadResult">Purged all download results.</string>
     <string name="skipThisVersion">Skip this version</string>
     <string name="selectDirForDownload">Select all files in directory for download</string>
+    <string name="pickProfile_someAction">Choose a profile to complete the action:</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

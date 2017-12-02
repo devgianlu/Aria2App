@@ -163,7 +163,7 @@
                         android:layout_height="wrap_content"
                         fab:fab_colorNormal="@color/colorMetalink"
                         fab:fab_colorPressed="@color/colorMetalink_pressed"
-                        fab:fab_icon="@drawable/ic_metalink"
+                        fab:fab_icon="@drawable/ic_link_white_48dp"
                         fab:fab_size="mini"
                         fab:fab_title="@string/addMetalink" />
 
@@ -173,7 +173,7 @@
                         android:layout_height="wrap_content"
                         fab:fab_colorNormal="@color/colorTorrent"
                         fab:fab_colorPressed="@color/colorTorrent_pressed"
-                        fab:fab_icon="@drawable/ic_bit_torrent"
+                        fab:fab_icon="@drawable/ic_torrent_white_48dp"
                         fab:fab_size="mini"
                         fab:fab_title="@string/addTorrent" />
 

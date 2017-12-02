@@ -41,6 +41,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class LoadingActivity extends AppCompatActivity implements IConnect {
+    public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
+    public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
+    public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
@@ -52,6 +55,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
     private Button seeError;
     private Button cancel;
     private ProfilesManager manager;
+    private String shortcutAction;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -113,11 +117,19 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
             return;
         }
 
+        if (hasShortcutAction()) {
+            AnalyticsApplication.sendAnalytics(LoadingActivity.this, Utils.ACTION_SHORTCUT);
+
+            shortcutAction = getIntent().getAction();
+            displayPicker(true);
+            return;
+        }
+
         if (hasShareData()) {
             AnalyticsApplication.sendAnalytics(LoadingActivity.this, Utils.ACTION_SHARE);
 
-            displayPicker(true);
             shareData = getShareData();
+            displayPicker(true);
             return;
         }
 
@@ -166,6 +178,11 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
             displayPicker(false);
         else
             tryConnecting(manager.getLastProfile(this));
+    }
+
+    private boolean hasShortcutAction() {
+        String action = getIntent().getAction();
+        return Objects.equals(action, SHORTCUT_ADD_METALINK) || Objects.equals(action, SHORTCUT_ADD_URI) || Objects.equals(action, SHORTCUT_ADD_TORRENT);
     }
 
     private boolean hasShareData() {
@@ -283,7 +300,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
         connecting.setVisibility(View.GONE);
         picker.setVisibility(View.VISIBLE);
 
-        if (share) pickerHint.setText(R.string.pickProfile_share);
+        if (share) pickerHint.setText(R.string.pickProfile_someAction);
         else pickerHint.setText(R.string.pickProfile);
 
         CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<MultiProfile>() {
@@ -304,8 +321,9 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
 
     private void goTo(Class goTo) {
         Intent intent = new Intent(LoadingActivity.this, goTo).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (shareData != null) intent.putExtra("shareData", shareData);
-        if (fromNotifGid != null) intent.putExtra("gid", fromNotifGid);
+        if (shortcutAction != null) intent.putExtra("shortcutAction", shortcutAction);
+        else if (shareData != null) intent.putExtra("shareData", shareData);
+        else if (fromNotifGid != null) intent.putExtra("gid", fromNotifGid);
         if (finished) startActivity(intent);
         else this.goTo = intent;
     }
