@@ -428,6 +428,9 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                 case LoadingActivity.SHORTCUT_ADD_METALINK:
                     startActivity(new Intent(this, AddMetalinkActivity.class));
                     break;
+                case LoadingActivity.SHORTCUT_SEARCH:
+                    startActivity(new Intent(this, SearchActivity.class));
+                    break;
             }
         } else {
             Uri shareData = getIntent().getParcelableExtra("shareData");

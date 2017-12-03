@@ -44,6 +44,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
     public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
     public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
+    public static final String SHORTCUT_SEARCH = "com.gianlu.aria2app.SEARCH";
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
@@ -182,7 +183,10 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
 
     private boolean hasShortcutAction() {
         String action = getIntent().getAction();
-        return Objects.equals(action, SHORTCUT_ADD_METALINK) || Objects.equals(action, SHORTCUT_ADD_URI) || Objects.equals(action, SHORTCUT_ADD_TORRENT);
+        return Objects.equals(action, SHORTCUT_ADD_METALINK)
+                || Objects.equals(action, SHORTCUT_ADD_URI)
+                || Objects.equals(action, SHORTCUT_ADD_TORRENT)
+                || Objects.equals(action, SHORTCUT_SEARCH);
     }
 
     private boolean hasShareData() {

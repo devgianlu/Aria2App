@@ -45,4 +45,18 @@
 
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_search_colored_48dp"
+        android:shortcutId="search"
+        android:shortcutShortLabel="@string/search">
+
+        <intent
+            android:action="com.gianlu.aria2app.SEARCH"
+            android:targetClass="com.gianlu.aria2app.LoadingActivity"
+            android:targetPackage="com.gianlu.aria2app" />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
 </shortcuts>
