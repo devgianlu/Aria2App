@@ -31,12 +31,4 @@
         android:summaryOff="@string/soundOff"
         android:summaryOn="@string/soundOn"
         android:title="@string/enableSound" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:dependency="a2_enableNotifications"
-        android:key="a2_enablePersistent"
-        android:summaryOff="@string/persistentOff"
-        android:summaryOn="@string/persistentOn"
-        android:title="@string/enablePersistent" />
 </PreferenceScreen>

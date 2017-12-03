@@ -52,7 +52,7 @@ public class Utils {
     public static final String ACTION_SEARCH_GET_TORRENT = "new_torrent_from_search";
     public static final String ACTION_SEARCH_GET_MAGNET = "new_magnet_from_search";
     public static final String ACTION_SHORTCUT = "used_shortcut";
-    private static final Random random = new Random();
+    public static final Random random = new Random();
 
     public static int indexOf(String[] items, String item) {
         for (int i = 0; i < items.length; i++)

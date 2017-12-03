@@ -1,27 +1,36 @@
 package com.gianlu.aria2app.Services;
 
-import android.app.IntentService;
+import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
+import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.LoadingActivity;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
-import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Prefs;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -30,184 +39,220 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
 
-// FIXME
-public class NotificationService extends IntentService {
-    private static final String CHANNEL_ID = "aria2app";
+public class NotificationService extends Service {
+    private static final int FOREGROUND_SERVICE_NOTIF_ID = 1;
+    private static final String CHANNEL_FOREGROUND_SERVICE = "foreground";
+    private final Map<String, Integer> errorNotifications = new HashMap<>();
+    private List<WebSocket> webSockets;
+    private ArrayList<MultiProfile> profiles;
+    private WifiManager wifiManager;
+    private NotificationManager notificationManager;
 
-    public NotificationService() {
-        super("Aria2App notification service");
-    }
-
-    private static Intent createStartIntent(Context context) {
+    public static void start(Context context) {
         ArrayList<MultiProfile> profiles = new ArrayList<>();
         for (MultiProfile profile : ProfilesManager.get(context).getProfiles())
             if (profile.notificationsEnabled) profiles.add(profile);
 
-        return new Intent(context, NotificationService.class)
-                .putExtra("foreground", Prefs.getBoolean(context, PKeys.A2_PERSISTENT_NOTIFS, true))
-                .putExtra("profiles", profiles);
+        if (profiles.isEmpty()) return;
+
+        context.startService(new Intent(context, NotificationService.class)
+                .putExtra("profiles", profiles));
     }
 
     public static void stop(Context context) {
-        context.stopService(new Intent(context, NotificationService.class).setAction("STOP"));
+        context.stopService(new Intent(context, NotificationService.class));
     }
 
-    public static void start(Context context) {
-        context.startService(NotificationService.createStartIntent(context));
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && !Objects.equals(intent.getAction(), "STOP") && intent.getBooleanExtra("foreground", true)) {
-            startForeground(new Random().nextInt(10000), new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setShowWhen(false)
-                    .setContentTitle(getString(R.string.notificationService))
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setContentText(CommonUtils.join((ArrayList<MultiProfile>) intent.getSerializableExtra("profiles"), ", "))
-                    .setCategory(Notification.CATEGORY_SERVICE)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .addAction(new NotificationCompat.Action.Builder(
-                            R.drawable.ic_clear_black_48dp,
-                            getApplicationContext().getString(R.string.stopNotificationService),
-                            PendingIntent.getService(getApplicationContext(), 0,
-                                    new Intent(getApplicationContext(), NotificationService.class)
-                                            .setAction("STOP"), 0)).build())
-                    .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
-                    .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT)).build());
+    @SuppressWarnings("unchecked")
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        if (intent != null && intent.hasExtra("profiles")) {
+            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
+            webSockets = new ArrayList<>();
+
+            getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+            startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+
+            return super.onStartCommand(intent, flags, startId);
         }
 
-        if (intent != null) onHandleIntent(intent);
-        return START_STICKY;
+        if (profiles != null) profiles.clear();
+        if (webSockets != null) webSockets.clear();
+
+        return START_NOT_STICKY; // Process will stop
     }
 
-    @SuppressWarnings("unchecked")
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createMainChannel() {
+        NotificationChannel channel = new NotificationChannel(CHANNEL_FOREGROUND_SERVICE, "Foreground service", NotificationManager.IMPORTANCE_LOW);
+        channel.setShowBadge(false);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    private Notification createForegroundServiceNotification() {
+        createMainChannel();
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
+        builder.setShowWhen(false)
+                .setContentTitle(getString(R.string.notificationService))
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentText(CommonUtils.join(profiles, ", "))
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .setGroup(CHANNEL_FOREGROUND_SERVICE)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo))
+                .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
+
+        // TODO: Stop service from notification
+
+        return builder.build();
+    }
+
+    @Nullable
     @Override
-    protected void onHandleIntent(Intent intent) {
-        List<MultiProfile> profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
-        if (Objects.equals(intent.getAction(), "STOP") || profiles == null || profiles.isEmpty()) {
-            stopSelf();
-            return;
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void handleEvent(MultiProfile.UserProfile profile, String gid, EventType type) {
+        // TODO
+    }
+
+    private void notifyError(MultiProfile.UserProfile profile, String title, String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
+        builder.setContentTitle(title)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(message))
+                .setContentText(message)
+                .setCategory(Notification.CATEGORY_ERROR)
+                .setGroup(CHANNEL_FOREGROUND_SERVICE)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_error_outline_grey_48dp));
+
+        Integer id = errorNotifications.get(profile.getParent().id);
+        if (id == null) {
+            id = Utils.random.nextInt();
+            errorNotifications.put(profile.getParent().id, id);
         }
 
+        notificationManager.notify(id, builder.build());
+    }
+
+    private void notifyUnsupportedConnectionMethod(MultiProfile.UserProfile profile) {
+        notifyError(profile, getString(R.string.notificationUnsupportedConnMethod, profile.getProfileName(this)), getString(R.string.notificationUnsupportedConnMethod_details));
+    }
+
+    private void notifyException(MultiProfile.UserProfile profile, Exception ex) {
+        notifyError(profile, getString(R.string.notificationException, profile.getProfileName(this)), ex.getMessage());
+    }
+
+    private void recreateWebsockets(int networkType) {
         for (MultiProfile multi : profiles) {
-            MultiProfile.UserProfile profile = multi.getProfile(getApplicationContext());
-            if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP) continue;
+            MultiProfile.UserProfile profile;
+            if (networkType == ConnectivityManager.TYPE_DUMMY)
+                profile = multi.getProfile(this);
+            else
+                profile = multi.getProfile(networkType, wifiManager);
 
-            WebSocket webSocket;
+            if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP) {
+                notifyUnsupportedConnectionMethod(profile);
+                continue;
+            }
+
             try {
-                if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, profile.certificate);
-                else
-                    webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.certificate);
-            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
-                stopSelf();
-                return;
-            }
-
-            webSocket.addListener(new NotificationHandler(profile, multi.id)).connectAsynchronously();
-        }
-    }
-
-    private enum Event {
-        START,
-        PAUSE,
-        STOP,
-        COMPLETE,
-        ERROR,
-        BTCOMPLETE,
-        UNKNOWN;
-
-        private static Event parse(String event) {
-            switch (event.replace("aria2.", "")) {
-                case "onDownloadStart":
-                    return Event.START;
-                case "onDownloadPause":
-                    return Event.PAUSE;
-                case "onDownloadStop":
-                    return Event.STOP;
-                case "onDownloadComplete":
-                    return Event.COMPLETE;
-                case "onDownloadError":
-                    return Event.ERROR;
-                case "onBtDownloadComplete":
-                    return Event.BTCOMPLETE;
-                default:
-                    return Event.UNKNOWN;
+                WebSocket webSocket = NetUtils.readyWebSocket(profile);
+                webSockets.add(webSocket);
+                webSocket.addListener(new NotificationsHandler(profile))
+                        .connectAsynchronously();
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyManagementException | KeyStoreException ex) {
+                notifyException(profile, ex);
             }
         }
     }
 
-    private class NotificationHandler extends WebSocketAdapter {
+    public enum EventType {
+        DOWNLOAD_START,
+        DOWNLOAD_PAUSE,
+        DOWNLOAD_STOP,
+        DOWNLOAD_COMPLETE,
+        DOWNLOAD_ERROR,
+        DOWNLOAD_BT_COMPLETE;
+
+
+        public static EventType parse(String method) {
+            switch (method) {
+                default: // Shouldn't happen
+                case "aria2.onDownloadStart":
+                    return DOWNLOAD_START;
+                case "aria2.onDownloadPause":
+                    return DOWNLOAD_PAUSE;
+                case "aria2.onDownloadStop":
+                    return DOWNLOAD_STOP;
+                case "aria2.onDownloadComplete":
+                    return DOWNLOAD_COMPLETE;
+                case "aria2.onDownloadError":
+                    return DOWNLOAD_ERROR;
+                case "aria2.onBtDownloadComplete":
+                    return DOWNLOAD_BT_COMPLETE;
+            }
+        }
+    }
+
+    private class ConnectivityChangedReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (profiles != null && wifiManager != null && Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
+                boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+                if (!noConnectivity) {
+                    int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
+                    if (networkType == ConnectivityManager.TYPE_DUMMY) return;
+
+                    if (webSockets != null) {
+                        for (WebSocket webSocket : webSockets) webSocket.disconnect();
+                        webSockets.clear();
+                    } else {
+                        webSockets = new ArrayList<>();
+                    }
+
+                    recreateWebsockets(networkType);
+                    notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                }
+            }
+        }
+    }
+
+    private class NotificationsHandler extends WebSocketAdapter {
         private final MultiProfile.UserProfile profile;
-        private final String profileId;
-        private final boolean soundEnabled;
-        private final Set<String> selectedNotifications;
 
-        NotificationHandler(MultiProfile.UserProfile profile, String profileId) {
+        NotificationsHandler(MultiProfile.UserProfile profile) {
             this.profile = profile;
-            this.profileId = profileId;
+        }
 
-            selectedNotifications = Prefs.getSet(getApplicationContext(), PKeys.A2_SELECTED_NOTIFS_TYPE, new HashSet<String>());
-            soundEnabled = Prefs.getBoolean(getApplicationContext(), PKeys.A2_NOTIFS_SOUND, true);
+        @Override
+        public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
+            notifyException(profile, exception);
         }
 
         @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
-            JSONObject eventBody = new JSONObject(text);
-            String gid = eventBody.getJSONArray("params").getJSONObject(0).getString("gid");
+            JSONObject json = new JSONObject(text);
+            JSONArray events = json.getJSONArray("params");
 
-            int reqCode = new Random().nextInt(10000);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(NotificationService.this, CHANNEL_ID)
-                    .setContentIntent(
-                            PendingIntent.getActivity(getApplicationContext(), reqCode, new Intent(NotificationService.this, LoadingActivity.class)
-                                    .putExtra("fromNotification", true)
-                                    .putExtra("profileId", profileId)
-                                    .putExtra("gid", gid), PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setContentText(profile.getProfileName(getApplicationContext()))
-                    .setContentInfo("GID#" + gid)
-                    .setGroup(gid)
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
-                    .setAutoCancel(true);
-
-            if (soundEnabled)
-                builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-
-            switch (Event.parse(eventBody.getString("method"))) {
-                case START:
-                    if (!selectedNotifications.contains("START")) return;
-                    builder.setContentTitle(getString(R.string.notificationStarted));
-                    break;
-                case STOP:
-                    if (!selectedNotifications.contains("STOP")) return;
-                    builder.setContentTitle(getString(R.string.notificationStopped));
-                    break;
-                case PAUSE:
-                    if (!selectedNotifications.contains("PAUSE")) return;
-                    builder.setContentTitle(getString(R.string.notificationPaused));
-                    break;
-                case COMPLETE:
-                    if (!selectedNotifications.contains("COMPLETE")) return;
-                    builder.setContentTitle(getString(R.string.notificationComplete));
-                    break;
-                case BTCOMPLETE:
-                    if (!selectedNotifications.contains("BTCOMPLETE")) return;
-                    builder.setContentTitle(getString(R.string.notificationBTComplete));
-                    break;
-                case ERROR:
-                    if (!selectedNotifications.contains("ERROR")) return;
-                    builder.setContentTitle(getString(R.string.notificationError));
-                    break;
+            for (int i = 0; i < events.length(); i++) {
+                JSONObject event = events.getJSONObject(i);
+                handleEvent(profile, event.getString("gid"), EventType.parse(event.getString("method")));
             }
-
-            NotificationManagerCompat.from(NotificationService.this).notify(reqCode, builder.build());
         }
     }
 }

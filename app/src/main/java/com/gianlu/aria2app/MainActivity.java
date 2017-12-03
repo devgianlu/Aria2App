@@ -394,7 +394,8 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
 
         if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
-        else NotificationService.stop(this);
+        else
+            NotificationService.stop(this);
 
         adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
         recyclerViewLayout.loadListData(adapter);
