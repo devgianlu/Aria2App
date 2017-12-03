@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Services;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,7 +12,7 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -21,11 +20,14 @@ import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Prefs;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -40,13 +42,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class NotificationService extends Service {
     private static final int FOREGROUND_SERVICE_NOTIF_ID = 1;
     private static final String CHANNEL_FOREGROUND_SERVICE = "foreground";
+    private static final String ACTION_STOP = "com.gianlu.aria2app.notifs.STOP";
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private List<WebSocket> webSockets;
     private ArrayList<MultiProfile> profiles;
@@ -71,17 +76,24 @@ public class NotificationService extends Service {
     @Override
     @SuppressWarnings("unchecked")
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        if (intent != null && intent.hasExtra("profiles")) {
-            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-            profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
-            webSockets = new ArrayList<>();
+        if (intent != null) {
+            if (Objects.equals(intent.getAction(), ACTION_STOP)) {
+                stopSelf();
+            } else if (intent.hasExtra("profiles")) {
+                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
+                webSockets = new ArrayList<>();
 
-            getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-            recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
-            startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                createMainChannel();
+                createEventsChannels();
 
-            return super.onStartCommand(intent, flags, startId);
+                getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+
+                return super.onStartCommand(intent, flags, startId);
+            }
         }
 
         if (profiles != null) profiles.clear();
@@ -90,16 +102,7 @@ public class NotificationService extends Service {
         return START_NOT_STICKY; // Process will stop
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
-    private void createMainChannel() {
-        NotificationChannel channel = new NotificationChannel(CHANNEL_FOREGROUND_SERVICE, "Foreground service", NotificationManager.IMPORTANCE_LOW);
-        channel.setShowBadge(false);
-        notificationManager.createNotificationChannel(channel);
-    }
-
     private Notification createForegroundServiceNotification() {
-        createMainChannel();
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setShowWhen(false)
                 .setContentTitle(getString(R.string.notificationService))
@@ -110,9 +113,8 @@ public class NotificationService extends Service {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo))
+                .addAction(new NotificationCompat.Action(R.drawable.ic_clear_black_48dp, getString(R.string.stopNotificationService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
                 .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-
-        // TODO: Stop service from notification
 
         return builder.build();
     }
@@ -124,7 +126,26 @@ public class NotificationService extends Service {
     }
 
     private void handleEvent(MultiProfile.UserProfile profile, String gid, EventType type) {
-        // TODO
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
+        builder.setContentTitle(type.getFormal(this))
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentText("GID#" + gid)
+                .setContentInfo(profile.getProfileName(this))
+                .setCategory(Notification.CATEGORY_EVENT)
+                .setGroup(gid)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_new_releases_grey_48dp))
+                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("fromNotification", true);
+        bundle.putString("profileId", profile.getParent().id);
+        bundle.putString("gid", gid);
+        builder.setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class)
+                .putExtras(bundle), PendingIntent.FLAG_UPDATE_CURRENT));
+
+        notificationManager.notify(Utils.random.nextInt(), builder.build());
     }
 
     private void notifyError(MultiProfile.UserProfile profile, String title, String message) {
@@ -157,6 +178,8 @@ public class NotificationService extends Service {
     }
 
     private void recreateWebsockets(int networkType) {
+        webSockets.clear();
+
         for (MultiProfile multi : profiles) {
             MultiProfile.UserProfile profile;
             if (networkType == ConnectivityManager.TYPE_DUMMY)
@@ -180,18 +203,65 @@ public class NotificationService extends Service {
         }
     }
 
+    private void createMainChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_FOREGROUND_SERVICE, "Foreground service", NotificationManager.IMPORTANCE_LOW);
+            channel.setShowBadge(false);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void createEventsChannels() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            for (EventType type : EventType.values()) {
+                NotificationChannel channel = new NotificationChannel(type.channelName(), type.getFormal(this), NotificationManager.IMPORTANCE_DEFAULT);
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
     public enum EventType {
-        DOWNLOAD_START,
-        DOWNLOAD_PAUSE,
-        DOWNLOAD_STOP,
-        DOWNLOAD_COMPLETE,
-        DOWNLOAD_ERROR,
-        DOWNLOAD_BT_COMPLETE;
+        DOWNLOAD_START("START"),
+        DOWNLOAD_PAUSE("PAUSE"),
+        DOWNLOAD_STOP("STOP"),
+        DOWNLOAD_COMPLETE("COMPLETE"),
+        DOWNLOAD_ERROR("ERROR"),
+        DOWNLOAD_BT_COMPLETE("BTCOMPLETE");
 
+        private final String prefValue;
 
+        EventType(String prefValue) {
+            this.prefValue = prefValue;
+        }
+
+        public static List<EventType> parseFromPrefs(Set<String> set) {
+            List<EventType> types = new ArrayList<>();
+            for (String name : set) {
+                EventType type = parseFromPrefs(name);
+                if (type != null && !types.contains(type)) types.add(type);
+            }
+
+            return types;
+        }
+
+        @Nullable
+        public static EventType parseFromPrefs(String name) {
+            for (EventType type : values())
+                if (Objects.equals(type.prefValue, name))
+                    return type;
+
+            return null;
+        }
+
+        public static Set<String> prefsValues() {
+            Set<String> set = new HashSet<>();
+            for (EventType type : values()) set.add(type.prefValue);
+            return set;
+        }
+
+        @Nullable
         public static EventType parse(String method) {
             switch (method) {
-                default: // Shouldn't happen
                 case "aria2.onDownloadStart":
                     return DOWNLOAD_START;
                 case "aria2.onDownloadPause":
@@ -204,6 +274,31 @@ public class NotificationService extends Service {
                     return DOWNLOAD_ERROR;
                 case "aria2.onBtDownloadComplete":
                     return DOWNLOAD_BT_COMPLETE;
+                default:
+                    return null;
+            }
+        }
+
+        public String channelName() {
+            return name().toLowerCase();
+        }
+
+        public String getFormal(Context context) {
+            switch (this) {
+                case DOWNLOAD_START:
+                    return context.getString(R.string.notificationStarted);
+                case DOWNLOAD_PAUSE:
+                    return context.getString(R.string.notificationPaused);
+                case DOWNLOAD_STOP:
+                    return context.getString(R.string.notificationStopped);
+                case DOWNLOAD_COMPLETE:
+                    return context.getString(R.string.notificationComplete);
+                case DOWNLOAD_ERROR:
+                    return context.getString(R.string.notificationError);
+                case DOWNLOAD_BT_COMPLETE:
+                    return context.getString(R.string.notificationBTComplete);
+                default:
+                    return context.getString(R.string.unknown);
             }
         }
     }
@@ -219,7 +314,11 @@ public class NotificationService extends Service {
                     if (networkType == ConnectivityManager.TYPE_DUMMY) return;
 
                     if (webSockets != null) {
-                        for (WebSocket webSocket : webSockets) webSocket.disconnect();
+                        for (WebSocket webSocket : webSockets) {
+                            webSocket.clearListeners();
+                            webSocket.disconnect();
+                        }
+
                         webSockets.clear();
                     } else {
                         webSockets = new ArrayList<>();
@@ -234,9 +333,11 @@ public class NotificationService extends Service {
 
     private class NotificationsHandler extends WebSocketAdapter {
         private final MultiProfile.UserProfile profile;
+        private final List<EventType> enabledNotifs;
 
         NotificationsHandler(MultiProfile.UserProfile profile) {
             this.profile = profile;
+            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PKeys.A2_SELECTED_NOTIFS_TYPE, EventType.prefsValues()));
         }
 
         @Override
@@ -245,13 +346,20 @@ public class NotificationService extends Service {
         }
 
         @Override
+        public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+            Logging.logMe(cause);
+        }
+
+        @Override
         public void onTextMessage(WebSocket websocket, String text) throws Exception {
             JSONObject json = new JSONObject(text);
-            JSONArray events = json.getJSONArray("params");
-
-            for (int i = 0; i < events.length(); i++) {
-                JSONObject event = events.getJSONObject(i);
-                handleEvent(profile, event.getString("gid"), EventType.parse(event.getString("method")));
+            EventType type = EventType.parse(json.getString("method"));
+            if (enabledNotifs.contains(type)) {
+                JSONArray events = json.getJSONArray("params");
+                for (int i = 0; i < events.length(); i++) {
+                    JSONObject event = events.getJSONObject(i);
+                    handleEvent(profile, event.getString("gid"), type);
+                }
             }
         }
     }

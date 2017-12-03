@@ -28,12 +28,12 @@
     <string name="path"><![CDATA[<b>Path:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Am choking:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking:</b>]]> %s</string>
-    <string name="notificationComplete">Download completed!</string>
-    <string name="notificationStarted">New download started!</string>
-    <string name="notificationStopped">Download stopped!</string>
-    <string name="notificationPaused">Download paused!</string>
-    <string name="notificationError">Got error on download!</string>
-    <string name="notificationBTComplete">BitTorrent download completed!</string>
+    <string name="notificationComplete">Download completed</string>
+    <string name="notificationStarted">Download started</string>
+    <string name="notificationStopped">Download stopped</string>
+    <string name="notificationPaused">Download paused</string>
+    <string name="notificationError">Download error</string>
+    <string name="notificationBTComplete">BitTorrent download completed</string>
     <string name="unknown">Unknown</string>
     <string name="noPeers">No peers</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
@@ -351,12 +351,12 @@
         <item>BTCOMPLETE</item>
         <item>ERROR</item>
     </string-array>
-    <string-array name="selectedNotifications">
-        <item>Start</item>
-        <item>Pause</item>
-        <item>Stop</item>
-        <item>Complete</item>
-        <item>BitTorrent complete</item>
-        <item>Error</item>
+    <string-array name="selectedNotifications" translatable="false">
+        <item>@string/notificationStarted</item>
+        <item>@string/notificationPaused</item>
+        <item>@string/notificationStopped</item>
+        <item>@string/notificationComplete</item>
+        <item>@string/notificationBTComplete</item>
+        <item>@string/notificationError</item>
     </string-array>
 </resources>

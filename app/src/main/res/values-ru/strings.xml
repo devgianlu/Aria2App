@@ -26,12 +26,6 @@
     <string name="path"><![CDATA[<b>Путь:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>Моя блокировка:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>Блокировка пира:</b>]]> %s</string>
-    <string name="notificationComplete">Все задачи завершены!</string>
-    <string name="notificationStarted">Новая загрузка началось!</string>
-    <string name="notificationStopped">Загрузка остановлена!</string>
-    <string name="notificationPaused">Загрузка приостановлена!</string>
-    <string name="notificationError">Произошла ошибка при загрузке!</string>
-    <string name="notificationBTComplete">Загрузка торрента завершена!</string>
     <string name="unknown">Неизвестно</string>
     <string name="noPeers">Нет пиров</string>
     <string name="features"><![CDATA[<b>Включенные функции:</b>]]> %s</string>
@@ -326,13 +320,5 @@
         <item>3 секунды</item>
         <item>4 секунды</item>
         <item>5 секунд</item>
-    </string-array>
-    <string-array name="selectedNotifications">
-        <item>Старт</item>
-        <item>Пауза</item>
-        <item>Стоп</item>
-        <item>Завершено</item>
-        <item>BitTorrent завершено</item>
-        <item>Ошибка</item>
     </string-array>
 </resources>

@@ -15,7 +15,6 @@ import com.neovisionaries.ws.client.WebSocketState;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -27,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketing extends AbstractClient {
     private static WebSocketing webSocketing;
     private static boolean locked = false;
-    private final Map<Integer, WeakReference<IReceived>> requests = new ConcurrentHashMap<>();
+    private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
     private IConnect connectionListener;
     private WebSocket socket;
 
@@ -92,7 +91,7 @@ public class WebSocketing extends AbstractClient {
         if (socket.getState() != WebSocketState.OPEN) return;
 
         try {
-            requests.put(request.getInt("id"), new WeakReference<>(listener));
+            requests.put(request.getInt("id"), listener);
             socket.sendText(request.toString());
         } catch (Exception ex) {
             listener.onException(ex);
@@ -114,9 +113,7 @@ public class WebSocketing extends AbstractClient {
             String method = response.optString("method", null);
             if (method != null && method.startsWith("aria2.on")) return;
 
-            WeakReference<IReceived> ref = requests.remove(response.getInt("id"));
-            if (ref == null || ref.get() == null) return;
-            IReceived listener = ref.get();
+            IReceived listener = requests.remove(response.getInt("id"));
             if (listener == null) return;
             if (response.isNull("error")) listener.onResponse(response);
             else listener.onException(new AriaException(response.getJSONObject("error")));

@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -38,6 +39,11 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
             defaultValues.add(CustomDownloadInfo.Info.REMAINING_TIME.name());
             Prefs.putSet(getApplicationContext(), PKeys.A2_CUSTOM_INFO, defaultValues);
         }
+
+        Logging.clearLogs(this);
+
+        if (Prefs.getString(this, PKeys.DD_DOWNLOAD_PATH, null) == null)
+            Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
     }
 
     @Override

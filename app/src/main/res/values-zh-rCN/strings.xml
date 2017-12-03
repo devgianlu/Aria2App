@@ -27,12 +27,6 @@
     <string name="path"><![CDATA[<b>路径：</b>]]>%s</string>
     <string name="amChoking"><![CDATA[<b>Am choking：</b>]]>%s</string>
     <string name="peerChoking"><![CDATA[<b>Peer choking：</b>]]>%s</string>
-    <string name="notificationComplete">下载完成！</string>
-    <string name="notificationStarted">新的下载已开始！</string>
-    <string name="notificationStopped">下载停止！</string>
-    <string name="notificationPaused">下载暂停！</string>
-    <string name="notificationError">下载出错！</string>
-    <string name="notificationBTComplete">BT下载完成！</string>
     <string name="unknown">未知</string>
     <string name="noPeers">没有同伴</string>
     <string name="features"><![CDATA[<b>启用的功能：</b>]]>%s</string>
@@ -327,13 +321,5 @@
         <item>3秒</item>
         <item>4秒</item>
         <item>5秒</item>
-    </string-array>
-    <string-array name="selectedNotifications">
-        <item>开始</item>
-        <item>暂停</item>
-        <item>停止</item>
-        <item>完成</item>
-        <item>BT完成</item>
-        <item>错误</item>
     </string-array>
 </resources>

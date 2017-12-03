@@ -23,12 +23,4 @@
         android:key="a2_selectedNotifications"
         android:summary="@string/notificationTypeSummary"
         android:title="@string/notificationType" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:dependency="a2_enableNotifications"
-        android:key="a2_enableSound"
-        android:summaryOff="@string/soundOff"
-        android:summaryOn="@string/soundOn"
-        android:title="@string/enableSound" />
 </PreferenceScreen>

@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
+import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.AppCompatPreferenceFragment;
 import com.gianlu.commonutils.BaseAboutFragment;
@@ -37,6 +38,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             if (!super.onMenuItemSelected(featureId, item)) NavUtils.navigateUpFromSameTask(this);
             return true;
         }
+
         return super.onMenuItemSelected(featureId, item);
     }
 
@@ -150,6 +152,15 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.notifications_pref);
             getActivity().setTitle(R.string.notifications);
             setHasOptionsMenu(true);
+
+            findPreference(PKeys.A2_ENABLE_NOTIFS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    if ((boolean) newValue) NotificationService.start(getActivity());
+                    else NotificationService.stop(getActivity());
+                    return true;
+                }
+            });
         }
 
         @Override

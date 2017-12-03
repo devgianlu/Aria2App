@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.provider.MediaStore;
@@ -298,11 +297,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
-        if (Prefs.getString(this, PKeys.DD_DOWNLOAD_PATH, null) == null)
-            Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
-
-        Logging.clearLogs(this);
-
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
@@ -418,6 +412,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         String shortcutAction = getIntent().getStringExtra("shortcutAction");
+        Uri shareData = getIntent().getParcelableExtra("shareData");
         if (shortcutAction != null) {
             switch (shortcutAction) {
                 case LoadingActivity.SHORTCUT_ADD_URI:
@@ -433,19 +428,16 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
                     startActivity(new Intent(this, SearchActivity.class));
                     break;
             }
-        } else {
-            Uri shareData = getIntent().getParcelableExtra("shareData");
-            if (shareData != null) {
-                String scheme = shareData.getScheme();
-                if (scheme.equals("magnet") || scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
-                    processUrl(shareData);
+        } else if (shareData != null) {
+            String scheme = shareData.getScheme();
+            if (scheme.equals("magnet") || scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
+                processUrl(shareData);
+            } else {
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    _sharedUri = shareData;
+                    Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, REQUEST_READ_CODE);
                 } else {
-                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        _sharedUri = shareData;
-                        Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, REQUEST_READ_CODE);
-                    } else {
-                        processFileUri(shareData);
-                    }
+                    processFileUri(shareData);
                 }
             }
         }
@@ -863,12 +855,13 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         }
 
         String gid = getIntent().getStringExtra("gid");
-        if (gid != null) {
-            for (Download download : downloads)
-                if (Objects.equals(download.gid, gid))
+        if (gid != null && !downloads.isEmpty()) {
+            for (Download download : downloads) {
+                if (Objects.equals(download.gid, gid)) {
                     onMoreClick(download);
-
-            getIntent().removeExtra("gid");
+                    getIntent().removeExtra("gid");
+                }
+            }
         }
     }
 
