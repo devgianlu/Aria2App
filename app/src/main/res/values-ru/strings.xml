@@ -312,6 +312,16 @@
     <string name="purgedDownloadResult">Список загрузок очищен!</string>
     <string name="skipThisVersion">пропустить эту версию</string>
     <string name="selectDirForDownload">Выбрать все файлы в каталоге для загрузки</string>
+    <string name="notificationComplete">Загрузка завершена</string>
+    <string name="notificationStarted">Запуск загрузки</string>
+    <string name="notificationStopped">Загрузка остановлена</string>
+    <string name="notificationPaused">Загрузить приостановлено</string>
+    <string name="notificationError">Ошибка загрузки</string>
+    <string name="notificationBTComplete">Загрузка BitTorrent завершена</string>
+    <string name="pickProfile_someAction">Выберите профиль, чтобы выполнить действие:</string>
+    <string name="notificationException">Не удалось запустить службу уведомлений для %s!</string>
+    <string name="notificationUnsupportedConnMethod">еподдерживаемый метод подключения для %s!</string>
+    <string name="notificationUnsupportedConnMethod_details">Не удается запустить службу уведомлений для этого профиля. Перейдите в WebSockets, если вы хотите включить уведомления.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

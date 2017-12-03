@@ -249,7 +249,7 @@
     <string name="dirFilesDeselected">取消选中文件夹中的所有文件用来下载。</string>
     <string name="dirFilesSelected">选中文件夹中的所有文件用来下载。</string>
     <string name="hasAlwaysCondition">您不能添加一个新的条件如果您已经指定了一个每次都会使用的条件。</string>
-    <string name="cannotAddAlwaysCondition">您不能添加一个“总是”运行的条件如果您已经有其它的条件。</string>
+    <string name="cannotAddAlwaysCondition">您不能添加一个"总是"运行的条件如果您已经有其它的条件。</string>
     <string name="failedChangingOptions">更改选项失败！</string>
     <string name="seeError">查看错误</string>
     <string name="contactMe">联系我</string>
@@ -284,7 +284,7 @@
     <string name="profileDoesntExist">此个人资料不再存在！</string>
     <string name="dd_resume">恢复下载</string>
     <string name="dd_resume_summary">打开应用程序时恢复暂停的下载</string>
-    <string name="noDirectDownloads">没有下载。 您可以从下载的“文件”选项卡开始下载文件。 请阅读更多关于DirectDownload的信息：http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="noDirectDownloads">没有下载。 您可以从下载的"文件"选项卡开始下载文件。 请阅读更多关于DirectDownload的信息：http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
     <string name="invalidMaxSimultaneousDownloads">值必须高于0且低于或等于10</string>
     <string name="connectionsLabel">连接数</string>
     <string name="numSeederLabel">种子数量</string>
@@ -313,6 +313,16 @@
     <string name="purgedDownloadResult">清除所有下载结果。</string>
     <string name="skipThisVersion">跳过这个版本</string>
     <string name="selectDirForDownload">选择目录下的所有文件进行下载</string>
+    <string name="notificationComplete">下载完成</string>
+    <string name="notificationStarted">下载开始</string>
+    <string name="notificationStopped">下载停止</string>
+    <string name="notificationPaused">下载暂停</string>
+    <string name="notificationError">下载错误</string>
+    <string name="notificationBTComplete"> BitTorrent下载完成</string>
+    <string name="pickProfile_someAction">选择一个配置文件来完成操作：</string>
+    <string name="notificationException">无法启动％s的通知服务！</string>
+    <string name="notificationUnsupportedConnMethod">％s不支持的连接方法！</string>
+    <string name="notificationUnsupportedConnMethod_details">无法为此配置文件启动通知服务。 如果你想启用通知，请切换到WebSockets。</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
