@@ -371,7 +371,6 @@ public class ConnectionFragment extends FieldErrorFragment {
         if (endpoint.isEmpty())
             throw new InvalidFieldException(getClass(), R.id.editProfile_endpoint, context.getString(R.string.endpointEmpty));
 
-
         boolean encryption = this.encryption.isChecked();
 
         try {

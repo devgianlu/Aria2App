@@ -327,6 +327,10 @@
     <string name="notificationException">Failed starting notification service for %s!</string>
     <string name="notificationUnsupportedConnMethod">Unsupported connection method for %s!</string>
     <string name="notificationUnsupportedConnMethod_details">Cannot start notification service for this profile. Please switch to WebSockets if you want to enable notifications.</string>
+    <string name="export">Export</string>
+    <string name="exportOptionsGrantWrite">In order to export the options you must grant the write permission and retry.</string>
+    <string name="failedExportingOptions">Failed exporting the options!</string>
+    <string name="exportedOptions">Options exported successfully to %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

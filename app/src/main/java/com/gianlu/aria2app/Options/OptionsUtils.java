@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.ViewTreeObserver;
@@ -11,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
@@ -25,14 +27,18 @@ import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class OptionsUtils {
+public final class OptionsUtils {
     private static void showGlobalDialog(final Activity activity, List<Option> options) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.globalOptions)
@@ -51,6 +57,12 @@ public class OptionsUtils {
         optionsView.setAdapter(adapter);
 
         builder.setView(optionsView)
+                .setNeutralButton(R.string.export, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        exportOptions(activity, adapter.getOptions(), true);
+                    }
+                })
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -79,6 +91,12 @@ public class OptionsUtils {
         optionsView.setAdapter(adapter);
 
         builder.setView(optionsView)
+                .setNeutralButton(R.string.export, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        exportOptions(activity, adapter.getOptions(), false);
+                    }
+                })
                 .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -316,5 +334,38 @@ public class OptionsUtils {
                 pd.dismiss();
             }
         });
+    }
+
+    private static void exportOptions(Activity activity, List<Option> options, boolean global) {
+        StringBuilder builder = new StringBuilder();
+
+        for (Option option : options) {
+            if ((option.value == null || option.value.isEmpty()) && !option.isValueChanged())
+                continue;
+
+            builder.append(option.name).append('=');
+            if (option.newValue != null) builder.append(option.newValue);
+            else builder.append(option.value);
+            builder.append('\n');
+        }
+
+        if (!Utils.requestWritePermission(activity, 3)) {
+            Toaster.show(activity, Utils.Messages.EXPORT_OPTIONS_GRANT_WRITE);
+            return;
+        }
+
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "aria2app-exported-" + (global ? "global" : "download") + ".conf");
+        if (file.exists())
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Utils.random.nextInt(1000) + "-aria2app-exported-" + (global ? "global" : "download") + ".conf");
+
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)))) {
+            writer.append(builder.toString());
+            writer.flush();
+        } catch (IOException ex) {
+            Toaster.show(activity, Utils.Messages.FAILED_EXPORTING_OPTIONS, ex);
+            return;
+        }
+
+        Toaster.show(activity, activity.getString(R.string.exportedOptions, file.getAbsolutePath()), Toast.LENGTH_LONG, null, null, null);
     }
 }

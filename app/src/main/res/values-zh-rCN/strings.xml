@@ -324,6 +324,11 @@
     <string name="notificationUnsupportedConnMethod">％s不支持的连接方法！</string>
     <string name="notificationUnsupportedConnMethod_details">无法为此配置文件启动通知服务。 如果你想启用通知，请切换到WebSockets。</string>
 
+    <string name="export">出口</string>
+    <string name="exportOptionsGrantWrite">为了导出选项，您必须授予写权限并重试。</string>
+    <string name="failedExportingOptions">Failed exporting the options!</string>
+    <string name="exportedOptions">选项成功导出到％s</string>
+
     <!-- String-arrays -->
     <string-array name="updateRate">
         <item>1秒</item>

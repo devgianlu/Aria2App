@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.Random;
 
-public class Utils {
+public final class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
     public static final int CHART_UPLOAD_SET = 0;
     public static final String ACTION_DOWNLOAD_FILE = "dd_download_file";
@@ -131,8 +131,8 @@ public class Utils {
         return array;
     }
 
-    public static void requestWritePermission(final Activity activity, final int code) {
-        if (activity == null) return;
+    public static boolean requestWritePermission(final Activity activity, final int code) {
+        if (activity == null) return false;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
@@ -144,10 +144,15 @@ public class Utils {
                                 ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, code);
                             }
                         }));
+
+                return false;
             } else {
                 ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, code);
+                return false;
             }
         }
+
+        return true;
     }
 
     public static void requestReadPermission(final Activity activity, @StringRes int message, final int code) {
@@ -233,6 +238,8 @@ public class Utils {
         public static final Toaster.Message PAUSED_ALL = new Toaster.Message(R.string.pausedAll, false);
         public static final Toaster.Message RESUMED_ALL = new Toaster.Message(R.string.resumedAll, false);
         public static final Toaster.Message PURGED_DOWNLOAD_RESULT = new Toaster.Message(R.string.purgedDownloadResult, false);
+        public static final Toaster.Message EXPORT_OPTIONS_GRANT_WRITE = new Toaster.Message(R.string.exportOptionsGrantWrite, false);
+        public static final Toaster.Message FAILED_EXPORTING_OPTIONS = new Toaster.Message(R.string.failedExportingOptions, true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
