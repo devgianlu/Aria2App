@@ -133,11 +133,11 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         return layout;
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            return new Fields(edit.directDownload);
+            if (edit == null) return null;
+            else return new Fields(edit.directDownload);
         }
 
         MultiProfile.DirectDownload dd = null;

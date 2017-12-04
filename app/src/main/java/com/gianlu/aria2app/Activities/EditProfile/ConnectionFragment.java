@@ -337,11 +337,10 @@ public class ConnectionFragment extends FieldErrorFragment {
     public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            if (edit != null) {
-                return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificate, edit.hostnameVerifier);
-            } else {
+            if (edit == null)
                 return null;
-            }
+            else
+                return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSSL, edit.certificate, edit.hostnameVerifier);
         }
 
         MultiProfile.ConnectionMethod connectionMethod;

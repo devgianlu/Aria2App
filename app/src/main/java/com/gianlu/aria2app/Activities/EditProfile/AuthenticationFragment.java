@@ -148,11 +148,13 @@ public class AuthenticationFragment extends FieldErrorFragment {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
             MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);
+            if (edit == null)
+                return null;
+            else
+                return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);
         }
 
         JTA2.AuthMethod authMethod;
