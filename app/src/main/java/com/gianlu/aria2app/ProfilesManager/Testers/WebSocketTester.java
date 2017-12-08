@@ -15,6 +15,7 @@ import com.neovisionaries.ws.client.WebSocketState;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -41,9 +42,9 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
         try {
             WebSocket webSocket;
             if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
-                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, profile.certificate);
+                webSocket = NetUtils.readyWebSocket(profile);
             else
-                webSocket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.certificate);
+                webSocket = NetUtils.readyWebSocket(profile);
 
             webSocket.addListener(this).connectAsynchronously();
 
@@ -51,7 +52,7 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
                 returnValue.wait();
                 return returnValue.get();
             }
-        } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
+        } catch (IOException | URISyntaxException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, ex));
             return false;
         } catch (InterruptedException ignored) {

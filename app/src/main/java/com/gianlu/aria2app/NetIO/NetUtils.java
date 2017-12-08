@@ -40,6 +40,21 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 public class NetUtils {
 
+    public static URI validateConnection(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption) throws URISyntaxException {
+        URIBuilder builder = new URIBuilder();
+        builder.setHost(address)
+                .setPort(port)
+                .setPath(endpoint);
+
+        if (connectionMethod == MultiProfile.ConnectionMethod.HTTP) {
+            builder.setScheme(encryption ? "https" : "http");
+        } else {
+            builder.setScheme(encryption ? "wss" : "ws");
+        }
+
+        return builder.build();
+    }
+
     @NonNull
     public static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         if (ca == null) return SSLContext.getDefault();
@@ -84,7 +99,7 @@ public class NetUtils {
         }
     }
 
-    public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+    public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, URISyntaxException {
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);
         factory.setVerifyHostname(profile.hostnameVerifier);
@@ -92,7 +107,7 @@ public class NetUtils {
             factory.setSSLContext(createSSLContext(profile.certificate));
 
         try {
-            WebSocket socket = factory.createSocket(profile.buildWebSocketUrl(), 5000);
+            WebSocket socket = factory.createSocket(createBaseWsURI(profile), 5000);
             socket.setFrameQueueSize(15);
 
             if (profile.authMethod == JTA2.AuthMethod.HTTP)
@@ -131,7 +146,8 @@ public class NetUtils {
         return builder.build();
     }
 
-    public static URI createBaseURI(MultiProfile.UserProfile profile) throws URISyntaxException {
+    @NonNull
+    public static URI createBaseHttpURI(MultiProfile.UserProfile profile) throws URISyntaxException {
         return new URIBuilder()
                 .setScheme(profile.serverSSL ? "https" : "http")
                 .setHost(profile.serverAddr)
@@ -139,8 +155,17 @@ public class NetUtils {
                 .setPath(profile.serverEndpoint).build();
     }
 
+    @NonNull
+    public static URI createBaseWsURI(MultiProfile.UserProfile profile) throws URISyntaxException {
+        return new URIBuilder()
+                .setScheme(profile.serverSSL ? "wss" : "ws")
+                .setHost(profile.serverAddr)
+                .setPort(profile.serverPort)
+                .setPath(profile.serverEndpoint).build();
+    }
+
     public static HttpGet createGetRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException {
-        if (defaultUri == null) defaultUri = createBaseURI(profile);
+        if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
         URIBuilder builder = new URIBuilder(defaultUri);
         if (request != null) {
             builder.addParameter("method", request.getString("method"))
@@ -158,7 +183,7 @@ public class NetUtils {
     }
 
     public static HttpPost createPostRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException {
-        if (defaultUri == null) defaultUri = createBaseURI(profile);
+        if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
         HttpPost post = new HttpPost(defaultUri);
 
         if (request != null)

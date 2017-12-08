@@ -45,7 +45,7 @@ public class HTTPing extends AbstractClient {
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
         this.client = NetUtils.buildHttpClient(profile, sslContext);
-        this.defaultUri = NetUtils.createBaseURI(profile);
+        this.defaultUri = NetUtils.createBaseHttpURI(profile);
     }
 
     public static HTTPing instantiate(Context context) throws InitializationException {

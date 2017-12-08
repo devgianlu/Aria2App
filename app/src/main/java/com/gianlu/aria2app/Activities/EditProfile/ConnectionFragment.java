@@ -27,6 +27,7 @@ import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -374,9 +375,7 @@ public class ConnectionFragment extends FieldErrorFragment {
         boolean encryption = this.encryption.isChecked();
 
         try {
-            new URI(connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET ?
-                    MultiProfile.buildWebSocketUrl(address, port, endpoint, encryption)
-                    : MultiProfile.buildHttpUrl(address, port, endpoint, encryption));
+            NetUtils.validateConnection(connectionMethod, address, port, endpoint, encryption);
         } catch (URISyntaxException ex) {
             throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.invalidCompleteAddress));
         }

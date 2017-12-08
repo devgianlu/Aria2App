@@ -13,9 +13,11 @@ import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,14 +108,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         profiles = new ArrayList<>();
         profiles.add(new UserProfile(token, port));
-    }
-
-    public static String buildWebSocketUrl(String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL) {
-        return (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
-    }
-
-    public static String buildHttpUrl(String serverAddr, int serverPort, String serverEndpoint, boolean serverSSL) {
-        return (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
     }
 
     @NonNull
@@ -431,7 +425,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final ConnectivityCondition connectivityCondition;
         private String encodedCredentials;
         private String fullServerAddress;
-        private String websocketUrl;
 
         public UserProfile(JSONObject obj) throws JSONException {
             this(obj, null);
@@ -519,21 +512,15 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return MultiProfile.this;
         }
 
-        public String buildWebSocketUrl() {
-            if (websocketUrl == null)
-                websocketUrl = MultiProfile.buildWebSocketUrl(serverAddr, serverPort, serverEndpoint, serverSSL);
-            return websocketUrl;
-        }
-
-        public String getFullServerAddress() {
+        public String getFullServerAddress() throws URISyntaxException {
             if (fullServerAddress == null) {
                 switch (connectionMethod) {
                     default:
                     case HTTP:
-                        fullServerAddress = (serverSSL ? "https://" : "http://") + serverAddr + ":" + serverPort + serverEndpoint;
+                        fullServerAddress = NetUtils.createBaseHttpURI(this).toASCIIString();
                         break;
                     case WEBSOCKET:
-                        fullServerAddress = (serverSSL ? "wss://" : "ws://") + serverAddr + ":" + serverPort + serverEndpoint;
+                        fullServerAddress = NetUtils.createBaseWsURI(this).toASCIIString();
                         break;
                 }
             }
@@ -596,7 +583,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         @Override
         public String getSecondaryText(Context context) {
-            return getFullServerAddress();
+            try {
+                return getFullServerAddress();
+            } catch (URISyntaxException ex) {
+                Logging.logMe(ex);
+                return "";
+            }
         }
 
         @Override

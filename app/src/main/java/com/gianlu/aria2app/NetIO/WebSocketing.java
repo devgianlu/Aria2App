@@ -15,6 +15,7 @@ import com.neovisionaries.ws.client.WebSocketState;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -30,14 +31,14 @@ public class WebSocketing extends AbstractClient {
     private IConnect connectionListener;
     private WebSocket socket;
 
-    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, ProfilesManager.NoCurrentProfileException {
+    private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, ProfilesManager.NoCurrentProfileException, URISyntaxException {
         super(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
         socket = NetUtils.readyWebSocket(profile).addListener(new Adapter()).connectAsynchronously();
     }
 
-    private WebSocketing(Context context, MultiProfile.UserProfile profile, @Nullable IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    private WebSocketing(Context context, MultiProfile.UserProfile profile, @Nullable IConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
         super(context, profile);
-        socket = NetUtils.readyWebSocket(profile.buildWebSocketUrl(), profile.hostnameVerifier, profile.serverUsername, profile.serverPassword, profile.certificate);
+        socket = NetUtils.readyWebSocket(profile);
         socket.addListener(new Adapter()).connectAsynchronously();
         connectionListener = listener;
     }
@@ -46,7 +47,7 @@ public class WebSocketing extends AbstractClient {
         if (webSocketing == null) {
             try {
                 webSocketing = new WebSocketing(context);
-            } catch (ProfilesManager.NoCurrentProfileException | IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
+            } catch (URISyntaxException | ProfilesManager.NoCurrentProfileException | IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
                 throw new InitializationException(ex);
             }
         }
@@ -58,7 +59,7 @@ public class WebSocketing extends AbstractClient {
         try {
             unlock();
             webSocketing = new WebSocketing(context, profile, listener);
-        } catch (CertificateException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
+        } catch (CertificateException | URISyntaxException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
         }
     }
