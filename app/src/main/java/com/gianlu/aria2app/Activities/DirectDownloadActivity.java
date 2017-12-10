@@ -21,6 +21,7 @@ import com.gianlu.aria2app.GeneralFileProvider;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.RecyclerViewLayout;
+import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         setContentView(layout);
         setTitle(R.string.directDownload);
 
-        layout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        layout.setLayoutManager(new SuppressingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         layout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         layout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         layout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

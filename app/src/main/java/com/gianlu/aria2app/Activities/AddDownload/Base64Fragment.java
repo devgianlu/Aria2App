@@ -121,7 +121,9 @@ public class Base64Fragment extends Fragment {
 
     @Nullable
     public String getBase64() throws InvalidFieldException {
-        if (data == null || getContext() == null)
+        if (getContext() == null) return null;
+
+        if (data == null)
             throw new InvalidFieldException(Base64Fragment.class, R.id.base64Fragment_pick, getString(R.string.base64NotSelected));
 
         try (InputStream in = getContext().getContentResolver().openInputStream(data); ByteArrayOutputStream out = new ByteArrayOutputStream()) {

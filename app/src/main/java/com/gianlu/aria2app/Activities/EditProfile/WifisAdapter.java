@@ -90,7 +90,7 @@ public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             wifis.clear();
-            wifis.addAll((ArrayList<WifiConfiguration>) results.values);
+            if (results.values != null) wifis.addAll((ArrayList<WifiConfiguration>) results.values);
             notifyDataSetChanged();
         }
     }
