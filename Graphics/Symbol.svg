@@ -1,14 +1,9 @@
-<svg height="512" preserveAspectRatio="xMidYMid" viewBox="0 0 512 512" width="512"
-    xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: #fbe9e7;
-        fill-rule: evenodd;
-      }
-    </style>
-  </defs>
-  <path class="cls-1"
-      d="M153.147,355.537 L153.062,355.492 L153.062,356.000 L108.062,356.000 L108.062,355.231 L107.978,355.276 L-0.001,152.198 L44.146,128.724 L77.791,192.000 L183.472,192.000 L216.978,128.985 L261.125,152.459 L153.147,355.537 ZM104.376,242.000 L130.632,291.379 L156.887,242.000 L104.376,242.000 ZM105.062,-0.000 L157.062,-0.000 L157.062,150.000 L105.062,150.000 L105.062,-0.000 Z"
-      transform="translate(125.44 78)" />
+<?xml version="1.0" encoding="utf-8"?><!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg style="enable-background:new 0 0 512 512;" id="Layer_1" version="1.1"  viewBox="0 0 512 512" x="0px"
+	 xmlns="http://www.w3.org/2000/svg" y="0px" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<path class="st0" d="M278.6,433.5L278.6,433.5l-0.1,0.5h-45v-0.8l-0.1,0l-108-203.1l44.1-23.5l33.6,63.3h105.7l33.5-63l44.1,23.5
+	L278.6,433.5z M229.8,320l26.3,49.4l26.3-49.4H229.8z M230.5,78h52v150h-52V78z"/>
 </svg>
