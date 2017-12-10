@@ -62,7 +62,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.edit_profile_test_fragment, container, false);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_edit_profile_test, container, false);
         test = layout.findViewById(R.id.editProfile_test);
         test.setOnClickListener(new View.OnClickListener() {
             @Override

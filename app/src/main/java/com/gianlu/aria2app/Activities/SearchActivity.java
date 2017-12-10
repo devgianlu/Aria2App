@@ -253,7 +253,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     private void showTorrentDialog(final Torrent torrent) {
-        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.torrent_dialog, null, false);
+        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_torrent, null, false);
         SuperTextView engine = layout.findViewById(R.id.torrentDialog_engine);
         SuperTextView size = layout.findViewById(R.id.torrentDialog_size);
         SuperTextView seeders = layout.findViewById(R.id.torrentDialog_seeders);

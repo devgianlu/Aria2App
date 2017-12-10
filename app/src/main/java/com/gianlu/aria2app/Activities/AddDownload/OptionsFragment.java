@@ -47,7 +47,7 @@ public class OptionsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.options_fragment, container, false);
+        final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_options, container, false);
         final ProgressBar loading = layout.findViewById(R.id.optionsFragment_loading);
         position = layout.findViewById(R.id.optionsFragment_position);
         filename = layout.findViewById(R.id.optionsFragment_filename);

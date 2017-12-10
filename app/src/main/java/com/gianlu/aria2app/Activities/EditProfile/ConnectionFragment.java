@@ -87,7 +87,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layout = (ScrollView) inflater.inflate(R.layout.edit_profile_connection_fragment, container, false);
+        layout = (ScrollView) inflater.inflate(R.layout.fragment_edit_profile_connection, container, false);
         completeAddress = layout.findViewById(R.id.editProfile_completeAddress);
         addressFlag = layout.findViewById(R.id.editProfile_addressFlag);
         connectionMethod = layout.findViewById(R.id.editProfile_connectionMethod);

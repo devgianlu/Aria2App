@@ -229,7 +229,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             return;
         }
 
-        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.new_condition_dialog, null, false);
+        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_new_condition, null, false);
         final RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
         final TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
         final MultiAutoCompleteTextView ssidField = (MultiAutoCompleteTextView) ssid.getEditText();

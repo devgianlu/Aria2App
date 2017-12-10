@@ -184,7 +184,7 @@ public final class OptionsUtils {
         builder.setTitle(option.name)
                 .setNegativeButton(android.R.string.cancel, null);
 
-        LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.edit_option_dialog, null, false);
+        LinearLayout layout = (LinearLayout) LayoutInflater.from(activity).inflate(R.layout.dialog_edit_option, null, false);
         SuperTextView value = layout.findViewById(R.id.editOptionDialog_value);
         value.setHtml(R.string.currentValue, option.value == null ? "not set" : option.value);
         final EditText edit = layout.findViewById(R.id.editOptionDialog_edit);

@@ -40,7 +40,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        layout = (ScrollView) inflater.inflate(R.layout.edit_profile_authentication_fragment, container, false);
+        layout = (ScrollView) inflater.inflate(R.layout.fragment_edit_profile_authentication, container, false);
         authMethod = layout.findViewById(R.id.editProfile_authenticationMethod);
         authMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

@@ -45,7 +45,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        layout = (ScrollView) inflater.inflate(R.layout.edit_profile_dd_fragment, parent, false);
+        layout = (ScrollView) inflater.inflate(R.layout.fragment_edit_profile_dd, parent, false);
         enableDirectDownload = layout.findViewById(R.id.editProfile_enableDirectDownload);
         enableDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

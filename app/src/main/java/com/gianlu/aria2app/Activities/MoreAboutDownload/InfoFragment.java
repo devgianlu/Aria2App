@@ -130,7 +130,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.info_fragment, container, false));
+        holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.fragment_info, container, false));
         MessageLayout.setPaddingTop(holder.rootView, 48);
 
         Download download = (Download) getArguments().getSerializable("download");

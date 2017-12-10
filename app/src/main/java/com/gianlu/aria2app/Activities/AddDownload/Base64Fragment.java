@@ -97,7 +97,7 @@ public class Base64Fragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.base64_fragment, container, false);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_base64, container, false);
         path = layout.findViewById(R.id.base64Fragment_path);
         Button pick = layout.findViewById(R.id.base64Fragment_pick);
         pick.setOnClickListener(new View.OnClickListener() {

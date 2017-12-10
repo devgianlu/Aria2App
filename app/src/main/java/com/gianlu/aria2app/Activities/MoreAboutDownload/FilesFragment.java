@@ -141,7 +141,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.files_fragment, parent, false);
+        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_files, parent, false);
         if (getContext() == null) return layout;
         breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);

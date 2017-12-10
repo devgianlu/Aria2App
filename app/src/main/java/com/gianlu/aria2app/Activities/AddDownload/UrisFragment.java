@@ -82,7 +82,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getContext() == null) return null;
 
-        layout = (LinearLayout) inflater.inflate(R.layout.uris_fragment, container, false);
+        layout = (LinearLayout) inflater.inflate(R.layout.fragment_uris, container, false);
         list = layout.findViewById(R.id.urisFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));

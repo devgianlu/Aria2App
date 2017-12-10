@@ -84,13 +84,12 @@ public class NotificationService extends Service {
                 notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                 profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
-                webSockets = new ArrayList<>();
 
                 createMainChannel();
                 createEventsChannels();
 
-                getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                 return super.onStartCommand(intent, flags, startId);
@@ -179,7 +178,16 @@ public class NotificationService extends Service {
     }
 
     private void recreateWebsockets(int networkType) {
-        webSockets.clear();
+        if (webSockets != null) {
+            for (WebSocket webSocket : webSockets) {
+                webSocket.clearListeners();
+                webSocket.disconnect();
+            }
+
+            webSockets.clear();
+        } else {
+            webSockets = new ArrayList<>();
+        }
 
         for (MultiProfile multi : profiles) {
             MultiProfile.UserProfile profile;
@@ -313,17 +321,6 @@ public class NotificationService extends Service {
                 if (!noConnectivity) {
                     int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
                     if (networkType == ConnectivityManager.TYPE_DUMMY) return;
-
-                    if (webSockets != null) {
-                        for (WebSocket webSocket : webSockets) {
-                            webSocket.clearListeners();
-                            webSocket.disconnect();
-                        }
-
-                        webSockets.clear();
-                    } else {
-                        webSockets = new ArrayList<>();
-                    }
 
                     recreateWebsockets(networkType);
                     notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
