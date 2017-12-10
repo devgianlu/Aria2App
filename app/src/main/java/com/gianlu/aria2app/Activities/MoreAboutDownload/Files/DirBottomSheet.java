@@ -36,7 +36,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
     private AriaDirectory currentDir = null;
 
     public DirBottomSheet(ViewGroup parent, ISheet listener) throws JTA2.InitializingException {
-        super(parent, R.layout.dir_sheet_header, R.layout.dir_sheet, true);
+        super(parent, R.layout.sheet_header_dir, R.layout.sheet_dir, true);
         this.listener = listener;
         this.jta2 = JTA2.instantiate(getContext());
     }

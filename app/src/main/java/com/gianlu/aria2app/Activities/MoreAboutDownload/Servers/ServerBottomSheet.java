@@ -32,7 +32,7 @@ public class ServerBottomSheet extends NiceBaseBottomSheet {
     private Server currentServer = null;
 
     public ServerBottomSheet(ViewGroup parent) {
-        super(parent, R.layout.server_sheet_header, R.layout.server_sheet, false);
+        super(parent, R.layout.sheet_header_server, R.layout.sheet_server, false);
         freeGeoIPApi = FreeGeoIPApi.get();
     }
 

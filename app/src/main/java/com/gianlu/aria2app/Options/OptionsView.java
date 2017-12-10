@@ -52,7 +52,7 @@ public class OptionsView extends FrameLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.options_view, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_options, this, true);
 
         list = findViewById(R.id.optionsView_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

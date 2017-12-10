@@ -19,7 +19,7 @@ public class BreadcrumbSegment extends LinearLayout {
         super(context);
         setOrientation(HORIZONTAL);
         setGravity(Gravity.CENTER_VERTICAL);
-        LayoutInflater.from(context).inflate(R.layout.breadcrumb_segment, this, true);
+        LayoutInflater.from(context).inflate(R.layout.item_breadcrumb, this, true);
 
         Button name = findViewById(R.id.breadcrumbSegment_name);
         name.setText(node.name);

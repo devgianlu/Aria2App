@@ -196,7 +196,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final SuperTextView name;
 
         DirViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.directory_item, parent, false));
+            super(inflater.inflate(R.layout.item_directory, parent, false));
 
             name = itemView.findViewById(R.id.directoryItem_name);
         }
@@ -210,7 +210,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final FileTypeTextView fileType;
 
         FileViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.file_item, parent, false));
+            super(inflater.inflate(R.layout.item_file, parent, false));
 
             name = itemView.findViewById(R.id.fileItem_name);
             progressBar = itemView.findViewById(R.id.fileItem_progressBar);

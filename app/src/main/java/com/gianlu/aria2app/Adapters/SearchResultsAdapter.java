@@ -111,7 +111,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         final TextView leeches;
 
         public ViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.search_result_item, parent, false));
+            super(inflater.inflate(R.layout.item_search_result, parent, false));
 
             name = itemView.findViewById(R.id.searchResult_name);
             engine = itemView.findViewById(R.id.searchResult_engine);

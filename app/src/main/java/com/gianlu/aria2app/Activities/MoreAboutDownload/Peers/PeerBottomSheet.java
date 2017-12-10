@@ -34,7 +34,7 @@ public class PeerBottomSheet extends NiceBaseBottomSheet {
     private Peer currentPeer = null;
 
     public PeerBottomSheet(ViewGroup parent) {
-        super(parent, R.layout.peer_sheet_header, R.layout.peer_sheet, false);
+        super(parent, R.layout.sheet_header_peer, R.layout.sheet_peer, false);
         freeGeoIPApi = FreeGeoIPApi.get();
     }
 

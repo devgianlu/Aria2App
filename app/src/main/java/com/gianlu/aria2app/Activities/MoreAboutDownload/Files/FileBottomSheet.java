@@ -38,7 +38,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
     private TextView percentage;
 
     public FileBottomSheet(ViewGroup parent, ISheet listener) throws JTA2.InitializingException {
-        super(parent, R.layout.file_sheet_header, R.layout.file_sheet, true);
+        super(parent, R.layout.sheet_header_file, R.layout.sheet_file, true);
         this.listener = listener;
         this.jta2 = JTA2.instantiate(getContext());
     }

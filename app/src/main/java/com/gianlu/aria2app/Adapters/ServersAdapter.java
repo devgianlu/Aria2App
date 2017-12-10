@@ -178,7 +178,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final SuperTextView name;
 
         HeaderViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.file_header_item, parent, false));
+            super(inflater.inflate(R.layout.item_file_header, parent, false));
 
             name = itemView.findViewById(R.id.fileHeaderItem_name);
         }
@@ -190,7 +190,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final ImageView flag;
 
         ItemViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.server_item, parent, false));
+            super(inflater.inflate(R.layout.item_server, parent, false));
 
             address = itemView.findViewById(R.id.serverItem_address);
             downloadSpeed = itemView.findViewById(R.id.serverItem_downloadSpeed);

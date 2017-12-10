@@ -94,7 +94,7 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         final ImageButton remove;
 
         public ViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.uri_item, parent, false));
+            super(inflater.inflate(R.layout.item_uri, parent, false));
 
             uri = itemView.findViewById(R.id.uriItem_uri);
             edit = itemView.findViewById(R.id.uriItem_edit);

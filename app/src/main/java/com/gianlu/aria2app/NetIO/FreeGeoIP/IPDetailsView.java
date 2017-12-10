@@ -33,7 +33,7 @@ public class IPDetailsView extends LinearLayout {
     public IPDetailsView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        LayoutInflater.from(getContext()).inflate(R.layout.ip_details_view, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_ip_details, this, true);
 
         flag = findViewById(R.id.ipDetailView_flag);
         ip = findViewById(R.id.ipDetailView_ip);

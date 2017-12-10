@@ -228,7 +228,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         final TextView remainingTime;
 
         public ViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.direct_download_item, parent, false));
+            super(inflater.inflate(R.layout.item_direct_download, parent, false));
 
             status = itemView.findViewById(R.id.directDownloadItem_status);
             status.setTypeface("fonts/Roboto-Bold.ttf");

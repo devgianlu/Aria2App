@@ -146,7 +146,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         final ImageButton info;
 
         ViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.option_item, parent, false));
+            super(inflater.inflate(R.layout.item_option, parent, false));
 
             name = itemView.findViewById(R.id.optionItem_name);
             value = itemView.findViewById(R.id.optionItem_value);

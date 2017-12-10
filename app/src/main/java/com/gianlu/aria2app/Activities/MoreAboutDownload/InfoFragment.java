@@ -355,7 +355,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
                 btAnnounceListContainer.setVisibility(View.VISIBLE);
                 btAnnounceList.removeAllViews();
                 for (String url : download.torrent.announceList) {
-                    final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.bt_announce_item, btAnnounceList, false);
+                    final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.item_bt_announce, btAnnounceList, false);
                     ((TextView) layout.getChildAt(0)).setText(url);
                     ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_country_unknown);
                     btAnnounceList.addView(layout);
