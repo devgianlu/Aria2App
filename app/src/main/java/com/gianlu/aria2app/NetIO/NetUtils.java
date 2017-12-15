@@ -40,7 +40,7 @@ import cz.msebera.android.httpclient.impl.client.HttpClients;
 
 public class NetUtils {
 
-    public static URI validateConnection(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption) throws URISyntaxException {
+    public static void validateConnection(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption) throws URISyntaxException {
         URIBuilder builder = new URIBuilder();
         builder.setHost(address)
                 .setPort(port)
@@ -52,11 +52,11 @@ public class NetUtils {
             builder.setScheme(encryption ? "wss" : "ws");
         }
 
-        return builder.build();
+        builder.build();
     }
 
     @NonNull
-    public static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+    static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         if (ca == null) return SSLContext.getDefault();
 
         String keyStoreType = KeyStore.getDefaultType();
@@ -72,31 +72,6 @@ public class NetUtils {
         context.init(null, tmf.getTrustManagers(), null);
 
         return context;
-    }
-
-    public static WebSocket readyWebSocket(String url, boolean hostnameVerifier, @NonNull String username, @NonNull String password, @Nullable Certificate ca) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, IllegalArgumentException {
-        WebSocketFactory factory = new WebSocketFactory();
-        factory.setVerifyHostname(hostnameVerifier);
-        factory.setSSLContext(createSSLContext(ca));
-
-        try {
-            return factory.createSocket(url, 5000)
-                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP));
-        } catch (IllegalArgumentException ex) {
-            throw new IOException("Just a wrapper", ex);
-        }
-    }
-
-    public static WebSocket readyWebSocket(String url, boolean hostnameVerifier, @Nullable Certificate ca) throws NoSuchAlgorithmException, IOException, CertificateException, KeyStoreException, KeyManagementException {
-        try {
-            WebSocketFactory factory = new WebSocketFactory();
-            factory.setVerifyHostname(hostnameVerifier);
-            factory.setConnectionTimeout(5000);
-            if (ca != null) factory.setSSLContext(createSSLContext(ca));
-            return factory.createSocket(url, 5000);
-        } catch (IllegalArgumentException ex) {
-            throw new IOException("Just a wrapper", ex);
-        }
     }
 
     public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, URISyntaxException {
@@ -123,7 +98,7 @@ public class NetUtils {
         return buildHttpClient(profile, createSSLContext(profile.certificate));
     }
 
-    public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) {
+    static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) {
         HttpClientBuilder builder = HttpClients.custom()
                 .setUserAgent("Aria2App")
                 .setDefaultRequestConfig(RequestConfig.custom()
@@ -148,20 +123,12 @@ public class NetUtils {
 
     @NonNull
     public static URI createBaseHttpURI(MultiProfile.UserProfile profile) throws URISyntaxException {
-        return new URIBuilder()
-                .setScheme(profile.serverSSL ? "https" : "http")
-                .setHost(profile.serverAddr)
-                .setPort(profile.serverPort)
-                .setPath(profile.serverEndpoint).build();
+        return new URI(profile.serverSSL ? "https" : "http", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
     }
 
     @NonNull
     public static URI createBaseWsURI(MultiProfile.UserProfile profile) throws URISyntaxException {
-        return new URIBuilder()
-                .setScheme(profile.serverSSL ? "wss" : "ws")
-                .setHost(profile.serverAddr)
-                .setPort(profile.serverPort)
-                .setPath(profile.serverEndpoint).build();
+        return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
     }
 
     public static HttpGet createGetRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException {
@@ -182,7 +149,7 @@ public class NetUtils {
         return get;
     }
 
-    public static HttpPost createPostRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException {
+    static HttpPost createPostRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException {
         if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
         HttpPost post = new HttpPost(defaultUri);
 
