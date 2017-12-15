@@ -219,15 +219,21 @@ public class DownloaderService extends Service {
 
         @Override
         public void add(int index, DownloadTask element) {
-            super.add(index, element);
-            notifyItemAdded(element);
+            if (!contains(element)) {
+                super.add(index, element);
+                notifyItemAdded(element);
+            }
         }
 
         @Override
         public boolean add(DownloadTask element) {
-            boolean a = super.add(element);
-            notifyItemAdded(element);
-            return a;
+            if (!contains(element)) {
+                boolean a = super.add(element);
+                notifyItemAdded(element);
+                return a;
+            } else {
+                return false;
+            }
         }
 
         private void notifyItemAdded(DownloadTask item) {
