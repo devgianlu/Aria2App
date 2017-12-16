@@ -134,8 +134,9 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
         holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.fragment_info, container, false));
         MessageLayout.setPaddingTop(holder.rootView, 48);
 
-        Download download = (Download) getArguments().getSerializable("download");
-        if (download == null) {
+        Bundle args = getArguments();
+        Download download;
+        if (args == null || (download = (Download) args.getSerializable("download")) == null) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
             return holder.rootView;

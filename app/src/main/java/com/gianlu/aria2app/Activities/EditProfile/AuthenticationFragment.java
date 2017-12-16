@@ -150,8 +150,9 @@ public class AuthenticationFragment extends FieldErrorFragment {
 
     public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
-            MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            if (edit == null)
+            Bundle args = getArguments();
+            MultiProfile.UserProfile edit;
+            if (args == null || (edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit")) == null)
                 return null;
             else
                 return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);

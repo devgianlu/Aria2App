@@ -135,9 +135,12 @@ public class DirectDownloadFragment extends FieldErrorFragment {
 
     public Fields getFields(Context context) throws InvalidFieldException {
         if (!created) {
-            MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-            if (edit == null) return null;
-            else return new Fields(edit.directDownload);
+            Bundle args = getArguments();
+            MultiProfile.UserProfile edit;
+            if (args == null || (edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit")) == null)
+                return null;
+            else
+                return new Fields(edit.directDownload);
         }
 
         MultiProfile.DirectDownload dd = null;
