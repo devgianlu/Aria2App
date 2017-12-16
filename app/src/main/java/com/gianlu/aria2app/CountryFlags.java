@@ -1,17 +1,27 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.LruCache;
 
 public class CountryFlags {
+    private static final int MAX_CACHE_SIZE = 8 * 1024; // 8 MiB
     private static CountryFlags instance;
     private final LruCache<String, Drawable> cache;
 
     private CountryFlags() {
-        cache = new LruCache<>(50);
+        cache = new LruCache<String, Drawable>(MAX_CACHE_SIZE) {
+            @Override
+            protected int sizeOf(String key, Drawable value) {
+                if (value instanceof BitmapDrawable)
+                    return ((BitmapDrawable) value).getBitmap().getByteCount();
+                else
+                    return value.getIntrinsicHeight() * value.getIntrinsicWidth();
+            }
+        };
     }
 
     public static CountryFlags get() {
