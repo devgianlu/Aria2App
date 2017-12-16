@@ -39,6 +39,8 @@ import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
@@ -51,8 +53,7 @@ import com.gianlu.commonutils.Toaster;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet {
-    private UpdateUI updater;
+public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
     private DirBottomSheet dirSheet;
@@ -95,7 +96,7 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onBackPressed() {
-        if (updater != null) updater.stopThread(null);
+        stopUpdater();
     }
 
     private void setupView() {
@@ -108,32 +109,16 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updater.stopThread(new BaseUpdater.IThread() {
+                refresh(new OnRefresh() {
                     @Override
-                    public void onStopped() {
-                        try {
-                            adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
-                            recyclerViewLayout.loadListData(adapter);
-                            recyclerViewLayout.startLoading();
-
-                            updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
-                            updater.start();
-                        } catch (JTA2.InitializingException ex) {
-                            Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
-                        }
+                    public void refreshed() {
+                        adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
+                        recyclerViewLayout.loadListData(adapter);
+                        recyclerViewLayout.startLoading();
                     }
                 });
             }
         });
-
-        try {
-            updater = new UpdateUI(getContext(), download.gid, FilesFragment.this);
-            updater.start();
-        } catch (JTA2.InitializingException ex) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(ex);
-            return;
-        }
 
         DownloaderUtils.bindService(getContext(), FilesFragment.this);
     }
@@ -159,8 +144,9 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
             return layout;
         }
 
-        String gid = getArguments().getString("gid", null);
-        if (gid == null) {
+        String gid;
+        Bundle args = getArguments();
+        if (args == null || (gid = args.getString("gid")) == null) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             return layout;
         }
@@ -400,6 +386,20 @@ public class FilesFragment extends BackPressedFragment implements UpdateUI.IUI, 
         }
 
         AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_DIRECTORY);
+    }
+
+    @Nullable
+    @Override
+    protected BaseUpdater createUpdater(@NonNull Bundle args) {
+        String gid = args.getString("gid");
+
+        try {
+            return new UpdateUI(getContext(), gid, FilesFragment.this);
+        } catch (JTA2.InitializingException ex) {
+            recyclerViewLayout.showMessage(R.string.failedLoading, true);
+            Logging.logMe(ex);
+            return null;
+        }
     }
 
     private interface IWaitBinder {

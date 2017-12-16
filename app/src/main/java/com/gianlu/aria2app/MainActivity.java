@@ -24,7 +24,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -62,7 +61,9 @@ import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Search.SearchUtils;
+import com.gianlu.aria2app.NetIO.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
@@ -95,12 +96,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, UpdateUI.IUI, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, UpdateUI.IUI, OnRefresh {
     private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private DownloadCardsAdapter adapter;
-    private UpdateUI updater;
     private SearchView searchView;
     private Uri _sharedUri;
     private Toolbar toolbar;
@@ -114,26 +114,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     private Messenger downloaderMessenger = null;
     private RecyclerViewLayout recyclerViewLayout;
 
-    private void refresh() {
-        updater.stopThread(new BaseUpdater.IThread() {
-            @Override
-            public void onStopped() {
-                adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<Download>(), MainActivity.this);
-                recyclerViewLayout.loadListData(adapter);
-                recyclerViewLayout.startLoading();
-                setupAdapterFiltersAndSorting();
-
-                try {
-                    updater = new UpdateUI(MainActivity.this, MainActivity.this);
-                    updater.start();
-                } catch (JTA2.InitializingException ex) {
-                    ErrorHandler.get().notifyException(ex, true);
-                    recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
-                }
-            }
-        });
-    }
-
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -146,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     public boolean onMenuItemSelected(BaseDrawerItem which) {
         switch (which.id) {
             case DrawerConst.HOME:
-                refresh();
+                refresh(this);
                 return true;
             case DrawerConst.DIRECT_DOWNLOAD:
                 startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
@@ -350,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refresh(MainActivity.this);
             }
         });
 
@@ -395,14 +375,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
-
-        try {
-            updater = new UpdateUI(this, this);
-            updater.start();
-        } catch (JTA2.InitializingException ex) {
-            ErrorHandler.get().notifyException(ex, true);
-            recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
-        }
 
         if (((ThisApplication) getApplication()).isFirstStart()) {
             SearchUtils.get().cacheSearchEngines();
@@ -482,7 +454,6 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
     @Override
     protected void onDestroy() {
         AbstractClient.removeConnectivityListener(this);
-        if (updater != null) updater.stopThread(null);
         super.onDestroy();
     }
 
@@ -1157,6 +1128,26 @@ public class MainActivity extends AppCompatActivity implements FloatingActionsMe
         broadcastReceiver = null;
 
         downloaderMessenger = null;
+    }
+
+    @Override
+    @Nullable
+    protected BaseUpdater createUpdater() {
+        try {
+            return new UpdateUI(this, this);
+        } catch (JTA2.InitializingException ex) {
+            ErrorHandler.get().notifyException(ex, true);
+            recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
+            return null;
+        }
+    }
+
+    @Override
+    public void refreshed() {
+        adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<Download>(), MainActivity.this);
+        recyclerViewLayout.loadListData(adapter);
+        recyclerViewLayout.startLoading();
+        setupAdapterFiltersAndSorting();
     }
 
     private class InternalBroadcastReceiver extends BroadcastReceiver {

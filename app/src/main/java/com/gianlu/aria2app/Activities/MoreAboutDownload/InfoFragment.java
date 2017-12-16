@@ -19,10 +19,12 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.UpdateUI;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -39,11 +41,10 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
-public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
+public class InfoFragment extends UpdaterFragment implements OnBackPressed, UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private IStatusChanged listener;
-    private UpdateUI updater;
     private ViewHolder holder;
     private Download.Status lastStatus = Download.Status.UNKNOWN;
 
@@ -142,16 +143,6 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
         holder.setup(download);
 
-        try {
-            updater = new UpdateUI(getContext(), download.gid, this);
-            updater.start();
-        } catch (JTA2.InitializingException ex) {
-            holder.loading.setVisibility(View.GONE);
-            MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-            Logging.logMe(ex);
-            return holder.rootView;
-        }
-
         return holder.rootView;
     }
 
@@ -172,7 +163,7 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
 
     @Override
     public void onBackPressed() {
-        if (updater != null) updater.stopThread(null);
+        stopUpdater();
     }
 
     @Override
@@ -209,6 +200,24 @@ public class InfoFragment extends BackPressedFragment implements UpdateUI.IUI, J
     public void onRemovedResult(String gid) {
         Toaster.show(getActivity(), Utils.Messages.RESULT_REMOVED, gid);
         if (listener != null) listener.onStatusChanged(Download.Status.UNKNOWN);
+    }
+
+    @Nullable
+    @Override
+    protected BaseUpdater createUpdater(@NonNull Bundle args) {
+        Download download = (Download) args.getSerializable("download");
+        if (download != null) {
+            try {
+                return new UpdateUI(getContext(), download.gid, this);
+            } catch (JTA2.InitializingException ex) {
+                holder.loading.setVisibility(View.GONE);
+                MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
+                Logging.logMe(ex);
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     public interface IStatusChanged {

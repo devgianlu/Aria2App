@@ -11,9 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.BackPressedFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.InfoFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
@@ -24,7 +24,7 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Toaster;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity implements InfoFragment.IStatusChanged {
-    private PagerAdapter<BackPressedFragment> adapter;
+    private PagerAdapter<? extends OnBackPressed> adapter;
     private Download.Status currentStatus = null;
 
     public static void start(Context context, Download download) {
@@ -118,7 +118,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_DRAGGING)
-                    adapter.getFragments().get(pager.getCurrentItem()).canGoBack(BackPressedFragment.CODE_CLOSE_SHEET);
+                    adapter.getFragments().get(pager.getCurrentItem()).canGoBack(OnBackPressed.CODE_CLOSE_SHEET);
             }
         });
 
@@ -131,7 +131,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                adapter.getFragments().get(tab.getPosition()).canGoBack(BackPressedFragment.CODE_CLOSE_SHEET);
+                adapter.getFragments().get(tab.getPosition()).canGoBack(OnBackPressed.CODE_CLOSE_SHEET);
             }
 
             @Override
@@ -144,11 +144,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
     @Override
     public void onBackPressed() {
         if (adapter != null) {
-            for (BackPressedFragment fragment : adapter.getFragments())
+            for (OnBackPressed fragment : adapter.getFragments())
                 if (!fragment.canGoBack(-1))
                     return;
 
-            for (BackPressedFragment fragment : adapter.getFragments())
+            for (OnBackPressed fragment : adapter.getFragments())
                 fragment.onBackPressed();
         }
 

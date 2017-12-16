@@ -24,18 +24,17 @@ import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
+import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
-import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
 
-public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI, ServersAdapter.IAdapter {
-    private UpdateUI updater;
+public class ServersFragment extends UpdaterFragment implements UpdateUI.IUI, ServersAdapter.IAdapter, OnBackPressed {
     private RecyclerViewLayout recyclerViewLayout;
     private ServersAdapter adapter;
     private ServerBottomSheet sheet;
@@ -62,42 +61,19 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
         recyclerViewLayout.startLoading();
 
         sheet = new ServerBottomSheet(layout);
-
-        final String gid = getArguments().getString("gid");
-        if (gid == null) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            return layout;
-        }
-
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updater.stopThread(new BaseUpdater.IThread() {
+                refresh(new OnRefresh() {
                     @Override
-                    public void onStopped() {
-                        try {
-                            adapter = new ServersAdapter(getContext(), ServersFragment.this);
-                            recyclerViewLayout.loadListData(adapter);
-                            recyclerViewLayout.startLoading();
-
-                            updater = new UpdateUI(getContext(), gid, ServersFragment.this);
-                            updater.start();
-                        } catch (JTA2.InitializingException ex) {
-                            Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
-                        }
+                    public void refreshed() {
+                        adapter = new ServersAdapter(getContext(), ServersFragment.this);
+                        recyclerViewLayout.loadListData(adapter);
+                        recyclerViewLayout.startLoading();
                     }
                 });
             }
         });
-
-        try {
-            updater = new UpdateUI(getContext(), gid, this);
-            updater.start();
-        } catch (JTA2.InitializingException ex) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(ex);
-            return layout;
-        }
 
         return layout;
     }
@@ -119,7 +95,7 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
 
     @Override
     public void onBackPressed() {
-        if (updater != null) updater.stopThread(null);
+        stopUpdater();
     }
 
     @Override
@@ -173,6 +149,20 @@ public class ServersFragment extends BackPressedFragment implements UpdateUI.IUI
     public void onNoServers(String reason) {
         recyclerViewLayout.showMessage(reason, false);
         if (sheet != null) sheet.collapse();
+    }
+
+    @Nullable
+    @Override
+    protected BaseUpdater createUpdater(@NonNull Bundle args) {
+        String gid = args.getString("gid");
+
+        try {
+            return new UpdateUI(getContext(), gid, this);
+        } catch (JTA2.InitializingException ex) {
+            recyclerViewLayout.showMessage(R.string.failedLoading, true);
+            Logging.logMe(ex);
+            return null;
+        }
     }
 }
 

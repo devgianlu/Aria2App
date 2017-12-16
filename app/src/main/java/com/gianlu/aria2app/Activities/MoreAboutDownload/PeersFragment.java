@@ -26,18 +26,17 @@ import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
+import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
-import com.gianlu.commonutils.Toaster;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, PeersAdapter.IAdapter {
-    private UpdateUI updater;
+public class PeersFragment extends UpdaterFragment implements UpdateUI.IUI, PeersAdapter.IAdapter, OnBackPressed {
     private PeersAdapter adapter;
     private PeerBottomSheet sheet;
     private boolean isShowingHint = false;
@@ -95,42 +94,19 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
         recyclerViewLayout.startLoading();
 
         sheet = new PeerBottomSheet(layout);
-
-        final String gid = getArguments().getString("gid");
-        if (gid == null) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            return layout;
-        }
-
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updater.stopThread(new BaseUpdater.IThread() {
+                refresh(new OnRefresh() {
                     @Override
-                    public void onStopped() {
-                        try {
-                            adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), PeersFragment.this);
-                            recyclerViewLayout.loadListData(adapter);
-                            recyclerViewLayout.startLoading();
-
-                            updater = new UpdateUI(getContext(), gid, PeersFragment.this);
-                            updater.start();
-                        } catch (JTA2.InitializingException ex) {
-                            Toaster.show(getActivity(), Utils.Messages.FAILED_REFRESHING, ex);
-                        }
+                    public void refreshed() {
+                        adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), PeersFragment.this);
+                        recyclerViewLayout.loadListData(adapter);
+                        recyclerViewLayout.startLoading();
                     }
                 });
             }
         });
-
-        try {
-            updater = new UpdateUI(getContext(), gid, this);
-            updater.start();
-        } catch (JTA2.InitializingException ex) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(ex);
-            return layout;
-        }
 
         return layout;
     }
@@ -152,7 +128,7 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
 
     @Override
     public void onBackPressed() {
-        if (updater != null) updater.stopThread(null);
+        stopUpdater();
     }
 
     @Override
@@ -211,5 +187,19 @@ public class PeersFragment extends BackPressedFragment implements UpdateUI.IUI, 
     @Override
     public RecyclerView getRecyclerView() {
         return recyclerViewLayout.getList();
+    }
+
+    @Nullable
+    @Override
+    protected BaseUpdater createUpdater(@NonNull Bundle args) {
+        String gid = args.getString("gid");
+
+        try {
+            return new UpdateUI(getContext(), gid, this);
+        } catch (JTA2.InitializingException ex) {
+            recyclerViewLayout.showMessage(R.string.failedLoading, true);
+            Logging.logMe(ex);
+            return null;
+        }
     }
 }
