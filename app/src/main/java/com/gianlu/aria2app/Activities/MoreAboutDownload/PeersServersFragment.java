@@ -81,7 +81,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
             }
         });
 
-        topUploadCountries.setVisibility(showUpload() ? View.VISIBLE : View.GONE);
+        layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);
 
         return layout;
     }
