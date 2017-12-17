@@ -322,11 +322,11 @@
     <string name="notificationException">Не удалось запустить службу уведомлений для %s!</string>
     <string name="notificationUnsupportedConnMethod">еподдерживаемый метод подключения для %s!</string>
     <string name="notificationUnsupportedConnMethod_details">Не удается запустить службу уведомлений для этого профиля. Перейдите в WebSockets, если вы хотите включить уведомления.</string>
-
     <string name="export">экспорт</string>
     <string name="exportOptionsGrantWrite">Чтобы экспортировать параметры, вы должны предоставить разрешение на запись и повторить попытку.</string>
     <string name="failedExportingOptions">Не удалось экспортировать параметры!</string>
     <string name="exportedOptions">Параметры успешно экспортированы в %s</string>
+    <string name="noActivity">Нет активности</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

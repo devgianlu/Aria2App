@@ -327,6 +327,7 @@
     <string name="exportOptionsGrantWrite">为了导出选项，您必须授予写权限并重试。</string>
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">选项成功导出到%s</string>
+    <string name="noActivity">没有活动</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
