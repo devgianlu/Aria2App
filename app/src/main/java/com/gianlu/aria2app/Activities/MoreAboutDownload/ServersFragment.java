@@ -23,7 +23,6 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements UpdateUI.IUI, ServersAdapter.IAdapter {
@@ -36,6 +35,11 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         args.putString("gid", download.gid);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    protected boolean showUpload() {
+        return false;
     }
 
     @Override
@@ -91,8 +95,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     public void onUpdateAdapter(SparseArray<List<Server>> servers, List<AriaFile> files) {
         if (servers.size() == 0) return;
         recyclerViewLayout.showList();
-        topCountries.setServers(servers, files);
-        reloadTopCountriesCharts();
+        topDownloadCountries.setServers(servers, files);
         if (adapter != null) adapter.notifyItemsChanged(servers, files);
         if (sheet != null && sheet.isExpanded()) sheet.update(servers);
     }
@@ -100,8 +103,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     @Override
     public void onNoServers(String reason) {
         recyclerViewLayout.showMessage(reason, false);
-        topCountries.setServers(new SparseArray<List<Server>>(), new ArrayList<AriaFile>());
-        reloadTopCountriesCharts();
+        topDownloadCountries.clear();
         if (sheet != null) sheet.collapse();
     }
 

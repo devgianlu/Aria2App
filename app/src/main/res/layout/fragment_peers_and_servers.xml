@@ -5,92 +5,77 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="6dp">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
-                android:id="@+id/peersServersFragment_topCountries"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <ImageButton
-                android:id="@+id/peersServersFragment_toggleTopCountries"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:alpha="0.54"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_keyboard_arrow_down_black_48dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/peersServersFragment_topCountriesDetails"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:visibility="gone">
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/download"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/primary_text_light" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:alpha="0.54"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_file_download_black_48dp" />
 
-                <com.gianlu.aria2app.Activities.MoreAboutDownload.SquarePieChart
-                    android:id="@+id/peersServersFragment_topDownloadChart"
-                    android:layout_width="match_parent"
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
+                    android:id="@+id/peersServersFragment_topDownloadCountries"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/upload"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/primary_text_light" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:alpha="0.54"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_file_upload_black_48dp" />
 
-                <com.gianlu.aria2app.Activities.MoreAboutDownload.SquarePieChart
-                    android:id="@+id/peersServersFragment_topUploadChart"
-                    android:layout_width="match_parent"
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
+                    android:id="@+id/peersServersFragment_topUploadCountries"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-            </LinearLayout>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
+            </LinearLayout>
         </LinearLayout>
 
         <FrameLayout
