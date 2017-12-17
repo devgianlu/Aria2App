@@ -55,16 +55,13 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         chart.setDrawCenterText(false);
         chart.getLegend().setEnabled(false);
 
-        chart.setData(new PieData(initDataSet()));
-        chart.invalidate();
-    }
-
-    private PieDataSet initDataSet() {
         PieDataSet set = new PieDataSet(new ArrayList<PieEntry>(), null);
         set.setDrawValues(false);
         set.setColors(MaterialColors.getShuffledInstance().getColorsRes(), getContext());
         set.setValueTextSize(16);
-        return set;
+
+        chart.setData(new PieData(set));
+        chart.invalidate();
     }
 
     protected void reloadTopCountriesCharts() {
@@ -76,7 +73,6 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
                 setupChart(topDownloadChart, R.string.noDownloadActivity);
 
             PieDataSet downloadSet = (PieDataSet) topDownloadChart.getData().getDataSet();
-
             downloadSet.setValues(downloadEntries);
             downloadSet.calcMinMax();
             topDownloadChart.notifyDataSetChanged();
@@ -91,7 +87,6 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
                 setupChart(topUploadChart, R.string.noUploadActivity);
 
             PieDataSet uploadSet = (PieDataSet) topUploadChart.getData().getDataSet();
-
             uploadSet.setValues(uploadEntries);
             uploadSet.calcMinMax();
             topUploadChart.notifyDataSetChanged();

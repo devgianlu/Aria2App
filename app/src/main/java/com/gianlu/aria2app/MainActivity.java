@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -313,11 +314,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         paused = findViewById(R.id.main_paused);
         stopped = findViewById(R.id.main_stopped);
         overallChart = findViewById(R.id.main_overallChart);
+        final FrameLayout overallChartContainer = findViewById(R.id.main_overallChartContainer);
         toggleChart = findViewById(R.id.main_toggleChart);
         toggleChart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CommonUtils.handleCollapseClick(toggleChart, overallChart);
+                CommonUtils.handleCollapseClick(toggleChart, overallChartContainer);
             }
         });
 
