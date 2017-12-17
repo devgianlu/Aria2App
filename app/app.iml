@@ -134,6 +134,7 @@
     <orderEntry type="library" name="com.google.firebase:firebase-common-11.6.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-ui-27.0.2" level="project" />
     <orderEntry type="library" name="io.fabric.sdk.android:fabric-1.4.1" level="project" />
+    <orderEntry type="library" name="com.github.PhilJay:MPAndroidChart:v3.0.3@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-compat-27.0.2" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tasks-11.6.2" level="project" />
     <orderEntry type="library" name="com.crashlytics.sdk.android:crashlytics-core-2.4.1" level="project" />
@@ -141,7 +142,6 @@
     <orderEntry type="library" name="org.apmem.tools:layouts-1.10" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-core-11.6.2" level="project" />
     <orderEntry type="library" name="com.crashlytics.sdk.android:beta-1.2.7" level="project" />
-    <orderEntry type="library" name="com.github.PhilJay:MPAndroidChart:v3.0.1@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-utils-27.0.2" level="project" />
     <orderEntry type="library" name="com.crashlytics.sdk.android:crashlytics-2.7.1" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-27.0.2" level="project" />
