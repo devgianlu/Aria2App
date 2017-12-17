@@ -6,13 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -24,21 +19,15 @@ import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Server;
-import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.RecyclerViewLayout;
-import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ServersFragment extends UpdaterFragment implements UpdateUI.IUI, ServersAdapter.IAdapter, OnBackPressed {
-    private RecyclerViewLayout recyclerViewLayout;
-    private ServersAdapter adapter;
-    private ServerBottomSheet sheet;
-    private boolean isShowingHint;
+public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements UpdateUI.IUI, ServersAdapter.IAdapter {
+    private boolean isShowingHint = false;
 
     public static ServersFragment getInstance(Context context, Download download) {
         ServersFragment fragment = new ServersFragment();
@@ -49,53 +38,14 @@ public class ServersFragment extends UpdaterFragment implements UpdateUI.IUI, Se
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_peers_and_servers, container, false);
-        recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
-        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        recyclerViewLayout.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new ServersAdapter(getContext(), this);
-        recyclerViewLayout.loadListData(adapter);
-        recyclerViewLayout.startLoading();
-
-        sheet = new ServerBottomSheet(layout);
-        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh(new OnRefresh() {
-                    @Override
-                    public void refreshed() {
-                        adapter = new ServersAdapter(getContext(), ServersFragment.this);
-                        recyclerViewLayout.loadListData(adapter);
-                        recyclerViewLayout.startLoading();
-                    }
-                });
-            }
-        });
-
-        return layout;
+    protected ServersAdapter getAdapter(@NonNull Context context) {
+        return new ServersAdapter(getContext(), this);
     }
 
     @Override
-    public boolean canGoBack(int code) {
-        if (code == CODE_CLOSE_SHEET) {
-            if (sheet != null) sheet.collapse();
-            return true;
-        }
-
-        if (sheet != null && sheet.isExpanded()) {
-            sheet.collapse();
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        stopUpdater();
+    protected ServerBottomSheet getSheet(@NonNull CoordinatorLayout layout) {
+        return new ServerBottomSheet(layout);
     }
 
     @Override
@@ -141,6 +91,8 @@ public class ServersFragment extends UpdaterFragment implements UpdateUI.IUI, Se
     public void onUpdateAdapter(SparseArray<List<Server>> servers, List<AriaFile> files) {
         if (servers.size() == 0) return;
         recyclerViewLayout.showList();
+        topCountries.setServers(servers, files);
+        reloadTopCountriesCharts();
         if (adapter != null) adapter.notifyItemsChanged(servers, files);
         if (sheet != null && sheet.isExpanded()) sheet.update(servers);
     }
@@ -148,6 +100,8 @@ public class ServersFragment extends UpdaterFragment implements UpdateUI.IUI, Se
     @Override
     public void onNoServers(String reason) {
         recyclerViewLayout.showMessage(reason, false);
+        topCountries.setServers(new SparseArray<List<Server>>(), new ArrayList<AriaFile>());
+        reloadTopCountriesCharts();
         if (sheet != null) sheet.collapse();
     }
 

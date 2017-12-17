@@ -3,10 +3,113 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.gianlu.commonutils.RecyclerViewLayout
-        android:id="@+id/peersServersFragment_recyclerViewLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
+                android:id="@+id/peersServersFragment_topCountries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/peersServersFragment_toggleTopCountries"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:alpha="0.54"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_keyboard_arrow_down_black_48dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/peersServersFragment_topCountriesDetails"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/download"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/primary_text_light" />
+
+                <com.gianlu.aria2app.Activities.MoreAboutDownload.SquarePieChart
+                    android:id="@+id/peersServersFragment_topDownloadChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/upload"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/primary_text_light" />
+
+                <com.gianlu.aria2app.Activities.MoreAboutDownload.SquarePieChart
+                    android:id="@+id/peersServersFragment_topUploadChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_gravity="top"
+                android:background="@drawable/shadow_bottom" />
+
+            <com.gianlu.commonutils.RecyclerViewLayout
+                android:id="@+id/peersServersFragment_recyclerViewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/niceBottomSheet_mask"

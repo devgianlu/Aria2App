@@ -21,8 +21,8 @@ import com.gianlu.commonutils.Sorting.NotFilterable;
 import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.SuperTextView;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
     private final Context context;
@@ -31,8 +31,8 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     private final FreeGeoIPApi freeGeoIPApi;
     private final CountryFlags flags = CountryFlags.get();
 
-    public PeersAdapter(Context context, List<Peer> peers, IAdapter handler) {
-        super(peers, SortBy.DOWNLOAD_SPEED);
+    public PeersAdapter(Context context, IAdapter handler) {
+        super(new ArrayList<Peer>(), SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
         this.context = context;
         this.handler = handler;

@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class Server {
-    public final String uri;
+    public final Uri uri;
     public final String currentUri;
     public final int downloadSpeed;
 
     public Server(JSONObject obj) throws JSONException {
-        uri = obj.getString("uri");
+        uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");
         downloadSpeed = obj.getInt("downloadSpeed");
     }
@@ -33,16 +33,12 @@ public class Server {
         return null;
     }
 
-    public Uri getCurrentUri() {
-        return Uri.parse(currentUri);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Server server = (Server) o;
-        return uri.equals(server.uri) || currentUri.equals(server.uri);
+        return uri.equals(server.uri) || currentUri.equals(server.uri.toString());
     }
 
     public static class DownloadSpeedComparator implements Comparator<Server> {

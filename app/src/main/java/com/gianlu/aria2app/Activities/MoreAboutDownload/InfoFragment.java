@@ -350,12 +350,7 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
             toggleBtAnnounceList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    CommonUtils.animateCollapsingArrowBellows(toggleBtAnnounceList, CommonUtils.isExpanded(btAnnounceList));
-
-                    if (CommonUtils.isExpanded(btAnnounceList))
-                        CommonUtils.collapse(btAnnounceList);
-                    else
-                        CommonUtils.expand(btAnnounceList);
+                    CommonUtils.handleCollapseClick(toggleBtAnnounceList, btAnnounceList);
                 }
             });
 

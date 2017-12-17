@@ -331,6 +331,9 @@
     <string name="exportOptionsGrantWrite">In order to export the options you must grant the write permission and retry.</string>
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">Options exported successfully to %s</string>
+    <string name="upload">Upload</string>
+    <string name="noDownloadActivity">No download activity</string>
+    <string name="noUploadActivity">No upload activity</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

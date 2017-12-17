@@ -62,7 +62,7 @@ public final class Utils {
         return -1;
     }
 
-    public static void setupChart(LineChart chart, boolean isCardView, @ColorRes int textColor) {
+    public static void setupChart(LineChart chart, boolean small, @ColorRes int textColor) {
         chart.clear();
 
         chart.setDescription(null);
@@ -80,10 +80,10 @@ public final class Utils {
         YAxis ya = chart.getAxisLeft();
         ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), textColor));
         ya.setTextColor(ContextCompat.getColor(chart.getContext(), textColor));
-        ya.setTextSize(isCardView ? 8 : 9);
+        ya.setTextSize(small ? 8 : 9);
         ya.setAxisMinimum(0);
         ya.setDrawAxisLine(false);
-        ya.setLabelCount(isCardView ? 4 : 8, true);
+        ya.setLabelCount(small ? 4 : 8, true);
         ya.setEnabled(true);
         ya.setDrawGridLines(true);
         ya.setValueFormatter(new CustomYAxisValueFormatter());
@@ -214,7 +214,6 @@ public final class Utils {
         public static final Toaster.Message MOVED = new Toaster.Message(R.string.downloadMoved, false);
         public static final Toaster.Message REMOVED = new Toaster.Message(R.string.downloadRemoved, false);
         public static final Toaster.Message RESULT_REMOVED = new Toaster.Message(R.string.downloadResultRemoved, false);
-        public static final Toaster.Message FAILED_REFRESHING = new Toaster.Message(R.string.failedRefreshing, true);
         public static final Toaster.Message GLOBAL_OPTIONS_CHANGED = new Toaster.Message(R.string.globalOptionsChanged, false);
         public static final Toaster.Message ONLY_ONE_TORRENT = new Toaster.Message(R.string.onlyOneTorrentUri, false);
         public static final Toaster.Message NO_FILE_MANAGER = new Toaster.Message(R.string.noFilemanager, true);

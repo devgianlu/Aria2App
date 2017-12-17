@@ -95,7 +95,7 @@ public class ServerBottomSheet extends NiceBaseBottomSheet {
         currentServer = server;
 
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
-        freeGeoIPApi.getIPDetails(server.getCurrentUri().getHost(), new FreeGeoIPApi.IIPDetails() {
+        freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.IIPDetails() {
             @Override
             public void onDetails(IPDetails details) {
                 ipDetails.setup(details);

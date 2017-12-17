@@ -6,16 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
@@ -26,21 +20,15 @@ import com.gianlu.aria2app.NetIO.BaseUpdater;
 import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
-import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.RecyclerViewLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeersFragment extends UpdaterFragment implements UpdateUI.IUI, PeersAdapter.IAdapter, OnBackPressed {
-    private PeersAdapter adapter;
-    private PeerBottomSheet sheet;
+public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements UpdateUI.IUI, PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
-    private RecyclerViewLayout recyclerViewLayout;
 
     public static PeersFragment getInstance(Context context, Download download) {
         PeersFragment fragment = new PeersFragment();
@@ -80,60 +68,21 @@ public class PeersFragment extends UpdaterFragment implements UpdateUI.IUI, Peer
         return true;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_peers_and_servers, container, false);
-        if (getContext() == null) return layout;
-        recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
-        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), this);
-        recyclerViewLayout.loadListData(adapter);
-        recyclerViewLayout.startLoading();
-
-        sheet = new PeerBottomSheet(layout);
-        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh(new OnRefresh() {
-                    @Override
-                    public void refreshed() {
-                        adapter = new PeersAdapter(getContext(), new ArrayList<Peer>(), PeersFragment.this);
-                        recyclerViewLayout.loadListData(adapter);
-                        recyclerViewLayout.startLoading();
-                    }
-                });
-            }
-        });
-
-        return layout;
+    protected PeersAdapter getAdapter(@NonNull Context context) {
+        return new PeersAdapter(getContext(), this);
     }
 
     @Override
-    public boolean canGoBack(int code) {
-        if (code == CODE_CLOSE_SHEET) {
-            if (sheet != null) sheet.collapse();
-            return true;
-        }
-
-        if (sheet != null && sheet.isExpanded()) {
-            sheet.collapse();
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        stopUpdater();
+    protected PeerBottomSheet getSheet(@NonNull CoordinatorLayout layout) {
+        return new PeerBottomSheet(layout);
     }
 
     @Override
     public void onUpdateAdapter(List<Peer> peers) {
         recyclerViewLayout.showList();
+        topCountries.setPeers(peers);
+        reloadTopCountriesCharts();
         if (adapter != null) adapter.notifyItemsChanged(peers);
         if (sheet != null && sheet.isExpanded()) sheet.update(peers);
     }
@@ -141,6 +90,8 @@ public class PeersFragment extends UpdaterFragment implements UpdateUI.IUI, Peer
     @Override
     public void onNoPeers(String reason) {
         recyclerViewLayout.showMessage(reason, false);
+        topCountries.setPeers(new ArrayList<Peer>());
+        reloadTopCountriesCharts();
         if (sheet != null) sheet.collapse();
     }
 

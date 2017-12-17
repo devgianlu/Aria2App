@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -84,7 +85,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            freeGeoIPApi.getIPDetails(server.getCurrentUri().getHost(), new FreeGeoIPApi.IIPDetails() {
+            freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.IIPDetails() {
                 @Override
                 public void onDetails(IPDetails details) {
                     notifyItemChanged(holder.getAdapterPosition(), details);
@@ -141,10 +142,10 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return -1;
     }
 
-    private int indexOfServer(String uri) {
+    private int indexOfServer(Uri uri) {
         for (int i = 0; i < objs.size(); i++)
             if (objs.get(i) instanceof Server)
-                if (Objects.equals(((Server) objs.get(i)).uri, uri) || Objects.equals(((Server) objs.get(i)).currentUri, uri))
+                if (Objects.equals(((Server) objs.get(i)).uri, uri))
                     return i;
 
         return -1;

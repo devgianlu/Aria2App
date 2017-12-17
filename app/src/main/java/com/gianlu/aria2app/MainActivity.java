@@ -317,9 +317,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         toggleChart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CommonUtils.animateCollapsingArrowBellows(toggleChart, CommonUtils.isExpanded(overallChart));
-                if (CommonUtils.isExpanded(overallChart)) CommonUtils.collapse(overallChart);
-                else CommonUtils.expand(overallChart);
+                CommonUtils.handleCollapseClick(toggleChart, overallChart);
             }
         });
 

@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO.FreeGeoIP;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.util.LruCache;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
@@ -38,6 +39,11 @@ public class FreeGeoIPApi {
     public static FreeGeoIPApi get() {
         if (instance == null) instance = new FreeGeoIPApi();
         return instance;
+    }
+
+    @Nullable
+    public IPDetails getCached(String ip) {
+        return cache.get(ip);
     }
 
     public void getIPDetails(final String ip, final IIPDetails listener) {
