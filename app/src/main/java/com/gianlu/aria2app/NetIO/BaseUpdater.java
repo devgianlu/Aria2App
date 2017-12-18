@@ -35,14 +35,13 @@ public abstract class BaseUpdater extends Thread {
             }
         }
 
-        if (stopListener != null) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (stopListener != null)
                     stopListener.onStopped();
-                }
-            });
-        }
+            }
+        });
     }
 
     public abstract void loop();

@@ -1137,7 +1137,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return new UpdateUI(this, this);
         } catch (JTA2.InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
-            recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
+            if (recyclerViewLayout != null)
+                recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
             return null;
         }
     }

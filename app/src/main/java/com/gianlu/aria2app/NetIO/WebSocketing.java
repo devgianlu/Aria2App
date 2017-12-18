@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.JTA2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -123,6 +124,13 @@ public class WebSocketing extends AbstractClient {
         @Override
         public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
             if (locked) return;
+            if (cause instanceof IllegalArgumentException) {
+                if (cause.getMessage().contains("port=")) {
+                    Crashlytics.setString("current_websocket_uri", websocket.getURI().toString());
+                    Crashlytics.setInt("current_profile_port", profile.serverPort);
+                }
+            }
+
             ErrorHandler.get().notifyException(cause, false);
         }
 
