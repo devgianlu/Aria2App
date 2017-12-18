@@ -18,27 +18,28 @@ import java.util.Objects;
 public class BitfieldVisualizer extends View {
     private final int padding = 12;
     private final int square = 48;
+    private final Paint paint;
     private String bitfield = null;
     private int pieces = -1;
     private int[] binary = null;
-    private Paint paint;
     private int columns;
     private int rows;
     private int hoff;
 
     public BitfieldVisualizer(Context context) {
-        super(context);
-        init();
+        this(context, null, 0);
+
     }
 
     public BitfieldVisualizer(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public BitfieldVisualizer(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+
+        paint = new Paint();
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
     }
 
     @Nullable
@@ -78,11 +79,6 @@ public class BitfieldVisualizer extends View {
         }
 
         return Arrays.copyOfRange(array, 0, num);
-    }
-
-    private void init() {
-        paint = new Paint();
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
     }
 
     public void setColor(@ColorRes int color) {
