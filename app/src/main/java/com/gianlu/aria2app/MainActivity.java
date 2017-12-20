@@ -367,7 +367,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         });
 
         if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
-            NotificationService.start(this);
+            NotificationService.start(this, false);
         else
             NotificationService.stop(this);
 
@@ -909,7 +909,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         if (!isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.CARD)) {
-            DownloadCardsAdapter.DownloadViewHolder holder = (DownloadCardsAdapter.DownloadViewHolder) recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
+            DownloadCardsAdapter.ViewHolder holder = (DownloadCardsAdapter.ViewHolder) recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
             if (holder != null && !CommonUtils.isExpanded(holder.details)) {
                 isShowingHint = true;
 

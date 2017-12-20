@@ -31,7 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
@@ -52,7 +52,6 @@ public final class Utils {
     public static final String ACTION_SEARCH_GET_TORRENT = "new_torrent_from_search";
     public static final String ACTION_SEARCH_GET_MAGNET = "new_magnet_from_search";
     public static final String ACTION_SHORTCUT = "used_shortcut";
-    public static final Random random = new Random();
 
     public static int indexOf(String[] items, String item) {
         for (int i = 0; i < items.length; i++)
@@ -175,7 +174,7 @@ public final class Utils {
     }
 
     public static JSONObject readyRequest() throws JSONException {
-        return new JSONObject().put("jsonrpc", "2.0").put("id", random.nextInt());
+        return new JSONObject().put("jsonrpc", "2.0").put("id", ThreadLocalRandom.current().nextInt());
     }
 
     public static String toHexString(byte[] bytes) {

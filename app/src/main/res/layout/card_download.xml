@@ -167,6 +167,16 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_arrow_downward_black_48dp" />
 
+            <ImageButton
+                android:id="@+id/downloadCard_toggleNotification"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:alpha="0.54"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_notifications_none_black_48dp" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

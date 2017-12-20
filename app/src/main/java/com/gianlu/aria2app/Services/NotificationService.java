@@ -1,22 +1,31 @@
 package com.gianlu.aria2app.Services;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
@@ -24,7 +33,6 @@ import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Prefs;
@@ -48,18 +56,87 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class NotificationService extends Service {
+    public static final String ACTION_STOPPED = "com.gianlu.aria2app.notifs.STOPPED";
+    public static final String ACTION_IS_NOTIFICABLE = "com.gianlu.aria2app.notifs.IS_NOTIFICABLE";
+    public static final String ACTION_TOGGLE_NOTIFICABLE = "com.gianlu.aria2app.notifs.TOGGLE_NOTIFICABLE";
+    public static final int MESSENGER_IS_NOTIFICABLE = 0;
+    public static final int MESSENGER_TOGGLE_NOTIFICABLE = 1;
     private static final int FOREGROUND_SERVICE_NOTIF_ID = 1;
     private static final String CHANNEL_FOREGROUND_SERVICE = "foreground";
     private static final String ACTION_STOP = "com.gianlu.aria2app.notifs.STOP";
+    private static final java.lang.String SERVICE_NAME = "aria2app notification service";
     private final Map<String, Integer> errorNotifications = new HashMap<>();
+    private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
+    private final List<String> notificableDownloads = new ArrayList<>(); // TODO
     private List<WebSocket> webSockets;
     private ArrayList<MultiProfile> profiles;
     private WifiManager wifiManager;
     private NotificationManager notificationManager;
+    private Messenger messenger;
+    private LocalBroadcastManager broadcastManager;
+    private Boolean startedNotificable = null;
 
-    public static void start(Context context) {
+    public static void toggleNotification(final Context context, final LocalBroadcastManager broadcastManager, final String gid, final OnIsNotificable listener) {
+        final Object waitToUnbind = new Object();
+
+        final BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (Objects.equals(intent.getAction(), ACTION_TOGGLE_NOTIFICABLE)) {
+                    boolean has = intent.getBooleanExtra("has", false);
+                    listener.onResult(has);
+
+                    if (has) {
+                        start(context, true);
+                    } else {
+                        if (intent.getBooleanExtra("shouldStop", false))
+                            stop(context);
+                    }
+
+                    broadcastManager.unregisterReceiver(this);
+
+                    synchronized (waitToUnbind) {
+                        waitToUnbind.notify();
+                    }
+                }
+            }
+        };
+
+        context.bindService(new Intent(context, NotificationService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Messenger messenger = new Messenger(service);
+
+                broadcastManager.registerReceiver(receiver, new IntentFilter(ACTION_TOGGLE_NOTIFICABLE));
+
+                try {
+                    messenger.send(Message.obtain(null, MESSENGER_TOGGLE_NOTIFICABLE, gid));
+                } catch (RemoteException ex) {
+                    Logging.logMe(ex);
+                    listener.onResult(false);
+                }
+
+                synchronized (waitToUnbind) {
+                    try {
+                        waitToUnbind.wait();
+                        context.unbindService(this);
+                    } catch (InterruptedException ex) {
+                        Logging.logMe(ex);
+                    }
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                broadcastManager.unregisterReceiver(receiver);
+            }
+        }, BIND_AUTO_CREATE);
+    }
+
+    public static void start(Context context, boolean notificable) {
         ArrayList<MultiProfile> profiles = new ArrayList<>();
         for (MultiProfile profile : ProfilesManager.get(context).getProfiles())
             if (profile.notificationsEnabled) profiles.add(profile);
@@ -67,37 +144,57 @@ public class NotificationService extends Service {
         if (profiles.isEmpty()) return;
 
         context.startService(new Intent(context, NotificationService.class)
+                .putExtra("notificable", notificable)
                 .putExtra("profiles", profiles));
     }
 
     public static void stop(Context context) {
-        context.stopService(new Intent(context, NotificationService.class));
+        context.startService(new Intent(context, NotificationService.class).setAction(ACTION_STOP));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+
         if (intent != null) {
+            if (startedNotificable == null)
+                startedNotificable = intent.getBooleanExtra("notificable", false);
+
             if (Objects.equals(intent.getAction(), ACTION_STOP)) {
+                stopForeground(true);
                 stopSelf();
             } else if (intent.hasExtra("profiles")) {
-                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
+                if (!intent.getBooleanExtra("notificable", false) || profiles == null) {
+                    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                    profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
 
-                createMainChannel();
-                createEventsChannels();
+                    createMainChannel();
+                    createEventsChannels();
 
-                recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
-                getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                    recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                    getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                }
+
                 startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                 return super.onStartCommand(intent, flags, startId);
             }
         }
 
+        notificableDownloads.clear();
         if (profiles != null) profiles.clear();
-        if (webSockets != null) webSockets.clear();
+        if (webSockets != null) {
+            for (WebSocket webSocket : webSockets) {
+                webSocket.clearListeners();
+                webSocket.disconnect();
+            }
+
+            webSockets.clear();
+        }
+
+        broadcastManager.sendBroadcastSync(new Intent(ACTION_STOPPED));
 
         return START_NOT_STICKY; // Process will stop
     }
@@ -122,7 +219,13 @@ public class NotificationService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        if (messenger == null) {
+            serviceThread.start();
+            broadcastManager = LocalBroadcastManager.getInstance(this);
+            messenger = new Messenger(new ServiceHandler());
+        }
+
+        return messenger.getBinder();
     }
 
     private void handleEvent(MultiProfile.UserProfile profile, String gid, EventType type) {
@@ -145,7 +248,7 @@ public class NotificationService extends Service {
         builder.setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class)
                 .putExtras(bundle), PendingIntent.FLAG_UPDATE_CURRENT));
 
-        notificationManager.notify(Utils.random.nextInt(), builder.build());
+        notificationManager.notify(ThreadLocalRandom.current().nextInt(), builder.build());
     }
 
     private void notifyError(MultiProfile.UserProfile profile, String title, String message) {
@@ -162,7 +265,7 @@ public class NotificationService extends Service {
 
         Integer id = errorNotifications.get(profile.getParent().id);
         if (id == null) {
-            id = Utils.random.nextInt();
+            id = ThreadLocalRandom.current().nextInt();
             errorNotifications.put(profile.getParent().id, id);
         }
 
@@ -308,6 +411,46 @@ public class NotificationService extends Service {
                     return context.getString(R.string.notificationBTComplete);
                 default:
                     return context.getString(R.string.unknown);
+            }
+        }
+    }
+
+    public interface OnIsNotificable {
+        void onResult(boolean notificable);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class ServiceHandler extends Handler {
+
+        ServiceHandler() {
+            super(serviceThread.getLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            String gid = (String) msg.obj;
+
+            switch (msg.what) {
+                case MESSENGER_TOGGLE_NOTIFICABLE:
+                    boolean hasBefore = notificableDownloads.contains(gid);
+                    if (hasBefore) {
+                        notificableDownloads.remove(gid);
+                        broadcastManager.sendBroadcastSync(new Intent(ACTION_TOGGLE_NOTIFICABLE)
+                                .putExtra("has", startedNotificable != null && !startedNotificable) // || false
+                                .putExtra("shouldStop", notificableDownloads.isEmpty() && startedNotificable != null && startedNotificable));
+                    } else {
+                        notificableDownloads.add(gid);
+                        broadcastManager.sendBroadcastSync(new Intent(ACTION_TOGGLE_NOTIFICABLE)
+                                .putExtra("has", true));
+                    }
+                    break;
+                case MESSENGER_IS_NOTIFICABLE:
+                    broadcastManager.sendBroadcastSync(new Intent(ACTION_IS_NOTIFICABLE)
+                            .putExtra("gid", gid)
+                            .putExtra("notificable", (startedNotificable != null && !startedNotificable) || notificableDownloads.contains(gid)));
+                    break;
+                default:
+                    super.handleMessage(msg);
             }
         }
     }

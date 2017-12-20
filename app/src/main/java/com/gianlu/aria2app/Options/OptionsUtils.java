@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class OptionsUtils {
     private static void showGlobalDialog(final Activity activity, List<Option> options) {
@@ -356,7 +357,7 @@ public final class OptionsUtils {
 
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "aria2app-exported-" + (global ? "global" : "download") + ".conf");
         if (file.exists())
-            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), Utils.random.nextInt(1000) + "-aria2app-exported-" + (global ? "global" : "download") + ".conf");
+            file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), ThreadLocalRandom.current().nextInt(1000) + "-aria2app-exported-" + (global ? "global" : "download") + ".conf");
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)))) {
             writer.append(builder.toString());
