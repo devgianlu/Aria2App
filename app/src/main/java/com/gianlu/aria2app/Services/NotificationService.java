@@ -58,7 +58,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class NotificationService extends Service {
+public class NotificationService extends Service { // TODO: Service is never stopped, therefore notifications will always be sent event if the service notification isn't shown :((
     public static final String ACTION_STOPPED = "com.gianlu.aria2app.notifs.STOPPED";
     public static final String ACTION_IS_NOTIFICABLE = "com.gianlu.aria2app.notifs.IS_NOTIFICABLE";
     public static final String ACTION_TOGGLE_NOTIFICABLE = "com.gianlu.aria2app.notifs.TOGGLE_NOTIFICABLE";
@@ -70,7 +70,7 @@ public class NotificationService extends Service {
     private static final java.lang.String SERVICE_NAME = "aria2app notification service";
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
-    private final List<String> notificableDownloads = new ArrayList<>(); // TODO
+    private final List<String> notificableDownloads = new ArrayList<>();
     private List<WebSocket> webSockets;
     private ArrayList<MultiProfile> profiles;
     private WifiManager wifiManager;
@@ -165,18 +165,15 @@ public class NotificationService extends Service {
                 stopForeground(true);
                 stopSelf();
             } else if (intent.hasExtra("profiles")) {
-                if (!intent.getBooleanExtra("notificable", false) || profiles == null) {
-                    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                    wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                    profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
+                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
 
-                    createMainChannel();
-                    createEventsChannels();
+                createMainChannel();
+                createEventsChannels();
 
-                    recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
-                    getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-                }
-
+                recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                 return super.onStartCommand(intent, flags, startId);
@@ -229,6 +226,8 @@ public class NotificationService extends Service {
     }
 
     private void handleEvent(MultiProfile.UserProfile profile, String gid, EventType type) {
+        if (startedNotificable && !notificableDownloads.contains(gid)) return;
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
         builder.setContentTitle(type.getFormal(this))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
