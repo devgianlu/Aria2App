@@ -58,7 +58,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class NotificationService extends Service { // TODO: Service is never stopped, therefore notifications will always be sent event if the service notification isn't shown :((
+public class NotificationService extends Service {
     public static final String ACTION_STOPPED = "com.gianlu.aria2app.notifs.STOPPED";
     public static final String ACTION_IS_NOTIFICABLE = "com.gianlu.aria2app.notifs.IS_NOTIFICABLE";
     public static final String ACTION_TOGGLE_NOTIFICABLE = "com.gianlu.aria2app.notifs.TOGGLE_NOTIFICABLE";
@@ -196,12 +196,19 @@ public class NotificationService extends Service { // TODO: Service is never sto
         return START_NOT_STICKY; // Process will stop
     }
 
+    private String describeServiceStatus() {
+        if (startedNotificable)
+            return CommonUtils.join(profiles, ", ") + " for " + CommonUtils.join(notificableDownloads, ", ");
+        else
+            return CommonUtils.join(profiles, ", ");
+    }
+
     private Notification createForegroundServiceNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setShowWhen(false)
                 .setContentTitle(getString(R.string.notificationService))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setContentText(CommonUtils.join(profiles, ", "))
+                .setContentText(describeServiceStatus())
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
                 .setSmallIcon(R.drawable.ic_notification)

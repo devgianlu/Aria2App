@@ -68,7 +68,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         filter.addAction(NotificationService.ACTION_IS_NOTIFICABLE);
         broadcastManager.registerReceiver(receiver, filter);
 
-        context.bindService(new Intent(context, NotificationService.class), this, Context.BIND_AUTO_CREATE); // TODO: That's blocking the service from stopping :((
+        context.bindService(new Intent(context, NotificationService.class), this, Context.BIND_AUTO_CREATE);
     }
 
     @Override

@@ -368,8 +368,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this, false);
-        else
-            NotificationService.stop(this);
 
         adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
         recyclerViewLayout.loadListData(adapter);
