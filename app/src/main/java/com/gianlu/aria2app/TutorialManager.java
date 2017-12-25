@@ -9,7 +9,6 @@ import java.util.Set;
 
 public class TutorialManager {
 
-    @SuppressWarnings("ConstantConditions")
     public static boolean shouldShowHintFor(Context context, Discovery discovery) {
         if (context == null) return false;
         Set<String> set = Prefs.getSet(context, PKeys.A2_TUTORIAL_DISCOVERIES, new HashSet<String>());

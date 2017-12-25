@@ -1151,13 +1151,18 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     private class InternalBroadcastReceiver extends BroadcastReceiver {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             if (intent.getAction() == null) return;
 
             switch (intent.getAction()) {
                 case DownloaderUtils.ACTION_COUNT_CHANGED:
-                    if (drawerManager != null)
-                        drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (drawerManager != null)
+                                drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
+                        }
+                    });
                     break;
             }
         }
