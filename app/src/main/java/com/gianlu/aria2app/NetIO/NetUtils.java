@@ -22,7 +22,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
@@ -84,22 +83,27 @@ public class NetUtils {
         return buildHttpClient(profile, createSSLContext(profile.certificate));
     }
 
-    static OkHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    private static void setSslSocketFactory(OkHttpClient.Builder builder, SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
         TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
         if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager))
-            throw new IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers)); // FIXME
+            return;
 
         X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
         if (SSLContext.getDefault() != sslContext)
             sslContext.init(null, new TrustManager[]{trustManager}, null);
 
+        builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
+    }
+
+    static OkHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-                .sslSocketFactory(sslContext.getSocketFactory(), trustManager);
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS);
+
+        setSslSocketFactory(builder, sslContext);
 
         if (!profile.hostnameVerifier) {
             builder.hostnameVerifier(new HostnameVerifier() {
