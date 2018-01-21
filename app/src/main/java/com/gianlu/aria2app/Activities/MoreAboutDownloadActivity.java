@@ -25,6 +25,7 @@ import com.gianlu.commonutils.Toaster;
 
 public class MoreAboutDownloadActivity extends AppCompatActivity implements InfoFragment.IStatusChanged {
     private PagerAdapter<? extends OnBackPressed> adapter;
+    private ViewPager pager;
     private Download.Status currentStatus = null;
 
     public static void start(Context context, Download download) {
@@ -95,7 +96,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
-        final ViewPager pager = findViewById(R.id.moreAboutDownload_pager);
+        pager = findViewById(R.id.moreAboutDownload_pager);
         final TabLayout tabLayout = findViewById(R.id.moreAboutDownload_tabs);
 
         adapter = new PagerAdapter<>(getSupportFragmentManager(),
@@ -144,12 +145,11 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
     @Override
     public void onBackPressed() {
         if (adapter != null) {
-            for (OnBackPressed fragment : adapter.getFragments())
-                if (!fragment.canGoBack(-1))
-                    return;
+            OnBackPressed visible = adapter.getFragments().get(pager.getCurrentItem());
+            if (!visible.canGoBack(-1))
+                return;
 
-            for (OnBackPressed fragment : adapter.getFragments())
-                fragment.onBackPressed();
+            visible.onBackPressed();
         }
 
         try {
