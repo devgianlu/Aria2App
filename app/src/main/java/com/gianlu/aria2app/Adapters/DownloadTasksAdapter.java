@@ -77,7 +77,7 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
         });
 
         holder.title.setText(task.task.getName());
-        holder.uri.setText(task.task.uri.toString());
+        holder.uri.setText(task.task.url.toString());
     }
 
     @SuppressLint("SetTextI18n")

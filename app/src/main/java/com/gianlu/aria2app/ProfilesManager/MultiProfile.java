@@ -24,13 +24,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import okhttp3.HttpUrl;
 
 public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final List<UserProfile> profiles;
@@ -190,14 +191,14 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return getProfile(context).getInitials(context);
     }
 
-    JSONObject toJSON() throws JSONException {
+    JSONObject toJson() throws JSONException {
         if (profiles.isEmpty()) throw new IllegalStateException("profiles cannot be empty!");
 
         JSONObject obj = new JSONObject();
         obj.put("name", name).put("notificationsEnabled", notificationsEnabled);
 
         JSONArray profilesArray = new JSONArray();
-        for (UserProfile profile : profiles) profilesArray.put(profile.toJSON());
+        for (UserProfile profile : profiles) profilesArray.put(profile.toJson());
 
         obj.put("profiles", profilesArray);
         return obj;
@@ -318,7 +319,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return type == that.type && (ssids != null ? Arrays.equals(ssids, that.ssids) : that.ssids == null);
         }
 
-        JSONObject toJSON() throws JSONException {
+        JSONObject toJson() throws JSONException {
             JSONObject obj = new JSONObject();
             obj.put("type", type.name()).put("isDefault", isDefault);
             if (ssids != null) {
@@ -363,7 +364,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final boolean auth;
         public final String username;
         public final String password;
-        private URI cachedUri;
+        private HttpUrl cachedUri;
 
         public DirectDownload(JSONObject obj) throws JSONException {
             address = obj.getString("addr");
@@ -379,14 +380,14 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             this.password = password;
         }
 
-        JSONObject toJSON() throws JSONException {
+        JSONObject toJson() throws JSONException {
             JSONObject obj = new JSONObject();
             obj.put("addr", address).put("auth", auth).put("username", username).put("password", password);
             return obj;
         }
 
-        public URI getURLAddress() throws URISyntaxException {
-            if (cachedUri == null) cachedUri = new URI(address);
+        public HttpUrl getUrl() {
+            if (cachedUri == null) cachedUri = HttpUrl.parse(address);
             return cachedUri;
         }
     }
@@ -517,7 +518,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 switch (connectionMethod) {
                     default:
                     case HTTP:
-                        fullServerAddress = NetUtils.createBaseHttpURI(this).toASCIIString();
+                        fullServerAddress = NetUtils.createBaseHttpURI(this).toString();
                         break;
                     case WEBSOCKET:
                         fullServerAddress = NetUtils.createBaseWsURI(this).toASCIIString();
@@ -532,7 +533,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return directDownload != null;
         }
 
-        JSONObject toJSON() throws JSONException {
+        JSONObject toJson() throws JSONException {
             JSONObject profile = new JSONObject();
             profile.put("serverAddr", serverAddr)
                     .put("serverPort", serverPort)
@@ -545,9 +546,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("serverSSL", serverSSL)
                     .put("certificate", CertUtils.encodeCertificate(certificate))
                     .put("connectionMethod", connectionMethod.name())
-                    .put("connectivityCondition", connectivityCondition.toJSON());
+                    .put("connectivityCondition", connectivityCondition.toJson());
 
-            if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJSON());
+            if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJson());
             return profile;
         }
 

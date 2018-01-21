@@ -14,24 +14,21 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.HttpClients;
-import cz.msebera.android.httpclient.util.EntityUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class FreeGeoIPApi {
     private static FreeGeoIPApi instance;
     private final ExecutorService executorService;
     private final Handler handler;
-    private final HttpClient client;
+    private final OkHttpClient client;
     private final LruCache<String, IPDetails> cache;
 
     private FreeGeoIPApi() {
         handler = new Handler(Looper.getMainLooper());
-        client = HttpClients.createDefault();
+        client = new OkHttpClient();
         executorService = Executors.newCachedThreadPool();
         cache = new LruCache<>(50);
     }
@@ -60,23 +57,19 @@ public class FreeGeoIPApi {
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        String realIP = ip;
-                        if (ip.startsWith("[") && ip.endsWith("]"))
-                            realIP = realIP.substring(1, ip.length() - 1);
+                    String realIP = ip;
+                    if (ip.startsWith("[") && ip.endsWith("]"))
+                        realIP = realIP.substring(1, ip.length() - 1);
 
-                        HttpGet get = new HttpGet("http://freegeoip.net/json/" + realIP);
-                        HttpResponse resp = client.execute(get);
-                        StatusLine sl = resp.getStatusLine();
-                        if (sl.getStatusCode() != HttpStatus.SC_OK) {
-                            get.releaseConnection();
-                            throw new StatusCodeException(sl);
-                        }
+                    try (Response resp = client.newCall(new Request.Builder()
+                            .get().url("http://freegeoip.net/json/" + realIP).build()).execute()) {
 
-                        String json = EntityUtils.toString(resp.getEntity());
-                        get.releaseConnection();
+                        if (resp.code() != 200) throw new StatusCodeException(resp);
 
-                        final IPDetails details = new IPDetails(new JSONObject(json));
+                        ResponseBody body = resp.body();
+                        if (body == null) throw new IOException("Empty body!");
+
+                        final IPDetails details = new IPDetails(new JSONObject(body.string()));
                         cache.put(ip, details);
 
                         handler.post(new Runnable() {

@@ -10,28 +10,32 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.config.RequestConfig;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
-import cz.msebera.android.httpclient.impl.client.HttpClients;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 class DirectDownloadTester extends BaseTester {
+    private static final int TIMEOUT = 5;
     private final MultiProfile.DirectDownload dd;
+    private final OkHttpClient client;
 
     DirectDownloadTester(Context context, MultiProfile.UserProfile profile, @Nullable IPublish listener) {
         super(context, profile, listener);
         this.dd = profile.directDownload;
+
+        client = new OkHttpClient.Builder()
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .build();
     }
 
     private void publishError(Exception ex) {
         if (ex instanceof StatusCodeException) {
             publishMessage("Server returned " + ex.getMessage(), R.color.red);
-            if (((StatusCodeException) ex).code == HttpStatus.SC_UNAUTHORIZED)
+            if (((StatusCodeException) ex).code == 401)
                 publishMessage("Your username and/or password may be wrong", R.color.red);
         } else {
             publishMessage(ex.getMessage(), R.color.red);
@@ -40,29 +44,21 @@ class DirectDownloadTester extends BaseTester {
 
     @Override
     protected Boolean call() {
-        try (CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(RequestConfig.custom()
-                .setConnectTimeout(5000)
-                .setConnectionRequestTimeout(5000)
-                .setSocketTimeout(5000)
-                .build()).build()) {
+        Request.Builder builder = new Request.Builder();
+        builder.get().url(dd.getUrl());
 
-            HttpGet get = new HttpGet(dd.getURLAddress());
-            if (dd.auth)
-                get.addHeader("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+        if (dd.auth)
+            builder.header("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
 
-            HttpResponse resp = client.execute(get);
-            StatusLine sl = resp.getStatusLine();
-
-            get.releaseConnection();
-
-            if (sl.getStatusCode() == HttpStatus.SC_OK) {
+        try (Response resp = client.newCall(builder.build()).execute()) {
+            if (resp.code() == 200) {
                 publishMessage("Your DirectDownload configuration is working", R.color.green);
                 return true;
             } else {
-                publishError(new StatusCodeException(sl));
+                publishError(new StatusCodeException(resp));
                 return false;
             }
-        } catch (IOException | URISyntaxException ex) {
+        } catch (IOException ex) {
             publishError(ex);
             return false;
         }

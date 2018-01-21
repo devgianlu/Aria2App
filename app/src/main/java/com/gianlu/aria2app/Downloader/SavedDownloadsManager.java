@@ -16,11 +16,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import okhttp3.HttpUrl;
 
 public class SavedDownloadsManager {
     private static SavedDownloadsManager instance;
@@ -57,7 +58,7 @@ public class SavedDownloadsManager {
     private void save() {
         try (FileOutputStream out = new FileOutputStream(storeFile, false)) {
             JSONArray array = new JSONArray();
-            for (SavedState state : savedStates) array.put(state.toJSON());
+            for (SavedState state : savedStates) array.put(state.toJson());
             out.write(array.toString().getBytes());
             out.flush();
         } catch (IOException | JSONException ex) {
@@ -65,14 +66,14 @@ public class SavedDownloadsManager {
         }
     }
 
-    public void saveState(int id, URI uri, File tempFile, File destFile, String profileId) {
+    public void saveState(int id, HttpUrl url, File tempFile, File destFile, String profileId) {
         if (savedStates == null) load();
 
         for (SavedState state : savedStates)
             if (state.id == id)
                 return;
 
-        savedStates.add(new SavedState(id, uri.getPath(), tempFile, profileId, destFile.getName()));
+        savedStates.add(new SavedState(id, url.encodedPath(), tempFile, profileId, destFile.getName()));
         save();
     }
 
@@ -124,7 +125,7 @@ public class SavedDownloadsManager {
             this.fileName = fileName;
         }
 
-        private JSONObject toJSON() throws JSONException {
+        private JSONObject toJson() throws JSONException {
             return new JSONObject()
                     .put("profileId", profileId)
                     .put("id", id)

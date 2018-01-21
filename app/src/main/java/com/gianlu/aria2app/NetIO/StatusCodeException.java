@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.NetIO;
 
-import cz.msebera.android.httpclient.StatusLine;
+import okhttp3.Response;
 
 public class StatusCodeException extends Exception {
     public final int code;
@@ -10,7 +10,7 @@ public class StatusCodeException extends Exception {
         this.code = code;
     }
 
-    public StatusCodeException(StatusLine sl) {
-        this(sl.getStatusCode(), sl.getReasonPhrase());
+    public StatusCodeException(Response resp) {
+        this(resp.code(), resp.message());
     }
 }

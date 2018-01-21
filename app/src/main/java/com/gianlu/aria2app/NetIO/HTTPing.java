@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -21,20 +20,18 @@ import java.security.cert.CertificateException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cz.msebera.android.httpclient.Consts;
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.methods.HttpRequestBase;
-import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
-import cz.msebera.android.httpclient.util.EntityUtils;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
 
 public class HTTPing extends AbstractClient {
     private static HTTPing httping;
     private final ExecutorService executorService;
-    private final CloseableHttpClient client;
-    private final URI defaultUri;
+    private final OkHttpClient client;
+    private final HttpUrl defaultUri;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
@@ -87,15 +84,6 @@ public class HTTPing extends AbstractClient {
     @Override
     protected void clearInternal() {
         executorService.shutdownNow();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    client.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -111,7 +99,6 @@ public class HTTPing extends AbstractClient {
 
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        if (httping != null) httping.client.close();
         httping = new HTTPing(context, profile);
     }
 
@@ -127,37 +114,34 @@ public class HTTPing extends AbstractClient {
         @Override
         public void run() {
             try {
-                HttpRequestBase req;
+                Request req;
                 if (request == null) req = NetUtils.createGetRequest(profile, defaultUri, null);
                 else req = NetUtils.createPostRequest(profile, defaultUri, request);
-                HttpResponse resp = client.execute(req);
-                StatusLine sl = resp.getStatusLine();
-
-                if (request == null) { // Connection test
-                    if (sl.getStatusCode() == HttpStatus.SC_BAD_REQUEST) listener.onResponse(null);
-                    else listener.onException(new StatusCodeException(sl));
-                } else {
-                    HttpEntity entity = resp.getEntity();
-                    if (entity != null) {
-                        String json = EntityUtils.toString(entity, Consts.UTF_8);
-                        if (json == null || json.isEmpty()) {
-                            listener.onException(new NullPointerException("Empty response"));
-                        } else {
-                            JSONObject obj = new JSONObject(json);
-                            if (obj.has("error")) {
-                                listener.onException(new AriaException(obj.getJSONObject("error")));
-                            } else {
-                                listener.onResponse(obj);
-                            }
-                        }
+                try (Response resp = client.newCall(req).execute()) {
+                    if (request == null) { // Connection test
+                        if (resp.code() == 400)
+                            listener.onResponse(null);
+                        else
+                            listener.onException(new StatusCodeException(resp));
                     } else {
-                        listener.onException(new StatusCodeException(sl));
+                        ResponseBody body = resp.body();
+                        if (body != null) {
+                            String json = body.string();
+                            if (json == null || json.isEmpty()) {
+                                listener.onException(new NullPointerException("Empty response"));
+                            } else {
+                                JSONObject obj = new JSONObject(json);
+                                if (obj.has("error")) {
+                                    listener.onException(new AriaException(obj.getJSONObject("error")));
+                                } else {
+                                    listener.onResponse(obj);
+                                }
+                            }
+                        } else {
+                            listener.onException(new StatusCodeException(resp));
+                        }
                     }
                 }
-
-                EntityUtils.consumeQuietly(resp.getEntity());
-
-                req.releaseConnection();
             } catch (IllegalArgumentException ex) {
                 String msg = ex.getMessage();
                 if (msg != null && msg.contains("port out of range")) {

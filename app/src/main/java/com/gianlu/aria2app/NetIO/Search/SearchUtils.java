@@ -16,7 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,26 +23,23 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.client.utils.URIBuilder;
-import cz.msebera.android.httpclient.impl.client.HttpClients;
-import cz.msebera.android.httpclient.util.EntityUtils;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class SearchUtils {
     public static final int RESULTS_PER_REQUEST = 20;
     private static final String BASE_URL = "https://torrent-search-engine.herokuapp.com/";
     private static SearchUtils instance;
-    private final HttpClient client;
+    private final OkHttpClient client;
     private final ExecutorService executorService;
     private final Handler handler;
     private List<SearchEngine> cachedEngines = null;
 
     private SearchUtils() {
-        client = HttpClients.createDefault();
+        client = new OkHttpClient();
         executorService = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
     }
@@ -54,44 +50,39 @@ public class SearchUtils {
     }
 
     @NonNull
-    private String request(HttpGet get) throws IOException, StatusCodeException {
-        HttpResponse resp = client.execute(get);
-        StatusLine sl = resp.getStatusLine();
-        if (sl.getStatusCode() != HttpStatus.SC_OK) {
-            get.releaseConnection();
-            throw new StatusCodeException(sl);
-        }
+    private String request(Request get) throws IOException, StatusCodeException {
+        try (Response resp = client.newCall(get).execute()) {
+            if (resp.code() != 200) throw new StatusCodeException(resp);
 
-        String json = EntityUtils.toString(resp.getEntity());
-        get.releaseConnection();
-        return json;
+            ResponseBody body = resp.body();
+            if (body == null) throw new IOException("Empty body!");
+
+            return body.string();
+        }
     }
 
     public void search(final String token, final int maxResults, final ISearch listener) {
         search(null, token, maxResults, null, listener);
     }
 
-    private void search(@Nullable final String query, @Nullable final String token, final int maxResults, @Nullable final Collection<String> engines, final ISearch listener) {
+    private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, final ISearch listener) {
+        final HttpUrl.Builder builder = HttpUrl.parse(BASE_URL + "search").newBuilder();
+        builder.addQueryParameter("m", String.valueOf(maxResults));
+        if (token != null) {
+            builder.addQueryParameter("t", token);
+        } else {
+            builder.addQueryParameter("q", query);
+            if (engines != null)
+                for (String engineId : engines)
+                    builder.addQueryParameter("e", engineId);
+        }
+
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URIBuilder builder = new URIBuilder(BASE_URL + "search");
-                    builder.addParameter("m", String.valueOf(maxResults));
-                    if (token != null) {
-                        builder.addParameter("t", token);
-                    } else {
-                        builder.addParameter("q", query);
-                        if (engines != null)
-                            for (String engineId : engines)
-                                builder.addParameter("e", engineId);
-                    }
-
-                    JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
-                    JSONArray resultsArray = obj.getJSONArray("result");
-                    final List<SearchResult> results = new ArrayList<>();
-                    for (int i = 0; i < resultsArray.length(); i++)
-                        results.add(new SearchResult(resultsArray.getJSONObject(i)));
+                    JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
+                    final List<SearchResult> results = CommonUtils.toTList(obj.getJSONArray("result"), SearchResult.class);
 
                     cacheEnginesBlocking();
                     JSONArray missingEnginesArray = obj.getJSONArray("missing");
@@ -107,7 +98,7 @@ public class SearchUtils {
                             listener.onResult(results, missingEngines, token);
                         }
                     });
-                } catch (IOException | StatusCodeException | URISyntaxException | JSONException ex) {
+                } catch (IOException | StatusCodeException | JSONException ex) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -123,16 +114,16 @@ public class SearchUtils {
         search(query, null, maxResults, engines, listener);
     }
 
-    public void getTorrent(final SearchResult result, final ITorrent listener) {
+    public void getTorrent(SearchResult result, final ITorrent listener) {
+        final HttpUrl.Builder builder = HttpUrl.parse(BASE_URL + "getTorrent").newBuilder();
+        builder.addQueryParameter("e", result.engineId)
+                .addQueryParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
+
         executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    URIBuilder builder = new URIBuilder(BASE_URL + "getTorrent");
-                    builder.addParameter("e", result.engineId)
-                            .addParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
-
-                    JSONObject obj = new JSONObject(request(new HttpGet(builder.build())));
+                    JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
                     final Torrent torrent = new Torrent(obj);
 
                     handler.post(new Runnable() {
@@ -141,7 +132,7 @@ public class SearchUtils {
                             listener.onDone(torrent);
                         }
                     });
-                } catch (IOException | StatusCodeException | URISyntaxException | JSONException ex) {
+                } catch (IOException | StatusCodeException | JSONException ex) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -189,7 +180,7 @@ public class SearchUtils {
     }
 
     private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
-        JSONArray array = new JSONArray(request(new HttpGet(BASE_URL + "listEngines")));
+        JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL + "listEngines").build()));
         return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
     }
 

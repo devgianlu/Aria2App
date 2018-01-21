@@ -16,13 +16,12 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cz.msebera.android.httpclient.client.utils.URIBuilder;
+import okhttp3.HttpUrl;
 
 public class DownloadStartConfig {
     private static final Random random = new Random();
@@ -47,8 +46,8 @@ public class DownloadStartConfig {
             File destFile = new File(downloadPath, relativePath);
 
             MultiProfile.DirectDownload dd = profile.directDownload;
-            URIBuilder builder = new URIBuilder(dd.getURLAddress());
-            builder.setPath(relativePath);
+            HttpUrl.Builder builder = dd.getUrl().newBuilder();
+            builder.addPathSegments(relativePath);
 
             config.addTask(builder.build(), destFile, dd.username, dd.password);
         }
@@ -63,8 +62,8 @@ public class DownloadStartConfig {
         File destFile = new File(downloadPath, file.getName());
 
         MultiProfile.DirectDownload dd = profile.directDownload;
-        URIBuilder builder = new URIBuilder(dd.getURLAddress());
-        builder.setPath(file.getRelativePath(download.dir));
+        HttpUrl.Builder builder = dd.getUrl().newBuilder();
+        builder.addPathSegments(file.getRelativePath(download.dir));
 
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
         config.addTask(builder.build(), destFile, dd.username, dd.password);
@@ -92,8 +91,8 @@ public class DownloadStartConfig {
         File destFile = new File(downloadPath, state.fileName);
 
         MultiProfile.DirectDownload dd = profile.directDownload;
-        URIBuilder builder = new URIBuilder(dd.getURLAddress());
-        builder.setPath(state.path);
+        HttpUrl.Builder builder = dd.getUrl().newBuilder();
+        builder.addPathSegments(state.path);
 
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
         config.addResumableTask(state.id, builder.build(), destFile, dd.username, dd.password);
@@ -102,16 +101,16 @@ public class DownloadStartConfig {
 
     public static DownloadStartConfig recreate(Context context, DownloadTask task) {
         DownloadStartConfig config = new DownloadStartConfig(context, task.task.getProfileId());
-        config.addTask(task.task.uri, task.task.destFile, task.task.username, task.task.password);
+        config.addTask(task.task.url, task.task.destFile, task.task.username, task.task.password);
         return config;
     }
 
-    private void addTask(URI uri, File destFile, String username, String password) {
-        tasks.add(new Task(uri, destFile, username, password));
+    private void addTask(HttpUrl url, File destFile, String username, String password) {
+        tasks.add(new Task(url, destFile, username, password));
     }
 
-    private void addResumableTask(int id, URI uri, File destFile, String username, String password) {
-        tasks.add(new Task(id, uri, destFile, username, password, true));
+    private void addResumableTask(int id, HttpUrl url, File destFile, String username, String password) {
+        tasks.add(new Task(id, url, destFile, username, password, true));
     }
 
     public static class CannotCreateStartConfigException extends Exception {
@@ -149,15 +148,15 @@ public class DownloadStartConfig {
     }
 
     public class Task implements Serializable {
-        public final URI uri;
+        public final HttpUrl url;
         public final File destFile;
         public final int id;
         public final String username;
         public final String password;
         public final boolean resumable;
 
-        Task(int id, URI uri, File destFile, @Nullable String username, @Nullable String password, boolean resumable) {
-            this.uri = uri;
+        Task(int id, HttpUrl url, File destFile, @Nullable String username, @Nullable String password, boolean resumable) {
+            this.url = url;
             this.destFile = destFile;
             this.username = username;
             this.password = password;
@@ -165,8 +164,8 @@ public class DownloadStartConfig {
             this.resumable = resumable;
         }
 
-        Task(URI uri, File destFile, @Nullable String username, @Nullable String password) {
-            this(random.nextInt(), uri, destFile, username, password, false);
+        Task(HttpUrl url, File destFile, @Nullable String username, @Nullable String password) {
+            this(random.nextInt(), url, destFile, username, password, false);
         }
 
         @Override

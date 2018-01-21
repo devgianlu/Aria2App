@@ -146,7 +146,7 @@ public class ProfilesManager {
     public void save(MultiProfile profile) throws IOException, JSONException {
         File file = new File(PROFILES_PATH, profile.id + ".profile");
         try (OutputStream out = new FileOutputStream(file)) {
-            out.write(profile.toJSON().toString().getBytes());
+            out.write(profile.toJson().toString().getBytes());
             out.flush();
         }
     }

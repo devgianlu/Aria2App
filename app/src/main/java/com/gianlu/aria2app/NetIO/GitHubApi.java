@@ -5,32 +5,26 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
-import cz.msebera.android.httpclient.impl.client.HttpClients;
-import cz.msebera.android.httpclient.util.EntityUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class GitHubApi {
     public static void getLatestVersion(final IRelease listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try (CloseableHttpClient client = HttpClients.createDefault()) {
-                    HttpGet get = new HttpGet("https://api.github.com/repos/aria2/aria2/releases/latest");
-                    HttpResponse resp = client.execute(get);
-                    StatusLine sl = resp.getStatusLine();
-                    if (sl.getStatusCode() != HttpStatus.SC_OK) {
-                        get.releaseConnection();
-                        throw new StatusCodeException(sl);
-                    }
+                OkHttpClient client = new OkHttpClient();
+                try (Response resp = client.newCall(new Request.Builder()
+                        .get().url("https://api.github.com/repos/aria2/aria2/releases/latest").build()).execute()) {
 
-                    String json = EntityUtils.toString(resp.getEntity());
-                    get.releaseConnection();
+                    if (resp.code() != 200) throw new StatusCodeException(resp);
 
-                    listener.onRelease(new JSONObject(json).getString("name").replace("aria2 ", ""));
+                    ResponseBody body = resp.body();
+                    if (body == null) throw new IOException("Empty body!");
+
+                    listener.onRelease(new JSONObject(body.string()).getString("name").replace("aria2 ", ""));
                 } catch (IOException | StatusCodeException | JSONException | NullPointerException ex) {
                     listener.onException(ex);
                 }

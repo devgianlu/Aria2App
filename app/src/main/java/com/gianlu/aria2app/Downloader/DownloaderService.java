@@ -30,20 +30,19 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.config.RequestConfig;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
-import cz.msebera.android.httpclient.impl.client.HttpClients;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class DownloaderService extends Service {
+    private static final int TIMEOUT = 5;
     private final DownloadTasks downloads = new DownloadTasks();
     private final List<DownloaderRunnable> activeRunnables = Collections.synchronizedList(new ArrayList<DownloaderRunnable>());
+    private OkHttpClient client;
     private ExecutorService executorService;
     private LocalBroadcastManager broadcastManager;
     private Messenger messenger;
@@ -66,6 +65,11 @@ public class DownloaderService extends Service {
         if (maxSimultaneousDownloads <= 0) maxSimultaneousDownloads = 3;
         else if (maxSimultaneousDownloads > 10) maxSimultaneousDownloads = 10;
         executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);
+
+        client = new OkHttpClient.Builder().readTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .build();
     }
 
     @Override
@@ -95,13 +99,14 @@ public class DownloaderService extends Service {
 
     private void startInternal(DownloadStartConfig.Task task) {
         File tempFile = new File(task.getCacheDir(), String.valueOf(task.id));
-        HttpGet get = new HttpGet(task.uri);
+        Request.Builder request = new Request.Builder();
+        request.get().url(task.url);
         if (task.hasAuth())
-            get.addHeader("Authorization", "Basic " + Base64.encodeToString((task.username + ":" + task.password).getBytes(), Base64.NO_WRAP));
+            request.header("Authorization", "Basic " + Base64.encodeToString((task.username + ":" + task.password).getBytes(), Base64.NO_WRAP));
 
         downloads.removeById(task.id);
         downloads.add(new DownloadTask(task));
-        executorService.execute(new DownloaderRunnable(task, get, tempFile));
+        executorService.execute(new DownloaderRunnable(task, request, tempFile));
     }
 
     private void resumeInternal(SavedDownloadsManager.SavedState state) {
@@ -312,20 +317,20 @@ public class DownloaderService extends Service {
     }
 
     private class DownloaderRunnable implements Runnable {
-        private final HttpGet get;
+        private final Request.Builder request;
         private final File tempFile;
         private final DownloadStartConfig.Task singleTask;
         private final AtomicBoolean shouldStop = new AtomicBoolean(false);
         private final AtomicBoolean saveState = new AtomicBoolean(false);
 
-        private DownloaderRunnable(DownloadStartConfig.Task task, HttpGet get, File tempFile) {
+        private DownloaderRunnable(DownloadStartConfig.Task task, Request.Builder request, File tempFile) {
             this.singleTask = task;
-            this.get = get;
+            this.request = request;
             this.tempFile = tempFile;
         }
 
         private void saveState() {
-            savedDownloadsManager.saveState(singleTask.id, singleTask.uri, tempFile, singleTask.destFile, singleTask.getProfileId());
+            savedDownloadsManager.saveState(singleTask.id, singleTask.url, tempFile, singleTask.destFile, singleTask.getProfileId());
         }
 
         private void pause() {
@@ -346,12 +351,7 @@ public class DownloaderService extends Service {
             task.status = DownloadTask.Status.STARTED;
             downloads.notifyItemChanged(task);
 
-            try (CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(RequestConfig.custom()
-                    .setConnectTimeout(5000)
-                    .setConnectionRequestTimeout(5000)
-                    .setSocketTimeout(5000)
-                    .build()).build()) {
-
+            try {
                 long downloaded = 0;
                 if (singleTask.resumable && tempFile.exists()) {
                     long toSkip = tempFile.length();
@@ -364,68 +364,66 @@ public class DownloaderService extends Service {
                         return;
                     }
 
-                    get.addHeader("Range", "bytes=" + toSkip + "-");
+                    request.header("Range", "bytes=" + toSkip + "-");
                     downloaded = toSkip;
                 }
 
-                HttpResponse resp = client.execute(get);
+                try (Response resp = client.newCall(request.build()).execute()) {
+                    if (singleTask.resumable) {
+                        if (resp.code() != 206) {
+                            removeState();
 
-                StatusLine sl = resp.getStatusLine();
-                if (singleTask.resumable) {
-                    if (sl.getStatusCode() != HttpStatus.SC_PARTIAL_CONTENT) {
-                        removeState();
-
-                        task.status = DownloadTask.Status.FAILED;
-                        task.ex = new DownloaderException("Server doesn't support partial content.");
-                        downloads.notifyItemChanged(task);
-                        return;
-                    }
-                } else {
-                    if (sl.getStatusCode() != HttpStatus.SC_OK) {
-                        removeState();
-
-                        task.status = DownloadTask.Status.FAILED;
-                        task.ex = new DownloaderException(new StatusCodeException(sl));
-                        downloads.notifyItemChanged(task);
-                        return;
-                    }
-                }
-
-                DownloaderService.this.activeRunnables.add(this);
-
-                HttpEntity entity = resp.getEntity();
-                task.length = entity.getContentLength() + downloaded;
-                downloads.notifyItemChanged(task);
-
-                InputStream in = entity.getContent(); // Don't close this
-
-                try (FileOutputStream out = new FileOutputStream(tempFile, singleTask.resumable)) {
-                    byte[] buffer = new byte[4096];
-
-                    int count;
-                    long lastUpdateCount = 0;
-                    long lastUpdate = System.currentTimeMillis();
-                    long period;
-                    while (!shouldStop.get() && (count = in.read(buffer)) != -1) {
-                        out.write(buffer, 0, count);
-                        out.flush();
-
-                        downloaded += count;
-                        lastUpdateCount += count;
-                        task.status = DownloadTask.Status.RUNNING;
-                        task.downloaded = downloaded;
-
-                        period = System.currentTimeMillis() - lastUpdate;
-                        if (period >= 500) {
-                            task.speed = (float) lastUpdateCount / ((float) period / 1000f);
+                            task.status = DownloadTask.Status.FAILED;
+                            task.ex = new DownloaderException("Server doesn't support partial content.");
                             downloads.notifyItemChanged(task);
-                            lastUpdate = System.currentTimeMillis();
-                            lastUpdateCount = 0;
+                            return;
+                        }
+                    } else {
+                        if (resp.code() != 200) {
+                            removeState();
+
+                            task.status = DownloadTask.Status.FAILED;
+                            task.ex = new DownloaderException(new StatusCodeException(resp));
+                            downloads.notifyItemChanged(task);
+                            return;
+                        }
+                    }
+
+                    DownloaderService.this.activeRunnables.add(this);
+
+                    ResponseBody body = resp.body();
+                    if (body == null) throw new IOException("Empty body!");
+
+                    task.length = body.contentLength() + downloaded;
+                    downloads.notifyItemChanged(task);
+
+                    try (InputStream in = body.byteStream();
+                         FileOutputStream out = new FileOutputStream(tempFile, singleTask.resumable)) {
+                        byte[] buffer = new byte[4096];
+
+                        int count;
+                        long lastUpdateCount = 0;
+                        long lastUpdate = System.currentTimeMillis();
+                        long period;
+                        while (!shouldStop.get() && (count = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, count);
+                            out.flush();
+
+                            downloaded += count;
+                            lastUpdateCount += count;
+                            task.status = DownloadTask.Status.RUNNING;
+                            task.downloaded = downloaded;
+
+                            period = System.currentTimeMillis() - lastUpdate;
+                            if (period >= 500) {
+                                task.speed = (float) lastUpdateCount / ((float) period / 1000f);
+                                downloads.notifyItemChanged(task);
+                                lastUpdate = System.currentTimeMillis();
+                                lastUpdateCount = 0;
+                            }
                         }
                     }
                 }
-
-                get.releaseConnection();
 
                 if (shouldStop.get()) {
                     if (saveState.get()) {

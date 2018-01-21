@@ -7,6 +7,7 @@ import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.Utils;
 
+import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -17,15 +18,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.Callable;
 
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
-import cz.msebera.android.httpclient.conn.HttpHostConnectException;
-import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class HttpTester extends NetTester implements Callable<Boolean> {
+
     HttpTester(Context context, MultiProfile.UserProfile profile, IPublish listener) {
         super(context, profile, listener);
     }
@@ -41,26 +38,24 @@ public class HttpTester extends NetTester implements Callable<Boolean> {
 
     @Override
     public Boolean call() {
-        try (CloseableHttpClient client = NetUtils.buildHttpClient(profile)) {
-            HttpGet get = NetUtils.createGetRequest(profile, null, Utils.readyRequest().put("method", "system.listMethods"));
+        try {
+            OkHttpClient client = NetUtils.buildHttpClient(profile);
 
             long startTime = System.currentTimeMillis();
-            HttpResponse resp = client.execute(get);
-            StatusLine sl = resp.getStatusLine();
+            try (Response resp = client.newCall(NetUtils.createGetRequest(profile, null, Utils.readyRequest().put("method", "system.listMethods"))).execute()) {
+                boolean a;
+                if (resp.code() == 200) {
+                    a = true;
+                    publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - startTime));
+                } else {
+                    a = false;
+                    publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, new StatusCodeException(resp)));
+                }
 
-            boolean a;
-            if (sl.getStatusCode() == HttpStatus.SC_OK) {
-                a = true;
-                publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, System.currentTimeMillis() - startTime));
-            } else {
-                a = false;
-                publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, new StatusCodeException(sl)));
+                return a;
             }
-
-            get.releaseConnection();
-            return a;
         } catch (IOException | CertificateException | URISyntaxException | JSONException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
-            if (ex instanceof HttpHostConnectException || ex instanceof ConnectTimeoutException) {
+            if (ex instanceof ConnectTimeoutException) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, ex));
             } else {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, ex));

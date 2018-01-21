@@ -16,44 +16,30 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
-import cz.msebera.android.httpclient.client.config.RequestConfig;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.client.methods.HttpPost;
-import cz.msebera.android.httpclient.client.utils.URIBuilder;
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
-import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
-import cz.msebera.android.httpclient.impl.client.HttpClients;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class NetUtils {
-
-    public static void validateConnection(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption) throws URISyntaxException {
-        URIBuilder builder = new URIBuilder();
-        builder.setHost(address)
-                .setPort(port)
-                .setPath(endpoint);
-
-        if (connectionMethod == MultiProfile.ConnectionMethod.HTTP) {
-            builder.setScheme(encryption ? "https" : "http");
-        } else {
-            builder.setScheme(encryption ? "wss" : "ws");
-        }
-
-        builder.build();
-    }
+    private static final int TIMEOUT = 5;
 
     @NonNull
     static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
@@ -94,22 +80,29 @@ public class NetUtils {
         }
     }
 
-    public static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    public static OkHttpClient buildHttpClient(MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         return buildHttpClient(profile, createSSLContext(profile.certificate));
     }
 
-    static CloseableHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) {
-        HttpClientBuilder builder = HttpClients.custom()
-                .setUserAgent("Aria2App")
-                .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectTimeout(5000)
-                        .setSocketTimeout(5000)
-                        .setConnectionRequestTimeout(5000)
-                        .build())
-                .setSslcontext(sslContext);
+    static OkHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager))
+            throw new IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers)); // FIXME
+
+        X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+        if (SSLContext.getDefault() != sslContext)
+            sslContext.init(null, new TrustManager[]{trustManager}, null);
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .sslSocketFactory(sslContext.getSocketFactory(), trustManager);
 
         if (!profile.hostnameVerifier) {
-            builder.setSSLHostnameVerifier(new HostnameVerifier() {
+            builder.hostnameVerifier(new HostnameVerifier() {
                 @SuppressLint("BadHostnameVerifier")
                 @Override
                 public boolean verify(String s, SSLSession sslSession) {
@@ -122,8 +115,14 @@ public class NetUtils {
     }
 
     @NonNull
-    public static URI createBaseHttpURI(MultiProfile.UserProfile profile) throws URISyntaxException {
-        return new URI(profile.serverSSL ? "https" : "http", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
+    public static HttpUrl createBaseHttpURI(MultiProfile.UserProfile profile) throws URISyntaxException {
+        HttpUrl.Builder builder = new HttpUrl.Builder();
+        builder.scheme(profile.serverSSL ? "https" : "http")
+                .host(profile.serverAddr)
+                .port(profile.serverPort)
+                .addPathSegments(profile.serverEndpoint.charAt(0) == '/' ? profile.serverEndpoint.substring(1) : profile.serverEndpoint);
+
+        return builder.build();
     }
 
     @NonNull
@@ -131,34 +130,43 @@ public class NetUtils {
         return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
     }
 
-    public static HttpGet createGetRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException {
+    public static Request createGetRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException {
         if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
-        URIBuilder builder = new URIBuilder(defaultUri);
+
+        HttpUrl.Builder uri = defaultUri.newBuilder();
         if (request != null) {
-            builder.addParameter("method", request.getString("method"))
-                    .addParameter("id", request.getString("id"));
+            uri.addQueryParameter("method", request.getString("method"))
+                    .addQueryParameter("id", request.getString("id"));
 
             if (request.has("params"))
-                builder.addParameter("params", Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP));
+                uri.addQueryParameter("params", Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP));
         }
 
-        HttpGet get = new HttpGet(builder.build());
-        if (profile.authMethod == JTA2.AuthMethod.HTTP)
-            get.addHeader("Authorization", "Basic " + profile.getEncodedCredentials());
+        Request.Builder builder = new Request.Builder();
+        builder.url(uri.build()).get();
 
-        return get;
+        if (profile.authMethod == JTA2.AuthMethod.HTTP)
+            builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
+
+        return builder.build();
     }
 
-    static HttpPost createPostRequest(MultiProfile.UserProfile profile, @Nullable URI defaultUri, @Nullable JSONObject request) throws URISyntaxException {
+    static Request createPostRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws URISyntaxException {
         if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
-        HttpPost post = new HttpPost(defaultUri);
+        Request.Builder builder = new Request.Builder();
+        builder.url(defaultUri);
 
+        RequestBody body;
         if (request != null)
-            post.setEntity(new StringEntity(request.toString(), Charset.forName("UTF-8")));
+            body = RequestBody.create(MediaType.parse("application/json"), request.toString());
+        else
+            body = RequestBody.create(null, new byte[0]);
+
+        builder.post(body);
 
         if (profile.authMethod == JTA2.AuthMethod.HTTP)
-            post.addHeader("Authorization", "Basic " + profile.getEncodedCredentials());
+            builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
 
-        return post;
+        return builder.build();
     }
 }
