@@ -144,7 +144,7 @@ public class DownloaderService extends Service {
         }
     }
 
-    private void resumeDownload(int id) { // FIXME: Fucks everything up
+    private void resumeDownload(int id) {
         SavedDownloadsManager.SavedState state = savedDownloadsManager.getSavedState(id);
         if (state != null) resumeInternal(state);
         else removeDownload(id);
@@ -312,7 +312,7 @@ public class DownloaderService extends Service {
             ListIterator<DownloadTask> iterator = listIterator();
             while (iterator.hasNext())
                 if (iterator.next().task.id == id)
-                    iterator.remove();
+                    iterator.remove(); // Calls #remove(int)
         }
     }
 

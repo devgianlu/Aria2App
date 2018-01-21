@@ -111,6 +111,11 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         if (downloaderMessenger != null) DownloaderUtils.getDownload(downloaderMessenger, id);
     }
 
+    private void countUpdated(int count) {
+        if (count == 0) layout.showMessage(R.string.noDirectDownloads, false);
+        else layout.showList();
+    }
+
     private class InternalBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -120,24 +125,23 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
 
             switch (intent.getAction()) {
                 case DownloaderUtils.ACTION_COUNT_CHANGED:
-                    if (intent.getIntExtra("count", 0) <= 0)
-                        layout.showMessage(R.string.noDirectDownloads, false);
+                    countUpdated(intent.getIntExtra("count", 0));
                     break;
                 case DownloaderUtils.ACTION_LIST_DOWNLOADS:
                     List<DownloadTask> downloads = (List<DownloadTask>) intent.getSerializableExtra("downloads");
-                    if (downloads.isEmpty()) {
-                        layout.showMessage(R.string.noDirectDownloads, false);
-                    } else {
-                        adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
-                        layout.loadListData(adapter);
-                    }
+                    adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
+                    layout.loadListData(adapter);
+
+                    countUpdated(downloads.size());
                     break;
                 case DownloaderUtils.ACTION_ITEM_INSERTED:
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (adapter != null)
+                            if (adapter != null) {
                                 adapter.addItemAndNotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                                countUpdated(adapter.getItemCount());
+                            }
                         }
                     });
                     break;
@@ -145,8 +149,10 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (adapter != null)
+                            if (adapter != null) {
                                 adapter.removeItemAndNotifyItemRemoved(intent.getIntExtra("pos", -1));
+                                countUpdated(adapter.getItemCount());
+                            }
                         }
                     });
                     break;
