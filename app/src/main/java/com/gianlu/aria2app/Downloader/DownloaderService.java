@@ -15,7 +15,7 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.PKeys;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.io.File;
 import java.io.FileOutputStream;

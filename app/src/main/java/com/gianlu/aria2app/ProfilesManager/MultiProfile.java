@@ -586,7 +586,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             try {
                 return getFullServerAddress();
             } catch (URISyntaxException ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
                 return "";
             }
         }

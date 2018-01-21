@@ -213,7 +213,7 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
             } catch (JTA2.InitializingException ex) {
                 holder.loading.setVisibility(View.GONE);
                 MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-                Logging.logMe(ex);
+                Logging.log(ex);
                 return null;
             }
         } else {
@@ -377,7 +377,7 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
 
                             @Override
                             public void onException(Exception ex) {
-                                Logging.logMe(ex);
+                                Logging.log(ex);
                             }
                         });
                     } catch (URISyntaxException ignored) {

@@ -32,10 +32,10 @@ import com.gianlu.aria2app.NetIO.Search.Torrent;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.AnalyticsApplication;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
@@ -183,7 +183,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public void onException(Exception ex) {
         message.setVisibility(View.GONE);
         recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
-        Logging.logMe(ex);
+        Logging.log(ex);
     }
 
     @Override

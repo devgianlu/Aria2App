@@ -116,7 +116,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
             return new UpdateUI(getContext(), gid, this);
         } catch (JTA2.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(ex);
+            Logging.log(ex);
             return null;
         }
     }

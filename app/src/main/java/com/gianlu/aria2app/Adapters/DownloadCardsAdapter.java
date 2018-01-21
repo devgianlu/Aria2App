@@ -30,10 +30,10 @@ import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
-import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -265,7 +265,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             try {
                 notificationMessenger.send(Message.obtain(null, NotificationService.MESSENGER_IS_NOTIFICABLE, item.gid));
             } catch (RemoteException ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
             }
         }
 

@@ -10,7 +10,7 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,7 +81,7 @@ public class ProfilesManager {
         try {
             return retrieveProfile(id);
         } catch (IOException | JSONException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             return null;
         }
     }

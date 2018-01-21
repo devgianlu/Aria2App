@@ -2,8 +2,8 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 import android.support.annotation.Nullable;
 
-import com.gianlu.commonutils.Sorting.Filterable;
-import com.gianlu.commonutils.Sorting.NotFilterable;
+import com.gianlu.commonutils.Adapters.Filterable;
+import com.gianlu.commonutils.Adapters.NotFilterable;
 
 import org.json.JSONObject;
 

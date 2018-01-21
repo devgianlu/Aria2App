@@ -27,7 +27,7 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.commonutils.AnalyticsApplication;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
@@ -156,7 +156,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
                     tryConnecting(manager.retrieveProfile(profileId));
                     return;
                 } catch (IOException | JSONException ex) {
-                    Logging.logMe(ex);
+                    Logging.log(ex);
                 }
             }
         }
@@ -239,7 +239,7 @@ public class LoadingActivity extends AppCompatActivity implements IConnect {
             }
         });
 
-        Logging.logMe(ex);
+        Logging.log(ex);
     }
 
     private void tryConnecting(MultiProfile profile) {

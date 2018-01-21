@@ -133,7 +133,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                                 @Override
                                 public void onException(Exception ex) {
                                     addressFlag.setImageResource(R.drawable.ic_list_country_unknown);
-                                    Logging.logMe(ex);
+                                    Logging.log(ex);
                                 }
                             });
                         }
@@ -269,7 +269,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         } catch (CertificateParsingException ex) {
             certificateDetailsIssuerAns.setVisibility(View.GONE);
-            Logging.logMe(ex);
+            Logging.log(ex);
         }
 
         certificateDetailsSubjectName.setHtml(R.string.name, certificate.getSubjectX500Principal().getName(X500Principal.RFC1779));
@@ -285,7 +285,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         } catch (CertificateParsingException ex) {
             certificateDetailsSubjectAns.setVisibility(View.GONE);
-            Logging.logMe(ex);
+            Logging.log(ex);
         }
     }
 

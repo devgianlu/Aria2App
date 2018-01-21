@@ -35,7 +35,7 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -115,7 +115,7 @@ public class NotificationService extends Service {
                 try {
                     messenger.send(Message.obtain(null, MESSENGER_TOGGLE_NOTIFICABLE, gid));
                 } catch (RemoteException ex) {
-                    Logging.logMe(ex);
+                    Logging.log(ex);
                     listener.onResult(false);
                 }
 
@@ -124,7 +124,7 @@ public class NotificationService extends Service {
                         waitToUnbind.wait();
                         context.unbindService(this);
                     } catch (InterruptedException ex) {
-                        Logging.logMe(ex);
+                        Logging.log(ex);
                     }
                 }
             }
@@ -494,7 +494,7 @@ public class NotificationService extends Service {
 
         @Override
         public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
-            Logging.logMe(cause);
+            Logging.log(cause);
         }
 
         @Override

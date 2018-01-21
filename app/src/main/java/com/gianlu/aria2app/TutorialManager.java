@@ -2,7 +2,7 @@ package com.gianlu.aria2app;
 
 import android.content.Context;
 
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -49,7 +49,7 @@ public class SavedDownloadsManager {
                 savedStates = CommonUtils.toTList(new JSONArray(line), SavedState.class);
             }
         } catch (IOException | JSONException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             savedStates = new ArrayList<>();
         }
     }
@@ -61,7 +61,7 @@ public class SavedDownloadsManager {
             out.write(array.toString().getBytes());
             out.flush();
         } catch (IOException | JSONException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
         }
     }
 

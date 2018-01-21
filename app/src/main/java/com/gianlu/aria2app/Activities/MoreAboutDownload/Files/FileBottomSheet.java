@@ -68,7 +68,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
                 return true;
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             return false;
         }
     }
@@ -161,7 +161,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
 
                         @Override
                         public void onException(final Exception ex) {
-                            Logging.logMe(ex);
+                            Logging.log(ex);
                             if (listener != null)
                                 listener.showToast(Utils.Messages.FAILED_CHANGE_FILE_SELECTION);
                         }

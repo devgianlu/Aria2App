@@ -1,6 +1,6 @@
 package com.gianlu.aria2app;
 
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 public enum PKeys implements Prefs.PrefKey {
     DD_DOWNLOAD_PATH("dd_downloadPath"),

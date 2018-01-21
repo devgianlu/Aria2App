@@ -113,7 +113,7 @@ public class PeerBottomSheet extends NiceBaseBottomSheet {
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
                 ipDetails.setVisibility(View.GONE);
             }
         });

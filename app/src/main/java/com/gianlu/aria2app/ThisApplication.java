@@ -7,9 +7,9 @@ import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.WebSocketing;
-import com.gianlu.commonutils.AnalyticsApplication;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -69,6 +69,6 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
 
     @Override
     public void onException(Throwable ex) {
-        Logging.logMe(ex);
+        Logging.log(ex);
     }
 }

@@ -116,8 +116,8 @@
     <orderEntry type="library" name="com.google.firebase:firebase-iid-11.8.0" level="project" />
     <orderEntry type="library" name="cz.msebera.android:httpclient:4.4.1.2@jar" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-iid-license-11.8.0" level="project" />
-    <orderEntry type="library" name="com.getkeepsafe.taptargetview:taptargetview-1.10.0" level="project" />
     <orderEntry type="library" name="com.android.support:transition-27.0.2" level="project" />
+    <orderEntry type="library" name="com.getkeepsafe.taptargetview:taptargetview-1.11.0" level="project" />
     <orderEntry type="library" name="com.android.support:recyclerview-v7-27.0.2" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-basement-license-11.8.0" level="project" />
     <orderEntry type="library" name="com.getbase:floatingactionbutton-1.10.1" level="project" />

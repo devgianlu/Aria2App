@@ -45,7 +45,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.AnalyticsApplication;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
@@ -139,7 +139,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
             fileSheet = new FileBottomSheet(layout, this);
             dirSheet = new DirBottomSheet(layout, this);
         } catch (JTA2.InitializingException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
             return layout;
         }
@@ -155,7 +155,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
         try {
             jta2 = JTA2.instantiate(getContext());
         } catch (JTA2.InitializingException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
             return layout;
         }
@@ -180,7 +180,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
 
             @Override
             public void onException(final Exception ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
 
                 Activity activity = getActivity();
                 if (activity != null) {
@@ -213,7 +213,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     @Override
     public void onFatalException(Exception ex) {
         recyclerViewLayout.showMessage(R.string.failedLoading, true);
-        Logging.logMe(ex);
+        Logging.log(ex);
     }
 
     @Override
@@ -397,7 +397,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
             return new UpdateUI(getContext(), gid, FilesFragment.this);
         } catch (JTA2.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.logMe(ex);
+            Logging.log(ex);
             return null;
         }
     }

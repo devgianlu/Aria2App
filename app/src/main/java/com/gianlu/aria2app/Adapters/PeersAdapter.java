@@ -15,10 +15,10 @@ import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Adapters.NotFilterable;
+import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Sorting.NotFilterable;
-import com.gianlu.commonutils.Sorting.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
             }
         });
     }

@@ -14,7 +14,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -10,11 +10,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 
 import com.gianlu.aria2app.Services.NotificationService;
-import com.gianlu.commonutils.AppCompatPreferenceActivity;
-import com.gianlu.commonutils.AppCompatPreferenceFragment;
-import com.gianlu.commonutils.BaseAboutFragment;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.LogsActivity;
+import com.gianlu.commonutils.Preferences.AppCompatPreferenceActivity;
+import com.gianlu.commonutils.Preferences.AppCompatPreferenceFragment;
+import com.gianlu.commonutils.Preferences.BaseAboutFragment;
 import com.gianlu.commonutils.Toaster;
 
 import java.io.File;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.gianlu.aria2app.PKeys;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.util.Objects;
 

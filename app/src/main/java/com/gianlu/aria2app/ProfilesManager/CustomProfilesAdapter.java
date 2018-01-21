@@ -48,7 +48,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         try {
             holder.secondary.setText(profile.getFullServerAddress());
         } catch (URISyntaxException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             holder.secondary.setText(null);
         }
 

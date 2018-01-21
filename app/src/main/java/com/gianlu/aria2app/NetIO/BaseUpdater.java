@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.PKeys;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 public abstract class BaseUpdater extends Thread {
     protected final JTA2 jta2;

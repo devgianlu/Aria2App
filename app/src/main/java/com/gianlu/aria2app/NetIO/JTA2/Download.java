@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Sorting.Filterable;
+import com.gianlu.commonutils.Adapters.Filterable;
 
 import org.json.JSONArray;
 import org.json.JSONException;

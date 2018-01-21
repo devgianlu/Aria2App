@@ -77,7 +77,7 @@ import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.Initializer;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Prefs;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
@@ -297,7 +297,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         try {
             currentProfile = manager.getCurrent(this);
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             WebSocketing.clear();
             HTTPing.clear();
             manager.unsetLastProfile(this);
@@ -423,7 +423,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 try {
                     jta2 = JTA2.instantiate(MainActivity.this);
                 } catch (JTA2.InitializingException ex) {
-                    Logging.logMe(ex);
+                    Logging.log(ex);
                     return;
                 }
 
@@ -437,14 +437,14 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
                     @Override
                     public void onException(Exception ex) {
-                        Logging.logMe(ex);
+                        Logging.log(ex);
                     }
                 });
             }
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
             }
         });
     }
@@ -511,7 +511,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         try {
             ProfilesManager.get(this).reloadCurrentProfile(this);
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            Logging.logMe(ex);
+            Logging.log(ex);
             WebSocketing.clear();
             HTTPing.clear();
             ProfilesManager.get(this).unsetLastProfile(this);

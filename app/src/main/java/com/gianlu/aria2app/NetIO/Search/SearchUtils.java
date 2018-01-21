@@ -205,7 +205,7 @@ public class SearchUtils {
 
             @Override
             public void onException(Exception ex) {
-                Logging.logMe(ex);
+                Logging.log(ex);
             }
         });
     }
