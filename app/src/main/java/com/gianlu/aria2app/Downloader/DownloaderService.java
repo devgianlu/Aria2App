@@ -144,7 +144,7 @@ public class DownloaderService extends Service {
         }
     }
 
-    private void resumeDownload(int id) {
+    private void resumeDownload(int id) { // FIXME: Fucks everything up
         SavedDownloadsManager.SavedState state = savedDownloadsManager.getSavedState(id);
         if (state != null) resumeInternal(state);
         else removeDownload(id);

@@ -92,7 +92,7 @@ public class DownloadStartConfig {
 
         MultiProfile.DirectDownload dd = profile.directDownload;
         HttpUrl.Builder builder = dd.getUrl().newBuilder();
-        builder.addPathSegments(state.path);
+        builder.encodedPath(state.path);
 
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
         config.addResumableTask(state.id, builder.build(), destFile, dd.username, dd.password);

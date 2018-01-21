@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -168,10 +169,15 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                     break;
                 case DownloaderUtils.ACTION_GET_DOWNLOAD:
                     DownloadTask task = (DownloadTask) intent.getSerializableExtra("task");
-                    if (task == null)
+                    if (task == null) {
                         Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD);
-                    else
-                        startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                    } else {
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                        } catch (ActivityNotFoundException exx) {
+                            Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD, exx);
+                        }
+                    }
                     break;
             }
         }

@@ -45,9 +45,9 @@ public class AriaFile implements Serializable {
     }
 
     public static String getRelativePath(String path, @NonNull String dir) {
-        String relPath = path.replace(dir, "");
-        if (relPath.startsWith("/")) return relPath;
-        else return "/" + relPath;
+        String relPath = path.replaceFirst(dir, "");
+        if (relPath.startsWith("/")) return relPath.substring(1);
+        else return relPath;
     }
 
     public String getName() {
