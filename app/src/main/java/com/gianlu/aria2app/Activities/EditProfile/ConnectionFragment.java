@@ -211,6 +211,14 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
 
+        ImageButton removeCertificateFile = layout.findViewById(R.id.editProfile_removeCertificateFile);
+        removeCertificateFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadCertificateUri(null);
+            }
+        });
+
         MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
         if (edit != null) {
             switch (edit.connectionMethod) {
@@ -288,7 +296,13 @@ public class ConnectionFragment extends FieldErrorFragment {
         }
     }
 
-    private void loadCertificateUri(Uri path) {
+    private void loadCertificateUri(@Nullable Uri path) {
+        if (path == null) {
+            lastLoadedCertificate = null;
+            certificateDetailsContainer.setVisibility(View.GONE);
+            return;
+        }
+
         if (getContext() == null) return;
 
         X509Certificate certificate;

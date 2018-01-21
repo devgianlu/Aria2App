@@ -146,6 +146,17 @@
                     android:padding="4dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_insert_drive_file_black_48dp" />
+
+                <ImageButton
+                    android:id="@+id/editProfile_removeCertificateFile"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:adjustViewBounds="true"
+                    android:alpha="0.54"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_delete_black_48dp" />
             </LinearLayout>
 
             <TextView
