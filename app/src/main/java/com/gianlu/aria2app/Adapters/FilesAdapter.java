@@ -13,7 +13,6 @@ import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import com.gianlu.aria2app.FileTypeTextView;
-import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
@@ -49,7 +48,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         for (AriaFile file : files) notifyItemChanged(file);
     }
 
-    public void notifyItemChanged(AriaFile file) {
+    private void notifyItemChanged(AriaFile file) {
         int pos = currentNode.indexOfObj(file);
         if (pos != -1) {
             currentNodes.get(pos + currentNode.dirs.size()).update(file);
@@ -134,12 +133,12 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TreeNode node = currentNodes.get(holder.getAdapterPosition());
-                if (node == null) return;
-                if (node.isFile()) {
-                    if (handler != null) handler.onFileSelected(node.obj);
-                } else {
-                    navigateInto(node);
+                int pos = holder.getAdapterPosition();
+                if (pos != -1) {
+                    TreeNode node = currentNodes.get(pos);
+                    if (node == null) return;
+                    if (node.isFile()) if (handler != null) handler.onFileSelected(node.obj);
+                    else navigateInto(node);
                 }
             }
         });
@@ -147,14 +146,16 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                TreeNode node = currentNodes.get(holder.getAdapterPosition());
-                if (node == null) return false;
-                if (!node.isFile()) {
-                    if (handler != null) handler.onDirectorySelected(node);
-                    return true;
-                } else {
-                    return false;
+                int pos = holder.getAdapterPosition();
+                if (pos != -1) {
+                    TreeNode node = currentNodes.get(pos);
+                    if (node != null && !node.isFile()) {
+                        if (handler != null) handler.onDirectorySelected(node);
+                        return true;
+                    }
                 }
+
+                return false;
             }
         });
     }
@@ -171,13 +172,6 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public boolean canGoUp() {
         return currentNode != null && !currentNode.isRoot();
-    }
-
-    public void notifyItemsChanged(AriaDirectory dir, boolean selected) {
-        List<AriaFile> files = dir.objs();
-        for (AriaFile file : files) file.selected = selected;
-        currentNode.updateHierarchy(files);
-        for (AriaFile file : files) notifyItemChanged(file);
     }
 
     public TreeNode getCurrentNode() {

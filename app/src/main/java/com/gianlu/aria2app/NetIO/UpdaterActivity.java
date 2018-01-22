@@ -44,13 +44,15 @@ public abstract class UpdaterActivity extends AppCompatActivity {
     }
 
     protected final void refresh(final OnRefresh listener) {
-        updater.stopThread(new BaseUpdater.IThread() {
-            @Override
-            public void onStopped() {
-                listener.refreshed();
-                restart();
-            }
-        });
+        if (updater != null) {
+            updater.stopThread(new BaseUpdater.IThread() {
+                @Override
+                public void onStopped() {
+                    listener.refreshed();
+                    restart();
+                }
+            });
+        }
     }
 
     private void restart() {
