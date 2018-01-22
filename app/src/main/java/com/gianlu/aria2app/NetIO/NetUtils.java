@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.commonutils.Logging;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
@@ -39,6 +40,23 @@ import okhttp3.RequestBody;
 
 public class NetUtils {
     private static final int TIMEOUT = 5;
+
+
+    public static boolean isUrlValid(String address, int port, String endpoint, boolean encryption) {
+        try {
+            new HttpUrl.Builder()
+                    .scheme(encryption ? "https" : "http")
+                    .host(address)
+                    .port(port)
+                    .addPathSegments(endpoint.charAt(0) == '/' ? endpoint.substring(1) : endpoint)
+                    .build();
+
+            return true;
+        } catch (IllegalArgumentException | NullPointerException | IllegalStateException ex) {
+            Logging.log(ex);
+            return false;
+        }
+    }
 
     @NonNull
     static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {

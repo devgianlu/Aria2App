@@ -27,6 +27,7 @@ import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -387,6 +388,9 @@ public class ConnectionFragment extends FieldErrorFragment {
             throw new InvalidFieldException(getClass(), R.id.editProfile_endpoint, context.getString(R.string.endpointEmpty));
 
         boolean encryption = this.encryption.isChecked();
+
+        if (!NetUtils.isUrlValid(address, port, endpoint, encryption))
+            throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.invalidCompleteAddress));
 
         if (partial)
             return new Fields(connectionMethod, address, port, endpoint, encryption, null, false);
