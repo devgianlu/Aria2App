@@ -10,6 +10,7 @@ import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.Toaster;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
     public void onFatal(Throwable ex) {
         WebSocketing.clear();
         HTTPing.clear();
-        Toast.makeText(this, R.string.fatalExceptionMessage, Toast.LENGTH_LONG).show();
+        Toaster.show(this, getString(R.string.fatalExceptionMessage), Toast.LENGTH_LONG, null, ex, null);
         LoadingActivity.startActivity(this, ex);
 
         Crashlytics.logException(ex);

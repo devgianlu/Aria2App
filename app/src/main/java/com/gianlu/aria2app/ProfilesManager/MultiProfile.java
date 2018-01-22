@@ -152,6 +152,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_WIFI:
                 String ssid = wifiManager.getConnectionInfo().getSSID();
+                if (ssid == null || ssid.length() <= 2) break;
                 profile = findForWifi(ssid.substring(1, ssid.length() - 1));
                 break;
             case ConnectivityManager.TYPE_MOBILE_DUN:
