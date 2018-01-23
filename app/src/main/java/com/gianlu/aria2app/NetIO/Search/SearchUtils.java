@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -31,6 +32,7 @@ import okhttp3.ResponseBody;
 
 public class SearchUtils {
     public static final int RESULTS_PER_REQUEST = 20;
+    private static final int TIMEOUT = 15;
     private static final String BASE_URL = "https://torrent-search-engine.herokuapp.com/";
     private static SearchUtils instance;
     private final OkHttpClient client;
@@ -39,7 +41,10 @@ public class SearchUtils {
     private List<SearchEngine> cachedEngines = null;
 
     private SearchUtils() {
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder().connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+                .build();
         executorService = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
     }
