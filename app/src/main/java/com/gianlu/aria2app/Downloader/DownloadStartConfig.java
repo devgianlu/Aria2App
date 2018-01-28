@@ -35,7 +35,7 @@ public class DownloadStartConfig {
         this.cacheDir = context.getExternalCacheDir();
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, URISyntaxException {
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, URISyntaxException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
@@ -46,7 +46,11 @@ public class DownloadStartConfig {
             File destFile = new File(downloadPath, relativePath);
 
             MultiProfile.DirectDownload dd = profile.directDownload;
-            HttpUrl.Builder builder = dd.getUrl().newBuilder();
+            HttpUrl url = dd.getUrl();
+            if (url == null)
+                throw new CannotCreateStartConfigException(CannotCreateStartConfigException.Cause.INVALID_URL);
+
+            HttpUrl.Builder builder = url.newBuilder();
             builder.addPathSegments(relativePath);
 
             config.addTask(builder.build(), destFile, dd.username, dd.password);
@@ -55,14 +59,18 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, URISyntaxException {
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, URISyntaxException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
         File destFile = new File(downloadPath, file.getName());
 
         MultiProfile.DirectDownload dd = profile.directDownload;
-        HttpUrl.Builder builder = dd.getUrl().newBuilder();
+        HttpUrl url = dd.getUrl();
+        if (url == null)
+            throw new CannotCreateStartConfigException(CannotCreateStartConfigException.Cause.INVALID_URL);
+
+        HttpUrl.Builder builder = url.newBuilder();
         builder.addPathSegments(file.getRelativePath(download.dir));
 
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
@@ -91,7 +99,11 @@ public class DownloadStartConfig {
         File destFile = new File(downloadPath, state.fileName);
 
         MultiProfile.DirectDownload dd = profile.directDownload;
-        HttpUrl.Builder builder = dd.getUrl().newBuilder();
+        HttpUrl url = dd.getUrl();
+        if (url == null)
+            throw new CannotCreateStartConfigException(CannotCreateStartConfigException.Cause.INVALID_URL);
+
+        HttpUrl.Builder builder = url.newBuilder();
         builder.encodedPath(state.path);
 
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
@@ -143,7 +155,7 @@ public class DownloadStartConfig {
         public enum Cause {
             INTERNAL,
             DD_NOT_ENABLED,
-            PROFILE_DOES_NOT_EXIST
+            INVALID_URL, PROFILE_DOES_NOT_EXIST
         }
     }
 

@@ -310,7 +310,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
             DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
-        } catch (DownloaderUtils.InvalidPathException | URISyntaxException ex) {
+        } catch (DownloaderUtils.InvalidPathException | URISyntaxException | DownloadStartConfig.CannotCreateStartConfigException ex) {
             if (file == null) Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
             else Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
             return;

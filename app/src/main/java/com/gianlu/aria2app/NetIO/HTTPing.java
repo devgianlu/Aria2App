@@ -3,7 +3,6 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.JTA2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -32,6 +31,7 @@ public class HTTPing extends AbstractClient {
     private final ExecutorService executorService;
     private final OkHttpClient client;
     private final HttpUrl defaultUri;
+    private boolean shouldIgnoreRequests = false;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
@@ -83,17 +83,18 @@ public class HTTPing extends AbstractClient {
 
     @Override
     protected void clearInternal() {
+        shouldIgnoreRequests = true;
         executorService.shutdownNow();
     }
 
     @Override
-    public void send(@NonNull final JSONObject request, final IReceived handler) {
-        if (!executorService.isShutdown())
+    public void send(@NonNull JSONObject request, IReceived handler) {
+        if (!shouldIgnoreRequests && !executorService.isShutdown() && !executorService.isTerminated())
             executorService.execute(new RequestProcessor(request, handler));
     }
 
     private void sendConnectionTest(IReceived handler) {
-        if (!executorService.isShutdown())
+        if (!shouldIgnoreRequests && !executorService.isShutdown() && !executorService.isTerminated())
             executorService.execute(new RequestProcessor(null, handler));
     }
 
@@ -142,16 +143,7 @@ public class HTTPing extends AbstractClient {
                         }
                     }
                 }
-            } catch (IllegalArgumentException ex) {
-                String msg = ex.getMessage();
-                if (msg != null && msg.contains("port out of range")) {
-                    Crashlytics.setString("current_default_uri", defaultUri.toString());
-                    Crashlytics.setInt("current_profile_port", profile.serverPort);
-                    Crashlytics.logException(ex);
-                }
-
-                listener.onException(ex);
-            } catch (JSONException | IOException | URISyntaxException | IllegalStateException ex) {
+            } catch (IllegalArgumentException | JSONException | IOException | URISyntaxException | IllegalStateException ex) {
                 listener.onException(ex);
             }
         }

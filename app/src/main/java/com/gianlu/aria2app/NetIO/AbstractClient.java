@@ -28,7 +28,7 @@ import javax.net.ssl.SSLContext;
 public abstract class AbstractClient {
     private static final List<WeakReference<OnConnectivityChanged>> listeners = new ArrayList<>();
     private final WifiManager wifiManager;
-    private final Context context;
+    private final WeakReference<Context> context;
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
@@ -37,7 +37,7 @@ public abstract class AbstractClient {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         this.sslContext = NetUtils.createSSLContext(profile.certificate);
         this.profile = profile;
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -65,7 +65,9 @@ public abstract class AbstractClient {
 
     @Override
     protected void finalize() throws Throwable {
-        context.getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+        if (context.get() != null)
+            context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+
         super.finalize();
     }
 

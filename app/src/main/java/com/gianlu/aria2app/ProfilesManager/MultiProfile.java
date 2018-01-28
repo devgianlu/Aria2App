@@ -387,6 +387,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return obj;
         }
 
+        @Nullable
         public HttpUrl getUrl() {
             if (cachedUri == null) cachedUri = HttpUrl.parse(address);
             return cachedUri;
