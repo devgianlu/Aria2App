@@ -39,8 +39,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class NetUtils {
-    private static final int TIMEOUT = 5;
-
+    private static final int TIMEOUT = 5; // sec
 
     public static boolean isUrlValid(String address, int port, String endpoint, boolean encryption) {
         try {
@@ -52,7 +51,7 @@ public class NetUtils {
                     .build();
 
             return true;
-        } catch (IllegalArgumentException | NullPointerException | IllegalStateException ex) {
+        } catch (Exception ex) {
             Logging.log(ex);
             return false;
         }

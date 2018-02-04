@@ -191,8 +191,21 @@ public class DownloadTasksAdapter extends RecyclerView.Adapter<DownloadTasksAdap
     }
 
     public void addItemAndNotifyItemInserted(DownloadTask task) {
-        tasks.add(task);
-        notifyItemInserted(tasks.size() - 1);
+        int index = indexOf(task.task.id);
+        if (index == -1) {
+            tasks.add(task);
+            notifyItemInserted(tasks.size() - 1);
+        } else {
+            tasks.set(index, task);
+            notifyItemChanged(index);
+        }
+    }
+
+    private int indexOf(int taskId) {
+        for (int i = 0; i < tasks.size(); i++)
+            if (tasks.get(i).task.id == taskId) return i;
+
+        return -1;
     }
 
     public void removeItemAndNotifyItemRemoved(int pos) {
