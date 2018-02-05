@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -20,6 +21,7 @@ public class AriaFile implements Serializable {
     public final HashMap<Status, String> uris;
     public boolean selected;
 
+    @Keep
     public AriaFile(JSONObject obj) throws JSONException {
         index = obj.getInt("index");
         path = obj.getString("path");

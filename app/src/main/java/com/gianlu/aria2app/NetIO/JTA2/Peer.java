@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.NetIO.JTA2;
 
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 
 import com.gianlu.commonutils.Adapters.Filterable;
@@ -23,6 +24,7 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
     public final int port;
     public final String bitfield;
 
+    @Keep
     public Peer(JSONObject obj) {
         peerId = obj.optString("peerId", null);
         ip = obj.optString("ip", null);

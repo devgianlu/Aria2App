@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.NetIO.Search;
 
+import android.support.annotation.Keep;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,6 +12,7 @@ public class SearchResult {
     public final Integer leeches;
     public final String engineId;
 
+    @Keep
     public SearchResult(JSONObject obj) throws JSONException {
         url = obj.getString("url");
         title = obj.getString("title");

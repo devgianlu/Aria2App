@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO.JTA2;
 
 
 import android.net.Uri;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
@@ -17,6 +18,7 @@ public class Server {
     public final String currentUri;
     public final int downloadSpeed;
 
+    @Keep
     public Server(JSONObject obj) throws JSONException {
         uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");

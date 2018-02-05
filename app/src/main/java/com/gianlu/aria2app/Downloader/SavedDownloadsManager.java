@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Downloader;
 
 import android.content.Context;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 
 import com.gianlu.commonutils.CommonUtils;
@@ -108,6 +109,7 @@ public class SavedDownloadsManager {
         public final File tempFile;
         public final String fileName;
 
+        @Keep
         @SuppressWarnings("unused")
         public SavedState(JSONObject obj) throws JSONException, URISyntaxException {
             id = obj.getInt("id");
