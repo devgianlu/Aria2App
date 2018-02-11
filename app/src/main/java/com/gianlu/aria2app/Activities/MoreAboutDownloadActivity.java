@@ -78,6 +78,7 @@ public class MoreAboutDownloadActivity extends AppCompatActivity implements Info
     protected void onCreate(Bundle savedInstanceState) {
         Download download = (Download) getIntent().getSerializableExtra("download");
         if (download == null) {
+            super.onCreate(savedInstanceState);
             Toaster.show(this, Utils.Messages.FAILED_LOADING, new NullPointerException("download is null!"));
             onBackPressed();
             return;

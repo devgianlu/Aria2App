@@ -123,69 +123,74 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
         public void onReceive(Context context, final Intent intent) {
             if (intent.getAction() == null) return;
 
-            switch (intent.getAction()) {
-                case DownloaderUtils.ACTION_COUNT_CHANGED:
-                    countUpdated(intent.getIntExtra("count", 0));
-                    break;
-                case DownloaderUtils.ACTION_LIST_DOWNLOADS:
-                    List<DownloadTask> downloads = (List<DownloadTask>) intent.getSerializableExtra("downloads");
-                    adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
-                    layout.loadListData(adapter);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (intent.getAction()) {
+                        case DownloaderUtils.ACTION_COUNT_CHANGED:
+                            countUpdated(intent.getIntExtra("count", 0));
+                            break;
+                        case DownloaderUtils.ACTION_LIST_DOWNLOADS:
+                            List<DownloadTask> downloads = (List<DownloadTask>) intent.getSerializableExtra("downloads");
+                            adapter = new DownloadTasksAdapter(DirectDownloadActivity.this, downloads, DirectDownloadActivity.this);
+                            layout.loadListData(adapter);
 
-                    countUpdated(downloads.size());
-                    break;
-                case DownloaderUtils.ACTION_ITEM_INSERTED:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (adapter != null) {
-                                adapter.addItemAndNotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
-                                countUpdated(adapter.getItemCount());
+                            countUpdated(downloads.size());
+                            break;
+                        case DownloaderUtils.ACTION_ITEM_INSERTED:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (adapter != null) {
+                                        adapter.addItemAndNotifyItemInserted((DownloadTask) intent.getSerializableExtra("item"));
+                                        countUpdated(adapter.getItemCount());
+                                    }
+                                }
+                            });
+                            break;
+                        case DownloaderUtils.ACTION_ITEM_REMOVED:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (adapter != null) {
+                                        adapter.removeItemAndNotifyItemRemoved(intent.getIntExtra("pos", -1));
+                                        countUpdated(adapter.getItemCount());
+                                    }
+                                }
+                            });
+                            break;
+                        case DownloaderUtils.ACTION_ITEM_CHANGED:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (adapter != null)
+                                        adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
+                                }
+                            });
+                            break;
+                        case DownloaderUtils.ACTION_FAILED_RESTARTING:
+                        case DownloaderUtils.ACTION_FAILED_RESUMING:
+                            Exception ex = (Exception) intent.getSerializableExtra("ex");
+                            if (ex instanceof DownloadStartConfig.CannotCreateStartConfigException)
+                                ((DownloadStartConfig.CannotCreateStartConfigException) ex).showAppropriateToast(DirectDownloadActivity.this);
+                            else
+                                Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
+                            break;
+                        case DownloaderUtils.ACTION_GET_DOWNLOAD:
+                            DownloadTask task = (DownloadTask) intent.getSerializableExtra("task");
+                            if (task == null) {
+                                Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD);
+                            } else {
+                                try {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                                } catch (ActivityNotFoundException exx) {
+                                    Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD, exx);
+                                }
                             }
-                        }
-                    });
-                    break;
-                case DownloaderUtils.ACTION_ITEM_REMOVED:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (adapter != null) {
-                                adapter.removeItemAndNotifyItemRemoved(intent.getIntExtra("pos", -1));
-                                countUpdated(adapter.getItemCount());
-                            }
-                        }
-                    });
-                    break;
-                case DownloaderUtils.ACTION_ITEM_CHANGED:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (adapter != null)
-                                adapter.notifyItemChanged(intent.getIntExtra("pos", -1), intent.getSerializableExtra("item"));
-                        }
-                    });
-                    break;
-                case DownloaderUtils.ACTION_FAILED_RESTARTING:
-                case DownloaderUtils.ACTION_FAILED_RESUMING:
-                    Exception ex = (Exception) intent.getSerializableExtra("ex");
-                    if (ex instanceof DownloadStartConfig.CannotCreateStartConfigException)
-                        ((DownloadStartConfig.CannotCreateStartConfigException) ex).showAppropriateToast(DirectDownloadActivity.this);
-                    else
-                        Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
-                    break;
-                case DownloaderUtils.ACTION_GET_DOWNLOAD:
-                    DownloadTask task = (DownloadTask) intent.getSerializableExtra("task");
-                    if (task == null) {
-                        Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD);
-                    } else {
-                        try {
-                            startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
-                        } catch (ActivityNotFoundException exx) {
-                            Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD, exx);
-                        }
+                            break;
                     }
-                    break;
-            }
+                }
+            });
         }
     }
 }

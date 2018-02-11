@@ -433,7 +433,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             if (conditions.get(i).isDefault)
                 return i;
 
-        return -1;
+        return 0;
     }
 
     private void setDefaultCondition(int pos) {
