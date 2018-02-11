@@ -224,20 +224,24 @@ public class DownloaderService extends Service {
 
         @Override
         public void add(int index, DownloadTask element) {
-            if (!contains(element)) {
-                super.add(index, element);
-                notifyItemAdded(element);
+            synchronized (this) {
+                if (!contains(element)) {
+                    super.add(index, element);
+                    notifyItemAdded(element);
+                }
             }
         }
 
         @Override
         public boolean add(DownloadTask element) {
-            if (!contains(element)) {
-                boolean a = super.add(element);
-                notifyItemAdded(element);
-                return a;
-            } else {
-                return false;
+            synchronized (this) {
+                if (!contains(element)) {
+                    boolean a = super.add(element);
+                    notifyItemAdded(element);
+                    return a;
+                } else {
+                    return false;
+                }
             }
         }
 
@@ -275,44 +279,52 @@ public class DownloaderService extends Service {
 
         @Override
         public DownloadTask remove(int index) {
-            DownloadTask a = super.remove(index);
-            notifyItemRemoved(index);
+            synchronized (this) {
+                DownloadTask a = super.remove(index);
+                notifyItemRemoved(index);
 
-            if (a.task.resumable)
-                savedDownloadsManager.removeState(a.task.id);
+                if (a.task.resumable)
+                    savedDownloadsManager.removeState(a.task.id);
 
-            return a;
+                return a;
+            }
         }
 
         @Override
         public boolean remove(Object o) {
-            int pos = indexOf(o);
-            boolean a = super.remove(o);
-            notifyItemRemoved(pos);
+            synchronized (this) {
+                int pos = indexOf(o);
+                boolean a = super.remove(o);
+                notifyItemRemoved(pos);
 
-            if (o instanceof DownloadTask) {
-                DownloadTask task = (DownloadTask) o;
-                if (task.task.resumable)
-                    savedDownloadsManager.removeState(task.task.id);
+                if (o instanceof DownloadTask) {
+                    DownloadTask task = (DownloadTask) o;
+                    if (task.task.resumable)
+                        savedDownloadsManager.removeState(task.task.id);
+                }
+
+                return a;
             }
-
-            return a;
         }
 
         @Nullable
         DownloadTask find(int id) {
-            for (DownloadTask task : this)
-                if (task.task.id == id)
-                    return task;
+            synchronized (this) {
+                for (DownloadTask task : this)
+                    if (task.task.id == id)
+                        return task;
 
-            return null;
+                return null;
+            }
         }
 
         void removeById(int id) {
-            ListIterator<DownloadTask> iterator = listIterator();
-            while (iterator.hasNext())
-                if (iterator.next().task.id == id)
-                    iterator.remove(); // Calls #remove(int)
+            synchronized (this) {
+                ListIterator<DownloadTask> iterator = listIterator();
+                while (iterator.hasNext())
+                    if (iterator.next().task.id == id)
+                        iterator.remove(); // Calls #remove(int)
+            }
         }
     }
 
