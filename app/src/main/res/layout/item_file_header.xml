@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="4dp"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
     android:paddingTop="4dp">
 
     <com.gianlu.commonutils.SuperTextView

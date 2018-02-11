@@ -364,4 +364,6 @@
         <item>@string/notificationBTComplete</item>
         <item>@string/notificationError</item>
     </string-array>
+
+    <string-array name="empty_array" translatable="false" />
 </resources>

@@ -181,10 +181,10 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             @Override
             public void onClick(View view) {
                 if (CommonUtils.isExpanded(holder.details)) {
-                    CommonUtils.collapse(holder.details);
+                    CommonUtils.collapse(holder.details, null);
                     CommonUtils.collapseTitle(holder.downloadName);
                 } else {
-                    CommonUtils.expand(holder.details);
+                    CommonUtils.expand(holder.details, null);
                     CommonUtils.expandTitle(holder.downloadName);
                 }
             }

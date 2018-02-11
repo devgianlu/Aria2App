@@ -59,8 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
             android:visibility="gone">
 
             <com.github.mikephil.charting.charts.LineChart

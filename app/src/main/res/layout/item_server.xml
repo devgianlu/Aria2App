@@ -5,7 +5,7 @@
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical"
     android:paddingBottom="4dp"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingEnd="16dp"
     android:paddingStart="36dp"
     android:paddingTop="4dp">
 
