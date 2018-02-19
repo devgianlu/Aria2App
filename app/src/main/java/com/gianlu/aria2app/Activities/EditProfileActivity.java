@@ -499,7 +499,8 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
         AnalyticsApplication.sendAnalytics(this, Utils.ACTION_STARTED_TEST);
 
         try {
-            return buildProfile().getProfile(this);
+            MultiProfile profile = buildProfile();
+            return profile == null ? null : profile.getProfile(this);
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
             return null;
