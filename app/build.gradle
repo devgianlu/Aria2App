@@ -36,6 +36,7 @@ dependencies {
     api 'org.apmem.tools:layouts:1.10@aar'
     api 'com.getkeepsafe.taptargetview:taptargetview:1.11.0'
     api 'com.michaelfotiadis:android-country-flags:1.0.3'
+    api 'com.llew.huawei:verifier:1.0.3'
 }
 
 apply plugin: 'com.google.gms.google-services'

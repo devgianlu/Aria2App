@@ -11,6 +11,7 @@ import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
+import com.llew.huawei.verifier.LoadedApkHuaWei;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,7 @@ public class ThisApplication extends AnalyticsApplication implements ErrorHandle
     @Override
     public void onCreate() {
         super.onCreate();
+        LoadedApkHuaWei.hookHuaWeiVerifier(this);
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
 

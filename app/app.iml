@@ -128,6 +128,8 @@
     <orderEntry type="library" name="com.android.support:support-vector-drawable-27.0.2" level="project" />
     <orderEntry type="library" name="com.android.support:cardview-v7-27.0.2" level="project" />
     <orderEntry type="library" name="android.arch.lifecycle:common:1.0.3@jar" level="project" />
+    <orderEntry type="library" name="com.llew.huawei:verifier-1.0.3" level="project" />
+    <orderEntry type="library" name="com.llew:reflect:1.0.1@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-basement-11.8.0" level="project" />
     <orderEntry type="library" name="com.squareup.okhttp3:okhttp:3.9.1@jar" level="project" />
     <orderEntry type="library" name="android.arch.core:common:1.0.0@jar" level="project" />
