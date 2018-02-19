@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.os.TransactionTooLargeException;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -861,7 +863,16 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onMoreClick(Download item) {
-        MoreAboutDownloadActivity.start(this, item);
+        try {
+            MoreAboutDownloadActivity.start(this, item);
+        } catch (RuntimeException ex) {
+            if (ex.getCause() instanceof TransactionTooLargeException) {
+                Crashlytics.log(item.toString() + " size: " + Utils.sizeOf(item));
+                Crashlytics.logException(ex.getCause());
+            } else {
+                throw ex;
+            }
+        }
     }
 
     @Override
