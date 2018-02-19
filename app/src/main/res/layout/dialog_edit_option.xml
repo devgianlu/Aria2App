@@ -30,4 +30,13 @@
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/editOptionDialog_multipleHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/multipleOptions_help"
+        android:textAlignment="center"
+        android:textSize="12sp" />
 </LinearLayout>

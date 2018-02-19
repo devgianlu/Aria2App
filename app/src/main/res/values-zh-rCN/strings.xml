@@ -328,6 +328,7 @@
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">选项成功导出到%s</string>
     <string name="noActivity">没有活动</string>
+    <string name="multipleOptions_help">该选项可以在命令行上多次指定。 这里的等价物是用分号（;）分隔项目。</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

@@ -332,6 +332,7 @@
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">Options exported successfully to %s</string>
     <string name="noActivity">No activity</string>
+    <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to separate the items with a semicolon (;).</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

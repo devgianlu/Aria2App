@@ -5,8 +5,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,6 +29,7 @@ import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,10 +40,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class OptionsUtils {
+
+    @NonNull
+    public static JSONObject toJson(@Nullable Map<String, String> options) throws JSONException {
+        if (options == null) return new JSONObject();
+
+        JSONObject json = new JSONObject();
+        for (Map.Entry<String, String> entry : options.entrySet()) {
+            if (Objects.equals(entry.getKey(), "header") || Objects.equals(entry.getKey(), "index-out")) {
+                if (entry.getValue().contains(";")) {
+                    json.put(entry.getKey(), CommonUtils.toJSONArray(entry.getValue().split(";")));
+                    continue;
+                }
+            }
+
+            json.put(entry.getKey(), entry.getValue());
+        }
+
+        return json;
+    }
+
     private static void showGlobalDialog(final Activity activity, List<Option> options) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.globalOptions)
@@ -190,6 +215,9 @@ public final class OptionsUtils {
         value.setHtml(R.string.currentValue, option.value == null ? "not set" : option.value);
         final EditText edit = layout.findViewById(R.id.editOptionDialog_edit);
         edit.setText(option.value);
+
+        layout.findViewById(R.id.editOptionDialog_multipleHelp).setVisibility(
+                Objects.equals(option.name, "header") || Objects.equals(option.name, "index-out") ? View.VISIBLE : View.GONE);
 
         builder.setView(layout)
                 .setPositiveButton(R.string.set, new DialogInterface.OnClickListener() {

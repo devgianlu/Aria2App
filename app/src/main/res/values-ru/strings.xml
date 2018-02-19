@@ -327,6 +327,7 @@
     <string name="failedExportingOptions">Не удалось экспортировать параметры!</string>
     <string name="exportedOptions">Параметры успешно экспортированы в %s</string>
     <string name="noActivity">Нет активности</string>
+    <string name="multipleOptions_help">Эта опция может быть указана несколько раз в командной строке. Здесь эквивалент состоит в том, чтобы отделить элементы точкой с запятой (;).</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">

@@ -9,6 +9,7 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IReceived;
 import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -408,15 +409,10 @@ public class JTA2 {
                 if (uri == null) continue;
                 jUris.put(uri);
             }
+
             params.put(jUris);
 
-            JSONObject jOptions = new JSONObject();
-            if (options != null)
-                for (String key : options.keySet())
-                    jOptions.put(key, options.get(key));
-
-            params.put(jOptions);
-
+            params.put(OptionsUtils.toJson(options));
             if (position != null) params.put(position);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
@@ -452,13 +448,7 @@ public class JTA2 {
 
             params.put(jUris);
 
-            JSONObject jOptions = new JSONObject();
-            if (options != null)
-                for (String key : options.keySet())
-                    jOptions.put(key, options.get(key));
-
-            params.put(jOptions);
-
+            params.put(OptionsUtils.toJson(options));
             if (position != null) params.put(position);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
@@ -487,13 +477,7 @@ public class JTA2 {
             JSONArray params = Utils.readyParams(context);
             params.put(base64);
 
-            JSONObject jOptions = new JSONObject();
-            if (options != null)
-                for (String key : options.keySet())
-                    jOptions.put(key, options.get(key));
-
-            params.put(jOptions);
-
+            params.put(OptionsUtils.toJson(options));
             if (position != null) params.put(position);
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
@@ -868,10 +852,7 @@ public class JTA2 {
             request.put("method", "aria2.changeOption");
             JSONArray params = Utils.readyParams(context);
             params.put(gid);
-            JSONObject jOptions = new JSONObject();
-            for (Map.Entry<String, String> entry : options.entrySet())
-                jOptions.put(entry.getKey(), entry.getValue());
-            params.put(jOptions);
+            params.put(OptionsUtils.toJson(options));
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             listener.onException(ex);
@@ -918,10 +899,7 @@ public class JTA2 {
             request = Utils.readyRequest();
             request.put("method", "aria2.changeGlobalOption");
             JSONArray params = Utils.readyParams(context);
-            JSONObject jOptions = new JSONObject();
-            for (Map.Entry<String, String> entry : options.entrySet())
-                jOptions.put(entry.getKey(), entry.getValue());
-            params.put(jOptions);
+            params.put(OptionsUtils.toJson(options));
             request.put("params", params);
         } catch (JSONException | ProfilesManager.NoCurrentProfileException ex) {
             listener.onException(ex);
