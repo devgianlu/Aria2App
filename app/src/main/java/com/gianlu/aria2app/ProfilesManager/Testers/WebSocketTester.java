@@ -67,7 +67,7 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
 
     @Override
     public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
-        publishMessage("State changed ti " + newState.name().toLowerCase(), android.R.color.tertiary_text_light);
+        publishMessage("State changed to " + newState.name().toLowerCase(), android.R.color.tertiary_text_light);
     }
 
     @Override
