@@ -12,6 +12,7 @@ import com.gianlu.aria2app.R;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,7 +46,13 @@ class DirectDownloadTester extends BaseTester {
     @Override
     protected Boolean call() {
         Request.Builder builder = new Request.Builder();
-        builder.get().url(dd.getUrl());
+        HttpUrl baseUrl = dd.getUrl();
+        if (baseUrl == null) {
+            publishError(new NullPointerException("Invalid DirectDownload URL."));
+            return false;
+        }
+
+        builder.get().url(baseUrl);
 
         if (dd.auth)
             builder.header("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));

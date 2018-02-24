@@ -16,7 +16,6 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -35,7 +34,7 @@ public class DownloadStartConfig {
         this.cacheDir = context.getExternalCacheDir();
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, URISyntaxException, CannotCreateStartConfigException {
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
@@ -59,7 +58,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, URISyntaxException, CannotCreateStartConfigException {
+    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
@@ -78,7 +77,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig createForSavedState(Context context, SavedDownloadsManager.SavedState state) throws CannotCreateStartConfigException, DownloaderUtils.InvalidPathException, URISyntaxException {
+    public static DownloadStartConfig createForSavedState(Context context, SavedDownloadsManager.SavedState state) throws CannotCreateStartConfigException, DownloaderUtils.InvalidPathException {
         ProfilesManager manager = ProfilesManager.get(context);
 
         MultiProfile.UserProfile profile;

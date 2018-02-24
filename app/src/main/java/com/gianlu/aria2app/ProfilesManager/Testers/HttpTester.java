@@ -11,7 +11,6 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +53,7 @@ public class HttpTester extends NetTester implements Callable<Boolean> {
 
                 return a;
             }
-        } catch (IOException | CertificateException | URISyntaxException | JSONException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
+        } catch (IOException | CertificateException | NetUtils.InvalidUrlException | JSONException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException | RuntimeException ex) {
             if (ex instanceof ConnectTimeoutException) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, ex));
             } else {

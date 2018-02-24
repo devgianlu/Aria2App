@@ -24,7 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -515,7 +514,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return MultiProfile.this;
         }
 
-        public String getFullServerAddress() throws URISyntaxException {
+        public String getFullServerAddress() throws NetUtils.InvalidUrlException {
             if (fullServerAddress == null) {
                 switch (connectionMethod) {
                     default:
@@ -588,7 +587,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public String getSecondaryText(Context context) {
             try {
                 return getFullServerAddress();
-            } catch (URISyntaxException ex) {
+            } catch (NetUtils.InvalidUrlException ex) {
                 Logging.log(ex);
                 return "";
             }

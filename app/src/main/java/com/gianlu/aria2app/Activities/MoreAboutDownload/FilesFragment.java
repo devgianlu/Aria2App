@@ -50,7 +50,6 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
 public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
@@ -310,7 +309,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
             DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
-        } catch (DownloaderUtils.InvalidPathException | URISyntaxException | DownloadStartConfig.CannotCreateStartConfigException ex) {
+        } catch (DownloaderUtils.InvalidPathException | DownloadStartConfig.CannotCreateStartConfigException ex) {
             if (file == null) Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
             else Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
             return;

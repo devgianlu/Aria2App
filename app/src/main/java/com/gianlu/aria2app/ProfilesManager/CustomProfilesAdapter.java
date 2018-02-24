@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.Testers.HttpTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.NetTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.WebSocketTester;
@@ -13,7 +14,6 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -47,7 +47,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
 
         try {
             holder.secondary.setText(profile.getFullServerAddress());
-        } catch (URISyntaxException ex) {
+        } catch (NetUtils.InvalidUrlException ex) {
             Logging.log(ex);
             holder.secondary.setText(null);
         }

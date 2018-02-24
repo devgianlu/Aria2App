@@ -44,7 +44,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -315,7 +314,7 @@ public class NotificationService extends Service {
                 webSockets.add(webSocket);
                 webSocket.addListener(new NotificationsHandler(profile))
                         .connectAsynchronously();
-            } catch (IOException | NoSuchAlgorithmException | URISyntaxException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            } catch (IOException | NoSuchAlgorithmException | NetUtils.InvalidUrlException | CertificateException | KeyManagementException | KeyStoreException ex) {
                 notifyException(profile, ex);
             }
         }

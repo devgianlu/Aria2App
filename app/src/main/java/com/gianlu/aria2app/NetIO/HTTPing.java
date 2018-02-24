@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -33,11 +32,11 @@ public class HTTPing extends AbstractClient {
     private final HttpUrl defaultUri;
     private boolean shouldIgnoreRequests = false;
 
-    private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException, ProfilesManager.NoCurrentProfileException {
+    private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
     }
 
-    private HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, URISyntaxException {
+    private HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
         super(context, profile);
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
@@ -49,7 +48,7 @@ public class HTTPing extends AbstractClient {
         if (httping == null) {
             try {
                 httping = new HTTPing(context);
-            } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyManagementException | URISyntaxException | KeyStoreException | ProfilesManager.NoCurrentProfileException ex) {
+            } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyManagementException | NetUtils.InvalidUrlException | KeyStoreException | ProfilesManager.NoCurrentProfileException ex) {
                 throw new InitializationException(ex);
             }
         }
@@ -71,7 +70,7 @@ public class HTTPing extends AbstractClient {
                     listener.onFailedConnecting(ex);
                 }
             });
-        } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | URISyntaxException | KeyStoreException ex) {
+        } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | NetUtils.InvalidUrlException | KeyStoreException ex) {
             listener.onFailedConnecting(ex);
         }
     }
@@ -143,7 +142,7 @@ public class HTTPing extends AbstractClient {
                         }
                     }
                 }
-            } catch (IllegalArgumentException | JSONException | IOException | URISyntaxException | IllegalStateException ex) {
+            } catch (IllegalArgumentException | JSONException | IOException | NetUtils.InvalidUrlException | IllegalStateException ex) {
                 listener.onException(ex);
             }
         }

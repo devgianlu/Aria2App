@@ -71,7 +71,13 @@ public class SearchUtils {
     }
 
     private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, final ISearch listener) {
-        final HttpUrl.Builder builder = HttpUrl.parse(BASE_URL + "search").newBuilder();
+        HttpUrl baseUrl = HttpUrl.parse(BASE_URL + "search");
+        if (baseUrl == null) {
+            listener.onException(new NullPointerException("Invalid URL."));
+            return;
+        }
+
+        final HttpUrl.Builder builder = baseUrl.newBuilder();
         builder.addQueryParameter("m", String.valueOf(maxResults));
         if (token != null) {
             builder.addQueryParameter("t", token);
@@ -120,7 +126,13 @@ public class SearchUtils {
     }
 
     public void getTorrent(SearchResult result, final ITorrent listener) {
-        final HttpUrl.Builder builder = HttpUrl.parse(BASE_URL + "getTorrent").newBuilder();
+        HttpUrl baseUrl = HttpUrl.parse(BASE_URL + "getTorrent");
+        if (baseUrl == null) {
+            listener.onException(new NullPointerException("Invalid URL."));
+            return;
+        }
+
+        final HttpUrl.Builder builder = baseUrl.newBuilder();
         builder.addQueryParameter("e", result.engineId)
                 .addQueryParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
 

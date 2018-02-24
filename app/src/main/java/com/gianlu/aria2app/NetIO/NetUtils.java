@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -76,7 +75,7 @@ public class NetUtils {
         return context;
     }
 
-    public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, URISyntaxException {
+    public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, InvalidUrlException {
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(5000);
         factory.setVerifyHostname(profile.hostnameVerifier);
@@ -136,22 +135,30 @@ public class NetUtils {
     }
 
     @NonNull
-    public static HttpUrl createBaseHttpURI(MultiProfile.UserProfile profile) throws URISyntaxException {
-        HttpUrl.Builder builder = new HttpUrl.Builder();
-        builder.scheme(profile.serverSSL ? "https" : "http")
-                .host(profile.serverAddr)
-                .port(profile.serverPort)
-                .addPathSegments(profile.serverEndpoint.charAt(0) == '/' ? profile.serverEndpoint.substring(1) : profile.serverEndpoint);
+    public static HttpUrl createBaseHttpURI(MultiProfile.UserProfile profile) throws InvalidUrlException {
+        try {
+            HttpUrl.Builder builder = new HttpUrl.Builder();
+            builder.scheme(profile.serverSSL ? "https" : "http")
+                    .host(profile.serverAddr)
+                    .port(profile.serverPort)
+                    .addPathSegments(profile.serverEndpoint.charAt(0) == '/' ? profile.serverEndpoint.substring(1) : profile.serverEndpoint);
 
-        return builder.build();
+            return builder.build();
+        } catch (Exception ex) {
+            throw new InvalidUrlException(ex);
+        }
     }
 
     @NonNull
-    public static URI createBaseWsURI(MultiProfile.UserProfile profile) throws URISyntaxException {
-        return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
+    public static URI createBaseWsURI(MultiProfile.UserProfile profile) throws InvalidUrlException {
+        try {
+            return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
+        } catch (Exception ex) {
+            throw new InvalidUrlException(ex);
+        }
     }
 
-    public static Request createGetRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws URISyntaxException, JSONException {
+    public static Request createGetRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws JSONException, InvalidUrlException {
         if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
 
         HttpUrl.Builder uri = defaultUri.newBuilder();
@@ -172,7 +179,7 @@ public class NetUtils {
         return builder.build();
     }
 
-    static Request createPostRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws URISyntaxException {
+    static Request createPostRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws InvalidUrlException {
         if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
         Request.Builder builder = new Request.Builder();
         builder.url(defaultUri);
@@ -189,5 +196,11 @@ public class NetUtils {
             builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
 
         return builder.build();
+    }
+
+    public static class InvalidUrlException extends Exception {
+        InvalidUrlException(Throwable cause) {
+            super(cause);
+        }
     }
 }

@@ -15,7 +15,6 @@ import com.neovisionaries.ws.client.WebSocketState;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
-import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -52,7 +51,7 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
                 returnValue.wait();
                 return returnValue.get();
             }
-        } catch (IOException | URISyntaxException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
+        } catch (IOException | NetUtils.InvalidUrlException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException ex) {
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, ex));
             return false;
         } catch (InterruptedException ignored) {

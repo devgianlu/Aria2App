@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,7 +112,7 @@ public class DownloaderService extends Service {
         try {
             DownloadStartConfig config = DownloadStartConfig.createForSavedState(this, state);
             startDownload(config);
-        } catch (DownloadStartConfig.CannotCreateStartConfigException | DownloaderUtils.InvalidPathException | URISyntaxException ex) {
+        } catch (DownloadStartConfig.CannotCreateStartConfigException | DownloaderUtils.InvalidPathException ex) {
             Bundle bundle = new Bundle();
             bundle.putSerializable("ex", ex);
             sendBroadcast(DownloaderUtils.ACTION_FAILED_RESUMING, bundle);
