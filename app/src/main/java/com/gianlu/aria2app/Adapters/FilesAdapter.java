@@ -137,8 +137,11 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 if (pos != -1) {
                     TreeNode node = currentNodes.get(pos);
                     if (node == null) return;
-                    if (node.isFile()) if (handler != null) handler.onFileSelected(node.obj);
-                    else navigateInto(node);
+                    if (node.isFile()) {
+                        if (handler != null) handler.onFileSelected(node.obj);
+                    } else {
+                        navigateInto(node);
+                    }
                 }
             }
         });
