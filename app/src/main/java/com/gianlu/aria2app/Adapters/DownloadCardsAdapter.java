@@ -336,6 +336,11 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         return -1;
     }
 
+    public void activityDestroying(Context context) {
+        context.unbindService(this);
+        if (broadcastManager != null) broadcastManager.unregisterReceiver(receiver);
+    }
+
     public enum SortBy {
         NAME,
         STATUS,

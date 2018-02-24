@@ -454,6 +454,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     @Override
     protected void onDestroy() {
         AbstractClient.removeConnectivityListener(this);
+
+        if (adapter != null) adapter.activityDestroying(this);
+
         super.onDestroy();
     }
 
