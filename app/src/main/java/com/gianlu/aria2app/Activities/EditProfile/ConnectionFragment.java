@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -206,9 +207,13 @@ public class ConnectionFragment extends FieldErrorFragment {
         pickCertificateFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
-                        .setType("*/*")
-                        .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
+                try {
+                    startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
+                            .setType("*/*")
+                            .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
+                } catch (ActivityNotFoundException ex) {
+                    Logging.log(ex);
+                }
             }
         });
 

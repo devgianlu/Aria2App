@@ -99,6 +99,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     }
 
     private void setupView() {
+        if (getContext() == null) return;
         final int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
 
         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
