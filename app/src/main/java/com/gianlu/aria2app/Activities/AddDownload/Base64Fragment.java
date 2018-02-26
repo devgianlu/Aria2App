@@ -28,8 +28,10 @@ import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class Base64Fragment extends Fragment {
     private final int FILE_SELECT_CODE = 7;
@@ -77,11 +79,20 @@ public class Base64Fragment extends Fragment {
     }
 
     private void setFilename(@NonNull Uri uri) {
-        if (getContext() == null) return;
-        try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null, null)) {
-            if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0)
-                path.setText(cursor.getString(0));
+        String name;
+        if (Objects.equals(uri.getScheme(), "file")) {
+            File file = new File(uri.getPath());
+            name = file.getName();
+        } else {
+            if (getContext() == null) return;
+            try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0)
+                    name = cursor.getString(0);
+                else return;
+            }
         }
+
+        path.setText(name);
     }
 
     @Override

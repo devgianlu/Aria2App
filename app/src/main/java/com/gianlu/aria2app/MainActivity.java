@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -254,23 +255,37 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     private void processFileUri(Uri uri) {
-        try (Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
-            if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
-                String mimeType = cursor.getString(0);
-                if (mimeType != null) {
-                    if (Objects.equals(mimeType, "application/x-bittorrent")) {
-                        AddTorrentActivity.startAndAdd(this, uri);
-                    } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
-                        AddMetalinkActivity.startAndAdd(this, uri);
-                    } else {
-                        Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("File type not supported: " + mimeType));
-                    }
+        String mimeType;
+        if (Objects.equals(uri.getScheme(), "file")) {
+            String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath());
+            if (extension != null)
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            else
+                mimeType = null;
+        } else {
+            try (Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
+                    mimeType = cursor.getString(0);
                 } else {
-                    Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + uri));
+                    Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cursor is empty: " + uri));
+                    return;
                 }
+            } catch (RuntimeException ex) {
+                Toaster.show(this, Utils.Messages.INVALID_FILE, ex);
+                return;
             }
-        } catch (RuntimeException ex) {
-            Toaster.show(this, Utils.Messages.INVALID_FILE, ex);
+        }
+
+        if (mimeType != null) {
+            if (Objects.equals(mimeType, "application/x-bittorrent")) {
+                AddTorrentActivity.startAndAdd(this, uri);
+            } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
+                AddMetalinkActivity.startAndAdd(this, uri);
+            } else {
+                Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("File type not supported: " + mimeType));
+            }
+        } else {
+            Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + uri));
         }
     }
 
