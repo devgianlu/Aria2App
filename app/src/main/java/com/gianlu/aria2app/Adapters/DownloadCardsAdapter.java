@@ -413,7 +413,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         final LineChart detailsChart;
 
         ViewHolder(ViewGroup parent) {
-            super(inflater.inflate(R.layout.card_download, parent, false));
+            super(inflater.inflate(R.layout.item_download, parent, false));
 
             donutProgress = itemView.findViewById(R.id.downloadCard_donutProgress);
             downloadName = itemView.findViewById(R.id.downloadCard_name);
