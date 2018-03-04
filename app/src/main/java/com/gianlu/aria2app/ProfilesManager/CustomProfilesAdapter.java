@@ -3,6 +3,7 @@ package com.gianlu.aria2app.ProfilesManager;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -38,7 +39,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     }
 
     @Override
-    public void onBindViewHolder(ProfilesAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProfilesAdapter.ViewHolder holder, int position) {
         final MultiProfile multi = getItem(position);
         final MultiProfile.UserProfile profile = multi.getProfile(context);
 
