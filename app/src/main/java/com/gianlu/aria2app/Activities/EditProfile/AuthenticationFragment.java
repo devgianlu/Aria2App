@@ -18,6 +18,7 @@ import android.widget.ScrollView;
 import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 public class AuthenticationFragment extends FieldErrorFragment {
     private ScrollView layout;
@@ -174,7 +175,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
 
         String token = null;
         if (authMethod == JTA2.AuthMethod.TOKEN) {
-            token = this.token.getEditText().getText().toString().trim();
+            token = CommonUtils.getText(this.token).trim();
             if (token.isEmpty()) {
                 throw new InvalidFieldException(getClass(), R.id.editProfile_token, context.getString(R.string.emptyToken));
             }
@@ -183,14 +184,13 @@ public class AuthenticationFragment extends FieldErrorFragment {
         String username = null;
         String password = null;
         if (authMethod == JTA2.AuthMethod.HTTP) {
-            username = this.username.getEditText().getText().toString().trim();
-            password = this.password.getEditText().getText().toString().trim();
-            if (username.isEmpty()) {
+            username = CommonUtils.getText(this.username).trim();
+            if (username.isEmpty())
                 throw new InvalidFieldException(getClass(), R.id.editProfile_username, context.getString(R.string.emptyUsername));
-            }
-            if (password.isEmpty()) {
+
+            password = CommonUtils.getText(this.password).trim();
+            if (password.isEmpty())
                 throw new InvalidFieldException(getClass(), R.id.editProfile_password, context.getString(R.string.emptyPassword));
-            }
         }
 
         return new Fields(authMethod, token, username, password);

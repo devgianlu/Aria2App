@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Activities;
 
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
@@ -34,6 +32,8 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
+public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
     private RecyclerViewLayout recyclerViewLayout;
     private LinearLayout message;
     private String query = null;
@@ -122,7 +122,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 })
                 .setNegativeButton(android.R.string.cancel, null);
 
-        CommonUtils.showDialog(this, builder);
+        showDialog(builder);
     }
 
     @Override
@@ -190,18 +190,17 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.search_engines:
-                final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
-                CommonUtils.showDialog(this, pd);
+                showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
                 SearchUtils.get().listSearchEngines(new SearchUtils.IResult<List<SearchEngine>>() {
                     @Override
                     public void onResult(List<SearchEngine> result) {
-                        pd.dismiss();
+                        dismissDialog();
                         showEnginesDialog(result);
                     }
 
                     @Override
                     public void onException(Exception ex) {
-                        pd.dismiss();
+                        dismissDialog();
                         Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
                     }
                 });
@@ -213,18 +212,17 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
 
     @Override
     public void onResultSelected(SearchResult result) {
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
-        CommonUtils.showDialog(this, pd);
+        showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
         SearchUtils.get().getTorrent(result, new SearchUtils.ITorrent() {
             @Override
             public void onDone(Torrent torrent) {
-                pd.dismiss();
+                dismissDialog();
                 showTorrentDialog(torrent);
             }
 
             @Override
             public void onException(Exception ex) {
-                pd.dismiss();
+                dismissDialog();
                 Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
             }
         });
@@ -249,7 +247,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, missingEngines), null)
                 .setPositiveButton(android.R.string.ok, null);
 
-        CommonUtils.showDialog(this, builder);
+        showDialog(builder);
     }
 
     private void showTorrentDialog(final Torrent torrent) {
@@ -335,7 +333,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
             }
         });
 
-        CommonUtils.showDialog(this, dialog);
+        showDialog(dialog);
     }
 
     @Override

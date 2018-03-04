@@ -19,6 +19,7 @@ import android.widget.ScrollView;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.net.URL;
 
@@ -145,7 +146,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
 
         MultiProfile.DirectDownload dd = null;
         if (this.enableDirectDownload.isChecked()) {
-            String address = this.address.getEditText().getText().toString().trim();
+            String address = CommonUtils.getText(this.address).trim();
             try {
                 new URL(address);
             } catch (Exception ex) {
@@ -156,15 +157,13 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             String password = null;
             boolean auth = this.auth.isChecked();
             if (auth) {
-                username = this.username.getEditText().getText().toString().trim();
-                if (username.isEmpty()) {
+                username = CommonUtils.getText(this.username).trim();
+                if (username.isEmpty())
                     throw new InvalidFieldException(getClass(), R.id.editProfile_dd_username, context.getString(R.string.emptyUsername));
-                }
 
-                password = this.password.getEditText().getText().toString().trim();
-                if (password.isEmpty()) {
+                password = CommonUtils.getText(this.password).trim();
+                if (password.isEmpty())
                     throw new InvalidFieldException(getClass(), R.id.editProfile_dd_password, context.getString(R.string.emptyPassword));
-                }
             }
 
             dd = new MultiProfile.DirectDownload(address, auth, username, password);

@@ -28,6 +28,7 @@ import com.gianlu.aria2app.NetIO.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
@@ -81,7 +82,7 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
                 break;
             case REMOVE:
                 if (getContext() != null && (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED || download.status == Download.Status.WAITING)) {
-                    CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
+                    DialogUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
                             .setTitle(getString(R.string.removeName, download.getName()))
                             .setMessage(R.string.removeDownloadAlert)
                             .setNegativeButton(android.R.string.no, null)
@@ -108,7 +109,7 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
         if (getContext() == null) return;
 
         if (download.following != null) {
-            CommonUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
+            DialogUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
                     .setTitle(getString(R.string.removeMetadataName, download.getName()))
                     .setMessage(R.string.removeDownload_removeMetadata)
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

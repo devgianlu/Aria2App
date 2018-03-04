@@ -1,13 +1,11 @@
 package com.gianlu.aria2app.Activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,14 +17,15 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-public class AddUriActivity extends AppCompatActivity {
+public class AddUriActivity extends ActivityWithDialog {
     private UrisFragment urisFragment;
     private OptionsFragment optionsFragment;
     private ViewPager pager;
@@ -103,12 +102,11 @@ public class AddUriActivity extends AppCompatActivity {
             return;
         }
 
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(this, R.string.gathering_information);
-        CommonUtils.showDialog(this, pd);
+        showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
         jta2.addUri(uris, position, options, new JTA2.IGID() {
             @Override
             public void onGID(String gid) {
-                pd.dismiss();
+                dismissDialog();
                 Toaster.show(AddUriActivity.this, Utils.Messages.DOWNLOAD_ADDED, gid, new Runnable() {
                     @Override
                     public void run() {
@@ -119,7 +117,7 @@ public class AddUriActivity extends AppCompatActivity {
 
             @Override
             public void onException(Exception ex) {
-                pd.dismiss();
+                dismissDialog();
                 Toaster.show(AddUriActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
             }
         });

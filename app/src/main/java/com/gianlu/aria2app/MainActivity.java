@@ -1,7 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -75,6 +74,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.Initializer;
@@ -168,7 +168,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void editProfile(final List<MultiProfile> items) {
-        CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+        showDialog(new AlertDialog.Builder(this)
                 .setTitle(R.string.editProfile)
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
                     @Override
@@ -188,8 +188,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return;
         }
 
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(MainActivity.this, R.string.gathering_information);
-        CommonUtils.showDialog(MainActivity.this, pd);
+        showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
         jta2.getVersion(new JTA2.IVersion() {
             @Override
             public void onVersion(List<String> rawFeatures, String version) {
@@ -204,9 +203,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     @Override
                     public void onSessionInfo(String sessionID) {
                         layout.addView(new SuperTextView(MainActivity.this, R.string.sessionId, sessionID));
-                        pd.dismiss();
+                        dismissDialog();
 
-                        CommonUtils.showDialog(MainActivity.this, new AlertDialog.Builder(MainActivity.this)
+                        showDialog(new AlertDialog.Builder(MainActivity.this)
                                 .setTitle(R.string.about_aria2)
                                 .setView(layout)
                                 .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
@@ -231,7 +230,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     @Override
                     public void onException(Exception ex) {
                         Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
-                        pd.dismiss();
+                        dismissDialog();
                     }
                 });
             }
@@ -239,7 +238,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             @Override
             public void onException(Exception ex) {
                 Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
-                pd.dismiss();
+                dismissDialog();
             }
         });
     }
@@ -509,7 +508,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 })
                 .setPositiveButton(android.R.string.ok, null);
 
-        CommonUtils.showDialog(this, builder);
+        showDialog(builder);
     }
 
     @Override
@@ -652,7 +651,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 })
                 .setNegativeButton(android.R.string.cancel, null);
 
-        CommonUtils.showDialog(this, builder);
+        showDialog(builder);
     }
 
     @Override
@@ -995,7 +994,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 break;
             case REMOVE:
                 if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED) {
-                    CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+                    showDialog(new AlertDialog.Builder(this)
                             .setTitle(getString(R.string.removeName, download.getName()))
                             .setMessage(R.string.removeDownloadAlert)
                             .setNegativeButton(android.R.string.no, null)
@@ -1020,7 +1019,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     private void removeDownload(final JTA2 jta2, final Download download) {
         if (download.following != null) {
-            CommonUtils.showDialog(this, new AlertDialog.Builder(this)
+            showDialog(new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.removeMetadataName, download.getName()))
                     .setMessage(R.string.removeDownload_removeMetadata)
                     .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

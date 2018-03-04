@@ -10,7 +10,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 
 import com.gianlu.aria2app.Services.NotificationService;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.LogsActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceFragment;
@@ -148,7 +147,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
 
             findPreference("mpAndroidChart").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    CommonUtils.showDialog(getActivity(), builder
+                    showDialog(builder
                             .setTitle("MPAndroidChart")
                             .setMessage(R.string.mpAndroidChart_details));
                     return true;
@@ -157,7 +156,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
 
             findPreference("nv-websocket-client").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
-                    CommonUtils.showDialog(getActivity(), builder
+                    showDialog(builder
                             .setTitle("nv-websocket-client")
                             .setMessage(R.string.nv_websocket_client_license));
                     return true;
@@ -167,7 +166,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             findPreference("tapTargetView").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    CommonUtils.showDialog(getActivity(), builder
+                    showDialog(builder
                             .setTitle("TapTargetView")
                             .setMessage(R.string.tapTargetView_details));
                     return true;
@@ -177,7 +176,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             findPreference("flowLayout").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    CommonUtils.showDialog(getActivity(), builder
+                    showDialog(builder
                             .setTitle("Android flow layout")
                             .setMessage(R.string.flowLayout_details));
                     return true;

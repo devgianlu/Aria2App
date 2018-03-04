@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Toaster;
 
@@ -74,7 +74,7 @@ public class UrisFragment extends Fragment implements UrisAdapter.IAdapter {
                     }
                 });
 
-        CommonUtils.showDialog(getActivity(), builder);
+        DialogUtils.showDialog(getActivity(), builder);
     }
 
     @Nullable

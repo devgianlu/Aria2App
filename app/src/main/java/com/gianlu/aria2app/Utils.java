@@ -18,6 +18,7 @@ import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -153,7 +154,7 @@ public final class Utils {
         if (activity == null) return false;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
+                DialogUtils.showDialog(activity, new AlertDialog.Builder(activity)
                         .setTitle(R.string.writeExternalStorageRequest_title)
                         .setMessage(R.string.writeExternalStorageRequest_message)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -177,7 +178,7 @@ public final class Utils {
         if (activity == null) return;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                CommonUtils.showDialog(activity, new AlertDialog.Builder(activity)
+                DialogUtils.showDialog(activity, new AlertDialog.Builder(activity)
                         .setTitle(R.string.readExternalStorageRequest_title)
                         .setMessage(message)
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

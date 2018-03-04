@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Options;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -24,6 +23,8 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
@@ -65,7 +66,7 @@ public final class OptionsUtils {
         return json;
     }
 
-    private static void showGlobalDialog(final Activity activity, List<Option> options) {
+    private static void showGlobalDialog(@NonNull final ActivityWithDialog activity, List<Option> options) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.globalOptions)
                 .setNegativeButton(android.R.string.cancel, null);
@@ -99,7 +100,7 @@ public final class OptionsUtils {
         _showDialog(activity, optionsView, builder);
     }
 
-    private static void showDownloadDialog(final Activity activity, final String gid, List<Option> options) {
+    private static void showDownloadDialog(@NonNull final ActivityWithDialog activity, final String gid, List<Option> options) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.options)
                 .setNegativeButton(android.R.string.cancel, null);
@@ -133,16 +134,15 @@ public final class OptionsUtils {
         _showDialog(activity, optionsView, builder);
     }
 
-    private static void handleApplyDownloadOptions(final Activity activity, String gid, List<Option> options) {
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(activity, R.string.gathering_information);
-        CommonUtils.showDialog(activity, pd);
+    private static void handleApplyDownloadOptions(@NonNull final ActivityWithDialog activity, String gid, List<Option> options) {
+        activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
 
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            pd.dismiss();
+            activity.dismissDialog();
             return;
         }
 
@@ -156,29 +156,28 @@ public final class OptionsUtils {
             @Override
             public void onSuccess() {
                 Toaster.show(activity, Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
-                pd.dismiss();
+                activity.dismissDialog();
             }
 
             @Override
             public void onException(Exception ex) {
                 Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                pd.dismiss();
+                activity.dismissDialog();
             }
         });
 
         AnalyticsApplication.sendAnalytics(activity, Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
     }
 
-    private static void handleApplyGlobalOptions(final Activity activity, List<Option> options) {
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(activity, R.string.gathering_information);
-        CommonUtils.showDialog(activity, pd);
+    private static void handleApplyGlobalOptions(@NonNull final ActivityWithDialog activity, List<Option> options) {
+        activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
 
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            pd.dismiss();
+            activity.dismissDialog();
             return;
         }
 
@@ -192,13 +191,13 @@ public final class OptionsUtils {
             @Override
             public void onSuccess() {
                 Toaster.show(activity, Utils.Messages.GLOBAL_OPTIONS_CHANGED);
-                pd.dismiss();
+                activity.dismissDialog();
             }
 
             @Override
             public void onException(Exception ex) {
                 Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                pd.dismiss();
+                activity.dismissDialog();
             }
         });
 
@@ -228,10 +227,10 @@ public final class OptionsUtils {
                     }
                 });
 
-        CommonUtils.showDialog(activity, builder);
+        DialogUtils.showDialog(activity, builder);
     }
 
-    private static void _showDialog(final Activity activity, final OptionsView layout, final AlertDialog.Builder builder) {
+    private static void _showDialog(final ActivityWithDialog activity, final OptionsView layout, final AlertDialog.Builder builder) {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -255,21 +254,20 @@ public final class OptionsUtils {
                     });
                 }
 
-                CommonUtils.showDialog(activity, dialog);
+                activity.showDialog(builder);
             }
         });
     }
 
-    public static void showGlobalDialog(final Activity activity, final boolean quick) {
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(activity, R.string.gathering_information);
-        CommonUtils.showDialog(activity, pd);
+    public static void showGlobalDialog(@NonNull final ActivityWithDialog activity, final boolean quick) {
+        activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
 
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            pd.dismiss();
+            activity.dismissDialog();
             return;
         }
 
@@ -278,7 +276,7 @@ public final class OptionsUtils {
             allOptions = OptionsManager.get(activity).loadGlobalOptions();
         } catch (IOException | JSONException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            pd.dismiss();
+            activity.dismissDialog();
             return;
         }
 
@@ -290,7 +288,7 @@ public final class OptionsUtils {
                     Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
                         Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
-                        pd.dismiss();
+                        activity.dismissDialog();
                         return;
                     }
 
@@ -299,27 +297,26 @@ public final class OptionsUtils {
                     showGlobalDialog(activity, Option.fromOptionsMap(options, allOptions));
                 }
 
-                pd.dismiss();
+                activity.dismissDialog();
             }
 
             @Override
             public void onException(Exception ex) {
                 Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                pd.dismiss();
+                activity.dismissDialog();
             }
         });
     }
 
-    public static void showDownloadDialog(final Activity activity, final String gid, final boolean quick) {
-        final ProgressDialog pd = CommonUtils.fastIndeterminateProgressDialog(activity, R.string.gathering_information);
-        CommonUtils.showDialog(activity, pd);
+    public static void showDownloadDialog(@NonNull final ActivityWithDialog activity, final String gid, final boolean quick) {
+        activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
 
         JTA2 jta2;
         try {
             jta2 = JTA2.instantiate(activity);
         } catch (JTA2.InitializingException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            pd.dismiss();
+            activity.dismissDialog();
             return;
         }
 
@@ -328,7 +325,7 @@ public final class OptionsUtils {
             allOptions = OptionsManager.get(activity).loadDownloadOptions();
         } catch (IOException | JSONException ex) {
             Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            pd.dismiss();
+            activity.dismissDialog();
             return;
         }
 
@@ -337,7 +334,7 @@ public final class OptionsUtils {
             @SuppressWarnings("ConstantConditions")
             public void onOptions(Map<String, String> options) {
                 if (activity == null) {
-                    pd.dismiss();
+                    activity.dismissDialog();
                     return;
                 }
 
@@ -345,7 +342,7 @@ public final class OptionsUtils {
                     Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
                         Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
-                        pd.dismiss();
+                        activity.dismissDialog();
                         return;
                     }
 
@@ -354,18 +351,18 @@ public final class OptionsUtils {
                     showDownloadDialog(activity, gid, Option.fromOptionsMap(options, allOptions));
                 }
 
-                pd.dismiss();
+                activity.dismissDialog();
             }
 
             @Override
             public void onException(Exception ex) {
                 Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                pd.dismiss();
+                activity.dismissDialog();
             }
         });
     }
 
-    private static void exportOptions(Activity activity, List<Option> options, boolean global) {
+    private static void exportOptions(ActivityWithDialog activity, List<Option> options, boolean global) {
         StringBuilder builder = new StringBuilder();
 
         for (Option option : options) {

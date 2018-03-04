@@ -125,7 +125,8 @@ public class Base64Fragment extends Fragment {
         SuperTextView help = layout.findViewById(R.id.base64Fragment_help);
         if (getArguments() == null || getArguments().getBoolean("torrent", true))
             help.setHtml(R.string.pickTorrent_help);
-        else help.setHtml(R.string.pickMetalink_help);
+        else
+            help.setHtml(R.string.pickMetalink_help);
 
         return layout;
     }

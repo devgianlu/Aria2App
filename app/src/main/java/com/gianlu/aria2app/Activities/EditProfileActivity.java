@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -44,6 +43,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class EditProfileActivity extends AppCompatActivity implements TestFragment.IGetProfile {
+public class EditProfileActivity extends ActivityWithDialog implements TestFragment.IGetProfile {
     private MultiProfile editProfile;
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
@@ -344,7 +344,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
             }
         });
 
-        CommonUtils.showDialog(this, dialog);
+        showDialog(dialog);
     }
 
     private void refreshSpinner() {
@@ -353,7 +353,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
 
     @Nullable
     private MultiProfile buildProfile() throws InvalidFieldException {
-        String profileName = this.profileName.getEditText().getText().toString().trim();
+        String profileName = CommonUtils.getText(this.profileName).trim();
         if (profileName.isEmpty() ||
                 (ProfilesManager.get(this).profileExists(ProfilesManager.getId(profileName))
                         && editProfile == null)) {
@@ -463,7 +463,7 @@ public class EditProfileActivity extends AppCompatActivity implements TestFragme
                 })
                 .setNegativeButton(android.R.string.cancel, null);
 
-        CommonUtils.showDialog(this, builder);
+        showDialog(builder);
     }
 
     @Override

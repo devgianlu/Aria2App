@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,9 +20,10 @@ import com.gianlu.aria2app.NetIO.JTA2.Download;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Toaster;
 
-public class MoreAboutDownloadActivity extends AppCompatActivity implements InfoFragment.IStatusChanged {
+public class MoreAboutDownloadActivity extends ActivityWithDialog implements InfoFragment.IStatusChanged {
     private PagerAdapter<? extends OnBackPressed> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;

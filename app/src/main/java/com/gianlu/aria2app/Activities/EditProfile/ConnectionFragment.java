@@ -375,20 +375,20 @@ public class ConnectionFragment extends FieldErrorFragment {
                 break;
         }
 
-        String address = this.address.getEditText().getText().toString().trim();
+        String address = CommonUtils.getText(this.address).trim();
         if (address.isEmpty())
             throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.addressEmpty));
 
 
         int port;
         try {
-            port = Integer.parseInt(this.port.getEditText().getText().toString().trim());
+            port = Integer.parseInt(CommonUtils.getText(this.port).trim());
             if (port <= 0 || port > 65535) throw new Exception();
         } catch (Exception ex) {
             throw new InvalidFieldException(getClass(), R.id.editProfile_port, context.getString(R.string.invalidPort));
         }
 
-        String endpoint = this.endpoint.getEditText().getText().toString().trim();
+        String endpoint = CommonUtils.getText(this.endpoint).trim();
         if (endpoint.isEmpty())
             throw new InvalidFieldException(getClass(), R.id.editProfile_endpoint, context.getString(R.string.endpointEmpty));
 
