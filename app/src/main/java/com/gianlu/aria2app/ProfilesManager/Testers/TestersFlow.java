@@ -32,7 +32,7 @@ public class TestersFlow extends Thread implements BaseTester.IPublish {
             testers.add(new WebSocketTester(context, profile, this));
 
         testers.add(new Aria2Tester(context, profile, this));
-        if (profile.isDirectDownloadEnabled())
+        if (profile.directDownload != null)
             testers.add(new DirectDownloadTester(context, profile, this));
     }
 

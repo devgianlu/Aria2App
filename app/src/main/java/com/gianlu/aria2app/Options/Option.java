@@ -70,7 +70,6 @@ public class Option implements Comparable<Option> {
         return newValue != null && !Objects.equals(value, newValue);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public boolean isQuick(Context context, boolean global) {
         return Prefs.getSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, new HashSet<String>()).contains(name);
     }

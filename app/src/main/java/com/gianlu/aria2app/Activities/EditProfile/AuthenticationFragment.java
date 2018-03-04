@@ -37,7 +37,6 @@ public class AuthenticationFragment extends FieldErrorFragment {
         return fragment;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,7 +63,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
             }
         });
         token = layout.findViewById(R.id.editProfile_token);
-        token.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(token).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -82,7 +81,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
         });
         userAndPasswd = layout.findViewById(R.id.editProfile_userAndPasswd);
         username = layout.findViewById(R.id.editProfile_username);
-        username.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(username).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -99,7 +98,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
             }
         });
         password = layout.findViewById(R.id.editProfile_password);
-        password.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(password).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -116,8 +115,9 @@ public class AuthenticationFragment extends FieldErrorFragment {
             }
         });
 
-        MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-        if (edit != null) {
+        Bundle args = getArguments();
+        MultiProfile.UserProfile edit;
+        if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
             switch (edit.authMethod) {
                 default:
                 case NONE:
@@ -125,12 +125,12 @@ public class AuthenticationFragment extends FieldErrorFragment {
                     break;
                 case HTTP:
                     authMethod.check(R.id.editProfile_authMethod_http);
-                    username.getEditText().setText(edit.serverUsername);
-                    password.getEditText().setText(edit.serverPassword);
+                    CommonUtils.setText(username, edit.serverUsername);
+                    CommonUtils.setText(password, edit.serverPassword);
                     break;
                 case TOKEN:
                     authMethod.check(R.id.editProfile_authMethod_token);
-                    token.getEditText().setText(edit.serverToken);
+                    CommonUtils.setText(token, edit.serverToken);
                     break;
             }
         }

@@ -42,7 +42,6 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         return fragment;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         });
         container = layout.findViewById(R.id.editProfile_dd_container);
         address = layout.findViewById(R.id.editProfile_dd_address);
-        address.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(address).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -82,7 +81,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         });
         authContainer = layout.findViewById(R.id.editProfile_dd_authContainer);
         username = layout.findViewById(R.id.editProfile_dd_username);
-        username.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(username).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -99,7 +98,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             }
         });
         password = layout.findViewById(R.id.editProfile_dd_password);
-        password.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(password).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -116,15 +115,16 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             }
         });
 
-        MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-        if (edit != null) {
-            enableDirectDownload.setChecked(edit.isDirectDownloadEnabled());
-            if (edit.isDirectDownloadEnabled()) {
-                address.getEditText().setText(edit.directDownload.address);
+        Bundle args = getArguments();
+        MultiProfile.UserProfile edit;
+        if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
+            enableDirectDownload.setChecked(edit.directDownload != null);
+            if (edit.directDownload != null) {
+                CommonUtils.setText(address, edit.directDownload.address);
                 auth.setChecked(edit.directDownload.auth);
                 if (edit.directDownload.auth) {
-                    username.getEditText().setText(edit.directDownload.username);
-                    password.getEditText().setText(edit.directDownload.password);
+                    CommonUtils.setText(username, edit.directDownload.username);
+                    CommonUtils.setText(password, edit.directDownload.password);
                 }
             }
         }

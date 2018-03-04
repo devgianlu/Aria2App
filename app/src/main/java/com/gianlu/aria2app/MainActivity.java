@@ -243,7 +243,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         });
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void setupAdapterFiltersAndSorting() {
         List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
         Set<String> checkedFiltersSet = Prefs.getSet(this, PKeys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));

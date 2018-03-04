@@ -264,9 +264,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             this.isDefault = isDefault;
         }
 
-        @Nullable
-        public static String[] parseSSIDs(String rawSsids) {
-            if (rawSsids == null) return null;
+        public static String[] parseSSIDs(@NonNull String rawSsids) {
             return checkSSIDsArray(rawSsids.split(",\\s+"));
         }
 
@@ -514,7 +512,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return MultiProfile.this;
         }
 
-        public String getFullServerAddress() throws NetUtils.InvalidUrlException {
+        String getFullServerAddress() throws NetUtils.InvalidUrlException {
             if (fullServerAddress == null) {
                 switch (connectionMethod) {
                     default:
@@ -528,10 +526,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             return fullServerAddress;
-        }
-
-        public boolean isDirectDownloadEnabled() {
-            return directDownload != null;
         }
 
         JSONObject toJson() throws JSONException {
@@ -549,7 +543,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("connectionMethod", connectionMethod.name())
                     .put("connectivityCondition", connectivityCondition.toJson());
 
-            if (isDirectDownloadEnabled()) profile.put("directDownload", directDownload.toJson());
+            if (directDownload != null) profile.put("directDownload", directDownload.toJson());
             return profile;
         }
 

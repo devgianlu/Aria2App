@@ -48,7 +48,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
 
         try {
             final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent(getContext());
-            if (download.isMetadata() || !profile.getProfile(getContext()).isDirectDownloadEnabled()) {
+            if (download.isMetadata() || profile.getProfile(getContext()).directDownload != null) {
                 return false;
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {

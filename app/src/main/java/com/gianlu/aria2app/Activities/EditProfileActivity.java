@@ -86,7 +86,6 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         return false;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +106,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         else setTitle(R.string.editProfile);
 
         profileName = findViewById(R.id.editProfile_profileName);
-        profileName.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(profileName).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -222,7 +221,6 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         return false;
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void createNewCondition(final boolean compulsory) {
         if (hasAlwaysCondition()) {
             Toaster.show(this, Utils.Messages.HAS_ALWAYS_CONDITION);
@@ -232,7 +230,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_new_condition, null, false);
         final RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
         final TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
-        final MultiAutoCompleteTextView ssidField = (MultiAutoCompleteTextView) ssid.getEditText();
+        final MultiAutoCompleteTextView ssidField = (MultiAutoCompleteTextView) CommonUtils.getEditText(ssid);
         ssidField.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         ssidField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -255,6 +253,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 if (checkedId == R.id.editProfile_connectivityCondition_wifi) {
                     WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                    if (manager == null) return;
                     ssidField.setAdapter(new WifisAdapter(EditProfileActivity.this, manager.getConfiguredNetworks()));
                     ssidField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
@@ -305,7 +304,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                                 condition = MultiProfile.ConnectivityCondition.newMobileCondition(!hasDefault());
                                 break;
                             case R.id.editProfile_connectivityCondition_wifi:
-                                String[] ssidsArray = MultiProfile.ConnectivityCondition.parseSSIDs(ssid.getEditText().getText().toString());
+                                String[] ssidsArray = MultiProfile.ConnectivityCondition.parseSSIDs(CommonUtils.getText(ssid));
                                 if (ssidsArray.length == 0) {
                                     ssidField.setText("");
                                     ssid.setError(getString(R.string.emptySSID));

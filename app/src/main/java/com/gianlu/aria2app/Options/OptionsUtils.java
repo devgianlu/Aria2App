@@ -282,8 +282,9 @@ public final class OptionsUtils {
 
         jta2.getGlobalOption(new JTA2.IOption() {
             @Override
-            @SuppressWarnings("ConstantConditions")
             public void onOptions(Map<String, String> options) {
+                activity.dismissDialog();
+
                 if (quick) {
                     Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
                     if (quickOptions.isEmpty()) {
@@ -296,8 +297,6 @@ public final class OptionsUtils {
                 } else {
                     showGlobalDialog(activity, Option.fromOptionsMap(options, allOptions));
                 }
-
-                activity.dismissDialog();
             }
 
             @Override
@@ -331,12 +330,8 @@ public final class OptionsUtils {
 
         jta2.getOption(gid, new JTA2.IOption() {
             @Override
-            @SuppressWarnings("ConstantConditions")
             public void onOptions(Map<String, String> options) {
-                if (activity == null) {
-                    activity.dismissDialog();
-                    return;
-                }
+                activity.dismissDialog();
 
                 if (quick) {
                     Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_QUICK_OPTIONS, new HashSet<String>());
@@ -350,8 +345,6 @@ public final class OptionsUtils {
                 } else {
                     showDownloadDialog(activity, gid, Option.fromOptionsMap(options, allOptions));
                 }
-
-                activity.dismissDialog();
             }
 
             @Override

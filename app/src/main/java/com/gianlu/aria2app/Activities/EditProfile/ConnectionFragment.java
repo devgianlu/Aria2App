@@ -84,7 +84,6 @@ public class ConnectionFragment extends FieldErrorFragment {
         return fragment;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -99,7 +98,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
         address = layout.findViewById(R.id.editProfile_address);
-        address.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(address).addTextChangedListener(new TextWatcher() {
             private final Timer timer = new Timer();
             private TimerTask task;
             private String lastAddress;
@@ -145,7 +144,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
         port = layout.findViewById(R.id.editProfile_port);
-        port.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(port).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 port.setErrorEnabled(false);
@@ -162,7 +161,7 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
         endpoint = layout.findViewById(R.id.editProfile_endpoint);
-        endpoint.getEditText().addTextChangedListener(new TextWatcher() {
+        CommonUtils.getEditText(endpoint).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 endpoint.setErrorEnabled(false);
@@ -225,8 +224,9 @@ public class ConnectionFragment extends FieldErrorFragment {
             }
         });
 
-        MultiProfile.UserProfile edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit");
-        if (edit != null) {
+        Bundle args = getArguments();
+        MultiProfile.UserProfile edit;
+        if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
             switch (edit.connectionMethod) {
                 default:
                 case HTTP:
@@ -237,9 +237,9 @@ public class ConnectionFragment extends FieldErrorFragment {
                     break;
             }
 
-            address.getEditText().setText(edit.serverAddr);
-            port.getEditText().setText(String.valueOf(edit.serverPort));
-            endpoint.getEditText().setText(edit.serverEndpoint);
+            CommonUtils.setText(address, edit.serverAddr);
+            CommonUtils.setText(port, String.valueOf(edit.serverPort));
+            CommonUtils.setText(endpoint, edit.serverEndpoint);
             encryption.setChecked(edit.serverSSL);
             hostnameVerifier.setChecked(edit.hostnameVerifier);
             if (edit.serverSSL && edit.certificate != null)
@@ -254,7 +254,6 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CODE_PICK_CERT && resultCode == Activity.RESULT_OK && isAdded())
             loadCertificateUri(data.getData());
