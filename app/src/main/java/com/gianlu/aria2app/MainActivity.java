@@ -491,7 +491,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedUri != null)
+        if (requestCode == REQUEST_READ_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && _sharedUri != null)
             processFileUri(_sharedUri);
         else
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
