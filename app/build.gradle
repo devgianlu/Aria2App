@@ -3,13 +3,13 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+
     defaultConfig {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 107
-        versionName "3.7.6"
+        versionCode 108
+        versionName "3.7.7"
     }
 
     buildTypes {
