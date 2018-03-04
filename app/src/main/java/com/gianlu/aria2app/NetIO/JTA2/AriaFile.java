@@ -47,6 +47,7 @@ public class AriaFile implements Serializable {
     }
 
     public static String getRelativePath(String path, @NonNull String dir) {
+        if (dir.contains("\\")) dir = dir.replaceAll("\\\\", "\\\\");
         String relPath = path.replaceFirst(dir, "");
         if (relPath.charAt(0) == '/') return relPath.substring(1);
         else return relPath;

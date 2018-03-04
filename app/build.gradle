@@ -28,7 +28,7 @@ android {
 
 dependencies {
     api project(':CommonUtils')
-    api 'com.squareup.okhttp3:okhttp:3.9.1'
+    api 'com.squareup.okhttp3:okhttp:3.10.0'
     api 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     api 'com.neovisionaries:nv-websocket-client:2.3'
     api 'com.getbase:floatingactionbutton:1.10.1'
