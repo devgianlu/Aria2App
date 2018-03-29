@@ -20,14 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
-import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Search.MissingSearchEngine;
+import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Search.SearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchResult;
-import com.gianlu.aria2app.NetIO.Search.SearchUtils;
 import com.gianlu.aria2app.NetIO.Search.Torrent;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchUtils.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
+public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.ISearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
     private RecyclerViewLayout recyclerViewLayout;
     private LinearLayout message;
     private String query = null;
@@ -153,7 +153,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.startLoading();
         this.query = query;
 
-        SearchUtils.get().search(query.trim(), SearchUtils.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
+        SearchApi.get().search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
 
         AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH);
         return true;
@@ -195,7 +195,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         switch (item.getItemId()) {
             case R.id.search_engines:
                 showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
-                SearchUtils.get().listSearchEngines(new SearchUtils.IResult<List<SearchEngine>>() {
+                SearchApi.get().listSearchEngines(new SearchApi.IResult<List<SearchEngine>>() {
                     @Override
                     public void onResult(List<SearchEngine> result) {
                         dismissDialog();
@@ -217,7 +217,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     @Override
     public void onResultSelected(SearchResult result) {
         showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
-        SearchUtils.get().getTorrent(result, new SearchUtils.ITorrent() {
+        SearchApi.get().getTorrent(result, new SearchApi.ITorrent() {
             @Override
             public void onDone(Torrent torrent) {
                 dismissDialog();
@@ -261,7 +261,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         SuperTextView seeders = layout.findViewById(R.id.torrentDialog_seeders);
         SuperTextView leeches = layout.findViewById(R.id.torrentDialog_leeches);
 
-        SearchEngine searchEngine = SearchUtils.get().findEngine(torrent.engineId);
+        SearchEngine searchEngine = SearchApi.get().findEngine(torrent.engineId);
         if (searchEngine != null) engine.setHtml(R.string.searchEngine, searchEngine.name);
         else engine.setVisibility(View.GONE);
         size.setHtml(R.string.size, CommonUtils.dimensionFormatter(torrent.size, false));

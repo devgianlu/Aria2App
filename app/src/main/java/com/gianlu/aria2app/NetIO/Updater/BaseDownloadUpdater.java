@@ -11,6 +11,6 @@ public abstract class BaseDownloadUpdater<P> extends BaseUpdater<P> {
 
     public BaseDownloadUpdater(Context context, Download download, UpdaterListener<P> listener) throws Aria2Helper.InitializingException {
         super(context, listener);
-        this.download = download.wrap(aria2Helper.getClient());
+        this.download = download.wrap(helper.getClient());
     }
 }

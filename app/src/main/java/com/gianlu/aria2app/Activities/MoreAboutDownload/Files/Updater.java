@@ -10,8 +10,8 @@ import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
 
 import java.util.List;
 
-public class UpdateUI extends BaseDownloadUpdater<List<AriaFile>> implements AbstractClient.OnResult<List<AriaFile>> {
-    public UpdateUI(Context context, Download download, UpdaterListener<List<AriaFile>> listener) throws Aria2Helper.InitializingException {
+class Updater extends BaseDownloadUpdater<List<AriaFile>> implements AbstractClient.OnResult<List<AriaFile>> {
+    Updater(Context context, Download download, UpdaterListener<List<AriaFile>> listener) throws Aria2Helper.InitializingException {
         super(context, download, listener);
     }
 
@@ -27,6 +27,6 @@ public class UpdateUI extends BaseDownloadUpdater<List<AriaFile>> implements Abs
 
     @Override
     public void onException(Exception ex) {
-        errorOccurred(ex, false);
+        errorOccurred(ex);
     }
 }

@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class TopCountriesView extends FlowLayout {
+public final class TopCountriesView extends FlowLayout {
     private final static int DISPLAYED_COUNTRIES = 3;
     private final FreeGeoIPApi freeGeoIp = FreeGeoIPApi.get();
     private final Map<String, Integer> topCountries;

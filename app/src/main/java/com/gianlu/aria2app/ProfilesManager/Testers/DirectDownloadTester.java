@@ -44,7 +44,7 @@ class DirectDownloadTester extends BaseTester {
     }
 
     @Override
-    protected Boolean call() {
+    public Boolean call() {
         Request.Builder builder = new Request.Builder();
         HttpUrl baseUrl = dd.getUrl();
         if (baseUrl == null) {

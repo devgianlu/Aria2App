@@ -1,64 +1,49 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 
-public abstract class UpdaterActivity extends ActivityWithDialog {
-    private BaseUpdater updater;
+public abstract class UpdaterActivity extends ActivityWithDialog implements UpdaterFramework.Interface {
+    private final UpdaterFramework framework;
 
-    @Nullable
-    protected abstract BaseUpdater createUpdater();
+    public UpdaterActivity() {
+        framework = new UpdaterFramework(this);
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        restart();
+        framework.restartUpdater();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stop();
+        framework.stopUpdater();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        stop();
+        framework.stopUpdater();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stop();
+        framework.stopUpdater();
     }
 
-    private void stop() {
-        if (updater != null) updater.stopThread(null);
-        updater = null;
+    @Nullable
+    @Override
+    public Bundle getArguments() {
+        return getIntent().getExtras();
     }
 
-    private void start() {
-        updater = createUpdater();
-        if (updater != null) updater.start();
-    }
-
-    protected final void refresh(final OnRefresh listener) {
-        if (updater != null) {
-            updater.stopThread(new BaseUpdater.IThread() {
-                @Override
-                public void onStopped() {
-                    listener.refreshed();
-                    restart();
-                }
-            });
-        }
-    }
-
-    private void restart() {
-        stop();
-        start();
+    protected void refresh(OnRefresh listener) {
+        framework.refresh(listener);
     }
 }

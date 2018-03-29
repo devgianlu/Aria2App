@@ -19,10 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
+import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.HTTPing;
-import com.gianlu.aria2app.NetIO.IConnect;
-import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.NetIO.HttpClient;
+import com.gianlu.aria2app.NetIO.OnConnect;
+import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -40,7 +41,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoadingActivity extends ActivityWithDialog implements IConnect {
+public class LoadingActivity extends ActivityWithDialog implements OnConnect {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
     public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
     public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
@@ -109,8 +110,8 @@ public class LoadingActivity extends ActivityWithDialog implements IConnect {
         }, 1000);
 
         Logging.clearLogs(this);
-        WebSocketing.clear();
-        HTTPing.clear();
+        WebSocketClient.clear();
+        HttpClient.clear();
 
         manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {
@@ -224,7 +225,7 @@ public class LoadingActivity extends ActivityWithDialog implements IConnect {
         displayPicker(hasShareData());
     }
 
-    private void failedConnecting(@NonNull final Exception ex) {
+    private void failedConnecting(@NonNull final Throwable ex) {
         Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
             @Override
             public void run() {
@@ -253,9 +254,9 @@ public class LoadingActivity extends ActivityWithDialog implements IConnect {
             manager.setCurrent(this, profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
-                WebSocketing.instantiate(this, single, this);
+                WebSocketClient.instantiate(this, single, this);
             } else {
-                HTTPing.instantiate(this, single, this);
+                HttpClient.instantiate(this, single, this);
             }
 
             new Timer().schedule(new TimerTask() {
@@ -279,8 +280,8 @@ public class LoadingActivity extends ActivityWithDialog implements IConnect {
     }
 
     private void cancelConnection() {
-        WebSocketing.clear();
-        HTTPing.clear();
+        WebSocketClient.clear();
+        HttpClient.clear();
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
     }
@@ -338,7 +339,7 @@ public class LoadingActivity extends ActivityWithDialog implements IConnect {
     }
 
     @Override
-    public void onFailedConnecting(Exception ex) {
+    public void onFailedConnecting(Throwable ex) {
         failedConnecting(ex);
     }
 }

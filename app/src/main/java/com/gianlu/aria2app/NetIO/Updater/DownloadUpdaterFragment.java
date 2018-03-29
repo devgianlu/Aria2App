@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadStatic;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 
 public abstract class DownloadUpdaterFragment extends UpdaterFragment {
@@ -13,19 +12,21 @@ public abstract class DownloadUpdaterFragment extends UpdaterFragment {
     @Nullable
     protected abstract Download getDownload(@NonNull Bundle args);
 
-    @NonNull
-    protected final DownloadStatic getDownload() {
-        return getDownloadWithHelper().get();
+    @Nullable
+    protected final Download getDownload() {
+        DownloadWithHelper helper = getDownloadWithHelper();
+        return helper != null ? helper.get() : null;
     }
 
-    @NonNull
+    @Nullable
     protected final DownloadWithHelper getDownloadWithHelper() {
-        return ((BaseDownloadUpdater) updater).download;
+        BaseDownloadUpdater updater = ((BaseDownloadUpdater) getUpdater());
+        return updater != null ? updater.download : null;
     }
 
     @Nullable
     @Override
-    protected final BaseUpdater createUpdater(@NonNull Bundle args) {
+    public final BaseUpdater createUpdater(@NonNull Bundle args) {
         Download download = getDownload(args);
         if (download != null) return createUpdater(download);
         else return null;

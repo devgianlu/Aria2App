@@ -1,67 +1,51 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.gianlu.aria2app.NetIO.OnRefresh;
 
-public abstract class UpdaterFragment extends Fragment {
-    protected BaseUpdater updater;
+public abstract class UpdaterFragment extends Fragment implements UpdaterFramework.Interface {
+    private final UpdaterFramework framework;
 
-    @Nullable
-    protected abstract BaseUpdater createUpdater(@NonNull Bundle args);
+    public UpdaterFragment() {
+        framework = new UpdaterFramework(this);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        restartUpdater();
+        framework.restartUpdater();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopUpdater();
+        framework.stopUpdater();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopUpdater();
+        framework.stopUpdater();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        stopUpdater();
+        framework.stopUpdater();
     }
 
     protected void stopUpdater() {
-        if (updater != null) updater.stopThread(null);
-        updater = null;
+        framework.stopUpdater();
     }
 
-    protected void startUpdater() {
-        Bundle args = getArguments();
-        if (args != null) {
-            updater = createUpdater(args);
-            if (updater != null) updater.start();
-        }
+    protected void refresh(OnRefresh listener) {
+        framework.refresh(listener);
     }
 
-    protected final void refresh(final OnRefresh listener) {
-        updater.stopThread(new BaseUpdater.IThread() {
-            @Override
-            public void onStopped() {
-                if (listener != null) listener.refreshed();
-                restartUpdater();
-            }
-        });
-    }
-
-    protected void restartUpdater() {
-        stopUpdater();
-        startUpdater();
+    @Nullable
+    protected BaseUpdater getUpdater() {
+        return framework.getUpdater();
     }
 }

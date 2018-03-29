@@ -1,7 +1,7 @@
 package com.gianlu.aria2app.NetIO;
 
-public interface IConnect {
+public interface OnConnect {
     void onConnected(AbstractClient client);
 
-    void onFailedConnecting(Exception ex);
+    void onFailedConnecting(Throwable ex);
 }

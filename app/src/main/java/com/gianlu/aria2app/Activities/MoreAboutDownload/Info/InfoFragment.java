@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Activities.MoreAboutDownload;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Info;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.UpdateUI;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -106,7 +106,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
     @Override
     protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), download, this);
+            return new Updater(getContext(), download, this);
         } catch (Aria2Helper.InitializingException ex) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);

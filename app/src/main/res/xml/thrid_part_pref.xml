@@ -6,11 +6,6 @@
         android:title="MPAndroidChart" />
 
     <Preference
-        android:key="nv-websocket-client"
-        android:summary="@string/apacheLicense"
-        android:title="nv-websocket-client" />
-
-    <Preference
         android:key="tapTargetView"
         android:summary="@string/apacheLicense"
         android:title="TapTargetView" />

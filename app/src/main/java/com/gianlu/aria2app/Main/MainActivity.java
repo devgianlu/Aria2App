@@ -1,4 +1,4 @@
-package com.gianlu.aria2app;
+package com.gianlu.aria2app.Main;
 
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -53,8 +53,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
-import com.gianlu.aria2app.Main.DrawerConst;
-import com.gianlu.aria2app.Main.UpdateUI;
+import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
@@ -64,17 +63,23 @@ import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
-import com.gianlu.aria2app.NetIO.HTTPing;
+import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.Search.SearchUtils;
+import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
-import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.Options.OptionsUtils;
+import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PreferencesActivity;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
@@ -298,8 +303,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             helper = Aria2Helper.instantiate(this);
         } catch (ProfilesManager.NoCurrentProfileException | Aria2Helper.InitializingException ex) {
             Logging.log(ex);
-            WebSocketing.clear();
-            HTTPing.clear();
+            WebSocketClient.clear();
+            HttpClient.clear();
             manager.unsetLastProfile(this);
             LoadingActivity.startActivity(this, ex);
             return;
@@ -375,7 +380,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         setupAdapterFiltersAndSorting();
 
         if (((ThisApplication) getApplication()).isFirstStart()) {
-            SearchUtils.get().cacheSearchEngines();
+            SearchApi.get().cacheSearchEngines();
             ((ThisApplication) getApplication()).firstStarted();
             if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true))
                 doVersionCheck();
@@ -509,8 +514,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             ProfilesManager.get(this).reloadCurrentProfile(this);
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.log(ex);
-            WebSocketing.clear();
-            HTTPing.clear();
+            WebSocketClient.clear();
+            HttpClient.clear();
             ProfilesManager.get(this).unsetLastProfile(this);
             LoadingActivity.startActivity(this, ex);
             return;
@@ -977,9 +982,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     @Nullable
-    protected BaseUpdater createUpdater() {
+    public BaseUpdater createUpdater(@NonNull Bundle args) {
         try {
-            return new UpdateUI(this, this);
+            return new Updater(this, this);
         } catch (Aria2Helper.InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
             if (recyclerViewLayout != null)

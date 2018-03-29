@@ -36,11 +36,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketAdapter;
-import com.neovisionaries.ws.client.WebSocketException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -56,6 +54,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 
 public class NotificationService extends Service {
     public static final String ACTION_STOPPED = "com.gianlu.aria2app.notifs.STOPPED";
@@ -183,8 +185,8 @@ public class NotificationService extends Service {
         if (profiles != null) profiles.clear();
         if (webSockets != null) {
             for (WebSocket webSocket : webSockets) {
-                webSocket.clearListeners();
-                webSocket.disconnect();
+                webSocket.close(1000, null);
+                webSocket.cancel();
             }
 
             webSockets.clear();
@@ -281,15 +283,15 @@ public class NotificationService extends Service {
         notifyError(profile, getString(R.string.notificationUnsupportedConnMethod, profile.getProfileName(this)), getString(R.string.notificationUnsupportedConnMethod_details));
     }
 
-    private void notifyException(MultiProfile.UserProfile profile, Exception ex) {
+    private void notifyException(MultiProfile.UserProfile profile, Throwable ex) {
         notifyError(profile, getString(R.string.notificationException, profile.getProfileName(this)), ex.getMessage());
     }
 
     private void recreateWebsockets(int networkType) {
         if (webSockets != null) {
             for (WebSocket webSocket : webSockets) {
-                webSocket.clearListeners();
-                webSocket.disconnect();
+                webSocket.close(1000, null);
+                webSocket.cancel();
             }
 
             webSockets.clear();
@@ -310,10 +312,7 @@ public class NotificationService extends Service {
             }
 
             try {
-                WebSocket webSocket = NetUtils.readyWebSocket(profile);
-                webSockets.add(webSocket);
-                webSocket.addListener(new NotificationsHandler(profile))
-                        .connectAsynchronously();
+                webSockets.add(NetUtils.buildClient(profile).newWebSocket(NetUtils.createWebsocketRequest(profile), new NotificationsHandler(profile)));
             } catch (IOException | NoSuchAlgorithmException | NetUtils.InvalidUrlException | CertificateException | KeyManagementException | KeyStoreException ex) {
                 notifyException(profile, ex);
             }
@@ -477,7 +476,7 @@ public class NotificationService extends Service {
         }
     }
 
-    private class NotificationsHandler extends WebSocketAdapter {
+    private class NotificationsHandler extends WebSocketListener {
         private final MultiProfile.UserProfile profile;
         private final List<EventType> enabledNotifs;
 
@@ -487,26 +486,25 @@ public class NotificationService extends Service {
         }
 
         @Override
-        public void onConnectError(WebSocket websocket, WebSocketException exception) {
-            notifyException(profile, exception);
-        }
-
-        @Override
-        public void handleCallbackError(WebSocket websocket, Throwable cause) {
-            Logging.log(cause);
-        }
-
-        @Override
-        public void onTextMessage(WebSocket websocket, String text) throws Exception {
-            JSONObject json = new JSONObject(text);
-            EventType type = EventType.parse(json.getString("method"));
-            if (enabledNotifs.contains(type)) {
-                JSONArray events = json.getJSONArray("params");
-                for (int i = 0; i < events.length(); i++) {
-                    JSONObject event = events.getJSONObject(i);
-                    handleEvent(profile, event.getString("gid"), type);
+        public void onMessage(WebSocket webSocket, String text) {
+            try {
+                JSONObject json = new JSONObject(text);
+                EventType type = EventType.parse(json.getString("method"));
+                if (enabledNotifs.contains(type)) {
+                    JSONArray events = json.getJSONArray("params");
+                    for (int i = 0; i < events.length(); i++) {
+                        JSONObject event = events.getJSONObject(i);
+                        handleEvent(profile, event.getString("gid"), type);
+                    }
                 }
+            } catch (JSONException ex) {
+                Logging.log(ex);
             }
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
+            notifyException(profile, throwable);
         }
     }
 }

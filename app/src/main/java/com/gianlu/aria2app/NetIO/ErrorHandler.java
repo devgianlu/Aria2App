@@ -8,7 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ErrorHandler {
+public final class ErrorHandler {
     private static ErrorHandler instance;
     private final IErrorHandler handler;
     private final AtomicInteger errorCount = new AtomicInteger(0);

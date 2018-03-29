@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
-public abstract class BaseTester { // TODO: Rewrite
+import java.util.concurrent.Callable;
+
+public abstract class BaseTester implements Callable<Boolean> { // FIXME: Can be done better, the idea isn't that bad
     protected final Context context;
     protected final MultiProfile.UserProfile profile;
     private final IPublish listener;
@@ -31,7 +33,8 @@ public abstract class BaseTester { // TODO: Rewrite
     /**
      * @return true if the test was successful, false otherwise
      */
-    protected abstract Boolean call();
+    @Override
+    public abstract Boolean call();
 
     public abstract String describe();
 

@@ -26,11 +26,7 @@ public class TestersFlow extends Thread implements BaseTester.IPublish {
         this.listener = listener;
         this.testers = new LinkedList<>();
 
-        if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP)
-            testers.add(new HttpTester(context, profile, this));
-        else
-            testers.add(new WebSocketTester(context, profile, this));
-
+        testers.add(new NetTester(context, profile, this));
         testers.add(new Aria2Tester(context, profile, this));
         if (profile.directDownload != null)
             testers.add(new DirectDownloadTester(context, profile, this));

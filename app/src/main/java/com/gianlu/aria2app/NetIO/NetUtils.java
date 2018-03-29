@@ -3,14 +3,10 @@ package com.gianlu.aria2app.NetIO;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Base64;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Logging;
-import com.neovisionaries.ws.client.WebSocket;
-import com.neovisionaries.ws.client.WebSocketFactory;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -36,8 +32,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class NetUtils {
-    private static final int TIMEOUT = 5; // sec
+public final class NetUtils {
+    public static final int HTTP_TIMEOUT = 5; // sec
 
     public static boolean isUrlValid(String address, int port, String endpoint, boolean encryption) {
         try {
@@ -74,30 +70,6 @@ public class NetUtils {
         return context;
     }
 
-    public static WebSocket readyWebSocket(MultiProfile.UserProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, InvalidUrlException {
-        WebSocketFactory factory = new WebSocketFactory();
-        factory.setConnectionTimeout(5000);
-        factory.setVerifyHostname(profile.hostnameVerifier);
-        if (profile.serverSSL)
-            factory.setSSLContext(createSSLContext(profile.certificate));
-
-        try {
-            WebSocket socket = factory.createSocket(createBaseWsURI(profile), 5000);
-            socket.setFrameQueueSize(15);
-
-            if (profile.authMethod == AbstractClient.AuthMethod.HTTP)
-                socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
-
-            return socket;
-        } catch (IllegalArgumentException ex) {
-            throw new IOException("Just a wrapper", ex);
-        }
-    }
-
-    public static OkHttpClient buildHttpClient(MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        return buildHttpClient(profile, createSSLContext(profile.certificate));
-    }
-
     private static void setSslSocketFactory(OkHttpClient.Builder builder, SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
@@ -112,11 +84,15 @@ public class NetUtils {
         builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
     }
 
-    static OkHttpClient buildHttpClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public static OkHttpClient buildClient(MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+        return buildClient(profile, createSSLContext(profile.certificate));
+    }
+
+    static OkHttpClient buildClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(TIMEOUT, TimeUnit.SECONDS);
+        builder.connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS);
 
         setSslSocketFactory(builder, sslContext);
 
@@ -134,22 +110,16 @@ public class NetUtils {
     }
 
     @NonNull
-    public static HttpUrl createBaseHttpURI(MultiProfile.UserProfile profile) throws InvalidUrlException {
+    public static URI createHttpURL(MultiProfile.UserProfile profile) throws InvalidUrlException {
         try {
-            HttpUrl.Builder builder = new HttpUrl.Builder();
-            builder.scheme(profile.serverSSL ? "https" : "http")
-                    .host(profile.serverAddr)
-                    .port(profile.serverPort)
-                    .addPathSegments(profile.serverEndpoint.charAt(0) == '/' ? profile.serverEndpoint.substring(1) : profile.serverEndpoint);
-
-            return builder.build();
+            return new URI(profile.serverSSL ? "https" : "http", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
         } catch (Exception ex) {
             throw new InvalidUrlException(ex);
         }
     }
 
     @NonNull
-    public static URI createBaseWsURI(MultiProfile.UserProfile profile) throws InvalidUrlException {
+    public static URI createWebSocketURL(MultiProfile.UserProfile profile) throws InvalidUrlException {
         try {
             return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
         } catch (Exception ex) {
@@ -157,31 +127,11 @@ public class NetUtils {
         }
     }
 
-    public static Request createGetRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws JSONException, InvalidUrlException {
-        if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
-
-        HttpUrl.Builder uri = defaultUri.newBuilder();
-        if (request != null) {
-            uri.addQueryParameter("method", request.getString("method"))
-                    .addQueryParameter("id", request.getString("id"));
-
-            if (request.has("params"))
-                uri.addQueryParameter("params", Base64.encodeToString(request.get("params").toString().getBytes(), Base64.NO_WRAP));
-        }
-
+    @NonNull
+    static Request createPostRequest(MultiProfile.UserProfile profile, @Nullable URI url, @Nullable JSONObject request) throws InvalidUrlException {
+        if (url == null) url = createHttpURL(profile);
         Request.Builder builder = new Request.Builder();
-        builder.url(uri.build()).get();
-
-        if (profile.authMethod == AbstractClient.AuthMethod.HTTP)
-            builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
-
-        return builder.build();
-    }
-
-    static Request createPostRequest(MultiProfile.UserProfile profile, @Nullable HttpUrl defaultUri, @Nullable JSONObject request) throws InvalidUrlException {
-        if (defaultUri == null) defaultUri = createBaseHttpURI(profile);
-        Request.Builder builder = new Request.Builder();
-        builder.url(defaultUri);
+        builder.url(url.toString());
 
         RequestBody body;
         if (request != null)
@@ -194,6 +144,13 @@ public class NetUtils {
         if (profile.authMethod == AbstractClient.AuthMethod.HTTP)
             builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
 
+        return builder.build();
+    }
+
+    @NonNull
+    public static Request createWebsocketRequest(MultiProfile.UserProfile profile) throws InvalidUrlException {
+        Request.Builder builder = new Request.Builder();
+        builder.url(createWebSocketURL(profile).toString());
         return builder.build();
     }
 

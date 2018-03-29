@@ -7,7 +7,7 @@ public class MissingSearchEngine {
     public final SearchEngine engine;
     public final int responseCode;
 
-    public MissingSearchEngine(SearchUtils utils, JSONObject obj) throws JSONException {
+    public MissingSearchEngine(SearchApi utils, JSONObject obj) throws JSONException {
         engine = utils.findEngine(obj.getString("id"));
         responseCode = obj.getInt("reason");
     }

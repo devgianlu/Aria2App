@@ -524,10 +524,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 switch (connectionMethod) {
                     default:
                     case HTTP:
-                        fullServerAddress = NetUtils.createBaseHttpURI(this).toString();
+                        fullServerAddress = NetUtils.createHttpURL(this).toString();
                         break;
                     case WEBSOCKET:
-                        fullServerAddress = NetUtils.createBaseWsURI(this).toASCIIString();
+                        fullServerAddress = NetUtils.createWebSocketURL(this).toString();
                         break;
                 }
             }

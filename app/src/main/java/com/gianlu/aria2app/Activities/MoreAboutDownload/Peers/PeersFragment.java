@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Activities.MoreAboutDownload;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -13,8 +13,7 @@ import android.view.MenuItem;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeerBottomSheet;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.UpdateUI;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
@@ -130,7 +129,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     @Override
     protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), download, this);
+            return new Updater(getContext(), download, this);
         } catch (Aria2Helper.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.log(ex);

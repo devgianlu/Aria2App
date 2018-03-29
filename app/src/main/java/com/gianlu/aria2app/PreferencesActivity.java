@@ -134,7 +134,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    public static class ThirdPartFragment extends AppCompatPreferenceFragment {
+    public static class ThirdPartFragment extends AppCompatPreferenceFragment { // TODO: Make a CommonUtils class for this (very nice stuff)
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -150,15 +150,6 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                     showDialog(builder
                             .setTitle("MPAndroidChart")
                             .setMessage(R.string.mpAndroidChart_details));
-                    return true;
-                }
-            });
-
-            findPreference("nv-websocket-client").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                public boolean onPreferenceClick(Preference preference) {
-                    showDialog(builder
-                            .setTitle("nv-websocket-client")
-                            .setMessage(R.string.nv_websocket_client_license));
                     return true;
                 }
             });

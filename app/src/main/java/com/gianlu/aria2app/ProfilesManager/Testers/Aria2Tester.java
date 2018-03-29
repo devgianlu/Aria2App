@@ -7,17 +7,18 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
-import com.gianlu.aria2app.NetIO.HTTPing;
-import com.gianlu.aria2app.NetIO.IConnect;
-import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.NetIO.HttpClient;
+import com.gianlu.aria2app.NetIO.OnConnect;
+import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Logging;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-class Aria2Tester extends BaseTester { // TODO: Rewrite
+class Aria2Tester extends BaseTester {
     Aria2Tester(Context context, MultiProfile.UserProfile profile, IPublish listener) {
         super(context, profile, listener);
     }
@@ -26,7 +27,7 @@ class Aria2Tester extends BaseTester { // TODO: Rewrite
     private AbstractClient getClient() {
         final AtomicReference<AbstractClient> returnValue = new AtomicReference<>();
 
-        IConnect listener = new IConnect() {
+        OnConnect listener = new OnConnect() {
             @Override
             public void onConnected(AbstractClient client) {
                 synchronized (returnValue) {
@@ -36,7 +37,7 @@ class Aria2Tester extends BaseTester { // TODO: Rewrite
             }
 
             @Override
-            public void onFailedConnecting(Exception ex) {
+            public void onFailedConnecting(Throwable ex) {
                 synchronized (returnValue) {
                     returnValue.set(null);
                     returnValue.notify();
@@ -45,9 +46,9 @@ class Aria2Tester extends BaseTester { // TODO: Rewrite
         };
 
         if (profile.connectionMethod == MultiProfile.ConnectionMethod.HTTP) {
-            HTTPing.instantiate(context, profile, listener);
+            HttpClient.instantiate(context, profile, listener);
         } else {
-            WebSocketing.instantiate(context, profile, listener);
+            WebSocketClient.instantiate(context, profile, listener);
         }
 
         synchronized (returnValue) {
@@ -100,14 +101,14 @@ class Aria2Tester extends BaseTester { // TODO: Rewrite
     }
 
     private boolean getVersion(Aria2Helper aria2Helper) {
-        final AtomicBoolean returnValue = new AtomicBoolean(false);
+        final AtomicBoolean lock = new AtomicBoolean(false);
 
         aria2Helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
             @Override
             public void onResult(VersionInfo info) {
-                synchronized (returnValue) {
-                    returnValue.set(true);
-                    returnValue.notify();
+                synchronized (lock) {
+                    lock.set(true);
+                    lock.notify();
                 }
             }
 
@@ -115,25 +116,26 @@ class Aria2Tester extends BaseTester { // TODO: Rewrite
             public void onException(Exception ex) {
                 publishError(ex, true);
 
-                synchronized (returnValue) {
-                    returnValue.set(false);
-                    returnValue.notify();
+                synchronized (lock) {
+                    lock.set(false);
+                    lock.notify();
                 }
             }
         });
 
-        synchronized (returnValue) {
+        synchronized (lock) {
             try {
-                returnValue.wait();
-            } catch (InterruptedException ignored) {
+                lock.wait();
+            } catch (InterruptedException ex) {
+                Logging.log(ex);
             }
 
-            return returnValue.get();
+            return lock.get();
         }
     }
 
     @Override
-    protected Boolean call() {
+    public Boolean call() {
         AbstractClient client = getClient();
         if (client == null) return false;
         Aria2Helper aria2Helper = new Aria2Helper(context, client);

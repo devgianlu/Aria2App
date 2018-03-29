@@ -9,8 +9,8 @@ import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
 
-public class UpdateUI extends BaseDownloadUpdater<SparseArray<Servers>> implements AbstractClient.OnResult<SparseArray<Servers>> {
-    public UpdateUI(Context context, Download download, UpdaterListener<SparseArray<Servers>> listener) throws Aria2Helper.InitializingException {
+class Updater extends BaseDownloadUpdater<SparseArray<Servers>> implements AbstractClient.OnResult<SparseArray<Servers>> {
+    Updater(Context context, Download download, UpdaterListener<SparseArray<Servers>> listener) throws Aria2Helper.InitializingException {
         super(context, download, listener);
     }
 
@@ -26,7 +26,7 @@ public class UpdateUI extends BaseDownloadUpdater<SparseArray<Servers>> implemen
 
     @Override
     public void onException(Exception ex) {
-        errorOccurred(ex, false);
+        errorOccurred(ex);
     }
 }
 

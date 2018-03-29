@@ -8,9 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.gianlu.aria2app.NetIO.NetUtils;
-import com.gianlu.aria2app.ProfilesManager.Testers.HttpTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.NetTester;
-import com.gianlu.aria2app.ProfilesManager.Testers.WebSocketTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
@@ -125,16 +123,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     @Override
     protected void runTest(int pos) {
         final MultiProfile.UserProfile profile = getItem(pos).getProfile(context);
-
-        switch (profile.connectionMethod) {
-            default:
-            case HTTP:
-                service.submit(new HttpTester(context, profile, this));
-                break;
-            case WEBSOCKET:
-                service.submit(new WebSocketTester(context, profile, this));
-                break;
-        }
+        service.submit(new NetTester(context, profile, this));
     }
 
     @Override

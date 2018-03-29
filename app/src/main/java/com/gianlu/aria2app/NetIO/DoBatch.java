@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.NetIO;
 
-public interface IBatch<R> {
+public interface DoBatch<R> {
     void onSandboxReturned(R result);
 
     void onException(Exception ex);

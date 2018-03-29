@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Activities.MoreAboutDownload;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -28,9 +28,7 @@ import android.widget.LinearLayout;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.DirBottomSheet;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FileBottomSheet;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.UpdateUI;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
@@ -422,7 +420,7 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
     @Override
     protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), download, FilesFragment.this);
+            return new Updater(getContext(), download, FilesFragment.this);
         } catch (Aria2Helper.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.log(ex);

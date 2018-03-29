@@ -117,7 +117,7 @@ public final class DownloadWithHelper {
             public String sandbox(AbstractClient client) throws Exception {
                 Download old = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get();
                 Map<String, String> oldOptions = client.sendSync(AriaRequests.getOptions(baseDownload.gid));
-                String url = old.files.get(0).uris.get(AriaFile.Status.USED); // FIXME: Send all (?)
+                String url = old.files.get(0).uris.get(AriaFile.Status.USED); // FIXME: Send all used ones (?)
                 String newGid = client.sendSync(AriaRequests.addUri(Collections.singletonList(url), null, oldOptions));
                 client.sendSync(AriaRequests.removeDownloadResult(baseDownload.gid));
                 return newGid;

@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Activities.MoreAboutDownload;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -11,8 +11,7 @@ import android.util.SparseArray;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServerBottomSheet;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.UpdateUI;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -99,7 +98,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     @Override
     protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), download, this);
+            return new Updater(getContext(), download, this);
         } catch (Aria2Helper.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.log(ex);
@@ -111,8 +110,8 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     public void onUpdateUi(final SparseArray<Servers> servers) {
         if (servers.size() == 0) return;
 
-        if (files == null) {
-            DownloadWithHelper download = getDownloadWithHelper();
+        DownloadWithHelper download = getDownloadWithHelper();
+        if (files == null && download != null) {
             download.files(new AbstractClient.OnResult<List<AriaFile>>() {
                 @Override
                 public void onResult(List<AriaFile> result) {

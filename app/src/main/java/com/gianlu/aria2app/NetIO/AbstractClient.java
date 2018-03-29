@@ -30,6 +30,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.net.ssl.SSLContext;
 
+import okhttp3.OkHttpClient;
+
 public abstract class AbstractClient {
     private static final List<WeakReference<OnConnectivityChanged>> listeners = new ArrayList<>();
     private final Handler handler;
@@ -38,10 +40,12 @@ public abstract class AbstractClient {
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
+    protected final OkHttpClient client;
 
     AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         this.sslContext = NetUtils.createSSLContext(profile.certificate);
+        this.client = NetUtils.buildClient(profile, sslContext);
         this.profile = profile;
         this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
@@ -80,9 +84,9 @@ public abstract class AbstractClient {
 
     protected abstract void clearInternal();
 
-    public final <R> void send(final AriaRequestWithResult<R> request, final OnResult<R> listener) {
+    public final <R> void send(@NonNull final AriaRequestWithResult<R> request, final OnResult<R> listener) {
         try {
-            send(request.build(this), new IReceived() {
+            send(request.build(this), new OnJson() {
                 @Override
                 public void onResponse(JSONObject response) throws JSONException {
                     final R result = request.processor.process(AbstractClient.this, response);
@@ -114,18 +118,18 @@ public abstract class AbstractClient {
         }
     }
 
-    public final void sendSync(AriaRequest request) throws Exception {
+    public final void sendSync(@NonNull AriaRequest request) throws Exception {
         sendSync(request.build(this));
     }
 
     @NonNull
-    public final <R> R sendSync(AriaRequestWithResult<R> request) throws Exception {
+    public final <R> R sendSync(@NonNull AriaRequestWithResult<R> request) throws Exception {
         return request.processor.process(AbstractClient.this, sendSync(request.build(this)));
     }
 
-    public final void send(AriaRequest request, final OnSuccess listener) {
+    public final void send(@NonNull AriaRequest request, final OnSuccess listener) {
         try {
-            send(request.build(this), new IReceived() {
+            send(request.build(this), new OnJson() {
                 @Override
                 public void onResponse(JSONObject response) {
                     handler.post(new Runnable() {
@@ -156,13 +160,13 @@ public abstract class AbstractClient {
         }
     }
 
-    protected abstract void send(JSONObject request, IReceived listener);
+    protected abstract void send(@NonNull JSONObject request, @NonNull OnJson listener);
 
     @NonNull
-    protected abstract JSONObject sendSync(JSONObject request) throws Exception;
+    protected abstract JSONObject sendSync(@NonNull JSONObject request) throws Exception;
 
     public final <R> void batch(BatchSandbox<R> sandbox, final OnResult<R> listener) {
-        batch(sandbox, new IBatch<R>() {
+        batch(sandbox, new DoBatch<R>() {
             @Override
             public void onSandboxReturned(final R result) {
                 handler.post(new Runnable() {
@@ -185,7 +189,7 @@ public abstract class AbstractClient {
         });
     }
 
-    protected abstract <R> void batch(BatchSandbox<R> sandbox, IBatch<R> listener);
+    protected abstract <R> void batch(BatchSandbox<R> sandbox, DoBatch<R> listener);
 
     protected abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;
 

@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.Search.MissingSearchEngine;
+import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Search.SearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchResult;
-import com.gianlu.aria2app.NetIO.Search.SearchUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.InfiniteRecyclerView;
 
@@ -21,17 +21,17 @@ import java.util.List;
 
 public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<SearchResultsAdapter.ViewHolder, SearchResult> {
     private final LayoutInflater inflater;
-    private final SearchUtils searchUtils;
+    private final SearchApi searchUtils;
     private final IAdapter listener;
-    private final SearchUtils utils;
+    private final SearchApi utils;
     private String token;
 
     public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, IAdapter listener) {
         super(context, results, -1, -1, false);
         this.inflater = LayoutInflater.from(context);
-        this.searchUtils = SearchUtils.get();
+        this.searchUtils = SearchApi.get();
         this.token = token;
-        this.utils = SearchUtils.get();
+        this.utils = SearchApi.get();
         this.listener = listener;
     }
 
@@ -75,7 +75,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         if (token == null) {
             provider.onMoreContent(new ArrayList<SearchResult>());
         } else {
-            utils.search(token, SearchUtils.RESULTS_PER_REQUEST, new SearchUtils.ISearch() {
+            utils.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.ISearch() {
                 @Override
                 public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;

@@ -36,7 +36,7 @@ import com.gianlu.aria2app.Activities.EditProfile.WifisAdapter;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.Adapters.RadioConditionsAdapter;
 import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
-import com.gianlu.aria2app.MainActivity;
+import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;

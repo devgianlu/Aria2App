@@ -30,17 +30,17 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class SearchUtils {
+public final class SearchApi {
     public static final int RESULTS_PER_REQUEST = 20;
     private static final int TIMEOUT = 15;
     private static final String BASE_URL = "https://torrent-search-engine.herokuapp.com/";
-    private static SearchUtils instance;
+    private static SearchApi instance;
     private final OkHttpClient client;
     private final ExecutorService executorService;
     private final Handler handler;
     private List<SearchEngine> cachedEngines = null;
 
-    private SearchUtils() {
+    private SearchApi() {
         client = new OkHttpClient.Builder().connectTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -49,8 +49,8 @@ public class SearchUtils {
         handler = new Handler(Looper.getMainLooper());
     }
 
-    public static SearchUtils get() {
-        if (instance == null) instance = new SearchUtils();
+    public static SearchApi get() {
+        if (instance == null) instance = new SearchApi();
         return instance;
     }
 
@@ -99,7 +99,7 @@ public class SearchUtils {
                     JSONArray missingEnginesArray = obj.getJSONArray("missing");
                     final List<MissingSearchEngine> missingEngines = new ArrayList<>();
                     for (int i = 0; i < missingEnginesArray.length(); i++)
-                        missingEngines.add(new MissingSearchEngine(SearchUtils.this, missingEnginesArray.getJSONObject(i)));
+                        missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
 
                     final String token = obj.optString("token", null);
 

@@ -10,11 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.FilesFragment;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.InfoFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.InfoFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeersFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.Options.OptionsUtils;

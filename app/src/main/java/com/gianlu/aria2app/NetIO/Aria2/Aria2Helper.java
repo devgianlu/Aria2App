@@ -8,8 +8,8 @@ import android.view.View;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
-import com.gianlu.aria2app.NetIO.HTTPing;
-import com.gianlu.aria2app.NetIO.WebSocketing;
+import com.gianlu.aria2app.NetIO.HttpClient;
+import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -33,9 +33,9 @@ public class Aria2Helper {
     public static AbstractClient getClient(Context context) throws AbstractClient.InitializationException, ProfilesManager.NoCurrentProfileException {
         MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentSpecific();
         if (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
-            return WebSocketing.instantiate(context);
+            return WebSocketClient.instantiate(context);
         else
-            return HTTPing.instantiate(context);
+            return HttpClient.instantiate(context);
     }
 
     @NonNull

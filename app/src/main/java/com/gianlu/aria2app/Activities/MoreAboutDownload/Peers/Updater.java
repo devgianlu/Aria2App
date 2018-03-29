@@ -8,8 +8,8 @@ import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
 
-public class UpdateUI extends BaseDownloadUpdater<Peers> implements AbstractClient.OnResult<Peers> {
-    public UpdateUI(Context context, Download download, UpdaterListener<Peers> listener) throws Aria2Helper.InitializingException {
+class Updater extends BaseDownloadUpdater<Peers> implements AbstractClient.OnResult<Peers> {
+    Updater(Context context, Download download, UpdaterListener<Peers> listener) throws Aria2Helper.InitializingException {
         super(context, download, listener);
     }
 
@@ -25,6 +25,6 @@ public class UpdateUI extends BaseDownloadUpdater<Peers> implements AbstractClie
 
     @Override
     public void onException(Exception ex) {
-        errorOccurred(ex, false);
+        errorOccurred(ex);
     }
 }

@@ -10,7 +10,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class GitHubApi {
+public final class GitHubApi {
     public static void getLatestVersion(final IRelease listener) {
         new Thread(new Runnable() {
             @Override
