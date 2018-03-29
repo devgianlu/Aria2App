@@ -1,7 +1,7 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
@@ -37,10 +37,11 @@ public abstract class UpdaterActivity extends ActivityWithDialog implements Upda
         framework.stopUpdater();
     }
 
-    @Nullable
+    @NonNull
     @Override
     public Bundle getArguments() {
-        return getIntent().getExtras();
+        Bundle args = getIntent().getExtras();
+        return args == null ? new Bundle() : args;
     }
 
     protected void refresh(OnRefresh listener) {
