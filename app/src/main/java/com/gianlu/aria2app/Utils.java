@@ -7,16 +7,12 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import com.crashlytics.android.Crashlytics;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
@@ -28,16 +24,11 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
@@ -58,6 +49,7 @@ public final class Utils {
     public static final String ACTION_SEARCH_GET_TORRENT = "new_torrent_from_search";
     public static final String ACTION_SEARCH_GET_MAGNET = "new_magnet_from_search";
     public static final String ACTION_SHORTCUT = "used_shortcut";
+    public static final String ACTION_PLAY_VIDEO = "play_video";
 
     public static long sizeOf(Serializable obj) {
         try {
@@ -140,16 +132,6 @@ public final class Utils {
         return set;
     }
 
-    public static JSONArray readyParams(@NonNull Context context) throws ProfilesManager.NoCurrentProfileException {
-        return readyParams(ProfilesManager.get(context).getCurrent(context).getProfile(context));
-    }
-
-    public static JSONArray readyParams(@NonNull MultiProfile.UserProfile profile) {
-        JSONArray array = new JSONArray();
-        if (profile.authMethod == JTA2.AuthMethod.TOKEN) array.put("token:" + profile.serverToken);
-        return array;
-    }
-
     public static boolean requestWritePermission(final Activity activity, final int code) {
         if (activity == null) return false;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -191,10 +173,6 @@ public final class Utils {
                 ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, code);
             }
         }
-    }
-
-    public static JSONObject readyRequest() throws JSONException {
-        return new JSONObject().put("jsonrpc", "2.0").put("id", ThreadLocalRandom.current().nextInt());
     }
 
     public static String toHexString(byte[] bytes) {
@@ -258,6 +236,7 @@ public final class Utils {
         public static final Toaster.Message PURGED_DOWNLOAD_RESULT = new Toaster.Message(R.string.purgedDownloadResult, false);
         public static final Toaster.Message EXPORT_OPTIONS_GRANT_WRITE = new Toaster.Message(R.string.exportOptionsGrantWrite, false);
         public static final Toaster.Message FAILED_EXPORTING_OPTIONS = new Toaster.Message(R.string.failedExportingOptions, true);
+        public static final Toaster.Message FAILED_STREAM_VIDEO = new Toaster.Message(R.string.failedStreamVideo, true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

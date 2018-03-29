@@ -14,8 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.Options.Option;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.Option;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.Options.OptionsView;
@@ -57,24 +59,23 @@ public class OptionsFragment extends Fragment {
         layout.findViewById(R.id.optionsFragment_filenameContainer)
                 .setVisibility(getArguments() != null && getArguments().getBoolean("isUri", false) ? View.VISIBLE : View.GONE);
 
-        JTA2 jta2;
+        Aria2Helper helper;
         final List<String> downloadOptions;
         try {
-            jta2 = JTA2.instantiate(getContext());
+            helper = Aria2Helper.instantiate(getContext());
             downloadOptions = OptionsManager.get(getContext()).loadDownloadOptions();
-        } catch (JTA2.InitializingException | IOException | JSONException ex) {
+        } catch (Aria2Helper.InitializingException | IOException | JSONException ex) {
             MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
             optionsView.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             return layout;
         }
-
-        jta2.getGlobalOption(new JTA2.IOption() {
+        helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
             @Override
-            public void onOptions(Map<String, String> optionsMap) {
+            public void onResult(Map<String, String> result) {
                 final Activity activity = getActivity();
                 if (activity != null) {
-                    List<Option> options = Option.fromOptionsMap(optionsMap, downloadOptions);
+                    List<Option> options = Option.fromOptionsMap(result, downloadOptions);
                     adapter = new OptionsAdapter(activity, options, false, true);
                     adapter.setHandler(new OptionsAdapter.IAdapter() {
                         @Override

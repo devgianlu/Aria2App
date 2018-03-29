@@ -1,10 +1,14 @@
-package com.gianlu.aria2app.NetIO.JTA2;
+package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Adapters.Filterable;
+import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,16 +20,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Download implements Serializable, Filterable<Download.Status> {
+public class Download extends DownloadStatic implements Serializable, Filterable<Download.Status> {
     public final String bitfield;
     public final long completedLength;
-    public final long length;
     public final long uploadLength;
-    public final String dir;
     public final int connections;
-    public final String gid;
-    public final int numPieces;
-    public final long pieceLength;
     public final Status status;
     public final int downloadSpeed;
     public final int uploadSpeed;
@@ -38,27 +37,26 @@ public class Download implements Serializable, Filterable<Download.Status> {
     // BitTorrent only
     public final boolean seeder;
     public final int numSeeders;
-    public final BitTorrent torrent;
     public final String following;
     public final String belongsTo;
     public final String infoHash;
+    private String name = null;
 
     public Download(JSONObject obj) throws JSONException {
-        gid = obj.getString("gid");
+        super(obj);
         status = Status.parse(obj.getString("status"));
-        length = obj.optLong("totalLength", 0);
+
         completedLength = obj.optLong("completedLength", 0);
         uploadLength = obj.optLong("uploadLength", 0);
         bitfield = obj.optString("bitfield", null);
         downloadSpeed = obj.optInt("downloadSpeed", 0);
         uploadSpeed = obj.optInt("uploadSpeed", 0);
-        pieceLength = obj.optLong("pieceLength", 0);
-        numPieces = obj.optInt("numPieces", 0);
+
         connections = obj.optInt("connections", 0);
         followedBy = obj.optString("followedBy", null);
         following = obj.optString("following", null);
         belongsTo = obj.optString("belongsTo", null);
-        dir = obj.optString("dir", null);
+
         verifiedLength = obj.optLong("verifiedLength", 0);
         verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
         files = new ArrayList<>();
@@ -66,19 +64,17 @@ public class Download implements Serializable, Filterable<Download.Status> {
         if (obj.has("files")) {
             JSONArray array = obj.optJSONArray("files");
             for (int i = 0; i < array.length(); i++)
-                files.add(new AriaFile(array.optJSONObject(i)));
+                files.add(new AriaFile(this, array.optJSONObject(i)));
         }
 
         if (obj.has("bittorrent")) {
             infoHash = obj.optString("infoHash", null);
             numSeeders = obj.optInt("numSeeders");
             seeder = obj.optBoolean("seeder", false);
-            torrent = new BitTorrent(obj.getJSONObject("bittorrent"));
         } else {
             infoHash = null;
             numSeeders = 0;
             seeder = false;
-            torrent = null;
         }
 
         if (obj.has("errorCode")) {
@@ -88,6 +84,14 @@ public class Download implements Serializable, Filterable<Download.Status> {
             errorCode = -1;
             errorMessage = null;
         }
+    }
+
+    public DownloadWithHelper wrap(@NonNull AbstractClient client) {
+        return new DownloadWithHelper(this, client);
+    }
+
+    public DownloadWithHelper wrap(@NonNull Context context) throws ProfilesManager.NoCurrentProfileException, AbstractClient.InitializationException {
+        return wrap(Aria2Helper.getClient(context));
     }
 
     @Override
@@ -103,15 +107,18 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return ((float) uploadLength) / ((float) completedLength);
     }
 
+    @NonNull
+    public String getName() {
+        if (name == null) name = getNameInternal();
+        return name;
+    }
+
     public boolean isMetadata() {
         return getName().startsWith("[METADATA]");
     }
 
-    public boolean isTorrent() {
-        return torrent != null;
-    }
-
-    public String getName() {
+    @NonNull
+    private String getNameInternal() {
         try {
             if (isTorrent()) {
                 if (torrent != null && torrent.name != null) {
@@ -135,6 +142,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
                 }
             }
         } catch (Exception ex) {
+            Logging.log(ex);
             return "Unknown";
         }
     }
@@ -148,11 +156,12 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return (length - completedLength) / downloadSpeed;
     }
 
-    public boolean supportsDeselectingFiles() {
+    public boolean canDeselectFiles() {
         return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR && status != Status.UNKNOWN;
     }
 
     @Override
+    @NonNull
     public Status getFilterable() {
         return status;
     }
@@ -166,6 +175,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
         COMPLETE,
         UNKNOWN;
 
+        @NonNull
         public static Status parse(@Nullable String val) {
             if (val == null) return Status.UNKNOWN;
             switch (val.toLowerCase()) {
@@ -186,12 +196,14 @@ public class Download implements Serializable, Filterable<Download.Status> {
             }
         }
 
+        @NonNull
         public static List<String> stringValues() {
             List<String> values = new ArrayList<>();
             for (Status value : values()) values.add(value.name());
             return values;
         }
 
+        @NonNull
         public String getFormal(Context context, boolean firstCapital) {
             String val;
             switch (this) {

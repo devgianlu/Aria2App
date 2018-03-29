@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
+import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.R;
 
 @SuppressLint("ViewConstructor")

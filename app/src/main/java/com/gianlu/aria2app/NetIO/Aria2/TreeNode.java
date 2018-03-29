@@ -1,6 +1,6 @@
-package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
+package com.gianlu.aria2app.NetIO.Aria2;
 
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,16 +8,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class TreeNode {
-    private static String SEPARATOR = "/";
+public class TreeNode extends DownloadChild {
     public final List<TreeNode> files;
     public final List<TreeNode> dirs;
     public final String incrementalPath;
     public final String name;
     public final TreeNode parent;
+    private final String separator;
     public AriaFile obj;
 
-    public TreeNode(TreeNode parent, String incrementalPath, AriaFile obj) {
+    private TreeNode(DownloadStatic download, TreeNode parent, String incrementalPath, AriaFile obj) {
+        super(download);
+        this.separator = TreeNode.guessSeparator(download.dir);
         this.parent = parent;
         this.incrementalPath = incrementalPath;
         this.obj = obj;
@@ -26,7 +28,9 @@ public class TreeNode {
         this.name = obj.getName();
     }
 
-    private TreeNode(TreeNode parent, String name, String incrementalPath) {
+    private TreeNode(DownloadStatic download, TreeNode parent, String name, String incrementalPath) {
+        super(download);
+        this.separator = TreeNode.guessSeparator(download.dir);
         this.parent = parent;
         this.dirs = new ArrayList<>();
         this.files = new ArrayList<>();
@@ -35,7 +39,9 @@ public class TreeNode {
         this.incrementalPath = incrementalPath;
     }
 
-    public TreeNode(TreeNode node) {
+    TreeNode(DownloadStatic download, TreeNode node) {
+        super(download);
+        this.separator = TreeNode.guessSeparator(download.dir);
         this.files = node.files;
         this.dirs = node.dirs;
         this.obj = node.obj;
@@ -58,15 +64,15 @@ public class TreeNode {
         return true;
     }
 
-    public static void guessSeparator(String path) {
-        if (path.contains("/")) SEPARATOR = "/";
-        else if (path.contains("\\")) SEPARATOR = "\\";
-        else SEPARATOR = "/";
+    private static String guessSeparator(String path) {
+        if (path.contains("/")) return "/";
+        else if (path.contains("\\")) return "\\";
+        else return "/";
     }
 
-    public static TreeNode create(List<AriaFile> files, String commonRoot) {
-        TreeNode rootNode = new TreeNode(null, SEPARATOR, "");
-        for (AriaFile file : files) rootNode.addElement(file, commonRoot);
+    public static TreeNode create(DownloadStatic download, List<AriaFile> files) {
+        TreeNode rootNode = new TreeNode(download, null, TreeNode.guessSeparator(download.dir), "");
+        for (AriaFile file : files) rootNode.addElement(file, download.dir);
         return rootNode;
     }
 
@@ -76,13 +82,20 @@ public class TreeNode {
 
     public List<AriaFile> allObjs() {
         if (isFile()) return Collections.singletonList(obj);
-        List<AriaFile> objs = new ArrayList<>();
-        objs.addAll(objs());
+        List<AriaFile> objs = new ArrayList<>(objs());
         for (TreeNode dir : dirs) objs.addAll(dir.allObjs());
         return objs;
     }
 
-    public List<AriaFile> objs() {
+    public Integer[] allIndexes() {
+        if (isFile()) return new Integer[]{obj.index};
+        List<AriaFile> allObjs = allObjs();
+        Integer[] indexes = new Integer[allObjs.size()];
+        for (int i = 0; i < allObjs.size(); i++) indexes[i] = allObjs.get(i).index;
+        return indexes;
+    }
+
+    private List<AriaFile> objs() {
         if (isFile()) return Collections.singletonList(obj);
         List<AriaFile> objs = new ArrayList<>();
         for (TreeNode file : files) objs.add(file.obj);
@@ -120,7 +133,7 @@ public class TreeNode {
         for (TreeNode dir : dirs) dir.updateOrFall(newFiles);
     }
 
-    public void update(AriaFile file) {
+    public void update(@NonNull AriaFile file) {
         this.obj = file;
     }
 
@@ -155,20 +168,20 @@ public class TreeNode {
         return incrementalPath.equals(treeNode.incrementalPath) && name.equals(treeNode.name);
     }
 
-    public void addElement(AriaFile element, String commonRoot) {
+    private void addElement(AriaFile element, String commonRoot) {
         if (element.path.isEmpty()) return;
-        String[] list = element.path.replace(commonRoot, "").split(Objects.equals(SEPARATOR, "/") ? SEPARATOR : ("\\u005C" + SEPARATOR + "\\u005C"));
+        String[] list = element.path.replace(commonRoot, "").split(Objects.equals(separator, "/") ? separator : ("\\u005C" + separator + "\\u005C"));
         addElement(incrementalPath, list, element);
     }
 
-    public void addElement(String currentPath, String[] list, AriaFile file) {
+    private void addElement(String currentPath, String[] list, AriaFile file) {
         while (list[0] == null || list[0].isEmpty())
             list = Arrays.copyOfRange(list, 1, list.length);
 
         if (list.length == 1) {
-            files.add(new TreeNode(this, currentPath, file));
+            files.add(new TreeNode(download, this, currentPath, file));
         } else {
-            TreeNode currentChild = new TreeNode(this, list[0], currentPath + SEPARATOR + list[0]);
+            TreeNode currentChild = new TreeNode(download, this, list[0], currentPath + separator + list[0]);
 
             int index = indexOfDir(currentChild);
             if (index == -1) {

@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class CertUtils {
+public final class CertUtils {
     @Nullable
     public static X509Certificate decodeCertificate(@Nullable String base64) {
         if (base64 == null) return null;

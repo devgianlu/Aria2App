@@ -11,8 +11,8 @@ import android.util.Base64;
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.CertUtils;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
@@ -140,11 +140,17 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return null;
     }
 
-    public UserProfile getProfile(Context context) {
-        ProfilesManager manager = ProfilesManager.get(context);
+    @NonNull
+    public UserProfile getProfile(ProfilesManager manager) {
         return getProfile(manager.getConnectivityManager(), manager.getWifiManager());
     }
 
+    @NonNull
+    public UserProfile getProfile(Context context) {
+        return getProfile(ProfilesManager.get(context));
+    }
+
+    @NonNull
     public UserProfile getProfile(int networkType, WifiManager wifiManager) {
         UserProfile profile = null;
         switch (networkType) {
@@ -413,7 +419,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final String serverAddr;
         public final int serverPort;
         public final String serverEndpoint;
-        public final JTA2.AuthMethod authMethod;
+        public final AbstractClient.AuthMethod authMethod;
         public final boolean serverSSL;
         public final boolean hostnameVerifier;
         public final X509Certificate certificate;
@@ -448,7 +454,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         private UserProfile(String token, int port) {
             serverAddr = "localhost";
-            authMethod = JTA2.AuthMethod.TOKEN;
+            authMethod = AbstractClient.AuthMethod.TOKEN;
             serverUsername = null;
             serverPassword = null;
             serverToken = token;
@@ -464,8 +470,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public UserProfile(JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
-            if (obj.has("serverAuth")) authMethod = JTA2.AuthMethod.TOKEN;
-            else authMethod = JTA2.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
+            if (obj.has("serverAuth")) authMethod = AbstractClient.AuthMethod.TOKEN;
+            else
+                authMethod = AbstractClient.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
             serverUsername = obj.optString("serverUsername", null);
             serverPassword = obj.optString("serverPassword", null);
             serverToken = obj.optString("serverToken", null);
@@ -502,7 +509,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         @Nullable
         public String getEncodedCredentials() {
-            if (authMethod != JTA2.AuthMethod.HTTP) return null;
+            if (authMethod != AbstractClient.AuthMethod.HTTP) return null;
             if (encodedCredentials == null)
                 encodedCredentials = Base64.encodeToString((serverUsername + ":" + serverPassword).getBytes(), Base64.NO_WRAP);
             return encodedCredentials;

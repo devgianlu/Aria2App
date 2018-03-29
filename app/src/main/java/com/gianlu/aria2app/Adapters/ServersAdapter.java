@@ -11,10 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.Server;
+import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
-import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
@@ -43,11 +44,11 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (listener != null) listener.onItemCountUpdated(objs.size());
     }
 
-    private void createObjs(SparseArray<List<Server>> servers, List<AriaFile> files) {
+    private void createObjs(SparseArray<Servers> servers, List<AriaFile> files) {
         objs.clear();
 
         for (AriaFile file : files) {
-            List<Server> fileServers = servers.get(file.index, new ArrayList<Server>());
+            List<Server> fileServers = servers.get(file.index, Servers.empty());
             if (!fileServers.isEmpty()) {
                 objs.add(file);
                 objs.addAll(fileServers);
@@ -158,7 +159,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (pos != -1) notifyItemChanged(pos, server);
     }
 
-    public void notifyItemsChanged(SparseArray<List<Server>> servers, List<AriaFile> files) {
+    public void notifyItemsChanged(SparseArray<Servers> servers, List<AriaFile> files) {
         createObjs(servers, files);
         for (AriaFile file : files) notifyHeaderChanged(file, servers.get(file.index));
     }

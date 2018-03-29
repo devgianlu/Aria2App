@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Logging;
 import com.neovisionaries.ws.client.WebSocket;
@@ -86,7 +85,7 @@ public class NetUtils {
             WebSocket socket = factory.createSocket(createBaseWsURI(profile), 5000);
             socket.setFrameQueueSize(15);
 
-            if (profile.authMethod == JTA2.AuthMethod.HTTP)
+            if (profile.authMethod == AbstractClient.AuthMethod.HTTP)
                 socket.addHeader("Authorization", "Basic " + Base64.encodeToString((profile.serverUsername + ":" + profile.serverPassword).getBytes(), Base64.NO_WRAP));
 
             return socket;
@@ -173,7 +172,7 @@ public class NetUtils {
         Request.Builder builder = new Request.Builder();
         builder.url(uri.build()).get();
 
-        if (profile.authMethod == JTA2.AuthMethod.HTTP)
+        if (profile.authMethod == AbstractClient.AuthMethod.HTTP)
             builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
 
         return builder.build();
@@ -192,7 +191,7 @@ public class NetUtils {
 
         builder.post(body);
 
-        if (profile.authMethod == JTA2.AuthMethod.HTTP)
+        if (profile.authMethod == AbstractClient.AuthMethod.HTTP)
             builder.header("Authorization", "Basic " + profile.getEncodedCredentials());
 
         return builder.build();

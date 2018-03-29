@@ -1,8 +1,8 @@
-package com.gianlu.aria2app.NetIO.JTA2;
+package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.webkit.MimeTypeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,18 +11,20 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-public class AriaFile implements Serializable {
+import okhttp3.HttpUrl;
+
+public class AriaFile extends DownloadChild implements Serializable {
     public final long completedLength;
     public final long length;
     public final String path;
-    public final int index;
+    public final Integer index;
     public final HashMap<Status, String> uris;
     public boolean selected;
+    private String mime;
 
-    @Keep
-    public AriaFile(JSONObject obj) throws JSONException {
+    public AriaFile(DownloadStatic download, JSONObject obj) throws JSONException {
+        super(download);
         index = obj.getInt("index");
         path = obj.getString("path");
         length = obj.getLong("length");
@@ -37,20 +39,20 @@ public class AriaFile implements Serializable {
         }
     }
 
-    @Nullable
-    public static AriaFile find(List<AriaFile> files, AriaFile item) {
-        for (AriaFile file : files)
-            if (file.index == item.index && Objects.equals(file.path, item.path))
-                return file;
-
-        return null;
-    }
-
-    public static String getRelativePath(String path, @NonNull String dir) {
+    private static String getRelativePath(String path, @NonNull String dir) {
         if (dir.contains("\\")) dir = dir.replaceAll("\\\\", "\\\\");
         String relPath = path.replaceFirst(dir, "");
         if (relPath.charAt(0) == '/') return relPath.substring(1);
         else return relPath;
+    }
+
+    @NonNull
+    public static AriaFile find(List<AriaFile> objs, @NonNull AriaFile match) {
+        for (AriaFile obj : objs)
+            if (match.equals(obj))
+                return obj;
+
+        return match;
     }
 
     public String getName() {
@@ -63,7 +65,7 @@ public class AriaFile implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AriaFile ariaFile = (AriaFile) o;
-        return index == ariaFile.index && path.equals(ariaFile.path);
+        return index.equals(ariaFile.index) && path.equals(ariaFile.path);
     }
 
     public float getProgress() {
@@ -76,6 +78,24 @@ public class AriaFile implements Serializable {
 
     public boolean completed() {
         return completedLength == length;
+    }
+
+    @Nullable
+    public String getMimeType() {
+        if (mime == null) {
+            int dot = path.lastIndexOf('.');
+            if (dot >= 0)
+                mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(path.substring(dot + 1));
+        }
+
+        return mime;
+    }
+
+    @NonNull
+    public HttpUrl getDownloadUrl(@NonNull HttpUrl base) {
+        HttpUrl.Builder builder = base.newBuilder();
+        builder.addPathSegments(getRelativePath(download.dir));
+        return builder.build();
     }
 
     public enum Status {

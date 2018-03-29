@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
-public abstract class BaseTester {
+public abstract class BaseTester { // TODO: Rewrite
     protected final Context context;
     protected final MultiProfile.UserProfile profile;
     private final IPublish listener;

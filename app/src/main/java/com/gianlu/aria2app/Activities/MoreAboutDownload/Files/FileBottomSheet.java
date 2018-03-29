@@ -11,9 +11,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.FileTypeTextView;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
@@ -24,23 +25,20 @@ import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 public class FileBottomSheet extends NiceBaseBottomSheet {
     private final ISheet listener;
-    private final JTA2 jta2;
     private int currentFileIndex = -1;
     private SuperTextView completedLength;
     private SuperTextView length;
     private CheckBox selected;
     private TextView percentage;
 
-    public FileBottomSheet(ViewGroup parent, ISheet listener) throws JTA2.InitializingException {
+    public FileBottomSheet(ViewGroup parent, ISheet listener) {
         super(parent, R.layout.sheet_header_file, R.layout.sheet_file, true);
         this.listener = listener;
-        this.jta2 = JTA2.instantiate(getContext());
     }
 
     @Override
@@ -50,18 +48,18 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
 
     @Override
     protected boolean onPrepareAction(@NonNull FloatingActionButton fab, Object... payloads) {
-        final Download download = (Download) payloads[0];
+        Download download = ((DownloadWithHelper) payloads[0]).get();
         final AriaFile file = (AriaFile) payloads[1];
 
         try {
-            final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent(getContext());
-            if (download.isMetadata() || profile.getProfile(getContext()).directDownload != null) {
+            final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent();
+            if (download.isMetadata() || profile.getProfile(getContext()).directDownload == null) {
                 return false;
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (listener != null) listener.onDownloadFile(profile, download, file);
+                        if (listener != null) listener.onDownloadFile(profile, file);
                     }
                 });
 
@@ -110,7 +108,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         percentage.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Medium.ttf"));
         TextView title = parent.findViewById(R.id.fileSheet_title);
 
-        Download download = (Download) payloads[0];
+        Download download = ((DownloadWithHelper) payloads[0]).get();
         AriaFile file = (AriaFile) payloads[1];
         currentFileIndex = file.index;
 
@@ -130,40 +128,40 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         completedLength = parent.findViewById(R.id.fileSheet_completedLength);
         selected = parent.findViewById(R.id.fileSheet_selected);
 
-        final Download download = (Download) payloads[0];
+        final DownloadWithHelper download = (DownloadWithHelper) payloads[0];
         final AriaFile file = (AriaFile) payloads[1];
 
         index.setHtml(R.string.index, file.index);
         path.setHtml(R.string.path, file.path);
         updateContentViews(file);
 
-        if (download.supportsDeselectingFiles()) {
+        if (download.get().canDeselectFiles()) {
             selected.setEnabled(true);
             selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    jta2.changeSelection(download, Collections.singletonList(file), isChecked, new JTA2.IChangeSelection() {
+                    download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<DownloadWithHelper.ChangeSelectionResult>() {
                         @Override
-                        public void onChangedSelection(final boolean selected) {
-                            file.selected = selected;
-
-                            if (listener != null) {
-                                if (selected) listener.showToast(Utils.Messages.FILE_SELECTED);
-                                else listener.showToast(Utils.Messages.FILE_DESELECTED);
+                        public void onResult(DownloadWithHelper.ChangeSelectionResult result) {
+                            switch (result) {
+                                case EMPTY:
+                                    listener.showToast(Utils.Messages.CANT_DESELECT_ALL_FILES);
+                                    break;
+                                case SELECTED:
+                                    file.selected = true;
+                                    listener.showToast(Utils.Messages.FILE_SELECTED);
+                                    break;
+                                case DESELECTED:
+                                    file.selected = false;
+                                    listener.showToast(Utils.Messages.FILE_DESELECTED);
+                                    break;
                             }
                         }
 
                         @Override
-                        public void cantDeselectAll() {
-                            if (listener != null)
-                                listener.showToast(Utils.Messages.CANT_DESELECT_ALL_FILES);
-                        }
-
-                        @Override
-                        public void onException(final Exception ex) {
+                        public void onException(Exception ex) {
                             Logging.log(ex);
-                            if (listener != null)
-                                listener.showToast(Utils.Messages.FAILED_CHANGE_FILE_SELECTION);
+                            listener.showToast(Utils.Messages.FAILED_CHANGE_FILE_SELECTION);
                         }
                     });
                 }
@@ -174,7 +172,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
     }
 
     public interface ISheet {
-        void onDownloadFile(MultiProfile profile, Download download, AriaFile file);
+        void onDownloadFile(MultiProfile profile, AriaFile file);
 
         void showToast(Toaster.Message message);
     }

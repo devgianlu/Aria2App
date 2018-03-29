@@ -3,9 +3,9 @@ package com.gianlu.aria2app.Downloader;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Utils;
@@ -69,11 +69,8 @@ public class DownloadStartConfig {
         if (url == null)
             throw new CannotCreateStartConfigException(CannotCreateStartConfigException.Cause.INVALID_URL);
 
-        HttpUrl.Builder builder = url.newBuilder();
-        builder.addPathSegments(file.getRelativePath(download.dir));
-
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
-        config.addTask(builder.build(), destFile, dd.username, dd.password);
+        config.addTask(file.getDownloadUrl(url), destFile, dd.username, dd.password);
         return config;
     }
 

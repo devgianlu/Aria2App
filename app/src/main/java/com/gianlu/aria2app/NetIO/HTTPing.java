@@ -3,7 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.gianlu.aria2app.NetIO.JTA2.AriaException;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 
@@ -33,7 +33,7 @@ public class HTTPing extends AbstractClient {
     private boolean shouldIgnoreRequests = false;
 
     private HTTPing(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
-        this(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
+        this(context, ProfilesManager.get(context).getCurrentSpecific());
     }
 
     private HTTPing(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
@@ -61,7 +61,7 @@ public class HTTPing extends AbstractClient {
             httping = new HTTPing(context, profile);
             httping.sendConnectionTest(new IReceived() {
                 @Override
-                public void onResponse(JSONObject response) throws JSONException {
+                public void onResponse(JSONObject response) {
                     listener.onConnected(httping);
                 }
 
@@ -87,19 +87,77 @@ public class HTTPing extends AbstractClient {
     }
 
     @Override
-    public void send(@NonNull JSONObject request, IReceived handler) {
-        if (!shouldIgnoreRequests && !executorService.isShutdown() && !executorService.isTerminated())
-            executorService.execute(new RequestProcessor(request, handler));
+    public void send(@NonNull JSONObject request, IReceived listener) {
+        executeRunnable(new RequestProcessor(request, listener));
     }
 
-    private void sendConnectionTest(IReceived handler) {
+    @NonNull
+    @Override
+    protected JSONObject sendSync(JSONObject request) throws JSONException, NetUtils.InvalidUrlException, IOException, StatusCodeException, AriaException {
+        Request req;
+        if (request == null) req = NetUtils.createGetRequest(profile, defaultUri, null);
+        else req = NetUtils.createPostRequest(profile, defaultUri, request);
+        try (Response resp = client.newCall(req).execute()) {
+            if (request == null) { // FIXME: Connection test
+                if (resp.code() == 400) return null;
+                else throw new StatusCodeException(resp);
+            } else {
+                ResponseBody body = resp.body();
+                if (body != null) {
+                    String json = body.string();
+                    if (json == null || json.isEmpty()) {
+                        throw new NullPointerException("Empty response");
+                    } else {
+                        JSONObject obj = new JSONObject(json);
+                        if (obj.has("error")) {
+                            throw new AriaException(obj.getJSONObject("error"));
+                        } else {
+                            return obj;
+                        }
+                    }
+                } else {
+                    throw new StatusCodeException(resp);
+                }
+            }
+        }
+    }
+
+    @Override
+    public <R> void batch(BatchSandbox<R> sandbox, IBatch<R> listener) {
+        executeRunnable(new SandboxRunnable<>(sandbox, listener));
+    }
+
+    private void sendConnectionTest(IReceived listener) {
+        executeRunnable(new RequestProcessor(null, listener));
+    }
+
+    private void executeRunnable(Runnable runnable) {
         if (!shouldIgnoreRequests && !executorService.isShutdown() && !executorService.isTerminated())
-            executorService.execute(new RequestProcessor(null, handler));
+            executorService.execute(runnable);
     }
 
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
         httping = new HTTPing(context, profile);
+    }
+
+    private class SandboxRunnable<R> implements Runnable {
+        private final BatchSandbox<R> sandbox;
+        private final IBatch<R> listener;
+
+        public SandboxRunnable(BatchSandbox<R> sandbox, IBatch<R> listener) {
+            this.sandbox = sandbox;
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            try {
+                listener.onSandboxReturned(sandbox.sandbox(HTTPing.this));
+            } catch (Exception ex) {
+                listener.onException(ex);
+            }
+        }
     }
 
     private class RequestProcessor implements Runnable {
@@ -114,35 +172,8 @@ public class HTTPing extends AbstractClient {
         @Override
         public void run() {
             try {
-                Request req;
-                if (request == null) req = NetUtils.createGetRequest(profile, defaultUri, null);
-                else req = NetUtils.createPostRequest(profile, defaultUri, request);
-                try (Response resp = client.newCall(req).execute()) {
-                    if (request == null) { // Connection test
-                        if (resp.code() == 400)
-                            listener.onResponse(null);
-                        else
-                            listener.onException(new StatusCodeException(resp));
-                    } else {
-                        ResponseBody body = resp.body();
-                        if (body != null) {
-                            String json = body.string();
-                            if (json == null || json.isEmpty()) {
-                                listener.onException(new NullPointerException("Empty response"));
-                            } else {
-                                JSONObject obj = new JSONObject(json);
-                                if (obj.has("error")) {
-                                    listener.onException(new AriaException(obj.getJSONObject("error")));
-                                } else {
-                                    listener.onResponse(obj);
-                                }
-                            }
-                        } else {
-                            listener.onException(new StatusCodeException(resp));
-                        }
-                    }
-                }
-            } catch (IllegalArgumentException | JSONException | IOException | NetUtils.InvalidUrlException | IllegalStateException ex) {
+                listener.onResponse(sendSync(request));
+            } catch (IllegalArgumentException | JSONException | StatusCodeException | AriaException | IOException | NetUtils.InvalidUrlException | IllegalStateException ex) {
                 listener.onException(ex);
             }
         }

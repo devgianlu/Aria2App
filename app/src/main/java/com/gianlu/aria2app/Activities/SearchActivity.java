@@ -21,7 +21,9 @@ import android.widget.SearchView;
 
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.MainActivity;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Search.MissingSearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchResult;
@@ -39,6 +41,8 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
+
+import org.json.JSONException;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -299,33 +303,30 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        JTA2 jta2;
                         try {
-                            jta2 = JTA2.instantiate(SearchActivity.this);
-                        } catch (JTA2.InitializingException ex) {
+                            Aria2Helper.instantiate(SearchActivity.this)
+                                    .request(AriaRequests.addUri(Collections.singletonList(torrent.magnet), null, null), new AbstractClient.OnResult<String>() {
+                                        @Override
+                                        public void onResult(String result) {
+                                            dialogInterface.dismiss();
+
+                                            Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
+                                                    .setAction(R.string.show, new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            startActivity(new Intent(SearchActivity.this, MainActivity.class));
+                                                        }
+                                                    }).show();
+                                        }
+
+                                        @Override
+                                        public void onException(Exception ex) {
+                                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                                        }
+                                    });
+                        } catch (Aria2Helper.InitializingException | JSONException ex) {
                             Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
-                            return;
                         }
-
-                        jta2.addUri(Collections.singletonList(torrent.magnet), null, null, new JTA2.IGID() {
-                            @Override
-                            public void onGID(String gid) {
-                                dialogInterface.dismiss();
-
-                                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
-                                        .setAction(R.string.show, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                startActivity(new Intent(SearchActivity.this, MainActivity.class));
-                                            }
-                                        }).show();
-                            }
-
-                            @Override
-                            public void onException(Exception ex) {
-                                Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
-                            }
-                        });
 
                         AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_DOWNLOAD);
                     }

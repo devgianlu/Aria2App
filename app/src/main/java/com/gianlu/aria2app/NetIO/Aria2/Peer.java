@@ -1,7 +1,6 @@
-package com.gianlu.aria2app.NetIO.JTA2;
+package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Adapters.NotFilterable;
@@ -13,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Peer implements Serializable, Filterable<NotFilterable> {
+public class Peer extends DownloadChild implements Serializable, Filterable<NotFilterable> {
     public final String peerId;
     public final boolean amChoking;
     public final boolean peerChoking;
@@ -24,8 +23,8 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
     public final int port;
     public final String bitfield;
 
-    @Keep
-    public Peer(JSONObject obj) {
+    public Peer(DownloadStatic download, JSONObject obj) {
+        super(download);
         peerId = obj.optString("peerId", null);
         ip = obj.optString("ip", null);
         port = obj.optInt("port", -1);
@@ -37,13 +36,13 @@ public class Peer implements Serializable, Filterable<NotFilterable> {
         seeder = obj.optBoolean("seeder", false);
     }
 
-    @Nullable
-    public static Peer find(List<Peer> peers, Peer current) {
+    @NonNull
+    public static Peer find(List<Peer> peers, Peer match) {
         for (Peer peer : peers)
-            if (Objects.equals(peer, current))
+            if (peer.equals(match))
                 return peer;
 
-        return null;
+        return match;
     }
 
     @Override

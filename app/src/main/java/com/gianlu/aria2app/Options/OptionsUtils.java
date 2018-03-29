@@ -17,7 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.Option;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -135,71 +138,59 @@ public final class OptionsUtils {
     }
 
     private static void handleApplyDownloadOptions(@NonNull final ActivityWithDialog activity, String gid, List<Option> options) {
-        activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
-
-        JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(activity);
-        } catch (JTA2.InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            activity.dismissDialog();
-            return;
-        }
-
         Map<String, String> map = new HashMap<>();
-
         for (Option option : options)
             if (option.isValueChanged())
                 map.put(option.name, option.newValue);
 
-        jta2.changeOption(gid, map, new JTA2.ISuccess() {
-            @Override
-            public void onSuccess() {
-                Toaster.show(activity, Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
-                activity.dismissDialog();
-            }
+        try {
+            activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
+            Aria2Helper.instantiate(activity).request(AriaRequests.changeOptions(gid, map), new AbstractClient.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    Toaster.show(activity, Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
+                    activity.dismissDialog();
+                }
 
-            @Override
-            public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                activity.dismissDialog();
-            }
-        });
+                @Override
+                public void onException(Exception ex) {
+                    Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+                    activity.dismissDialog();
+                }
+            });
+        } catch (Aria2Helper.InitializingException | JSONException ex) {
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+            activity.dismissDialog();
+        }
 
         AnalyticsApplication.sendAnalytics(activity, Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
     }
 
     private static void handleApplyGlobalOptions(@NonNull final ActivityWithDialog activity, List<Option> options) {
-        activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
-
-        JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(activity);
-        } catch (JTA2.InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            activity.dismissDialog();
-            return;
-        }
-
         Map<String, String> map = new HashMap<>();
-
         for (Option option : options)
             if (option.isValueChanged())
                 map.put(option.name, option.newValue);
 
-        jta2.changeGlobalOption(map, new JTA2.ISuccess() {
-            @Override
-            public void onSuccess() {
-                Toaster.show(activity, Utils.Messages.GLOBAL_OPTIONS_CHANGED);
-                activity.dismissDialog();
-            }
+        try {
+            activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
+            Aria2Helper.instantiate(activity).request(AriaRequests.changeGlobalOptions(map), new AbstractClient.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    Toaster.show(activity, Utils.Messages.GLOBAL_OPTIONS_CHANGED);
+                    activity.dismissDialog();
+                }
 
-            @Override
-            public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                activity.dismissDialog();
-            }
-        });
+                @Override
+                public void onException(Exception ex) {
+                    Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+                    activity.dismissDialog();
+                }
+            });
+        } catch (Aria2Helper.InitializingException | JSONException ex) {
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+            activity.dismissDialog();
+        }
 
         AnalyticsApplication.sendAnalytics(activity, Utils.ACTION_CHANGED_GLOBAL_OPTIONS);
     }
@@ -262,97 +253,75 @@ public final class OptionsUtils {
     public static void showGlobalDialog(@NonNull final ActivityWithDialog activity, final boolean quick) {
         activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
 
-        JTA2 jta2;
         try {
-            jta2 = JTA2.instantiate(activity);
-        } catch (JTA2.InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            activity.dismissDialog();
-            return;
-        }
+            final List<String> allOptions = OptionsManager.get(activity).loadGlobalOptions();
 
-        final List<String> allOptions;
-        try {
-            allOptions = OptionsManager.get(activity).loadGlobalOptions();
-        } catch (IOException | JSONException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            activity.dismissDialog();
-            return;
-        }
+            Aria2Helper.instantiate(activity).request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
+                @Override
+                public void onResult(Map<String, String> result) {
+                    activity.dismissDialog();
 
-        jta2.getGlobalOption(new JTA2.IOption() {
-            @Override
-            public void onOptions(Map<String, String> options) {
-                activity.dismissDialog();
+                    if (quick) {
+                        Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
+                        if (quickOptions.isEmpty()) {
+                            Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
+                            activity.dismissDialog();
+                            return;
+                        }
 
-                if (quick) {
-                    Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>());
-                    if (quickOptions.isEmpty()) {
-                        Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
-                        activity.dismissDialog();
-                        return;
+                        showGlobalDialog(activity, Option.fromOptionsMap(result, allOptions, quickOptions));
+                    } else {
+                        showGlobalDialog(activity, Option.fromOptionsMap(result, allOptions));
                     }
-
-                    showGlobalDialog(activity, Option.fromOptionsMap(options, allOptions, quickOptions));
-                } else {
-                    showGlobalDialog(activity, Option.fromOptionsMap(options, allOptions));
                 }
-            }
 
-            @Override
-            public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                activity.dismissDialog();
-            }
-        });
+                @Override
+                public void onException(Exception ex) {
+                    Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+                    activity.dismissDialog();
+                }
+            });
+        } catch (Aria2Helper.InitializingException | IOException | JSONException ex) {
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+            activity.dismissDialog();
+        }
     }
 
     public static void showDownloadDialog(@NonNull final ActivityWithDialog activity, final String gid, final boolean quick) {
         activity.showDialog(DialogUtils.progressDialog(activity, R.string.gathering_information));
 
-        JTA2 jta2;
         try {
-            jta2 = JTA2.instantiate(activity);
-        } catch (JTA2.InitializingException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            activity.dismissDialog();
-            return;
-        }
+            final List<String> allOptions = OptionsManager.get(activity).loadDownloadOptions();
 
-        final List<String> allOptions;
-        try {
-            allOptions = OptionsManager.get(activity).loadDownloadOptions();
-        } catch (IOException | JSONException ex) {
-            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-            activity.dismissDialog();
-            return;
-        }
+            Aria2Helper.instantiate(activity).request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
+                @Override
+                public void onResult(Map<String, String> result) {
+                    activity.dismissDialog();
 
-        jta2.getOption(gid, new JTA2.IOption() {
-            @Override
-            public void onOptions(Map<String, String> options) {
-                activity.dismissDialog();
+                    if (quick) {
+                        Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_QUICK_OPTIONS, new HashSet<String>());
+                        if (quickOptions.isEmpty()) {
+                            Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
+                            activity.dismissDialog();
+                            return;
+                        }
 
-                if (quick) {
-                    Set<String> quickOptions = Prefs.getSet(activity, PKeys.A2_QUICK_OPTIONS, new HashSet<String>());
-                    if (quickOptions.isEmpty()) {
-                        Toaster.show(activity, Utils.Messages.NO_QUICK_OPTIONS);
-                        activity.dismissDialog();
-                        return;
+                        showDownloadDialog(activity, gid, Option.fromOptionsMap(result, allOptions, quickOptions));
+                    } else {
+                        showDownloadDialog(activity, gid, Option.fromOptionsMap(result, allOptions));
                     }
-
-                    showDownloadDialog(activity, gid, Option.fromOptionsMap(options, allOptions, quickOptions));
-                } else {
-                    showDownloadDialog(activity, gid, Option.fromOptionsMap(options, allOptions));
                 }
-            }
 
-            @Override
-            public void onException(Exception ex) {
-                Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
-                activity.dismissDialog();
-            }
-        });
+                @Override
+                public void onException(Exception ex) {
+                    Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+                    activity.dismissDialog();
+                }
+            });
+        } catch (Aria2Helper.InitializingException | IOException | JSONException ex) {
+            Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+            activity.dismissDialog();
+        }
     }
 
     private static void exportOptions(ActivityWithDialog activity, List<Option> options, boolean global) {

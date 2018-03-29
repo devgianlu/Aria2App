@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Options;
+package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

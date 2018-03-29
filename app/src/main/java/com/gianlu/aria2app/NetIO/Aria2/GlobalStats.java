@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.NetIO.JTA2;
+package com.gianlu.aria2app.NetIO.Aria2;
 
 import org.json.JSONObject;
 

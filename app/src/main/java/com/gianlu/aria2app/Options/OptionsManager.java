@@ -3,6 +3,8 @@ package com.gianlu.aria2app.Options;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.gianlu.aria2app.NetIO.Aria2.Option;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

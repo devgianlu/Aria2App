@@ -2,7 +2,7 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.neovisionaries.ws.client.ThreadType;
@@ -40,7 +40,7 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
     public Boolean call() {
         try {
             WebSocket webSocket;
-            if (profile.authMethod.equals(JTA2.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
+            if (profile.authMethod.equals(AbstractClient.AuthMethod.HTTP) && profile.serverUsername != null && profile.serverPassword != null)
                 webSocket = NetUtils.readyWebSocket(profile);
             else
                 webSocket = NetUtils.readyWebSocket(profile);
@@ -65,12 +65,12 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
     }
 
     @Override
-    public void onStateChanged(WebSocket websocket, WebSocketState newState) throws Exception {
+    public void onStateChanged(WebSocket websocket, WebSocketState newState) {
         publishMessage("State changed to " + newState.name().toLowerCase(), android.R.color.tertiary_text_light);
     }
 
     @Override
-    public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
+    public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
         publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, null));
 
         pingTime = System.currentTimeMillis();
@@ -78,7 +78,7 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
     }
 
     @Override
-    public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onPongFrame(WebSocket websocket, WebSocketFrame frame) {
         publishPing(profile, System.currentTimeMillis() - pingTime);
         notifyReturnValue(true);
     }
@@ -91,77 +91,77 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
     }
 
     @Override
-    public void onTextMessage(WebSocket websocket, String text) throws Exception {
+    public void onTextMessage(WebSocket websocket, String text) {
     }
 
     @Override
-    public void onBinaryMessage(WebSocket websocket, byte[] binary) throws Exception {
+    public void onBinaryMessage(WebSocket websocket, byte[] binary) {
     }
 
     @Override
-    public void onSendingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onSendingFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onFrameSent(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onFrameSent(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onFrameUnsent(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onFrameUnsent(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onThreadCreated(WebSocket websocket, ThreadType threadType, Thread thread) throws Exception {
+    public void onThreadCreated(WebSocket websocket, ThreadType threadType, Thread thread) {
     }
 
     @Override
-    public void onThreadStarted(WebSocket websocket, ThreadType threadType, Thread thread) throws Exception {
+    public void onThreadStarted(WebSocket websocket, ThreadType threadType, Thread thread) {
     }
 
     @Override
-    public void onThreadStopping(WebSocket websocket, ThreadType threadType, Thread thread) throws Exception {
+    public void onThreadStopping(WebSocket websocket, ThreadType threadType, Thread thread) {
     }
 
     @Override
-    public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+    public void onError(WebSocket websocket, WebSocketException cause) {
     }
 
     @Override
-    public void onFrameError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) throws Exception {
+    public void onFrameError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) {
     }
 
     @Override
-    public void onMessageError(WebSocket websocket, WebSocketException cause, List<WebSocketFrame> frames) throws Exception {
+    public void onMessageError(WebSocket websocket, WebSocketException cause, List<WebSocketFrame> frames) {
     }
 
     @Override
-    public void onMessageDecompressionError(WebSocket websocket, WebSocketException cause, byte[] compressed) throws Exception {
+    public void onMessageDecompressionError(WebSocket websocket, WebSocketException cause, byte[] compressed) {
     }
 
     @Override
-    public void onTextMessageError(WebSocket websocket, WebSocketException cause, byte[] data) throws Exception {
+    public void onTextMessageError(WebSocket websocket, WebSocketException cause, byte[] data) {
     }
 
     @Override
-    public void onSendError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) throws Exception {
+    public void onSendError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) {
     }
 
     @Override
-    public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
+    public void onUnexpectedError(WebSocket websocket, WebSocketException cause) {
         publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, cause));
         notifyReturnValue(false);
     }
 
     @Override
-    public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+    public void handleCallbackError(WebSocket websocket, Throwable cause) {
     }
 
     @Override
-    public void onSendingHandshake(WebSocket websocket, String requestLine, List<String[]> headers) throws Exception {
+    public void onSendingHandshake(WebSocket websocket, String requestLine, List<String[]> headers) {
     }
 
     @Override
-    public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
+    public void onConnectError(WebSocket websocket, WebSocketException exception) {
         Throwable cause = exception.getCause();
 
         if (cause instanceof ConnectException || cause instanceof SocketTimeoutException)
@@ -173,7 +173,7 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
     }
 
     @Override
-    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) throws Exception {
+    public void onDisconnected(WebSocket websocket, WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame, boolean closedByServer) {
         if (closedByServer)
             publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ERROR, null));
         else
@@ -183,26 +183,26 @@ public class WebSocketTester extends NetTester implements WebSocketListener, Cal
     }
 
     @Override
-    public void onFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onContinuationFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onContinuationFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onTextFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onTextFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onBinaryFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onBinaryFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onCloseFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onCloseFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 
     @Override
-    public void onPingFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
+    public void onPingFrame(WebSocket websocket, WebSocketFrame frame) {
     }
 }

@@ -12,9 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import com.gianlu.aria2app.FileTypeTextView;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadStatic;
+import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
@@ -38,9 +39,9 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.handler = handler;
     }
 
-    public void update(List<AriaFile> files, String commonRoot) {
+    public void update(DownloadStatic download, List<AriaFile> files) {
         if (currentNode == null) {
-            currentNode = TreeNode.create(files, commonRoot);
+            currentNode = TreeNode.create(download, files);
             notifyCurrentDirChanged();
             return;
         }

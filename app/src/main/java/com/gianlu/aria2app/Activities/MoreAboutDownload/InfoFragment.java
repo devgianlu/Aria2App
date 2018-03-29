@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,12 +18,15 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.UpdateUI;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.CountryFlags;
-import com.gianlu.aria2app.NetIO.BaseUpdater;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.UpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Updater.DownloadUpdaterFragment;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -42,7 +44,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
-public class InfoFragment extends UpdaterFragment implements OnBackPressed, UpdateUI.IUI, JTA2.IRemove, JTA2.IRestart, JTA2.IUnpause, JTA2.IPause, JTA2.IMove {
+public class InfoFragment extends DownloadUpdaterFragment implements OnBackPressed, BaseUpdater.UpdaterListener<Download>, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private IStatusChanged listener;
@@ -59,76 +61,6 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
         return fragment;
     }
 
-    private void handleDownloadAction(final Download download, JTA2.DownloadActions action) {
-        if (download == null) return; // Garbage collected
-
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2.InitializingException ex) {
-            onException(ex);
-            return;
-        }
-
-        switch (action) {
-            case MOVE_UP:
-                jta2.moveUp(download.gid, this);
-                break;
-            case MOVE_DOWN:
-                jta2.moveDown(download.gid, this);
-                break;
-            case PAUSE:
-                jta2.pause(download.gid, this);
-                break;
-            case REMOVE:
-                if (getContext() != null && (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED || download.status == Download.Status.WAITING)) {
-                    DialogUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
-                            .setTitle(getString(R.string.removeName, download.getName()))
-                            .setMessage(R.string.removeDownloadAlert)
-                            .setNegativeButton(android.R.string.no, null)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    removeDownload(jta2, download);
-                                }
-                            }));
-                } else {
-                    removeDownload(jta2, download);
-                }
-                break;
-            case RESTART:
-                jta2.restart(download.gid, this);
-                break;
-            case RESUME:
-                jta2.unpause(download.gid, this);
-                break;
-        }
-    }
-
-    private void removeDownload(final JTA2 jta2, final Download download) {
-        if (getContext() == null) return;
-
-        if (download.following != null) {
-            DialogUtils.showDialog(getActivity(), new AlertDialog.Builder(getContext())
-                    .setTitle(getString(R.string.removeMetadataName, download.getName()))
-                    .setMessage(R.string.removeDownload_removeMetadata)
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            jta2.remove(download.gid, false, InfoFragment.this);
-                        }
-                    })
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            jta2.remove(download.gid, true, InfoFragment.this);
-                        }
-                    }));
-        } else {
-            jta2.remove(download.gid, false, InfoFragment.this);
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -137,25 +69,21 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
 
         Bundle args = getArguments();
         Download download;
-        if (args == null || (download = (Download) args.getSerializable("download")) == null) {
+        if (args == null || (download = (Download) args.getSerializable("download")) == null || getContext() == null) {
             holder.loading.setVisibility(View.GONE);
             MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
             return holder.rootView;
         }
 
-        holder.setup(download);
+        try {
+            holder.setup(download.wrap(getContext()));
+        } catch (ProfilesManager.NoCurrentProfileException | AbstractClient.InitializationException ex) {
+            holder.loading.setVisibility(View.GONE);
+            MessageLayout.show(holder.rootView, getString(R.string.failedLoading_reason, ex.getMessage()), R.drawable.ic_error_outline_black_48dp);
+            return holder.rootView;
+        }
 
         return holder.rootView;
-    }
-
-    @Override
-    public void onUpdateUI(Download download) {
-        if (holder != null) holder.update(download);
-
-        if (listener != null && lastStatus != download.status)
-            listener.onStatusChanged(download.status);
-
-        lastStatus = download.status;
     }
 
     @Override
@@ -168,58 +96,48 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
         stopUpdater();
     }
 
+    @Nullable
     @Override
-    public void onPaused(String gid) {
-        Toaster.show(getActivity(), Utils.Messages.PAUSED, gid);
-    }
-
-    @Override
-    public void onRestarted(String gid) {
-        Toaster.show(getActivity(), Utils.Messages.RESTARTED, gid);
-    }
-
-    @Override
-    public void onUnpaused(String gid) {
-        Toaster.show(getActivity(), Utils.Messages.RESUMED, gid);
-    }
-
-    @Override
-    public void onMoved(String gid) {
-        Toaster.show(getActivity(), Utils.Messages.MOVED, gid);
-    }
-
-    @Override
-    public void onException(Exception ex) {
-        Toaster.show(getActivity(), Utils.Messages.FAILED_PERFORMING_ACTION, ex);
-    }
-
-    @Override
-    public void onRemoved(String gid) {
-        Toaster.show(getActivity(), Utils.Messages.REMOVED, gid);
-    }
-
-    @Override
-    public void onRemovedResult(String gid) {
-        Toaster.show(getActivity(), Utils.Messages.RESULT_REMOVED, gid);
-        if (listener != null) listener.onStatusChanged(Download.Status.UNKNOWN);
+    protected Download getDownload(@NonNull Bundle args) {
+        return (Download) args.getSerializable("download");
     }
 
     @Nullable
     @Override
-    protected BaseUpdater createUpdater(@NonNull Bundle args) {
-        Download download = (Download) args.getSerializable("download");
-        if (download != null) {
-            try {
-                return new UpdateUI(getContext(), download.gid, this);
-            } catch (JTA2.InitializingException ex) {
-                holder.loading.setVisibility(View.GONE);
-                MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-                Logging.log(ex);
-                return null;
-            }
-        } else {
+    protected BaseUpdater createUpdater(@NonNull Download download) {
+        try {
+            return new UpdateUI(getContext(), download, this);
+        } catch (Aria2Helper.InitializingException ex) {
+            holder.loading.setVisibility(View.GONE);
+            MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
+            Logging.log(ex);
             return null;
         }
+    }
+
+    @Override
+    public void onUpdateUi(Download download) {
+        if (holder != null) holder.update(download);
+
+        if (listener != null && lastStatus != download.status)
+            listener.onStatusChanged(download.status);
+
+        lastStatus = download.status;
+    }
+
+    @Override
+    public void showDialog(AlertDialog.Builder builder) {
+        DialogUtils.showDialog(getActivity(), builder);
+    }
+
+    @Override
+    public void showToast(Toaster.Message msg, Exception ex) {
+        Toaster.show(getActivity(), msg, ex);
+    }
+
+    @Override
+    public void showToast(Toaster.Message msg, String extra) {
+        Toaster.show(getActivity(), msg, extra);
     }
 
     public interface IStatusChanged {
@@ -305,11 +223,11 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
             btAnnounceList = rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
-        void setup(final Download download) {
+        void setup(final DownloadWithHelper download) {
             if (getContext() == null) return;
 
             Utils.setupChart(chart, false, R.color.colorPrimaryDark);
-            int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
+            int colorRes = download.get().isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
             bitfield.setColor(colorRes);
             progress.setTypeface("fonts/Roboto-Light.ttf");
@@ -317,36 +235,13 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
             uploadSpeed.setTypeface("fonts/Roboto-Light.ttf");
             remainingTime.setTypeface("fonts/Roboto-Light.ttf");
 
-            pause.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.PAUSE);
-                }
-            });
-            start.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.RESUME);
-                }
-            });
-            stop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
-                }
-            });
-            restart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.RESTART);
-                }
-            });
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleDownloadAction(download, JTA2.DownloadActions.REMOVE);
-                }
-            });
+            pause.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.PAUSE, InfoFragment.this));
+            start.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.RESUME, InfoFragment.this));
+            stop.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.STOP, InfoFragment.this));
+            restart.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.RESTART, InfoFragment.this));
+            remove.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.REMOVE, InfoFragment.this));
+            moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.MOVE_UP, InfoFragment.this));
+            moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.MOVE_DOWN, InfoFragment.this));
 
             toggleBtAnnounceList.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -355,12 +250,12 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
                 }
             });
 
-            if (download.torrent == null || download.torrent.announceList.isEmpty()) {
+            if (download.get().torrent == null || download.get().torrent.announceList.isEmpty()) {
                 btAnnounceListContainer.setVisibility(View.GONE);
             } else {
                 btAnnounceListContainer.setVisibility(View.VISIBLE);
                 btAnnounceList.removeAllViews();
-                for (String url : download.torrent.announceList) {
+                for (String url : download.get().torrent.announceList) {
                     final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.item_bt_announce, btAnnounceList, false);
                     ((TextView) layout.getChildAt(0)).setText(url);
                     ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_country_unknown);
@@ -381,7 +276,8 @@ public class InfoFragment extends UpdaterFragment implements OnBackPressed, Upda
                                 Logging.log(ex);
                             }
                         });
-                    } catch (URISyntaxException ignored) {
+                    } catch (URISyntaxException ex) {
+                        Logging.log(ex);
                     }
                 }
             }

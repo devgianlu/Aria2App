@@ -4,9 +4,11 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.HTTPing;
 import com.gianlu.aria2app.NetIO.IConnect;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-class Aria2Tester extends BaseTester {
+class Aria2Tester extends BaseTester { // TODO: Rewrite
     Aria2Tester(Context context, MultiProfile.UserProfile profile, IPublish listener) {
         super(context, profile, listener);
     }
@@ -64,12 +66,12 @@ class Aria2Tester extends BaseTester {
             publishMessage("Your token or username and password may be wrong", R.color.red);
     }
 
-    private boolean listMethods(JTA2 jta2) {
+    private boolean listMethods(Aria2Helper aria2Helper) {
         final AtomicBoolean returnValue = new AtomicBoolean(false);
 
-        jta2.listMethods(new JTA2.IMethod() {
+        aria2Helper.request(AriaRequests.listMethods(), new AbstractClient.OnResult<List<String>>() {
             @Override
-            public void onMethods(List<String> methods) {
+            public void onResult(List<String> result) {
                 synchronized (returnValue) {
                     returnValue.set(true);
                     returnValue.notify();
@@ -97,12 +99,12 @@ class Aria2Tester extends BaseTester {
         }
     }
 
-    private boolean getVersion(JTA2 jta2) {
+    private boolean getVersion(Aria2Helper aria2Helper) {
         final AtomicBoolean returnValue = new AtomicBoolean(false);
 
-        jta2.getVersion(profile, new JTA2.IVersion() {
+        aria2Helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
             @Override
-            public void onVersion(List<String> rawFeatures, String version) {
+            public void onResult(VersionInfo info) {
                 synchronized (returnValue) {
                     returnValue.set(true);
                     returnValue.notify();
@@ -134,13 +136,13 @@ class Aria2Tester extends BaseTester {
     protected Boolean call() {
         AbstractClient client = getClient();
         if (client == null) return false;
-        JTA2 jta2 = new JTA2(context, client);
+        Aria2Helper aria2Helper = new Aria2Helper(context, client);
 
         publishMessage("Started not authenticated request...", android.R.color.tertiary_text_light);
-        if (!listMethods(jta2)) return false;
+        if (!listMethods(aria2Helper)) return false;
         publishMessage("Not authenticated request was successful", R.color.green);
         publishMessage("Started authenticated request...", android.R.color.tertiary_text_light);
-        if (!getVersion(jta2)) return false;
+        if (!getVersion(aria2Helper)) return false;
         publishMessage("Authenticated request was successful", R.color.green);
 
         return true;

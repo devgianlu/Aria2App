@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -57,16 +56,19 @@ import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.Main.DrawerConst;
 import com.gianlu.aria2app.Main.UpdateUI;
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
+import com.gianlu.aria2app.NetIO.Aria2.VersionAndSession;
+import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.HTTPing;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Search.SearchUtils;
-import com.gianlu.aria2app.NetIO.UpdaterActivity;
+import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.WebSocketing;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
@@ -97,10 +99,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, JTA2.IUnpause, JTA2.IRemove, JTA2.IPause, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, DownloadCardsAdapter.IAdapter, JTA2.IRestart, JTA2.IMove, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, UpdateUI.IUI, OnRefresh {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, BaseUpdater.UpdaterListener<DownloadsAndGlobalStats> {
     private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -117,6 +120,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private InternalBroadcastReceiver broadcastReceiver;
     private Messenger downloaderMessenger = null;
     private RecyclerViewLayout recyclerViewLayout;
+    private Aria2Helper helper;
 
     @Override
     protected void onRestart() {
@@ -180,59 +184,39 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     private void showAboutDialog() {
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(MainActivity.this);
-        } catch (JTA2.InitializingException ex) {
-            Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
-            return;
-        }
-
         showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
-        jta2.getVersion(new JTA2.IVersion() {
+        helper.getVersionAndSession(new AbstractClient.OnResult<VersionAndSession>() {
             @Override
-            public void onVersion(List<String> rawFeatures, String version) {
+            public void onResult(VersionAndSession result) {
                 final LinearLayout layout = new LinearLayout(MainActivity.this);
                 layout.setOrientation(LinearLayout.VERTICAL);
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
                 layout.setPadding(padding, padding, padding, padding);
-                layout.addView(new SuperTextView(MainActivity.this, R.string.version, version));
-                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(rawFeatures, ", ")));
+                layout.addView(new SuperTextView(MainActivity.this, R.string.version, result.version.version));
+                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(result.version.enabledFeatures, ", ")));
+                layout.addView(new SuperTextView(MainActivity.this, R.string.sessionId, result.session.sessionId));
+                dismissDialog();
 
-                jta2.getSessionInfo(new JTA2.ISession() {
-                    @Override
-                    public void onSessionInfo(String sessionID) {
-                        layout.addView(new SuperTextView(MainActivity.this, R.string.sessionId, sessionID));
-                        dismissDialog();
-
-                        showDialog(new AlertDialog.Builder(MainActivity.this)
-                                .setTitle(R.string.about_aria2)
-                                .setView(layout)
-                                .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                showDialog(new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.about_aria2)
+                        .setView(layout)
+                        .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                helper.request(AriaRequests.saveSession(), new AbstractClient.OnSuccess() {
                                     @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        jta2.saveSession(new JTA2.ISuccess() {
-                                            @Override
-                                            public void onSuccess() {
-                                                Toaster.show(MainActivity.this, Utils.Messages.SESSION_SAVED);
-                                            }
-
-                                            @Override
-                                            public void onException(Exception exception) {
-                                                Toaster.show(MainActivity.this, Utils.Messages.FAILED_SAVE_SESSION, exception);
-                                            }
-                                        });
+                                    public void onSuccess() {
+                                        Toaster.show(MainActivity.this, Utils.Messages.SESSION_SAVED);
                                     }
-                                })
-                                .setPositiveButton(android.R.string.ok, null));
-                    }
 
-                    @Override
-                    public void onException(Exception ex) {
-                        Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
-                        dismissDialog();
-                    }
-                });
+                                    @Override
+                                    public void onException(Exception ex) {
+                                        Toaster.show(MainActivity.this, Utils.Messages.FAILED_SAVE_SESSION, ex);
+                                    }
+                                });
+                            }
+                        })
+                        .setPositiveButton(android.R.string.ok, null));
             }
 
             @Override
@@ -310,8 +294,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         ProfilesManager manager = ProfilesManager.get(this);
         MultiProfile currentProfile;
         try {
-            currentProfile = manager.getCurrent(this);
-        } catch (ProfilesManager.NoCurrentProfileException ex) {
+            currentProfile = manager.getCurrent();
+            helper = Aria2Helper.instantiate(this);
+        } catch (ProfilesManager.NoCurrentProfileException | Aria2Helper.InitializingException ex) {
             Logging.log(ex);
             WebSocketing.clear();
             HTTPing.clear();
@@ -436,20 +421,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
             @Override
             public void onRelease(final String latestVersion) {
-                JTA2 jta2;
-                try {
-                    jta2 = JTA2.instantiate(MainActivity.this);
-                } catch (JTA2.InitializingException ex) {
-                    Logging.log(ex);
-                    return;
-                }
-
-                jta2.getVersion(new JTA2.IVersion() {
+                helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
                     @Override
-                    public void onVersion(List<String> rawFeatures, String version) {
+                    public void onResult(VersionInfo result) {
                         String skipVersion = Prefs.getString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, null);
-                        if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(version, latestVersion))
-                            showOutdatedDialog(latestVersion, version);
+                        if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
+                            showOutdatedDialog(latestVersion, result.version);
                     }
 
                     @Override
@@ -676,16 +653,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     private void pauseAll() {
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(this);
-        } catch (JTA2.InitializingException ex) {
-            onException(ex);
-            return;
-        }
-
-        jta2.pauseAll(new JTA2.ISuccess() {
-            boolean retried = false;
+        helper.request(AriaRequests.pauseAll(), new AbstractClient.OnSuccess() {
+            private boolean retried = false;
 
             @Override
             public void onSuccess() {
@@ -694,23 +663,15 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onException(Exception ex) {
-                if (!retried) jta2.forcePauseAll(this);
-                else MainActivity.this.onException(ex);
+                if (!retried) helper.request(AriaRequests.forcePauseAll(), this); // TODO
+                else Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
                 retried = true;
             }
         });
     }
 
     private void unpauseAll() {
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(this);
-        } catch (JTA2.InitializingException ex) {
-            onException(ex);
-            return;
-        }
-
-        jta2.unpauseAll(new JTA2.ISuccess() {
+        helper.request(AriaRequests.unpauseAll(), new AbstractClient.OnSuccess() {
             @Override
             public void onSuccess() {
                 Toaster.show(MainActivity.this, Utils.Messages.RESUMED_ALL);
@@ -718,21 +679,13 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onException(Exception ex) {
-                MainActivity.this.onException(ex);
+                Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
             }
         });
     }
 
     private void purgeDownloadResult() {
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(this);
-        } catch (JTA2.InitializingException ex) {
-            onException(ex);
-            return;
-        }
-
-        jta2.purgeDownloadResult(new JTA2.ISuccess() {
+        helper.request(AriaRequests.purgeDownloadResults(), new AbstractClient.OnSuccess() {
             @Override
             public void onSuccess() {
                 Toaster.show(MainActivity.this, Utils.Messages.PURGED_DOWNLOAD_RESULT);
@@ -740,7 +693,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onException(Exception ex) {
-                MainActivity.this.onException(ex);
+                Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
             }
         });
     }
@@ -837,49 +790,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onUpdateAdapter(List<Download> downloads) {
-        if (adapter != null) {
-            adapter.notifyItemsChanged(downloads);
-            recyclerViewLayout.stopLoading();
-        }
-
-        String gid = getIntent().getStringExtra("gid");
-        if (gid != null && !downloads.isEmpty()) {
-            for (Download download : downloads) {
-                if (Objects.equals(download.gid, gid)) {
-                    onMoreClick(download);
-                    getIntent().removeExtra("gid");
-                }
-            }
-        }
-    }
-
-    @Override
-    @SuppressLint("SetTextI18n")
-    public void onUpdateGlobalStats(GlobalStats stats) {
-        active.setText(String.valueOf(stats.numActive));
-        paused.setText(String.valueOf(stats.numWaiting));
-        stopped.setText(stats.numStopped + " (" + stats.numStoppedTotal + ")");
-
-        LineData data = overallChart.getData();
-        if (data == null) {
-            Utils.setupChart(overallChart, true, R.color.white);
-            data = overallChart.getData();
-        }
-
-        if (data != null) {
-            int pos = data.getEntryCount() / 2 + 1;
-            data.addEntry(new Entry(pos, stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-            data.addEntry(new Entry(pos, stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
-            data.notifyDataChanged();
-            overallChart.notifyDataSetChanged();
-
-            overallChart.setVisibleXRangeMaximum(90);
-            overallChart.moveViewToX(pos - 91);
-        }
-    }
-
-    @Override
     public void onMoreClick(Download item) {
         try {
             MoreAboutDownloadActivity.start(this, item);
@@ -972,73 +882,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onMenuItemSelected(final Download download, JTA2.DownloadActions action) {
-        final JTA2 jta2;
-        try {
-            jta2 = JTA2.instantiate(this);
-        } catch (JTA2.InitializingException ex) {
-            onException(ex);
-            return;
-        }
-
-        switch (action) {
-            case MOVE_UP:
-                jta2.moveUp(download.gid, this);
-                break;
-            case MOVE_DOWN:
-                jta2.moveDown(download.gid, this);
-                break;
-            case PAUSE:
-                jta2.pause(download.gid, this);
-                break;
-            case REMOVE:
-                if (download.status == Download.Status.ACTIVE || download.status == Download.Status.PAUSED) {
-                    showDialog(new AlertDialog.Builder(this)
-                            .setTitle(getString(R.string.removeName, download.getName()))
-                            .setMessage(R.string.removeDownloadAlert)
-                            .setNegativeButton(android.R.string.no, null)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    removeDownload(jta2, download);
-                                }
-                            }));
-                } else {
-                    removeDownload(jta2, download);
-                }
-                break;
-            case RESTART:
-                jta2.restart(download.gid, this);
-                break;
-            case RESUME:
-                jta2.unpause(download.gid, this);
-                break;
-        }
-    }
-
-    private void removeDownload(final JTA2 jta2, final Download download) {
-        if (download.following != null) {
-            showDialog(new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.removeMetadataName, download.getName()))
-                    .setMessage(R.string.removeDownload_removeMetadata)
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            jta2.remove(download.gid, false, MainActivity.this);
-                        }
-                    })
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            jta2.remove(download.gid, true, MainActivity.this);
-                        }
-                    }));
-        } else {
-            jta2.remove(download.gid, false, this);
-        }
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
 
@@ -1064,38 +907,13 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onPaused(String gid) {
-        Toaster.show(this, Utils.Messages.PAUSED, gid);
+    public void showToast(Toaster.Message msg, Exception ex) {
+        Toaster.show(this, msg, ex);
     }
 
     @Override
-    public void onRestarted(String gid) {
-        Toaster.show(this, Utils.Messages.RESTARTED, gid);
-    }
-
-    @Override
-    public void onUnpaused(String gid) {
-        Toaster.show(this, Utils.Messages.RESUMED, gid);
-    }
-
-    @Override
-    public void onMoved(String gid) {
-        Toaster.show(this, Utils.Messages.MOVED, gid);
-    }
-
-    @Override
-    public void onException(Exception ex) {
-        Toaster.show(this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
-    }
-
-    @Override
-    public void onRemoved(String gid) {
-        Toaster.show(this, Utils.Messages.REMOVED, gid);
-    }
-
-    @Override
-    public void onRemovedResult(String gid) {
-        Toaster.show(this, Utils.Messages.RESULT_REMOVED, gid);
+    public void showToast(Toaster.Message msg, String extra) {
+        Toaster.show(this, msg, extra);
     }
 
     @Override
@@ -1162,7 +980,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     protected BaseUpdater createUpdater() {
         try {
             return new UpdateUI(this, this);
-        } catch (JTA2.InitializingException ex) {
+        } catch (Aria2Helper.InitializingException ex) {
             ErrorHandler.get().notifyException(ex, true);
             if (recyclerViewLayout != null)
                 recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
@@ -1176,6 +994,45 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
+    }
+
+    @Override
+    public void onUpdateUi(DownloadsAndGlobalStats payload) {
+        if (adapter != null) {
+            adapter.notifyItemsChanged(payload.downloads);
+            recyclerViewLayout.stopLoading();
+        }
+
+        String gid = getIntent().getStringExtra("gid");
+        if (gid != null && !payload.downloads.isEmpty()) {
+            for (Download download : payload.downloads) {
+                if (Objects.equals(download.gid, gid)) {
+                    onMoreClick(download);
+                    getIntent().removeExtra("gid");
+                }
+            }
+        }
+
+        active.setText(String.valueOf(payload.stats.numActive));
+        paused.setText(String.valueOf(payload.stats.numWaiting));
+        stopped.setText(String.format(Locale.getDefault(), "%d (%d)", payload.stats.numStopped, payload.stats.numStoppedTotal));
+
+        LineData data = overallChart.getData();
+        if (data == null) {
+            Utils.setupChart(overallChart, true, R.color.white);
+            data = overallChart.getData();
+        }
+
+        if (data != null) {
+            int pos = data.getEntryCount() / 2 + 1;
+            data.addEntry(new Entry(pos, payload.stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+            data.addEntry(new Entry(pos, payload.stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
+            data.notifyDataChanged();
+            overallChart.notifyDataSetChanged();
+
+            overallChart.setVisibleXRangeMaximum(90);
+            overallChart.moveViewToX(pos - 91);
+        }
     }
 
     private class InternalBroadcastReceiver extends BroadcastReceiver {

@@ -16,13 +16,17 @@ import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
+
+import org.json.JSONException;
 
 import java.util.List;
 import java.util.Map;
@@ -104,33 +108,30 @@ public class AddTorrentActivity extends ActivityWithDialog {
         Map<String, String> options = optionsFragment.getOptions();
         Integer position = optionsFragment.getPosition();
 
-        JTA2 jta2;
         try {
-            jta2 = JTA2.instantiate(this);
-        } catch (JTA2.InitializingException ex) {
+
+            showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
+            Aria2Helper.instantiate(this).request(AriaRequests.addTorrent(base64, uris, position, options), new AbstractClient.OnResult<String>() {
+                @Override
+                public void onResult(String result) {
+                    dismissDialog();
+                    Toaster.show(AddTorrentActivity.this, Utils.Messages.DOWNLOAD_ADDED, result, new Runnable() {
+                        @Override
+                        public void run() {
+                            onBackPressed();
+                        }
+                    });
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    dismissDialog();
+                    Toaster.show(AddTorrentActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                }
+            });
+        } catch (Aria2Helper.InitializingException | JSONException ex) {
             Toaster.show(this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
-            return;
         }
-
-        showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
-        jta2.addTorrent(base64, uris, options, position, new JTA2.IGID() {
-            @Override
-            public void onGID(String gid) {
-                dismissDialog();
-                Toaster.show(AddTorrentActivity.this, Utils.Messages.DOWNLOAD_ADDED, gid, new Runnable() {
-                    @Override
-                    public void run() {
-                        onBackPressed();
-                    }
-                });
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                dismissDialog();
-                Toaster.show(AddTorrentActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
-            }
-        });
 
         AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);
     }

@@ -16,17 +16,16 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeerBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.UpdateUI;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
-import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.Peer;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.Peer;
+import com.gianlu.aria2app.NetIO.Aria2.Peers;
+import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
 
-import java.util.List;
-
-public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements UpdateUI.IUI, PeersAdapter.IAdapter {
+public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter, BaseUpdater.UpdaterListener<Peers> {
     private boolean isShowingHint = false;
 
     public static PeersFragment getInstance(Context context, Download download) {
@@ -34,7 +33,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         fragment.setHasOptionsMenu(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.peers));
-        args.putString("gid", download.gid);
+        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,23 +79,6 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     @Override
     protected PeerBottomSheet getSheet(@NonNull CoordinatorLayout layout) {
         return new PeerBottomSheet(layout);
-    }
-
-    @Override
-    public void onUpdateAdapter(List<Peer> peers) {
-        recyclerViewLayout.showList();
-        topDownloadCountries.setPeers(peers, true);
-        topUploadCountries.setPeers(peers, false);
-        if (adapter != null) adapter.notifyItemsChanged(peers);
-        if (sheet != null && sheet.isExpanded()) sheet.update(peers);
-    }
-
-    @Override
-    public void onNoPeers(String reason) {
-        recyclerViewLayout.showMessage(reason, false);
-        topDownloadCountries.clear();
-        topUploadCountries.clear();
-        if (sheet != null) sheet.collapse();
     }
 
     @Override
@@ -146,15 +128,22 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
 
     @Nullable
     @Override
-    protected BaseUpdater createUpdater(@NonNull Bundle args) {
-        String gid = args.getString("gid");
-
+    protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), gid, this);
-        } catch (JTA2.InitializingException ex) {
+            return new UpdateUI(getContext(), download, this);
+        } catch (Aria2Helper.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.log(ex);
             return null;
         }
+    }
+
+    @Override
+    public void onUpdateUi(Peers peers) {
+        recyclerViewLayout.showList();
+        topDownloadCountries.setPeers(peers, true);
+        topUploadCountries.setPeers(peers, false);
+        if (adapter != null) adapter.notifyItemsChanged(peers);
+        if (sheet != null && sheet.isExpanded()) sheet.update(peers);
     }
 }

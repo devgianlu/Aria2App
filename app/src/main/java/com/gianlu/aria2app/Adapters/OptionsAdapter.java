@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.gianlu.aria2app.Options.Option;
+import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;

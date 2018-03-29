@@ -16,7 +16,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;

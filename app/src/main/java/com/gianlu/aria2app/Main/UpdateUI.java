@@ -2,71 +2,33 @@ package com.gianlu.aria2app.Main;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.GlobalStats;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
+import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.commonutils.Preferences.Prefs;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class UpdateUI extends BaseUpdater implements JTA2.IDownloadList, JTA2.IStats {
-    private static final String[] KEYS = new String[]{"gid", "status", "totalLength", "completedLength", "uploadLength", "downloadSpeed", "uploadSpeed", "errorCode", "errorMessage", "bittorrent", "files", "connections", "numSeeders"};
-    private final IUI listener;
+public class UpdateUI extends BaseUpdater<DownloadsAndGlobalStats> implements AbstractClient.OnResult<DownloadsAndGlobalStats> {
     private final boolean hideMetadata;
 
-    public UpdateUI(Context context, IUI listener) throws JTA2.InitializingException {
-        super(context);
-        this.listener = listener;
+    public UpdateUI(Context context, UpdaterListener<DownloadsAndGlobalStats> listener) throws Aria2Helper.InitializingException {
+        super(context, listener);
         this.hideMetadata = Prefs.getBoolean(context, PKeys.A2_HIDE_METADATA, false);
     }
 
     @Override
     public void loop() {
-        jta2.tellAll(KEYS, this);
-        jta2.getGlobalStat(this);
+        aria2Helper.tellAllAndGlobalStats(hideMetadata, this);
     }
 
     @Override
-    public void onDownloads(final List<Download> downloads) {
-        if (listener == null) return;
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                List<Download> filteredDownloads = new ArrayList<>();
-                for (Download download : downloads)
-                    if (!(hideMetadata && download.isMetadata() && (download.followedBy != null || download.status == Download.Status.COMPLETE)))
-                        filteredDownloads.add(download);
-
-                listener.onUpdateAdapter(filteredDownloads);
-            }
-        });
-    }
-
-    @Override
-    public void onStats(final GlobalStats stats) {
-        if (listener == null) return;
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onUpdateGlobalStats(stats);
-            }
-        });
+    public void onResult(DownloadsAndGlobalStats result) {
+        hasResult(result);
     }
 
     @Override
     public void onException(Exception ex) {
-        ErrorHandler.get().notifyException(ex, false);
-    }
-
-    public interface IUI {
-        void onUpdateAdapter(List<Download> downloads);
-
-        void onUpdateGlobalStats(GlobalStats stats);
+        errorOccurred(ex, false);
     }
 }

@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.NetIO.JTA2;
+package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,14 +9,15 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BitTorrent implements Serializable {
+public class BitTorrent extends DownloadChild implements Serializable {
     public final ArrayList<String> announceList;
     public final Mode mode;
     public final String comment;
     public final long creationDate;
     public final String name;
 
-    public BitTorrent(@NonNull JSONObject obj) {
+    BitTorrent(DownloadStatic download, @NonNull JSONObject obj) {
+        super(download);
         comment = obj.optString("comment", null);
         creationDate = obj.optInt("creationDate", -1);
         mode = Mode.parse(obj.optString("mode"));

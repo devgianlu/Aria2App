@@ -178,7 +178,7 @@ public class LoadingActivity extends ActivityWithDialog implements IConnect {
         if (getIntent().getBooleanExtra("showPicker", false))
             displayPicker(false);
         else
-            tryConnecting(manager.getLastProfile(this));
+            tryConnecting(manager.getLastProfile());
     }
 
     private boolean hasShortcutAction() {

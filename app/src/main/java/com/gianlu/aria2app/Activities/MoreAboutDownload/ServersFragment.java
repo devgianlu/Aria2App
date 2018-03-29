@@ -14,25 +14,29 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServerBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.UpdateUI;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
-import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
-import com.gianlu.aria2app.NetIO.JTA2.Server;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.Server;
+import com.gianlu.aria2app.NetIO.Aria2.Servers;
+import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
 
 import java.util.List;
 
-public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements UpdateUI.IUI, ServersAdapter.IAdapter {
+public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements ServersAdapter.IAdapter, BaseUpdater.UpdaterListener<SparseArray<Servers>> {
     private boolean isShowingHint = false;
+    private List<AriaFile> files = null;
 
     public static ServersFragment getInstance(Context context, Download download) {
         ServersFragment fragment = new ServersFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.servers));
-        args.putString("gid", download.gid);
+        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
     }
@@ -91,34 +95,53 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         }
     }
 
-    @Override
-    public void onUpdateAdapter(SparseArray<List<Server>> servers, List<AriaFile> files) {
-        if (servers.size() == 0) return;
-        recyclerViewLayout.showList();
-        topDownloadCountries.setServers(servers, files);
-        if (adapter != null) adapter.notifyItemsChanged(servers, files);
-        if (sheet != null && sheet.isExpanded()) sheet.update(servers);
-    }
-
-    @Override
-    public void onNoServers(String reason) {
-        recyclerViewLayout.showMessage(reason, false);
-        topDownloadCountries.clear();
-        if (sheet != null) sheet.collapse();
-    }
-
     @Nullable
     @Override
-    protected BaseUpdater createUpdater(@NonNull Bundle args) {
-        String gid = args.getString("gid");
-
+    protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), gid, this);
-        } catch (JTA2.InitializingException ex) {
+            return new UpdateUI(getContext(), download, this);
+        } catch (Aria2Helper.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.log(ex);
             return null;
         }
+    }
+
+    @Override
+    public void onUpdateUi(final SparseArray<Servers> servers) {
+        if (servers.size() == 0) return;
+
+        if (files == null) {
+            DownloadWithHelper download = getDownloadWithHelper();
+            download.files(new AbstractClient.OnResult<List<AriaFile>>() {
+                @Override
+                public void onResult(List<AriaFile> result) {
+                    files = result;
+
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                onUpdateUi(servers);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    recyclerViewLayout.showMessage(R.string.failedLoading, true);
+                    Logging.log(ex);
+                }
+            });
+
+            return;
+        }
+
+        recyclerViewLayout.showList();
+        topDownloadCountries.setServers(servers, files);
+        if (adapter != null) adapter.notifyItemsChanged(servers, files);
+        if (sheet != null && sheet.isExpanded()) sheet.update(servers);
     }
 }
 

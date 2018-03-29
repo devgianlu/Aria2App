@@ -11,11 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.Peer;
+import com.gianlu.aria2app.NetIO.Aria2.Server;
+import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
-import com.gianlu.aria2app.NetIO.JTA2.Peer;
-import com.gianlu.aria2app.NetIO.JTA2.Server;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
@@ -93,11 +94,11 @@ public class TopCountriesView extends FlowLayout {
         buildLayout();
     }
 
-    public void setServers(SparseArray<List<Server>> servers, List<AriaFile> files) {
+    public void setServers(SparseArray<Servers> servers, List<AriaFile> files) {
         topCountries.clear();
 
         for (AriaFile file : files) {
-            List<Server> list = servers.get(file.index);
+            Servers list = servers.get(file.index);
             for (Server server : list) {
                 IPDetails details = freeGeoIp.getCached(server.uri.getHost());
                 if (details != null)

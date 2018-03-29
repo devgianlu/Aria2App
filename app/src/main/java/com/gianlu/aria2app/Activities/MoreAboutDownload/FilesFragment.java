@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Rect;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,31 +30,39 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.DirBottomSheet;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FileBottomSheet;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.UpdateUI;
 import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
-import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.JTA2.AriaDirectory;
-import com.gianlu.aria2app.NetIO.JTA2.AriaFile;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.ExternalPlayers;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadStatic;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.UpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Updater.DownloadUpdaterFragment;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
 
-public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
+import okhttp3.HttpUrl;
+
+public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed, BaseUpdater.UpdaterListener<List<AriaFile>> {
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
     private DirBottomSheet dirSheet;
@@ -62,13 +72,13 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     private RecyclerViewLayout recyclerViewLayout;
     private Messenger downloaderMessenger = null;
     private IWaitBinder boundWaiter;
-    private Download download;
+    private DownloadWithHelper download;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.files));
-        args.putSerializable("gid", download.gid);
+        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,7 +110,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
 
     private void setupView() {
         if (getContext() == null) return;
-        final int colorRes = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
+        final int colorRes = download.get().isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
 
         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
         recyclerViewLayout.loadListData(adapter);
@@ -135,85 +145,56 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
-        try {
-            fileSheet = new FileBottomSheet(layout, this);
-            dirSheet = new DirBottomSheet(layout, this);
-        } catch (JTA2.InitializingException ex) {
-            Logging.log(ex);
-            recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
-            return layout;
-        }
+        fileSheet = new FileBottomSheet(layout, this);
+        dirSheet = new DirBottomSheet(layout, this);
 
-        String gid;
+        DownloadStatic downloadStatic;
         Bundle args = getArguments();
-        if (args == null || (gid = args.getString("gid")) == null) {
+        if (args == null || (downloadStatic = (DownloadStatic) args.getSerializable("download")) == null) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             return layout;
         }
 
-        JTA2 jta2;
+        recyclerViewLayout.startLoading();
         try {
-            jta2 = JTA2.instantiate(getContext());
-        } catch (JTA2.InitializingException ex) {
+            Aria2Helper.instantiate(getContext()).request(AriaRequests.tellStatus(downloadStatic.gid), new AbstractClient.OnResult<DownloadWithHelper>() {
+                @Override
+                public void onResult(DownloadWithHelper result) {
+                    download = result;
+
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setupView();
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onException(final Exception ex) {
+                    Logging.log(ex);
+
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
+                            }
+                        });
+                    }
+                }
+            });
+        } catch (Aria2Helper.InitializingException ex) {
             Logging.log(ex);
             recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
             return layout;
         }
 
-        recyclerViewLayout.startLoading();
-
-        jta2.tellStatus(gid, null, new JTA2.IDownload() {
-            @Override
-            public void onDownload(final Download download) {
-                FilesFragment.this.download = download;
-
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            setupView();
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onException(final Exception ex) {
-                Logging.log(ex);
-
-                Activity activity = getActivity();
-                if (activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
-                        }
-                    });
-                }
-            }
-        });
-
         return layout;
-    }
-
-    @Override
-    public void onUpdateHierarchy(List<AriaFile> files, String commonRoot) {
-        if (files.isEmpty() || files.get(0).path.isEmpty()) {
-            recyclerViewLayout.showMessage(R.string.noFiles, false);
-        } else {
-            recyclerViewLayout.showList();
-            if (adapter != null) adapter.update(files, commonRoot);
-            if (fileSheet != null) fileSheet.update(files);
-            if (dirSheet != null) dirSheet.update(download, files);
-            if (adapter != null) showTutorial(adapter.getCurrentNode());
-        }
-    }
-
-    @Override
-    public void onFatalException(Exception ex) {
-        recyclerViewLayout.showMessage(R.string.failedLoading, true);
-        Logging.log(ex);
     }
 
     @Override
@@ -223,7 +204,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
 
     @Override
     public void onDirectorySelected(TreeNode dir) {
-        dirSheet.expand(download, new AriaDirectory(dir, download));
+        dirSheet.expand(download, new AriaDirectory(dir, download.get()));
     }
 
     private void showTutorial(TreeNode dir) {
@@ -309,20 +290,14 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
 
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
-            DownloaderUtils.startDownload(downloaderMessenger, file == null ? DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) : DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
+            DownloaderUtils.startDownload(downloaderMessenger,
+                    file == null ?
+                            DownloadStartConfig.create(getContext(), download.get(), profile.getProfile(getContext()), dir) :
+                            DownloadStartConfig.create(getContext(), download.get(), profile.getProfile(getContext()), file));
         } catch (DownloaderUtils.InvalidPathException | DownloadStartConfig.CannotCreateStartConfigException ex) {
-            if (file == null) Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
-            else Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
+            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
             return;
         }
-
-        Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
-                .setAction(R.string.show, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(getContext(), DirectDownloadActivity.class));
-                    }
-                }).show();
 
         Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
                 .setAction(R.string.show, new View.OnClickListener() {
@@ -346,9 +321,58 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     }
 
     @Override
-    public void onDownloadFile(final MultiProfile profile, Download download, final AriaFile file) {
+    public void onDownloadFile(final MultiProfile profile, final AriaFile file) {
         if (fileSheet != null) fileSheet.collapse();
 
+        String mime = file.getMimeType();
+        if (mime != null) {
+            final ExternalPlayers.Player player = ExternalPlayers.supportedBy(mime);
+            if (player != null && getContext() != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.couldStreamVideo)
+                        .setMessage(R.string.couldStreamVideo_message)
+                        .setNeutralButton(android.R.string.cancel, null)
+                        .setPositiveButton(R.string.stream, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                shouldStream(profile, file, player);
+                            }
+                        })
+                        .setNegativeButton(R.string.download, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                shouldDownload(profile, file);
+                            }
+                        });
+
+                DialogUtils.showDialog(getActivity(), builder);
+                return;
+            }
+        }
+
+        shouldDownload(profile, file);
+    }
+
+    private void shouldStream(MultiProfile profile, AriaFile file, ExternalPlayers.Player player) {
+        if (getContext() == null) return;
+
+        MultiProfile.DirectDownload dd = profile.getProfile(getContext()).directDownload;
+        if (dd == null) throw new IllegalStateException("WTF?!");
+
+        HttpUrl base = dd.getUrl();
+        if (base == null) {
+            Toaster.show(getActivity(), Utils.Messages.FAILED_STREAM_VIDEO, new NullPointerException("DirectDownload url is null!"));
+            return;
+        }
+
+        HttpUrl url = file.getDownloadUrl(base);
+        // TODO: Stream video
+
+        ExternalPlayers.play(getContext(), player);
+        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_PLAY_VIDEO);
+    }
+
+    private void shouldDownload(final MultiProfile profile, final AriaFile file) {
         if (downloaderMessenger != null) {
             startDownloadInternal(profile, file, null);
         } else {
@@ -371,7 +395,7 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
     }
 
     @Override
-    public void onDownloadDirectory(final MultiProfile profile, Download download, final AriaDirectory dir) {
+    public void onDownloadDirectory(final MultiProfile profile, final AriaDirectory dir) {
         if (dirSheet != null) dirSheet.collapse();
 
         if (downloaderMessenger != null) {
@@ -390,15 +414,32 @@ public class FilesFragment extends UpdaterFragment implements UpdateUI.IUI, File
 
     @Nullable
     @Override
-    protected BaseUpdater createUpdater(@NonNull Bundle args) {
-        String gid = args.getString("gid");
+    protected Download getDownload(@NonNull Bundle args) {
+        return (Download) args.getSerializable("download");
+    }
 
+    @Nullable
+    @Override
+    protected BaseUpdater createUpdater(@NonNull Download download) {
         try {
-            return new UpdateUI(getContext(), gid, FilesFragment.this);
-        } catch (JTA2.InitializingException ex) {
+            return new UpdateUI(getContext(), download, FilesFragment.this);
+        } catch (Aria2Helper.InitializingException ex) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             Logging.log(ex);
             return null;
+        }
+    }
+
+    @Override
+    public void onUpdateUi(List<AriaFile> files) {
+        if (files.isEmpty() || files.get(0).path.isEmpty()) {
+            recyclerViewLayout.showMessage(R.string.noFiles, false);
+        } else {
+            recyclerViewLayout.showList();
+            if (adapter != null) adapter.update(download.get(), files);
+            if (fileSheet != null) fileSheet.update(files);
+            if (dirSheet != null) dirSheet.update(download, files);
+            if (adapter != null) showTutorial(adapter.getCurrentNode());
         }
     }
 

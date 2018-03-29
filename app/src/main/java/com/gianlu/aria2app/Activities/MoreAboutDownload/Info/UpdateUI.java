@@ -2,43 +2,29 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Info;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.NetIO.BaseUpdater;
-import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.NetIO.JTA2.Download;
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
 
-public class UpdateUI extends BaseUpdater implements JTA2.IDownload {
-    private final String gid;
-    private final IUI listener;
-
-    public UpdateUI(Context context, String gid, IUI listener) throws JTA2.InitializingException {
-        super(context);
-        this.gid = gid;
-        this.listener = listener;
+public class UpdateUI extends BaseDownloadUpdater<Download> implements AbstractClient.OnResult<DownloadWithHelper> {
+    public UpdateUI(Context context, Download download, UpdaterListener<Download> listener) throws Aria2Helper.InitializingException {
+        super(context, download, listener);
     }
 
     @Override
     public void loop() {
-        jta2.tellStatus(gid, null, this);
+        download.update(this);
     }
 
     @Override
-    public void onDownload(final Download download) {
-        if (listener == null) return;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onUpdateUI(download);
-            }
-        });
+    public void onResult(DownloadWithHelper result) {
+        hasResult(result.get());
     }
 
     @Override
     public void onException(Exception ex) {
-        ErrorHandler.get().notifyException(ex, false);
-    }
-
-    public interface IUI {
-        void onUpdateUI(Download download);
+        errorOccurred(ex, false);
     }
 }

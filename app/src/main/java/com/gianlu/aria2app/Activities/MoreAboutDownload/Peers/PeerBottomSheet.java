@@ -6,10 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.NetIO.Aria2.Peer;
+import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
-import com.gianlu.aria2app.NetIO.JTA2.Peer;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -19,8 +20,6 @@ import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-
-import java.util.List;
 
 public class PeerBottomSheet extends NiceBaseBottomSheet {
     private final FreeGeoIPApi freeGeoIPApi;
@@ -39,14 +38,11 @@ public class PeerBottomSheet extends NiceBaseBottomSheet {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onUpdateViews(Object... payloads) {
         if (currentPeer == null) return;
-        Peer peer = Peer.find((List<Peer>) payloads[0], currentPeer);
-        if (peer != null) {
-            updateContentViews(peer);
-            updateHeaderViews(peer);
-        }
+        Peer peer = Peer.find((Peers) payloads[0], currentPeer);
+        updateContentViews(peer);
+        updateHeaderViews(peer);
     }
 
     private void updateHeaderViews(Peer peer) {

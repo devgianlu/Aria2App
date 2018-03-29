@@ -1,8 +1,7 @@
-package com.gianlu.aria2app.NetIO.JTA2;
+package com.gianlu.aria2app.NetIO.Aria2;
 
 
 import android.net.Uri;
-import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
@@ -13,13 +12,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Server {
+public class Server extends DownloadChild {
     public final Uri uri;
     public final String currentUri;
     public final int downloadSpeed;
 
-    @Keep
-    public Server(JSONObject obj) throws JSONException {
+    Server(DownloadStatic download, JSONObject obj) throws JSONException {
+        super(download);
         uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");
         downloadSpeed = obj.getInt("downloadSpeed");

@@ -1,6 +1,4 @@
-package com.gianlu.aria2app.NetIO.JTA2;
-
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.TreeNode;
+package com.gianlu.aria2app.NetIO.Aria2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +12,7 @@ public class AriaDirectory extends TreeNode {
     public final String fullPath;
 
     public AriaDirectory(TreeNode node, Download download) {
-        super(node);
+        super(download, node);
 
         if (node.isFile()) throw new IllegalArgumentException("node is a file!");
 

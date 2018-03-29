@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
-import com.gianlu.aria2app.NetIO.JTA2.JTA2;
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
@@ -159,22 +159,22 @@ public class AuthenticationFragment extends FieldErrorFragment {
                 return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);
         }
 
-        JTA2.AuthMethod authMethod;
+        AbstractClient.AuthMethod authMethod;
         switch (this.authMethod.getCheckedRadioButtonId()) {
             default:
             case R.id.editProfile_authMethod_none:
-                authMethod = JTA2.AuthMethod.NONE;
+                authMethod = AbstractClient.AuthMethod.NONE;
                 break;
             case R.id.editProfile_authMethod_token:
-                authMethod = JTA2.AuthMethod.TOKEN;
+                authMethod = AbstractClient.AuthMethod.TOKEN;
                 break;
             case R.id.editProfile_authMethod_http:
-                authMethod = JTA2.AuthMethod.HTTP;
+                authMethod = AbstractClient.AuthMethod.HTTP;
                 break;
         }
 
         String token = null;
-        if (authMethod == JTA2.AuthMethod.TOKEN) {
+        if (authMethod == AbstractClient.AuthMethod.TOKEN) {
             token = CommonUtils.getText(this.token).trim();
             if (token.isEmpty()) {
                 throw new InvalidFieldException(getClass(), R.id.editProfile_token, context.getString(R.string.emptyToken));
@@ -183,7 +183,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
 
         String username = null;
         String password = null;
-        if (authMethod == JTA2.AuthMethod.HTTP) {
+        if (authMethod == AbstractClient.AuthMethod.HTTP) {
             username = CommonUtils.getText(this.username).trim();
             if (username.isEmpty())
                 throw new InvalidFieldException(getClass(), R.id.editProfile_username, context.getString(R.string.emptyUsername));
@@ -197,12 +197,12 @@ public class AuthenticationFragment extends FieldErrorFragment {
     }
 
     public class Fields {
-        public final JTA2.AuthMethod authMethod;
+        public final AbstractClient.AuthMethod authMethod;
         public final String token;
         public final String username;
         public final String password;
 
-        Fields(JTA2.AuthMethod authMethod, @Nullable String token, @Nullable String username, @Nullable String password) {
+        Fields(AbstractClient.AuthMethod authMethod, @Nullable String token, @Nullable String username, @Nullable String password) {
             this.authMethod = authMethod;
             this.token = token;
             this.username = username;

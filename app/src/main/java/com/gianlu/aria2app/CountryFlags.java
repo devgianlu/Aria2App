@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.LruCache;
 
-public class CountryFlags {
+public final class CountryFlags {
     private static final int MAX_CACHE_SIZE = 8 * 1024; // 8 MiB
     private static CountryFlags instance;
     private final LruCache<String, Drawable> cache;

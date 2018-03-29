@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
-import com.gianlu.aria2app.NetIO.JTA2.AriaException;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.neovisionaries.ws.client.WebSocket;
@@ -23,8 +23,11 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class WebSocketing extends AbstractClient {
+    private static final AtomicInteger sandboxCount = new AtomicInteger(0);
     private static WebSocketing webSocketing;
     private static boolean locked = false;
     private final Map<Integer, IReceived> requests = new ConcurrentHashMap<>();
@@ -32,7 +35,7 @@ public class WebSocketing extends AbstractClient {
     private WebSocket socket;
 
     private WebSocketing(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException {
-        super(context, ProfilesManager.get(context).getCurrent(context).getProfile(context));
+        super(context, ProfilesManager.get(context).getCurrentSpecific());
         socket = NetUtils.readyWebSocket(profile).addListener(new Adapter()).connectAsynchronously();
     }
 
@@ -99,9 +102,67 @@ public class WebSocketing extends AbstractClient {
         }
     }
 
+    @NonNull
+    @Override
+    protected JSONObject sendSync(JSONObject request) throws Exception {
+        final AtomicReference<Object> lock = new AtomicReference<>(null);
+
+        send(request, new IReceived() {
+            @Override
+            public void onResponse(JSONObject response) {
+                synchronized (lock) {
+                    lock.set(response);
+                    lock.notifyAll();
+                }
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                synchronized (lock) {
+                    lock.set(ex);
+                    lock.notifyAll();
+                }
+            }
+        });
+
+        synchronized (lock) {
+            lock.wait();
+        }
+
+        Object result = lock.get();
+        if (result instanceof Exception) throw (Exception) result;
+        else return (JSONObject) result;
+    }
+
+    @Override
+    protected <R> void batch(BatchSandbox<R> sandbox, IBatch<R> listener) {
+        new SandboxThread<>(sandbox, listener).start();
+    }
+
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
         webSocketing = new WebSocketing(context, profile, null);
+    }
+
+    private class SandboxThread<R> extends Thread {
+
+        private final BatchSandbox<R> sandbox;
+        private final IBatch<R> listener;
+
+        SandboxThread(BatchSandbox<R> sandbox, IBatch<R> listener) {
+            super("sandbox-thread-" + sandboxCount.getAndIncrement());
+            this.sandbox = sandbox;
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            try {
+                listener.onSandboxReturned(sandbox.sandbox(WebSocketing.this));
+            } catch (Exception ex) {
+                listener.onException(ex);
+            }
+        }
     }
 
     private class Adapter extends WebSocketAdapter {
@@ -121,7 +182,7 @@ public class WebSocketing extends AbstractClient {
         }
 
         @Override
-        public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+        public void handleCallbackError(WebSocket websocket, Throwable cause) {
             if (locked) return;
             if (cause instanceof IllegalArgumentException) {
                 if (cause.getMessage().contains("port=")) {
@@ -134,7 +195,7 @@ public class WebSocketing extends AbstractClient {
         }
 
         @Override
-        public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
+        public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
             if (connectionListener != null) {
                 connectionListener.onConnected(WebSocketing.this);
                 connectionListener = null;
@@ -142,7 +203,7 @@ public class WebSocketing extends AbstractClient {
         }
 
         @Override
-        public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
+        public void onConnectError(WebSocket websocket, WebSocketException exception) {
             if (connectionListener != null) {
                 connectionListener.onFailedConnecting(exception);
                 connectionListener = null;

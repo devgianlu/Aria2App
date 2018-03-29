@@ -7,7 +7,7 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TutorialManager {
+public final class TutorialManager {
 
     public static boolean shouldShowHintFor(Context context, Discovery discovery) {
         if (context == null) return false;

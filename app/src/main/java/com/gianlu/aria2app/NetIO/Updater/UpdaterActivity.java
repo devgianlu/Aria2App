@@ -1,7 +1,8 @@
-package com.gianlu.aria2app.NetIO;
+package com.gianlu.aria2app.NetIO.Updater;
 
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 
 public abstract class UpdaterActivity extends ActivityWithDialog {

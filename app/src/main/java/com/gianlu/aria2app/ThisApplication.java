@@ -16,7 +16,7 @@ import com.llew.huawei.verifier.LoadedApkHuaWei;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ThisApplication extends AnalyticsApplication implements ErrorHandler.IErrorHandler {
+public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.IErrorHandler {
     private boolean firstStart = true;
 
     public boolean isFirstStart() {
