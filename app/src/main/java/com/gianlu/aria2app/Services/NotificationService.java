@@ -264,7 +264,7 @@ public class NotificationService extends Service {
                 .setContentText(message)
                 .setCategory(Notification.CATEGORY_ERROR)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification) // FIXME: "Notification icons must be entirely white"
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_error_outline_grey_48dp));
 
@@ -487,12 +487,12 @@ public class NotificationService extends Service {
         }
 
         @Override
-        public void onConnectError(WebSocket websocket, WebSocketException exception) throws Exception {
+        public void onConnectError(WebSocket websocket, WebSocketException exception) {
             notifyException(profile, exception);
         }
 
         @Override
-        public void handleCallbackError(WebSocket websocket, Throwable cause) throws Exception {
+        public void handleCallbackError(WebSocket websocket, Throwable cause) {
             Logging.log(cause);
         }
 

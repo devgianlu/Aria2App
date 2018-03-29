@@ -85,12 +85,6 @@
     <string name="notificationsOff">通知禁用</string>
     <string name="notificationType">通知类型</string>
     <string name="notificationTypeSummary">选择接收的通知类型</string>
-    <string name="enableSound">启用声音</string>
-    <string name="soundOn">声音启用</string>
-    <string name="soundOff">声音禁用</string>
-    <string name="enablePersistent">启用持久化通知服务</string>
-    <string name="persistentOn">通知服务永不关闭</string>
-    <string name="persistentOff">通知服务可能不在线或被关闭</string>
     <string name="about_aria2">关于aria2</string>
     <string name="saveSession">保存会话</string>
     <string name="editProfile">编辑或删除配置</string>
@@ -99,8 +93,6 @@
     <string name="enabledVersionCheck">版本检查将会执行，如果版本过期您将会收到提醒</string>
     <string name="disabledVersionCheck">版本检查不会执行</string>
     <string name="menu_downloadQuickOptions">快捷选项</string>
-    <string name="downloadIncomplete">不完整的下载</string>
-    <string name="downloadIncompleteMessage">当前文件不完整（没下载完）。\n您需要继续下载吗？</string>
     <string name="notificationService">通知服务</string>
     <string name="writeExternalStorageRequest_title">需要写入权限</string>
     <string name="writeExternalStorageRequest_message">为了保存文件到您的设备，Aria2App需要写入外部存储。</string>
@@ -108,7 +100,6 @@
     <string name="readExternalStorageRequest_certMessage">为了加载证书，Aria2App需要读取外部存储。</string>
     <string name="readExternalStorageRequest_base64Message">为了加载种子或Metalink，Aria2App需要读取外部存储。</string>
     <string name="noDownloads">没有可显示的下载。尝试更改过滤器或通过底角的添加图标开始一个下载任务。</string>
-    <string name="certificate">CA证书路径</string>
     <string name="search">搜索</string>
     <string name="addUri">添加网址</string>
     <string name="directDownload">直接下载</string>
@@ -117,9 +108,6 @@
     <string name="dd_downloadPath_summary">所有文件将必下载到这里。</string>
     <string name="connecting">连接中……</string>
     <string name="completed">已完成</string>
-    <string name="directDownload_noItems">没有运行中的下载。您可以从文件页选取文件下载。如果您未设置直接下载，您可能通过编辑配置来设置。</string>
-    <string name="error">错误</string>
-    <string name="error_details">错误：%s</string>
     <string name="searchTorrent">搜索种子</string>
     <string name="download">下载</string>
     <string name="size"><![CDATA[<b>大小：</b>]]>%s</string>
@@ -129,7 +117,6 @@
     <string name="completedLengthLabel">完成长度</string>
     <string name="progress">进度</string>
     <string name="connectionMethod">连接方法</string>
-    <string name="mitLicense">MIT license许可</string>
     <string name="addMetalink">添加Metalink</string>
     <string name="addTorrent">添加种子</string>
     <string name="fatalExceptionMessage">碰到一个严重错误！</string>
@@ -148,8 +135,6 @@
     <string name="emptyUsername">用户名项为空！</string>
     <string name="invalidAddress">无效地址！</string>
     <string name="pickProfile">选择配置或创建新配置。长按以编辑。</string>
-    <string name="removeName">删除%s</string>
-    <string name="removeDownloadAlert">如果您删除了这个下载就不能重新开始了。您确定删除吗？</string>
     <string name="failedLoading">加载本页失败!</string>
     <string name="currentUri"><![CDATA[<b>目前网址：</b>]]>%s</string>
     <string name="uri"><![CDATA[<b>网址：</b>]]>%s</string>
@@ -167,7 +152,6 @@
     <string name="file">文件</string>
     <string name="pickTorrent_help">选取种子文件。支持的MIME类型是<![CDATA[<b>application/x-bittorrent</b>]]>。</string>
     <string name="pickMetalink_help">选取MetaLink文件。支持的MIME类型是<![CDATA[<b>application/metalink4+xml</b>]]>和<![CDATA[<b>application/metalink+xml</b>]]>。</string>
-    <string name="pickProfile_share">选择用于下载的配置：</string>
     <string name="outdated_aria2">过期的aria2版本</string>
     <string name="outdated_aria2_message">您的aria2已过期。Aria2App基于最新版本aria2开始，因此您必须更新。您可以关闭此消息。 \n\n当前版本：%1$s \n最新版本：%2$s</string>
     <string name="selectFile_help">仅在多文件种子下载时文件才可以被选中或取消。</string>
@@ -227,14 +211,12 @@
     <string name="downloadRemoved">下载已删除。</string>
     <string name="downloadMoved">下载已移到队列。</string>
     <string name="downloadResultRemoved">下载结果已移除。</string>
-    <string name="failedRefreshing">刷新失败！</string>
     <string name="invalidFile">无效文件！</string>
     <string name="invalidDownloadPath">无效的下载路径。</string>
     <string name="failedSavingSession">保存当前会话失败！</string>
     <string name="failedDownloadingFile">下载文件失败！</string>
     <string name="globalOptionsChanged">全局选项更改成功。</string>
     <string name="fileSelected">选择的下载文件</string>
-    <string name="downloadStarted">下载开始。</string>
     <string name="noQuickOptions">您没有快捷选项。</string>
     <string name="failedAddingDownload">添加新的下载失败！</string>
     <string name="atLeastOneUri">添加至少一个网址！</string>
@@ -278,7 +260,6 @@
     <string name="failed">失败</string>
     <string name="running">不断的</string>
     <string name="paused">暂停</string>
-    <string name="removed">删除</string>
     <string name="failedOpeningDownload">无法打开下载！</string>
     <string name="ddNotEnabled">此配置文件上未启用DirectDownload功能！</string>
     <string name="profileDoesntExist">此个人资料不再存在！</string>

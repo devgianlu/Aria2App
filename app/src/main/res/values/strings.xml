@@ -92,12 +92,6 @@
     <string name="notificationsOff">Notifications are disabled</string>
     <string name="notificationType">Notification type</string>
     <string name="notificationTypeSummary">Select which type of notifications to receive</string>
-    <string name="enableSound">Enabled sound</string>
-    <string name="soundOn">Sound is enabled</string>
-    <string name="soundOff">Sound is disabled</string>
-    <string name="enablePersistent">Enable persistent notification service</string>
-    <string name="persistentOn">Notification service will never go off</string>
-    <string name="persistentOff">Notification service may not be live or may go off</string>
     <string name="about_aria2">About aria2</string>
     <string name="saveSession">Save session</string>
     <string name="editProfile">Edit or delete profile</string>
@@ -106,8 +100,6 @@
     <string name="enabledVersionCheck">Version will be checked and you\'ll be notified if your version it\'s outdated</string>
     <string name="disabledVersionCheck">No version check will be performed</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
-    <string name="downloadIncomplete">Incomplete download</string>
-    <string name="downloadIncompleteMessage">The current file is incomplete (not fully downloaded).\nWould you like to download it anyway?</string>
     <string name="notificationService">Notification service</string>
     <string name="writeExternalStorageRequest_title">Write permission required</string>
     <string name="writeExternalStorageRequest_message">In order to save files to your devices, Aria2App needs to write to your external storage.</string>
@@ -115,19 +107,14 @@
     <string name="readExternalStorageRequest_certMessage">In order to load the certificate Aria2App needs to read from your external storage.</string>
     <string name="readExternalStorageRequest_base64Message">In order to load the torrent/metalink file Aria2App needs to read from your external storage.</string>
     <string name="noDownloads">There are no downloads to display. Try changing the filters or start a download by tapping on the plus icon in the bottom corner.</string>
-    <string name="certificate">CA certificate path</string>
     <string name="search">Search</string>
     <string name="addUri">Add URI</string>
     <string name="directDownload">DirectDownload</string>
-    <string name="fileDownloader_details" translatable="false">Copyright 2015 LingoChamp Inc.</string>
     <string name="quickGlobalOptions">Quick global options</string>
     <string name="dd_downloadPath">Download path</string>
     <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
     <string name="connecting">Connecting…</string>
     <string name="completed">Completed</string>
-    <string name="directDownload_noItems">There are no downloads running currently. You can add a download from the files tab selecting a file. If you haven\'t set up DirectDownload yet, you can do it by editing your profile.</string>
-    <string name="error">Error</string>
-    <string name="error_details">Error: %s</string>
     <string name="searchTorrent">Search for torrents</string>
     <string name="download">Download</string>
     <string name="size"><![CDATA[<b>Size:</b>]]> %s</string>
@@ -136,7 +123,6 @@
     <string name="totalLengthLabel">Total length</string>
     <string name="progress">Progress</string>
     <string name="connectionMethod">Connection method</string>
-    <string name="mitLicense">Licensed under MIT license</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
     <string name="fatalExceptionMessage">A fatal exception has been thrown!</string>
@@ -155,8 +141,6 @@
     <string name="emptyUsername">The username field is empty!</string>
     <string name="invalidAddress">Invalid address!</string>
     <string name="pickProfile">Choose a profile or create a new one. Press and hold to edit.</string>
-    <string name="removeName">Remove %s</string>
-    <string name="removeDownloadAlert">If you remove the download you won\'t be able to restart it. Would you like to remove it anyway?</string>
     <string name="failedLoading">Failed loading the page!</string>
     <string name="currentUri"><![CDATA[<b>Current URI:</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
@@ -174,7 +158,6 @@
     <string name="file">File</string>
     <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
-    <string name="pickProfile_share">Choose a profile to start the download on:</string>
     <string name="outdated_aria2">Outdated aria2 version</string>
     <string name="outdated_aria2_message">Your version of aria2 is outdated. Aria2App is developed to run on the latest aria2 version and so you should update it. You can disable this message in the preferences. \n\nCurrent version: %1$s \nLatest version: %2$s</string>
     <string name="selectFile_help">File can be selected or deselected from download only on multi-file torrents.</string>
@@ -236,14 +219,12 @@
     <string name="downloadRemoved">Download removed.</string>
     <string name="downloadMoved">Download moved in queue.</string>
     <string name="downloadResultRemoved">Download result removed.</string>
-    <string name="failedRefreshing">Failed refreshing!</string>
     <string name="invalidFile">Invalid file!</string>
     <string name="invalidDownloadPath">Invalid download path.</string>
     <string name="failedSavingSession">Failed saving current session!</string>
     <string name="failedDownloadingFile">Failed downloading file!</string>
     <string name="globalOptionsChanged">Global options has been successfully changed.</string>
     <string name="fileSelected">File selected for download.</string>
-    <string name="downloadStarted">Download started.</string>
     <string name="noQuickOptions">You have no quick options.</string>
     <string name="failedAddingDownload">Failed adding the new download!</string>
     <string name="atLeastOneUri">Add at least one URI!</string>
@@ -288,7 +269,6 @@
     <string name="failed">Failed</string>
     <string name="running">Running</string>
     <string name="paused">Paused</string>
-    <string name="removed">Removed</string>
     <string name="failedOpeningDownload">Failed opening the download!</string>
     <string name="ddNotEnabled">DirectDownload isn\'t enabled on this profile!</string>
     <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>

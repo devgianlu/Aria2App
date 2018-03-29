@@ -291,11 +291,7 @@ public class Download extends DownloadStatic implements Serializable, Filterable
     public static class ProgressComparator implements Comparator<Download> {
         @Override
         public int compare(Download o1, Download o2) {
-            int p1 = (int) o1.getProgress();
-            int p2 = (int) o2.getProgress();
-            if (p1 == p2) return 0;
-            else if (p1 < p2) return 1;
-            else return -1;
+            return Integer.compare((int) o2.getProgress(), (int) o1.getProgress());
         }
     }
 }

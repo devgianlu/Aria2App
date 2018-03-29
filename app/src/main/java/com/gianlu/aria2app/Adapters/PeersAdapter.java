@@ -93,7 +93,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     }
 
     @Override
-    protected boolean matchQuery(Peer item, String query) {
+    protected boolean matchQuery(@NonNull Peer item, String query) {
         return true;
     }
 

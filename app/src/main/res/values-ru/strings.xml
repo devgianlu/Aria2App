@@ -84,12 +84,6 @@
     <string name="notificationsOff">Уведомления отключены</string>
     <string name="notificationType">Тип уведомлений</string>
     <string name="notificationTypeSummary">Выберите какие уведомления получать</string>
-    <string name="enableSound">Включить звук</string>
-    <string name="soundOn">Звук включен</string>
-    <string name="soundOff">Звук отключен</string>
-    <string name="enablePersistent">Включить службу постоянных уведомлений</string>
-    <string name="persistentOn">Служба уведомлений работает всегда</string>
-    <string name="persistentOff">Служба уведомлений может выключится со временем</string>
     <string name="about_aria2">Версия сервера Aria2</string>
     <string name="saveSession">Сохранить сеанс</string>
     <string name="editProfile">Редактировать или удалить профиль</string>
@@ -98,8 +92,6 @@
     <string name="enabledVersionCheck">Версия будет проверяться и вы будете уведомлены, если ваша версия устарела</string>
     <string name="disabledVersionCheck">Проверка версии не будет выполняться</string>
     <string name="menu_downloadQuickOptions">Быстрые настройки</string>
-    <string name="downloadIncomplete">Неполная загрузка</string>
-    <string name="downloadIncompleteMessage">Текущий файл является неполным (он не загружен полностью).\nВы бы хотели его загрузить?</string>
     <string name="notificationService">Служба уведомлений</string>
     <string name="writeExternalStorageRequest_title">Требуется разрешение на запись</string>
     <string name="writeExternalStorageRequest_message">Чтобы сохранить файлы на ваших устройствах, Aria2App необходимо записать на внешнее хранилище.</string>
@@ -107,7 +99,6 @@
     <string name="readExternalStorageRequest_certMessage">Чтобы загрузить сертификат, Aria2App необходимо чтение из внешнего хранилища.</string>
     <string name="readExternalStorageRequest_base64Message">Чтобы загрузить файл torrent/metalink, Aria2App необходимо чтение из внешнего хранилища.I</string>
     <string name="noDownloads">Не удается отобразить загружаемые файлы. Попробуйте изменить фильтры или запустить загрузку, нажав на иконку \"Плюс\" в нижнем углу.</string>
-    <string name="certificate">Расположение сертификата CA</string>
     <string name="search">Поиск</string>
     <string name="addUri">Добавить URI</string>
     <string name="directDownload">Прямая загрузка</string>
@@ -116,9 +107,6 @@
     <string name="dd_downloadPath_summary">Все файлы будут загружены сюда.</string>
     <string name="connecting">Подключение…</string>
     <string name="completed">Завершено</string>
-    <string name="directDownload_noItems">Тут нет загрузок в настоящее время. Загрузки, можно добавить на вкладке \"Файлы\", выбор файла. Если вы не настроили \"Прямую загрузку\" вы можете сделать это путем редактирования вашего профиля.</string>
-    <string name="error">Ошибка (см. Логи)</string>
-    <string name="error_details">Ошибка: %s</string>
     <string name="searchTorrent">Поиск торрентов</string>
     <string name="download">Загрузка</string>
     <string name="size"><![CDATA[<b>Размер:</b>]]> %s</string>
@@ -127,7 +115,6 @@
     <string name="totalLengthLabel">Общий размер</string>
     <string name="progress">Прогресс</string>
     <string name="connectionMethod">Способ подключения:</string>
-    <string name="mitLicense">Лицензия от MIT</string>
     <string name="addMetalink">Добавить Metalink</string>
     <string name="addTorrent">Добавить Torrent</string>
     <string name="fatalExceptionMessage">Было создано неустранимое исключение!</string>
@@ -146,8 +133,6 @@
     <string name="emptyUsername">Поле имени пользователя пусто!</string>
     <string name="invalidAddress">Недопустимый адрес!</string>
     <string name="pickProfile">Выберите профиль или создайте новый. Нажмите и удерживайте для редактирования.</string>
-    <string name="removeName">Удалить %s</string>
-    <string name="removeDownloadAlert">Если вы удалите загрузку, вы не сможете ее перезапустить. Вы хотите ее удалить?</string>
     <string name="failedLoading">Не удалось загрузить страницу!</string>
     <string name="currentUri"><![CDATA[<b>Текущий URI:</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
@@ -165,7 +150,6 @@
     <string name="file">Файл</string>
     <string name="pickTorrent_help">Выберите torrent-файл. Поддерживаемый тип <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Выберите файл Metalink. Поддерживаемые типы <![CDATA[<b>application/metalink4+xml</b>]]> и <![CDATA[<b>application/metalink+xml</b>]]>.</string>
-    <string name="pickProfile_share">Выберите профиль, чтобы начать загрузку:</string>
     <string name="outdated_aria2">Устаревшая версия Aria2</string>
     <string name="outdated_aria2_message">Ваша версия Aria2 устарела. Обновите его до последней версии, чтобы избежать ошибок или проблем.\nВы можете отключить эту функцию в настройках.\n\nВаша версия: %1$s\nБолее новая версия: %2$s</string>
     <string name="selectFile_help">Файл может быть выбран или отменен при загрузке только в многофайловых торрентах.</string>
@@ -226,14 +210,12 @@
     <string name="downloadRemoved">Загрузка удалена!</string>
     <string name="downloadMoved">Загрузка перенесена в очередь.</string>
     <string name="downloadResultRemoved">Результат загрузки удален.</string>
-    <string name="failedRefreshing">Не удалось обновить!</string>
     <string name="invalidFile">Недопустимый файл!</string>
     <string name="invalidDownloadPath">Недопустимый путь для загрузки.</string>
     <string name="failedSavingSession">Не удалось сохранить текущий сеанс!</string>
     <string name="failedDownloadingFile">Не удалось скачать файл!</string>
     <string name="globalOptionsChanged">Глобальные параметры успешно изменены.</string>
     <string name="fileSelected">Файл, выбранный для скачивания.</string>
-    <string name="downloadStarted">Загрузка началась.</string>
     <string name="noQuickOptions">У вас нет быстрых настроек.</string>
     <string name="failedAddingDownload">Не удалось добавить новую загрузку!</string>
     <string name="atLeastOneUri">Добавьте хотя бы один URI!</string>
@@ -278,7 +260,6 @@
     <string name="failed">Не смогли</string>
     <string name="running">работающий</string>
     <string name="paused">Paused</string>
-    <string name="removed">Удалены</string>
     <string name="failedOpeningDownload">Не удалось открыть загрузку!</string>
     <string name="ddNotEnabled">\"Прямую загрузку\" не включен в этот профиль!</string>
     <string name="profileDoesntExist">Этот профиль больше не существует!</string>

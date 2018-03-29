@@ -17,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -111,7 +110,7 @@ public class SavedDownloadsManager {
 
         @Keep
         @SuppressWarnings("unused")
-        public SavedState(JSONObject obj) throws JSONException, URISyntaxException {
+        public SavedState(JSONObject obj) throws JSONException {
             id = obj.getInt("id");
             path = obj.getString("path");
             tempFile = new File(obj.getString("tempFile"));
