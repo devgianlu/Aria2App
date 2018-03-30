@@ -52,8 +52,11 @@ public class HttpClient extends AbstractClient {
             @Override
             public void run() {
                 try (Socket socket = new Socket()) {
+                    long initializedAt = System.currentTimeMillis();
                     socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
-                    if (connectionListener != null) connectionListener.onConnected(HttpClient.this);
+                    if (connectionListener != null)
+                        if (connectionListener.onConnected(HttpClient.this))
+                            connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
                 } catch (IOException ex) {
                     if (connectionListener != null) connectionListener.onFailedConnecting(ex);
                     else Logging.log(ex);

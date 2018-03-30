@@ -2,9 +2,10 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Base64;
 
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
@@ -12,19 +13,15 @@ import com.gianlu.aria2app.R;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 
-class DirectDownloadTester extends BaseTester {
+class DirectDownloadTester extends BaseTester<Boolean> {
     private static final int TIMEOUT = 5;
-    private final MultiProfile.DirectDownload dd;
     private final OkHttpClient client;
 
-    DirectDownloadTester(Context context, MultiProfile.UserProfile profile, @Nullable IPublish listener) {
+    DirectDownloadTester(Context context, MultiProfile.UserProfile profile, @Nullable IPublish<Boolean> listener) {
         super(context, profile, listener);
-        this.dd = profile.directDownload;
 
         client = new OkHttpClient.Builder()
                 .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -43,34 +40,23 @@ class DirectDownloadTester extends BaseTester {
         }
     }
 
-    @Override
-    public Boolean call() {
-        Request.Builder builder = new Request.Builder();
-        HttpUrl baseUrl = dd.getUrl();
-        if (baseUrl == null) {
-            publishError(new NullPointerException("Invalid DirectDownload URL."));
-            return false;
-        }
-
-        builder.get().url(baseUrl);
-
-        if (dd.auth)
-            builder.header("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
-
-        try (Response resp = client.newCall(builder.build()).execute()) {
+    @Nullable
+    public Boolean call(@Nullable Object prevResult) {
+        try (Response resp = client.newCall(NetUtils.createDirectDownloadRequest(profile.directDownload)).execute()) {
             if (resp.code() == 200) {
                 publishMessage("Your DirectDownload configuration is working", R.color.green);
                 return true;
             } else {
                 publishError(new StatusCodeException(resp));
-                return false;
+                return null;
             }
-        } catch (IOException ex) {
+        } catch (IOException | NetUtils.InvalidUrlException ex) {
             publishError(ex);
-            return false;
+            return null;
         }
     }
 
+    @NonNull
     @Override
     public String describe() {
         return "DirectDownload test";

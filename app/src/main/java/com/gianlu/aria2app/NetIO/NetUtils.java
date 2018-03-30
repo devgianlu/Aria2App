@@ -3,6 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Logging;
@@ -151,6 +152,21 @@ public final class NetUtils {
     public static Request createWebsocketRequest(MultiProfile.UserProfile profile) throws InvalidUrlException {
         Request.Builder builder = new Request.Builder();
         builder.url(createWebSocketURL(profile).toString());
+        return builder.build();
+    }
+
+    @NonNull
+    public static Request createDirectDownloadRequest(@NonNull MultiProfile.DirectDownload dd) throws InvalidUrlException {
+        HttpUrl baseUrl = dd.getUrl();
+        if (baseUrl == null)
+            throw new InvalidUrlException(new NullPointerException("DirectDownload url is invalid."));
+
+        Request.Builder builder = new Request.Builder()
+                .get().url(baseUrl);
+
+        if (dd.auth)
+            builder.header("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+
         return builder.build();
     }
 

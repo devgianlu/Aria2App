@@ -334,8 +334,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
     }
 
     @Override
-    public void onConnected(AbstractClient client) {
+    public boolean onConnected(AbstractClient client) {
         goTo(MainActivity.class);
+        return false;
+    }
+
+    @Override
+    public void onPingTested(AbstractClient client, long latency) {
     }
 
     @Override

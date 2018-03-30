@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.ColorRes;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
@@ -15,12 +16,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class TestersFlow extends Thread implements BaseTester.IPublish {
-    private final Queue<BaseTester> testers;
+    private final Queue<BaseTester<?>> testers;
     private final Context context;
     private final ITestFlow listener;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private long startTime;
 
+    @SuppressWarnings("unchecked")
     public TestersFlow(Context context, MultiProfile.UserProfile profile, ITestFlow listener) {
         this.context = context;
         this.listener = listener;
@@ -44,8 +46,11 @@ public class TestersFlow extends Thread implements BaseTester.IPublish {
 
         startTime = System.currentTimeMillis();
 
-        for (BaseTester tester : testers)
-            if (!tester.start()) break;
+        Object lastResult = null;
+        for (BaseTester tester : testers) {
+            lastResult = tester.start(lastResult);
+            if (lastResult == null) break;
+        }
 
         handler.post(new Runnable() {
             @Override
@@ -73,8 +78,8 @@ public class TestersFlow extends Thread implements BaseTester.IPublish {
     }
 
     @Override
-    public void endedTest(BaseTester tester, boolean successful) {
-        publishGeneralMessage("Finished " + tester.describe(), successful ? android.R.color.secondary_text_light : R.color.red);
+    public void endedTest(BaseTester tester, @Nullable Object result) {
+        publishGeneralMessage("Finished " + tester.describe(), result != null ? android.R.color.secondary_text_light : R.color.red);
     }
 
     public interface ITestFlow {

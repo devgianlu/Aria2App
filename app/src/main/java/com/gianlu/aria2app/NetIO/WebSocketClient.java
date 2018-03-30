@@ -31,11 +31,13 @@ public class WebSocketClient extends AbstractClient {
     private static boolean locked = false;
     private final Map<Integer, OnJson> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
+    private final long initializedAt;
     private OnConnect connectionListener = null;
 
     private WebSocketClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
         super(context, profile);
         webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
+        initializedAt = System.currentTimeMillis();
     }
 
     private WebSocketClient(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException {
@@ -167,7 +169,10 @@ public class WebSocketClient extends AbstractClient {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             if (connectionListener != null) {
-                connectionListener.onConnected(WebSocketClient.this);
+                if (connectionListener.onConnected(WebSocketClient.this)) {
+                    connectionListener.onPingTested(WebSocketClient.this, System.currentTimeMillis() - initializedAt);
+                }
+
                 connectionListener = null;
             }
         }
@@ -182,7 +187,6 @@ public class WebSocketClient extends AbstractClient {
     }
 
     private class SandboxThread<R> extends Thread {
-
         private final BatchSandbox<R> sandbox;
         private final DoBatch<R> listener;
 

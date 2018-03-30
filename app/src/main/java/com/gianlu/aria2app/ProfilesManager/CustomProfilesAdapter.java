@@ -123,7 +123,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
     @Override
     protected void runTest(int pos) {
         final MultiProfile.UserProfile profile = getItem(pos).getProfile(context);
-        service.submit(new NetTester(context, profile, this));
+        service.execute(new NetTester(context, profile, this));
     }
 
     @Override

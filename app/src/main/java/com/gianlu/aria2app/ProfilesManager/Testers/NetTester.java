@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
@@ -10,12 +12,12 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Logging;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class NetTester extends BaseTester {
+public class NetTester extends BaseTester<AbstractClient> {
     private final IProfileTester profileListener;
 
-    NetTester(Context context, MultiProfile.UserProfile profile, IPublish listener) {
+    NetTester(Context context, MultiProfile.UserProfile profile, IPublish<AbstractClient> listener) {
         super(context, profile, listener);
         this.profileListener = null;
     }
@@ -25,16 +27,22 @@ public class NetTester extends BaseTester {
         this.profileListener = profileListener;
     }
 
-    @Override
-    public Boolean call() {
-        final AtomicBoolean lock = new AtomicBoolean(false);
+    @Nullable
+    public AbstractClient call(@Nullable Object prevResult) {
+        final AtomicReference<AbstractClient> lock = new AtomicReference<>(null);
 
         OnConnect listener = new OnConnect() {
             @Override
-            public void onConnected(AbstractClient client) {
+            public boolean onConnected(AbstractClient client) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, -1));
+                return true;
+            }
+
+            @Override
+            public void onPingTested(AbstractClient client, long latency) {
+                publishPing(profile, latency);
                 synchronized (lock) {
-                    lock.set(true);
+                    lock.set(client);
                     lock.notifyAll();
                 }
             }
@@ -43,20 +51,21 @@ public class NetTester extends BaseTester {
             public void onFailedConnecting(Throwable ex) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, ex));
                 synchronized (lock) {
-                    lock.set(false);
+                    lock.set(null);
                     lock.notifyAll();
                 }
             }
         };
 
         switch (profile.connectionMethod) {
-            default:
-                return false;
             case HTTP:
                 HttpClient.instantiate(context, profile, listener);
                 break;
             case WEBSOCKET:
                 WebSocketClient.instantiate(context, profile, listener);
+                break;
+            default:
+                return null;
         }
 
         synchronized (lock) {
@@ -70,12 +79,13 @@ public class NetTester extends BaseTester {
         }
     }
 
+    @NonNull
     @Override
     public String describe() {
-        return "Connection test";
+        return "connection test";
     }
 
-    protected void publishResult(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
+    private void publishResult(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
         if (profileListener != null) {
             profileListener.statusUpdated(profile.getParent().id, status);
             return;
@@ -105,11 +115,9 @@ public class NetTester extends BaseTester {
                 publishMessage(status.ex.getMessage(), R.color.red);
             }
         }
-
-        if (status.latency != -1) publishPing(profile, status.latency);
     }
 
-    protected void publishPing(MultiProfile.UserProfile profile, long ping) {
+    private void publishPing(MultiProfile.UserProfile profile, long ping) {
         if (profileListener != null) {
             profileListener.pingUpdated(profile.getParent().id, ping);
             return;
