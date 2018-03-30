@@ -25,6 +25,6 @@ class Updater extends BaseDownloadUpdater<Peers> implements AbstractClient.OnRes
 
     @Override
     public void onException(Exception ex) {
-        errorOccurred(ex);
+        errorOccurred(ex); // TODO: Handle no peers
     }
 }

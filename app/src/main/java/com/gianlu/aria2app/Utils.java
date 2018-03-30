@@ -4,15 +4,21 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 import com.crashlytics.android.Crashlytics;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
@@ -28,7 +34,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Collection;
+import java.util.HashSet;
+
+import okhttp3.HttpUrl;
 
 public final class Utils {
     public static final int CHART_DOWNLOAD_SET = 1;
@@ -50,6 +59,71 @@ public final class Utils {
     public static final String ACTION_SEARCH_GET_MAGNET = "new_magnet_from_search";
     public static final String ACTION_SHORTCUT = "used_shortcut";
     public static final String ACTION_PLAY_VIDEO = "play_video";
+    private static final Collection<String> streamableMimeTypes = new HashSet<>();
+
+    static {
+        streamableMimeTypes.add("video/*");
+        streamableMimeTypes.add("audio/*");
+        streamableMimeTypes.add("*/rmvb");
+        streamableMimeTypes.add("*/avi ");
+        streamableMimeTypes.add("*/mkv");
+        streamableMimeTypes.add("application/3gpp*");
+        streamableMimeTypes.add("application/mp4");
+        streamableMimeTypes.add("application/mpeg*");
+        streamableMimeTypes.add("application/ogg");
+        streamableMimeTypes.add("application/sdp");
+        streamableMimeTypes.add("application/vnd.3gp*");
+        streamableMimeTypes.add("application/vnd.apple.mpegurl");
+        streamableMimeTypes.add("application/vnd.dvd*");
+        streamableMimeTypes.add("application/vnd.dolby*");
+        streamableMimeTypes.add("application/vnd.rn-realmedia*");
+        streamableMimeTypes.add("application/x-iso9660-image");
+        streamableMimeTypes.add("application/x-extension-mp4");
+        streamableMimeTypes.add("application/x-flac");
+        streamableMimeTypes.add("application/x-matroska");
+        streamableMimeTypes.add("application/x-mpegURL");
+        streamableMimeTypes.add("application/x-ogg");
+        streamableMimeTypes.add("application/x-quicktimeplayer");
+        streamableMimeTypes.add("application/x-shockwave-flash");
+        streamableMimeTypes.add("application/xspf+xml");
+        streamableMimeTypes.add("misc/ultravox");
+    }
+
+    public static boolean isStreamable(String mime) {
+        for (String supported : streamableMimeTypes) {
+            if (supported.charAt(0) == '*') {
+                if (mime.endsWith(supported.substring(1)))
+                    return true;
+            } else if (supported.charAt(supported.length() - 1) == '*') {
+                if (mime.startsWith(supported.substring(0, supported.length() - 1)))
+                    return true;
+            } else {
+                if (mime.equalsIgnoreCase(supported))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Nullable
+    public static Intent getStreamIntent(MultiProfile.UserProfile profile, AriaFile file) {
+        MultiProfile.DirectDownload dd = profile.directDownload;
+        if (dd == null) throw new IllegalStateException("WTF?!");
+
+        HttpUrl base = dd.getUrl();
+        if (base == null) return null;
+
+        HttpUrl url = file.getDownloadUrl(base);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(url.toString()), file.getMimeType());
+        return intent;
+    }
+
+    public static boolean canHandleIntent(Context context, @NonNull Intent intent) {
+        return intent.resolveActivity(context.getPackageManager()) != null;
+    }
 
     public static long sizeOf(Serializable obj) {
         try {
@@ -63,14 +137,6 @@ public final class Utils {
             Crashlytics.logException(ex);
             return 0;
         }
-    }
-
-    public static int indexOf(String[] items, String item) {
-        for (int i = 0; i < items.length; i++)
-            if (Objects.equals(items[i], item))
-                return i;
-
-        return -1;
     }
 
     public static void setupChart(LineChart chart, boolean small, @ColorRes int textColor) {

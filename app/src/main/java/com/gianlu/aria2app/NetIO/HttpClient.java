@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.commonutils.Logging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,16 +45,21 @@ public class HttpClient extends AbstractClient {
         this.url = NetUtils.createHttpURL(profile);
     }
 
-    private HttpClient(Context context, MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
+    private HttpClient(Context context, final MultiProfile.UserProfile profile, @Nullable final OnConnect connectionListener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
         this(context, profile);
 
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
-            if (connectionListener != null) connectionListener.onConnected(this);
-        } catch (IOException ex) {
-            if (connectionListener != null) connectionListener.onFailedConnecting(ex);
-            throw ex;
-        }
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try (Socket socket = new Socket()) {
+                    socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
+                    if (connectionListener != null) connectionListener.onConnected(HttpClient.this);
+                } catch (IOException ex) {
+                    if (connectionListener != null) connectionListener.onFailedConnecting(ex);
+                    else Logging.log(ex);
+                }
+            }
+        });
     }
 
     public static HttpClient instantiate(Context context) throws InitializationException {

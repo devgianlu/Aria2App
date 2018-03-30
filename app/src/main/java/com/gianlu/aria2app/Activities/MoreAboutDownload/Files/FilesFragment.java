@@ -33,7 +33,6 @@ import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
-import com.gianlu.aria2app.ExternalPlayers;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
@@ -57,8 +56,6 @@ import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
-
-import okhttp3.HttpUrl;
 
 public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed, BaseUpdater.UpdaterListener<List<AriaFile>> {
     private FilesAdapter adapter;
@@ -324,50 +321,34 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
 
         String mime = file.getMimeType();
         if (mime != null) {
-            final ExternalPlayers.Player player = ExternalPlayers.supportedBy(mime);
-            if (player != null && getContext() != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(R.string.couldStreamVideo)
-                        .setMessage(R.string.couldStreamVideo_message)
-                        .setNeutralButton(android.R.string.cancel, null)
-                        .setPositiveButton(R.string.stream, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                shouldStream(profile, file, player);
-                            }
-                        })
-                        .setNegativeButton(R.string.download, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                shouldDownload(profile, file);
-                            }
-                        });
+            if (Utils.isStreamable(mime) && getContext() != null) {
+                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), file);
+                if (intent != null && Utils.canHandleIntent(getContext(), intent)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.couldStreamVideo)
+                            .setMessage(R.string.couldStreamVideo_message)
+                            .setNeutralButton(android.R.string.cancel, null)
+                            .setPositiveButton(R.string.stream, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    startActivity(intent);
+                                    AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_PLAY_VIDEO);
+                                }
+                            })
+                            .setNegativeButton(R.string.download, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    shouldDownload(profile, file);
+                                }
+                            });
 
-                DialogUtils.showDialog(getActivity(), builder);
-                return;
+                    DialogUtils.showDialog(getActivity(), builder);
+                    return;
+                }
             }
         }
 
         shouldDownload(profile, file);
-    }
-
-    private void shouldStream(MultiProfile profile, AriaFile file, ExternalPlayers.Player player) {
-        if (getContext() == null) return;
-
-        MultiProfile.DirectDownload dd = profile.getProfile(getContext()).directDownload;
-        if (dd == null) throw new IllegalStateException("WTF?!");
-
-        HttpUrl base = dd.getUrl();
-        if (base == null) {
-            Toaster.show(getActivity(), Utils.Messages.FAILED_STREAM_VIDEO, new NullPointerException("DirectDownload url is null!"));
-            return;
-        }
-
-        HttpUrl url = file.getDownloadUrl(base);
-        // TODO: Stream video
-
-        ExternalPlayers.play(getContext(), player);
-        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_PLAY_VIDEO);
     }
 
     private void shouldDownload(final MultiProfile profile, final AriaFile file) {
