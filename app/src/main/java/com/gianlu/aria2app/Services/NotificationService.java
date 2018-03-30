@@ -216,7 +216,7 @@ public class NotificationService extends Service {
                 .setContentText(describeServiceStatus())
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification_icon)
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo))
                 .addAction(new NotificationCompat.Action(R.drawable.ic_clear_black_48dp, getString(R.string.stopNotificationService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
@@ -248,7 +248,7 @@ public class NotificationService extends Service {
                 .setCategory(Notification.CATEGORY_EVENT)
                 .setGroup(gid)
                 .setAutoCancel(true)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_new_releases_grey_48dp))
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
 
@@ -270,7 +270,7 @@ public class NotificationService extends Service {
                 .setContentText(message)
                 .setCategory(Notification.CATEGORY_ERROR)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
-                .setSmallIcon(R.drawable.ic_notification) // FIXME: "Notification icons must be entirely white"
+                .setSmallIcon(R.drawable.ic_notification_icon)
                 .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_error_outline_grey_48dp));
 
