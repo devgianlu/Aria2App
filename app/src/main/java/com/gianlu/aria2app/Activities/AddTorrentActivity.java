@@ -124,7 +124,7 @@ public class AddTorrentActivity extends ActivityWithDialog {
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     dismissDialog();
                     Toaster.show(AddTorrentActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
                 }

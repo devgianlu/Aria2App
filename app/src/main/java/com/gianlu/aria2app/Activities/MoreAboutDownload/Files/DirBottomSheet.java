@@ -142,7 +142,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
                         }
 
                         @Override
-                        public void onException(Exception ex) {
+                        public void onException(Exception ex, boolean shouldForce) {
                             Logging.log(ex);
                             listener.showToast(Utils.Messages.FAILED_CHANGE_FILE_SELECTION);
                         }

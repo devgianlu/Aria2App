@@ -36,7 +36,7 @@ class Aria2Tester extends BaseTester<Boolean> {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(Exception ex, boolean shouldForce) {
                 publishError(ex, authenticated);
 
                 synchronized (lock) {
@@ -65,7 +65,7 @@ class Aria2Tester extends BaseTester<Boolean> {
         else
             throw new IllegalStateException("Previous result should be a client, but was " + prevResult);
 
-        Aria2Helper helper = new Aria2Helper(context, client);
+        Aria2Helper helper = new Aria2Helper(client);
         publishMessage("Started unauthenticated request...", android.R.color.tertiary_text_light);
         if (!runRequest(AriaRequests.listMethods(), helper, false)) return null;
         publishMessage("Unauthenticated request was successful", R.color.green);

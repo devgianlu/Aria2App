@@ -215,7 +215,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                                     }
 
                                     @Override
-                                    public void onException(Exception ex) {
+                                    public void onException(Exception ex, boolean shouldForce) {
                                         Toaster.show(MainActivity.this, Utils.Messages.FAILED_SAVE_SESSION, ex);
                                     }
                                 });
@@ -225,7 +225,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(Exception ex, boolean shouldForce) {
                 Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
                 dismissDialog();
             }
@@ -435,7 +435,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     }
 
                     @Override
-                    public void onException(Exception ex) {
+                    public void onException(Exception ex, boolean shouldForce) {
                         Logging.log(ex);
                     }
                 });
@@ -667,8 +667,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
-                if (!retried) helper.request(AriaRequests.forcePauseAll(), this); // TODO
+            public void onException(Exception ex, boolean shouldForce) {
+                if (!retried && shouldForce) helper.request(AriaRequests.forcePauseAll(), this);
                 else Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
                 retried = true;
             }
@@ -683,7 +683,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(Exception ex, boolean shouldForce) {
                 Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
             }
         });
@@ -697,7 +697,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(Exception ex, boolean shouldForce) {
                 Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
             }
         });

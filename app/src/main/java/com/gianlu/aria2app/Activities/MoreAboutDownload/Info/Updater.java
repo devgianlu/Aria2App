@@ -24,7 +24,7 @@ class Updater extends BaseDownloadUpdater<Download> implements AbstractClient.On
     }
 
     @Override
-    public void onException(Exception ex) {
+    public void onException(Exception ex, boolean shouldForce) {
         errorOccurred(ex);
     }
 }

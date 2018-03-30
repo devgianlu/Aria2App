@@ -199,7 +199,7 @@ public class WebSocketClient extends AbstractClient {
         @Override
         public void run() {
             try {
-                listener.onSandboxReturned(sandbox.sandbox(WebSocketClient.this));
+                listener.onSandboxReturned(sandbox.sandbox(WebSocketClient.this, shouldForce));
             } catch (Exception ex) {
                 listener.onException(ex);
             }

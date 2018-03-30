@@ -113,7 +113,7 @@ public class AddUriActivity extends ActivityWithDialog {
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     dismissDialog();
                     Toaster.show(AddUriActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
                 }

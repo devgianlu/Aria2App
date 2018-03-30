@@ -96,7 +96,7 @@ public class OptionsFragment extends Fragment {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(Exception ex, boolean shouldForce) {
                 MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
 
                 Activity activity = getActivity();

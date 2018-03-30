@@ -153,7 +153,7 @@ public final class OptionsUtils {
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                     activity.dismissDialog();
                 }
@@ -182,7 +182,7 @@ public final class OptionsUtils {
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                     activity.dismissDialog();
                 }
@@ -276,7 +276,7 @@ public final class OptionsUtils {
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                     activity.dismissDialog();
                 }
@@ -313,7 +313,7 @@ public final class OptionsUtils {
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     Toaster.show(activity, Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
                     activity.dismissDialog();
                 }

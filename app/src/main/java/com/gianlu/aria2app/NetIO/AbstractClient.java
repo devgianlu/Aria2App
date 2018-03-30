@@ -10,7 +10,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,13 +36,14 @@ import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient {
     private static final List<WeakReference<OnConnectivityChanged>> listeners = new ArrayList<>();
+    protected final OkHttpClient client;
     private final Handler handler;
     private final WifiManager wifiManager;
     private final WeakReference<Context> context;
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
+    protected final boolean shouldForce;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
-    protected final OkHttpClient client;
 
     AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -50,6 +53,7 @@ public abstract class AbstractClient {
         this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
+        this.shouldForce = Prefs.getBoolean(context, PKeys.A2_FORCE_ACTION, true);
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
@@ -103,7 +107,7 @@ public abstract class AbstractClient {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onException(ex);
+                            listener.onException(ex, shouldForce);
                         }
                     });
                 }
@@ -112,7 +116,7 @@ public abstract class AbstractClient {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onException(ex);
+                    listener.onException(ex, shouldForce);
                 }
             });
         }
@@ -145,7 +149,7 @@ public abstract class AbstractClient {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onException(ex);
+                            listener.onException(ex, shouldForce);
                         }
                     });
                 }
@@ -154,7 +158,7 @@ public abstract class AbstractClient {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onException(ex);
+                    listener.onException(ex, shouldForce);
                 }
             });
         }
@@ -182,7 +186,7 @@ public abstract class AbstractClient {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        listener.onException(ex);
+                        listener.onException(ex, shouldForce);
                     }
                 });
             }
@@ -246,19 +250,19 @@ public abstract class AbstractClient {
     }
 
     public interface BatchSandbox<R> {
-        R sandbox(AbstractClient client) throws Exception;
+        R sandbox(AbstractClient client, boolean shouldForce) throws Exception;
     }
 
     public interface OnResult<R> {
         void onResult(R result);
 
-        void onException(Exception ex);
+        void onException(Exception ex, boolean shouldForce);
     }
 
     public interface OnSuccess {
         void onSuccess();
 
-        void onException(Exception ex);
+        void onException(Exception ex, boolean shouldForce);
     }
 
     public interface OnConnectivityChanged {

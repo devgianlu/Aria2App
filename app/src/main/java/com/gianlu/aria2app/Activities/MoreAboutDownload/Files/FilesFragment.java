@@ -169,7 +169,7 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
                 }
 
                 @Override
-                public void onException(final Exception ex) {
+                public void onException(final Exception ex, boolean shouldForce) {
                     Logging.log(ex);
 
                     Activity activity = getActivity();

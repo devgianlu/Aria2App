@@ -10,12 +10,10 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
-import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.ArrayList;
@@ -24,9 +22,8 @@ import java.util.List;
 public class Aria2Helper {
     private final AbstractClient client;
 
-    public Aria2Helper(Context context, @NonNull AbstractClient client) {
+    public Aria2Helper(@NonNull AbstractClient client) {
         this.client = client;
-        Prefs.getBoolean(context, PKeys.A2_FORCE_ACTION, true); // FIXME
     }
 
     @NonNull
@@ -41,7 +38,7 @@ public class Aria2Helper {
     @NonNull
     public static Aria2Helper instantiate(Context context) throws InitializingException {
         try {
-            return new Aria2Helper(context, getClient(context));
+            return new Aria2Helper(getClient(context));
         } catch (AbstractClient.InitializationException | ProfilesManager.NoCurrentProfileException ex) {
             throw new InitializingException(ex);
         }
@@ -58,7 +55,7 @@ public class Aria2Helper {
     public void getVersionAndSession(AbstractClient.OnResult<VersionAndSession> listener) {
         client.batch(new AbstractClient.BatchSandbox<VersionAndSession>() {
             @Override
-            public VersionAndSession sandbox(AbstractClient client) throws Exception {
+            public VersionAndSession sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 return new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
             }
         }, listener);
@@ -68,7 +65,7 @@ public class Aria2Helper {
         client.batch(new AbstractClient.BatchSandbox<DownloadsAndGlobalStats>() {
 
             @Override
-            public DownloadsAndGlobalStats sandbox(AbstractClient client) throws Exception {
+            public DownloadsAndGlobalStats sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 List<Download> all = new ArrayList<>();
                 all.addAll(client.sendSync(AriaRequests.tellActive()));
                 all.addAll(client.sendSync(AriaRequests.tellWaiting(0, Integer.MAX_VALUE)));
@@ -205,7 +202,7 @@ public class Aria2Helper {
         }
 
         @Override
-        public void onException(Exception ex) {
+        public void onException(Exception ex, boolean shouldForce) {
             listener.showToast(Utils.Messages.FAILED_PERFORMING_ACTION, ex);
         }
 

@@ -26,7 +26,7 @@ class Updater extends BaseDownloadUpdater<List<AriaFile>> implements AbstractCli
     }
 
     @Override
-    public void onException(Exception ex) {
+    public void onException(Exception ex, boolean shouldForce) {
         errorOccurred(ex);
     }
 }

@@ -25,7 +25,7 @@ class Updater extends BaseDownloadUpdater<SparseArray<Servers>> implements Abstr
     }
 
     @Override
-    public void onException(Exception ex) {
+    public void onException(Exception ex, boolean shouldForce) {
         errorOccurred(ex); // TODO: Handle no servers
     }
 }

@@ -154,7 +154,7 @@ public class HttpClient extends AbstractClient {
         @Override
         public void run() {
             try {
-                listener.onSandboxReturned(sandbox.sandbox(HttpClient.this));
+                listener.onSandboxReturned(sandbox.sandbox(HttpClient.this, shouldForce));
             } catch (Exception ex) {
                 listener.onException(ex);
             }

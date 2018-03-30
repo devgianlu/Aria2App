@@ -9,6 +9,7 @@ import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,8 +58,8 @@ public final class DownloadWithHelper {
             }
 
             @Override
-            public void onException(Exception ex) {
-                listener.onException(ex);
+            public void onException(Exception ex, boolean shouldForce) {
+                listener.onException(ex, shouldForce);
             }
         });
     }
@@ -99,8 +100,23 @@ public final class DownloadWithHelper {
         client.send(AriaRequests.changeOptions(baseDownload.gid, options), listener);
     }
 
-    public final void pause(AbstractClient.OnSuccess listener) {
-        client.send(AriaRequests.pause(baseDownload.gid), listener);
+    public final void pause(final AbstractClient.OnSuccess listener) {
+        client.send(AriaRequests.pause(baseDownload.gid), new AbstractClient.OnSuccess() {
+            private boolean retried = false;
+
+            @Override
+            public void onSuccess() {
+                listener.onSuccess();
+            }
+
+            @Override
+            public void onException(Exception ex, boolean shouldForce) {
+                if (!retried && shouldForce)
+                    client.send(AriaRequests.forcePause(baseDownload.gid), this);
+                else listener.onException(ex, shouldForce);
+                retried = true;
+            }
+        });
     }
 
     public final void unpause(AbstractClient.OnSuccess listener) {
@@ -114,7 +130,7 @@ public final class DownloadWithHelper {
     public final void restart(AbstractClient.OnResult<String> listener) {
         client.batch(new AbstractClient.BatchSandbox<String>() {
             @Override
-            public String sandbox(AbstractClient client) throws Exception {
+            public String sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 Download old = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get();
                 Map<String, String> oldOptions = client.sendSync(AriaRequests.getOptions(baseDownload.gid));
                 String url = old.files.get(0).uris.get(AriaFile.Status.USED); // FIXME: Send all used ones (?)
@@ -128,7 +144,7 @@ public final class DownloadWithHelper {
     public final void remove(final boolean removeMetadata, AbstractClient.OnResult<RemoveResult> listener) {
         client.batch(new AbstractClient.BatchSandbox<RemoveResult>() {
             @Override
-            public RemoveResult sandbox(AbstractClient client) throws Exception {
+            public RemoveResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 Download download = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get();
                 if (download.status == Download.Status.COMPLETE || download.status == Download.Status.ERROR || download.status == Download.Status.REMOVED) {
                     client.sendSync(AriaRequests.removeDownloadResult(baseDownload.gid));
@@ -139,7 +155,15 @@ public final class DownloadWithHelper {
                         return RemoveResult.REMOVED_RESULT;
                     }
                 } else {
-                    client.sendSync(AriaRequests.remove(baseDownload.gid));
+                    try {
+                        client.sendSync(AriaRequests.remove(baseDownload.gid));
+                    } catch (IOException ex) {
+                        if (shouldForce)
+                            client.sendSync(AriaRequests.forceRemove(baseDownload.gid));
+                        else
+                            throw ex;
+                    }
+
                     return RemoveResult.REMOVED;
                 }
             }
@@ -149,7 +173,7 @@ public final class DownloadWithHelper {
     public final void changeSelection(final Integer[] selIndexes, final boolean select, AbstractClient.OnResult<ChangeSelectionResult> listener) {
         client.batch(new AbstractClient.BatchSandbox<ChangeSelectionResult>() {
             @Override
-            public ChangeSelectionResult sandbox(AbstractClient client) throws Exception {
+            public ChangeSelectionResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 Map<String, String> options = client.sendSync(AriaRequests.getOptions(baseDownload.gid));
                 String currIndexes = options.get("select-file");
                 if (currIndexes == null)

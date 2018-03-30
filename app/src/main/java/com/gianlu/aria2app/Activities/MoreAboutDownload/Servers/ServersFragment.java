@@ -128,7 +128,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(Exception ex, boolean shouldForce) {
                     recyclerViewLayout.showMessage(R.string.failedLoading, true);
                     Logging.log(ex);
                 }
