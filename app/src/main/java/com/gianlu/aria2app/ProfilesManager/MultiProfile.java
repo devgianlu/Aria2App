@@ -470,9 +470,11 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public UserProfile(JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
-            if (obj.has("serverAuth")) authMethod = AbstractClient.AuthMethod.TOKEN;
+            if (obj.has("serverAuth"))
+                authMethod = AbstractClient.AuthMethod.TOKEN;
             else
                 authMethod = AbstractClient.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
+
             serverUsername = obj.optString("serverUsername", null);
             serverPassword = obj.optString("serverPassword", null);
             serverToken = obj.optString("serverToken", null);

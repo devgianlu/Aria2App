@@ -153,6 +153,19 @@ public class NotificationService extends Service {
         context.startService(new Intent(context, NotificationService.class).setAction(ACTION_STOP));
     }
 
+    private void clearWebsockets() {
+        if (webSockets != null) {
+            for (WebSocket webSocket : webSockets) {
+                webSocket.close(1000, null);
+                webSocket.cancel();
+            }
+
+            webSockets.clear();
+        } else {
+            webSockets = new ArrayList<>();
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
@@ -183,15 +196,7 @@ public class NotificationService extends Service {
 
         notificableDownloads.clear();
         if (profiles != null) profiles.clear();
-        if (webSockets != null) {
-            for (WebSocket webSocket : webSockets) {
-                webSocket.close(1000, null);
-                webSocket.cancel();
-            }
-
-            webSockets.clear();
-        }
-
+        clearWebsockets();
         broadcastManager.sendBroadcastSync(new Intent(ACTION_STOPPED));
 
         return START_NOT_STICKY; // Process will stop
@@ -284,20 +289,12 @@ public class NotificationService extends Service {
     }
 
     private void notifyException(MultiProfile.UserProfile profile, Throwable ex) {
+        Logging.log(ex);
         notifyError(profile, getString(R.string.notificationException, profile.getProfileName(this)), ex.getMessage());
     }
 
     private void recreateWebsockets(int networkType) {
-        if (webSockets != null) {
-            for (WebSocket webSocket : webSockets) {
-                webSocket.close(1000, null);
-                webSocket.cancel();
-            }
-
-            webSockets.clear();
-        } else {
-            webSockets = new ArrayList<>();
-        }
+        clearWebsockets();
 
         for (MultiProfile multi : profiles) {
             MultiProfile.UserProfile profile;

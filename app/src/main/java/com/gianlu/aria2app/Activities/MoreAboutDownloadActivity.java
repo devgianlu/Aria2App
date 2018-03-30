@@ -21,6 +21,7 @@ import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
 public class MoreAboutDownloadActivity extends ActivityWithDialog implements InfoFragment.IStatusChanged {
@@ -109,12 +110,10 @@ public class MoreAboutDownloadActivity extends ActivityWithDialog implements Inf
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
@@ -138,7 +137,6 @@ public class MoreAboutDownloadActivity extends ActivityWithDialog implements Inf
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
     }
@@ -147,15 +145,14 @@ public class MoreAboutDownloadActivity extends ActivityWithDialog implements Inf
     public void onBackPressed() {
         if (adapter != null) {
             OnBackPressed visible = adapter.getFragments().get(pager.getCurrentItem());
-            if (!visible.canGoBack(-1))
-                return;
-
+            if (!visible.canGoBack(-1)) return;
             visible.onBackPressed();
         }
 
         try {
             super.onBackPressed();
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException ex) {
+            Logging.log(ex);
         }
     }
 

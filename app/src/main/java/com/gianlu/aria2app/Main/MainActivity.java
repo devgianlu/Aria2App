@@ -311,7 +311,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
-        AbstractClient.addConnectivityListener(this);
+        AbstractClient.addConnectivityListener(MainActivity.class.getName(), this);
 
         setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
 
@@ -450,7 +450,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     protected void onDestroy() {
-        AbstractClient.removeConnectivityListener(this);
+        AbstractClient.removeConnectivityListener(MainActivity.class.getName());
 
         if (adapter != null) adapter.activityDestroying(this);
 

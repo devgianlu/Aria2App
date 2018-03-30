@@ -25,9 +25,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
+import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.net.ssl.SSLContext;
@@ -35,13 +34,13 @@ import javax.net.ssl.SSLContext;
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient {
-    private static final List<WeakReference<OnConnectivityChanged>> listeners = new ArrayList<>();
+    private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
     protected final OkHttpClient client;
+    protected final boolean shouldForce;
     private final Handler handler;
     private final WifiManager wifiManager;
     private final WeakReference<Context> context;
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
-    protected final boolean shouldForce;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
 
@@ -58,24 +57,22 @@ public abstract class AbstractClient {
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-    public static void addConnectivityListener(OnConnectivityChanged listener) {
-        for (WeakReference<OnConnectivityChanged> ref : listeners)
-            if (ref.get() == listener)
-                return;
-
-        listeners.add(new WeakReference<>(listener));
+    public static void addConnectivityListener(String key, OnConnectivityChanged listener) {
+        synchronized (listeners) {
+            listeners.put(key, listener);
+        }
     }
 
-    public static void removeConnectivityListener(OnConnectivityChanged listener) {
-        Iterator<WeakReference<OnConnectivityChanged>> iterator = listeners.listIterator();
-        while (iterator.hasNext()) {
-            WeakReference<OnConnectivityChanged> ref = iterator.next();
-            if (ref.get() == null || ref.get() == listener) iterator.remove();
+    public static void removeConnectivityListener(String key) {
+        synchronized (listeners) {
+            listeners.remove(key);
         }
     }
 
     static void clearConnectivityListener() {
-        listeners.clear();
+        synchronized (listeners) {
+            listeners.clear();
+        }
     }
 
     @Override
@@ -314,33 +311,34 @@ public abstract class AbstractClient {
 
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
 
+        private void switchClients(final Context context, final MultiProfile.UserProfile updated) {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        connectivityChanged(context, updated);
+                        profile = updated;
+
+                        for (OnConnectivityChanged listener : new ArrayList<>(listeners.values()))
+                            if (listener != null)
+                                listener.connectivityChanged(updated);
+                    } catch (Exception ex) {
+                        ErrorHandler.get().notifyException(ex, true);
+                    }
+                }
+            }.start();
+        }
+
         @Override
-        public void onReceive(final Context context, final Intent intent) {
+        public void onReceive(Context context, Intent intent) {
             if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
                 if (!noConnectivity) {
-                    int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
-                    final MultiProfile.UserProfile profile = AbstractClient.this.profile.getParent().getProfile(networkType, wifiManager);
-                    if (!Objects.equals(AbstractClient.this.profile.connectivityCondition, profile.connectivityCondition)) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    connectivityChanged(context, profile);
-                                    AbstractClient.this.profile = profile;
+                    MultiProfile.UserProfile user = profile.getParent()
+                            .getProfile(intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY), wifiManager);
 
-                                    Iterator<WeakReference<OnConnectivityChanged>> iterator = listeners.listIterator();
-                                    while (iterator.hasNext()) {
-                                        WeakReference<OnConnectivityChanged> ref = iterator.next();
-                                        if (ref.get() == null) iterator.remove();
-                                        else ref.get().connectivityChanged(profile);
-                                    }
-                                } catch (Exception ex) {
-                                    ErrorHandler.get().notifyException(ex, true);
-                                }
-                            }
-                        }).start();
-                    }
+                    if (!Objects.equals(profile.connectivityCondition, user.connectivityCondition))
+                        switchClients(context, user);
                 }
             }
         }
