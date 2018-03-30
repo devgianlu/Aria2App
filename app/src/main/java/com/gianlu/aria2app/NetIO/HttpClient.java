@@ -112,14 +112,11 @@ public class HttpClient extends AbstractClient {
             if (body != null) {
                 String json = body.string();
                 if (json == null || json.isEmpty()) {
-                    throw new NullPointerException("Empty response");
+                    throw new IOException("Empty response");
                 } else {
                     JSONObject obj = new JSONObject(json);
-                    if (obj.has("error")) {
-                        throw new AriaException(obj.getJSONObject("error"));
-                    } else {
-                        return obj;
-                    }
+                    validateResponse(obj);
+                    return obj;
                 }
             } else {
                 throw new StatusCodeException(resp);

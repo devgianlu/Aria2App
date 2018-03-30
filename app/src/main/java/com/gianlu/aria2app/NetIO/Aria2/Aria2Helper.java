@@ -80,17 +80,6 @@ public class Aria2Helper {
         return client;
     }
 
-    /*
-    private void handleSuccessRequestt(JSONObject request, final ISuccess listener) {
-        if (response.has("error")) // FIXME
-            listener.onException(new AriaException(response.getJSONObject("error")));
-        else if (Objects.equals(response.optString("result"), "OK"))
-            listener.onSuccess();
-        else
-            listener.onException(new AriaException(response.toString(), -1));
-    }
-    */
-
     public enum WhatAction {
         REMOVE, RESTART, RESUME, PAUSE, MOVE_UP, STOP, MOVE_DOWN
     }

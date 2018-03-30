@@ -159,8 +159,13 @@ public class WebSocketClient extends AbstractClient {
 
                 OnJson listener = requests.remove(response.getInt("id"));
                 if (listener == null) return;
-                if (response.isNull("error")) listener.onResponse(response);
-                else listener.onException(new AriaException(response.getJSONObject("error")));
+
+                try {
+                    validateResponse(response);
+                    listener.onResponse(response);
+                } catch (AriaException ex) {
+                    listener.onException(ex);
+                }
             } catch (JSONException ex) {
                 ErrorHandler.get().notifyException(ex, false);
             }

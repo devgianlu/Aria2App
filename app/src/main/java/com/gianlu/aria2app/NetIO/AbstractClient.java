@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -165,6 +166,10 @@ public abstract class AbstractClient {
 
     @NonNull
     protected abstract JSONObject sendSync(@NonNull JSONObject request) throws Exception;
+
+    protected final void validateResponse(JSONObject resp) throws JSONException, AriaException {
+        if (resp.has("error")) throw new AriaException(resp.getJSONObject("error"));
+    }
 
     public final <R> void batch(BatchSandbox<R> sandbox, final OnResult<R> listener) {
         batch(sandbox, new DoBatch<R>() {

@@ -7,7 +7,7 @@ public class AriaException extends Exception {
     public final int code;
     public final String reason;
 
-    AriaException(String detailMessage, int code) {
+    private AriaException(String detailMessage, int code) {
         super(detailMessage);
         this.reason = detailMessage;
         this.code = code;
