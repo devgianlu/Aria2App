@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
-import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 
@@ -146,7 +145,7 @@ public class ProfilesManager {
             try {
                 profiles.add(retrieveProfile(id.replace(".profile", "")));
             } catch (IOException | JSONException ex) {
-                if (BuildConfig.DEBUG) ex.printStackTrace();
+                Logging.log(ex);
             }
         }
 

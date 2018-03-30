@@ -2,7 +2,7 @@ package com.gianlu.aria2app.NetIO;
 
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.BuildConfig;
+import com.gianlu.commonutils.Logging;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,7 +57,7 @@ public final class ErrorHandler {
             if (handler != null) handler.onException(ex);
         }
 
-        if (BuildConfig.DEBUG) ex.printStackTrace();
+        Logging.log(ex);
     }
 
     public interface IErrorHandler {

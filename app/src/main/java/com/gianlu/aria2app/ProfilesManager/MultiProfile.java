@@ -487,7 +487,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
             if (obj.has("directDownload"))
                 directDownload = new DirectDownload(obj.getJSONObject("directDownload"));
-            else directDownload = null;
+            else
+                directDownload = null;
 
             connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.HTTP.name()));
 
@@ -501,7 +502,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             if (obj.isNull("certificatePath")) {
-                certificate = CertUtils.decodeCertificate(obj.optString("certificate", null));
+                String base64 = obj.optString("certificate", null);
+                if (base64 == null) certificate = null;
+                else certificate = CertUtils.decodeCertificate(base64);
             } else {
                 certificate = CertUtils.loadCertificateFromFile(obj.getString("certificatePath"));
             }
@@ -548,11 +551,15 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("serverPassword", serverPassword)
                     .put("hostnameVerifier", hostnameVerifier)
                     .put("serverSSL", serverSSL)
-                    .put("certificate", CertUtils.encodeCertificate(certificate))
                     .put("connectionMethod", connectionMethod.name())
                     .put("connectivityCondition", connectivityCondition.toJson());
 
-            if (directDownload != null) profile.put("directDownload", directDownload.toJson());
+            if (certificate != null)
+                profile.put("certificate", CertUtils.encodeCertificate(certificate));
+
+            if (directDownload != null)
+                profile.put("directDownload", directDownload.toJson());
+
             return profile;
         }
 

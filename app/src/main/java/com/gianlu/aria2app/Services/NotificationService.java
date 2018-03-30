@@ -72,7 +72,7 @@ public class NotificationService extends Service {
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
     private final List<String> notificableDownloads = new ArrayList<>();
-    private List<WebSocket> webSockets;
+    private Set<WebSocket> webSockets;
     private ArrayList<MultiProfile> profiles;
     private WifiManager wifiManager;
     private NotificationManager notificationManager;
@@ -157,12 +157,11 @@ public class NotificationService extends Service {
         if (webSockets != null) {
             for (WebSocket webSocket : webSockets) {
                 webSocket.close(1000, null);
-                webSocket.cancel();
             }
 
             webSockets.clear();
         } else {
-            webSockets = new ArrayList<>();
+            webSockets = new HashSet<>();
         }
     }
 

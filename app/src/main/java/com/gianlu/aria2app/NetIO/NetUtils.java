@@ -71,7 +71,7 @@ public final class NetUtils {
         return context;
     }
 
-    private static void setSslSocketFactory(OkHttpClient.Builder builder, SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+    private static void setSslSocketFactory(OkHttpClient.Builder builder, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
         TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
@@ -89,7 +89,7 @@ public final class NetUtils {
         return buildClient(profile, createSSLContext(profile.certificate));
     }
 
-    static OkHttpClient buildClient(MultiProfile.UserProfile profile, SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    static OkHttpClient buildClient(MultiProfile.UserProfile profile, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
