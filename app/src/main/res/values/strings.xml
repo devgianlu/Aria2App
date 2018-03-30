@@ -317,6 +317,9 @@
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
     <string name="stream">Stream</string>
     <string name="failedStreamVideo">Failed to stream the video!</string>
+    <string name="mpAndroidChart">MPAndroidChart</string>
+    <string name="tapTargetView">TapTargetView</string>
+    <string name="flowLayout">Android flow layout</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
