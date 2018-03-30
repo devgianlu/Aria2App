@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
@@ -25,6 +26,10 @@ class Updater extends BaseDownloadUpdater<Peers> implements AbstractClient.OnRes
 
     @Override
     public void onException(Exception ex, boolean shouldForce) {
-        errorOccurred(ex); // TODO: Handle no peers
+        if (ex instanceof AriaException && ex.getMessage().startsWith("No peer data is available")) {
+            hasResult(Peers.empty());
+        } else {
+            errorOccurred(ex);
+        }
     }
 }

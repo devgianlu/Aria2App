@@ -99,6 +99,7 @@ public final class TopCountriesView extends FlowLayout {
 
         for (AriaFile file : files) {
             Servers list = servers.get(file.index);
+            if (list == null) continue;
             for (Server server : list) {
                 IPDetails details = freeGeoIp.getCached(server.uri.getHost());
                 if (details != null)

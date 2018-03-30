@@ -108,8 +108,6 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
     @Override
     public void onUpdateUi(final SparseArray<Servers> servers) {
-        if (servers.size() == 0) return;
-
         DownloadWithHelper download = getDownloadWithHelper();
         if (files == null && download != null) {
             download.files(new AbstractClient.OnResult<List<AriaFile>>() {
@@ -133,7 +131,6 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
                     Logging.log(ex);
                 }
             });
-
             return;
         }
 

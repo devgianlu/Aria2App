@@ -5,6 +5,7 @@ import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
@@ -26,7 +27,11 @@ class Updater extends BaseDownloadUpdater<SparseArray<Servers>> implements Abstr
 
     @Override
     public void onException(Exception ex, boolean shouldForce) {
-        errorOccurred(ex); // TODO: Handle no servers
+        if (ex instanceof AriaException && ex.getMessage().startsWith("No active download")) {
+            hasResult(new SparseArray<Servers>());
+        } else {
+            errorOccurred(ex);
+        }
     }
 }
 
