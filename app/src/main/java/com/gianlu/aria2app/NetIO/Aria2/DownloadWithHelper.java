@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class DownloadWithHelper {
     private final Download baseDownload;
@@ -133,8 +134,16 @@ public final class DownloadWithHelper {
             public String sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 Download old = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get();
                 Map<String, String> oldOptions = client.sendSync(AriaRequests.getOptions(baseDownload.gid));
-                String url = old.files.get(0).uris.get(AriaFile.Status.USED); // FIXME: Send all used ones (?)
-                String newGid = client.sendSync(AriaRequests.addUri(Collections.singletonList(url), null, oldOptions));
+
+                Set<String> newUrls = new HashSet<>();
+                for (AriaFile file : old.files) {
+                    for (String url : file.uris.keySet()) {
+                        if (file.uris.get(url) == AriaFile.Status.USED)
+                            newUrls.add(url);
+                    }
+                }
+
+                String newGid = client.sendSync(AriaRequests.addUri(newUrls, null, oldOptions));
                 client.sendSync(AriaRequests.removeDownloadResult(baseDownload.gid));
                 return newGid;
             }

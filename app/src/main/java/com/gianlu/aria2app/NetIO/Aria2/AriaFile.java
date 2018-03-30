@@ -19,7 +19,7 @@ public class AriaFile extends DownloadChild implements Serializable {
     public final long length;
     public final String path;
     public final Integer index;
-    public final HashMap<Status, String> uris;
+    public final HashMap<String, Status> uris;
     public boolean selected;
     private String mime;
 
@@ -34,8 +34,10 @@ public class AriaFile extends DownloadChild implements Serializable {
 
         if (obj.has("uris")) {
             JSONArray array = obj.getJSONArray("uris");
-            for (int i = 0; i < array.length(); i++)
-                uris.put(Status.parse(array.optJSONObject(i).optString("status")), array.optJSONObject(i).optString("uri"));
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject uri = array.getJSONObject(i);
+                uris.put(uri.getString("uri"), Status.parse(uri.getString("status")));
+            }
         }
     }
 

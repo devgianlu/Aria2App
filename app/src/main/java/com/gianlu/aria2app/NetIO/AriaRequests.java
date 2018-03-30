@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +113,7 @@ public final class AriaRequests {
         }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull List<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
+    public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
         Object[] params = new Object[3];
         params[0] = CommonUtils.toJSONArray(uris, true);
         if (options != null) params[1] = OptionsUtils.toJson(options);
@@ -122,7 +123,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.ADD_URI, STRING_PROCESSOR, params);
     }
 
-    public static AbstractClient.AriaRequestWithResult<String> addTorrent(@NonNull String base64, @Nullable List<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
+    public static AbstractClient.AriaRequestWithResult<String> addTorrent(@NonNull String base64, @Nullable Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
         Object[] params = new Object[4];
         params[0] = base64;
         if (uris != null) params[1] = CommonUtils.toJSONArray(uris, true);

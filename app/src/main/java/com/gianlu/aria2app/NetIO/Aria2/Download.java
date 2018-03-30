@@ -120,31 +120,14 @@ public class Download extends DownloadStatic implements Serializable, Filterable
     @NonNull
     private String getNameInternal() {
         try {
-            if (isTorrent()) {
-                if (torrent != null && torrent.name != null) {
-                    return torrent.name;
-                } else {
-                    String[] splitted = files.get(0).path.split("/");
-                    return splitted[splitted.length - 1];
-                }
-            } else {
-                String[] splitted = files.get(0).path.split("/");
-                if (splitted.length == 1) {
-                    if (files.get(0).uris.get(AriaFile.Status.USED) != null) {
-                        return files.get(0).uris.get(AriaFile.Status.USED);
-                    } else if (files.get(0).uris.get(AriaFile.Status.WAITING) != null) {
-                        return files.get(0).uris.get(AriaFile.Status.WAITING);
-                    } else {
-                        return "Unknown";
-                    }
-                } else {
-                    return splitted[splitted.length - 1];
-                }
-            }
+            if (torrent != null && torrent.name != null) return torrent.name;
+            String[] splitted = files.get(0).path.split("/");
+            if (splitted.length >= 1) return splitted[splitted.length - 1];
         } catch (Exception ex) {
             Logging.log(ex);
-            return "Unknown";
         }
+
+        return "Unknown";
     }
 
     public float getProgress() {
@@ -167,13 +150,7 @@ public class Download extends DownloadStatic implements Serializable, Filterable
     }
 
     public enum Status {
-        ACTIVE,
-        PAUSED,
-        WAITING,
-        ERROR,
-        REMOVED,
-        COMPLETE,
-        UNKNOWN;
+        ACTIVE, PAUSED, WAITING, ERROR, REMOVED, COMPLETE, UNKNOWN;
 
         @NonNull
         public static Status parse(@Nullable String val) {
@@ -232,7 +209,7 @@ public class Download extends DownloadStatic implements Serializable, Filterable
             }
 
             if (firstCapital) return val;
-            else return val.substring(0, 1).toLowerCase() + val.substring(1);
+            else return Character.toLowerCase(val.charAt(0)) + val.substring(1);
         }
     }
 
