@@ -1,11 +1,11 @@
 package com.gianlu.aria2app.Downloader;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Utils;
@@ -18,30 +18,29 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import okhttp3.HttpUrl;
 
 public class DownloadStartConfig {
-    private static final Random random = new Random();
     public final List<Task> tasks;
     public final File cacheDir;
     public final String profileId;
 
-    private DownloadStartConfig(Context context, String profileId) {
+    private DownloadStartConfig(@NonNull Context context, String profileId) {
         this.profileId = profileId;
         this.tasks = new ArrayList<>();
         this.cacheDir = context.getExternalCacheDir();
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
+    public static DownloadStartConfig create(@NonNull Context context, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
 
         for (AriaFile file : dir.allObjs()) {
-            String relativePath = file.getRelativePath(download.dir);
+            String relativePath = file.getRelativePath();
             File destFile = new File(downloadPath, relativePath);
 
             MultiProfile.DirectDownload dd = profile.directDownload;
@@ -58,7 +57,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(Context context, Download download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
+    public static DownloadStartConfig create(@NonNull Context context, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
@@ -74,7 +73,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig createForSavedState(Context context, SavedDownloadsManager.SavedState state) throws CannotCreateStartConfigException, DownloaderUtils.InvalidPathException {
+    public static DownloadStartConfig createForSavedState(@NonNull Context context, SavedDownloadsManager.SavedState state) throws CannotCreateStartConfigException, DownloaderUtils.InvalidPathException {
         ProfilesManager manager = ProfilesManager.get(context);
 
         MultiProfile.UserProfile profile;
@@ -107,7 +106,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig recreate(Context context, DownloadTask task) {
+    public static DownloadStartConfig recreate(@NonNull Context context, DownloadTask task) {
         DownloadStartConfig config = new DownloadStartConfig(context, task.task.getProfileId());
         config.addTask(task.task.url, task.task.destFile, task.task.username, task.task.password);
         return config;
@@ -124,7 +123,7 @@ public class DownloadStartConfig {
     public static class CannotCreateStartConfigException extends Exception {
         final Cause cause;
 
-        CannotCreateStartConfigException(Exception ex) {
+        public CannotCreateStartConfigException(Exception ex) {
             super(ex);
             this.cause = Cause.INTERNAL;
         }
@@ -173,7 +172,7 @@ public class DownloadStartConfig {
         }
 
         Task(HttpUrl url, File destFile, @Nullable String username, @Nullable String password) {
-            this(random.nextInt(), url, destFile, username, password, false);
+            this(ThreadLocalRandom.current().nextInt(), url, destFile, username, password, false);
         }
 
         @Override

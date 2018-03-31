@@ -74,8 +74,8 @@ public class AriaFile extends DownloadChild implements Serializable {
         return ((float) completedLength) / ((float) length) * 100;
     }
 
-    public String getRelativePath(@NonNull String dir) {
-        return getRelativePath(path, dir);
+    public String getRelativePath() {
+        return getRelativePath(path, download.dir);
     }
 
     public boolean completed() {
@@ -96,7 +96,7 @@ public class AriaFile extends DownloadChild implements Serializable {
     @NonNull
     public HttpUrl getDownloadUrl(@NonNull HttpUrl base) {
         HttpUrl.Builder builder = base.newBuilder();
-        builder.addPathSegments(getRelativePath(download.dir));
+        builder.addPathSegments(getRelativePath());
         return builder.build();
     }
 

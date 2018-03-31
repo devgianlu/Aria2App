@@ -285,10 +285,13 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
 
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
         try {
+            if (getContext() == null)
+                throw new DownloadStartConfig.CannotCreateStartConfigException(new NullPointerException("Context is null!"));
+
             DownloaderUtils.startDownload(downloaderMessenger,
                     file == null ?
-                            DownloadStartConfig.create(getContext(), download.get(), profile.getProfile(getContext()), dir) :
-                            DownloadStartConfig.create(getContext(), download.get(), profile.getProfile(getContext()), file));
+                            DownloadStartConfig.create(getContext(), profile.getProfile(getContext()), dir) :
+                            DownloadStartConfig.create(getContext(), profile.getProfile(getContext()), file));
         } catch (DownloaderUtils.InvalidPathException | DownloadStartConfig.CannotCreateStartConfigException ex) {
             Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
             return;
