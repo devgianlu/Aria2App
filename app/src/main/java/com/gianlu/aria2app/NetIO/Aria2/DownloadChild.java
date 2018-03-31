@@ -12,7 +12,7 @@ public abstract class DownloadChild implements Serializable {
     }
 
     @NonNull
-    public DownloadStatic getDownload() { // TODO: Not really useful
+    public DownloadStatic getDownload() {
         return download;
     }
 }
