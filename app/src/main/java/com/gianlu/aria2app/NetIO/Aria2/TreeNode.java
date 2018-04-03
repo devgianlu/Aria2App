@@ -17,7 +17,7 @@ public class TreeNode extends DownloadChild {
     private final String separator;
     public AriaFile obj;
 
-    private TreeNode(DownloadStatic download, TreeNode parent, String incrementalPath, AriaFile obj) {
+    private TreeNode(Download download, TreeNode parent, String incrementalPath, AriaFile obj) {
         super(download);
         this.separator = TreeNode.guessSeparator(download.dir);
         this.parent = parent;
@@ -28,7 +28,7 @@ public class TreeNode extends DownloadChild {
         this.name = obj.getName();
     }
 
-    private TreeNode(DownloadStatic download, TreeNode parent, String name, String incrementalPath) {
+    private TreeNode(Download download, TreeNode parent, String name, String incrementalPath) {
         super(download);
         this.separator = TreeNode.guessSeparator(download.dir);
         this.parent = parent;
@@ -39,7 +39,7 @@ public class TreeNode extends DownloadChild {
         this.incrementalPath = incrementalPath;
     }
 
-    TreeNode(DownloadStatic download, TreeNode node) {
+    TreeNode(Download download, TreeNode node) {
         super(download);
         this.separator = TreeNode.guessSeparator(download.dir);
         this.files = node.files;
@@ -70,7 +70,7 @@ public class TreeNode extends DownloadChild {
         else return "/";
     }
 
-    public static TreeNode create(DownloadStatic download, List<AriaFile> files) {
+    public static TreeNode create(Download download, List<AriaFile> files) {
         TreeNode rootNode = new TreeNode(download, null, TreeNode.guessSeparator(download.dir), "");
         for (AriaFile file : files) rootNode.addElement(file, download.dir);
         return rootNode;
@@ -89,13 +89,10 @@ public class TreeNode extends DownloadChild {
 
     public Integer[] allIndexes() {
         if (isFile()) return new Integer[]{obj.index};
-        List<AriaFile> allObjs = allObjs();
-        Integer[] indexes = new Integer[allObjs.size()];
-        for (int i = 0; i < allObjs.size(); i++) indexes[i] = allObjs.get(i).index;
-        return indexes;
+        return AriaFile.allIndexes(allObjs());
     }
 
-    private List<AriaFile> objs() {
+    public List<AriaFile> objs() {
         if (isFile()) return Collections.singletonList(obj);
         List<AriaFile> objs = new ArrayList<>();
         for (TreeNode file : files) objs.add(file.obj);

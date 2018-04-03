@@ -242,7 +242,7 @@ public abstract class AbstractClient {
         GET_OPTIONS("aria2.getOption"),
         GET_FILES("aria2.getFiles"),
         CHANGE_POSITION("aria2.changePosition"),
-        CHANGE_OPTIONS("aria2.changeOptions");
+        CHANGE_OPTIONS("aria2.changeOption");
 
         private final String method;
 

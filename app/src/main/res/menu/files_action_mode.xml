@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/filesActionMode_deselect"
+        android:icon="@drawable/ic_cloud_off_white_48dp"
+        android:title="@string/deselect"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/filesActionMode_select"
+        android:icon="@drawable/ic_cloud_download_white_48dp"
+        android:title="@string/select"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/filesActionMode_selectAll"
+        android:icon="@drawable/ic_select_all_white_48dp"
+        android:title="@string/selectAll"
+        app:showAsAction="ifRoom" />
+
+</menu>

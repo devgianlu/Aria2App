@@ -9,15 +9,14 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BitTorrent extends DownloadChild implements Serializable {
+public class BitTorrent implements Serializable {
     public final ArrayList<String> announceList;
     public final Mode mode;
     public final String comment;
     public final long creationDate;
     public final String name;
 
-    BitTorrent(DownloadStatic download, @NonNull JSONObject obj) {
-        super(download);
+    BitTorrent(@NonNull JSONObject obj) {
         comment = obj.optString("comment", null);
         creationDate = obj.optInt("creationDate", -1);
         mode = Mode.parse(obj.optString("mode"));

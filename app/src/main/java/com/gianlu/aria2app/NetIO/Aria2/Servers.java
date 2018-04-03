@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Servers extends ArrayList<Server> {
 
-    public Servers(DownloadStatic download, JSONArray servers) throws JSONException {
+    public Servers(Download download, JSONArray servers) throws JSONException {
         for (int i = 0; i < servers.length(); i++)
             add(new Server(download, servers.getJSONObject(i)));
     }

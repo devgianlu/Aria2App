@@ -9,8 +9,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.HttpUrl;
 
@@ -22,16 +25,17 @@ public class AriaFile extends DownloadChild implements Serializable {
     public final HashMap<String, Status> uris;
     public boolean selected;
     private String mime;
+    private String name;
 
-    public AriaFile(DownloadStatic download, JSONObject obj) throws JSONException {
+    public AriaFile(Download download, JSONObject obj) throws JSONException {
         super(download);
         index = obj.getInt("index");
         path = obj.getString("path");
         length = obj.getLong("length");
         completedLength = obj.getLong("completedLength");
         selected = obj.getBoolean("selected");
-        uris = new HashMap<>();
 
+        uris = new HashMap<>();
         if (obj.has("uris")) {
             JSONArray array = obj.getJSONArray("uris");
             for (int i = 0; i < array.length(); i++) {
@@ -57,9 +61,20 @@ public class AriaFile extends DownloadChild implements Serializable {
         return match;
     }
 
+    public static Integer[] allIndexes(Collection<AriaFile> files) {
+        Integer[] indexes = new Integer[files.size()];
+        Iterator<AriaFile> iterator = files.iterator();
+        for (int i = 0; i < files.size(); i++) indexes[i] = iterator.next().index;
+        return indexes;
+    }
+
     public String getName() {
-        String[] splitted = path.split("/");
-        return splitted[splitted.length - 1];
+        if (name == null) {
+            String[] splitted = path.split("/");
+            name = splitted[splitted.length - 1];
+        }
+
+        return name;
     }
 
     @Override
@@ -68,6 +83,11 @@ public class AriaFile extends DownloadChild implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         AriaFile ariaFile = (AriaFile) o;
         return index.equals(ariaFile.index) && path.equals(ariaFile.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, index);
     }
 
     public float getProgress() {

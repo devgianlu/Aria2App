@@ -7,6 +7,14 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
+    <CheckBox
+        android:id="@+id/fileItem_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="4dp"
+        android:visibility="gone" />
+
     <com.gianlu.aria2app.FileTypeTextView
         android:id="@+id/fileItem_fileType"
         android:layout_width="wrap_content"

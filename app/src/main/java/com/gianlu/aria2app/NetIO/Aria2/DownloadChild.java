@@ -5,14 +5,14 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 
 public abstract class DownloadChild implements Serializable {
-    protected final DownloadStatic download;
+    protected final Download download;
 
-    DownloadChild(@NonNull DownloadStatic download) {
+    DownloadChild(@NonNull Download download) {
         this.download = download;
     }
 
     @NonNull
-    public DownloadStatic getDownload() {
+    public Download getDownload() {
         return download;
     }
 }

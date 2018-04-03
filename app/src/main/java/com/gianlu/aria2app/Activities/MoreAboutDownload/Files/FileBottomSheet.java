@@ -149,11 +149,11 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
                                     break;
                                 case SELECTED:
                                     file.selected = true;
-                                    listener.showToast(Utils.Messages.FILE_SELECTED);
+                                    listener.showToast(Utils.Messages.FILES_SELECTED);
                                     break;
                                 case DESELECTED:
                                     file.selected = false;
-                                    listener.showToast(Utils.Messages.FILE_DESELECTED);
+                                    listener.showToast(Utils.Messages.FILES_DESELECTED);
                                     break;
                             }
                         }

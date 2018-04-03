@@ -23,7 +23,7 @@ public class Peer extends DownloadChild implements Serializable, Filterable<NotF
     public final int port;
     public final String bitfield;
 
-    public Peer(DownloadStatic download, JSONObject obj) {
+    public Peer(Download download, JSONObject obj) {
         super(download);
         peerId = obj.optString("peerId", null);
         ip = obj.optString("ip", null);

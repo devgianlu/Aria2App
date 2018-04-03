@@ -9,20 +9,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadStatic;
+import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_DIR = 0;
@@ -31,7 +35,9 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final LayoutInflater inflater;
     private final int color;
     private final IAdapter handler;
+    private final Set<AriaFile> selectedFiles = new HashSet<>();
     private TreeNode currentNode;
+    private boolean isInActionMode = false;
 
     public FilesAdapter(Context context, @ColorRes int colorRes, IAdapter handler) {
         this.inflater = LayoutInflater.from(context);
@@ -39,7 +45,20 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.handler = handler;
     }
 
-    public void update(DownloadStatic download, List<AriaFile> files) {
+    public void enteredActionMode(AriaFile trigger) {
+        isInActionMode = true;
+        selectedFiles.clear();
+        selectedFiles.add(trigger);
+        notifyDataSetChanged();
+    }
+
+    public void selectAllInDirectory() {
+        if (!isInActionMode || currentNode == null) return;
+        selectedFiles.addAll(currentNode.objs());
+        notifyDataSetChanged();
+    }
+
+    public void update(Download download, List<AriaFile> files) {
         if (currentNode == null) {
             currentNode = TreeNode.create(download, files);
             notifyCurrentDirChanged();
@@ -115,17 +134,45 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         else return new DirViewHolder(parent);
     }
 
+    public Set<AriaFile> getSelectedFiles() {
+        return selectedFiles;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof FileViewHolder) {
             FileViewHolder castHolder = (FileViewHolder) holder;
-            TreeNode file = currentNodes.get(position);
+            final TreeNode file = currentNodes.get(position);
 
             castHolder.name.setText(file.name);
             castHolder.fileType.setFilename(file.name);
             castHolder.progressBar.setProgress((int) file.obj.getProgress());
             castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", file.obj.getProgress()));
             castHolder.updateStatus(file.obj);
+
+            if (isInActionMode) {
+                castHolder.select.setVisibility(View.VISIBLE);
+                boolean selected = false;
+                if (selectedFiles.contains(file.obj))
+                    selected = true;
+
+                castHolder.select.setOnCheckedChangeListener(null);
+                castHolder.select.setChecked(selected);
+                castHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) selectedFiles.add(file.obj);
+                        else selectedFiles.remove(file.obj);
+
+                        if (selectedFiles.isEmpty()) {
+                            if (handler != null) handler.exitActionMode();
+                            exitedActionMode();
+                        }
+                    }
+                });
+            } else {
+                castHolder.select.setVisibility(View.GONE);
+            }
         } else if (holder instanceof DirViewHolder) {
             DirViewHolder castHolder = (DirViewHolder) holder;
             TreeNode dir = currentNodes.get(position);
@@ -155,8 +202,9 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 int pos = holder.getAdapterPosition();
                 if (pos != -1) {
                     TreeNode node = currentNodes.get(pos);
-                    if (node != null && !node.isFile()) {
-                        if (handler != null) handler.onDirectorySelected(node);
+                    if (node != null && handler != null) {
+                        if (node.isFile()) return handler.onFileLongClick(node.obj);
+                        else handler.onDirectorySelected(node);
                         return true;
                     }
                 }
@@ -184,8 +232,18 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return currentNode;
     }
 
+    public void exitedActionMode() {
+        isInActionMode = false;
+        selectedFiles.clear();
+        notifyDataSetChanged();
+    }
+
     public interface IAdapter {
         void onFileSelected(AriaFile file);
+
+        boolean onFileLongClick(AriaFile file);
+
+        void exitActionMode();
 
         void onDirectoryChanged(TreeNode dir);
 
@@ -208,11 +266,13 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         final SuperTextView percentage;
         final ImageView status;
         final FileTypeTextView fileType;
+        final CheckBox select;
 
         FileViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.item_file, parent, false));
 
             name = itemView.findViewById(R.id.fileItem_name);
+            select = itemView.findViewById(R.id.fileItem_select);
             progressBar = itemView.findViewById(R.id.fileItem_progressBar);
             progressBar.setProgressTintList(ColorStateList.valueOf(color));
             percentage = itemView.findViewById(R.id.fileItem_percentage);

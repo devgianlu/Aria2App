@@ -6,7 +6,6 @@ import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadStatic;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.Aria2.GlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
@@ -49,7 +48,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_POSITION, gid, pos, mode);
     }
 
-    public static AbstractClient.AriaRequestWithResult<SparseArray<Servers>> getServers(final DownloadStatic download) {
+    public static AbstractClient.AriaRequestWithResult<SparseArray<Servers>> getServers(final Download download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SERVERS, new AbstractClient.Processor<SparseArray<Servers>>() {
             @NonNull
             @Override
@@ -65,7 +64,7 @@ public final class AriaRequests {
         }, download.gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<Peers> getPeers(final DownloadStatic download) {
+    public static AbstractClient.AriaRequestWithResult<Peers> getPeers(final Download download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_PEERS, new AbstractClient.Processor<Peers>() {
             @NonNull
             @Override
@@ -75,7 +74,7 @@ public final class AriaRequests {
         }, download.gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(final DownloadStatic download) {
+    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(final Download download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<List<AriaFile>>() {
             @NonNull
             @Override

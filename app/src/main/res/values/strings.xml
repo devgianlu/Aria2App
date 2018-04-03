@@ -223,7 +223,7 @@
     <string name="failedSavingSession">Failed saving current session!</string>
     <string name="failedDownloadingFile">Failed downloading file!</string>
     <string name="globalOptionsChanged">Global options has been successfully changed.</string>
-    <string name="fileSelected">File selected for download.</string>
+    <string name="fileSelected">File(s) selected for download.</string>
     <string name="noQuickOptions">You have no quick options.</string>
     <string name="failedAddingDownload">Failed adding the new download!</string>
     <string name="atLeastOneUri">Add at least one URI!</string>
@@ -232,7 +232,7 @@
     <string name="cannotDeselectAllFiles">You cannot deselect all files!</string>
     <string name="failedDownloadingDir">Failed downloading directory!</string>
     <string name="duplicatedCondition">This condition is already present in this profile.</string>
-    <string name="fileDeselected">File deselected from download.</string>
+    <string name="fileDeselected">File(s) deselected from download.</string>
     <string name="noFilemanager">A file manager has not been found!</string>
     <string name="onlyOneTorrentUri">When adding torrent magnets only one link should be added at once.</string>
     <string name="dirFilesDeselected">All files in directory are deselected from download.</string>
@@ -319,6 +319,9 @@
     <string name="mpAndroidChart">MPAndroidChart</string>
     <string name="tapTargetView">TapTargetView</string>
     <string name="flowLayout">Android flow layout</string>
+    <string name="select">Select</string>
+    <string name="deselect">Deselect</string>
+    <string name="selectAll">Select all</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

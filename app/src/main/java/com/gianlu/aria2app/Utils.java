@@ -280,8 +280,8 @@ public final class Utils {
         public static final Toaster.Message GLOBAL_OPTIONS_CHANGED = new Toaster.Message(R.string.globalOptionsChanged, false);
         public static final Toaster.Message ONLY_ONE_TORRENT = new Toaster.Message(R.string.onlyOneTorrentUri, false);
         public static final Toaster.Message NO_FILE_MANAGER = new Toaster.Message(R.string.noFilemanager, true);
-        public static final Toaster.Message FILE_DESELECTED = new Toaster.Message(R.string.fileDeselected, false);
-        public static final Toaster.Message FILE_SELECTED = new Toaster.Message(R.string.fileSelected, false);
+        public static final Toaster.Message FILES_DESELECTED = new Toaster.Message(R.string.fileDeselected, false);
+        public static final Toaster.Message FILES_SELECTED = new Toaster.Message(R.string.fileSelected, false);
         public static final Toaster.Message DIR_DESELECTED = new Toaster.Message(R.string.dirFilesDeselected, false);
         public static final Toaster.Message DIR_SELECTED = new Toaster.Message(R.string.dirFilesSelected, false);
         public static final Toaster.Message CANT_DESELECT_ALL_FILES = new Toaster.Message(R.string.cannotDeselectAllFiles, false);

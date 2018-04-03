@@ -16,10 +16,14 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -55,6 +59,7 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
+import java.util.Collection;
 import java.util.List;
 
 public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed, BaseUpdater.UpdaterListener<List<AriaFile>> {
@@ -68,6 +73,7 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
     private Messenger downloaderMessenger = null;
     private IWaitBinder boundWaiter;
     private DownloadWithHelper download;
+    private ActionMode actionMode = null;
 
     public static FilesFragment getInstance(Context context, Download download) {
         FilesFragment fragment = new FilesFragment();
@@ -80,15 +86,17 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
 
     @Override
     public boolean canGoBack(int code) {
-        if (fileSheet == null) return true;
-
         if (code == CODE_CLOSE_SHEET) {
             fileSheet.collapse();
+            if (actionMode != null) actionMode.finish();
             return true;
         }
 
         if (fileSheet.isExpanded()) { // We don't need to do this for dirSheet too, it would be redundant
             fileSheet.collapse();
+            return false;
+        } else if (actionMode != null) {
+            actionMode.finish();
             return false;
         } else if (adapter != null && adapter.canGoUp()) {
             adapter.navigateUp();
@@ -114,6 +122,8 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                canGoBack(CODE_CLOSE_SHEET);
+
                 refresh(new OnRefresh() {
                     @Override
                     public void refreshed() {
@@ -195,6 +205,80 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
     @Override
     public void onFileSelected(AriaFile file) {
         fileSheet.expand(download, file);
+    }
+
+    @Override
+    public boolean onFileLongClick(AriaFile file) {
+        if (getActivity() == null || file.getDownload().files.size() == 1) return false;
+
+        adapter.enteredActionMode(file);
+        actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.files_action_mode, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.filesActionMode_select:
+                        changeSelectionForBatch(adapter.getSelectedFiles(), true);
+                        return true;
+                    case R.id.filesActionMode_deselect:
+                        changeSelectionForBatch(adapter.getSelectedFiles(), false);
+                        return true;
+                    case R.id.filesActionMode_selectAll:
+                        adapter.selectAllInDirectory();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                actionMode = null;
+                adapter.exitedActionMode();
+            }
+        });
+        return true;
+    }
+
+    private void changeSelectionForBatch(Collection<AriaFile> files, boolean select) {
+        download.changeSelection(AriaFile.allIndexes(files), select, new AbstractClient.OnResult<DownloadWithHelper.ChangeSelectionResult>() {
+            @Override
+            public void onResult(DownloadWithHelper.ChangeSelectionResult result) {
+                switch (result) {
+                    case EMPTY:
+                        Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES);
+                        break;
+                    case SELECTED:
+                        Toaster.show(getActivity(), Utils.Messages.FILES_SELECTED);
+                        break;
+                    case DESELECTED:
+                        Toaster.show(getActivity(), Utils.Messages.FILES_DESELECTED);
+                        break;
+                }
+
+                exitActionMode();
+            }
+
+            @Override
+            public void onException(Exception ex, boolean shouldForce) {
+                Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
+            }
+        });
+    }
+
+    @Override
+    public void exitActionMode() {
+        if (actionMode != null) actionMode.finish();
     }
 
     @Override
