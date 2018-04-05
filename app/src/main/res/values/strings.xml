@@ -33,7 +33,6 @@
     <string name="notificationPaused">Download paused</string>
     <string name="notificationError">Download error</string>
     <string name="notificationBTComplete">BitTorrent download completed</string>
-    <string name="unknown">Unknown</string>
     <string name="noPeers">No peers</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>

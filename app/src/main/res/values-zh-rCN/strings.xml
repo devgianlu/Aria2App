@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="select">选择</string>
+    <string name="deselect">取消选择</string>
+    <string name="selectAll">选择全部</string>
     <string name="downloadStatus_waiting">等待</string>
     <string name="downloadStatus_error">错误</string>
     <string name="downloadStatus_paused">已暂停</string>
@@ -32,7 +35,6 @@
     <string name="notificationPaused">下载已暂停</string>
     <string name="notificationError">下载错误</string>
     <string name="notificationBTComplete">BitTorrent 下载已完成</string>
-    <string name="unknown">位置</string>
     <string name="noPeers">无 Peer</string>
     <string name="features"><![CDATA[<b>已启用功能:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>实例 ID:</b>]]> %s</string>
