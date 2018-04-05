@@ -1,10 +1,12 @@
 package com.gianlu.aria2app;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 
 import com.gianlu.aria2app.Services.NotificationService;
@@ -161,6 +163,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         @Override
         protected String getPackageName() {
             return "com.gianlu.aria2app";
+        }
+
+        @Nullable
+        @Override
+        protected Uri getOpenSourceUrl() {
+            return null;
         }
 
         @Override
