@@ -92,11 +92,11 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
             return true;
         }
 
-        if (fileSheet.isExpanded()) { // We don't need to do this for dirSheet too, it would be redundant
-            fileSheet.collapse();
-            return false;
-        } else if (actionMode != null) {
+        if (actionMode != null) { // Unluckily ActionMode intercepts the event (useless condition)
             actionMode.finish();
+            return false;
+        } else if (fileSheet.isExpanded()) { // We don't need to do this for dirSheet too, it would be redundant
+            fileSheet.collapse();
             return false;
         } else if (adapter != null && adapter.canGoUp()) {
             adapter.navigateUp();
