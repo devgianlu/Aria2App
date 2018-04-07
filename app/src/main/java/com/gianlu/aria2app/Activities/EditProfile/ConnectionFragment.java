@@ -354,7 +354,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     }
 
     public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
-        if (!created) {
+        if (!created || !isAdded()) {
             Bundle args = getArguments();
             MultiProfile.UserProfile edit;
             if (args == null || (edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit")) == null)
