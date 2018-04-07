@@ -71,9 +71,6 @@ public class Base64Fragment extends Fragment {
         switch (requestCode) {
             case FILE_SELECT_CODE:
                 if (resultCode == Activity.RESULT_OK && intent.getData() != null) {
-                    if (getActivity() != null)
-                        getActivity().getContentResolver().takePersistableUriPermission(intent.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
                     data = intent.getData();
                     if (intent.getData() != null) setFilename(data);
                 }
