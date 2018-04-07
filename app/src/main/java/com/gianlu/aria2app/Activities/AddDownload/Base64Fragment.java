@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
@@ -89,6 +90,9 @@ public class Base64Fragment extends Fragment {
                 if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0)
                     name = cursor.getString(0);
                 else return;
+            } catch (Exception ex) {
+                Logging.log(ex);
+                return;
             }
         }
 
