@@ -455,9 +455,13 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
 
     @Override
     public void showToast(Toaster.Message message) {
-        Toaster.show(getActivity(), message);
-        if (dirSheet != null)
-            dirSheet.collapse(); // We don't need to do this for dirSheet too, it would be redundant
+        Toaster.show(getActivity(), message, new Runnable() {
+            @Override
+            public void run() {
+                if (dirSheet != null)
+                    dirSheet.collapse(); // We don't need to do this for dirSheet too, it would be redundant
+            }
+        });
     }
 
     @Override
