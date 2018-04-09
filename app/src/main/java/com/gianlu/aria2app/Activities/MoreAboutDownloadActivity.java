@@ -85,12 +85,13 @@ public class MoreAboutDownloadActivity extends ActivityWithDialog implements Inf
             return;
         }
 
-        if (currentStatus == null) currentStatus = download.status;
+        Download.Update last = download.last();
+        if (currentStatus == null) currentStatus = last.status;
 
         setTheme(download.isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_more_about_download);
-        setTitle(download.getName());
+        setTitle(last.getName());
 
         Toolbar toolbar = findViewById(R.id.moreAboutDownload_toolbar);
         setSupportActionBar(toolbar);

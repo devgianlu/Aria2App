@@ -12,9 +12,11 @@ public class DownloadsAndGlobalStats {
 
         downloads = new ArrayList<>();
         if (ignoreMetadata) {
-            for (Download download : allDownloads)
-                if (!(download.isMetadata() && (download.followedBy != null || download.status == Download.Status.COMPLETE)))
+            for (Download download : allDownloads) {
+                Download.Update last = download.last();
+                if (!(last.isMetadata() && (last.followedBy != null || last.status == Download.Status.COMPLETE)))
                     downloads.add(download);
+            }
         } else {
             downloads.addAll(allDownloads);
         }

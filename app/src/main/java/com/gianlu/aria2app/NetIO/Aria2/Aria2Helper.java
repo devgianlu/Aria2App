@@ -96,9 +96,10 @@ public class Aria2Helper {
         }
 
         private void remove(Context context) {
-            if (download.get().following != null) {
+            Download.Update last = download.get().last();
+            if (last.following != null) {
                 listener.showDialog(new AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.removeMetadataName, download.get().getName()))
+                        .setTitle(context.getString(R.string.removeMetadataName, last.getName()))
                         .setMessage(R.string.removeDownload_removeMetadata)
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             @Override

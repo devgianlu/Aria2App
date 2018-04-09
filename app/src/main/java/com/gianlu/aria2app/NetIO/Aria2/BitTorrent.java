@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ public class BitTorrent implements Serializable {
     public final long creationDate;
     public final String name;
 
-    BitTorrent(@NonNull JSONObject obj) {
+    private BitTorrent(@NonNull JSONObject obj) {
         comment = obj.optString("comment", null);
         creationDate = obj.optInt("creationDate", -1);
         mode = Mode.parse(obj.optString("mode"));
@@ -30,6 +31,12 @@ public class BitTorrent implements Serializable {
 
         if (obj.has("info")) name = obj.optJSONObject("info").optString("name");
         else name = null;
+    }
+
+    @Nullable
+    public static BitTorrent create(JSONObject obj) throws JSONException {
+        if (obj.has("bittorrent")) return new BitTorrent(obj.getJSONObject("bittorrent"));
+        else return null;
     }
 
     public enum Mode {

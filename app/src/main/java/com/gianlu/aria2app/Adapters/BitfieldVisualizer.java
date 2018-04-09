@@ -87,9 +87,10 @@ public class BitfieldVisualizer extends View {
     }
 
     public void update(Download download) {
-        if (Objects.equals(bitfield, download.bitfield)) return;
+        Download.Update last = download.last();
+        if (Objects.equals(bitfield, last.bitfield)) return;
 
-        bitfield = download.bitfield;
+        bitfield = last.bitfield;
         pieces = download.numPieces / 4;
         binary = hexToBinary(bitfield, pieces);
 

@@ -32,7 +32,7 @@ public final class AriaRequests {
             List<Download> list = new ArrayList<>();
             JSONArray array = obj.getJSONArray("result");
             for (int i = 0; i < array.length(); i++)
-                list.add(new Download(array.getJSONObject(i)));
+                list.add(Download.create(array.getJSONObject(i)));
             return list;
         }
     };
@@ -241,7 +241,7 @@ public final class AriaRequests {
             @NonNull
             @Override
             public DownloadWithHelper process(AbstractClient client, JSONObject obj) throws JSONException {
-                return new Download(obj.getJSONObject("result")).wrap(client);
+                return Download.create(obj.getJSONObject("result")).wrap(client);
             }
         }, gid);
     }

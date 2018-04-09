@@ -104,7 +104,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         holder.toggleNotification.setVisibility(View.VISIBLE);
         holder.more.setVisibility(View.VISIBLE);
 
-        switch (download.status) {
+        switch (download.last().status) {
             case ACTIVE:
                 holder.restart.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
@@ -256,7 +256,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     @Override
     protected boolean matchQuery(@NonNull Download item, @Nullable String query) {
         return (query == null
-                || item.getName().toLowerCase().contains(query.toLowerCase())
+                || item.last().getName().toLowerCase().contains(query.toLowerCase())
                 || item.gid.toLowerCase().contains(query.toLowerCase()))
                 && !filters.contains(item.getFilterable());
     }
@@ -426,8 +426,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             detailsUploadLength = itemView.findViewById(R.id.downloadCard_detailsUploadLength);
         }
 
-        public void update(Download item) {
-            if (item.status == Download.Status.ACTIVE) {
+        public void update(Download download) {
+            Download.Update last = download.last();
+            if (last.status == Download.Status.ACTIVE) {
                 LineData data = detailsChart.getData();
                 if (data == null) {
                     Utils.setupChart(detailsChart, true, R.color.colorPrimaryDark);
@@ -436,8 +437,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
                 if (data != null) {
                     int pos = data.getEntryCount() / 2 + 1;
-                    data.addEntry(new Entry(pos, item.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                    data.addEntry(new Entry(pos, item.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                    data.addEntry(new Entry(pos, last.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(pos, last.uploadSpeed), Utils.CHART_UPLOAD_SET);
                     data.notifyDataChanged();
                     detailsChart.notifyDataSetChanged();
 
@@ -446,22 +447,22 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 }
             } else {
                 detailsChart.clear();
-                detailsChart.setNoDataText(context.getString(R.string.downloadIs, item.status.getFormal(context, false)));
+                detailsChart.setNoDataText(context.getString(R.string.downloadIs, last.status.getFormal(context, false)));
             }
 
-            donutProgress.setProgress(item.getProgress());
-            downloadName.setText(item.getName());
-            if (item.status == Download.Status.ERROR)
-                downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", item.status.getFormal(context, true), item.errorCode, item.errorMessage));
+            donutProgress.setProgress(last.getProgress());
+            downloadName.setText(last.getName());
+            if (last.status == Download.Status.ERROR)
+                downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", last.status.getFormal(context, true), last.errorCode, last.errorMessage));
             else
-                downloadStatus.setText(item.status.getFormal(context, true));
+                downloadStatus.setText(last.status.getFormal(context, true));
 
-            customInfo.update(item);
+            customInfo.update(last);
 
-            detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(item.completedLength, false));
-            detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(item.uploadLength, false));
+            detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(last.completedLength, false));
+            detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(last.uploadLength, false));
 
-            setupActions(this, item);
+            setupActions(this, download);
         }
     }
 }

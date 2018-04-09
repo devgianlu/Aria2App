@@ -42,7 +42,6 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadStatic;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.NetIO.AriaRequests;
@@ -153,9 +152,9 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
         fileSheet = new FileBottomSheet(layout, this);
         dirSheet = new DirBottomSheet(layout, this);
 
-        DownloadStatic downloadStatic;
+        Download downloadStatic;
         Bundle args = getArguments();
-        if (args == null || (downloadStatic = (DownloadStatic) args.getSerializable("download")) == null) {
+        if (args == null || (downloadStatic = (Download) args.getSerializable("download")) == null) {
             recyclerViewLayout.showMessage(R.string.failedLoading, true);
             return layout;
         }
@@ -209,7 +208,7 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
 
     @Override
     public boolean onFileLongClick(AriaFile file) {
-        if (getActivity() == null || file.getDownload().files.size() == 1) return false;
+        if (getActivity() == null || file.getDownload().last().files.size() == 1) return false;
 
         adapter.enteredActionMode(file);
         actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionMode.Callback() {

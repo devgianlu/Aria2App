@@ -109,7 +109,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
             }
         }, 1000);
 
-        Logging.clearLogs(this);
         WebSocketClient.clear();
         HttpClient.clear();
 

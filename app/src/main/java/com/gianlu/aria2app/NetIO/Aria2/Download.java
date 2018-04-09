@@ -20,70 +20,53 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Download extends DownloadStatic implements Serializable, Filterable<Download.Status> {
-    public final String bitfield;
-    public final long completedLength;
-    public final long uploadLength;
-    public final int connections;
-    public final Status status;
-    public final int downloadSpeed;
-    public final int uploadSpeed;
-    public final ArrayList<AriaFile> files;
-    public final int errorCode;
-    public final String errorMessage;
-    public final String followedBy;
-    public final long verifiedLength;
-    public final boolean verifyIntegrityPending;
-    // BitTorrent only
-    public final boolean seeder;
-    public final int numSeeders;
-    public final String following;
-    public final String belongsTo;
-    public final String infoHash;
-    private String name = null;
+public class Download implements Serializable, Filterable<Download.Status> {
+    public final String dir;
+    public final String gid;
+    public final int numPieces;
+    public final long pieceLength;
+    public final long length;
+    public final BitTorrent torrent;
 
-    public Download(JSONObject obj) throws JSONException {
-        super(obj);
-        status = Status.parse(obj.getString("status"));
+    private Download(JSONObject obj) throws JSONException {
+        gid = obj.getString("gid");
+        length = obj.getLong("totalLength");
+        pieceLength = obj.getLong("pieceLength");
+        numPieces = obj.getInt("numPieces");
+        dir = obj.getString("dir");
+        torrent = BitTorrent.create(obj);
+    }
 
-        completedLength = obj.optLong("completedLength", 0);
-        uploadLength = obj.optLong("uploadLength", 0);
-        bitfield = obj.optString("bitfield", null);
-        downloadSpeed = obj.optInt("downloadSpeed", 0);
-        uploadSpeed = obj.optInt("uploadSpeed", 0);
+    public static Download create(JSONObject obj) throws JSONException {
+        Download download = new Download(obj);
+        AbstractClient.downloadUpdates.put(download.gid, download.update(obj));
+        return download;
+    }
 
-        connections = obj.optInt("connections", 0);
-        followedBy = obj.optString("followedBy", null);
-        following = obj.optString("following", null);
-        belongsTo = obj.optString("belongsTo", null);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Download download = (Download) o;
+        return Objects.equals(gid, download.gid);
+    }
 
-        verifiedLength = obj.optLong("verifiedLength", 0);
-        verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
-        files = new ArrayList<>();
+    @Override
+    public int hashCode() {
+        return Objects.hash(gid);
+    }
 
-        if (obj.has("files")) {
-            JSONArray array = obj.optJSONArray("files");
-            for (int i = 0; i < array.length(); i++)
-                files.add(new AriaFile(this, array.optJSONObject(i)));
-        }
+    private Update update(JSONObject obj) throws JSONException {
+        return new Update(obj);
+    }
 
-        if (obj.has("bittorrent")) {
-            infoHash = obj.optString("infoHash", null);
-            numSeeders = obj.optInt("numSeeders");
-            seeder = obj.optBoolean("seeder", false);
-        } else {
-            infoHash = null;
-            numSeeders = 0;
-            seeder = false;
-        }
+    public final boolean isTorrent() {
+        return torrent != null;
+    }
 
-        if (obj.has("errorCode")) {
-            errorCode = obj.getInt("errorCode");
-            errorMessage = obj.optString("errorMessage");
-        } else {
-            errorCode = -1;
-            errorMessage = null;
-        }
+    @NonNull
+    public Download.Update last() {
+        return AbstractClient.downloadUpdates.get(gid);
     }
 
     public DownloadWithHelper wrap(@NonNull AbstractClient client) {
@@ -95,58 +78,9 @@ public class Download extends DownloadStatic implements Serializable, Filterable
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Download download = (Download) o;
-        return gid.equals(download.gid);
-    }
-
-    public float shareRatio() {
-        if (completedLength == 0) return 0f;
-        return ((float) uploadLength) / ((float) completedLength);
-    }
-
-    @NonNull
-    public String getName() {
-        if (name == null) name = getNameInternal();
-        return name;
-    }
-
-    public boolean isMetadata() {
-        return getName().startsWith("[METADATA]");
-    }
-
-    @NonNull
-    private String getNameInternal() {
-        try {
-            if (torrent != null && torrent.name != null) return torrent.name;
-            String[] splitted = files.get(0).path.split("/");
-            if (splitted.length >= 1) return splitted[splitted.length - 1];
-        } catch (Exception ex) {
-            Logging.log(ex);
-        }
-
-        return "Unknown";
-    }
-
-    public float getProgress() {
-        return ((float) completedLength) / ((float) length) * 100;
-    }
-
-    public long getMissingTime() {
-        if (downloadSpeed == 0) return 0;
-        return (length - completedLength) / downloadSpeed;
-    }
-
-    public boolean canDeselectFiles() {
-        return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR && status != Status.UNKNOWN;
-    }
-
-    @Override
     @NonNull
     public Status getFilterable() {
-        return status;
+        return last().status;
     }
 
     public enum Status {
@@ -213,27 +147,37 @@ public class Download extends DownloadStatic implements Serializable, Filterable
         }
     }
 
-    public static class StatusComparator implements Comparator<Download> {
+    private abstract static class UpdateComparator implements Comparator<Download> {
+
         @Override
-        public int compare(Download o1, Download o2) {
+        public final int compare(Download o1, Download o2) {
+            return compare(o1.last(), o2.last());
+        }
+
+        protected abstract int compare(Download.Update o1, Download.Update o2);
+    }
+
+    public static class StatusComparator extends UpdateComparator {
+        @Override
+        public int compare(Download.Update o1, Download.Update o2) {
             if (o1.status == o2.status) return 0;
             else if (o1.status.ordinal() < o2.status.ordinal()) return -1;
             else return 1;
         }
     }
 
-    public static class DownloadSpeedComparator implements Comparator<Download> {
+    public static class DownloadSpeedComparator extends UpdateComparator {
         @Override
-        public int compare(Download o1, Download o2) {
+        public int compare(Download.Update o1, Download.Update o2) {
             if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
             else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
             else return 1;
         }
     }
 
-    public static class UploadSpeedComparator implements Comparator<Download> {
+    public static class UploadSpeedComparator extends UpdateComparator {
         @Override
-        public int compare(Download o1, Download o2) {
+        public int compare(Download.Update o1, Download.Update o2) {
             if (Objects.equals(o1.uploadSpeed, o2.uploadSpeed)) return 0;
             else if (o1.uploadSpeed > o2.uploadSpeed) return -1;
             else return 1;
@@ -249,26 +193,140 @@ public class Download extends DownloadStatic implements Serializable, Filterable
         }
     }
 
-    public static class NameComparator implements Comparator<Download> {
+    public static class NameComparator extends UpdateComparator {
         @Override
-        public int compare(Download o1, Download o2) {
+        public int compare(Download.Update o1, Download.Update o2) {
             return o1.getName().compareToIgnoreCase(o2.getName());
         }
     }
 
-    public static class CompletedLengthComparator implements Comparator<Download> {
+    public static class CompletedLengthComparator extends UpdateComparator {
         @Override
-        public int compare(Download o1, Download o2) {
+        public int compare(Download.Update o1, Download.Update o2) {
             if (Objects.equals(o1.completedLength, o2.completedLength)) return 0;
             else if (o1.completedLength > o2.completedLength) return -1;
             else return 1;
         }
     }
 
-    public static class ProgressComparator implements Comparator<Download> {
+    public static class ProgressComparator extends UpdateComparator {
         @Override
-        public int compare(Download o1, Download o2) {
+        public int compare(Download.Update o1, Download.Update o2) {
             return Integer.compare((int) o2.getProgress(), (int) o1.getProgress());
+        }
+    }
+
+    public class Update {
+        public final String bitfield;
+        public final long completedLength;
+        public final long uploadLength;
+        public final int connections;
+        public final Download.Status status;
+        public final int downloadSpeed;
+        public final int uploadSpeed;
+        public final ArrayList<AriaFile> files;
+        public final int errorCode;
+        public final String errorMessage;
+        public final String followedBy;
+        public final long verifiedLength;
+        public final boolean verifyIntegrityPending;
+        // BitTorrent only
+        public final boolean seeder;
+        public final int numSeeders;
+        public final String following;
+        public final String belongsTo;
+        public final String infoHash;
+        private String name = null;
+
+        public Update(JSONObject obj) throws JSONException {
+            status = Download.Status.parse(obj.getString("status"));
+            completedLength = obj.getLong("completedLength");
+            uploadLength = obj.getLong("uploadLength");
+            downloadSpeed = obj.getInt("downloadSpeed");
+            uploadSpeed = obj.getInt("uploadSpeed");
+            connections = obj.getInt("connections");
+
+            // Optional
+            bitfield = obj.optString("bitfield", null);
+            followedBy = obj.optString("followedBy", null);
+            following = obj.optString("following", null);
+            belongsTo = obj.optString("belongsTo", null);
+            verifiedLength = obj.optLong("verifiedLength", 0);
+            verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
+
+            files = new ArrayList<>();
+            if (obj.has("files")) {
+                JSONArray array = obj.getJSONArray("files");
+                for (int i = 0; i < array.length(); i++)
+                    files.add(new AriaFile(Download.this, array.getJSONObject(i)));
+            }
+
+            if (isTorrent()) {
+                infoHash = obj.getString("infoHash");
+                numSeeders = obj.getInt("numSeeders");
+                seeder = obj.optBoolean("seeder", false);
+            } else {
+                infoHash = null;
+                numSeeders = 0;
+                seeder = false;
+            }
+
+            if (obj.has("errorCode")) {
+                errorCode = obj.getInt("errorCode");
+                errorMessage = obj.getString("errorMessage");
+            } else {
+                errorCode = -1;
+                errorMessage = null;
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Download download = (Download) o;
+            return gid.equals(download.gid);
+        }
+
+        public float shareRatio() {
+            if (completedLength == 0) return 0f;
+            return ((float) uploadLength) / ((float) completedLength);
+        }
+
+        @NonNull
+        public String getName() {
+            if (name == null) name = getNameInternal();
+            return name;
+        }
+
+        public boolean isMetadata() {
+            return getName().startsWith("[METADATA]");
+        }
+
+        @NonNull
+        private String getNameInternal() {
+            try {
+                if (torrent != null && torrent.name != null) return torrent.name;
+                String[] splitted = files.get(0).path.split("/");
+                if (splitted.length >= 1) return splitted[splitted.length - 1];
+            } catch (Exception ex) {
+                Logging.log(ex);
+            }
+
+            return "Unknown";
+        }
+
+        public float getProgress() {
+            return ((float) completedLength) / ((float) length) * 100;
+        }
+
+        public long getMissingTime() {
+            if (downloadSpeed == 0) return 0;
+            return (length - completedLength) / downloadSpeed;
+        }
+
+        public boolean canDeselectFiles() {
+            return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR && status != Status.UNKNOWN;
         }
     }
 }

@@ -136,7 +136,7 @@ public final class DownloadWithHelper {
                 Map<String, String> oldOptions = client.sendSync(AriaRequests.getOptions(baseDownload.gid));
 
                 Set<String> newUrls = new HashSet<>();
-                for (AriaFile file : old.files) {
+                for (AriaFile file : old.last().files) {
                     for (String url : file.uris.keySet()) {
                         if (file.uris.get(url) == AriaFile.Status.USED)
                             newUrls.add(url);
@@ -154,11 +154,11 @@ public final class DownloadWithHelper {
         client.batch(new AbstractClient.BatchSandbox<RemoveResult>() {
             @Override
             public RemoveResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
-                Download download = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get();
-                if (download.status == Download.Status.COMPLETE || download.status == Download.Status.ERROR || download.status == Download.Status.REMOVED) {
+                Download.Update last = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get().last();
+                if (last.status == Download.Status.COMPLETE || last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED) {
                     client.sendSync(AriaRequests.removeDownloadResult(baseDownload.gid));
                     if (removeMetadata) {
-                        client.sendSync(AriaRequests.removeDownloadResult(download.following));
+                        client.sendSync(AriaRequests.removeDownloadResult(last.following));
                         return RemoveResult.REMOVED_RESULT_AND_METADATA;
                     } else {
                         return RemoveResult.REMOVED_RESULT;

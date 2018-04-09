@@ -119,10 +119,11 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
     public void onUpdateUi(@NonNull Download download) {
         if (holder != null) holder.update(download);
 
-        if (listener != null && lastStatus != download.status)
-            listener.onStatusChanged(download.status);
+        Download.Update last = download.last();
+        if (listener != null && lastStatus != last.status)
+            listener.onStatusChanged(last.status);
 
-        lastStatus = download.status;
+        lastStatus = last.status;
     }
 
     @Override
@@ -292,7 +293,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
             moveUp.setVisibility(View.VISIBLE);
             moveDown.setVisibility(View.VISIBLE);
 
-            switch (download.status) {
+            switch (download.last().status) {
                 case ACTIVE:
                     restart.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
@@ -335,7 +336,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
             }
         }
 
-        boolean setChartState(Download download) {
+        boolean setChartState(Download.Update download) {
             switch (download.status) {
                 case ACTIVE:
                     return true;
@@ -361,7 +362,8 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
 
             setActionsState(download);
 
-            if (setChartState(download)) {
+            Download.Update last = download.last();
+            if (setChartState(last)) {
                 LineData data = chart.getLineData();
                 if (data == null) {
                     Utils.setupChart(chart, true, R.color.colorPrimaryDark);
@@ -369,37 +371,43 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
                 }
 
                 int pos = data.getEntryCount();
-                data.addEntry(new Entry(pos, download.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                data.addEntry(new Entry(pos, download.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                data.addEntry(new Entry(pos, last.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                data.addEntry(new Entry(pos, last.uploadSpeed), Utils.CHART_UPLOAD_SET);
                 data.notifyDataChanged();
                 chart.notifyDataSetChanged();
                 chart.setVisibleXRangeMaximum(90);
                 chart.moveViewToX(data.getEntryCount());
             }
 
-            progress.setText(String.format(Locale.getDefault(), "%.1f %%", download.getProgress()));
-            downloadSpeed.setText(CommonUtils.speedFormatter(download.downloadSpeed, false));
-            uploadSpeed.setText(CommonUtils.speedFormatter(download.uploadSpeed, false));
-            remainingTime.setText(CommonUtils.timeFormatter(download.getMissingTime()));
+            progress.setText(String.format(Locale.getDefault(), "%.1f %%", last.getProgress()));
+            downloadSpeed.setText(CommonUtils.speedFormatter(last.downloadSpeed, false));
+            uploadSpeed.setText(CommonUtils.speedFormatter(last.uploadSpeed, false));
+            remainingTime.setText(CommonUtils.timeFormatter(last.getMissingTime()));
             bitfield.update(download);
 
             gid.setHtml(R.string.gid, download.gid);
             totalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(download.length, false));
-            completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(download.completedLength, false));
-            uploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(download.uploadLength, false));
+            completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(last.completedLength, false));
+            uploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(last.uploadLength, false));
             pieceLength.setHtml(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength, false));
             numPieces.setHtml(R.string.pieces, download.numPieces);
-            connections.setHtml(R.string.connections, download.connections);
+            connections.setHtml(R.string.connections, last.connections);
             directory.setHtml(R.string.directory, download.dir);
-            verifiedLength.setHtml(R.string.verifiedLength, CommonUtils.dimensionFormatter(download.verifiedLength, false));
-            verifyIntegrityPending.setHtml(R.string.verifyIntegrityPending, String.valueOf(download.verifyIntegrityPending));
+
+            verifyIntegrityPending.setHtml(R.string.verifyIntegrityPending, String.valueOf(last.verifyIntegrityPending));
+            if (last.verifyIntegrityPending) {
+                verifiedLength.setVisibility(View.VISIBLE);
+                verifiedLength.setHtml(R.string.verifiedLength, CommonUtils.dimensionFormatter(last.verifiedLength, false));
+            } else {
+                verifiedLength.setVisibility(View.GONE);
+            }
 
             bitTorrentOnly.setVisibility(download.isTorrent() ? View.VISIBLE : View.GONE);
             if (download.isTorrent()) {
                 btMode.setHtml(R.string.mode, download.torrent.mode.toString());
-                btSeeders.setHtml(R.string.numSeeder, download.numSeeders);
-                btSeeder.setHtml(R.string.seeder, String.valueOf(download.seeder));
-                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", download.shareRatio()));
+                btSeeders.setHtml(R.string.numSeeder, last.numSeeders);
+                btSeeder.setHtml(R.string.seeder, String.valueOf(last.seeder));
+                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", last.shareRatio()));
 
                 if (download.torrent.comment == null) {
                     btComment.setVisibility(View.GONE);

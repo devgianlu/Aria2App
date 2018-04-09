@@ -47,7 +47,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
 
         try {
             final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent();
-            if (download.isMetadata() || profile.getProfile(getContext()).directDownload == null) {
+            if (download.last().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
                 return false;
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +120,7 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
         path.setHtml(R.string.path, dir.fullPath);
         updateContentViews(dir);
 
-        if (download.get().canDeselectFiles()) {
+        if (download.get().last().canDeselectFiles()) {
             selected.setEnabled(true);
             selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
