@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -82,7 +83,7 @@ public final class TopCountriesView extends FlowLayout {
         }
     }
 
-    public void setPeers(List<Peer> peers, boolean download) {
+    public void setPeers(@NonNull List<Peer> peers, boolean download) {
         topCountries.clear();
 
         for (Peer peer : peers) {
@@ -94,7 +95,7 @@ public final class TopCountriesView extends FlowLayout {
         buildLayout();
     }
 
-    public void setServers(SparseArray<Servers> servers, List<AriaFile> files) {
+    public void setServers(@NonNull SparseArray<Servers> servers, @NonNull List<AriaFile> files) {
         topCountries.clear();
 
         for (AriaFile file : files) {

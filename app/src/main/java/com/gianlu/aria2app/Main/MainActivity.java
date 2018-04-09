@@ -1002,7 +1002,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onUpdateUi(DownloadsAndGlobalStats payload) {
+    public void onUpdateUi(@NonNull DownloadsAndGlobalStats payload) {
         if (adapter != null) {
             adapter.notifyItemsChanged(payload.downloads);
             recyclerViewLayout.stopLoading();

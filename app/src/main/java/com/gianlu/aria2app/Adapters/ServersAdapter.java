@@ -159,7 +159,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (pos != -1) notifyItemChanged(pos, server);
     }
 
-    public void notifyItemsChanged(SparseArray<Servers> servers, List<AriaFile> files) {
+    public void notifyItemsChanged(@NonNull SparseArray<Servers> servers, @NonNull List<AriaFile> files) {
         createObjs(servers, files);
         for (AriaFile file : files) notifyHeaderChanged(file, servers.get(file.index));
     }

@@ -3,6 +3,7 @@ package com.gianlu.aria2app.NetIO.Updater;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -69,6 +70,6 @@ public abstract class BaseUpdater<P> extends Thread {
     }
 
     public interface UpdaterListener<P> {
-        void onUpdateUi(P payload);
+        void onUpdateUi(@NonNull P payload);
     }
 }

@@ -138,7 +138,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
-    public void onUpdateUi(Peers peers) {
+    public void onUpdateUi(@NonNull Peers peers) {
         recyclerViewLayout.showList();
         topDownloadCountries.setPeers(peers, true);
         topUploadCountries.setPeers(peers, false);

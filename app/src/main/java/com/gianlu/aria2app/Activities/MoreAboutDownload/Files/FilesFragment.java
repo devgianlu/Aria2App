@@ -501,7 +501,7 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
     }
 
     @Override
-    public void onUpdateUi(List<AriaFile> files) {
+    public void onUpdateUi(@NonNull List<AriaFile> files) {
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {

@@ -116,7 +116,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
     }
 
     @Override
-    public void onUpdateUi(Download download) {
+    public void onUpdateUi(@NonNull Download download) {
         if (holder != null) holder.update(download);
 
         if (listener != null && lastStatus != download.status)

@@ -107,7 +107,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    public void onUpdateUi(final SparseArray<Servers> servers) {
+    public void onUpdateUi(@NonNull final SparseArray<Servers> servers) {
         DownloadWithHelper download = getDownloadWithHelper();
         if (files == null && download != null) {
             download.files(new AbstractClient.OnResult<List<AriaFile>>() {
@@ -135,8 +135,8 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         }
 
         recyclerViewLayout.showList();
-        topDownloadCountries.setServers(servers, files);
-        if (adapter != null) adapter.notifyItemsChanged(servers, files);
+        if (files != null) topDownloadCountries.setServers(servers, files);
+        if (adapter != null && files != null) adapter.notifyItemsChanged(servers, files);
         if (sheet != null && sheet.isExpanded()) sheet.update(servers);
     }
 }
