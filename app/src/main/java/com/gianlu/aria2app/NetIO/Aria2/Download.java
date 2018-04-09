@@ -37,9 +37,9 @@ public class Download implements Serializable, Filterable<Download.Status> {
         torrent = BitTorrent.create(obj);
     }
 
-    public static Download create(JSONObject obj) throws JSONException {
+    public static Download create(JSONObject obj, boolean small) throws JSONException {
         Download download = new Download(obj);
-        AbstractClient.update(download.gid, download.update(obj));
+        AbstractClient.update(download.gid, download.update(obj, small));
         return download;
     }
 
@@ -56,8 +56,9 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return Objects.hash(gid);
     }
 
-    private Update update(JSONObject obj) throws JSONException {
-        return new Update(obj);
+    private SmallUpdate update(JSONObject obj, boolean small) throws JSONException {
+        if (small) return new SmallUpdate(obj);
+        else return new BigUpdate(obj);
     }
 
     public final boolean isTorrent() {
@@ -65,8 +66,15 @@ public class Download implements Serializable, Filterable<Download.Status> {
     }
 
     @NonNull
-    public Download.Update last() {
+    public SmallUpdate last() {
         return AbstractClient.update(gid);
+    }
+
+    @Nullable
+    public BigUpdate lastBig() {
+        SmallUpdate update = AbstractClient.update(gid);
+        if (update instanceof BigUpdate) return (BigUpdate) update;
+        else return null;
     }
 
     public DownloadWithHelper wrap(@NonNull AbstractClient client) {
@@ -154,12 +162,12 @@ public class Download implements Serializable, Filterable<Download.Status> {
             return compare(o1.last(), o2.last());
         }
 
-        protected abstract int compare(Download.Update o1, Download.Update o2);
+        protected abstract int compare(SmallUpdate o1, SmallUpdate o2);
     }
 
     public static class StatusComparator extends UpdateComparator {
         @Override
-        public int compare(Download.Update o1, Download.Update o2) {
+        public int compare(SmallUpdate o1, SmallUpdate o2) {
             if (o1.status == o2.status) return 0;
             else if (o1.status.ordinal() < o2.status.ordinal()) return -1;
             else return 1;
@@ -168,7 +176,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     public static class DownloadSpeedComparator extends UpdateComparator {
         @Override
-        public int compare(Download.Update o1, Download.Update o2) {
+        public int compare(SmallUpdate o1, SmallUpdate o2) {
             if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
             else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
             else return 1;
@@ -177,7 +185,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     public static class UploadSpeedComparator extends UpdateComparator {
         @Override
-        public int compare(Download.Update o1, Download.Update o2) {
+        public int compare(SmallUpdate o1, SmallUpdate o2) {
             if (Objects.equals(o1.uploadSpeed, o2.uploadSpeed)) return 0;
             else if (o1.uploadSpeed > o2.uploadSpeed) return -1;
             else return 1;
@@ -195,14 +203,14 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     public static class NameComparator extends UpdateComparator {
         @Override
-        public int compare(Download.Update o1, Download.Update o2) {
+        public int compare(SmallUpdate o1, SmallUpdate o2) {
             return o1.getName().compareToIgnoreCase(o2.getName());
         }
     }
 
     public static class CompletedLengthComparator extends UpdateComparator {
         @Override
-        public int compare(Download.Update o1, Download.Update o2) {
+        public int compare(SmallUpdate o1, SmallUpdate o2) {
             if (Objects.equals(o1.completedLength, o2.completedLength)) return 0;
             else if (o1.completedLength > o2.completedLength) return -1;
             else return 1;
@@ -211,13 +219,39 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     public static class ProgressComparator extends UpdateComparator {
         @Override
-        public int compare(Download.Update o1, Download.Update o2) {
+        public int compare(SmallUpdate o1, SmallUpdate o2) {
             return Integer.compare((int) o2.getProgress(), (int) o1.getProgress());
         }
     }
 
-    public class Update {
+    public class BigUpdate extends SmallUpdate {
         public final String bitfield;
+        public final long verifiedLength;
+        public final boolean verifyIntegrityPending;
+
+        // BitTorrent only
+        public final boolean seeder;
+        public final String infoHash;
+
+        BigUpdate(JSONObject obj) throws JSONException {
+            super(obj);
+
+            // Optional
+            bitfield = obj.optString("bitfield", null);
+            verifiedLength = obj.optLong("verifiedLength", 0);
+            verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
+
+            if (isTorrent()) {
+                infoHash = obj.getString("infoHash");
+                seeder = obj.optBoolean("seeder", false);
+            } else {
+                seeder = false;
+                infoHash = null;
+            }
+        }
+    }
+
+    public class SmallUpdate {
         public final long completedLength;
         public final long uploadLength;
         public final int connections;
@@ -228,17 +262,13 @@ public class Download implements Serializable, Filterable<Download.Status> {
         public final int errorCode;
         public final String errorMessage;
         public final String followedBy;
-        public final long verifiedLength;
-        public final boolean verifyIntegrityPending;
         // BitTorrent only
-        public final boolean seeder;
         public final int numSeeders;
         public final String following;
         public final String belongsTo;
-        public final String infoHash;
         private String name = null;
 
-        public Update(JSONObject obj) throws JSONException {
+        SmallUpdate(JSONObject obj) throws JSONException {
             status = Download.Status.parse(obj.getString("status"));
             completedLength = obj.getLong("completedLength");
             uploadLength = obj.getLong("uploadLength");
@@ -247,28 +277,20 @@ public class Download implements Serializable, Filterable<Download.Status> {
             connections = obj.getInt("connections");
 
             // Optional
-            bitfield = obj.optString("bitfield", null);
             followedBy = obj.optString("followedBy", null);
             following = obj.optString("following", null);
             belongsTo = obj.optString("belongsTo", null);
-            verifiedLength = obj.optLong("verifiedLength", 0);
-            verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
+
 
             files = new ArrayList<>();
-            if (obj.has("files")) {
-                JSONArray array = obj.getJSONArray("files");
-                for (int i = 0; i < array.length(); i++)
-                    files.add(new AriaFile(Download.this, array.getJSONObject(i)));
-            }
+            JSONArray array = obj.getJSONArray("files");
+            for (int i = 0; i < array.length(); i++)
+                files.add(new AriaFile(Download.this, array.getJSONObject(i)));
 
             if (isTorrent()) {
-                infoHash = obj.getString("infoHash");
                 numSeeders = obj.getInt("numSeeders");
-                seeder = obj.optBoolean("seeder", false);
             } else {
-                infoHash = null;
                 numSeeders = 0;
-                seeder = false;
             }
 
             if (obj.has("errorCode")) {

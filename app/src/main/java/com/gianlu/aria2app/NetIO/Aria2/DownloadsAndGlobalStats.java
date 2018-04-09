@@ -13,7 +13,7 @@ public class DownloadsAndGlobalStats {
         downloads = new ArrayList<>();
         if (ignoreMetadata) {
             for (Download download : allDownloads) {
-                Download.Update last = download.last();
+                Download.SmallUpdate last = download.last();
                 if (!(last.isMetadata() && (last.followedBy != null || last.status == Download.Status.COMPLETE)))
                     downloads.add(download);
             }

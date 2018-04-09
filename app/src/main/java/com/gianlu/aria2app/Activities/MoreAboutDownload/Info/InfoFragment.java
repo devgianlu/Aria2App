@@ -119,7 +119,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
     public void onUpdateUi(@NonNull Download download) {
         if (holder != null) holder.update(download);
 
-        Download.Update last = download.last();
+        Download.SmallUpdate last = download.last();
         if (listener != null && lastStatus != last.status)
             listener.onStatusChanged(last.status);
 
@@ -336,7 +336,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
             }
         }
 
-        boolean setChartState(Download.Update download) {
+        boolean setChartState(Download.SmallUpdate download) {
             switch (download.status) {
                 case ACTIVE:
                     return true;
@@ -362,7 +362,9 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
 
             setActionsState(download);
 
-            Download.Update last = download.last();
+            Download.BigUpdate last = download.lastBig();
+            if (last == null) return;
+
             if (setChartState(last)) {
                 LineData data = chart.getLineData();
                 if (data == null) {

@@ -427,7 +427,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         }
 
         public void update(Download download) {
-            Download.Update last = download.last();
+            Download.SmallUpdate last = download.last();
             if (last.status == Download.Status.ACTIVE) {
                 LineData data = detailsChart.getData();
                 if (data == null) {

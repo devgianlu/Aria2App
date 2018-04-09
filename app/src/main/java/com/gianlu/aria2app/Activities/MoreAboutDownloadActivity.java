@@ -85,7 +85,7 @@ public class MoreAboutDownloadActivity extends ActivityWithDialog implements Inf
             return;
         }
 
-        Download.Update last = download.last();
+        Download.SmallUpdate last = download.last();
         if (currentStatus == null) currentStatus = last.status;
 
         setTheme(download.isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar);

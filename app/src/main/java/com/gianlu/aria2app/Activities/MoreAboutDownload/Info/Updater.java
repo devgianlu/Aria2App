@@ -15,7 +15,7 @@ class Updater extends BaseDownloadUpdater<Download> implements AbstractClient.On
 
     @Override
     public void loop() {
-        download.update(this);
+        download.bigUpdate(this);
     }
 
     @Override

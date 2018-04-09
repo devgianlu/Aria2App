@@ -67,9 +67,9 @@ public class Aria2Helper {
             @Override
             public DownloadsAndGlobalStats sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 List<Download> all = new ArrayList<>();
-                all.addAll(client.sendSync(AriaRequests.tellActive()));
-                all.addAll(client.sendSync(AriaRequests.tellWaiting(0, Integer.MAX_VALUE)));
-                all.addAll(client.sendSync(AriaRequests.tellStopped(0, Integer.MAX_VALUE)));
+                all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
+                all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
+                all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
                 return new DownloadsAndGlobalStats(all, ignoreMetadata, client.sendSync(AriaRequests.getGlobalStats()));
             }
         }, listener);
@@ -96,7 +96,7 @@ public class Aria2Helper {
         }
 
         private void remove(Context context) {
-            Download.Update last = download.get().last();
+            Download.SmallUpdate last = download.get().last();
             if (last.following != null) {
                 listener.showDialog(new AlertDialog.Builder(context)
                         .setTitle(context.getString(R.string.removeMetadataName, last.getName()))

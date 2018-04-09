@@ -89,7 +89,7 @@ public final class DownloadWithHelper {
         client.send(AriaRequests.getOptions(baseDownload.gid), listener);
     }
 
-    public final void update(AbstractClient.OnResult<DownloadWithHelper> listener) {
+    public final void bigUpdate(AbstractClient.OnResult<DownloadWithHelper> listener) {
         client.send(AriaRequests.tellStatus(baseDownload.gid), listener);
     }
 
@@ -154,7 +154,7 @@ public final class DownloadWithHelper {
         client.batch(new AbstractClient.BatchSandbox<RemoveResult>() {
             @Override
             public RemoveResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
-                Download.Update last = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get().last();
+                Download.SmallUpdate last = client.sendSync(AriaRequests.tellStatus(baseDownload.gid)).get().last();
                 if (last.status == Download.Status.COMPLETE || last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED) {
                     client.sendSync(AriaRequests.removeDownloadResult(baseDownload.gid));
                     if (removeMetadata) {

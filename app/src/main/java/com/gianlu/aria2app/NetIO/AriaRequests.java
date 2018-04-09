@@ -32,7 +32,7 @@ public final class AriaRequests {
             List<Download> list = new ArrayList<>();
             JSONArray array = obj.getJSONArray("result");
             for (int i = 0; i < array.length(); i++)
-                list.add(Download.create(array.getJSONObject(i)));
+                list.add(Download.create(array.getJSONObject(i), true));
             return list;
         }
     };
@@ -43,6 +43,11 @@ public final class AriaRequests {
             return obj.getString("result");
         }
     };
+    private static final JSONArray SMALL_KEYS = CommonUtils.toJSONArray(new String[]{
+            "totalLength", "gid", "status", "pieceLength", "numPieces", "dir", "bittorrent",
+            "completedLength", "downloadSpeed", "uploadSpeed", "connections", "uploadLength",
+            "numSeeders", "files"
+    });
 
     public static AbstractClient.AriaRequest changePosition(String gid, int pos, String mode) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_POSITION, gid, pos, mode);
@@ -241,21 +246,21 @@ public final class AriaRequests {
             @NonNull
             @Override
             public DownloadWithHelper process(AbstractClient client, JSONObject obj) throws JSONException {
-                return Download.create(obj.getJSONObject("result")).wrap(client);
+                return Download.create(obj.getJSONObject("result"), false).wrap(client);
             }
         }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<Download>> tellActive() {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_ACTIVE, DOWNLOADS_LIST_PROCESSOR);
+    public static AbstractClient.AriaRequestWithResult<List<Download>> tellActiveSmall() {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_ACTIVE, DOWNLOADS_LIST_PROCESSOR, SMALL_KEYS);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<Download>> tellWaiting(int offset, int count) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_WAITING, DOWNLOADS_LIST_PROCESSOR, offset, count);
+    public static AbstractClient.AriaRequestWithResult<List<Download>> tellWaitingSmall(int offset, int count) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_WAITING, DOWNLOADS_LIST_PROCESSOR, offset, count, SMALL_KEYS);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<Download>> tellStopped(int offset, int count) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STOPPED, DOWNLOADS_LIST_PROCESSOR, offset, count);
+    public static AbstractClient.AriaRequestWithResult<List<Download>> tellStoppedSmall(int offset, int count) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STOPPED, DOWNLOADS_LIST_PROCESSOR, offset, count, SMALL_KEYS);
     }
 
     public static AbstractClient.AriaRequestWithResult<VersionInfo> getVersion() {

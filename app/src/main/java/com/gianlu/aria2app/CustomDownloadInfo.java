@@ -50,7 +50,7 @@ public class CustomDownloadInfo extends FlowLayout {
         ((Item) getChildAt(index)).setText(text);
     }
 
-    public void update(Download.Update download) {
+    public void update(Download.SmallUpdate download) {
         if (info.length == 0) return;
 
         for (int i = 0; i < this.info.length; i++) {

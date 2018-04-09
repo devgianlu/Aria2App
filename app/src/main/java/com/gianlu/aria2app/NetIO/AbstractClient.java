@@ -39,7 +39,7 @@ import javax.net.ssl.SSLContext;
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient implements Closeable {
-    private static final Map<String, Download.Update> downloadUpdates = new ConcurrentHashMap<>();
+    private static final Map<String, Download.SmallUpdate> downloadUpdates = new ConcurrentHashMap<>();
     private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
     protected final OkHttpClient client;
     protected final boolean shouldForce;
@@ -65,13 +65,13 @@ public abstract class AbstractClient implements Closeable {
     }
 
     @NonNull
-    public static Download.Update update(String gid) {
+    public static Download.SmallUpdate update(String gid) {
         synchronized (downloadUpdates) {
             return downloadUpdates.get(gid);
         }
     }
 
-    public static void update(String gid, Download.Update update) {
+    public static void update(String gid, Download.SmallUpdate update) {
         synchronized (downloadUpdates) {
             downloadUpdates.put(gid, update);
         }

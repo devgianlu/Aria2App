@@ -87,8 +87,8 @@ public class BitfieldVisualizer extends View {
     }
 
     public void update(Download download) {
-        Download.Update last = download.last();
-        if (Objects.equals(bitfield, last.bitfield)) return;
+        Download.BigUpdate last = download.lastBig();
+        if (last == null || Objects.equals(bitfield, last.bitfield)) return;
 
         bitfield = last.bitfield;
         pieces = download.numPieces / 4;
