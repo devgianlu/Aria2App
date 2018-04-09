@@ -251,6 +251,17 @@ public final class AriaRequests {
         }, gid);
     }
 
+    public static AbstractClient.AriaRequestWithResult<DownloadWithHelper> tellBigUpdate(final Download download) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithHelper>() {
+            @NonNull
+            @Override
+            public DownloadWithHelper process(AbstractClient client, JSONObject obj) throws JSONException {
+                Download.updateOnly(download, obj.getJSONObject("result"), false);
+                return download.wrap(client);
+            }
+        }, download.gid);
+    }
+
     public static AbstractClient.AriaRequestWithResult<List<Download>> tellActiveSmall() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_ACTIVE, DOWNLOADS_LIST_PROCESSOR, SMALL_KEYS);
     }

@@ -43,6 +43,10 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return download;
     }
 
+    public static void updateOnly(Download download, JSONObject obj, boolean small) throws JSONException {
+        AbstractClient.update(download.gid, download.update(obj, small));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

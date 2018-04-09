@@ -90,7 +90,7 @@ public final class DownloadWithHelper {
     }
 
     public final void bigUpdate(AbstractClient.OnResult<DownloadWithHelper> listener) {
-        client.send(AriaRequests.tellStatus(baseDownload.gid), listener);
+        client.send(AriaRequests.tellBigUpdate(baseDownload), listener);
     }
 
     public final void changePosition(int pos, String mode, AbstractClient.OnSuccess listener) {
