@@ -32,7 +32,6 @@ public class HttpClient extends AbstractClient {
     private static HttpClient instance;
     private final ExecutorService executorService;
     private final URI url;
-    private boolean shouldIgnoreRequests = false;
 
     private HttpClient(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrentSpecific());
@@ -86,16 +85,14 @@ public class HttpClient extends AbstractClient {
     }
 
     public static void clear() {
-        clearConnectivityListener();
         if (instance != null) {
-            instance.clearInternal();
+            instance.close();
             instance = null;
         }
     }
 
     @Override
-    protected void clearInternal() {
-        shouldIgnoreRequests = true;
+    protected void closeClient() {
         executorService.shutdownNow();
     }
 
@@ -130,7 +127,7 @@ public class HttpClient extends AbstractClient {
     }
 
     private void executeRunnable(Runnable runnable) {
-        if (!shouldIgnoreRequests && !executorService.isShutdown() && !executorService.isTerminated())
+        if (!shouldIgnoreCommunication && !executorService.isShutdown() && !executorService.isTerminated())
             executorService.execute(runnable);
     }
 

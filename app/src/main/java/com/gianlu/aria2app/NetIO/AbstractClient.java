@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.security.KeyManagementException;
@@ -37,8 +38,8 @@ import javax.net.ssl.SSLContext;
 
 import okhttp3.OkHttpClient;
 
-public abstract class AbstractClient {
-    public static final Map<String, Download.Update> downloadUpdates = new ConcurrentHashMap<>();
+public abstract class AbstractClient implements Closeable {
+    private static final Map<String, Download.Update> downloadUpdates = new ConcurrentHashMap<>();
     private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
     protected final OkHttpClient client;
     protected final boolean shouldForce;
@@ -48,6 +49,7 @@ public abstract class AbstractClient {
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
+    protected boolean shouldIgnoreCommunication = false;
 
     AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -62,6 +64,19 @@ public abstract class AbstractClient {
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
+    @NonNull
+    public static Download.Update update(String gid) {
+        synchronized (downloadUpdates) {
+            return downloadUpdates.get(gid);
+        }
+    }
+
+    public static void update(String gid, Download.Update update) {
+        synchronized (downloadUpdates) {
+            downloadUpdates.put(gid, update);
+        }
+    }
+
     public static void addConnectivityListener(String key, OnConnectivityChanged listener) {
         synchronized (listeners) {
             listeners.put(key, listener);
@@ -74,12 +89,6 @@ public abstract class AbstractClient {
         }
     }
 
-    static void clearConnectivityListener() {
-        synchronized (listeners) {
-            listeners.clear();
-        }
-    }
-
     @Override
     protected void finalize() throws Throwable {
         if (context.get() != null)
@@ -88,7 +97,16 @@ public abstract class AbstractClient {
         super.finalize();
     }
 
-    protected abstract void clearInternal();
+    @Override
+    public final void close() {
+        shouldIgnoreCommunication = true;
+
+        closeClient();
+        downloadUpdates.clear();
+        listeners.clear();
+    }
+
+    protected abstract void closeClient();
 
     public final <R> void send(@NonNull final AriaRequestWithResult<R> request, final OnResult<R> listener) {
         try {

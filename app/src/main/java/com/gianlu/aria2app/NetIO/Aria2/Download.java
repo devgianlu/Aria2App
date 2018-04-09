@@ -39,7 +39,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     public static Download create(JSONObject obj) throws JSONException {
         Download download = new Download(obj);
-        AbstractClient.downloadUpdates.put(download.gid, download.update(obj));
+        AbstractClient.update(download.gid, download.update(obj));
         return download;
     }
 
@@ -66,7 +66,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     @NonNull
     public Download.Update last() {
-        return AbstractClient.downloadUpdates.get(gid);
+        return AbstractClient.update(gid);
     }
 
     public DownloadWithHelper wrap(@NonNull AbstractClient client) {

@@ -28,7 +28,6 @@ import okhttp3.WebSocketListener;
 public class WebSocketClient extends AbstractClient {
     private static final AtomicInteger sandboxCount = new AtomicInteger(0);
     private static WebSocketClient instance;
-    private static boolean locked = false;
     private final Map<Integer, OnJson> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
     private final long initializedAt;
@@ -63,7 +62,6 @@ public class WebSocketClient extends AbstractClient {
 
     public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
-            unlock();
             instance = new WebSocketClient(context, profile, listener);
         } catch (CertificateException | NetUtils.InvalidUrlException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
             listener.onFailedConnecting(ex);
@@ -71,21 +69,14 @@ public class WebSocketClient extends AbstractClient {
     }
 
     public static void clear() {
-        locked = true;
-        clearConnectivityListener();
         if (instance != null) {
-            instance.clearInternal();
+            instance.close();
             instance = null;
         }
     }
 
-    private static void unlock() {
-        locked = false;
-        ErrorHandler.get().unlock();
-    }
-
     @Override
-    protected void clearInternal() {
+    protected void closeClient() {
         connectionListener = null;
         if (webSocket != null) webSocket.close(1000, null);
         if (requests != null) requests.clear();
@@ -93,7 +84,7 @@ public class WebSocketClient extends AbstractClient {
 
     @Override
     public void send(@NonNull JSONObject request, @NonNull OnJson listener) {
-        if (locked) return;
+        if (shouldIgnoreCommunication) return;
         if (requests.size() > 10) requests.clear();
 
         try {
@@ -149,7 +140,7 @@ public class WebSocketClient extends AbstractClient {
     private class Listener extends WebSocketListener {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            if (locked) return;
+            if (shouldIgnoreCommunication) return;
 
             try {
                 JSONObject response = new JSONObject(text);
