@@ -67,7 +67,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     }
 
     public void firstStarted() {
-        this.firstStart = true;
+        this.firstStart = false;
     }
 
     @Override
