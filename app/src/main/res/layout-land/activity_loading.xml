@@ -8,25 +8,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.4" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3" />
 
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:layout_gravity="center_horizontal"
             android:src="@drawable/logo" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3" />
 
         <LinearLayout
             android:id="@+id/loading_connecting"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <ProgressBar
@@ -57,9 +61,8 @@
 
         <LinearLayout
             android:id="@+id/loading_picker"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
             android:visibility="gone">
@@ -81,8 +84,6 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:paddingBottom="8dp"
-                android:paddingEnd="48dp"
-                android:paddingStart="48dp"
                 android:scrollbars="vertical"
                 tools:ignore="NestedWeights" />
 
@@ -97,9 +98,10 @@
         </LinearLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.6" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3" />
+
     </LinearLayout>
 
     <Button
@@ -107,7 +109,7 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
+        android:layout_gravity="bottom|start"
         android:layout_margin="8dp"
         android:text="@string/seeError"
         android:visibility="gone" />

@@ -224,24 +224,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
         displayPicker(hasShareData());
     }
 
-    private void failedConnecting(@NonNull final Throwable ex) {
-        Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
-            @Override
-            public void run() {
-                displayPicker(hasShareData());
-                seeError.setVisibility(View.VISIBLE);
-                seeError.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showErrorDialog(ex);
-                    }
-                });
-            }
-        });
-
-        Logging.log(ex);
-    }
-
     private void tryConnecting(MultiProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
@@ -295,7 +277,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
                         CommonUtils.sendEmail(LoadingActivity.this, getString(R.string.app_name), ex);
                     }
                 })
-                .setMessage(ex.getLocalizedMessage());
+                .setMessage(ex.toString());
 
         showDialog(builder);
     }
@@ -343,7 +325,21 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
     }
 
     @Override
-    public void onFailedConnecting(Throwable ex) {
-        failedConnecting(ex);
+    public void onFailedConnecting(final Throwable ex) {
+        Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
+            @Override
+            public void run() {
+                displayPicker(hasShareData());
+                seeError.setVisibility(View.VISIBLE);
+                seeError.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showErrorDialog(ex);
+                    }
+                });
+            }
+        });
+
+        Logging.log(ex);
     }
 }
