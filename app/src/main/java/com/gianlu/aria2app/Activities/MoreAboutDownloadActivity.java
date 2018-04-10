@@ -24,7 +24,7 @@ import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
-public class MoreAboutDownloadActivity extends ActivityWithDialog implements InfoFragment.IStatusChanged {
+public class MoreAboutDownloadActivity extends ActivityWithDialog implements InfoFragment.OnStatusChanged {
     private PagerAdapter<? extends OnBackPressed> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
@@ -103,8 +103,8 @@ public class MoreAboutDownloadActivity extends ActivityWithDialog implements Inf
         final TabLayout tabLayout = findViewById(R.id.moreAboutDownload_tabs);
 
         adapter = new PagerAdapter<>(getSupportFragmentManager(),
-                InfoFragment.getInstance(this, download, this),
-                (download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download)),
+                InfoFragment.getInstance(this, download),
+                download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download),
                 FilesFragment.getInstance(this, download));
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);

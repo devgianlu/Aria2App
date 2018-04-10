@@ -47,18 +47,25 @@ import java.util.Locale;
 public class InfoFragment extends DownloadUpdaterFragment implements OnBackPressed, BaseUpdater.UpdaterListener<Download>, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
-    private IStatusChanged listener;
+    private OnStatusChanged listener = null;
     private ViewHolder holder;
     private Download.Status lastStatus = Download.Status.UNKNOWN;
 
-    public static InfoFragment getInstance(Context context, Download download, IStatusChanged listener) {
+    public static InfoFragment getInstance(Context context, Download download) {
         InfoFragment fragment = new InfoFragment();
-        fragment.listener = listener;
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.info));
         args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof OnStatusChanged)
+            listener = (OnStatusChanged) context;
     }
 
     @Nullable
@@ -141,7 +148,7 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
         Toaster.show(getActivity(), msg, extra);
     }
 
-    public interface IStatusChanged {
+    public interface OnStatusChanged {
         void onStatusChanged(Download.Status newStatus);
     }
 

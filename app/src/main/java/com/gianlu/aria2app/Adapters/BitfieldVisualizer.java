@@ -28,7 +28,6 @@ public class BitfieldVisualizer extends View {
 
     public BitfieldVisualizer(Context context) {
         this(context, null, 0);
-
     }
 
     public BitfieldVisualizer(Context context, @Nullable AttributeSet attrs) {
@@ -45,10 +44,9 @@ public class BitfieldVisualizer extends View {
     @Nullable
     private static int[] hexToBinary(@Nullable String hex, int num) {
         if (hex == null) return null;
-        hex = hex.toLowerCase();
         int[] array = new int[hex.length()];
         for (int i = 0; i < hex.length(); i++) {
-            switch (hex.charAt(i)) {
+            switch (Character.toLowerCase(hex.charAt(i))) {
                 case '0':
                     array[i] = 0;
                     break;

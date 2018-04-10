@@ -18,7 +18,9 @@ import android.os.Messenger;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -47,10 +49,15 @@ import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.InfoFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeersFragment;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
+import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -108,7 +115,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, BaseUpdater.UpdaterListener<DownloadsAndGlobalStats> {
+public class MainActivity extends UpdaterActivity implements InfoFragment.OnStatusChanged, FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, BaseUpdater.UpdaterListener<DownloadsAndGlobalStats> {
     private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -127,6 +134,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private RecyclerViewLayout recyclerViewLayout;
     private Aria2Helper helper;
     private FrameLayout secondSpace = null;
+    private ViewPager secondSpacePager = null;
+    private PagerAdapter<? extends OnBackPressed> secondSpaceAdapter = null;
+    private TabLayout secondSpaceTabs = null;
+    private LinearLayout secondSpaceContainer = null;
 
     @Override
     protected void onRestart() {
@@ -424,7 +435,26 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)
         if (secondSpace != null) {
-            MessageLayout.show(secondSpace, R.string.secondSpace_selectDownload, R.drawable.ic_info_outline_black_48dp);
+            secondSpaceContainer = secondSpace.findViewById(R.id.mainSecondSpace_container);
+            secondSpaceTabs = secondSpace.findViewById(R.id.mainSecondSpace_tabs);
+            secondSpacePager = secondSpace.findViewById(R.id.mainSecondSpace_pager);
+            secondSpacePager.setOffscreenPageLimit(3);
+            secondSpaceTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    secondSpacePager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                }
+            });
+
+            hideSecondSpace();
         }
     }
 
@@ -589,8 +619,18 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onBackPressed() {
-        if (fabMenu != null && fabMenu.isExpanded()) fabMenu.collapse();
-        else super.onBackPressed();
+        if (fabMenu != null && fabMenu.isExpanded()) {
+            fabMenu.collapse();
+            return;
+        } else if (secondSpace != null && secondSpaceAdapter != null) {
+            OnBackPressed visible = secondSpaceAdapter.getFragments().get(secondSpacePager.getCurrentItem());
+            if (!visible.canGoBack(-1)) return;
+            visible.onBackPressed();
+            hideSecondSpace();
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     private void showFilteringDialog() {
@@ -800,21 +840,34 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         return R.color.colorPrimary_shadow;
     }
 
+    private void showSecondSpace(Download download) {
+        secondSpaceAdapter = new PagerAdapter<>(getSupportFragmentManager(),
+                InfoFragment.getInstance(this, download),
+                download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download),
+                FilesFragment.getInstance(this, download));
+
+        secondSpacePager.setAdapter(secondSpaceAdapter);
+        secondSpaceTabs.setupWithViewPager(secondSpacePager);
+
+        secondSpaceContainer.setVisibility(View.VISIBLE);
+        MessageLayout.hide(secondSpace);
+    }
+
+    @Override
+    public void onStatusChanged(Download.Status newStatus) {
+        if (newStatus == Download.Status.UNKNOWN && secondSpace != null) hideSecondSpace();
+    }
+
+    private void hideSecondSpace() {
+        MessageLayout.show(secondSpace, R.string.secondSpace_selectDownload, R.drawable.ic_info_outline_black_48dp);
+        secondSpaceContainer.setVisibility(View.GONE);
+        secondSpaceAdapter = null;
+    }
+
     @Override
     public void onMoreClick(Download item) {
-        if (secondSpace != null) {
-            InfoFragment fragment = InfoFragment.getInstance(this, item, new InfoFragment.IStatusChanged() {
-                @Override
-                public void onStatusChanged(Download.Status newStatus) {
-                    // TODO
-                }
-            });
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_secondSpace, fragment).commit();
-            MessageLayout.hide(secondSpace);
-        } else {
-            MoreAboutDownloadActivity.start(this, item);
-        }
+        if (secondSpace != null) showSecondSpace(item);
+        else MoreAboutDownloadActivity.start(this, item);
     }
 
     @Override
