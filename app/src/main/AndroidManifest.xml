@@ -1115,8 +1115,8 @@
         <!-- Main activity -->
         <activity
             android:name=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Drawer">
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/main_searchable" />

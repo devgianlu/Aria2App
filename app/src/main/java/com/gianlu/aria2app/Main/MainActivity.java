@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.os.TransactionTooLargeException;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,7 +38,6 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -49,6 +47,7 @@ import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.InfoFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
@@ -87,6 +86,7 @@ import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.Initializer;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
@@ -126,6 +126,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private Messenger downloaderMessenger = null;
     private RecyclerViewLayout recyclerViewLayout;
     private Aria2Helper helper;
+    private FrameLayout secondSpace = null;
 
     @Override
     protected void onRestart() {
@@ -420,6 +421,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         DownloaderUtils.startService(this, Prefs.getBoolean(this, PKeys.DD_RESUME, true));
+
+        secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)
+        if (secondSpace != null) {
+            MessageLayout.show(secondSpace, R.string.secondSpace_selectDownload, R.drawable.ic_info_outline_black_48dp);
+        }
     }
 
     private void doVersionCheck() {
@@ -796,15 +802,18 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onMoreClick(Download item) {
-        try {
+        if (secondSpace != null) {
+            InfoFragment fragment = InfoFragment.getInstance(this, item, new InfoFragment.IStatusChanged() {
+                @Override
+                public void onStatusChanged(Download.Status newStatus) {
+                    // TODO
+                }
+            });
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_secondSpace, fragment).commit();
+            MessageLayout.hide(secondSpace);
+        } else {
             MoreAboutDownloadActivity.start(this, item);
-        } catch (RuntimeException ex) {
-            if (ex.getCause() instanceof TransactionTooLargeException) {
-                Crashlytics.log(item.toString() + " size: " + Utils.sizeOf(item));
-                Crashlytics.logException(ex.getCause());
-            } else {
-                throw ex;
-            }
         }
     }
 
