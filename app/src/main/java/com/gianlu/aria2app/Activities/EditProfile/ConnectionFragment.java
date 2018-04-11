@@ -126,13 +126,15 @@ public class ConnectionFragment extends FieldErrorFragment {
                             FreeGeoIPApi.get().getIPDetails(lastAddress, new FreeGeoIPApi.IIPDetails() {
                                 @Override
                                 public void onDetails(IPDetails details) {
-                                    if (isAdded())
+                                    if (isAdded()) {
+                                        addressFlag.setVisibility(View.VISIBLE);
                                         addressFlag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
+                                    }
                                 }
 
                                 @Override
                                 public void onException(Exception ex) {
-                                    addressFlag.setImageResource(R.drawable.ic_list_country_unknown);
+                                    addressFlag.setVisibility(View.GONE);
                                     Logging.log(ex);
                                 }
                             });

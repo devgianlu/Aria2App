@@ -32,10 +32,8 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="16dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_list_country_unknown" />
-
+                android:visibility="gone" />
         </LinearLayout>
-
 
         <TextView
             android:layout_width="match_parent"

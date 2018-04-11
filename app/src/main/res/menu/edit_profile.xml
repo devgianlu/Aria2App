@@ -16,7 +16,7 @@
 
     <item
         android:id="@+id/editProfile_setDefault"
-        android:icon="@drawable/ic_done_all_white_48dp"
+        android:icon="@drawable/ic_bookmark_white_48dp"
         android:title="@string/setDefaultCondition"
         app:showAsAction="ifRoom" />
 

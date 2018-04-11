@@ -1126,7 +1126,6 @@
         <activity
             android:name=".Activities.EditProfileActivity"
             android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
