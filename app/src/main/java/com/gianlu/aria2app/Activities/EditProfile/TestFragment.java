@@ -18,18 +18,25 @@ import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
-    private IGetProfile handler;
+    private OnGetProfile listener;
     private LinearLayout testResults;
     private Button test;
 
-    public static TestFragment getInstance(Context context, IGetProfile handler) {
+    public static TestFragment getInstance(Context context) {
         TestFragment fragment = new TestFragment();
         fragment.setRetainInstance(true);
-        fragment.handler = handler;
         Bundle bundle = new Bundle();
         bundle.putString("title", context.getString(R.string.test));
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof OnGetProfile)
+            listener = (OnGetProfile) context;
     }
 
     @Override
@@ -68,8 +75,8 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) {
-                    MultiProfile.UserProfile profile = handler.getProfile();
+                if (listener != null) {
+                    MultiProfile.UserProfile profile = listener.getProfile();
                     if (profile != null) startTest(profile);
                 }
             }
@@ -80,7 +87,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
         return layout;
     }
 
-    public interface IGetProfile {
+    public interface OnGetProfile {
         @Nullable
         MultiProfile.UserProfile getProfile();
     }

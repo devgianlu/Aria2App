@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Activities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -54,7 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class EditProfileActivity extends ActivityWithDialog implements TestFragment.IGetProfile {
+public class EditProfileActivity extends ActivityWithDialog implements TestFragment.OnGetProfile {
     private MultiProfile editProfile;
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
@@ -85,11 +84,6 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 return true;
 
         return false;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
     }
 
     @Override
@@ -200,7 +194,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     private void showFragmentsAt(int pos) {
         int tabPos = pager.getCurrentItem();
         if (pos != -1) {
-            if (testFragment == null) testFragment = TestFragment.getInstance(this, this);
+            if (testFragment == null) testFragment = TestFragment.getInstance(this);
             pagerAdapter = new PagerAdapter<>(getSupportFragmentManager(), connectionFragments.get(pos), authFragments.get(pos), ddFragments.get(pos), testFragment);
             pager.setAdapter(pagerAdapter);
             tabLayout.setupWithViewPager(pager);
