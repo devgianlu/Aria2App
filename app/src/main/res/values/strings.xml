@@ -321,7 +321,7 @@
     <string name="select">Select</string>
     <string name="deselect">Deselect</string>
     <string name="selectAll">Select all</string>
-    <string name="secondSpace_selectDownload">Select more on a download to show additional information.</string>
+    <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

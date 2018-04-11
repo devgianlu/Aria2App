@@ -22,10 +22,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
-        android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:replace="android:supportsRtl">
+        android:theme="@style/AppTheme">
 
         <!-- General files provider -->
         <provider

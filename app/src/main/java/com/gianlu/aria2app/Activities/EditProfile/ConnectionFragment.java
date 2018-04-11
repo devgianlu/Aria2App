@@ -1,15 +1,18 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -53,6 +56,7 @@ import javax.security.auth.x500.X500Principal;
 
 public class ConnectionFragment extends FieldErrorFragment {
     private final static int CODE_PICK_CERT = 1;
+    private static final int READ_PERMISSION_CODE = 11;
     private final CountryFlags flags = CountryFlags.get();
     private ScrollView layout;
     private TextView completeAddress;
@@ -111,7 +115,6 @@ public class ConnectionFragment extends FieldErrorFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -155,7 +158,6 @@ public class ConnectionFragment extends FieldErrorFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -172,7 +174,6 @@ public class ConnectionFragment extends FieldErrorFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -186,8 +187,6 @@ public class ConnectionFragment extends FieldErrorFragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 certificateSelectionContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
                 updateCompleteAddress();
-                if (isChecked)
-                    Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_certMessage, 11);
             }
         });
 
@@ -209,12 +208,12 @@ public class ConnectionFragment extends FieldErrorFragment {
         pickCertificateFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
-                            .setType("*/*")
-                            .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
-                } catch (ActivityNotFoundException ex) {
-                    Logging.log(ex);
+                if (getContext() == null) return;
+
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    showCertPicker();
+                } else {
+                    Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_certMessage, READ_PERMISSION_CODE);
                 }
             }
         });
@@ -254,6 +253,26 @@ public class ConnectionFragment extends FieldErrorFragment {
         created = true;
 
         return layout;
+    }
+
+    private void showCertPicker() {
+        try {
+            startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
+                    .setType("*/*")
+                    .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
+        } catch (ActivityNotFoundException ex) {
+            Logging.log(ex);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == READ_PERMISSION_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            showCertPicker();
+            return;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -380,7 +399,6 @@ public class ConnectionFragment extends FieldErrorFragment {
         String address = CommonUtils.getText(this.address).trim();
         if (address.isEmpty())
             throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.addressEmpty));
-
 
         int port;
         try {
