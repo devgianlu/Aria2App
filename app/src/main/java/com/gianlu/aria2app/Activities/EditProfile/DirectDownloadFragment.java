@@ -35,6 +35,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
 
     public static DirectDownloadFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         DirectDownloadFragment fragment = new DirectDownloadFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.directDownload));
         if (edit != null) args.putSerializable("edit", edit);

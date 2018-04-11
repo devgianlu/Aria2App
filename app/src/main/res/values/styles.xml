@@ -61,4 +61,8 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <style name="BigTabLayout">
+        <item name="tabMode">scrollable</item>
+    </style>
 </resources>

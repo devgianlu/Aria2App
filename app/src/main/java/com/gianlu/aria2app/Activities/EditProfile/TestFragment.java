@@ -24,6 +24,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
 
     public static TestFragment getInstance(Context context, IGetProfile handler) {
         TestFragment fragment = new TestFragment();
+        fragment.setRetainInstance(true);
         fragment.handler = handler;
         Bundle bundle = new Bundle();
         bundle.putString("title", context.getString(R.string.test));

@@ -77,6 +77,7 @@ public class ConnectionFragment extends FieldErrorFragment {
 
     public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         ConnectionFragment fragment = new ConnectionFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.connection));
         if (edit != null) args.putSerializable("edit", edit);

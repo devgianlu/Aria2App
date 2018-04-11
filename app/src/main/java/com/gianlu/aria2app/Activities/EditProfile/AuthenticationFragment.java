@@ -30,6 +30,7 @@ public class AuthenticationFragment extends FieldErrorFragment {
 
     public static AuthenticationFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         AuthenticationFragment fragment = new AuthenticationFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.authentication));
         if (edit != null) args.putSerializable("edit", edit);

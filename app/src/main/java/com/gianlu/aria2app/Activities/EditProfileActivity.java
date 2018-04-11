@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -87,6 +88,11 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
@@ -109,12 +115,10 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         CommonUtils.getEditText(profileName).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -139,7 +143,6 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
@@ -155,12 +158,10 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 
