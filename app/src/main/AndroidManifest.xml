@@ -1138,17 +1138,14 @@
         <activity
             android:name=".Activities.AddUriActivity"
             android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.URI" />
         <activity
             android:name=".Activities.AddTorrentActivity"
             android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Torrent" />
         <activity
             android:name=".Activities.AddMetalinkActivity"
             android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Metalink" />
 
         <!-- More about download activity -->
@@ -1171,7 +1168,6 @@
         <activity
             android:name=".Activities.SearchActivity"
             android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.app.searchable"

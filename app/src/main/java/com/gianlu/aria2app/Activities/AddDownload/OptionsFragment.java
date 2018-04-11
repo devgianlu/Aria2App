@@ -22,6 +22,7 @@ import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.Options.OptionsView;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 
 import org.json.JSONException;
@@ -70,6 +71,7 @@ public class OptionsFragment extends Fragment {
             loading.setVisibility(View.GONE);
             return layout;
         }
+
         helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
             @Override
             public void onResult(Map<String, String> result) {
@@ -140,6 +142,7 @@ public class OptionsFragment extends Fragment {
         try {
             return Integer.parseInt(position.getText().toString());
         } catch (Exception ex) {
+            Logging.log(ex);
             return null;
         }
     }
