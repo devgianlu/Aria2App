@@ -315,9 +315,9 @@
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
     <string name="stream">Stream</string>
     <string name="failedStreamVideo">Failed to stream the video!</string>
-    <string name="mpAndroidChart">MPAndroidChart</string>
-    <string name="tapTargetView">TapTargetView</string>
-    <string name="flowLayout">Android flow layout</string>
+    <string name="mpAndroidChart" translatable="false">MPAndroidChart</string>
+    <string name="tapTargetView" translatable="false">TapTargetView</string>
+    <string name="flowLayout" translatable="false">Android flow layout</string>
     <string name="select">Select</string>
     <string name="deselect">Deselect</string>
     <string name="selectAll">Select all</string>

@@ -312,9 +312,6 @@
     <string name="couldStreamVideo_message">目前可以流媒体播放这个视频。 你想要观看或者只是下载？</string>
     <string name="stream">流媒体</string>
     <string name="failedStreamVideo">流媒体播放这个视频失败！</string>
-    <string name="mpAndroidChart">MPAndroidChart</string>
-    <string name="tapTargetView">TapTargetView</string>
-    <string name="flowLayout">Android 流式布局</string>
     <string name="select">选择</string>
     <string name="deselect">取消选择</string>
     <string name="selectAll">选择全部</string>
@@ -327,4 +324,5 @@
         <item>4 秒</item>
         <item>5 秒</item>
     </string-array>
+    <string name="secondSpace_selectDownload">点击下载更多信息以提供更多信息。</string>
 </resources>
