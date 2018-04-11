@@ -86,7 +86,7 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
     @Override
     public boolean canGoBack(int code) {
         if (code == CODE_CLOSE_SHEET) {
-            fileSheet.collapse();
+            if (fileSheet != null) fileSheet.collapse();
             if (actionMode != null) actionMode.finish();
             return true;
         }
