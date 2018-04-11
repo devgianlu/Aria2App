@@ -23,6 +23,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
+        tools:replace="android:supportsRtl"
         android:theme="@style/AppTheme">
 
         <!-- General files provider -->

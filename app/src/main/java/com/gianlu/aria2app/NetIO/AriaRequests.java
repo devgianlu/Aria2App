@@ -46,7 +46,7 @@ public final class AriaRequests {
     private static final JSONArray SMALL_KEYS = CommonUtils.toJSONArray(new String[]{
             "totalLength", "gid", "status", "pieceLength", "numPieces", "dir", "bittorrent",
             "completedLength", "downloadSpeed", "uploadSpeed", "connections", "uploadLength",
-            "numSeeders", "files"
+            "numSeeders", "files", "errorCode", "errorMessage"
     });
 
     public static AbstractClient.AriaRequest changePosition(String gid, int pos, String mode) {
