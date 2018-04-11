@@ -1132,8 +1132,7 @@
         <!-- DirectDownload activity -->
         <activity
             android:name=".Activities.DirectDownloadActivity"
-            android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".Main.MainActivity" />
 
         <!-- Add download activities -->
         <activity
@@ -1156,20 +1155,17 @@
         <activity
             android:name=".Activities.MoreAboutDownloadActivity"
             android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
         <activity
             android:name=".PreferencesActivity"
-            android:parentActivityName=".Main.MainActivity"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".Main.MainActivity" />
 
         <!-- Logs activity -->
         <activity
             android:name="com.gianlu.commonutils.LogsActivity"
-            android:parentActivityName=".PreferencesActivity"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".PreferencesActivity" />
 
         <!-- Search Torrent activity -->
         <activity
