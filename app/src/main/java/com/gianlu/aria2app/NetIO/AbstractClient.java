@@ -28,10 +28,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.net.ssl.SSLContext;
@@ -39,7 +39,7 @@ import javax.net.ssl.SSLContext;
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient implements Closeable {
-    private static final Map<String, Download.SmallUpdate> downloadUpdates = new ConcurrentHashMap<>();
+    private static final Map<String, Download.SmallUpdate> downloadUpdates = new HashMap<>();
     private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
     protected final OkHttpClient client;
     protected final boolean shouldForce;
@@ -65,25 +65,25 @@ public abstract class AbstractClient implements Closeable {
     }
 
     @NonNull
-    public static Download.SmallUpdate update(String gid) {
+    public static Download.SmallUpdate update(@NonNull String gid) {
         synchronized (downloadUpdates) {
             return downloadUpdates.get(gid);
         }
     }
 
-    public static void update(String gid, Download.SmallUpdate update) {
+    public static void update(@NonNull String gid, @NonNull Download.SmallUpdate update) {
         synchronized (downloadUpdates) {
             downloadUpdates.put(gid, update);
         }
     }
 
-    public static void addConnectivityListener(String key, OnConnectivityChanged listener) {
+    public static void addConnectivityListener(@NonNull String key, OnConnectivityChanged listener) {
         synchronized (listeners) {
             listeners.put(key, listener);
         }
     }
 
-    public static void removeConnectivityListener(String key) {
+    public static void removeConnectivityListener(@NonNull String key) {
         synchronized (listeners) {
             listeners.remove(key);
         }

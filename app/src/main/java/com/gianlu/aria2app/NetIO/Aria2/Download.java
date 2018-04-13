@@ -60,6 +60,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return Objects.hash(gid);
     }
 
+    @NonNull
     private SmallUpdate update(JSONObject obj, boolean small) throws JSONException {
         if (small) return new SmallUpdate(obj);
         else return new BigUpdate(obj);
