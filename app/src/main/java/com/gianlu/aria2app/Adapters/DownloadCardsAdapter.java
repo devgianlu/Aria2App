@@ -93,64 +93,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         return objs.get(position).gid.hashCode();
     }
 
-    private void setupActions(ViewHolder holder, Download download) {
-        holder.start.setVisibility(View.VISIBLE);
-        holder.stop.setVisibility(View.VISIBLE);
-        holder.restart.setVisibility(View.VISIBLE);
-        holder.pause.setVisibility(View.VISIBLE);
-        holder.remove.setVisibility(View.VISIBLE);
-        holder.moveUp.setVisibility(View.VISIBLE);
-        holder.moveDown.setVisibility(View.VISIBLE);
-        holder.toggleNotification.setVisibility(View.VISIBLE);
-        holder.more.setVisibility(View.VISIBLE);
-
-        switch (download.last().status) {
-            case ACTIVE:
-                holder.restart.setVisibility(View.GONE);
-                holder.start.setVisibility(View.GONE);
-                holder.remove.setVisibility(View.GONE);
-                holder.moveUp.setVisibility(View.GONE);
-                holder.moveDown.setVisibility(View.GONE);
-                break;
-            case PAUSED:
-                holder.pause.setVisibility(View.GONE);
-                holder.restart.setVisibility(View.GONE);
-                holder.remove.setVisibility(View.GONE);
-                holder.moveUp.setVisibility(View.GONE);
-                holder.moveDown.setVisibility(View.GONE);
-                break;
-            case WAITING:
-                holder.pause.setVisibility(View.GONE);
-                holder.restart.setVisibility(View.GONE);
-                holder.stop.setVisibility(View.GONE);
-                holder.start.setVisibility(View.GONE);
-                break;
-            case ERROR:
-                holder.more.setVisibility(View.INVISIBLE);
-            case COMPLETE:
-            case REMOVED:
-                if (download.isTorrent()) holder.restart.setVisibility(View.GONE);
-                holder.pause.setVisibility(View.GONE);
-                holder.start.setVisibility(View.GONE);
-                holder.stop.setVisibility(View.GONE);
-                holder.moveUp.setVisibility(View.GONE);
-                holder.moveDown.setVisibility(View.GONE);
-                holder.toggleNotification.setVisibility(View.GONE);
-                break;
-            case UNKNOWN:
-                holder.more.setVisibility(View.GONE);
-                holder.pause.setVisibility(View.GONE);
-                holder.start.setVisibility(View.GONE);
-                holder.stop.setVisibility(View.GONE);
-                holder.restart.setVisibility(View.GONE);
-                holder.remove.setVisibility(View.GONE);
-                holder.moveUp.setVisibility(View.GONE);
-                holder.moveDown.setVisibility(View.GONE);
-                holder.toggleNotification.setVisibility(View.GONE);
-                break;
-        }
-    }
-
     @Override
     protected void onBindViewHolder(ViewHolder holder, int position, @NonNull Download payload) {
         holder.update(payload);
@@ -170,7 +112,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final Download item = objs.get(position);
-
 
         final int color;
         if (item.isTorrent()) color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
@@ -241,7 +182,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         }
 
         holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PKeys.A2_CUSTOM_INFO, new HashSet<String>()), item.isTorrent()));
-        setupActions(holder, item);
         holder.update(item);
         CommonUtils.setRecyclerViewTopMargin(context, holder);
     }
@@ -426,6 +366,64 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             detailsUploadLength = itemView.findViewById(R.id.downloadCard_detailsUploadLength);
         }
 
+        private void setupActions(Download download) {
+            start.setVisibility(View.VISIBLE);
+            stop.setVisibility(View.VISIBLE);
+            restart.setVisibility(View.VISIBLE);
+            pause.setVisibility(View.VISIBLE);
+            remove.setVisibility(View.VISIBLE);
+            moveUp.setVisibility(View.VISIBLE);
+            moveDown.setVisibility(View.VISIBLE);
+            toggleNotification.setVisibility(View.VISIBLE);
+            more.setVisibility(View.VISIBLE);
+
+            switch (download.last().status) {
+                case ACTIVE:
+                    restart.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    remove.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
+                    break;
+                case PAUSED:
+                    pause.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
+                    remove.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
+                    break;
+                case WAITING:
+                    pause.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
+                    stop.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    break;
+                case ERROR:
+                    more.setVisibility(View.INVISIBLE);
+                case COMPLETE:
+                case REMOVED:
+                    if (download.isTorrent()) restart.setVisibility(View.GONE);
+                    pause.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    stop.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
+                    toggleNotification.setVisibility(View.GONE);
+                    break;
+                case UNKNOWN:
+                    more.setVisibility(View.GONE);
+                    pause.setVisibility(View.GONE);
+                    start.setVisibility(View.GONE);
+                    stop.setVisibility(View.GONE);
+                    restart.setVisibility(View.GONE);
+                    remove.setVisibility(View.GONE);
+                    moveUp.setVisibility(View.GONE);
+                    moveDown.setVisibility(View.GONE);
+                    toggleNotification.setVisibility(View.GONE);
+                    break;
+            }
+        }
+
         public void update(Download download) {
             Download.SmallUpdate last = download.last();
             if (last.status == Download.Status.ACTIVE) {
@@ -462,7 +460,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(last.completedLength, false));
             detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(last.uploadLength, false));
 
-            setupActions(this, download);
+            setupActions(download);
         }
     }
 }
