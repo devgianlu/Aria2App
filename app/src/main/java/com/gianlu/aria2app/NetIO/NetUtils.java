@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONObject;
@@ -32,6 +33,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class NetUtils {
     public static final int HTTP_TIMEOUT = 5; // sec
@@ -105,6 +107,12 @@ public final class NetUtils {
                     return true;
                 }
             });
+        }
+
+        if (CommonUtils.isDebug()) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            builder.addInterceptor(logging);
         }
 
         return builder.build();
