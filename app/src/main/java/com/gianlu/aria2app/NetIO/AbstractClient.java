@@ -28,8 +28,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -39,7 +37,6 @@ import javax.net.ssl.SSLContext;
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient implements Closeable {
-    private static final Map<String, Download.SmallUpdate> downloadUpdates = new HashMap<>();
     private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
     protected final OkHttpClient client;
     protected final boolean shouldForce;
@@ -62,19 +59,6 @@ public abstract class AbstractClient implements Closeable {
         this.shouldForce = Prefs.getBoolean(context, PKeys.A2_FORCE_ACTION, true);
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @NonNull
-    public static Download.SmallUpdate update(@NonNull String gid) {
-        synchronized (downloadUpdates) {
-            return downloadUpdates.get(gid);
-        }
-    }
-
-    public static void update(@NonNull String gid, @NonNull Download.SmallUpdate update) {
-        synchronized (downloadUpdates) {
-            downloadUpdates.put(gid, update);
-        }
     }
 
     public static void addConnectivityListener(@NonNull String key, OnConnectivityChanged listener) {
@@ -102,7 +86,7 @@ public abstract class AbstractClient implements Closeable {
         shouldIgnoreCommunication = true;
 
         closeClient();
-        downloadUpdates.clear();
+        Download.clearUpdates();
         listeners.clear();
     }
 

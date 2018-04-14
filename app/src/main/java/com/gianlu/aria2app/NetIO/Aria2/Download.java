@@ -17,16 +17,20 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class Download implements Serializable, Filterable<Download.Status> {
+    private static final Map<String, SmallUpdate> downloadUpdates = new HashMap<>();
     public final String dir;
     public final String gid;
     public final int numPieces;
     public final long pieceLength;
     public final long length;
     public final BitTorrent torrent;
+    private transient SmallUpdate last = null;
 
     private Download(JSONObject obj) throws JSONException {
         gid = obj.getString("gid");
@@ -37,14 +41,33 @@ public class Download implements Serializable, Filterable<Download.Status> {
         torrent = BitTorrent.create(obj);
     }
 
+    @Nullable
+    public static Download.SmallUpdate update(@NonNull String gid) {
+        synchronized (downloadUpdates) {
+            return downloadUpdates.get(gid);
+        }
+    }
+
+    public static void update(@NonNull String gid, @NonNull Download.SmallUpdate update) {
+        synchronized (downloadUpdates) {
+            downloadUpdates.put(gid, update);
+        }
+    }
+
     public static Download create(JSONObject obj, boolean small) throws JSONException {
         Download download = new Download(obj);
-        AbstractClient.update(download.gid, download.update(obj, small));
+        update(download.gid, download.update(obj, small));
         return download;
     }
 
     public static void updateOnly(Download download, JSONObject obj, boolean small) throws JSONException {
-        AbstractClient.update(download.gid, download.update(obj, small));
+        update(download.gid, download.update(obj, small));
+    }
+
+    public static void clearUpdates() {
+        synchronized (downloadUpdates) {
+            downloadUpdates.clear();
+        }
     }
 
     @Override
@@ -62,8 +85,10 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     @NonNull
     private SmallUpdate update(JSONObject obj, boolean small) throws JSONException {
-        if (small) return new SmallUpdate(obj);
-        else return new BigUpdate(obj);
+        SmallUpdate update;
+        if (small) update = new SmallUpdate(obj);
+        else update = new BigUpdate(obj);
+        return last = update;
     }
 
     public final boolean isTorrent() {
@@ -72,12 +97,14 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
     @NonNull
     public SmallUpdate last() {
-        return AbstractClient.update(gid);
+        SmallUpdate update = update(gid);
+        if (update == null) return last;
+        else return update;
     }
 
     @Nullable
     public BigUpdate lastBig() {
-        SmallUpdate update = AbstractClient.update(gid);
+        SmallUpdate update = update(gid);
         if (update instanceof BigUpdate) return (BigUpdate) update;
         else return null;
     }
