@@ -327,7 +327,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
             if (obj.has("errorCode")) {
                 errorCode = obj.getInt("errorCode");
-                errorMessage = obj.getString("errorMessage");
+                errorMessage = obj.optString("errorMessage", null);
             } else {
                 errorCode = -1;
                 errorMessage = null;
@@ -358,7 +358,7 @@ public class Download implements Serializable, Filterable<Download.Status> {
         }
 
         @NonNull
-        private String getNameInternal() {
+        private String getNameInternal() { // TODO: Error download has wrong name
             try {
                 if (torrent != null && torrent.name != null) return torrent.name;
                 String[] splitted = files.get(0).path.split("/");

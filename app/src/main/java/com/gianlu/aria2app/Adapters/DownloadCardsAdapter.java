@@ -450,10 +450,15 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
             donutProgress.setProgress(last.getProgress());
             downloadName.setText(last.getName());
-            if (last.status == Download.Status.ERROR)
-                downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", last.status.getFormal(context, true), last.errorCode, last.errorMessage));
-            else
+            if (last.status == Download.Status.ERROR) {
+                if (last.errorMessage == null) {
+                    downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d", last.status.getFormal(context, true), last.errorCode));
+                } else {
+                    downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", last.status.getFormal(context, true), last.errorCode, last.errorMessage));
+                }
+            } else {
                 downloadStatus.setText(last.status.getFormal(context, true));
+            }
 
             customInfo.update(last);
 
