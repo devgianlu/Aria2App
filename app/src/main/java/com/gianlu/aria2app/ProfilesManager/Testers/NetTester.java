@@ -9,7 +9,6 @@ import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnConnect;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Logging;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -93,13 +92,13 @@ public class NetTester extends BaseTester<AbstractClient> {
 
         switch (status.status) {
             case OFFLINE:
-                publishMessage("Host is offline, check your connection parameters", R.color.red);
+                publishMessage("Host is offline, check your connection parameters", Level.ERROR);
                 break;
             case ERROR:
-                publishMessage("Failed establishing a connection", R.color.red);
+                publishMessage("Failed establishing a connection", Level.ERROR);
                 break;
             case ONLINE:
-                publishMessage("Host is online, connection parameters are configured correctly", R.color.green);
+                publishMessage("Host is online, connection parameters are configured correctly", Level.SUCCESS);
                 break;
             default:
             case UNKNOWN:
@@ -110,9 +109,9 @@ public class NetTester extends BaseTester<AbstractClient> {
             if (status.ex.getMessage() == null) {
                 Throwable cause = status.ex.getCause();
                 if (cause != null && cause.getMessage() != null)
-                    publishMessage(cause.getMessage(), R.color.red);
+                    publishMessage(cause.getMessage(), Level.ERROR);
             } else {
-                publishMessage(status.ex.getMessage(), R.color.red);
+                publishMessage(status.ex.getMessage(), Level.ERROR);
             }
         }
     }
@@ -123,7 +122,7 @@ public class NetTester extends BaseTester<AbstractClient> {
             return;
         }
 
-        publishMessage("Latency is " + ping + "ms", android.R.color.tertiary_text_light);
+        publishMessage("Latency is " + ping + "ms", Level.INFO);
     }
 
     public interface IProfileTester {

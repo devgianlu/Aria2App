@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.R;
 
 public abstract class BaseTester<T> implements Runnable {
     protected final Context context;
@@ -23,8 +24,20 @@ public abstract class BaseTester<T> implements Runnable {
         start(null);
     }
 
-    protected final void publishMessage(String message, @ColorRes int color) {
-        if (listener != null) listener.publishGeneralMessage(message, color);
+    protected final void publishMessage(String message, Level level) {
+        if (listener != null) listener.publishGeneralMessage(message, level.color);
+    }
+
+    public enum Level {
+        INFO(android.R.color.tertiary_text_light),
+        ERROR(R.color.red),
+        SUCCESS(R.color.green);
+
+        private final int color;
+
+        Level(@ColorRes int color) {
+            this.color = color;
+        }
     }
 
     public final T start(@Nullable Object prevResult) {

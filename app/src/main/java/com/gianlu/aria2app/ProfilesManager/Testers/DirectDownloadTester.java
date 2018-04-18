@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.R;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -32,11 +31,11 @@ class DirectDownloadTester extends BaseTester<Boolean> {
 
     private void publishError(Exception ex) {
         if (ex instanceof StatusCodeException) {
-            publishMessage("Server returned " + ex.getMessage(), R.color.red);
+            publishMessage("Server returned " + ex.getMessage(), Level.ERROR);
             if (((StatusCodeException) ex).code == 401)
-                publishMessage("Your username and/or password may be wrong", R.color.red);
+                publishMessage("Your username and/or password may be wrong", Level.ERROR);
         } else {
-            publishMessage(ex.getMessage(), R.color.red);
+            publishMessage(ex.getMessage(), Level.ERROR);
         }
     }
 
@@ -44,7 +43,7 @@ class DirectDownloadTester extends BaseTester<Boolean> {
     public Boolean call(@Nullable Object prevResult) {
         try (Response resp = client.newCall(NetUtils.createDirectDownloadRequest(profile.directDownload)).execute()) {
             if (resp.code() == 200) {
-                publishMessage("Your DirectDownload configuration is working", R.color.green);
+                publishMessage("Your DirectDownload configuration is working", Level.SUCCESS);
                 return true;
             } else {
                 publishError(new StatusCodeException(resp));

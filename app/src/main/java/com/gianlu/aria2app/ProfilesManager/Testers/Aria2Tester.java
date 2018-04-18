@@ -6,12 +6,13 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
+import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Logging;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 class Aria2Tester extends BaseTester<Boolean> {
     Aria2Tester(Context context, MultiProfile.UserProfile profile, IPublish<Boolean> listener) {
@@ -19,28 +20,26 @@ class Aria2Tester extends BaseTester<Boolean> {
     }
 
     private void publishError(Exception ex, boolean authenticated) {
-        publishMessage(ex.getMessage(), R.color.red);
+        publishMessage(ex.getMessage(), Level.ERROR);
         if (authenticated)
-            publishMessage("Your token or username and password may be wrong", R.color.red);
+            publishMessage("Your token or username and password may be wrong", Level.ERROR);
     }
 
-    private <O> boolean runRequest(AbstractClient.AriaRequestWithResult<O> request, Aria2Helper helper, final boolean authenticated) {
-        final AtomicBoolean lock = new AtomicBoolean(false);
+    private <O> Object runRequest(AbstractClient.AriaRequestWithResult<O> request, Aria2Helper helper) {
+        final AtomicReference<Object> lock = new AtomicReference<>(null);
         helper.request(request, new AbstractClient.OnResult<O>() {
             @Override
             public void onResult(O result) {
                 synchronized (lock) {
-                    lock.set(true);
+                    lock.set(result);
                     lock.notify();
                 }
             }
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                publishError(ex, authenticated);
-
                 synchronized (lock) {
-                    lock.set(false);
+                    lock.set(ex);
                     lock.notify();
                 }
             }
@@ -66,15 +65,39 @@ class Aria2Tester extends BaseTester<Boolean> {
             throw new IllegalStateException("Previous result should be a client, but was " + prevResult);
 
         Aria2Helper helper = new Aria2Helper(client);
-        publishMessage("Started unauthenticated request...", android.R.color.tertiary_text_light);
-        if (!runRequest(AriaRequests.listMethods(), helper, false)) return null;
-        publishMessage("Unauthenticated request was successful", R.color.green);
+        publishMessage("Started unauthenticated request...", Level.INFO);
 
-        publishMessage("Started authenticated request...", android.R.color.tertiary_text_light);
-        if (!runRequest(AriaRequests.getVersion(), helper, true)) return null;
-        publishMessage("Authenticated request was successful", R.color.green);
+        Object unauthenticatedResult = runRequest(AriaRequests.listMethods(), helper);
+        if (unauthenticatedResult instanceof Exception) {
+            if (unauthenticatedResult instanceof AriaException) {
+                if (((AriaException) unauthenticatedResult).getMessage().contains("No such method")) {
+                    Object authenticatedResult = runAuthenticated(helper);
+                    if (authenticatedResult instanceof VersionInfo) {
+                        publishMessage("Skipped unauthenticated request due to outdated version ("
+                                + ((VersionInfo) authenticatedResult).version
+                                + "), assuming to be successful...", Level.INFO);
+                        return true;
+                    }
+                }
+            }
 
-        return true;
+            publishError((Exception) unauthenticatedResult, false);
+            return null;
+        } else {
+            publishMessage("Unauthenticated request was successful", Level.SUCCESS);
+
+            if (runAuthenticated(helper) instanceof Exception) return null;
+            else return true;
+        }
+    }
+
+    @NonNull
+    private Object runAuthenticated(Aria2Helper helper) {
+        publishMessage("Started authenticated request...", Level.INFO);
+        Object result = runRequest(AriaRequests.getVersion(), helper);
+        if (result instanceof Exception) publishError((Exception) result, true);
+        else publishMessage("Authenticated request was successful", Level.SUCCESS);
+        return result;
     }
 
     @NonNull
