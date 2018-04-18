@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,7 +28,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     private String token;
 
     public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, IAdapter listener) {
-        super(context, results, -1, -1, false);
+        super(new Config<SearchResult>(context).noSeparators().undeterminedPages().items(results));
         this.inflater = LayoutInflater.from(context);
         this.searchUtils = SearchApi.get();
         this.token = token;
@@ -36,8 +37,8 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     }
 
     @Override
-    protected void userBindViewHolder(ViewHolder holder, int position) {
-        final SearchResult result = items.get(position).getItem();
+    protected void userBindViewHolder(@NonNull ViewHolder holder, @NonNull ItemEnclosure<SearchResult> item, int position) {
+        final SearchResult result = item.getItem();
         SearchEngine engine = searchUtils.findEngine(result.engineId);
 
         holder.name.setText(result.title);
