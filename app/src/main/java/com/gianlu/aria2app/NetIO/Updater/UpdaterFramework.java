@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 
-final class UpdaterFramework {
-    private final Interface listener;
-    protected BaseUpdater updater;
+public final class UpdaterFramework<P> {
+    private final Interface<P> listener;
+    protected BaseUpdater<P> updater;
 
-    UpdaterFramework(Interface listener) {
+    UpdaterFramework(@NonNull Interface<P> listener) {
         this.listener = listener;
     }
 
@@ -20,15 +21,19 @@ final class UpdaterFramework {
     }
 
     @Nullable
-    public BaseUpdater getUpdater() {
+    public BaseUpdater<P> getUpdater() {
         return updater;
     }
 
-    private void startUpdater() {
+    protected void startUpdater() {
         Bundle args = listener.getArguments();
         if (args != null) {
-            updater = listener.createUpdater(args);
-            if (updater != null) updater.start();
+            try {
+                updater = listener.createUpdater(args);
+                updater.start();
+            } catch (Exception ex) {
+                listener.onCouldntLoad(ex);
+            }
         }
     }
 
@@ -42,16 +47,26 @@ final class UpdaterFramework {
         });
     }
 
-    protected void restartUpdater() {
+    protected void restartUpdater() { // FIXME: Updater is destroyed even if not needed
         stopUpdater();
         startUpdater();
     }
 
-    protected interface Interface {
+    public void requirePayload(AbstractClient.OnResult<P> listener) {
+        if (updater != null) updater.requirePayload(listener);
+        else listener.onException(new IllegalStateException("Updater not initialized yet!"), false);
+    }
 
-        BaseUpdater createUpdater(@NonNull Bundle args);
+    public interface Interface<P> {
+
+        @NonNull
+        BaseUpdater<P> createUpdater(@NonNull Bundle args) throws Exception;
 
         @Nullable
         Bundle getArguments();
+
+        void onUpdateUi(@NonNull P payload);
+
+        void onCouldntLoad(@NonNull Exception ex);
     }
 }

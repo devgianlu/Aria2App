@@ -44,7 +44,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
-public class InfoFragment extends DownloadUpdaterFragment implements OnBackPressed, BaseUpdater.UpdaterListener<Download>, Aria2Helper.DownloadActionClick.Listener {
+public class InfoFragment extends DownloadUpdaterFragment<Download> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private OnStatusChanged listener = null;
@@ -109,17 +109,10 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
         return (Download) args.getSerializable("download");
     }
 
-    @Nullable
+    @NonNull
     @Override
-    protected BaseUpdater createUpdater(@NonNull Download download) {
-        try {
-            return new Updater(getContext(), download, this);
-        } catch (Aria2Helper.InitializingException ex) {
-            holder.loading.setVisibility(View.GONE);
-            MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-            Logging.log(ex);
-            return null;
-        }
+    protected BaseUpdater<Download> createUpdater(@NonNull Download download) throws Exception {
+        return new Updater(getContext(), download, this);
     }
 
     @Override
@@ -146,6 +139,13 @@ public class InfoFragment extends DownloadUpdaterFragment implements OnBackPress
     @Override
     public void showToast(Toaster.Message msg, String extra) {
         Toaster.show(getActivity(), msg, extra);
+    }
+
+    @Override
+    public void onCouldntLoad(@NonNull Exception ex) {
+        holder.loading.setVisibility(View.GONE);
+        MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
+        Logging.log(ex);
     }
 
     public interface OnStatusChanged {

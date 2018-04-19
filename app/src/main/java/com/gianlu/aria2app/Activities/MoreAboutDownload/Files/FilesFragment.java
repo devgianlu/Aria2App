@@ -61,7 +61,7 @@ import com.gianlu.commonutils.Toaster;
 import java.util.Collection;
 import java.util.List;
 
-public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed, BaseUpdater.UpdaterListener<List<AriaFile>> {
+public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
     private DirBottomSheet dirSheet;
@@ -487,16 +487,10 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
         return (Download) args.getSerializable("download");
     }
 
-    @Nullable
+    @NonNull
     @Override
-    protected BaseUpdater createUpdater(@NonNull Download download) {
-        try {
-            return new Updater(getContext(), download, FilesFragment.this);
-        } catch (Aria2Helper.InitializingException ex) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.log(ex);
-            return null;
-        }
+    protected BaseUpdater<List<AriaFile>> createUpdater(@NonNull Download download) throws Exception {
+        return new Updater(getContext(), download, FilesFragment.this);
     }
 
     @Override
@@ -510,6 +504,12 @@ public class FilesFragment extends DownloadUpdaterFragment implements FilesAdapt
             if (dirSheet != null) dirSheet.update(download, files);
             if (adapter != null) showTutorial(adapter.getCurrentNode());
         }
+    }
+
+    @Override
+    public void onCouldntLoad(@NonNull Exception ex) {
+        recyclerViewLayout.showMessage(R.string.failedLoading, true);
+        Logging.log(ex);
     }
 
     private interface IWaitBinder {

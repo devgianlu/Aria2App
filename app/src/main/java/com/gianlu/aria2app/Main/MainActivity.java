@@ -91,7 +91,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
-import com.gianlu.commonutils.Drawer.Initializer;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
@@ -116,7 +115,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements InfoFragment.OnStatusChanged, FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DrawerManager.ISetup<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, BaseUpdater.UpdaterListener<DownloadsAndGlobalStats> {
+public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> implements InfoFragment.OnStatusChanged, FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
     private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -290,8 +289,7 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onPostCreate() {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
 
@@ -300,7 +298,7 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
 
         setRequestedOrientation(getResources().getBoolean(R.bool.isTablet) ? ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        drawerManager = new DrawerManager<>(new Initializer<>(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar, this)
+        drawerManager = new DrawerManager.Config<MultiProfile>(R.color.colorAccent, R.color.colorPrimary_shadow, R.drawable.drawer_background)
                 .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
@@ -309,7 +307,19 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
                 .addMenuItemSeparator()
                 .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.ic_settings_black_48dp, getString(R.string.preferences)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.ic_report_problem_black_48dp, getString(R.string.support)))
-                .addProfiles(ProfilesManager.get(this).getProfiles()));
+                .addProfiles(ProfilesManager.get(this).getProfiles(), new DrawerManager.Config.AdapterProvider<MultiProfile>() {
+                    @Override
+                    public ProfilesAdapter<MultiProfile> provide(@NonNull Context context, @NonNull List<MultiProfile> profiles, final DrawerManager.IDrawerListener<MultiProfile> listener) {
+                        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<MultiProfile>() {
+                            @Override
+                            public void onProfileSelected(MultiProfile profile) {
+                                if (listener != null) listener.onProfileSelected(profile);
+                                if (drawerManager != null) drawerManager.performUnlock();
+                            }
+                        }, true, null);
+                    }
+                })
+                .build(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar);
 
         ProfilesManager manager = ProfilesManager.get(this);
         MultiProfile currentProfile;
@@ -389,12 +399,9 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
         if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this, false);
 
-        adapter = new DownloadCardsAdapter(this, new ArrayList<Download>(), this);
-        recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
-        setupAdapterFiltersAndSorting();
 
-        if (((ThisApplication) getApplication()).isFirstStart()) {
+        if (((ThisApplication) getApplication()).isFirstStart()) { // FIXME: What if he changes the profile?
             SearchApi.get().cacheSearchEngines();
             ((ThisApplication) getApplication()).firstStarted();
             if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true))
@@ -461,6 +468,13 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
         }
     }
 
+    @Override
+    protected void onLoad(@NonNull DownloadsAndGlobalStats payload) {
+        adapter = new DownloadCardsAdapter(this, payload.downloads, this);
+        recyclerViewLayout.loadListData(adapter);
+        setupAdapterFiltersAndSorting();
+    }
+
     private void doVersionCheck() {
         GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
             @Override
@@ -468,7 +482,7 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
                 helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
                     @Override
                     public void onResult(VersionInfo result) {
-                        String skipVersion = Prefs.getString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, null);
+                        String skipVersion = Prefs.getString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, null); // FIXME: Every single profile should have its own
                         if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
                             showOutdatedDialog(latestVersion, result.version);
                     }
@@ -490,9 +504,7 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
     @Override
     protected void onDestroy() {
         AbstractClient.removeConnectivityListener(MainActivity.class.getName());
-
         if (adapter != null) adapter.activityDestroying(this);
-
         super.onDestroy();
     }
 
@@ -806,43 +818,6 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
         mask.setClickable(false);
     }
 
-    @Override
-    public int getColorAccent() {
-        return R.color.colorAccent;
-    }
-
-    @Override
-    public int getHeaderBackground() {
-        return R.drawable.drawer_background;
-    }
-
-    @Override
-    public int getDrawerBadge() {
-        return R.drawable.drawer_badge;
-    }
-
-    @Override
-    public int getColorPrimary() {
-        return R.color.colorPrimary;
-    }
-
-    @Nullable
-    @Override
-    public ProfilesAdapter<MultiProfile> getProfilesAdapter(Context context, List<MultiProfile> profiles, final DrawerManager.IDrawerListener<MultiProfile> listener) {
-        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<MultiProfile>() {
-            @Override
-            public void onProfileSelected(MultiProfile profile) {
-                if (listener != null) listener.onProfileSelected(profile);
-                if (drawerManager != null) drawerManager.performUnlock();
-            }
-        }, true, null);
-    }
-
-    @Override
-    public int getColorPrimaryShadow() {
-        return R.color.colorPrimary_shadow;
-    }
-
     private void showSecondSpace(Download download) {
         secondSpaceAdapter = new PagerAdapter<>(getSupportFragmentManager(),
                 InfoFragment.getInstance(this, download),
@@ -1041,21 +1016,13 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
     public void onServiceDisconnected(ComponentName name) {
         DownloaderUtils.unregisterReceiver(this, broadcastReceiver);
         broadcastReceiver = null;
-
         downloaderMessenger = null;
     }
 
+    @NonNull
     @Override
-    @Nullable
-    public BaseUpdater createUpdater(@NonNull Bundle args) {
-        try {
-            return new Updater(this, this);
-        } catch (Aria2Helper.InitializingException ex) {
-            ErrorHandler.get().notifyException(ex, true);
-            if (recyclerViewLayout != null)
-                recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
-            return null;
-        }
+    public BaseUpdater<DownloadsAndGlobalStats> createUpdater(@NonNull Bundle args) throws Exception {
+        return new Updater(this, this);
     }
 
     @Override
@@ -1103,6 +1070,13 @@ public class MainActivity extends UpdaterActivity implements InfoFragment.OnStat
             overallChart.setVisibleXRangeMaximum(90);
             overallChart.moveViewToX(pos - 91);
         }
+    }
+
+    @Override
+    public void onCouldntLoad(@NonNull Exception ex) {
+        ErrorHandler.get().notifyException(ex, true);
+        if (recyclerViewLayout != null)
+            recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
     }
 
     private class InternalBroadcastReceiver extends BroadcastReceiver {

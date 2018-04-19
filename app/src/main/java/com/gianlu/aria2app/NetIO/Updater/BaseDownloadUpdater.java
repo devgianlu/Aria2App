@@ -9,7 +9,7 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 public abstract class BaseDownloadUpdater<P> extends BaseUpdater<P> {
     protected final DownloadWithHelper download;
 
-    public BaseDownloadUpdater(Context context, Download download, UpdaterListener<P> listener) throws Aria2Helper.InitializingException {
+    public BaseDownloadUpdater(Context context, Download download, UpdaterFramework.Interface<P> listener) throws Aria2Helper.InitializingException {
         super(context, listener);
         this.download = download.wrap(helper.getClient());
     }

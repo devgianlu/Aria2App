@@ -9,9 +9,10 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFramework;
 
 class Updater extends BaseDownloadUpdater<SparseArray<Servers>> implements AbstractClient.OnResult<SparseArray<Servers>> {
-    Updater(Context context, Download download, UpdaterListener<SparseArray<Servers>> listener) throws Aria2Helper.InitializingException {
+    Updater(Context context, Download download, UpdaterFramework.Interface<SparseArray<Servers>> listener) throws Aria2Helper.InitializingException {
         super(context, download, listener);
     }
 
@@ -30,7 +31,7 @@ class Updater extends BaseDownloadUpdater<SparseArray<Servers>> implements Abstr
         if (ex instanceof AriaException && ex.getMessage().startsWith("No active download")) {
             hasResult(new SparseArray<Servers>());
         } else {
-            errorOccurred(ex);
+            errorOccurred(ex, shouldForce);
         }
     }
 }

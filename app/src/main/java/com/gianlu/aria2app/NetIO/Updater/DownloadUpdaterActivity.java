@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 
-public abstract class DownloadUpdaterFragment<P> extends UpdaterFragment<P> {
+public abstract class DownloadUpdaterActivity extends UpdaterActivity {
 
     @Nullable
     protected abstract Download getDownload(@NonNull Bundle args);
@@ -26,12 +26,12 @@ public abstract class DownloadUpdaterFragment<P> extends UpdaterFragment<P> {
 
     @NonNull
     @Override
-    public final BaseUpdater<P> createUpdater(@NonNull Bundle args) throws Exception {
+    public final BaseUpdater createUpdater(@NonNull Bundle args) {
         Download download = getDownload(args);
         if (download != null) return createUpdater(download);
-        else throw new IllegalStateException("Download is null!");
+        else return null;
     }
 
-    @NonNull
-    protected abstract BaseUpdater<P> createUpdater(@NonNull Download download) throws Exception;
+    @Nullable
+    protected abstract BaseUpdater createUpdater(@NonNull Download download);
 }

@@ -7,11 +7,12 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFramework;
 
 import java.util.List;
 
 class Updater extends BaseDownloadUpdater<List<AriaFile>> implements AbstractClient.OnResult<List<AriaFile>> {
-    Updater(Context context, Download download, UpdaterListener<List<AriaFile>> listener) throws Aria2Helper.InitializingException {
+    Updater(Context context, Download download, UpdaterFramework.Interface<List<AriaFile>> listener) throws Aria2Helper.InitializingException {
         super(context, download, listener);
     }
 
@@ -27,6 +28,6 @@ class Updater extends BaseDownloadUpdater<List<AriaFile>> implements AbstractCli
 
     @Override
     public void onException(Exception ex, boolean shouldForce) {
-        errorOccurred(ex);
+        errorOccurred(ex, shouldForce);
     }
 }

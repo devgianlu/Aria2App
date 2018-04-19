@@ -5,11 +5,11 @@ import android.support.v4.app.Fragment;
 
 import com.gianlu.aria2app.NetIO.OnRefresh;
 
-public abstract class UpdaterFragment extends Fragment implements UpdaterFramework.Interface {
-    private final UpdaterFramework framework;
+public abstract class UpdaterFragment<P> extends Fragment implements UpdaterFramework.Interface<P> {
+    private final UpdaterFramework<P> framework;
 
     public UpdaterFragment() {
-        framework = new UpdaterFramework(this);
+        framework = new UpdaterFramework<>(this);
     }
 
     @Override
@@ -45,7 +45,7 @@ public abstract class UpdaterFragment extends Fragment implements UpdaterFramewo
     }
 
     @Nullable
-    protected BaseUpdater getUpdater() {
+    protected BaseUpdater<P> getUpdater() {
         return framework.getUpdater();
     }
 }

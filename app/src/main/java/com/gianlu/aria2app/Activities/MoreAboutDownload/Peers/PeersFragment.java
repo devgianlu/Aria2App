@@ -15,16 +15,14 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
-import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
-import com.gianlu.commonutils.Logging;
 
-public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter, BaseUpdater.UpdaterListener<Peers> {
+public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet, Peers> implements PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
     public static PeersFragment getInstance(Context context, Download download) {
@@ -125,16 +123,10 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         return recyclerViewLayout.getList();
     }
 
-    @Nullable
+    @NonNull
     @Override
-    protected BaseUpdater createUpdater(@NonNull Download download) {
-        try {
-            return new Updater(getContext(), download, this);
-        } catch (Aria2Helper.InitializingException ex) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.log(ex);
-            return null;
-        }
+    protected BaseUpdater<Peers> createUpdater(@NonNull Download download) throws Exception {
+        return new Updater(getContext(), download, this);
     }
 
     @Override

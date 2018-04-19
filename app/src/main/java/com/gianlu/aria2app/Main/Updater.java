@@ -6,13 +6,14 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFramework;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 class Updater extends BaseUpdater<DownloadsAndGlobalStats> implements AbstractClient.OnResult<DownloadsAndGlobalStats> {
     private final boolean hideMetadata;
 
-    Updater(Context context, UpdaterListener<DownloadsAndGlobalStats> listener) throws Aria2Helper.InitializingException {
+    Updater(Context context, UpdaterFramework.Interface<DownloadsAndGlobalStats> listener) throws Aria2Helper.InitializingException {
         super(context, listener);
         this.hideMetadata = Prefs.getBoolean(context, PKeys.A2_HIDE_METADATA, false);
     }
@@ -29,6 +30,6 @@ class Updater extends BaseUpdater<DownloadsAndGlobalStats> implements AbstractCl
 
     @Override
     public void onException(Exception ex, boolean shouldForce) {
-        errorOccurred(ex);
+        errorOccurred(ex, shouldForce);
     }
 }

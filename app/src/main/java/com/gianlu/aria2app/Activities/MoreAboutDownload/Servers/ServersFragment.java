@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -14,7 +13,6 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
@@ -27,7 +25,7 @@ import com.gianlu.commonutils.Logging;
 
 import java.util.List;
 
-public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements ServersAdapter.IAdapter, BaseUpdater.UpdaterListener<SparseArray<Servers>> {
+public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet, SparseArray<Servers>> implements ServersAdapter.IAdapter {
     private boolean isShowingHint = false;
     private List<AriaFile> files = null;
 
@@ -94,16 +92,10 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         }
     }
 
-    @Nullable
+    @NonNull
     @Override
-    protected BaseUpdater createUpdater(@NonNull Download download) {
-        try {
-            return new Updater(getContext(), download, this);
-        } catch (Aria2Helper.InitializingException ex) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            Logging.log(ex);
-            return null;
-        }
+    protected BaseUpdater<SparseArray<Servers>> createUpdater(@NonNull Download download) throws Exception {
+        return new Updater(getContext(), download, this);
     }
 
     @Override

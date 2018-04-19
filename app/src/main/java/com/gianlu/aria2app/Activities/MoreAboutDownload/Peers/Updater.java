@@ -8,9 +8,10 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.BaseDownloadUpdater;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFramework;
 
 class Updater extends BaseDownloadUpdater<Peers> implements AbstractClient.OnResult<Peers> {
-    Updater(Context context, Download download, UpdaterListener<Peers> listener) throws Aria2Helper.InitializingException {
+    Updater(Context context, Download download, UpdaterFramework.Interface<Peers> listener) throws Aria2Helper.InitializingException {
         super(context, download, listener);
     }
 
@@ -29,7 +30,7 @@ class Updater extends BaseDownloadUpdater<Peers> implements AbstractClient.OnRes
         if (ex instanceof AriaException && ex.getMessage().startsWith("No peer data is available")) {
             hasResult(Peers.empty());
         } else {
-            errorOccurred(ex);
+            errorOccurred(ex, shouldForce);
         }
     }
 }
