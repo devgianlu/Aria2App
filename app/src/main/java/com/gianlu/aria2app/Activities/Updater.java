@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -23,7 +24,7 @@ class Updater extends BaseUpdater<DownloadWithHelper> implements AbstractClient.
     }
 
     @Override
-    public void onResult(DownloadWithHelper result) {
+    public void onResult(@NonNull DownloadWithHelper result) {
         hasResult(result);
     }
 

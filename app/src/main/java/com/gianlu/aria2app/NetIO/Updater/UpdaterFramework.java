@@ -27,7 +27,7 @@ public final class UpdaterFramework<P> {
 
     protected void startUpdater() {
         Bundle args = listener.getArguments();
-        if (args != null) {
+        if (args != null && updater == null) {
             try {
                 updater = listener.createUpdater(args);
                 updater.start();
@@ -42,14 +42,10 @@ public final class UpdaterFramework<P> {
             @Override
             public void onStopped() {
                 if (listener != null) listener.refreshed();
-                restartUpdater();
+                stopUpdater();
+                startUpdater();
             }
         });
-    }
-
-    protected void restartUpdater() { // FIXME: Updater is destroyed even if not needed
-        stopUpdater();
-        startUpdater();
     }
 
     public void requirePayload(AbstractClient.OnResult<P> listener) {
@@ -65,7 +61,7 @@ public final class UpdaterFramework<P> {
         @Nullable
         Bundle getArguments();
 
-        void onUpdateUi(@NonNull P payload);
+        void onPayload(@NonNull P payload);
 
         void onCouldntLoad(@NonNull Exception ex);
     }

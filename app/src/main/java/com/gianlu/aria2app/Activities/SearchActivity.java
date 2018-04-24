@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -307,7 +308,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                             Aria2Helper.instantiate(SearchActivity.this)
                                     .request(AriaRequests.addUri(Collections.singletonList(torrent.magnet), null, null), new AbstractClient.OnResult<String>() {
                                         @Override
-                                        public void onResult(String result) {
+                                        public void onResult(@NonNull String result) {
                                             dialogInterface.dismiss();
 
                                             Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)

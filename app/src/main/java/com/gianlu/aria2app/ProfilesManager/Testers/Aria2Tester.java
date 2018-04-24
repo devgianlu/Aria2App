@@ -29,7 +29,7 @@ class Aria2Tester extends BaseTester<Boolean> {
         final AtomicReference<Object> lock = new AtomicReference<>(null);
         helper.request(request, new AbstractClient.OnResult<O>() {
             @Override
-            public void onResult(O result) {
+            public void onResult(@NonNull O result) {
                 synchronized (lock) {
                     lock.set(result);
                     lock.notify();

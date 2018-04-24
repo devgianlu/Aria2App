@@ -24,8 +24,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
-import com.gianlu.aria2app.NetIO.Updater.DownloadUpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -44,7 +43,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
-public class InfoFragment extends DownloadUpdaterFragment<Download> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
+public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private OnStatusChanged listener = null;
@@ -99,31 +98,19 @@ public class InfoFragment extends DownloadUpdaterFragment<Download> implements O
     }
 
     @Override
-    public void onBackPressed() {
-        stopUpdater();
-    }
+    public void onUpdateUi(@NonNull DownloadWithHelper download) {
+        if (holder != null) holder.update(download.get());
 
-    @Nullable
-    @Override
-    protected Download getDownload(@NonNull Bundle args) {
-        return (Download) args.getSerializable("download");
-    }
-
-    @NonNull
-    @Override
-    protected BaseUpdater<Download> createUpdater(@NonNull Download download) throws Exception {
-        return new Updater(getContext(), download, this);
-    }
-
-    @Override
-    public void onUpdateUi(@NonNull Download download) {
-        if (holder != null) holder.update(download);
-
-        Download.SmallUpdate last = download.last();
+        Download.SmallUpdate last = download.get().last();
         if (listener != null && lastStatus != last.status)
             listener.onStatusChanged(last.status);
 
         lastStatus = last.status;
+    }
+
+    @Override
+    public void onLoad(@NonNull DownloadWithHelper payload) {
+        // TODO
     }
 
     @Override
@@ -139,13 +126,6 @@ public class InfoFragment extends DownloadUpdaterFragment<Download> implements O
     @Override
     public void showToast(Toaster.Message msg, String extra) {
         Toaster.show(getActivity(), msg, extra);
-    }
-
-    @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        holder.loading.setVisibility(View.GONE);
-        MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-        Logging.log(ex);
     }
 
     public interface OnStatusChanged {

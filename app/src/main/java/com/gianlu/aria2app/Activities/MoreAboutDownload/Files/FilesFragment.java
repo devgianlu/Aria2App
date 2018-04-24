@@ -46,8 +46,7 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
-import com.gianlu.aria2app.NetIO.Updater.DownloadUpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
@@ -61,7 +60,7 @@ import com.gianlu.commonutils.Toaster;
 import java.util.Collection;
 import java.util.List;
 
-public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
+public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
     private DirBottomSheet dirSheet;
@@ -103,11 +102,6 @@ public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> imple
         } else {
             return true;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        stopUpdater();
     }
 
     private void setupView() {
@@ -163,7 +157,7 @@ public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> imple
         try {
             Aria2Helper.instantiate(getContext()).request(AriaRequests.tellStatus(downloadStatic.gid), new AbstractClient.OnResult<DownloadWithHelper>() {
                 @Override
-                public void onResult(DownloadWithHelper result) {
+                public void onResult(@NonNull DownloadWithHelper result) {
                     download = result;
 
                     Activity activity = getActivity();
@@ -252,7 +246,7 @@ public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> imple
     private void changeSelectionForBatch(Collection<AriaFile> files, boolean select) {
         download.changeSelection(AriaFile.allIndexes(files), select, new AbstractClient.OnResult<DownloadWithHelper.ChangeSelectionResult>() {
             @Override
-            public void onResult(DownloadWithHelper.ChangeSelectionResult result) {
+            public void onResult(@NonNull DownloadWithHelper.ChangeSelectionResult result) {
                 switch (result) {
                     case EMPTY:
                         Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES);
@@ -481,20 +475,9 @@ public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> imple
         AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_DIRECTORY);
     }
 
-    @Nullable
     @Override
-    protected Download getDownload(@NonNull Bundle args) {
-        return (Download) args.getSerializable("download");
-    }
-
-    @NonNull
-    @Override
-    protected BaseUpdater<List<AriaFile>> createUpdater(@NonNull Download download) throws Exception {
-        return new Updater(getContext(), download, FilesFragment.this);
-    }
-
-    @Override
-    public void onUpdateUi(@NonNull List<AriaFile> files) {
+    public void onUpdateUi(@NonNull DownloadWithHelper download) {
+        List<AriaFile> files = download.get().last().files;
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {
@@ -507,9 +490,8 @@ public class FilesFragment extends DownloadUpdaterFragment<List<AriaFile>> imple
     }
 
     @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        recyclerViewLayout.showMessage(R.string.failedLoading, true);
-        Logging.log(ex);
+    public void onLoad(@NonNull DownloadWithHelper download) {
+        // TODO
     }
 
     private interface IWaitBinder {

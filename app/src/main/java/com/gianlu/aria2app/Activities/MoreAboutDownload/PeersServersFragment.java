@@ -12,17 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.Updater.DownloadUpdaterFragment;
-import com.gianlu.aria2app.NetIO.Updater.UpdaterFramework;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 
-public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends NiceBaseBottomSheet, P> extends DownloadUpdaterFragment<P> implements OnBackPressed, UpdaterFramework.Interface<P> {
+public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends NiceBaseBottomSheet> extends UpdaterFragment<DownloadWithHelper> implements OnBackPressed {
     protected TopCountriesView topDownloadCountries;
     protected TopCountriesView topUploadCountries;
     protected RecyclerViewLayout recyclerViewLayout;
@@ -48,17 +46,6 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         } else {
             return true;
         }
-    }
-
-    @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        recyclerViewLayout.showMessage(R.string.failedLoading, true);
-        Logging.log(ex);
-    }
-
-    @Override
-    public final void onBackPressed() {
-        stopUpdater();
     }
 
     @Nullable
@@ -93,11 +80,5 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);
 
         return layout;
-    }
-
-    @Nullable
-    @Override
-    protected Download getDownload(@NonNull Bundle args) {
-        return (Download) args.getSerializable("download");
     }
 }

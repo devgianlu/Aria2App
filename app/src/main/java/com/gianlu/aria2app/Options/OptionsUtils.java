@@ -258,7 +258,7 @@ public final class OptionsUtils {
 
             Aria2Helper.instantiate(activity).request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
                 @Override
-                public void onResult(Map<String, String> result) {
+                public void onResult(@NonNull Map<String, String> result) {
                     activity.dismissDialog();
 
                     if (quick) {
@@ -295,7 +295,7 @@ public final class OptionsUtils {
 
             Aria2Helper.instantiate(activity).request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
                 @Override
-                public void onResult(Map<String, String> result) {
+                public void onResult(@NonNull Map<String, String> result) {
                     activity.dismissDialog();
 
                     if (quick) {

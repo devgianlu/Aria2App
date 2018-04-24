@@ -3,6 +3,7 @@ package com.gianlu.aria2app.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -102,7 +103,7 @@ public class AddUriActivity extends ActivityWithDialog {
             showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
             Aria2Helper.instantiate(this).request(AriaRequests.addUri(uris, position, options), new AbstractClient.OnResult<String>() {
                 @Override
-                public void onResult(String result) {
+                public void onResult(@NonNull String result) {
                     dismissDialog();
                     Toaster.show(AddUriActivity.this, Utils.Messages.DOWNLOAD_ADDED, result, new Runnable() {
                         @Override

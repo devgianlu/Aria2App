@@ -54,7 +54,7 @@ public final class DownloadWithHelper {
     public void restart(final AbstractClient.OnSuccess listener) {
         restart(new AbstractClient.OnResult<String>() {
             @Override
-            public void onResult(String result) {
+            public void onResult(@NonNull String result) {
                 listener.onSuccess();
             }
 

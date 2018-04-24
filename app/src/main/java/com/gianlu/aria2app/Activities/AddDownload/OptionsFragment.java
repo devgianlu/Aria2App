@@ -74,7 +74,7 @@ public class OptionsFragment extends Fragment {
 
         helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
             @Override
-            public void onResult(Map<String, String> result) {
+            public void onResult(@NonNull Map<String, String> result) {
                 final Activity activity = getActivity();
                 if (activity != null) {
                     List<Option> options = Option.fromOptionsMap(result, downloadOptions);

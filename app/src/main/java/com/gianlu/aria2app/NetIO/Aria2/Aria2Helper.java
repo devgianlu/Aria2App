@@ -173,7 +173,7 @@ public class Aria2Helper {
         }
 
         @Override
-        public void onResult(DownloadWithHelper.RemoveResult result) {
+        public void onResult(@NonNull DownloadWithHelper.RemoveResult result) {
             Toaster.Message msg;
             switch (result) {
                 case REMOVED:

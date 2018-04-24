@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Main;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -24,7 +25,7 @@ class Updater extends BaseUpdater<DownloadsAndGlobalStats> implements AbstractCl
     }
 
     @Override
-    public void onResult(DownloadsAndGlobalStats result) {
+    public void onResult(@NonNull DownloadsAndGlobalStats result) {
         hasResult(result);
     }
 

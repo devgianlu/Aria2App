@@ -204,7 +204,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
         helper.getVersionAndSession(new AbstractClient.OnResult<VersionAndSession>() {
             @Override
-            public void onResult(VersionAndSession result) {
+            public void onResult(@NonNull VersionAndSession result) {
                 final LinearLayout layout = new LinearLayout(MainActivity.this);
                 layout.setOrientation(LinearLayout.VERTICAL);
                 int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
@@ -469,7 +469,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
     }
 
     @Override
-    protected void onLoad(@NonNull DownloadsAndGlobalStats payload) {
+    public void onLoad(@NonNull DownloadsAndGlobalStats payload) {
         adapter = new DownloadCardsAdapter(this, payload.downloads, this);
         recyclerViewLayout.loadListData(adapter);
         setupAdapterFiltersAndSorting();
@@ -481,7 +481,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
             public void onRelease(final String latestVersion) {
                 helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
                     @Override
-                    public void onResult(VersionInfo result) {
+                    public void onResult(@NonNull VersionInfo result) {
                         String skipVersion = Prefs.getString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, null); // FIXME: Every single profile should have its own
                         if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
                             showOutdatedDialog(latestVersion, result.version);
@@ -640,7 +640,6 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         } else if (secondSpace != null && secondSpaceAdapter != null) {
             OnBackPressed visible = secondSpaceAdapter.getFragments().get(secondSpacePager.getCurrentItem());
             if (!visible.canGoBack(-1)) return;
-            visible.onBackPressed();
             hideSecondSpace();
             return;
         }

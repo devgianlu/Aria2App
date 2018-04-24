@@ -262,7 +262,7 @@ public abstract class AbstractClient implements Closeable {
     }
 
     public interface OnResult<R> {
-        void onResult(R result);
+        void onResult(@NonNull R result);
 
         void onException(Exception ex, boolean shouldForce);
     }

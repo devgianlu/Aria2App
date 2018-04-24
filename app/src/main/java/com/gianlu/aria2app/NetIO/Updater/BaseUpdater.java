@@ -44,7 +44,7 @@ public abstract class BaseUpdater<P> extends Thread {
             requireListener.onResult(result);
             requireListener = null;
         } else {
-            listener.onUpdateUi(result);
+            listener.onPayload(result);
         }
     }
 

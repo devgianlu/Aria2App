@@ -15,14 +15,15 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
-import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 
-public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet, Peers> implements PeersAdapter.IAdapter {
+public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
     public static PeersFragment getInstance(Context context, Download download) {
@@ -123,18 +124,27 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         return recyclerViewLayout.getList();
     }
 
-    @NonNull
     @Override
-    protected BaseUpdater<Peers> createUpdater(@NonNull Download download) throws Exception {
-        return new Updater(getContext(), download, this);
+    public void onUpdateUi(@NonNull DownloadWithHelper payload) {
+        payload.peers(new AbstractClient.OnResult<Peers>() {
+            @Override
+            public void onResult(@NonNull Peers result) {
+                recyclerViewLayout.showList();
+                topDownloadCountries.setPeers(result, true);
+                topUploadCountries.setPeers(result, false);
+                if (adapter != null) adapter.notifyItemsChanged(result);
+                if (sheet != null && sheet.isExpanded()) sheet.update(result);
+            }
+
+            @Override
+            public void onException(Exception ex, boolean shouldForce) {
+                ex.printStackTrace(); // FIXME
+            }
+        });
     }
 
     @Override
-    public void onUpdateUi(@NonNull Peers peers) {
-        recyclerViewLayout.showList();
-        topDownloadCountries.setPeers(peers, true);
-        topUploadCountries.setPeers(peers, false);
-        if (adapter != null) adapter.notifyItemsChanged(peers);
-        if (sheet != null && sheet.isExpanded()) sheet.update(peers);
+    public void onLoad(@NonNull DownloadWithHelper payload) {
+        // TODO
     }
 }

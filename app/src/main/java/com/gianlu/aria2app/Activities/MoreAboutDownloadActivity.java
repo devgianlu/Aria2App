@@ -22,6 +22,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
 import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
+import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -29,7 +30,7 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
 public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelper> implements InfoFragment.OnStatusChanged {
-    private PagerAdapter<? extends OnBackPressed> adapter;
+    private PagerAdapter<UpdaterFragment<DownloadWithHelper>> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
 
@@ -119,8 +120,8 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if (adapter != null && state == ViewPager.SCROLL_STATE_DRAGGING)
-                    adapter.getFragments().get(pager.getCurrentItem()).canGoBack(OnBackPressed.CODE_CLOSE_SHEET);
+                if (state == ViewPager.SCROLL_STATE_DRAGGING)
+                    canGoBack(OnBackPressed.CODE_CLOSE_SHEET);
             }
         });
 
@@ -133,7 +134,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                adapter.getFragments().get(tab.getPosition()).canGoBack(OnBackPressed.CODE_CLOSE_SHEET);
+                canGoBack(OnBackPressed.CODE_CLOSE_SHEET);
             }
 
             @Override
@@ -143,26 +144,32 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
     }
 
     @Override
-    protected void onLoad(@NonNull DownloadWithHelper payload) { // FIXME
+    public void onLoad(@NonNull DownloadWithHelper payload) { // FIXME
         Download.SmallUpdate last = payload.get().lastBig();
         if (currentStatus == null) currentStatus = last.status;
 
         setTitle(last.getName());
 
-        adapter = new PagerAdapter<>(getSupportFragmentManager(),
+        adapter = new PagerAdapter<UpdaterFragment<DownloadWithHelper>>(getSupportFragmentManager(),
                 InfoFragment.getInstance(this, payload.get()),
                 payload.get().isTorrent() ? PeersFragment.getInstance(this, payload.get()) : ServersFragment.getInstance(this, payload.get()),
                 FilesFragment.getInstance(this, payload.get()));
         pager.setAdapter(adapter);
     }
 
+    private boolean canGoBack(int code) {
+        if (adapter != null) {
+            UpdaterFragment fragment = adapter.getFragments().get(pager.getCurrentItem());
+            if (fragment instanceof OnBackPressed)
+                return ((OnBackPressed) fragment).canGoBack(code);
+        }
+
+        return true;
+    }
+
     @Override
     public void onBackPressed() {
-        if (adapter != null) {
-            OnBackPressed visible = adapter.getFragments().get(pager.getCurrentItem());
-            if (!visible.canGoBack(-1)) return;
-            visible.onBackPressed();
-        }
+        if (!canGoBack(-1)) return;
 
         try {
             super.onBackPressed();
@@ -193,7 +200,6 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
     @Override
     public void onUpdateUi(@NonNull DownloadWithHelper payload) {
         // TODO
-        // TODO: Should broadcast to fragments, remove fragment updaters
     }
 
     @Override

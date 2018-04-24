@@ -142,7 +142,7 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<DownloadWithHelper.ChangeSelectionResult>() {
                         @Override
-                        public void onResult(DownloadWithHelper.ChangeSelectionResult result) {
+                        public void onResult(@NonNull DownloadWithHelper.ChangeSelectionResult result) {
                             switch (result) {
                                 case EMPTY:
                                     listener.showToast(Utils.Messages.CANT_DESELECT_ALL_FILES);
