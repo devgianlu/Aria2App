@@ -298,7 +298,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
 
         setRequestedOrientation(getResources().getBoolean(R.bool.isTablet) ? ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        drawerManager = new DrawerManager.Config<MultiProfile>(R.color.colorAccent, R.color.colorPrimary_shadow, R.drawable.drawer_background)
+        drawerManager = new DrawerManager.Config<MultiProfile>(R.drawable.drawer_background)
                 .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
