@@ -5,15 +5,15 @@ import java.util.List;
 
 public class DownloadsAndGlobalStats {
     public final GlobalStats stats;
-    public final List<Download> downloads;
+    public final List<DownloadWithUpdate> downloads;
 
-    DownloadsAndGlobalStats(List<Download> allDownloads, boolean ignoreMetadata, GlobalStats stats) {
+    DownloadsAndGlobalStats(List<DownloadWithUpdate> allDownloads, boolean ignoreMetadata, GlobalStats stats) {
         this.stats = stats;
 
         downloads = new ArrayList<>();
         if (ignoreMetadata) {
-            for (Download download : allDownloads) {
-                Download.SmallUpdate last = download.last();
+            for (DownloadWithUpdate download : allDownloads) {
+                DownloadWithUpdate.SmallUpdate last = download.update();
                 if (!(last.isMetadata() && (last.followedBy != null || last.status == Download.Status.COMPLETE)))
                     downloads.add(download);
             }

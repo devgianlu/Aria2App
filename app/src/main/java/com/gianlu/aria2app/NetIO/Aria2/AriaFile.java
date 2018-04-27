@@ -27,7 +27,7 @@ public class AriaFile extends DownloadChild implements Serializable {
     private String mime;
     private String name;
 
-    public AriaFile(Download download, JSONObject obj) throws JSONException {
+    public AriaFile(DownloadWithUpdate download, JSONObject obj) throws JSONException {
         super(download);
         index = obj.getInt("index");
         path = obj.getString("path");
@@ -95,7 +95,7 @@ public class AriaFile extends DownloadChild implements Serializable {
     }
 
     public String getRelativePath() {
-        return getRelativePath(path, download.dir);
+        return getRelativePath(path, download.update().dir);
     }
 
     public boolean completed() {

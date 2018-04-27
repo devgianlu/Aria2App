@@ -19,7 +19,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
@@ -29,16 +29,11 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
-public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelper> implements InfoFragment.OnStatusChanged {
-    private PagerAdapter<UpdaterFragment<DownloadWithHelper>> adapter;
+public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithUpdate.BigUpdate> {
+    private PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
-
-    public static void start(Context context, @NonNull Download download) {
-        context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
-                .putExtra("theme", download.isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar)
-                .putExtra("gid", download.gid));
-    }
+    private Download.Status lastStatus = Download.Status.UNKNOWN;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -46,40 +41,25 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (currentStatus == Download.Status.UNKNOWN
-                || currentStatus == Download.Status.ERROR
-                || currentStatus == Download.Status.COMPLETE
-                || currentStatus == Download.Status.REMOVED) {
-            menu.findItem(R.id.moreAboutDownload_options).setVisible(false);
-            menu.findItem(R.id.moreAboutDownload_quickOptions).setVisible(false);
-        } else {
-            menu.findItem(R.id.moreAboutDownload_options).setVisible(true);
-            menu.findItem(R.id.moreAboutDownload_quickOptions).setVisible(true);
-        }
-
-        return true;
+    public static void start(Context context, @NonNull DownloadWithUpdate download) {
+        context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
+                .putExtra("theme", download.update().isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar)
+                .putExtra("gid", download.gid));
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Download download = (Download) getIntent().getSerializableExtra("download");
-        if (download == null) return false;
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.moreAboutDownload_options:
-                OptionsUtils.showDownloadDialog(this, download.gid, false);
-                return true;
-            case R.id.moreAboutDownload_quickOptions:
-                OptionsUtils.showDownloadDialog(this, download.gid, true);
-                return true;
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem options = menu.findItem(R.id.moreAboutDownload_options);
+        MenuItem quick = menu.findItem(R.id.moreAboutDownload_quickOptions);
+        if (currentStatus == Download.Status.UNKNOWN || currentStatus == Download.Status.ERROR || currentStatus == Download.Status.COMPLETE || currentStatus == Download.Status.REMOVED) {
+            options.setVisible(false);
+            quick.setVisible(false);
+        } else {
+            options.setVisible(true);
+            quick.setVisible(true);
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -144,17 +124,23 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithHelper payload) { // FIXME
-        Download.SmallUpdate last = payload.get().lastBig();
-        if (currentStatus == null) currentStatus = last.status;
+    public boolean onOptionsItemSelected(MenuItem item) {
+        String gid = getIntent().getStringExtra("gid");
+        if (gid == null) return false;
 
-        setTitle(last.getName());
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.moreAboutDownload_options:
+                OptionsUtils.showDownloadDialog(this, gid, false);
+                return true;
+            case R.id.moreAboutDownload_quickOptions:
+                OptionsUtils.showDownloadDialog(this, gid, true);
+                return true;
+        }
 
-        adapter = new PagerAdapter<UpdaterFragment<DownloadWithHelper>>(getSupportFragmentManager(),
-                InfoFragment.getInstance(this, payload.get()),
-                payload.get().isTorrent() ? PeersFragment.getInstance(this, payload.get()) : ServersFragment.getInstance(this, payload.get()),
-                FilesFragment.getInstance(this, payload.get()));
-        pager.setAdapter(adapter);
+        return false;
     }
 
     private boolean canGoBack(int code) {
@@ -179,27 +165,31 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithHelpe
     }
 
     @Override
-    public void onStatusChanged(Download.Status newStatus) {
-        currentStatus = newStatus;
-        invalidateOptionsMenu();
+    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        if (currentStatus == null) currentStatus = payload.status;
+        setTitle(payload.getName());
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (currentStatus == Download.Status.UNKNOWN) onBackPressed();
-            }
-        });
+        adapter = new PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>>(getSupportFragmentManager(),
+                InfoFragment.getInstance(this),
+                payload.isTorrent() ? PeersFragment.getInstance(this) : ServersFragment.getInstance(this),
+                FilesFragment.getInstance(this));
+        pager.setAdapter(adapter);
     }
 
     @NonNull
     @Override
-    public BaseUpdater<DownloadWithHelper> createUpdater(@NonNull Bundle args) throws Exception {
+    public BaseUpdater<DownloadWithUpdate.BigUpdate> createUpdater(@NonNull Bundle args) throws Exception {
         return new Updater(this, args.getString("gid"), this);
     }
 
     @Override
-    public void onUpdateUi(@NonNull DownloadWithHelper payload) {
-        // TODO
+    public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        if (lastStatus != payload.status) {
+            lastStatus = payload.status;
+            invalidateOptionsMenu();
+        }
+
+        if (payload.status == Download.Status.UNKNOWN) onBackPressed();
     }
 
     @Override

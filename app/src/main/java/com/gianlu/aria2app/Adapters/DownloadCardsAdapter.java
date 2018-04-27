@@ -25,12 +25,10 @@ import android.widget.LinearLayout;
 
 import com.gianlu.aria2app.CustomDownloadInfo;
 import com.gianlu.aria2app.DonutProgress;
-import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.PKeys;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.Utils;
@@ -50,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, Download, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection, Aria2Helper.DownloadActionClick.Listener {
+public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, DownloadWithUpdate, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection, Aria2Helper.DownloadActionClick.Listener {
     private final Context context;
     private final IAdapter listener;
     private final LayoutInflater inflater;
@@ -58,7 +56,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     private final LocalBroadcastManager broadcastManager;
     private Messenger notificationMessenger;
 
-    public DownloadCardsAdapter(Context context, List<Download> objs, IAdapter listener) {
+    public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, IAdapter listener) {
         super(objs, SortBy.STATUS);
         this.context = context;
         this.listener = listener;
@@ -90,11 +88,11 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     public long getItemId(int position) {
-        return objs.get(position).gid.hashCode();
+        return objs.get(position).hashCode();
     }
 
     @Override
-    protected void onBindViewHolder(ViewHolder holder, int position, @NonNull Download payload) {
+    protected void onBindViewHolder(ViewHolder holder, int position, @NonNull DownloadWithUpdate payload) {
         holder.update(payload);
         CommonUtils.setRecyclerViewTopMargin(context, holder);
     }
@@ -111,10 +109,12 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final Download item = objs.get(position);
+        final DownloadWithUpdate item = objs.get(position);
+        DownloadWithUpdate.SmallUpdate update = item.update();
 
         final int color;
-        if (item.isTorrent()) color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
+        if (update.isTorrent())
+            color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
         else color = ContextCompat.getColor(context, R.color.colorAccent);
 
         Utils.setupChart(holder.detailsChart, true, R.color.colorPrimaryDark);
@@ -122,7 +122,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         holder.donutProgress.setFinishedStrokeColor(color);
 
         holder.detailsGid.setHtml(R.string.gid, item.gid);
-        holder.detailsTotalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(item.length, false));
+        holder.detailsTotalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(update.length, false));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,18 +160,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             }
         });
 
-        try {
-            DownloadWithHelper helper = item.wrap(context);
-            holder.pause.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.PAUSE, this));
-            holder.restart.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.RESTART, this));
-            holder.start.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.RESUME, this));
-            holder.stop.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.STOP, this));
-            holder.remove.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.REMOVE, this));
-            holder.moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.MOVE_UP, this));
-            holder.moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(helper, Aria2Helper.WhatAction.MOVE_DOWN, this));
-        } catch (ProfilesManager.NoCurrentProfileException | AbstractClient.InitializationException ex) {
-            Logging.log(ex);
-        }
+        holder.pause.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.PAUSE, this));
+        holder.restart.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.RESTART, this));
+        holder.start.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.RESUME, this));
+        holder.stop.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.STOP, this));
+        holder.remove.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.REMOVE, this));
+        holder.moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_UP, this));
+        holder.moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_DOWN, this));
 
         if (notificationMessenger != null) {
             try {
@@ -181,7 +176,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             }
         }
 
-        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PKeys.A2_CUSTOM_INFO, new HashSet<String>()), item.isTorrent()));
+        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PKeys.A2_CUSTOM_INFO, new HashSet<String>()), update.isTorrent()));
         holder.update(item);
         CommonUtils.setRecyclerViewTopMargin(context, holder);
     }
@@ -194,9 +189,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
-    protected boolean matchQuery(@NonNull Download item, @Nullable String query) {
+    protected boolean matchQuery(@NonNull DownloadWithUpdate item, @Nullable String query) {
         return (query == null
-                || item.last().getName().toLowerCase().contains(query.toLowerCase())
+                || item.update().getName().toLowerCase().contains(query.toLowerCase())
                 || item.gid.toLowerCase().contains(query.toLowerCase()))
                 && !filters.contains(item.getFilterable());
     }
@@ -208,23 +203,23 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     @NonNull
-    public Comparator<Download> getComparatorFor(SortBy sorting) {
+    public Comparator<DownloadWithUpdate> getComparatorFor(SortBy sorting) {
         switch (sorting) {
             case NAME:
-                return new Download.NameComparator();
+                return new DownloadWithUpdate.NameComparator();
             default:
             case STATUS:
-                return new Download.StatusComparator();
+                return new DownloadWithUpdate.StatusComparator();
             case PROGRESS:
-                return new Download.ProgressComparator();
+                return new DownloadWithUpdate.ProgressComparator();
             case DOWNLOAD_SPEED:
-                return new Download.DownloadSpeedComparator();
+                return new DownloadWithUpdate.DownloadSpeedComparator();
             case UPLOAD_SPEED:
-                return new Download.UploadSpeedComparator();
+                return new DownloadWithUpdate.UploadSpeedComparator();
             case COMPLETED_LENGTH:
-                return new Download.CompletedLengthComparator();
+                return new DownloadWithUpdate.CompletedLengthComparator();
             case LENGTH:
-                return new Download.LengthComparator();
+                return new DownloadWithUpdate.LengthComparator();
         }
     }
 
@@ -278,7 +273,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     public interface IAdapter {
-        void onMoreClick(Download item);
+        void onMoreClick(DownloadWithUpdate item);
 
         void onItemCountUpdated(int count);
 
@@ -366,7 +361,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             detailsUploadLength = itemView.findViewById(R.id.downloadCard_detailsUploadLength);
         }
 
-        private void setupActions(Download download) {
+        private void setupActions(DownloadWithUpdate download) {
             start.setVisibility(View.VISIBLE);
             stop.setVisibility(View.VISIBLE);
             restart.setVisibility(View.VISIBLE);
@@ -377,7 +372,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             toggleNotification.setVisibility(View.VISIBLE);
             more.setVisibility(View.VISIBLE);
 
-            switch (download.last().status) {
+            switch (download.update().status) {
                 case ACTIVE:
                     restart.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
@@ -402,7 +397,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                     more.setVisibility(View.INVISIBLE);
                 case COMPLETE:
                 case REMOVED:
-                    if (download.isTorrent()) restart.setVisibility(View.GONE);
+                    if (download.update().isTorrent()) restart.setVisibility(View.GONE);
                     pause.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
                     stop.setVisibility(View.GONE);
@@ -424,8 +419,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             }
         }
 
-        public void update(Download download) {
-            Download.SmallUpdate last = download.last();
+        public void update(DownloadWithUpdate download) {
+            DownloadWithUpdate.SmallUpdate last = download.update();
             if (last.status == Download.Status.ACTIVE) {
                 LineData data = detailsChart.getData();
                 if (data == null) {

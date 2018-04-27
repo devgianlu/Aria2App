@@ -18,14 +18,11 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.CountryFlags;
-import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -43,28 +40,17 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
 
-public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
+public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
-    private OnStatusChanged listener = null;
     private ViewHolder holder;
-    private Download.Status lastStatus = Download.Status.UNKNOWN;
 
-    public static InfoFragment getInstance(Context context, Download download) {
+    public static InfoFragment getInstance(Context context) {
         InfoFragment fragment = new InfoFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.info));
-        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof OnStatusChanged)
-            listener = (OnStatusChanged) context;
     }
 
     @Nullable
@@ -72,23 +58,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.fragment_info, container, false));
         MessageLayout.setPaddingTop(holder.rootView, 48);
-
-        Bundle args = getArguments();
-        Download download;
-        if (args == null || (download = (Download) args.getSerializable("download")) == null || getContext() == null) {
-            holder.loading.setVisibility(View.GONE);
-            MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
-            return holder.rootView;
-        }
-
-        try {
-            holder.setup(download.wrap(getContext()));
-        } catch (ProfilesManager.NoCurrentProfileException | AbstractClient.InitializationException ex) {
-            holder.loading.setVisibility(View.GONE);
-            MessageLayout.show(holder.rootView, getString(R.string.failedLoading_reason, ex.getMessage()), R.drawable.ic_error_outline_black_48dp);
-            return holder.rootView;
-        }
-
         return holder.rootView;
     }
 
@@ -98,19 +67,14 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
     }
 
     @Override
-    public void onUpdateUi(@NonNull DownloadWithHelper download) {
-        if (holder != null) holder.update(download.get());
-
-        Download.SmallUpdate last = download.get().last();
-        if (listener != null && lastStatus != last.status)
-            listener.onStatusChanged(last.status);
-
-        lastStatus = last.status;
+    public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        holder.update(payload);
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithHelper payload) {
-        // TODO
+    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        holder.setup(payload.download());
+        holder.update(payload);
     }
 
     @Override
@@ -126,10 +90,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
     @Override
     public void showToast(Toaster.Message msg, String extra) {
         Toaster.show(getActivity(), msg, extra);
-    }
-
-    public interface OnStatusChanged {
-        void onStatusChanged(Download.Status newStatus);
     }
 
     public class ViewHolder {
@@ -211,11 +171,13 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
             btAnnounceList = rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
-        void setup(final DownloadWithHelper download) {
+        void setup(final DownloadWithUpdate download) {
             if (getContext() == null) return;
 
+            DownloadWithUpdate.BigUpdate update = download.bigUpdate();
+
             Utils.setupChart(chart, false, R.color.colorPrimaryDark);
-            int colorRes = download.get().isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
+            int colorRes = update.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
             chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
             bitfield.setColor(colorRes);
             progress.setTypeface("fonts/Roboto-Light.ttf");
@@ -238,12 +200,12 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
                 }
             });
 
-            if (download.get().torrent == null || download.get().torrent.announceList.isEmpty()) {
+            if (update.torrent == null || update.torrent.announceList.isEmpty()) {
                 btAnnounceListContainer.setVisibility(View.GONE);
             } else {
                 btAnnounceListContainer.setVisibility(View.VISIBLE);
                 btAnnounceList.removeAllViews();
-                for (String url : download.get().torrent.announceList) {
+                for (String url : update.torrent.announceList) {
                     final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.item_bt_announce, btAnnounceList, false);
                     ((TextView) layout.getChildAt(0)).setText(url);
                     ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_country_unknown);
@@ -271,7 +233,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
             }
         }
 
-        void setActionsState(Download download) {
+        void setActionsState(DownloadWithUpdate.BigUpdate update) {
             start.setVisibility(View.VISIBLE);
             stop.setVisibility(View.VISIBLE);
             restart.setVisibility(View.VISIBLE);
@@ -280,7 +242,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
             moveUp.setVisibility(View.VISIBLE);
             moveDown.setVisibility(View.VISIBLE);
 
-            switch (download.last().status) {
+            switch (update.status) {
                 case ACTIVE:
                     restart.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
@@ -304,7 +266,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
                 case ERROR:
                 case COMPLETE:
                 case REMOVED:
-                    if (download.isTorrent()) restart.setVisibility(View.GONE);
+                    if (update.isTorrent()) restart.setVisibility(View.GONE);
                     pause.setVisibility(View.GONE);
                     start.setVisibility(View.GONE);
                     stop.setVisibility(View.GONE);
@@ -323,8 +285,8 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
             }
         }
 
-        boolean setChartState(Download.SmallUpdate download) {
-            switch (download.status) {
+        boolean setChartState(DownloadWithUpdate.BigUpdate update) {
+            switch (update.status) {
                 case ACTIVE:
                     return true;
                 default:
@@ -335,24 +297,21 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
                 case COMPLETE:
                 case UNKNOWN:
                     chart.clear();
-                    chart.setNoDataText(getString(R.string.downloadIs, download.status.getFormal(getContext(), false)));
+                    chart.setNoDataText(getString(R.string.downloadIs, update.status.getFormal(getContext(), false)));
                     return false;
             }
         }
 
-        void update(Download download) {
+        void update(DownloadWithUpdate.BigUpdate update) {
             if (!isAdded()) return;
 
             MessageLayout.hide(rootView);
             loading.setVisibility(View.GONE);
             container.setVisibility(View.VISIBLE);
 
-            setActionsState(download);
+            setActionsState(update);
 
-            Download.BigUpdate last = download.lastBig();
-            if (last == null) return;
-
-            if (setChartState(last)) {
+            if (setChartState(update)) {
                 LineData data = chart.getLineData();
                 if (data == null) {
                     Utils.setupChart(chart, true, R.color.colorPrimaryDark);
@@ -360,56 +319,56 @@ public class InfoFragment extends UpdaterFragment<DownloadWithHelper> implements
                 }
 
                 int pos = data.getEntryCount();
-                data.addEntry(new Entry(pos, last.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-                data.addEntry(new Entry(pos, last.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                data.addEntry(new Entry(pos, update.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                data.addEntry(new Entry(pos, update.uploadSpeed), Utils.CHART_UPLOAD_SET);
                 data.notifyDataChanged();
                 chart.notifyDataSetChanged();
                 chart.setVisibleXRangeMaximum(90);
                 chart.moveViewToX(data.getEntryCount());
             }
 
-            progress.setText(String.format(Locale.getDefault(), "%.1f %%", last.getProgress()));
-            downloadSpeed.setText(CommonUtils.speedFormatter(last.downloadSpeed, false));
-            uploadSpeed.setText(CommonUtils.speedFormatter(last.uploadSpeed, false));
-            remainingTime.setText(CommonUtils.timeFormatter(last.getMissingTime()));
-            bitfield.update(download);
+            progress.setText(String.format(Locale.getDefault(), "%.1f %%", update.getProgress()));
+            downloadSpeed.setText(CommonUtils.speedFormatter(update.downloadSpeed, false));
+            uploadSpeed.setText(CommonUtils.speedFormatter(update.uploadSpeed, false));
+            remainingTime.setText(CommonUtils.timeFormatter(update.getMissingTime()));
+            bitfield.update(update);
 
-            gid.setHtml(R.string.gid, download.gid);
-            totalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(download.length, false));
-            completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(last.completedLength, false));
-            uploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(last.uploadLength, false));
-            pieceLength.setHtml(R.string.pieces_length, CommonUtils.dimensionFormatter(download.pieceLength, false));
-            numPieces.setHtml(R.string.pieces, download.numPieces);
-            connections.setHtml(R.string.connections, last.connections);
-            directory.setHtml(R.string.directory, download.dir);
+            gid.setHtml(R.string.gid, update.download().gid);
+            totalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(update.length, false));
+            completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(update.completedLength, false));
+            uploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(update.uploadLength, false));
+            pieceLength.setHtml(R.string.pieces_length, CommonUtils.dimensionFormatter(update.pieceLength, false));
+            numPieces.setHtml(R.string.pieces, update.numPieces);
+            connections.setHtml(R.string.connections, update.connections);
+            directory.setHtml(R.string.directory, update.dir);
 
-            verifyIntegrityPending.setHtml(R.string.verifyIntegrityPending, String.valueOf(last.verifyIntegrityPending));
-            if (last.verifyIntegrityPending) {
+            verifyIntegrityPending.setHtml(R.string.verifyIntegrityPending, String.valueOf(update.verifyIntegrityPending));
+            if (update.verifyIntegrityPending) {
                 verifiedLength.setVisibility(View.VISIBLE);
-                verifiedLength.setHtml(R.string.verifiedLength, CommonUtils.dimensionFormatter(last.verifiedLength, false));
+                verifiedLength.setHtml(R.string.verifiedLength, CommonUtils.dimensionFormatter(update.verifiedLength, false));
             } else {
                 verifiedLength.setVisibility(View.GONE);
             }
 
-            bitTorrentOnly.setVisibility(download.isTorrent() ? View.VISIBLE : View.GONE);
-            if (download.isTorrent()) {
-                btMode.setHtml(R.string.mode, download.torrent.mode.toString());
-                btSeeders.setHtml(R.string.numSeeder, last.numSeeders);
-                btSeeder.setHtml(R.string.seeder, String.valueOf(last.seeder));
-                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", last.shareRatio()));
+            bitTorrentOnly.setVisibility(update.isTorrent() ? View.VISIBLE : View.GONE);
+            if (update.isTorrent()) {
+                btMode.setHtml(R.string.mode, update.torrent.mode.toString());
+                btSeeders.setHtml(R.string.numSeeder, update.numSeeders);
+                btSeeder.setHtml(R.string.seeder, String.valueOf(update.seeder));
+                shareRatio.setHtml(R.string.shareRatio, String.format(Locale.getDefault(), "%.2f", update.shareRatio()));
 
-                if (download.torrent.comment == null) {
+                if (update.torrent.comment == null) {
                     btComment.setVisibility(View.GONE);
                 } else {
                     btComment.setVisibility(View.VISIBLE);
-                    btComment.setHtml(R.string.comment, download.torrent.comment);
+                    btComment.setHtml(R.string.comment, update.torrent.comment);
                 }
 
-                if (download.torrent.creationDate == -1) {
+                if (update.torrent.creationDate == -1) {
                     btCreationDate.setVisibility(View.GONE);
                 } else {
                     btCreationDate.setVisibility(View.VISIBLE);
-                    btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(download.torrent.creationDate * 1000)));
+                    btCreationDate.setHtml(R.string.creation_date, CommonUtils.getFullDateFormatter().format(new Date(update.torrent.creationDate * 1000)));
                 }
             }
         }

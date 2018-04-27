@@ -17,9 +17,9 @@ public class TreeNode extends DownloadChild {
     private final String separator;
     public AriaFile obj;
 
-    private TreeNode(Download download, TreeNode parent, String incrementalPath, AriaFile obj) {
+    private TreeNode(DownloadWithUpdate download, TreeNode parent, String incrementalPath, AriaFile obj) {
         super(download);
-        this.separator = TreeNode.guessSeparator(download.dir);
+        this.separator = TreeNode.guessSeparator(download.update().dir);
         this.parent = parent;
         this.incrementalPath = incrementalPath;
         this.obj = obj;
@@ -28,9 +28,9 @@ public class TreeNode extends DownloadChild {
         this.name = obj.getName();
     }
 
-    private TreeNode(Download download, TreeNode parent, String name, String incrementalPath) {
+    private TreeNode(DownloadWithUpdate download, TreeNode parent, String name, String incrementalPath) {
         super(download);
-        this.separator = TreeNode.guessSeparator(download.dir);
+        this.separator = TreeNode.guessSeparator(download.update().dir);
         this.parent = parent;
         this.dirs = new ArrayList<>();
         this.files = new ArrayList<>();
@@ -39,9 +39,9 @@ public class TreeNode extends DownloadChild {
         this.incrementalPath = incrementalPath;
     }
 
-    TreeNode(Download download, TreeNode node) {
+    TreeNode(DownloadWithUpdate download, TreeNode node) {
         super(download);
-        this.separator = TreeNode.guessSeparator(download.dir);
+        this.separator = TreeNode.guessSeparator(download.update().dir);
         this.files = node.files;
         this.dirs = node.dirs;
         this.obj = node.obj;
@@ -70,9 +70,10 @@ public class TreeNode extends DownloadChild {
         else return "/";
     }
 
-    public static TreeNode create(Download download, List<AriaFile> files) {
-        TreeNode rootNode = new TreeNode(download, null, TreeNode.guessSeparator(download.dir), "");
-        for (AriaFile file : files) rootNode.addElement(file, download.dir);
+    public static TreeNode create(DownloadWithUpdate download, List<AriaFile> files) {
+        String dir = download.update().dir;
+        TreeNode rootNode = new TreeNode(download, null, TreeNode.guessSeparator(dir), "");
+        for (AriaFile file : files) rootNode.addElement(file, dir);
         return rootNode;
     }
 

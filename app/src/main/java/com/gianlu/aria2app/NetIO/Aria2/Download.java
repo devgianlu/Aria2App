@@ -5,69 +5,171 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Adapters.Filterable;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.CommonUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
-public class Download implements Serializable, Filterable<Download.Status> {
-    private static final Map<String, SmallUpdate> downloadUpdates = new HashMap<>();
-    public final String dir;
+public class Download implements Serializable {
     public final String gid;
-    public final int numPieces;
-    public final long pieceLength;
-    public final long length;
-    public final BitTorrent torrent;
-    private transient SmallUpdate last = null;
+    protected final AbstractClient client;
 
-    private Download(JSONObject obj) throws JSONException {
-        gid = obj.getString("gid");
-        length = obj.getLong("totalLength");
-        pieceLength = obj.getLong("pieceLength");
-        numPieces = obj.getInt("numPieces");
-        dir = obj.getString("dir");
-        torrent = BitTorrent.create(obj);
+    public Download(String gid, @NonNull AbstractClient client) {
+        this.gid = gid;
+        this.client = client;
     }
 
-    @Nullable
-    public static Download.SmallUpdate update(@NonNull String gid) {
-        synchronized (downloadUpdates) {
-            return downloadUpdates.get(gid);
+    private static ChangeSelectionResult performSelectIndexesOperation(AbstractClient client, String gid, Integer[] currIndexes, Integer[] selIndexes, boolean select) throws Exception {
+        Collection<Integer> newIndexes = new HashSet<>(Arrays.asList(currIndexes));
+        if (select) {
+            newIndexes.addAll(Arrays.asList(selIndexes)); // Does not allow duplicates
+        } else {
+            newIndexes.removeAll(Arrays.asList(selIndexes));
+            if (newIndexes.isEmpty()) return ChangeSelectionResult.EMPTY;
         }
+
+        client.sendSync(AriaRequests.changeOptions(gid, Collections.singletonMap("select-file", CommonUtils.join(newIndexes, ","))));
+        if (select) return ChangeSelectionResult.SELECTED;
+        else return ChangeSelectionResult.DESELECTED;
     }
 
-    public static void update(@NonNull String gid, @NonNull Download.SmallUpdate update) {
-        synchronized (downloadUpdates) {
-            downloadUpdates.put(gid, update);
-        }
+    public void restart(final AbstractClient.OnSuccess listener) {
+        restart(new AbstractClient.OnResult<String>() {
+            @Override
+            public void onResult(@NonNull String result) {
+                listener.onSuccess();
+            }
+
+            @Override
+            public void onException(Exception ex, boolean shouldForce) {
+                listener.onException(ex, shouldForce);
+            }
+        });
     }
 
-    public static Download create(JSONObject obj, boolean small) throws JSONException {
-        Download download = new Download(obj);
-        update(download.gid, download.update(obj, small));
-        return download;
+    public void moveUp(AbstractClient.OnSuccess listener) {
+        moveRelative(1, listener);
     }
 
-    public static void updateOnly(Download download, JSONObject obj, boolean small) throws JSONException {
-        update(download.gid, download.update(obj, small));
+    public void moveDown(AbstractClient.OnSuccess listener) {
+        moveRelative(-1, listener);
     }
 
-    public static void clearUpdates() {
-        synchronized (downloadUpdates) {
-            downloadUpdates.clear();
-        }
+    public final void options(AbstractClient.OnResult<Map<String, String>> listener) {
+        client.send(AriaRequests.getOptions(gid), listener);
+    }
+
+    public final void changePosition(int pos, String mode, AbstractClient.OnSuccess listener) {
+        client.send(AriaRequests.changePosition(gid, pos, mode), listener);
+    }
+
+    public final void changeOptions(Map<String, String> options, AbstractClient.OnSuccess listener) throws JSONException {
+        client.send(AriaRequests.changeOptions(gid, options), listener);
+    }
+
+    public final void pause(final AbstractClient.OnSuccess listener) {
+        client.send(AriaRequests.pause(gid), new AbstractClient.OnSuccess() {
+            private boolean retried = false;
+
+            @Override
+            public void onSuccess() {
+                listener.onSuccess();
+            }
+
+            @Override
+            public void onException(Exception ex, boolean shouldForce) {
+                if (!retried && shouldForce)
+                    client.send(AriaRequests.forcePause(gid), this);
+                else listener.onException(ex, shouldForce);
+                retried = true;
+            }
+        });
+    }
+
+    public final void unpause(AbstractClient.OnSuccess listener) {
+        client.send(AriaRequests.unpause(gid), listener);
+    }
+
+    public final void moveRelative(int relative, AbstractClient.OnSuccess listener) {
+        client.send(AriaRequests.changePosition(gid, relative, "POS_CUR"), listener);
+    }
+
+    public final void restart(AbstractClient.OnResult<String> listener) {
+        client.batch(new AbstractClient.BatchSandbox<String>() {
+            @Override
+            public String sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+                DownloadWithUpdate old = client.sendSync(AriaRequests.tellStatus(gid));
+                Map<String, String> oldOptions = client.sendSync(AriaRequests.getOptions(gid));
+
+                Set<String> newUrls = new HashSet<>();
+                for (AriaFile file : old.update().files) {
+                    for (String url : file.uris.keySet()) {
+                        if (file.uris.get(url) == AriaFile.Status.USED)
+                            newUrls.add(url);
+                    }
+                }
+
+                String newGid = client.sendSync(AriaRequests.addUri(newUrls, null, oldOptions));
+                client.sendSync(AriaRequests.removeDownloadResult(gid));
+                return newGid;
+            }
+        }, listener);
+    }
+
+    public final void remove(final boolean removeMetadata, AbstractClient.OnResult<RemoveResult> listener) {
+        client.batch(new AbstractClient.BatchSandbox<RemoveResult>() {
+            @Override
+            public RemoveResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+                DownloadWithUpdate.SmallUpdate last = client.sendSync(AriaRequests.tellStatus(gid)).update();
+                if (last.status == Download.Status.COMPLETE || last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED) {
+                    client.sendSync(AriaRequests.removeDownloadResult(gid));
+                    if (removeMetadata) {
+                        client.sendSync(AriaRequests.removeDownloadResult(last.following));
+                        return RemoveResult.REMOVED_RESULT_AND_METADATA;
+                    } else {
+                        return RemoveResult.REMOVED_RESULT;
+                    }
+                } else {
+                    try {
+                        client.sendSync(AriaRequests.remove(gid));
+                    } catch (IOException ex) {
+                        if (shouldForce)
+                            client.sendSync(AriaRequests.forceRemove(gid));
+                        else
+                            throw ex;
+                    }
+
+                    return RemoveResult.REMOVED;
+                }
+            }
+        }, listener);
+    }
+
+    public final void changeSelection(final Integer[] selIndexes, final boolean select, AbstractClient.OnResult<ChangeSelectionResult> listener) {
+        client.batch(new AbstractClient.BatchSandbox<ChangeSelectionResult>() {
+            @Override
+            public ChangeSelectionResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+                Map<String, String> options = client.sendSync(AriaRequests.getOptions(gid));
+                String currIndexes = options.get("select-file");
+                if (currIndexes == null)
+                    return performSelectIndexesOperation(client, gid, client.sendSync(AriaRequests.getFileIndexes(gid)), selIndexes, select);
+                else
+                    return performSelectIndexesOperation(client, gid, CommonUtils.toIntsList(currIndexes, ","), selIndexes, select);
+            }
+        }, listener);
     }
 
     @Override
@@ -83,45 +185,18 @@ public class Download implements Serializable, Filterable<Download.Status> {
         return Objects.hash(gid);
     }
 
-    @NonNull
-    private SmallUpdate update(JSONObject obj, boolean small) throws JSONException {
-        SmallUpdate update;
-        if (small) update = new SmallUpdate(obj);
-        else update = new BigUpdate(obj);
-        return last = update;
+    public enum ChangeSelectionResult {
+        EMPTY,
+        SELECTED,
+        DESELECTED
     }
 
-    public final boolean isTorrent() {
-        return torrent != null;
+    public enum RemoveResult {
+        REMOVED,
+        REMOVED_RESULT,
+        REMOVED_RESULT_AND_METADATA
     }
 
-    @NonNull
-    public SmallUpdate last() {
-        SmallUpdate update = update(gid);
-        if (update == null) return last;
-        else return update;
-    }
-
-    @Nullable
-    public BigUpdate lastBig() {
-        SmallUpdate update = update(gid);
-        if (update instanceof BigUpdate) return (BigUpdate) update;
-        else return null;
-    }
-
-    public DownloadWithHelper wrap(@NonNull AbstractClient client) {
-        return new DownloadWithHelper(this, client);
-    }
-
-    public DownloadWithHelper wrap(@NonNull Context context) throws ProfilesManager.NoCurrentProfileException, AbstractClient.InitializationException {
-        return wrap(Aria2Helper.getClient(context));
-    }
-
-    @Override
-    @NonNull
-    public Status getFilterable() {
-        return last().status;
-    }
 
     public enum Status {
         ACTIVE, PAUSED, WAITING, ERROR, REMOVED, COMPLETE, UNKNOWN;
@@ -184,203 +259,6 @@ public class Download implements Serializable, Filterable<Download.Status> {
 
             if (firstCapital) return val;
             else return Character.toLowerCase(val.charAt(0)) + val.substring(1);
-        }
-    }
-
-    private abstract static class UpdateComparator implements Comparator<Download> {
-
-        @Override
-        public final int compare(Download o1, Download o2) {
-            return compare(o1.last(), o2.last());
-        }
-
-        protected abstract int compare(SmallUpdate o1, SmallUpdate o2);
-    }
-
-    public static class StatusComparator extends UpdateComparator {
-        @Override
-        public int compare(SmallUpdate o1, SmallUpdate o2) {
-            if (o1.status == o2.status) return 0;
-            else if (o1.status.ordinal() < o2.status.ordinal()) return -1;
-            else return 1;
-        }
-    }
-
-    public static class DownloadSpeedComparator extends UpdateComparator {
-        @Override
-        public int compare(SmallUpdate o1, SmallUpdate o2) {
-            if (Objects.equals(o1.downloadSpeed, o2.downloadSpeed)) return 0;
-            else if (o1.downloadSpeed > o2.downloadSpeed) return -1;
-            else return 1;
-        }
-    }
-
-    public static class UploadSpeedComparator extends UpdateComparator {
-        @Override
-        public int compare(SmallUpdate o1, SmallUpdate o2) {
-            if (Objects.equals(o1.uploadSpeed, o2.uploadSpeed)) return 0;
-            else if (o1.uploadSpeed > o2.uploadSpeed) return -1;
-            else return 1;
-        }
-    }
-
-    public static class LengthComparator implements Comparator<Download> {
-        @Override
-        public int compare(Download o1, Download o2) {
-            if (Objects.equals(o1.length, o2.length)) return 0;
-            else if (o1.length > o2.length) return -1;
-            else return 1;
-        }
-    }
-
-    public static class NameComparator extends UpdateComparator {
-        @Override
-        public int compare(SmallUpdate o1, SmallUpdate o2) {
-            return o1.getName().compareToIgnoreCase(o2.getName());
-        }
-    }
-
-    public static class CompletedLengthComparator extends UpdateComparator {
-        @Override
-        public int compare(SmallUpdate o1, SmallUpdate o2) {
-            if (Objects.equals(o1.completedLength, o2.completedLength)) return 0;
-            else if (o1.completedLength > o2.completedLength) return -1;
-            else return 1;
-        }
-    }
-
-    public static class ProgressComparator extends UpdateComparator {
-        @Override
-        public int compare(SmallUpdate o1, SmallUpdate o2) {
-            return Integer.compare((int) o2.getProgress(), (int) o1.getProgress());
-        }
-    }
-
-    public class BigUpdate extends SmallUpdate {
-        public final String bitfield;
-        public final long verifiedLength;
-        public final boolean verifyIntegrityPending;
-
-        // BitTorrent only
-        public final boolean seeder;
-        public final String infoHash;
-
-        BigUpdate(JSONObject obj) throws JSONException {
-            super(obj);
-
-            // Optional
-            bitfield = obj.optString("bitfield", null);
-            verifiedLength = obj.optLong("verifiedLength", 0);
-            verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
-
-            if (isTorrent()) {
-                infoHash = obj.getString("infoHash");
-                seeder = obj.optBoolean("seeder", false);
-            } else {
-                seeder = false;
-                infoHash = null;
-            }
-        }
-    }
-
-    public class SmallUpdate {
-        public final long completedLength;
-        public final long uploadLength;
-        public final int connections;
-        public final Download.Status status;
-        public final int downloadSpeed;
-        public final int uploadSpeed;
-        public final ArrayList<AriaFile> files;
-        public final int errorCode;
-        public final String errorMessage;
-        public final String followedBy;
-        // BitTorrent only
-        public final int numSeeders;
-        public final String following;
-        public final String belongsTo;
-        private String name = null;
-
-        SmallUpdate(JSONObject obj) throws JSONException {
-            status = Download.Status.parse(obj.getString("status"));
-            completedLength = obj.getLong("completedLength");
-            uploadLength = obj.getLong("uploadLength");
-            downloadSpeed = obj.getInt("downloadSpeed");
-            uploadSpeed = obj.getInt("uploadSpeed");
-            connections = obj.getInt("connections");
-
-            // Optional
-            followedBy = obj.optString("followedBy", null);
-            following = obj.optString("following", null);
-            belongsTo = obj.optString("belongsTo", null);
-
-
-            files = new ArrayList<>();
-            JSONArray array = obj.getJSONArray("files");
-            for (int i = 0; i < array.length(); i++)
-                files.add(new AriaFile(Download.this, array.getJSONObject(i)));
-
-            if (isTorrent()) {
-                numSeeders = obj.getInt("numSeeders");
-            } else {
-                numSeeders = 0;
-            }
-
-            if (obj.has("errorCode")) {
-                errorCode = obj.getInt("errorCode");
-                errorMessage = obj.optString("errorMessage", null);
-            } else {
-                errorCode = -1;
-                errorMessage = null;
-            }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Download download = (Download) o;
-            return gid.equals(download.gid);
-        }
-
-        public float shareRatio() {
-            if (completedLength == 0) return 0f;
-            return ((float) uploadLength) / ((float) completedLength);
-        }
-
-        @NonNull
-        public String getName() {
-            if (name == null) name = getNameInternal();
-            return name;
-        }
-
-        public boolean isMetadata() {
-            return getName().startsWith("[METADATA]");
-        }
-
-        @NonNull
-        private String getNameInternal() { // TODO: Error download has wrong name
-            try {
-                if (torrent != null && torrent.name != null) return torrent.name;
-                String[] splitted = files.get(0).path.split("/");
-                if (splitted.length >= 1) return splitted[splitted.length - 1];
-            } catch (Exception ex) {
-                Logging.log(ex);
-            }
-
-            return "Unknown";
-        }
-
-        public float getProgress() {
-            return ((float) completedLength) / ((float) length) * 100;
-        }
-
-        public long getMissingTime() {
-            if (downloadSpeed == 0) return 0;
-            return (length - completedLength) / downloadSpeed;
-        }
-
-        public boolean canDeselectFiles() {
-            return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR && status != Status.UNKNOWN;
         }
     }
 }

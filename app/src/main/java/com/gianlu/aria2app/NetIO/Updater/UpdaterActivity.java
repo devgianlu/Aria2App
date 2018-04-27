@@ -14,6 +14,7 @@ import java.util.Set;
 public abstract class UpdaterActivity<P> extends ActivityWithDialog implements UpdaterFramework.Interface<P> {
     private final UpdaterFramework<P> framework;
     private final Set<UpdaterFragment<P>> attachedFragments = new HashSet<>();
+    private P lastPayload;
 
     public UpdaterActivity() {
         framework = new UpdaterFramework<>(this);
@@ -35,10 +36,11 @@ public abstract class UpdaterActivity<P> extends ActivityWithDialog implements U
         framework.requirePayload(new AbstractClient.OnResult<P>() {
             @Override
             public void onResult(@NonNull P result) {
-                for (UpdaterFragment<P> fragment : attachedFragments)
-                    fragment.onLoad(result);
-
+                lastPayload = result;
                 onLoad(result);
+
+                for (UpdaterFragment<P> fragment : attachedFragments)
+                    fragment.callOnLoad(result);
             }
 
             @Override
@@ -52,8 +54,13 @@ public abstract class UpdaterActivity<P> extends ActivityWithDialog implements U
         attachedFragments.add(fragment);
     }
 
+    public void requireLoadCall(UpdaterFragment<P> fragment) {
+        if (lastPayload != null) fragment.callOnLoad(lastPayload);
+    }
+
     @Override
     public final void onPayload(@NonNull P payload) {
+        lastPayload = payload;
         for (UpdaterFragment<P> fragment : attachedFragments)
             fragment.onUpdateUi(payload);
 

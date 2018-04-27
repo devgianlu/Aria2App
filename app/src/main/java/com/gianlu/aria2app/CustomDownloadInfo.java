@@ -8,7 +8,7 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
 
@@ -50,7 +50,7 @@ public class CustomDownloadInfo extends FlowLayout {
         ((Item) getChildAt(index)).setText(text);
     }
 
-    public void update(Download.SmallUpdate download) {
+    public void update(DownloadWithUpdate.SmallUpdate download) {
         if (info.length == 0) return;
 
         for (int i = 0; i < this.info.length; i++) {

@@ -17,7 +17,7 @@ public class Server extends DownloadChild {
     public final String currentUri;
     public final int downloadSpeed;
 
-    Server(Download download, JSONObject obj) throws JSONException {
+    Server(DownloadWithUpdate download, JSONObject obj) throws JSONException {
         super(download);
         uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");

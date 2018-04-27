@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,13 +37,11 @@ import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
-import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -53,14 +50,13 @@ import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
-import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.Collection;
 import java.util.List;
 
-public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
+public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
     private FilesAdapter adapter;
     private FileBottomSheet fileSheet;
     private DirBottomSheet dirSheet;
@@ -70,14 +66,13 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
     private RecyclerViewLayout recyclerViewLayout;
     private Messenger downloaderMessenger = null;
     private IWaitBinder boundWaiter;
-    private DownloadWithHelper download;
     private ActionMode actionMode = null;
+    private DownloadWithUpdate download;
 
-    public static FilesFragment getInstance(Context context, Download download) {
+    public static FilesFragment getInstance(Context context) {
         FilesFragment fragment = new FilesFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.files));
-        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
     }
@@ -106,7 +101,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
 
     private void setupView() {
         if (getContext() == null) return;
-        final int colorRes = download.get().isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
+        final int colorRes = download.update().isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
 
         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
         recyclerViewLayout.loadListData(adapter);
@@ -146,51 +141,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
         fileSheet = new FileBottomSheet(layout, this);
         dirSheet = new DirBottomSheet(layout, this);
 
-        Download downloadStatic;
-        Bundle args = getArguments();
-        if (args == null || (downloadStatic = (Download) args.getSerializable("download")) == null) {
-            recyclerViewLayout.showMessage(R.string.failedLoading, true);
-            return layout;
-        }
-
         recyclerViewLayout.startLoading();
-        try {
-            Aria2Helper.instantiate(getContext()).request(AriaRequests.tellStatus(downloadStatic.gid), new AbstractClient.OnResult<DownloadWithHelper>() {
-                @Override
-                public void onResult(@NonNull DownloadWithHelper result) {
-                    download = result;
-
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setupView();
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onException(final Exception ex, boolean shouldForce) {
-                    Logging.log(ex);
-
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
-                            }
-                        });
-                    }
-                }
-            });
-        } catch (Aria2Helper.InitializingException ex) {
-            Logging.log(ex);
-            recyclerViewLayout.showMessage(R.string.failedLoading_reason, true, ex.getMessage());
-            return layout;
-        }
 
         return layout;
     }
@@ -202,7 +153,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
 
     @Override
     public boolean onFileLongClick(AriaFile file) {
-        if (getActivity() == null || file.getDownload().last().files.size() == 1) return false;
+        if (getActivity() == null || download.update().files.size() == 1) return false;
 
         adapter.enteredActionMode(file);
         actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionMode.Callback() {
@@ -244,9 +195,9 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
     }
 
     private void changeSelectionForBatch(Collection<AriaFile> files, boolean select) {
-        download.changeSelection(AriaFile.allIndexes(files), select, new AbstractClient.OnResult<DownloadWithHelper.ChangeSelectionResult>() {
+        download.changeSelection(AriaFile.allIndexes(files), select, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
             @Override
-            public void onResult(@NonNull DownloadWithHelper.ChangeSelectionResult result) {
+            public void onResult(@NonNull Download.ChangeSelectionResult result) {
                 switch (result) {
                     case EMPTY:
                         Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES);
@@ -276,7 +227,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
 
     @Override
     public void onDirectorySelected(TreeNode dir) {
-        dirSheet.expand(download, new AriaDirectory(dir, download.get()));
+        dirSheet.expand(download, new AriaDirectory(dir, download));
     }
 
     private void showTutorial(TreeNode dir) {
@@ -476,22 +427,24 @@ public class FilesFragment extends UpdaterFragment<DownloadWithHelper> implement
     }
 
     @Override
-    public void onUpdateUi(@NonNull DownloadWithHelper download) {
-        List<AriaFile> files = download.get().last().files;
+    public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        List<AriaFile> files = payload.files;
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {
             recyclerViewLayout.showList();
-            if (adapter != null) adapter.update(download.get(), files);
+            if (adapter != null) adapter.update(payload.download(), files);
             if (fileSheet != null) fileSheet.update(files);
-            if (dirSheet != null) dirSheet.update(download, files);
+            if (dirSheet != null) dirSheet.update(payload.download(), files);
             if (adapter != null) showTutorial(adapter.getCurrentNode());
         }
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithHelper download) {
-        // TODO
+    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        this.download = payload.download();
+        setupView();
+        onUpdateUi(payload);
     }
 
     private interface IWaitBinder {

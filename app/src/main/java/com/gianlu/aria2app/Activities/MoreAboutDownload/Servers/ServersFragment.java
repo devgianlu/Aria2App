@@ -13,8 +13,8 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.R;
@@ -23,11 +23,10 @@ import com.gianlu.aria2app.TutorialManager;
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements ServersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
-    public static ServersFragment getInstance(Context context, Download download) {
+    public static ServersFragment getInstance(Context context) {
         ServersFragment fragment = new ServersFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.servers));
-        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,28 +86,32 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    public void onUpdateUi(@NonNull final DownloadWithHelper download) {
-        download.servers(new AbstractClient.OnResult<SparseArray<Servers>>() {
+    public void onUpdateUi(@NonNull final DownloadWithUpdate.BigUpdate payload) {
+        payload.download().servers(new AbstractClient.OnResult<SparseArray<Servers>>() {
             @Override
             public void onResult(@NonNull SparseArray<Servers> servers) {
                 recyclerViewLayout.showList();
-                if (download.get().last().files != null)
-                    topDownloadCountries.setServers(servers, download.get().last().files);
-                if (adapter != null && download.get().last().files != null)
-                    adapter.notifyItemsChanged(servers, download.get().last().files);
-                if (sheet != null && sheet.isExpanded()) sheet.update(servers);
+
+                if (payload.files != null)
+                    topDownloadCountries.setServers(servers, payload.files);
+
+                if (adapter != null && payload.files != null)
+                    adapter.notifyItemsChanged(servers, payload.files);
+
+                if (sheet != null && sheet.isExpanded())
+                    sheet.update(servers);
             }
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                ex.printStackTrace(); // FIXME
+                if (!(ex instanceof AriaException))
+                    ex.printStackTrace(); // FIXME
             }
         });
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithHelper download) {
-        // TODO
+    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
     }
 }
 

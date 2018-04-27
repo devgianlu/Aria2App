@@ -14,7 +14,7 @@ import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
@@ -48,12 +48,12 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
 
     @Override
     protected boolean onPrepareAction(@NonNull FloatingActionButton fab, Object... payloads) {
-        Download download = ((DownloadWithHelper) payloads[0]).get();
+        DownloadWithUpdate download = (DownloadWithUpdate) payloads[0];
         final AriaFile file = (AriaFile) payloads[1];
 
         try {
             final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent();
-            if (download.last().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
+            if (download.update().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
                 return false;
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
@@ -108,11 +108,11 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         percentage.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Medium.ttf"));
         TextView title = parent.findViewById(R.id.fileSheet_title);
 
-        Download download = ((DownloadWithHelper) payloads[0]).get();
+        DownloadWithUpdate download = (DownloadWithUpdate) payloads[0];
         AriaFile file = (AriaFile) payloads[1];
         currentFileIndex = file.index;
 
-        int colorAccent = download.isTorrent() ? R.color.colorTorrent : R.color.colorAccent_light;
+        int colorAccent = download.update().isTorrent() ? R.color.colorTorrent : R.color.colorAccent_light;
         parent.setBackgroundResource(colorAccent);
 
         fileType.setFilename(file.getName());
@@ -128,21 +128,21 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         completedLength = parent.findViewById(R.id.fileSheet_completedLength);
         selected = parent.findViewById(R.id.fileSheet_selected);
 
-        final DownloadWithHelper download = (DownloadWithHelper) payloads[0];
+        final DownloadWithUpdate download = (DownloadWithUpdate) payloads[0];
         final AriaFile file = (AriaFile) payloads[1];
 
         index.setHtml(R.string.index, file.index);
         path.setHtml(R.string.path, file.path);
         updateContentViews(file);
 
-        if (download.get().last().canDeselectFiles()) {
+        if (download.update().canDeselectFiles()) {
             selected.setEnabled(true);
             selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<DownloadWithHelper.ChangeSelectionResult>() {
+                    download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                         @Override
-                        public void onResult(@NonNull DownloadWithHelper.ChangeSelectionResult result) {
+                        public void onResult(@NonNull Download.ChangeSelectionResult result) {
                             switch (result) {
                                 case EMPTY:
                                     listener.showToast(Utils.Messages.CANT_DESELECT_ALL_FILES);

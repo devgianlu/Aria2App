@@ -5,8 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.GlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
@@ -25,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 public final class AriaRequests {
-    private static final AbstractClient.Processor<List<Download>> DOWNLOADS_LIST_PROCESSOR = new AbstractClient.Processor<List<Download>>() {
+    private static final AbstractClient.Processor<List<DownloadWithUpdate>> DOWNLOADS_LIST_PROCESSOR = new AbstractClient.Processor<List<DownloadWithUpdate>>() {
         @NonNull
         @Override
-        public List<Download> process(AbstractClient client, JSONObject obj) throws JSONException {
-            List<Download> list = new ArrayList<>();
+        public List<DownloadWithUpdate> process(AbstractClient client, JSONObject obj) throws JSONException {
+            List<DownloadWithUpdate> list = new ArrayList<>();
             JSONArray array = obj.getJSONArray("result");
             for (int i = 0; i < array.length(); i++)
-                list.add(Download.create(array.getJSONObject(i), true));
+                list.add(DownloadWithUpdate.create(client, array.getJSONObject(i), true));
             return list;
         }
     };
@@ -53,7 +52,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_POSITION, gid, pos, mode);
     }
 
-    public static AbstractClient.AriaRequestWithResult<SparseArray<Servers>> getServers(final Download download) {
+    public static AbstractClient.AriaRequestWithResult<SparseArray<Servers>> getServers(final DownloadWithUpdate download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SERVERS, new AbstractClient.Processor<SparseArray<Servers>>() {
             @NonNull
             @Override
@@ -69,7 +68,7 @@ public final class AriaRequests {
         }, download.gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<Peers> getPeers(final Download download) {
+    public static AbstractClient.AriaRequestWithResult<Peers> getPeers(final DownloadWithUpdate download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_PEERS, new AbstractClient.Processor<Peers>() {
             @NonNull
             @Override
@@ -79,7 +78,7 @@ public final class AriaRequests {
         }, download.gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(final Download download) {
+    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(final DownloadWithUpdate download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<List<AriaFile>>() {
             @NonNull
             @Override
@@ -241,36 +240,25 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequest(AbstractClient.Method.REMOVE_RESULT, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<DownloadWithHelper> tellStatus(String gid) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithHelper>() {
+    public static AbstractClient.AriaRequestWithResult<DownloadWithUpdate> tellStatus(String gid) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithUpdate>() {
             @NonNull
             @Override
-            public DownloadWithHelper process(AbstractClient client, JSONObject obj) throws JSONException {
-                return Download.create(obj.getJSONObject("result"), false).wrap(client);
+            public DownloadWithUpdate process(AbstractClient client, JSONObject obj) throws JSONException {
+                return DownloadWithUpdate.create(client, obj.getJSONObject("result"), false);
             }
         }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<DownloadWithHelper> tellBigUpdate(final Download download) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithHelper>() {
-            @NonNull
-            @Override
-            public DownloadWithHelper process(AbstractClient client, JSONObject obj) throws JSONException {
-                Download.updateOnly(download, obj.getJSONObject("result"), false);
-                return download.wrap(client);
-            }
-        }, download.gid);
-    }
-
-    public static AbstractClient.AriaRequestWithResult<List<Download>> tellActiveSmall() {
+    public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellActiveSmall() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_ACTIVE, DOWNLOADS_LIST_PROCESSOR, SMALL_KEYS);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<Download>> tellWaitingSmall(int offset, int count) {
+    public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellWaitingSmall(int offset, int count) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_WAITING, DOWNLOADS_LIST_PROCESSOR, offset, count, SMALL_KEYS);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<Download>> tellStoppedSmall(int offset, int count) {
+    public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellStoppedSmall(int offset, int count) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STOPPED, DOWNLOADS_LIST_PROCESSOR, offset, count, SMALL_KEYS);
     }
 

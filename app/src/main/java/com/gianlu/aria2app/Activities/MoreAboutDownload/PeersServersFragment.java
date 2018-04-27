@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
@@ -20,7 +20,7 @@ import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 
-public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends NiceBaseBottomSheet> extends UpdaterFragment<DownloadWithHelper> implements OnBackPressed {
+public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends NiceBaseBottomSheet> extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed {
     protected TopCountriesView topDownloadCountries;
     protected TopCountriesView topUploadCountries;
     protected RecyclerViewLayout recyclerViewLayout;
@@ -52,6 +52,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getContext() == null) return null;
+
         CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_peers_and_servers, container, false);
         topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries);
         topUploadCountries = layout.findViewById(R.id.peersServersFragment_topUploadCountries);

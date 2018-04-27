@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.HttpClient;
+import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
@@ -32,6 +33,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onCreate() {
         super.onCreate();
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
+        SearchApi.get().cacheSearchEngines();
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
 

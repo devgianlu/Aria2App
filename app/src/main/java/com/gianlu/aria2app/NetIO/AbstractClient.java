@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -86,7 +85,6 @@ public abstract class AbstractClient implements Closeable {
         shouldIgnoreCommunication = true;
 
         closeClient();
-        Download.clearUpdates();
         listeners.clear();
     }
 

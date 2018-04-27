@@ -64,6 +64,7 @@ import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.VersionAndSession;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
@@ -72,7 +73,6 @@ import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
@@ -115,7 +115,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> implements InfoFragment.OnStatusChanged, FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
+public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
     private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -402,7 +402,6 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         recyclerViewLayout.startLoading();
 
         if (((ThisApplication) getApplication()).isFirstStart()) { // FIXME: What if he changes the profile?
-            SearchApi.get().cacheSearchEngines();
             ((ThisApplication) getApplication()).firstStarted();
             if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true))
                 doVersionCheck();
@@ -817,11 +816,11 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         mask.setClickable(false);
     }
 
-    private void showSecondSpace(Download download) {
+    private void showSecondSpace(DownloadWithUpdate download) {
         secondSpaceAdapter = new PagerAdapter<>(getSupportFragmentManager(),
-                InfoFragment.getInstance(this, download),
-                download.isTorrent() ? PeersFragment.getInstance(this, download) : ServersFragment.getInstance(this, download),
-                FilesFragment.getInstance(this, download));
+                InfoFragment.getInstance(this),
+                download.update().isTorrent() ? PeersFragment.getInstance(this) : ServersFragment.getInstance(this),
+                FilesFragment.getInstance(this));
 
         secondSpacePager.setAdapter(secondSpaceAdapter);
         secondSpaceTabs.setupWithViewPager(secondSpacePager);
@@ -830,19 +829,14 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         MessageLayout.hide(secondSpace);
     }
 
-    @Override
-    public void onStatusChanged(Download.Status newStatus) {
-        if (newStatus == Download.Status.UNKNOWN && secondSpace != null) hideSecondSpace();
-    }
-
-    private void hideSecondSpace() {
+    private void hideSecondSpace() { // TODO: Hide when status == UNKNOWN
         MessageLayout.show(secondSpace, R.string.secondSpace_selectDownload, R.drawable.ic_info_outline_black_48dp);
         secondSpaceContainer.setVisibility(View.GONE);
         secondSpaceAdapter = null;
     }
 
     @Override
-    public void onMoreClick(Download item) {
+    public void onMoreClick(DownloadWithUpdate item) {
         if (secondSpace != null) showSecondSpace(item);
         else MoreAboutDownloadActivity.start(this, item);
     }
@@ -1026,7 +1020,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
 
     @Override
     public void refreshed() {
-        adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<Download>(), MainActivity.this);
+        adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<DownloadWithUpdate>(), MainActivity.this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
@@ -1041,7 +1035,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
 
         String gid = getIntent().getStringExtra("gid");
         if (gid != null && !payload.downloads.isEmpty()) {
-            for (Download download : payload.downloads) {
+            for (DownloadWithUpdate download : payload.downloads) {
                 if (Objects.equals(download.gid, gid)) {
                     onMoreClick(download);
                     getIntent().removeExtra("gid");

@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.gianlu.aria2app.NetIO.Aria2.Download;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.R;
 
 import java.util.Arrays;
@@ -84,12 +84,11 @@ public class BitfieldVisualizer extends View {
         invalidate();
     }
 
-    public void update(Download download) {
-        Download.BigUpdate last = download.lastBig();
-        if (last == null || Objects.equals(bitfield, last.bitfield)) return;
+    public void update(DownloadWithUpdate.BigUpdate update) {
+        if (update == null || Objects.equals(bitfield, update.bitfield)) return;
 
-        bitfield = last.bitfield;
-        pieces = download.numPieces / 4;
+        bitfield = update.bitfield;
+        pieces = update.numPieces / 4;
         binary = hexToBinary(bitfield, pieces);
 
         invalidate();

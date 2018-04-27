@@ -16,8 +16,8 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithHelper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.R;
@@ -26,12 +26,11 @@ import com.gianlu.aria2app.TutorialManager;
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
-    public static PeersFragment getInstance(Context context, Download download) {
+    public static PeersFragment getInstance(Context context) {
         PeersFragment fragment = new PeersFragment();
         fragment.setHasOptionsMenu(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.peers));
-        args.putSerializable("download", download);
         fragment.setArguments(args);
         return fragment;
     }
@@ -125,8 +124,8 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
-    public void onUpdateUi(@NonNull DownloadWithHelper payload) {
-        payload.peers(new AbstractClient.OnResult<Peers>() {
+    public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        payload.download().peers(new AbstractClient.OnResult<Peers>() {
             @Override
             public void onResult(@NonNull Peers result) {
                 recyclerViewLayout.showList();
@@ -138,13 +137,13 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                ex.printStackTrace(); // FIXME
+                if (!(ex instanceof AriaException))
+                    ex.printStackTrace(); // FIXME
             }
         });
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithHelper payload) {
-        // TODO
+    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
     }
 }

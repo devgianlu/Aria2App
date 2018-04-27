@@ -11,7 +11,7 @@ public class AriaDirectory extends TreeNode {
     public final List<Integer> indexes;
     public final String fullPath;
 
-    public AriaDirectory(TreeNode node, Download download) {
+    public AriaDirectory(TreeNode node, DownloadWithUpdate download) {
         super(download, node);
 
         if (node.isFile()) throw new IllegalArgumentException("node is a file!");
@@ -23,7 +23,7 @@ public class AriaDirectory extends TreeNode {
         findIndexes(indexes, this);
         Collections.sort(indexes);
 
-        fullPath = download.dir + node.incrementalPath;
+        fullPath = download.update().dir + node.incrementalPath;
     }
 
     public static void update(TreeNode node, List<AriaFile> files) {
@@ -48,7 +48,7 @@ public class AriaDirectory extends TreeNode {
         for (TreeNode dir : parent.dirs) findIndexes(indexes, dir);
     }
 
-    public AriaDirectory update(Download download, List<AriaFile> files) {
+    public AriaDirectory update(DownloadWithUpdate download, List<AriaFile> files) {
         update(this, files);
         return new AriaDirectory(this, download);
     }

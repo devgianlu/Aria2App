@@ -66,7 +66,7 @@ public class Aria2Helper {
 
             @Override
             public DownloadsAndGlobalStats sandbox(AbstractClient client, boolean shouldForce) throws Exception {
-                List<Download> all = new ArrayList<>();
+                List<DownloadWithUpdate> all = new ArrayList<>();
                 all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
                 all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
                 all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
@@ -84,22 +84,22 @@ public class Aria2Helper {
         REMOVE, RESTART, RESUME, PAUSE, MOVE_UP, STOP, MOVE_DOWN
     }
 
-    public static class DownloadActionClick implements View.OnClickListener, AbstractClient.OnSuccess, AbstractClient.OnResult<DownloadWithHelper.RemoveResult> {
-        private final DownloadWithHelper download;
+    public static class DownloadActionClick implements View.OnClickListener, AbstractClient.OnSuccess, AbstractClient.OnResult<Download.RemoveResult> {
+        private final DownloadWithUpdate download;
         private final WhatAction what;
         private final Listener listener;
 
-        public DownloadActionClick(DownloadWithHelper download, WhatAction what, Listener listener) {
+        public DownloadActionClick(DownloadWithUpdate download, WhatAction what, Listener listener) {
             this.download = download;
             this.what = what;
             this.listener = listener;
         }
 
         private void remove(Context context) {
-            Download.SmallUpdate last = download.get().last();
-            if (last.following != null) {
+            DownloadWithUpdate.SmallUpdate update = download.update();
+            if (update.following != null) {
                 listener.showDialog(new AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.removeMetadataName, last.getName()))
+                        .setTitle(context.getString(R.string.removeMetadataName, update.getName()))
                         .setMessage(R.string.removeDownload_removeMetadata)
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             @Override
@@ -169,11 +169,11 @@ public class Aria2Helper {
                     break;
             }
 
-            listener.showToast(msg, download.gid());
+            listener.showToast(msg, download.gid);
         }
 
         @Override
-        public void onResult(@NonNull DownloadWithHelper.RemoveResult result) {
+        public void onResult(@NonNull Download.RemoveResult result) {
             Toaster.Message msg;
             switch (result) {
                 case REMOVED:
@@ -188,7 +188,7 @@ public class Aria2Helper {
                     break;
             }
 
-            listener.showToast(msg, download.gid());
+            listener.showToast(msg, download.gid);
         }
 
         @Override
