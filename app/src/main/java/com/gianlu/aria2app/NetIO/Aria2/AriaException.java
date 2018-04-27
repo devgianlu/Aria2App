@@ -19,6 +19,14 @@ public class AriaException extends Exception {
         this(error.getString("message"), error.getInt("code"));
     }
 
+    public boolean isNoPeers() {
+        return reason.startsWith("No peer data is available");
+    }
+
+    public boolean isNoServers() {
+        return reason.startsWith("No active download");
+    }
+
     @Override
     public String toString() {
         return "AriaException #" + code + ": " + getMessage();

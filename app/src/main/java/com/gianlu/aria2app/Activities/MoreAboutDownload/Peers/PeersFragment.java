@@ -22,6 +22,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.commonutils.Logging;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
@@ -137,13 +138,18 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                if (!(ex instanceof AriaException))
-                    ex.printStackTrace(); // FIXME
+                if (ex instanceof AriaException && ((AriaException) ex).isNoPeers()) {
+                    onResult(Peers.empty());
+                } else {
+                    recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+                    Logging.log(ex);
+                }
             }
         });
     }
 
     @Override
     public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        onUpdateUi(payload);
     }
 }

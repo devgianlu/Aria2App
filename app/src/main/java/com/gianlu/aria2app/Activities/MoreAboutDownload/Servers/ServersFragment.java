@@ -19,6 +19,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.commonutils.Logging;
 
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements ServersAdapter.IAdapter {
     private boolean isShowingHint = false;
@@ -104,14 +105,19 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                if (!(ex instanceof AriaException))
-                    ex.printStackTrace(); // FIXME
+                if (ex instanceof AriaException && ((AriaException) ex).isNoServers()) {
+                    onResult(new SparseArray<Servers>());
+                } else {
+                    recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+                    Logging.log(ex);
+                }
             }
         });
     }
 
     @Override
     public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        onUpdateUi(payload);
     }
 }
 
