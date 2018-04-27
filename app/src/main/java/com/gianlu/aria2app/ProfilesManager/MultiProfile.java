@@ -36,7 +36,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final List<UserProfile> profiles;
     public final String id;
     public final String name;
-    public boolean notificationsEnabled;
+    public final boolean notificationsEnabled;
     public TestStatus status;
 
     public MultiProfile(String name, boolean enableNotifs) {
@@ -53,10 +53,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         this.id = ProfilesManager.getId(name);
         this.status = new TestStatus(Status.UNKNOWN, null);
 
-        profiles = new ArrayList<>();
+        this.profiles = new ArrayList<>();
         if (obj.has("serverAddr")) { // Needed for backward compatibility
             UserProfile unique = new UserProfile(obj);
-            profiles.add(unique);
+            this.profiles.add(unique);
             return;
         }
 
@@ -92,12 +92,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
                 JSONObject profile = conditionObj.getJSONObject("profile");
                 profile.put("name", name + " - " + condition.type.name().toLowerCase());
-                profiles.add(new UserProfile(profile, condition));
+                this.profiles.add(new UserProfile(profile, condition));
             }
         } else {
             JSONArray profilesArray = obj.getJSONArray("profiles");
             for (int i = 0; i < profilesArray.length(); i++)
-                profiles.add(new UserProfile(profilesArray.getJSONObject(i)));
+                this.profiles.add(new UserProfile(profilesArray.getJSONObject(i)));
         }
     }
 
@@ -105,9 +105,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         this.name = "Local device";
         this.id = ProfilesManager.getId(name);
         this.status = new TestStatus(Status.UNKNOWN, null);
+        this.notificationsEnabled = true;
 
-        profiles = new ArrayList<>();
-        profiles.add(new UserProfile(token, port));
+        this.profiles = new ArrayList<>();
+        this.profiles.add(new UserProfile(token, port));
     }
 
     @NonNull
