@@ -401,10 +401,9 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
 
         recyclerViewLayout.startLoading();
 
-        if (((ThisApplication) getApplication()).isFirstStart()) { // FIXME: What if he changes the profile?
-            ((ThisApplication) getApplication()).firstStarted();
-            if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true))
-                doVersionCheck();
+        if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true) && ((ThisApplication) getApplication()).shouldCheckVersion()) {
+            ((ThisApplication) getApplication()).checkedVersion();
+            doVersionCheck();
         }
 
         String shortcutAction = getIntent().getStringExtra("shortcutAction");
@@ -481,9 +480,13 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
                 helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
                     @Override
                     public void onResult(@NonNull VersionInfo result) {
-                        String skipVersion = Prefs.getString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, null); // FIXME: Every single profile should have its own
-                        if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
-                            showOutdatedDialog(latestVersion, result.version);
+                        try {
+                            String skipVersion = ProfilesManager.get(MainActivity.this).getCurrent().shouldSkipVersionCheck(MainActivity.this);
+                            if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
+                                showOutdatedDialog(latestVersion, result.version);
+                        } catch (ProfilesManager.NoCurrentProfileException ex) {
+                            Logging.log(ex);
+                        }
                     }
 
                     @Override
@@ -534,7 +537,11 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
                 .setNeutralButton(R.string.skipThisVersion, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Prefs.putString(MainActivity.this, PKeys.A2_CHECK_VERSION_SKIP, latest);
+                        try {
+                            ProfilesManager.get(MainActivity.this).getCurrent().skipVersionCheck(MainActivity.this, latest);
+                        } catch (ProfilesManager.NoCurrentProfileException ex) {
+                            Logging.log(ex);
+                        }
                     }
                 })
                 .setPositiveButton(android.R.string.ok, null);
