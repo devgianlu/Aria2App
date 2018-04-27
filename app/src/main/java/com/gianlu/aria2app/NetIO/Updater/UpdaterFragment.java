@@ -11,7 +11,7 @@ import com.gianlu.aria2app.NetIO.OnRefresh;
 
 public abstract class UpdaterFragment<P> extends Fragment {
     private boolean calledLoad = false;
-    private UpdaterActivity<P> activity;
+    private PayloadProvider<P> provider;
 
     public abstract void onUpdateUi(@NonNull P payload);
 
@@ -31,16 +31,19 @@ public abstract class UpdaterFragment<P> extends Fragment {
     @CallSuper
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity.requireLoadCall(this);
+        if (provider != null) provider.requireLoadCall(this);
     }
+
+    @NonNull
+    public abstract Class<P> requires();
 
     @Override
     @CallSuper
     @SuppressWarnings("unchecked")
     public void onAttach(Context context) {
         if (context instanceof UpdaterActivity) {
-            activity = ((UpdaterActivity<P>) context);
-            activity.attachFragment(this);
+            UpdaterActivity<P> activity = (UpdaterActivity<P>) context;
+            this.provider = activity.attachFragment(this);
         }
 
         super.onAttach(context);

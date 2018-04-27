@@ -466,6 +466,12 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         }
     }
 
+    @NonNull
+    @Override
+    public Class<DownloadsAndGlobalStats> provides() {
+        return DownloadsAndGlobalStats.class;
+    }
+
     @Override
     public void onLoad(@NonNull DownloadsAndGlobalStats payload) {
         adapter = new DownloadCardsAdapter(this, payload.downloads, this);

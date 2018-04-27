@@ -48,6 +48,12 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         }
     }
 
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> requires() {
+        return DownloadWithUpdate.BigUpdate.class;
+    }
+
     @Nullable
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

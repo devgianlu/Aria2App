@@ -440,6 +440,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         }
     }
 
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> requires() {
+        return DownloadWithUpdate.BigUpdate.class;
+    }
+
     @Override
     public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
         this.download = payload.download();

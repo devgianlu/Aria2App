@@ -8,12 +8,15 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-public abstract class UpdaterActivity<P> extends ActivityWithDialog implements UpdaterFramework.Interface<P> {
+public abstract class UpdaterActivity<P> extends ActivityWithDialog implements UpdaterFramework.Interface<P>, PayloadProvider<P> {
     private final UpdaterFramework<P> framework;
     private final Set<UpdaterFragment<P>> attachedFragments = new HashSet<>();
+    private final Map<Class<?>, StandaloneProvider<?>> standaloneProviders = new HashMap<>();
     private P lastPayload;
 
     public UpdaterActivity() {
@@ -50,11 +53,23 @@ public abstract class UpdaterActivity<P> extends ActivityWithDialog implements U
         });
     }
 
-    public void attachFragment(UpdaterFragment<P> fragment) {
-        attachedFragments.add(fragment);
+    public <R> PayloadProvider<R> attachFragment(@NonNull UpdaterFragment<R> fragment) {
+        if (fragment.requires() == this.provides()) {
+            attachedFragments.add((UpdaterFragment<P>) fragment);
+            return (PayloadProvider<R>) this;
+        } else {
+            StandaloneProvider<?> provider = standaloneProviders.get(fragment.requires());
+            if (provider == null) {
+                provider = new StandaloneProvider<>(fragment.requires());
+                standaloneProviders.put(fragment.requires(), provider);
+            }
+
+            return (PayloadProvider<R>) provider;
+        }
     }
 
-    public void requireLoadCall(UpdaterFragment<P> fragment) {
+    @Override
+    public void requireLoadCall(@NonNull UpdaterFragment<P> fragment) {
         if (lastPayload != null) fragment.callOnLoad(lastPayload);
     }
 
@@ -66,10 +81,6 @@ public abstract class UpdaterActivity<P> extends ActivityWithDialog implements U
 
         onUpdateUi(payload);
     }
-
-    public abstract void onUpdateUi(@NonNull P payload);
-
-    public abstract void onLoad(@NonNull P payload);
 
     @Override
     protected void onResume() {

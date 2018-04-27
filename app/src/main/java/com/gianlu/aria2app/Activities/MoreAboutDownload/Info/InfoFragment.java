@@ -77,6 +77,12 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
         holder.update(payload);
     }
 
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> requires() {
+        return DownloadWithUpdate.BigUpdate.class;
+    }
+
     @Override
     public void showDialog(AlertDialog.Builder builder) {
         DialogUtils.showDialog(getActivity(), builder);

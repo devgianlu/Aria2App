@@ -123,6 +123,12 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithUpdat
         });
     }
 
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> provides() {
+        return DownloadWithUpdate.BigUpdate.class;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String gid = getIntent().getStringExtra("gid");
