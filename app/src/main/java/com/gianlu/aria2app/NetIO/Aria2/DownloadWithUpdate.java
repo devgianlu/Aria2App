@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class DownloadWithUpdate extends Download implements Filterable<Download.Status> {
     private final Object lock = new Object();
-    private transient SmallUpdate update;
+    private SmallUpdate update;
 
     private DownloadWithUpdate(@NonNull String gid, @NonNull AbstractClient client) {
         super(gid, client);

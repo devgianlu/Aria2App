@@ -12,7 +12,6 @@ import com.gianlu.commonutils.CommonUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class Download implements Serializable {
+public class Download {
     public final String gid;
     protected final AbstractClient client;
 
