@@ -158,12 +158,6 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         });
     }
 
-    @NonNull
-    @Override
-    public Class<DownloadWithUpdate.BigUpdate> provides() {
-        return DownloadWithUpdate.BigUpdate.class; // FIXME: Should be peers
-    }
-
     @Override
     protected void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
     }

@@ -9,12 +9,13 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.PayloadUpdater;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 
 public class BigUpdateProvider extends PayloadProvider<DownloadWithUpdate.BigUpdate> {
     private final String gid;
 
     public BigUpdateProvider(Context context, String gid) throws Aria2Helper.InitializingException {
-        super(context);
+        super(context, Wants.bigUpdate(gid));
         this.gid = gid;
     }
 

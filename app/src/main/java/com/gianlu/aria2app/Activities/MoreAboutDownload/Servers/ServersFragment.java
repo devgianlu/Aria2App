@@ -125,12 +125,6 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         return new BigUpdateProvider(getContext(), args.getString("gid"));
     }
 
-    @NonNull
-    @Override
-    public Class<DownloadWithUpdate.BigUpdate> provides() {
-        return DownloadWithUpdate.BigUpdate.class; // FIXME: Should be servers
-    }
-
     @Override
     public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
     }

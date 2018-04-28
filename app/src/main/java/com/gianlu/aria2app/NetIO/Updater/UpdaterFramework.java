@@ -7,31 +7,38 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class UpdaterFramework {
-    private final Map<Class<?>, PayloadProvider<?>> providers;
+    private final Map<Wants<?>, PayloadProvider<?>> providers;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     UpdaterFramework() {
         this.providers = new HashMap<>();
     }
 
     @Nullable
-    public <P> PayloadProvider<P> attachReceiver(@NonNull final Receiver<P> receiver) {
-        Class<P> provides = receiver.provides();
-        PayloadProvider<P> provider = getProvider(provides);
+    public <P> PayloadProvider<P> attachReceiver(@NonNull ReceiverOwner owner, @NonNull final Receiver<P> receiver) {
+        Wants<P> wants = receiver.wants();
+        PayloadProvider<P> provider = getProvider(wants);
         if (provider == null) {
             try {
                 provider = receiver.requireProvider();
-                providers.put(provides, provider);
-                provider.start();
+                if (!provider.provides().equals(wants))
+                    throw new RuntimeException("What?! Required " + wants + " but got " + provider.provides());
+
+                providers.put(wants, provider);
+                provider.start(executorService);
             } catch (Aria2Helper.InitializingException ex) {
                 receiver.onCouldntLoad(ex);
                 return null;
             }
         }
 
-        provider.attachReceiver(receiver);
+        provider.attachReceiver(owner, receiver);
         provider.requirePayload(new PayloadUpdater.OnPayload<P>() {
             @Override
             public void onPayload(@NonNull P payload) {
@@ -41,23 +48,38 @@ public final class UpdaterFramework {
         return provider;
     }
 
-    protected void stopUpdaters() {
-        for (PayloadProvider<?> provider : providers.values()) provider.stop(null);
+    protected void stopUpdaters(@NonNull ReceiverOwner owner) {
+        for (PayloadProvider<?> provider : providers.values())
+            if (provider.isOnlyOwner(owner)) provider.stop(null);
     }
 
-    protected void startUpdaters() {
-        for (PayloadProvider<?> provider : providers.values()) provider.start();
+    protected void startUpdaters(@NonNull ReceiverOwner owner) {
+        for (PayloadProvider<?> provider : providers.values())
+            if (provider.owns(owner)) provider.start(executorService);
+    }
+
+    public void removeUpdaters(ReceiverOwner owner) {
+        Iterator<PayloadProvider<?>> iterator = providers.values().iterator();
+        while (iterator.hasNext()) {
+            PayloadProvider<?> provider = iterator.next();
+            if (provider.isOnlyOwner(owner)) {
+                provider.stop(null);
+                iterator.remove();
+            } else if (provider.owns(owner)) {
+                provider.removeOwner(owner);
+            }
+        }
     }
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public <P> PayloadProvider<P> getProvider(Class<P> type) {
-        return (PayloadProvider<P>) providers.get(type);
+    public <P> PayloadProvider<P> getProvider(@NonNull Wants<P> wants) {
+        return (PayloadProvider<P>) providers.get(wants);
     }
 
-    protected <P> void refresh(Class<P> type, final OnRefresh listener) {
-        PayloadProvider<P> provider = getProvider(type);
-        if (provider != null) provider.refresh(listener);
+    protected <P> void refresh(@NonNull Wants<P> wants, final OnRefresh listener) {
+        PayloadProvider<P> provider = getProvider(wants);
+        if (provider != null) provider.refresh(executorService, listener);
         else listener.refreshed();
     }
 }

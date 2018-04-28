@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.NiceBaseBottomSheet;
@@ -55,6 +56,12 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         Logging.log(ex);
     }
 
+    @NonNull
+    @Override
+    public final Wants<DownloadWithUpdate.BigUpdate> wants(@NonNull Bundle args) {
+        return Wants.bigUpdate(args.getString("gid")); // TODO: Should be peers or servers
+    }
+
     @Nullable
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,7 +81,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh(DownloadWithUpdate.BigUpdate.class, new OnRefresh() {
+                refresh(new OnRefresh() {
                     @Override
                     public void refreshed() {
                         adapter = getAdapter(getContext());

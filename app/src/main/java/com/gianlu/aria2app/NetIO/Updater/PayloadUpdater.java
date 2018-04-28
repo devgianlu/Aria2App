@@ -19,7 +19,8 @@ public abstract class PayloadUpdater<P> implements Runnable {
     private final int updateInterval;
     private final ErrorHandler errorHandler;
     private OnStop stopListener;
-    private volatile boolean _shouldStop = false;
+    private volatile boolean shouldStop = false;
+    private volatile boolean running = false;
 
     public PayloadUpdater(Context context, OnPayload<P> listener) throws Aria2Helper.InitializingException {
         this.helper = Aria2Helper.instantiate(context);
@@ -31,26 +32,36 @@ public abstract class PayloadUpdater<P> implements Runnable {
 
     protected abstract void loop();
 
-    protected void errorOccurred(Exception ex) {
+    protected final void errorOccurred(Exception ex) {
         errorHandler.notifyException(ex, false);
     }
 
-    protected void hasResult(P result) {
+    protected final void hasResult(P result) {
         listener.onPayload(result);
     }
 
+    public final boolean isRunning() {
+        return running;
+    }
+
     @Override
-    public void run() {
-        while (!_shouldStop) {
+    public final void run() {
+        shouldStop = false;
+
+        while (!shouldStop) {
+            running = true;
             loop();
 
             try {
                 Thread.sleep(updateInterval);
             } catch (InterruptedException ex) {
                 Logging.log(ex);
-                _shouldStop = true;
+                shouldStop = true;
             }
         }
+
+        shouldStop = false;
+        running = false;
 
         handler.post(new Runnable() {
             @Override
@@ -60,9 +71,18 @@ public abstract class PayloadUpdater<P> implements Runnable {
         });
     }
 
-    public final void safeStop(@Nullable OnStop listener) {
-        stopListener = listener;
-        _shouldStop = true;
+    /**
+     * @return true if the updater is running; false otherwise
+     */
+    public final boolean safeStop(@Nullable OnStop listener) {
+        if (isRunning()) {
+            stopListener = listener;
+            shouldStop = true;
+            return true;
+        } else {
+            if (listener != null) listener.onStopped();
+            return false;
+        }
     }
 
     public interface OnStop {

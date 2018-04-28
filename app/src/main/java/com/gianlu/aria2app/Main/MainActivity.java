@@ -76,6 +76,7 @@ import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.PKeys;
@@ -148,34 +149,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             drawerManager.refreshProfiles(ProfilesManager.get(this).getProfiles());
     }
 
-    @Override
-    public boolean onMenuItemSelected(BaseDrawerItem which) {
-        switch (which.id) {
-            case DrawerConst.HOME:
-                refresh(DownloadsAndGlobalStats.class, this);
-                return true;
-            case DrawerConst.DIRECT_DOWNLOAD:
-                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
-                return false;
-            case DrawerConst.QUICK_OPTIONS:
-                OptionsUtils.showGlobalDialog(this, true);
-                return true;
-            case DrawerConst.GLOBAL_OPTIONS:
-                OptionsUtils.showGlobalDialog(this, false);
-                return true;
-            case DrawerConst.PREFERENCES:
-                startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
-                return false;
-            case DrawerConst.SUPPORT:
-                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name), null);
-                return true;
-            case DrawerConst.ABOUT_ARIA2:
-                showAboutDialog();
-                return true;
-            default:
-                return true;
-        }
-    }
+    private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
 
     @Override
     public void onProfileSelected(final MultiProfile profile) {
@@ -290,8 +264,37 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
+    public boolean onMenuItemSelected(BaseDrawerItem which) {
+        switch (which.id) {
+            case DrawerConst.HOME:
+                refresh(MAIN_WANTS, this);
+                return true;
+            case DrawerConst.DIRECT_DOWNLOAD:
+                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
+                return false;
+            case DrawerConst.QUICK_OPTIONS:
+                OptionsUtils.showGlobalDialog(this, true);
+                return true;
+            case DrawerConst.GLOBAL_OPTIONS:
+                OptionsUtils.showGlobalDialog(this, false);
+                return true;
+            case DrawerConst.PREFERENCES:
+                startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                return false;
+            case DrawerConst.SUPPORT:
+                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name), null);
+                return true;
+            case DrawerConst.ABOUT_ARIA2:
+                showAboutDialog();
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    @Override
     protected void onPreCreate(@Nullable Bundle savedInstanceState) {
-        attachReceiver(new Receiver<DownloadsAndGlobalStats>() {
+        attachReceiver(this, new Receiver<DownloadsAndGlobalStats>() {
             @Override
             public void onUpdateUi(@NonNull DownloadsAndGlobalStats payload) {
                 if (adapter != null) {
@@ -347,8 +350,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @NonNull
             @Override
-            public Class<DownloadsAndGlobalStats> provides() {
-                return DownloadsAndGlobalStats.class;
+            public Wants<DownloadsAndGlobalStats> wants() {
+                return MAIN_WANTS;
             }
 
             @NonNull
@@ -431,7 +434,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh(DownloadsAndGlobalStats.class, MainActivity.this);
+                refresh(MAIN_WANTS, MainActivity.this);
             }
         });
 

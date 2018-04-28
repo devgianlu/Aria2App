@@ -47,6 +47,7 @@ import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
@@ -72,6 +73,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private IWaitBinder boundWaiter;
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
+
 
     public static FilesFragment getInstance(Context context, String gid) {
         FilesFragment fragment = new FilesFragment();
@@ -117,7 +119,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             public void onRefresh() {
                 canGoBack(CODE_CLOSE_SHEET);
 
-                refresh(DownloadWithUpdate.BigUpdate.class, new OnRefresh() {
+                refresh(new OnRefresh() {
                     @Override
                     public void refreshed() {
                         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
@@ -465,8 +467,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
     @NonNull
     @Override
-    public Class<DownloadWithUpdate.BigUpdate> provides() {
-        return DownloadWithUpdate.BigUpdate.class;
+    public Wants<DownloadWithUpdate.BigUpdate> wants(@NonNull Bundle args) {
+        return Wants.bigUpdate(args.getString("gid"));
     }
 
     private interface IWaitBinder {

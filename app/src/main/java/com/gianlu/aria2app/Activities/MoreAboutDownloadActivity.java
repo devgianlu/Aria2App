@@ -26,6 +26,7 @@ import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -68,16 +69,17 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     @Override
     protected void onPreCreate(@Nullable Bundle savedInstanceState) {
         int theme = getIntent().getIntExtra("theme", 0);
-        if (!getIntent().hasExtra("gid") || theme == 0) {
+        final String gid = getIntent().getStringExtra("gid");
+        if (gid == null || theme == 0) {
             super.onCreate(savedInstanceState);
-            Toaster.show(this, Utils.Messages.FAILED_LOADING, new IllegalArgumentException("missing gid or theme = " + theme));
+            Toaster.show(this, Utils.Messages.FAILED_LOADING, new IllegalArgumentException("gid = " + gid + ", theme = " + theme));
             onBackPressed();
             return;
         }
 
         setTheme(theme);
 
-        attachReceiver(new Receiver<DownloadWithUpdate.BigUpdate>() {
+        attachReceiver(this, new Receiver<DownloadWithUpdate.BigUpdate>() {
             @Override
             public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
                 if (lastStatus != payload.status) {
@@ -110,8 +112,8 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
             @NonNull
             @Override
-            public Class<DownloadWithUpdate.BigUpdate> provides() {
-                return DownloadWithUpdate.BigUpdate.class;
+            public Wants<DownloadWithUpdate.BigUpdate> wants() {
+                return Wants.bigUpdate(gid);
             }
 
             @NonNull

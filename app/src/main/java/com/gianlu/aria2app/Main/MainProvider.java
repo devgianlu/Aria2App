@@ -8,13 +8,14 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.PayloadUpdater;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
 
     MainProvider(Context context) throws Aria2Helper.InitializingException {
-        super(context);
+        super(context, Wants.downloadsAndStats());
     }
 
     @NonNull

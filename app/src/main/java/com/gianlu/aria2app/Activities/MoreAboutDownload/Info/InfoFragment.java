@@ -25,6 +25,7 @@ import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
@@ -83,8 +84,8 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
     @NonNull
     @Override
-    public Class<DownloadWithUpdate.BigUpdate> provides() {
-        return DownloadWithUpdate.BigUpdate.class;
+    public Wants<DownloadWithUpdate.BigUpdate> wants(@NonNull Bundle args) {
+        return Wants.bigUpdate(args.getString("gid"));
     }
 
     @NonNull

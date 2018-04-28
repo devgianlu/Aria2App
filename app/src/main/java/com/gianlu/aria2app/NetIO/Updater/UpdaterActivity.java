@@ -1,13 +1,14 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 
-public abstract class UpdaterActivity extends ActivityWithDialog {
+public abstract class UpdaterActivity extends ActivityWithDialog implements ReceiverOwner {
     private final UpdaterFramework framework;
 
     public UpdaterActivity() {
@@ -26,38 +27,48 @@ public abstract class UpdaterActivity extends ActivityWithDialog {
         super.onCreate(savedInstanceState);
         onPostCreate();
 
-        framework.startUpdaters();
+        framework.startUpdaters(this);
     }
 
-    public <P> PayloadProvider<P> attachReceiver(@NonNull Receiver<P> receiver) {
-        return framework.attachReceiver(receiver);
+    @Nullable
+    public final <P> PayloadProvider<P> attachReceiver(@NonNull ReceiverOwner owner, @NonNull Receiver<P> receiver) {
+        return framework.attachReceiver(owner, receiver);
     }
 
     @Override
+    @CallSuper
     protected void onResume() {
         super.onResume();
-        framework.startUpdaters();
+        framework.startUpdaters(this);
     }
 
     @Override
+    @CallSuper
     protected void onDestroy() {
         super.onDestroy();
-        framework.stopUpdaters();
+        framework.removeUpdaters(this);
     }
 
     @Override
+    @CallSuper
     protected void onPause() {
         super.onPause();
-        framework.stopUpdaters();
+        framework.stopUpdaters(this);
     }
 
     @Override
+    @CallSuper
     protected void onStop() {
         super.onStop();
-        framework.stopUpdaters();
+        framework.stopUpdaters(this);
     }
 
-    protected void refresh(@NonNull Class<?> type, OnRefresh listener) {
-        framework.refresh(type, listener);
+    protected final void refresh(@NonNull Wants<?> wants, OnRefresh listener) {
+        framework.refresh(wants, listener);
+    }
+
+    @NonNull
+    public UpdaterFramework getFramework() {
+        return framework;
     }
 }

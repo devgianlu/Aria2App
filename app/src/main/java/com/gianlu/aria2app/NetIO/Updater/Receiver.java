@@ -12,7 +12,7 @@ public interface Receiver<P> {
     void onCouldntLoad(@NonNull Exception ex);
 
     @NonNull
-    Class<P> provides();
+    Wants<P> wants();
 
     @NonNull
     PayloadProvider<P> requireProvider() throws Aria2Helper.InitializingException;

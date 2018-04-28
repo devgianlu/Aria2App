@@ -6,18 +6,28 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.commonutils.CommonUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> {
     protected final PayloadUpdater<P> updater;
-    private final List<Receiver<P>> attachedReceivers = new ArrayList<>();
+    private final Wants<P> provides;
+    private final Set<Receiver<P>> attachedReceivers = new HashSet<>();
+    private final Set<ReceiverOwner> owners = new HashSet<>();
     private P lastPayload;
     private PayloadUpdater.OnPayload<P> requireListener = null;
 
-    public PayloadProvider(@NonNull Context context) throws Aria2Helper.InitializingException {
-        updater = requireUpdater(context);
+    public PayloadProvider(@NonNull Context context, @NonNull Wants<P> provides) throws Aria2Helper.InitializingException {
+        this.updater = requireUpdater(context);
+        this.provides = provides;
+    }
+
+    @NonNull
+    public final Wants<P> provides() {
+        return provides;
     }
 
     @Override
@@ -39,27 +49,47 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
         if (lastPayload != null) receiver.onLoad(lastPayload);
     }
 
-    public void attachReceiver(@NonNull Receiver<P> receiver) {
+    public void attachReceiver(@NonNull ReceiverOwner owner, @NonNull Receiver<P> receiver) {
         attachedReceivers.add(receiver);
+        owners.add(owner);
+
+        if (CommonUtils.isDebug())
+            System.out.println("Attached receiver to " + provides() + " by " + owner.toString());
     }
 
-    public void refresh(@Nullable final OnRefresh listener) {
+    public boolean isOnlyOwner(ReceiverOwner owner) {
+        return owners.size() == 1 && owners.contains(owner);
+    }
+
+    public boolean owns(ReceiverOwner owner) {
+        return owners.contains(owner);
+    }
+
+    public void removeOwner(ReceiverOwner owner) {
+        owners.remove(owner);
+    }
+
+    public void refresh(final ExecutorService executorService, @Nullable final OnRefresh listener) {
         updater.safeStop(new PayloadUpdater.OnStop() {
             @Override
             public void onStopped() {
                 stop(null);
-                start();
+                start(executorService);
                 if (listener != null) listener.refreshed();
             }
         });
     }
 
     public void stop(@Nullable PayloadUpdater.OnStop listener) {
-        updater.safeStop(listener);
+        if (updater.safeStop(listener) && CommonUtils.isDebug())
+            System.out.println("Provider stopped " + provides());
     }
 
-    public void start() {
-        new Thread(updater).start();
+    public void start(@NonNull ExecutorService executorService) {
+        if (!updater.isRunning()) {
+            executorService.submit(updater);
+            if (CommonUtils.isDebug()) System.out.println("Provider started " + provides());
+        }
     }
 
     public void requirePayload(PayloadUpdater.OnPayload<P> listener) {
