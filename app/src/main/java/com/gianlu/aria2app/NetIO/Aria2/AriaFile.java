@@ -8,7 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +16,7 @@ import java.util.Objects;
 
 import okhttp3.HttpUrl;
 
-public class AriaFile extends DownloadChild implements Serializable {
+public class AriaFile {
     public final long completedLength;
     public final long length;
     public final String path;
@@ -27,8 +26,7 @@ public class AriaFile extends DownloadChild implements Serializable {
     private String mime;
     private String name;
 
-    public AriaFile(DownloadWithUpdate download, JSONObject obj) throws JSONException {
-        super(download);
+    public AriaFile(JSONObject obj) throws JSONException {
         index = obj.getInt("index");
         path = obj.getString("path");
         length = obj.getLong("length");
@@ -94,8 +92,8 @@ public class AriaFile extends DownloadChild implements Serializable {
         return ((float) completedLength) / ((float) length) * 100;
     }
 
-    public String getRelativePath() {
-        return getRelativePath(path, download.update().dir);
+    public String getRelativePath(String dir) {
+        return getRelativePath(path, dir);
     }
 
     public boolean completed() {
@@ -114,9 +112,9 @@ public class AriaFile extends DownloadChild implements Serializable {
     }
 
     @NonNull
-    public HttpUrl getDownloadUrl(@NonNull HttpUrl base) {
+    public HttpUrl getDownloadUrl(String dir, @NonNull HttpUrl base) {
         HttpUrl.Builder builder = base.newBuilder();
-        builder.addPathSegments(getRelativePath());
+        builder.addPathSegments(getRelativePath(dir));
         return builder.build();
     }
 

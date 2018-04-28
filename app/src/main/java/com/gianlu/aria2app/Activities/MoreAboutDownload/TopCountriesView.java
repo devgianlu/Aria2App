@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -16,6 +15,7 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
+import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.R;
@@ -95,7 +95,7 @@ public final class TopCountriesView extends FlowLayout {
         buildLayout();
     }
 
-    public void setServers(@NonNull SparseArray<Servers> servers, @NonNull List<AriaFile> files) {
+    public void setServers(@NonNull SparseServers servers, @NonNull List<AriaFile> files) {
         topCountries.clear();
 
         for (AriaFile file : files) {

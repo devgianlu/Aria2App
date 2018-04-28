@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class TreeNode extends DownloadChild {
+public class TreeNode {
     public final List<TreeNode> files;
     public final List<TreeNode> dirs;
     public final String incrementalPath;
@@ -16,9 +16,10 @@ public class TreeNode extends DownloadChild {
     public final TreeNode parent;
     private final String separator;
     public AriaFile obj;
+    private final DownloadWithUpdate download;
 
     private TreeNode(DownloadWithUpdate download, TreeNode parent, String incrementalPath, AriaFile obj) {
-        super(download);
+        this.download = download;
         this.separator = TreeNode.guessSeparator(download.update().dir);
         this.parent = parent;
         this.incrementalPath = incrementalPath;
@@ -29,7 +30,7 @@ public class TreeNode extends DownloadChild {
     }
 
     private TreeNode(DownloadWithUpdate download, TreeNode parent, String name, String incrementalPath) {
-        super(download);
+        this.download = download;
         this.separator = TreeNode.guessSeparator(download.update().dir);
         this.parent = parent;
         this.dirs = new ArrayList<>();
@@ -40,7 +41,7 @@ public class TreeNode extends DownloadChild {
     }
 
     TreeNode(DownloadWithUpdate download, TreeNode node) {
-        super(download);
+        this.download = download;
         this.separator = TreeNode.guessSeparator(download.update().dir);
         this.files = node.files;
         this.dirs = node.dirs;

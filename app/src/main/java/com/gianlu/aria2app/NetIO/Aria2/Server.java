@@ -12,13 +12,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Server extends DownloadChild {
+public class Server {
     public final Uri uri;
     public final String currentUri;
     public final int downloadSpeed;
 
-    Server(DownloadWithUpdate download, JSONObject obj) throws JSONException {
-        super(download);
+    Server(JSONObject obj) throws JSONException {
         uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");
         downloadSpeed = obj.getInt("downloadSpeed");

@@ -71,6 +71,18 @@ public class Download {
         client.send(AriaRequests.getOptions(gid), listener);
     }
 
+    public final void servers(AbstractClient.OnResult<SparseServers> listener) {
+        client.send(AriaRequests.getServers(gid), listener);
+    }
+
+    public final void files(AbstractClient.OnResult<List<AriaFile>> listener) {
+        client.send(AriaRequests.getFiles(gid), listener);
+    }
+
+    public final void peers(AbstractClient.OnResult<Peers> listener) {
+        client.send(AriaRequests.getPeers(gid), listener);
+    }
+
     public final void changePosition(int pos, String mode, AbstractClient.OnSuccess listener) {
         client.send(AriaRequests.changePosition(gid, pos, mode), listener);
     }

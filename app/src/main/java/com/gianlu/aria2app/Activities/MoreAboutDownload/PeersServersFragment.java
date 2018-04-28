@@ -12,17 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
-import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 
-public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends NiceBaseBottomSheet> extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed {
+public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends NiceBaseBottomSheet, P> extends UpdaterFragment<P> implements OnBackPressed {
     protected TopCountriesView topDownloadCountries;
     protected TopCountriesView topUploadCountries;
     protected RecyclerViewLayout recyclerViewLayout;
@@ -48,18 +45,6 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         } else {
             return true;
         }
-    }
-
-    @Override
-    public final void onCouldntLoad(@NonNull Exception ex) {
-        recyclerViewLayout.showMessage(R.string.failedLoading, true);
-        Logging.log(ex);
-    }
-
-    @NonNull
-    @Override
-    public final Wants<DownloadWithUpdate.BigUpdate> wants(@NonNull Bundle args) {
-        return Wants.bigUpdate(args.getString("gid")); // TODO: Should be peers or servers
     }
 
     @Nullable

@@ -85,6 +85,11 @@ public abstract class PayloadUpdater<P> implements Runnable {
         }
     }
 
+    @NonNull
+    public Aria2Helper getHelper() {
+        return helper;
+    }
+
     public interface OnStop {
         void onStopped();
     }

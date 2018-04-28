@@ -75,6 +75,17 @@ public class Aria2Helper {
         }, listener);
     }
 
+    public void getServersAndFiles(final String gid, AbstractClient.OnResult<SparseServersWithFiles> listener) {
+        client.batch(new AbstractClient.BatchSandbox<SparseServersWithFiles>() {
+            @Override
+            public SparseServersWithFiles sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+                SparseServers servers = client.sendSync(AriaRequests.getServers(gid));
+                List<AriaFile> files = client.sendSync(AriaRequests.getFiles(gid));
+                return new SparseServersWithFiles(servers, files);
+            }
+        }, listener);
+    }
+
     @NonNull
     public AbstractClient getClient() {
         return client;

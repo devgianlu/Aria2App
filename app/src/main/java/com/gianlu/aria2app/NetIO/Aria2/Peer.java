@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Peer extends DownloadChild implements Serializable, Filterable<NotFilterable> {
+public class Peer implements Serializable, Filterable<NotFilterable> {
     public final String peerId;
     public final boolean amChoking;
     public final boolean peerChoking;
@@ -23,8 +23,7 @@ public class Peer extends DownloadChild implements Serializable, Filterable<NotF
     public final int port;
     public final String bitfield;
 
-    public Peer(DownloadWithUpdate download, JSONObject obj) {
-        super(download);
+    public Peer(JSONObject obj) {
         peerId = obj.optString("peerId", null);
         ip = obj.optString("ip", null);
         port = obj.optInt("port", -1);

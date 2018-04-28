@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Utils;
@@ -33,14 +34,14 @@ public class DownloadStartConfig {
         this.cacheDir = context.getExternalCacheDir();
     }
 
-    public static DownloadStartConfig create(@NonNull Context context, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
+    public static DownloadStartConfig create(@NonNull Context context, DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
 
         for (AriaFile file : dir.allObjs()) {
-            String relativePath = file.getRelativePath();
+            String relativePath = file.getRelativePath(download.update().dir);
             File destFile = new File(downloadPath, relativePath);
 
             MultiProfile.DirectDownload dd = profile.directDownload;
@@ -57,7 +58,7 @@ public class DownloadStartConfig {
         return config;
     }
 
-    public static DownloadStartConfig create(@NonNull Context context, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
+    public static DownloadStartConfig create(@NonNull Context context, DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
@@ -69,7 +70,7 @@ public class DownloadStartConfig {
             throw new CannotCreateStartConfigException(CannotCreateStartConfigException.Cause.INVALID_URL);
 
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
-        config.addTask(file.getDownloadUrl(url), destFile, dd.username, dd.password);
+        config.addTask(file.getDownloadUrl(download.update().dir, url), destFile, dd.username, dd.password);
         return config;
     }
 

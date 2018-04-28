@@ -95,4 +95,9 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     public void requirePayload(PayloadUpdater.OnPayload<P> listener) {
         requireListener = listener;
     }
+
+    @NonNull
+    public Aria2Helper getHelper() {
+        return updater.getHelper();
+    }
 }

@@ -1,10 +1,8 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.support.annotation.NonNull;
-import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Logging;
 
@@ -14,7 +12,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 public class DownloadWithUpdate extends Download implements Filterable<Download.Status> {
@@ -61,18 +58,6 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
     @NonNull
     public BigUpdate bigUpdate() {
         return (BigUpdate) update;
-    }
-
-    public final void files(AbstractClient.OnResult<List<AriaFile>> listener) {
-        client.send(AriaRequests.getFiles(this), listener);
-    }
-
-    public final void servers(AbstractClient.OnResult<SparseArray<Servers>> listener) {
-        client.send(AriaRequests.getServers(this), listener);
-    }
-
-    public final void peers(AbstractClient.OnResult<Peers> listener) {
-        client.send(AriaRequests.getPeers(this), listener);
     }
 
     private abstract static class UpdateComparator implements Comparator<DownloadWithUpdate> {
@@ -221,7 +206,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
             files = new ArrayList<>();
             JSONArray array = obj.getJSONArray("files");
             for (int i = 0; i < array.length(); i++)
-                files.add(new AriaFile(DownloadWithUpdate.this, array.getJSONObject(i)));
+                files.add(new AriaFile(array.getJSONObject(i)));
 
             if (isTorrent()) {
                 numSeeders = obj.getInt("numSeeders");

@@ -13,21 +13,19 @@ import android.view.MenuItem;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
-import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
 
-public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter {
+public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet, Peers> implements PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
     public static PeersFragment getInstance(Context context, String gid) {
@@ -130,35 +128,36 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
 
     @NonNull
     @Override
-    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
-        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    protected Wants<Peers> wants(@NonNull Bundle args) {
+        return Wants.peers(args.getString("gid"));
+    }
+
+    @NonNull
+    @Override
+    protected PayloadProvider<Peers> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new PeersProvider(getContext(), args.getString("gid"));
     }
 
     @Override
-    public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        payload.download().peers(new AbstractClient.OnResult<Peers>() {
-            @Override
-            public void onResult(@NonNull Peers result) {
-                recyclerViewLayout.showList();
-                topDownloadCountries.setPeers(result, true);
-                topUploadCountries.setPeers(result, false);
-                if (adapter != null) adapter.notifyItemsChanged(result);
-                if (sheet != null && sheet.isExpanded()) sheet.update(result);
-            }
-
-            @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                if (ex instanceof AriaException && ((AriaException) ex).isNoPeers()) {
-                    onResult(Peers.empty());
-                } else {
-                    recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
-                    Logging.log(ex);
-                }
-            }
-        });
+    public void onUpdateUi(@NonNull Peers payload) {
+        recyclerViewLayout.showList();
+        topDownloadCountries.setPeers(payload, true);
+        topUploadCountries.setPeers(payload, false);
+        if (adapter != null) adapter.notifyItemsChanged(payload);
+        if (sheet != null && sheet.isExpanded()) sheet.update(payload);
     }
 
     @Override
-    protected void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+    public void onCouldntLoad(@NonNull Exception ex) {
+        if (ex instanceof AriaException && ((AriaException) ex).isNoPeers()) {
+            onUpdateUi(Peers.empty());
+        } else {
+            recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+            Logging.log(ex);
+        }
+    }
+
+    @Override
+    protected void onLoadUi(@NonNull Peers payload) {
     }
 }

@@ -16,8 +16,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
-import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
@@ -30,10 +30,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -107,14 +103,14 @@ public final class Utils {
     }
 
     @Nullable
-    public static Intent getStreamIntent(MultiProfile.UserProfile profile, AriaFile file) {
+    public static Intent getStreamIntent(DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaFile file) {
         MultiProfile.DirectDownload dd = profile.directDownload;
         if (dd == null) throw new IllegalStateException("WTF?!");
 
         HttpUrl base = dd.getUrl();
         if (base == null) return null;
 
-        HttpUrl url = file.getDownloadUrl(base);
+        HttpUrl url = file.getDownloadUrl(download.update().dir, base);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(url.toString()), file.getMimeType());
@@ -123,20 +119,6 @@ public final class Utils {
 
     public static boolean canHandleIntent(Context context, @NonNull Intent intent) {
         return intent.resolveActivity(context.getPackageManager()) != null;
-    }
-
-    public static long sizeOf(Serializable obj) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(obj);
-            oos.flush();
-            oos.close();
-            return baos.toByteArray().length;
-        } catch (IOException ex) {
-            Crashlytics.logException(ex);
-            return 0;
-        }
     }
 
     public static void setupChart(LineChart chart, boolean small, @ColorRes int textColor) {

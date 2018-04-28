@@ -74,7 +74,6 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
 
-
     public static FilesFragment getInstance(Context context, String gid) {
         FilesFragment fragment = new FilesFragment();
         Bundle args = new Bundle();
@@ -331,8 +330,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
             DownloaderUtils.startDownload(downloaderMessenger,
                     file == null ?
-                            DownloadStartConfig.create(getContext(), profile.getProfile(getContext()), dir) :
-                            DownloadStartConfig.create(getContext(), profile.getProfile(getContext()), file));
+                            DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) :
+                            DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
         } catch (DownloaderUtils.InvalidPathException | DownloadStartConfig.CannotCreateStartConfigException ex) {
             Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
             return;
@@ -366,7 +365,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         String mime = file.getMimeType();
         if (mime != null) {
             if (Utils.isStreamable(mime) && getContext() != null) {
-                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), file);
+
+                final Intent intent = Utils.getStreamIntent(download, profile.getProfile(getContext()), file);
                 if (intent != null && Utils.canHandleIntent(getContext(), intent)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle(R.string.couldStreamVideo)

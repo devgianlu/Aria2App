@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Peers extends ArrayList<Peer> {
 
-    public Peers(DownloadWithUpdate download, JSONArray array) throws JSONException {
-        for (int i = 0; i < array.length(); i++) add(new Peer(download, array.getJSONObject(i)));
+    public Peers(JSONArray array) throws JSONException {
+        for (int i = 0; i < array.length(); i++) add(new Peer(array.getJSONObject(i)));
     }
 
     private Peers() {

@@ -14,7 +14,7 @@ import com.gianlu.aria2app.NetIO.Updater.Wants;
 public class BigUpdateProvider extends PayloadProvider<DownloadWithUpdate.BigUpdate> {
     private final String gid;
 
-    public BigUpdateProvider(Context context, String gid) throws Aria2Helper.InitializingException {
+    public BigUpdateProvider(@NonNull Context context, String gid) throws Aria2Helper.InitializingException {
         super(context, Wants.bigUpdate(gid));
         this.gid = gid;
     }

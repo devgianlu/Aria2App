@@ -6,25 +6,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
-import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
-import com.gianlu.aria2app.NetIO.Aria2.Servers;
+import com.gianlu.aria2app.NetIO.Aria2.SparseServersWithFiles;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
+import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
 
-public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements ServersAdapter.IAdapter {
+public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet, SparseServersWithFiles> implements ServersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
     public static ServersFragment getInstance(Context context, String gid) {
@@ -91,42 +88,43 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    public void onUpdateUi(@NonNull final DownloadWithUpdate.BigUpdate payload) {
-        payload.download().servers(new AbstractClient.OnResult<SparseArray<Servers>>() {
-            @Override
-            public void onResult(@NonNull SparseArray<Servers> servers) {
-                recyclerViewLayout.showList();
+    public void onUpdateUi(@NonNull final SparseServersWithFiles payload) {
+        recyclerViewLayout.showList();
 
-                if (payload.files != null)
-                    topDownloadCountries.setServers(servers, payload.files);
+        if (payload.files != null)
+            topDownloadCountries.setServers(payload.servers, payload.files);
 
-                if (adapter != null && payload.files != null)
-                    adapter.notifyItemsChanged(servers, payload.files);
+        if (adapter != null && payload.files != null)
+            adapter.notifyItemsChanged(payload.servers, payload.files);
 
-                if (sheet != null && sheet.isExpanded())
-                    sheet.update(servers);
-            }
+        if (sheet != null && sheet.isExpanded())
+            sheet.update(payload);
+    }
 
-            @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                if (ex instanceof AriaException && ((AriaException) ex).isNoServers()) {
-                    onResult(new SparseArray<Servers>());
-                } else {
-                    recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
-                    Logging.log(ex);
-                }
-            }
-        });
+    @Override
+    public void onCouldntLoad(@NonNull Exception ex) {
+        if (ex instanceof AriaException && ((AriaException) ex).isNoServers()) {
+            onUpdateUi(SparseServersWithFiles.empty());
+        } else {
+            recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+            Logging.log(ex);
+        }
     }
 
     @NonNull
     @Override
-    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
-        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    protected Wants<SparseServersWithFiles> wants(@NonNull Bundle args) {
+        return Wants.serversAndFiles(args.getString("gid"));
+    }
+
+    @NonNull
+    @Override
+    protected PayloadProvider<SparseServersWithFiles> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new ServersProvider(getContext(), args.getString("gid"));
     }
 
     @Override
-    public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+    public void onLoadUi(@NonNull SparseServersWithFiles payload) {
     }
 }
 

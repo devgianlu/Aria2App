@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
+import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.R;
@@ -44,7 +44,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (listener != null) listener.onItemCountUpdated(objs.size());
     }
 
-    private void createObjs(SparseArray<Servers> servers, List<AriaFile> files) {
+    private void createObjs(SparseServers servers, List<AriaFile> files) {
         objs.clear();
 
         for (AriaFile file : files) {
@@ -159,7 +159,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (pos != -1) notifyItemChanged(pos, server);
     }
 
-    public void notifyItemsChanged(@NonNull SparseArray<Servers> servers, @NonNull List<AriaFile> files) {
+    public void notifyItemsChanged(@NonNull SparseServers servers, @NonNull List<AriaFile> files) {
         createObjs(servers, files);
         for (AriaFile file : files) notifyHeaderChanged(file, servers.get(file.index));
     }

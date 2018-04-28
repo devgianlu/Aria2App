@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class Servers extends ArrayList<Server> {
 
-    public Servers(DownloadWithUpdate download, JSONArray servers) throws JSONException {
+    public Servers(JSONArray servers) throws JSONException {
         for (int i = 0; i < servers.length(); i++)
-            add(new Server(download, servers.getJSONObject(i)));
+            add(new Server(servers.getJSONObject(i)));
     }
 
     private Servers() {

@@ -2,14 +2,13 @@ package com.gianlu.aria2app.NetIO;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.SparseArray;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.GlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
-import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.Aria2.SessionInfo;
+import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.commonutils.CommonUtils;
@@ -52,33 +51,27 @@ public final class AriaRequests { // TODO: Reuse same download instance
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_POSITION, gid, pos, mode);
     }
 
-    public static AbstractClient.AriaRequestWithResult<SparseArray<Servers>> getServers(final DownloadWithUpdate download) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SERVERS, new AbstractClient.Processor<SparseArray<Servers>>() {
+    public static AbstractClient.AriaRequestWithResult<SparseServers> getServers(String gid) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SERVERS, new AbstractClient.Processor<SparseServers>() {
             @NonNull
             @Override
-            public SparseArray<Servers> process(AbstractClient client, JSONObject obj) throws JSONException {
-                JSONArray array = obj.getJSONArray("result");
-                SparseArray<Servers> list = new SparseArray<>();
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject server = array.getJSONObject(i);
-                    list.put(server.getInt("index"), new Servers(download, server.getJSONArray("servers")));
-                }
-                return list;
+            public SparseServers process(AbstractClient client, JSONObject obj) throws JSONException {
+                return new SparseServers(obj.getJSONArray("result"));
             }
-        }, download.gid);
+        }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<Peers> getPeers(final DownloadWithUpdate download) {
+    public static AbstractClient.AriaRequestWithResult<Peers> getPeers(String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_PEERS, new AbstractClient.Processor<Peers>() {
             @NonNull
             @Override
             public Peers process(AbstractClient client, JSONObject obj) throws JSONException {
-                return new Peers(download, obj.getJSONArray("result"));
+                return new Peers(obj.getJSONArray("result"));
             }
-        }, download.gid);
+        }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(final DownloadWithUpdate download) {
+    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<List<AriaFile>>() {
             @NonNull
             @Override
@@ -86,10 +79,10 @@ public final class AriaRequests { // TODO: Reuse same download instance
                 List<AriaFile> list = new ArrayList<>();
                 JSONArray array = obj.getJSONArray("result");
                 for (int i = 0; i < array.length(); i++)
-                    list.add(new AriaFile(download, array.getJSONObject(i)));
+                    list.add(new AriaFile(array.getJSONObject(i)));
                 return list;
             }
-        }, download.gid);
+        }, gid);
     }
 
     public static AbstractClient.AriaRequestWithResult<Integer[]> getFileIndexes(final String gid) {

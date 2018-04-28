@@ -43,6 +43,11 @@ public abstract class UpdaterFragment<P> extends Fragment implements Receiver<P>
     }
 
     @NonNull
+    protected final Aria2Helper getHelper() {
+        return provider.getHelper();
+    }
+
+    @NonNull
     protected abstract Wants<P> wants(@NonNull Bundle args);
 
     @NonNull

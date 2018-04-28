@@ -34,7 +34,7 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
 public class MoreAboutDownloadActivity extends UpdaterActivity {
-    private PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>> adapter;
+    private PagerAdapter<UpdaterFragment<?>> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
     private Download.Status lastStatus = Download.Status.UNKNOWN;
@@ -97,7 +97,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
                 String gid = payload.download().gid;
 
-                adapter = new PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>>(getSupportFragmentManager(),
+                adapter = new PagerAdapter<UpdaterFragment<?>>(getSupportFragmentManager(),
                         InfoFragment.getInstance(MoreAboutDownloadActivity.this, gid),
                         payload.isTorrent() ? PeersFragment.getInstance(MoreAboutDownloadActivity.this, gid) : ServersFragment.getInstance(MoreAboutDownloadActivity.this, gid),
                         FilesFragment.getInstance(MoreAboutDownloadActivity.this, gid));

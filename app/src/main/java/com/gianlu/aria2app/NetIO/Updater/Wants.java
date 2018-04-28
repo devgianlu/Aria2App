@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
+import com.gianlu.aria2app.NetIO.Aria2.Peers;
+import com.gianlu.aria2app.NetIO.Aria2.SparseServersWithFiles;
 
 public final class Wants<P> {
     private final Class<P> klass;
@@ -24,6 +26,18 @@ public final class Wants<P> {
     public static Wants<DownloadWithUpdate.BigUpdate> bigUpdate(String gid) {
         if (gid == null) throw new IllegalArgumentException("gid is null! Check arguments.");
         return new Wants<>(DownloadWithUpdate.BigUpdate.class, gid);
+    }
+
+    @NonNull
+    public static Wants<Peers> peers(String gid) {
+        if (gid == null) throw new IllegalArgumentException("gid is null! Check arguments.");
+        return new Wants<>(Peers.class, gid);
+    }
+
+    @NonNull
+    public static Wants<SparseServersWithFiles> serversAndFiles(String gid) {
+        if (gid == null) throw new IllegalArgumentException("gid is null! Check arguments.");
+        return new Wants<>(SparseServersWithFiles.class, gid);
     }
 
     @Override
