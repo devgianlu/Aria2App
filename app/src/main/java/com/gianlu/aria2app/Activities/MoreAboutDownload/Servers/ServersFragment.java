@@ -125,11 +125,6 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         return new BigUpdateProvider(getContext(), args.getString("gid"));
     }
 
-    @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        ex.printStackTrace(); // TODO
-    }
-
     @NonNull
     @Override
     public Class<DownloadWithUpdate.BigUpdate> provides() {

@@ -76,7 +76,9 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
     @Override
     public void onCouldntLoad(@NonNull Exception ex) {
-        ex.printStackTrace(); // TODO
+        holder.loading.setVisibility(View.GONE);
+        MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
+        Logging.log(ex);
     }
 
     @NonNull

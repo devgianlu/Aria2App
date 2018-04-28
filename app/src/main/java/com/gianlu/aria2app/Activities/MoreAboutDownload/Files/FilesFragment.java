@@ -53,6 +53,7 @@ import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
@@ -458,7 +459,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
     @Override
     public void onCouldntLoad(@NonNull Exception ex) {
-        ex.printStackTrace(); // TODO
+        recyclerViewLayout.showMessage(R.string.failedLoading, true);
+        Logging.log(ex);
     }
 
     @NonNull

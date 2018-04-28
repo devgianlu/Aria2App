@@ -16,6 +16,7 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
@@ -46,6 +47,12 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         } else {
             return true;
         }
+    }
+
+    @Override
+    public final void onCouldntLoad(@NonNull Exception ex) {
+        recyclerViewLayout.showMessage(R.string.failedLoading, true);
+        Logging.log(ex);
     }
 
     @Nullable

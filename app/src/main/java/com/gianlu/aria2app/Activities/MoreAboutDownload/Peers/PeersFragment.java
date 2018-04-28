@@ -158,11 +158,6 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         });
     }
 
-    @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        ex.printStackTrace(); // TODO
-    }
-
     @NonNull
     @Override
     public Class<DownloadWithUpdate.BigUpdate> provides() {
