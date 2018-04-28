@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.CountryFlags;
@@ -22,6 +23,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -45,10 +47,11 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private ViewHolder holder;
 
-    public static InfoFragment getInstance(Context context) {
+    public static InfoFragment getInstance(Context context, String gid) {
         InfoFragment fragment = new InfoFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.info));
+        args.putString("gid", gid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,15 +75,25 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        holder.setup(payload.download());
-        holder.update(payload);
+    public void onCouldntLoad(@NonNull Exception ex) {
+        ex.printStackTrace(); // TODO
     }
 
     @NonNull
     @Override
-    public Class<DownloadWithUpdate.BigUpdate> requires() {
+    public Class<DownloadWithUpdate.BigUpdate> provides() {
         return DownloadWithUpdate.BigUpdate.class;
+    }
+
+    @NonNull
+    @Override
+    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    }
+
+    @Override
+    public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        holder.setup(payload.download());
     }
 
     @Override

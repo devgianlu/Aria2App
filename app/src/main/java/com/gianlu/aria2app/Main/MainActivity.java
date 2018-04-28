@@ -73,7 +73,8 @@ import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
+import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.Options.OptionsUtils;
@@ -115,7 +116,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
     private static final int REQUEST_READ_CODE = 12;
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
@@ -151,7 +152,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
     public boolean onMenuItemSelected(BaseDrawerItem which) {
         switch (which.id) {
             case DrawerConst.HOME:
-                refresh(this);
+                refresh(DownloadsAndGlobalStats.class, this);
                 return true;
             case DrawerConst.DIRECT_DOWNLOAD:
                 startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
@@ -289,6 +290,76 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
     }
 
     @Override
+    protected void onPreCreate(@Nullable Bundle savedInstanceState) {
+        attachReceiver(new Receiver<DownloadsAndGlobalStats>() {
+            @Override
+            public void onUpdateUi(@NonNull DownloadsAndGlobalStats payload) {
+                if (adapter != null) {
+                    adapter.notifyItemsChanged(payload.downloads);
+                    recyclerViewLayout.stopLoading();
+                }
+
+                String gid = getIntent().getStringExtra("gid");
+                if (gid != null && !payload.downloads.isEmpty()) {
+                    for (DownloadWithUpdate download : payload.downloads) {
+                        if (Objects.equals(download.gid, gid)) {
+                            onMoreClick(download);
+                            getIntent().removeExtra("gid");
+                        }
+                    }
+                }
+
+                active.setText(String.valueOf(payload.stats.numActive));
+                paused.setText(String.valueOf(payload.stats.numWaiting));
+                stopped.setText(String.format(Locale.getDefault(), "%d (%d)", payload.stats.numStopped, payload.stats.numStoppedTotal));
+
+                LineData data = overallChart.getData();
+                if (data == null) {
+                    Utils.setupChart(overallChart, true, R.color.white);
+                    data = overallChart.getData();
+                }
+
+                if (data != null) {
+                    int pos = data.getEntryCount() / 2 + 1;
+                    data.addEntry(new Entry(pos, payload.stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
+                    data.addEntry(new Entry(pos, payload.stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
+                    data.notifyDataChanged();
+                    overallChart.notifyDataSetChanged();
+
+                    overallChart.setVisibleXRangeMaximum(90);
+                    overallChart.moveViewToX(pos - 91);
+                }
+            }
+
+            @Override
+            public void onLoad(@NonNull DownloadsAndGlobalStats payload) {
+                adapter = new DownloadCardsAdapter(MainActivity.this, payload.downloads, MainActivity.this);
+                recyclerViewLayout.loadListData(adapter);
+                setupAdapterFiltersAndSorting();
+            }
+
+            @Override
+            public void onCouldntLoad(@NonNull Exception ex) {
+                ErrorHandler.get().notifyException(ex, true);
+                if (recyclerViewLayout != null)
+                    recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
+            }
+
+            @NonNull
+            @Override
+            public Class<DownloadsAndGlobalStats> provides() {
+                return DownloadsAndGlobalStats.class;
+            }
+
+            @NonNull
+            @Override
+            public PayloadProvider<DownloadsAndGlobalStats> requireProvider() throws Aria2Helper.InitializingException {
+                return new MainProvider(MainActivity.this);
+            }
+        });
+    }
+
+    @Override
     protected void onPostCreate() {
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
@@ -360,7 +431,7 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh(MainActivity.this);
+                refresh(DownloadsAndGlobalStats.class, MainActivity.this);
             }
         });
 
@@ -464,19 +535,6 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
 
             hideSecondSpace();
         }
-    }
-
-    @NonNull
-    @Override
-    public Class<DownloadsAndGlobalStats> provides() {
-        return DownloadsAndGlobalStats.class;
-    }
-
-    @Override
-    public void onLoad(@NonNull DownloadsAndGlobalStats payload) {
-        adapter = new DownloadCardsAdapter(this, payload.downloads, this);
-        recyclerViewLayout.loadListData(adapter);
-        setupAdapterFiltersAndSorting();
     }
 
     private void doVersionCheck() {
@@ -831,9 +889,9 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
 
     private void showSecondSpace(DownloadWithUpdate download) {
         secondSpaceAdapter = new PagerAdapter<>(getSupportFragmentManager(),
-                InfoFragment.getInstance(this),
-                download.update().isTorrent() ? PeersFragment.getInstance(this) : ServersFragment.getInstance(this),
-                FilesFragment.getInstance(this));
+                InfoFragment.getInstance(this, download.gid),
+                download.update().isTorrent() ? PeersFragment.getInstance(this, download.gid) : ServersFragment.getInstance(this, download.gid),
+                FilesFragment.getInstance(this, download.gid));
 
         secondSpacePager.setAdapter(secondSpaceAdapter);
         secondSpaceTabs.setupWithViewPager(secondSpacePager);
@@ -1025,64 +1083,12 @@ public class MainActivity extends UpdaterActivity<DownloadsAndGlobalStats> imple
         downloaderMessenger = null;
     }
 
-    @NonNull
-    @Override
-    public BaseUpdater<DownloadsAndGlobalStats> createUpdater(@NonNull Bundle args) throws Exception {
-        return new Updater(this, this);
-    }
-
     @Override
     public void refreshed() {
         adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<DownloadWithUpdate>(), MainActivity.this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
-    }
-
-    @Override
-    public void onUpdateUi(@NonNull DownloadsAndGlobalStats payload) {
-        if (adapter != null) {
-            adapter.notifyItemsChanged(payload.downloads);
-            recyclerViewLayout.stopLoading();
-        }
-
-        String gid = getIntent().getStringExtra("gid");
-        if (gid != null && !payload.downloads.isEmpty()) {
-            for (DownloadWithUpdate download : payload.downloads) {
-                if (Objects.equals(download.gid, gid)) {
-                    onMoreClick(download);
-                    getIntent().removeExtra("gid");
-                }
-            }
-        }
-
-        active.setText(String.valueOf(payload.stats.numActive));
-        paused.setText(String.valueOf(payload.stats.numWaiting));
-        stopped.setText(String.format(Locale.getDefault(), "%d (%d)", payload.stats.numStopped, payload.stats.numStoppedTotal));
-
-        LineData data = overallChart.getData();
-        if (data == null) {
-            Utils.setupChart(overallChart, true, R.color.white);
-            data = overallChart.getData();
-        }
-
-        if (data != null) {
-            int pos = data.getEntryCount() / 2 + 1;
-            data.addEntry(new Entry(pos, payload.stats.downloadSpeed), Utils.CHART_DOWNLOAD_SET);
-            data.addEntry(new Entry(pos, payload.stats.uploadSpeed), Utils.CHART_UPLOAD_SET);
-            data.notifyDataChanged();
-            overallChart.notifyDataSetChanged();
-
-            overallChart.setVisibleXRangeMaximum(90);
-            overallChart.moveViewToX(pos - 91);
-        }
-    }
-
-    @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        ErrorHandler.get().notifyException(ex, true);
-        if (recyclerViewLayout != null)
-            recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
     }
 
     private class InternalBroadcastReceiver extends BroadcastReceiver {

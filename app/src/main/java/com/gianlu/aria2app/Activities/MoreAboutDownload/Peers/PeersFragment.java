@@ -13,13 +13,16 @@ import android.view.MenuItem;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
+import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
@@ -27,11 +30,12 @@ import com.gianlu.commonutils.Logging;
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet> implements PeersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
-    public static PeersFragment getInstance(Context context) {
+    public static PeersFragment getInstance(Context context, String gid) {
         PeersFragment fragment = new PeersFragment();
         fragment.setHasOptionsMenu(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.peers));
+        args.putString("gid", gid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -124,6 +128,12 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         return recyclerViewLayout.getList();
     }
 
+    @NonNull
+    @Override
+    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    }
+
     @Override
     public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
         payload.download().peers(new AbstractClient.OnResult<Peers>() {
@@ -149,7 +159,17 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        onUpdateUi(payload);
+    public void onCouldntLoad(@NonNull Exception ex) {
+        ex.printStackTrace(); // TODO
+    }
+
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> provides() {
+        return DownloadWithUpdate.BigUpdate.class; // FIXME: Should be peers
+    }
+
+    @Override
+    protected void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
     }
 }

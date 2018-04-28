@@ -10,13 +10,16 @@ import android.util.SparseArray;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
+import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.commonutils.Logging;
@@ -24,10 +27,11 @@ import com.gianlu.commonutils.Logging;
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet> implements ServersAdapter.IAdapter {
     private boolean isShowingHint = false;
 
-    public static ServersFragment getInstance(Context context) {
+    public static ServersFragment getInstance(Context context, String gid) {
         ServersFragment fragment = new ServersFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.servers));
+        args.putString("gid", gid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,9 +119,25 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         });
     }
 
+    @NonNull
     @Override
-    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        onUpdateUi(payload);
+    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    }
+
+    @Override
+    public void onCouldntLoad(@NonNull Exception ex) {
+        ex.printStackTrace(); // TODO
+    }
+
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> provides() {
+        return DownloadWithUpdate.BigUpdate.class; // FIXME: Should be servers
+    }
+
+    @Override
+    public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
     }
 }
 

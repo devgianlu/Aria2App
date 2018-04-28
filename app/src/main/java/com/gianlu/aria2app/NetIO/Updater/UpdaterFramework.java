@@ -1,68 +1,63 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 
-public final class UpdaterFramework<P> {
-    private final Interface<P> listener;
-    protected BaseUpdater<P> updater;
+import java.util.HashMap;
+import java.util.Map;
 
-    UpdaterFramework(@NonNull Interface<P> listener) {
-        this.listener = listener;
-    }
+public final class UpdaterFramework {
+    private final Map<Class<?>, PayloadProvider<?>> providers;
 
-    protected void stopUpdater() {
-        if (updater != null) updater.safeStop(null);
-        updater = null;
+    UpdaterFramework() {
+        this.providers = new HashMap<>();
     }
 
     @Nullable
-    public BaseUpdater<P> getUpdater() {
-        return updater;
-    }
-
-    protected void startUpdater() {
-        Bundle args = listener.getArguments();
-        if (args != null && updater == null) {
+    public <P> PayloadProvider<P> attachReceiver(@NonNull final Receiver<P> receiver) {
+        Class<P> provides = receiver.provides();
+        PayloadProvider<P> provider = getProvider(provides);
+        if (provider == null) {
             try {
-                updater = listener.createUpdater(args);
-                updater.start();
-            } catch (Exception ex) {
-                listener.onCouldntLoad(ex);
+                provider = receiver.requireProvider();
+                providers.put(provides, provider);
+                provider.start();
+            } catch (Aria2Helper.InitializingException ex) {
+                receiver.onCouldntLoad(ex);
+                return null;
             }
         }
-    }
 
-    protected void refresh(final OnRefresh listener) {
-        updater.safeStop(new BaseUpdater.OnStop() {
+        provider.attachReceiver(receiver);
+        provider.requirePayload(new PayloadUpdater.OnPayload<P>() {
             @Override
-            public void onStopped() {
-                if (listener != null) listener.refreshed();
-                stopUpdater();
-                startUpdater();
+            public void onPayload(@NonNull P payload) {
+                receiver.onLoad(payload);
             }
         });
+        return provider;
     }
 
-    public void requirePayload(AbstractClient.OnResult<P> listener) {
-        if (updater != null) updater.requirePayload(listener);
-        else listener.onException(new IllegalStateException("Updater not initialized yet!"), false);
+    protected void stopUpdaters() {
+        for (PayloadProvider<?> provider : providers.values()) provider.stop(null);
     }
 
-    public interface Interface<P> {
+    protected void startUpdaters() {
+        for (PayloadProvider<?> provider : providers.values()) provider.start();
+    }
 
-        @NonNull
-        BaseUpdater<P> createUpdater(@NonNull Bundle args) throws Exception;
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <P> PayloadProvider<P> getProvider(Class<P> type) {
+        return (PayloadProvider<P>) providers.get(type);
+    }
 
-        @Nullable
-        Bundle getArguments();
-
-        void onPayload(@NonNull P payload);
-
-        void onCouldntLoad(@NonNull Exception ex);
+    protected <P> void refresh(Class<P> type, final OnRefresh listener) {
+        PayloadProvider<P> provider = getProvider(type);
+        if (provider != null) provider.refresh(listener);
+        else listener.refreshed();
     }
 }

@@ -4,23 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-public abstract class UpdaterActivity<P> extends ActivityWithDialog implements UpdaterFramework.Interface<P>, PayloadProvider<P> {
-    private final UpdaterFramework<P> framework;
-    private final Set<UpdaterFragment<P>> attachedFragments = new HashSet<>();
-    private final Map<Class<?>, StandaloneProvider<?>> standaloneProviders = new HashMap<>();
-    private P lastPayload;
+public abstract class UpdaterActivity extends ActivityWithDialog {
+    private final UpdaterFramework framework;
 
     public UpdaterActivity() {
-        framework = new UpdaterFramework<>(this);
+        framework = new UpdaterFramework();
     }
 
     protected void onPreCreate(@Nullable Bundle savedInstanceState) {
@@ -35,90 +26,38 @@ public abstract class UpdaterActivity<P> extends ActivityWithDialog implements U
         super.onCreate(savedInstanceState);
         onPostCreate();
 
-        framework.startUpdater();
-        framework.requirePayload(new AbstractClient.OnResult<P>() {
-            @Override
-            public void onResult(@NonNull P result) {
-                lastPayload = result;
-                onLoad(result);
-
-                for (UpdaterFragment<P> fragment : attachedFragments)
-                    fragment.callOnLoad(result);
-            }
-
-            @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                onCouldntLoad(ex);
-            }
-        });
+        framework.startUpdaters();
     }
 
-    public <R> PayloadProvider<R> attachFragment(@NonNull UpdaterFragment<R> fragment) {
-        if (fragment.requires() == this.provides()) {
-            attachedFragments.add((UpdaterFragment<P>) fragment);
-            return (PayloadProvider<R>) this;
-        } else {
-            StandaloneProvider<?> provider = standaloneProviders.get(fragment.requires());
-            if (provider == null) {
-                provider = new StandaloneProvider<>(fragment.requires());
-                standaloneProviders.put(fragment.requires(), provider);
-            }
-
-            return (PayloadProvider<R>) provider;
-        }
-    }
-
-    @Override
-    public void requireLoadCall(@NonNull UpdaterFragment<P> fragment) {
-        if (lastPayload != null) fragment.callOnLoad(lastPayload);
-    }
-
-    @Override
-    public final void onPayload(@NonNull P payload) {
-        lastPayload = payload;
-        for (UpdaterFragment<P> fragment : attachedFragments)
-            fragment.onUpdateUi(payload);
-
-        onUpdateUi(payload);
+    public <P> PayloadProvider<P> attachReceiver(@NonNull Receiver<P> receiver) {
+        return framework.attachReceiver(receiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        framework.startUpdater();
+        framework.startUpdaters();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        framework.stopUpdater();
+        framework.stopUpdaters();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        framework.stopUpdater();
+        framework.stopUpdaters();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        framework.stopUpdater();
+        framework.stopUpdaters();
     }
 
-    @NonNull
-    @Override
-    public Bundle getArguments() {
-        Bundle args = getIntent().getExtras();
-        return args == null ? new Bundle() : args;
-    }
-
-    protected void refresh(OnRefresh listener) {
-        framework.refresh(listener);
-    }
-
-    @Nullable
-    protected BaseUpdater getUpdater() {
-        return framework.getUpdater();
+    protected void refresh(@NonNull Class<?> type, OnRefresh listener) {
+        framework.refresh(type, listener);
     }
 }

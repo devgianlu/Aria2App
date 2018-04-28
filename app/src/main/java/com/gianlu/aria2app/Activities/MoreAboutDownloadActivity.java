@@ -12,15 +12,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.InfoFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.NetIO.Updater.BaseUpdater;
+import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
+import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.Options.OptionsUtils;
@@ -29,22 +32,22 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
-public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithUpdate.BigUpdate> {
+public class MoreAboutDownloadActivity extends UpdaterActivity {
     private PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
     private Download.Status lastStatus = Download.Status.UNKNOWN;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.more_about_download, menu);
-        return true;
-    }
-
     public static void start(Context context, @NonNull DownloadWithUpdate download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
                 .putExtra("theme", download.update().isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar)
                 .putExtra("gid", download.gid));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.more_about_download, menu);
+        return true;
     }
 
     @Override
@@ -73,6 +76,50 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithUpdat
         }
 
         setTheme(theme);
+
+        attachReceiver(new Receiver<DownloadWithUpdate.BigUpdate>() {
+            @Override
+            public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+                if (lastStatus != payload.status) {
+                    lastStatus = payload.status;
+                    invalidateOptionsMenu();
+                }
+
+                if (payload.status == Download.Status.UNKNOWN) onBackPressed();
+            }
+
+            @Override
+            public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
+                if (currentStatus == null) currentStatus = payload.status;
+                setTitle(payload.getName());
+
+                String gid = payload.download().gid;
+
+                adapter = new PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>>(getSupportFragmentManager(),
+                        InfoFragment.getInstance(MoreAboutDownloadActivity.this, gid),
+                        payload.isTorrent() ? PeersFragment.getInstance(MoreAboutDownloadActivity.this, gid) : ServersFragment.getInstance(MoreAboutDownloadActivity.this, gid),
+                        FilesFragment.getInstance(MoreAboutDownloadActivity.this, gid));
+                pager.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCouldntLoad(@NonNull Exception ex) {
+                Toaster.show(MoreAboutDownloadActivity.this, Utils.Messages.FAILED_LOADING, ex);
+                onBackPressed();
+            }
+
+            @NonNull
+            @Override
+            public Class<DownloadWithUpdate.BigUpdate> provides() {
+                return DownloadWithUpdate.BigUpdate.class;
+            }
+
+            @NonNull
+            @Override
+            public PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider() throws Aria2Helper.InitializingException {
+                return new BigUpdateProvider(MoreAboutDownloadActivity.this, getIntent().getStringExtra("gid"));
+            }
+        });
     }
 
     @Override
@@ -123,12 +170,6 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithUpdat
         });
     }
 
-    @NonNull
-    @Override
-    public Class<DownloadWithUpdate.BigUpdate> provides() {
-        return DownloadWithUpdate.BigUpdate.class;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         String gid = getIntent().getStringExtra("gid");
@@ -168,39 +209,5 @@ public class MoreAboutDownloadActivity extends UpdaterActivity<DownloadWithUpdat
         } catch (NullPointerException ex) {
             Logging.log(ex);
         }
-    }
-
-    @Override
-    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        if (currentStatus == null) currentStatus = payload.status;
-        setTitle(payload.getName());
-
-        adapter = new PagerAdapter<UpdaterFragment<DownloadWithUpdate.BigUpdate>>(getSupportFragmentManager(),
-                InfoFragment.getInstance(this),
-                payload.isTorrent() ? PeersFragment.getInstance(this) : ServersFragment.getInstance(this),
-                FilesFragment.getInstance(this));
-        pager.setAdapter(adapter);
-    }
-
-    @NonNull
-    @Override
-    public BaseUpdater<DownloadWithUpdate.BigUpdate> createUpdater(@NonNull Bundle args) throws Exception {
-        return new Updater(this, args.getString("gid"), this);
-    }
-
-    @Override
-    public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        if (lastStatus != payload.status) {
-            lastStatus = payload.status;
-            invalidateOptionsMenu();
-        }
-
-        if (payload.status == Download.Status.UNKNOWN) onBackPressed();
-    }
-
-    @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        Toaster.show(this, Utils.Messages.FAILED_LOADING, ex);
-        onBackPressed();
     }
 }

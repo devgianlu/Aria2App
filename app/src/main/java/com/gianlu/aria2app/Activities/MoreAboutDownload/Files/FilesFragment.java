@@ -31,18 +31,21 @@ import android.widget.LinearLayout;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
@@ -69,10 +72,11 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
 
-    public static FilesFragment getInstance(Context context) {
+    public static FilesFragment getInstance(Context context, String gid) {
         FilesFragment fragment = new FilesFragment();
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.files));
+        args.putString("gid", gid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -112,7 +116,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             public void onRefresh() {
                 canGoBack(CODE_CLOSE_SHEET);
 
-                refresh(new OnRefresh() {
+                refresh(DownloadWithUpdate.BigUpdate.class, new OnRefresh() {
                     @Override
                     public void refreshed() {
                         adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
@@ -124,6 +128,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         });
 
         DownloaderUtils.bindService(getContext(), FilesFragment.this);
+    }
+
+    @NonNull
+    @Override
+    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new BigUpdateProvider(getContext(), args.getString("gid"));
     }
 
     @Nullable
@@ -440,17 +450,21 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         }
     }
 
-    @NonNull
     @Override
-    public Class<DownloadWithUpdate.BigUpdate> requires() {
-        return DownloadWithUpdate.BigUpdate.class;
+    public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
+        this.download = payload.download();
+        setupView();
     }
 
     @Override
-    public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        this.download = payload.download();
-        setupView();
-        onUpdateUi(payload);
+    public void onCouldntLoad(@NonNull Exception ex) {
+        ex.printStackTrace(); // TODO
+    }
+
+    @NonNull
+    @Override
+    public Class<DownloadWithUpdate.BigUpdate> provides() {
+        return DownloadWithUpdate.BigUpdate.class;
     }
 
     private interface IWaitBinder {
