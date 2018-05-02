@@ -100,6 +100,8 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     public void onItemCountUpdated(int count) {
         if (count == 0) {
             recyclerViewLayout.showMessage(R.string.noPeers, false);
+            topDownloadCountries.clear();
+            topUploadCountries.clear();
             if (sheet != null) sheet.collapse();
         } else {
             recyclerViewLayout.showList();

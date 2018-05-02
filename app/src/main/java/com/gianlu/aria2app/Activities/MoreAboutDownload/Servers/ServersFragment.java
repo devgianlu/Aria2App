@@ -67,6 +67,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     public void onItemCountUpdated(int count) {
         if (count == 0) {
             recyclerViewLayout.showMessage(R.string.noServers, false);
+            topDownloadCountries.clear();
             if (sheet != null) sheet.collapse();
         } else {
             recyclerViewLayout.showList();
