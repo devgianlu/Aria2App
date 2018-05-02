@@ -144,8 +144,8 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
 
     @NonNull
     @Override
-    protected PayloadProvider<Peers> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
-        return new PeersProvider(getContext(), args.getString("gid"));
+    protected PayloadProvider<Peers> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new PeersProvider(context, args.getString("gid"));
     }
 
     @Override
@@ -158,13 +158,9 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        if (ex instanceof AriaException && ((AriaException) ex).isNoPeers()) {
-            onUpdateUi(Peers.empty());
-        } else {
-            recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
-            Logging.log(ex);
-        }
+    public void onCouldntLoadChecked(@NonNull Exception ex) {
+        recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+        Logging.log(ex);
     }
 
     @Override

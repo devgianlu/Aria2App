@@ -76,10 +76,11 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     }
 
     @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
+    public boolean onCouldntLoad(@NonNull Exception ex) {
         holder.loading.setVisibility(View.GONE);
         MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
         Logging.log(ex);
+        return false;
     }
 
     @NonNull
@@ -90,8 +91,8 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
     @NonNull
     @Override
-    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
-        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new BigUpdateProvider(context, args.getString("gid"));
     }
 
     @Override

@@ -341,9 +341,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onCouldntLoad(@NonNull Exception ex) {
+            public boolean onCouldntLoad(@NonNull Exception ex) {
                 if (recyclerViewLayout != null)
                     recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
+
+                return false;
             }
 
             @Override

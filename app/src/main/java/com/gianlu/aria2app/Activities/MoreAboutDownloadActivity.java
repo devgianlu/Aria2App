@@ -105,9 +105,10 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
             }
 
             @Override
-            public void onCouldntLoad(@NonNull Exception ex) {
+            public boolean onCouldntLoad(@NonNull Exception ex) {
                 Toaster.show(MoreAboutDownloadActivity.this, Utils.Messages.FAILED_LOADING, ex);
                 onBackPressed();
+                return false;
             }
 
             @Override

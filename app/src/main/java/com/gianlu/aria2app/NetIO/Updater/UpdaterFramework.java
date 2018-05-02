@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public final class UpdaterFramework {
                 providers.put(wants, provider);
                 provider.start(executorService);
             } catch (Aria2Helper.InitializingException ex) {
-                receiver.onCouldntLoad(ex);
+                if (!receiver.onCouldntLoad(ex)) ErrorHandler.get().notifyException(ex, false);
                 return null;
             }
         }
@@ -47,8 +48,7 @@ public final class UpdaterFramework {
 
             @Override
             public boolean onException(@NonNull Exception ex) {
-                receiver.onCouldntLoad(ex);
-                return false;
+                return receiver.onCouldntLoad(ex);
             }
         });
         return provider;

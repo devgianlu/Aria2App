@@ -112,13 +112,9 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
-        if (ex instanceof AriaException && ((AriaException) ex).isNoServers()) {
-            onUpdateUi(SparseServersWithFiles.empty());
-        } else {
-            recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
-            Logging.log(ex);
-        }
+    public void onCouldntLoadChecked(@NonNull Exception ex) {
+        recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+        Logging.log(ex);
     }
 
     @NonNull
@@ -129,8 +125,8 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
     @NonNull
     @Override
-    protected PayloadProvider<SparseServersWithFiles> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
-        return new ServersProvider(getContext(), args.getString("gid"));
+    protected PayloadProvider<SparseServersWithFiles> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new ServersProvider(context, args.getString("gid"));
     }
 
     @Override

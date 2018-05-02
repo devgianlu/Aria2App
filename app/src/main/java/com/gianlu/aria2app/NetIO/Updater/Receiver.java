@@ -9,7 +9,10 @@ public interface Receiver<P> {
 
     void onLoad(@NonNull P payload);
 
-    void onCouldntLoad(@NonNull Exception ex);
+    /**
+     * @see PayloadUpdater.OnPayload#onException(Exception)
+     */
+    boolean onCouldntLoad(@NonNull Exception ex);
 
     /**
      * @see PayloadUpdater.OnPayload#onException(Exception)

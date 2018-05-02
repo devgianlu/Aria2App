@@ -48,7 +48,13 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
     }
 
     @Override
-    public abstract boolean onUpdateException(@NonNull Exception ex);
+    public final boolean onCouldntLoad(@NonNull Exception ex) {
+        boolean a = onUpdateException(ex);
+        if (!a) onCouldntLoadChecked(ex);
+        return a;
+    }
+
+    protected abstract void onCouldntLoadChecked(@NonNull Exception ex);
 
     @Nullable
     @Override

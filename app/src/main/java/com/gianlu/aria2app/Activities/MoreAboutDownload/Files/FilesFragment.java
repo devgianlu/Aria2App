@@ -134,8 +134,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
     @NonNull
     @Override
-    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException {
-        return new BigUpdateProvider(getContext(), args.getString("gid"));
+    protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException {
+        return new BigUpdateProvider(context, args.getString("gid"));
     }
 
     @Nullable
@@ -460,9 +460,10 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onCouldntLoad(@NonNull Exception ex) {
+    public boolean onCouldntLoad(@NonNull Exception ex) {
         recyclerViewLayout.showMessage(R.string.failedLoading, true);
         Logging.log(ex);
+        return false;
     }
 
     @NonNull

@@ -32,7 +32,9 @@ public abstract class UpdaterFragment<P> extends Fragment implements Receiver<P>
     public final PayloadProvider<P> requireProvider() throws Aria2Helper.InitializingException {
         Bundle args = getArguments();
         if (args == null) throw new IllegalStateException("Missing arguments!");
-        return requireProvider(args);
+        if (getContext() == null)
+            throw new Aria2Helper.InitializingException(new IllegalStateException("Context is null!"));
+        return requireProvider(getContext(), args);
     }
 
     @NonNull
@@ -56,7 +58,7 @@ public abstract class UpdaterFragment<P> extends Fragment implements Receiver<P>
     protected abstract Wants<P> wants(@NonNull Bundle args);
 
     @NonNull
-    protected abstract PayloadProvider<P> requireProvider(@NonNull Bundle args) throws Aria2Helper.InitializingException;
+    protected abstract PayloadProvider<P> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException;
 
     protected abstract void onLoadUi(@NonNull P payload);
 
