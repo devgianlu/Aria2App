@@ -214,7 +214,8 @@
                 android:id="@+id/main_secondSpace"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                tools:ignore="InconsistentLayout">
 
                 <!-- Keep this as first child -->
                 <include layout="@layout/message_layout" />
@@ -224,19 +225,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:ignore="InconsistentLayout">
 
                     <android.support.design.widget.TabLayout
                         android:id="@+id/mainSecondSpace_tabs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:tabGravity="fill"
-                        app:tabMode="fixed" />
+                        app:tabMode="fixed"
+                        tools:ignore="InconsistentLayout" />
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/mainSecondSpace_pager"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        tools:ignore="InconsistentLayout" />
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
