@@ -19,7 +19,9 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.Main.HideSecondSpace;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
@@ -63,6 +65,18 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
         holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.fragment_info, container, false));
         MessageLayout.setPaddingTop(holder.rootView, 48);
         return holder.rootView;
+    }
+
+    @Override
+    public boolean onUpdateException(@NonNull Exception ex) {
+        if (ex instanceof AriaException && ((AriaException) ex).isNotFound()) {
+            if (getActivity() instanceof HideSecondSpace) {
+                ((HideSecondSpace) getActivity()).hideSecondSpace();
+                return true;
+            }
+        }
+
+        return super.onUpdateException(ex);
     }
 
     @Override
@@ -296,15 +310,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                     moveUp.setVisibility(View.GONE);
                     moveDown.setVisibility(View.GONE);
                     break;
-                case UNKNOWN:
-                    pause.setVisibility(View.GONE);
-                    start.setVisibility(View.GONE);
-                    stop.setVisibility(View.GONE);
-                    restart.setVisibility(View.GONE);
-                    remove.setVisibility(View.GONE);
-                    moveUp.setVisibility(View.GONE);
-                    moveDown.setVisibility(View.GONE);
-                    break;
             }
         }
 
@@ -318,7 +323,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                 case ERROR:
                 case REMOVED:
                 case COMPLETE:
-                case UNKNOWN:
                     chart.clear();
                     chart.setNoDataText(getString(R.string.downloadIs, update.status.getFormal(getContext(), false)));
                     return false;

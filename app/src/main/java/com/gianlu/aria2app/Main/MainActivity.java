@@ -116,8 +116,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, HideSecondSpace, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
     private static final int REQUEST_READ_CODE = 12;
+    private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile> drawerManager;
     private FloatingActionsMenu fabMenu;
     private DownloadCardsAdapter adapter;
@@ -147,8 +148,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (drawerManager != null && drawerManager.isOpen())
             drawerManager.refreshProfiles(ProfilesManager.get(this).getProfiles());
     }
-
-    private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
 
     @Override
     public void onProfileSelected(final MultiProfile profile) {
@@ -908,7 +907,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         MessageLayout.hide(secondSpace);
     }
 
-    private void hideSecondSpace() { // TODO: Hide when status == UNKNOWN
+    @Override
+    public void hideSecondSpace() {
         MessageLayout.show(secondSpace, R.string.secondSpace_selectDownload, R.drawable.ic_info_outline_black_48dp);
         secondSpaceContainer.setVisibility(View.GONE);
         secondSpaceAdapter = null;

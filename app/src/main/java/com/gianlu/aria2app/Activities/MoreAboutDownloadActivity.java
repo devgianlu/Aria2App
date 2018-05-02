@@ -20,6 +20,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownload.Peers.PeersFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Servers.ServersFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
@@ -37,7 +38,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     private PagerAdapter<UpdaterFragment<?>> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
-    private Download.Status lastStatus = Download.Status.UNKNOWN;
+    private Download.Status lastStatus = null;
 
     public static void start(Context context, @NonNull DownloadWithUpdate download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
@@ -55,7 +56,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem options = menu.findItem(R.id.moreAboutDownload_options);
         MenuItem quick = menu.findItem(R.id.moreAboutDownload_quickOptions);
-        if (currentStatus == Download.Status.UNKNOWN || currentStatus == Download.Status.ERROR || currentStatus == Download.Status.COMPLETE || currentStatus == Download.Status.REMOVED) {
+        if (currentStatus == Download.Status.ERROR || currentStatus == Download.Status.COMPLETE || currentStatus == Download.Status.REMOVED) {
             options.setVisible(false);
             quick.setVisible(false);
         } else {
@@ -86,8 +87,6 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
                     lastStatus = payload.status;
                     invalidateOptionsMenu();
                 }
-
-                if (payload.status == Download.Status.UNKNOWN) onBackPressed();
             }
 
             @Override
@@ -113,6 +112,11 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
             @Override
             public boolean onUpdateException(@NonNull Exception ex) {
+                if (ex instanceof AriaException && ((AriaException) ex).isNotFound()) {
+                    onBackPressed();
+                    return true;
+                }
+
                 return false;
             }
 
