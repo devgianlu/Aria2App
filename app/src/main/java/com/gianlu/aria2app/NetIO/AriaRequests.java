@@ -3,7 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.GlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
@@ -71,16 +71,12 @@ public final class AriaRequests { // TODO: Reuse same download instance
         }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<List<AriaFile>> getFiles(String gid) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<List<AriaFile>>() {
+    public static AbstractClient.AriaRequestWithResult<AriaFiles> getFiles(String gid) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<AriaFiles>() {
             @NonNull
             @Override
-            public List<AriaFile> process(AbstractClient client, JSONObject obj) throws JSONException {
-                List<AriaFile> list = new ArrayList<>();
-                JSONArray array = obj.getJSONArray("result");
-                for (int i = 0; i < array.length(); i++)
-                    list.add(new AriaFile(array.getJSONObject(i)));
-                return list;
+            public AriaFiles process(AbstractClient client, JSONObject obj) throws JSONException {
+                return new AriaFiles(obj.getJSONArray("result"));
             }
         }, gid);
     }

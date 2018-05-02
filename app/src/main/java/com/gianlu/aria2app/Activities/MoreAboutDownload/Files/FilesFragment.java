@@ -41,6 +41,7 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
@@ -59,7 +60,6 @@ import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.Collection;
-import java.util.List;
 
 public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
     private FilesAdapter adapter;
@@ -441,7 +441,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
     @Override
     public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
-        List<AriaFile> files = payload.files;
+        AriaFiles files = payload.files;
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showMessage(R.string.noFiles, false);
         } else {

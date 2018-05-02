@@ -27,6 +27,10 @@ public class AriaException extends Exception {
         return reason.startsWith("No active download");
     }
 
+    public boolean isNotFound() {
+        return reason.endsWith("is not found");
+    }
+
     @Override
     public String toString() {
         return "AriaException #" + code + ": " + getMessage();

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
-import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -24,7 +24,6 @@ import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
-import java.util.List;
 import java.util.Locale;
 
 public class DirBottomSheet extends NiceBaseBottomSheet {
@@ -71,10 +70,9 @@ public class DirBottomSheet extends NiceBaseBottomSheet {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onUpdateViews(Object... payloads) {
         if (currentDir != null) {
-            currentDir = currentDir.update((DownloadWithUpdate) payloads[0], (List<AriaFile>) payloads[1]);
+            currentDir = currentDir.update((DownloadWithUpdate) payloads[0], (AriaFiles) payloads[1]);
             updateContentViews(currentDir);
             updateHeaderViews(currentDir);
         }

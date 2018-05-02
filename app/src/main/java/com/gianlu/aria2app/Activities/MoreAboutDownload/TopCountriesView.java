@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
@@ -95,7 +96,7 @@ public final class TopCountriesView extends FlowLayout {
         buildLayout();
     }
 
-    public void setServers(@NonNull SparseServers servers, @NonNull List<AriaFile> files) {
+    public void setServers(@NonNull SparseServers servers, @NonNull AriaFiles files) {
         topCountries.clear();
 
         for (AriaFile file : files) {

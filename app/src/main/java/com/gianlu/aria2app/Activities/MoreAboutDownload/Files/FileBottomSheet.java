@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -25,7 +25,6 @@ import com.gianlu.commonutils.NiceBaseBottomSheet;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
-import java.util.List;
 import java.util.Locale;
 
 public class FileBottomSheet extends NiceBaseBottomSheet {
@@ -72,9 +71,8 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onUpdateViews(Object... payloads) {
-        AriaFile file = findCurrent((List<AriaFile>) payloads[0]);
+        AriaFile file = ((AriaFiles) payloads[0]).findFileIndex(currentFileIndex);
         if (file != null) {
             updateHeaderViews(file);
             updateContentViews(file);
@@ -89,15 +87,6 @@ public class FileBottomSheet extends NiceBaseBottomSheet {
         selected.setChecked(file.selected);
         length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(file.length, false));
         completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(file.completedLength, false));
-    }
-
-    @Nullable
-    private AriaFile findCurrent(List<AriaFile> files) {
-        for (AriaFile file : files)
-            if (file.index == currentFileIndex)
-                return file;
-
-        return null;
     }
 
     @Override

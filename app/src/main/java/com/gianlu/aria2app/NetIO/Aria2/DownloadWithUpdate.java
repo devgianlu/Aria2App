@@ -1,16 +1,16 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Logging;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -163,22 +163,21 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
         public final Download.Status status;
         public final int downloadSpeed;
         public final int uploadSpeed;
-        public final ArrayList<AriaFile> files;
+        public final AriaFiles files;
         public final int errorCode;
         public final String errorMessage;
         public final String followedBy;
-        // BitTorrent only
-        public final int numSeeders;
-        public final String following;
-        public final String belongsTo;
-
-        ////////////////////////
-
         public final String dir;
         public final int numPieces;
         public final long pieceLength;
         public final long length;
+
+        // BitTorrent only
+        public final int numSeeders;
+        public final String following;
+        public final String belongsTo;
         public final BitTorrent torrent;
+
         private String name = null;
 
         SmallUpdate(JSONObject obj) throws JSONException {
@@ -188,14 +187,19 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
             dir = obj.getString("dir");
             torrent = BitTorrent.create(obj);
 
-            //////////////////////////
+            try {
+                status = Status.parse(obj.getString("status"));
+            } catch (ParseException ex) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) throw new JSONException(ex);
+                else throw new JSONException(ex.getMessage());
+            }
 
-            status = Download.Status.parse(obj.getString("status"));
             completedLength = obj.getLong("completedLength");
             uploadLength = obj.getLong("uploadLength");
             downloadSpeed = obj.getInt("downloadSpeed");
             uploadSpeed = obj.getInt("uploadSpeed");
             connections = obj.getInt("connections");
+            files = new AriaFiles(obj.getJSONArray("files"));
 
             // Optional
             followedBy = obj.optString("followedBy", null);
@@ -203,16 +207,8 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
             belongsTo = obj.optString("belongsTo", null);
 
 
-            files = new ArrayList<>();
-            JSONArray array = obj.getJSONArray("files");
-            for (int i = 0; i < array.length(); i++)
-                files.add(new AriaFile(array.getJSONObject(i)));
-
-            if (isTorrent()) {
-                numSeeders = obj.getInt("numSeeders");
-            } else {
-                numSeeders = 0;
-            }
+            if (isTorrent()) numSeeders = obj.getInt("numSeeders");
+            else numSeeders = 0;
 
             if (obj.has("errorCode")) {
                 errorCode = obj.getInt("errorCode");
@@ -278,7 +274,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
         }
 
         public boolean canDeselectFiles() {
-            return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR && status != Status.UNKNOWN;
+            return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR;
         }
     }
 }

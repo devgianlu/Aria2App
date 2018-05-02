@@ -80,7 +80,7 @@ public class Aria2Helper {
             @Override
             public SparseServersWithFiles sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 SparseServers servers = client.sendSync(AriaRequests.getServers(gid));
-                List<AriaFile> files = client.sendSync(AriaRequests.getFiles(gid));
+                AriaFiles files = client.sendSync(AriaRequests.getFiles(gid));
                 return new SparseServersWithFiles(servers, files);
             }
         }, listener);

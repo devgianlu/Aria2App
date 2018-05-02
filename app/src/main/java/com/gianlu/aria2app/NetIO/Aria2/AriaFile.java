@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.HttpUrl;
@@ -48,15 +47,6 @@ public class AriaFile {
         String relPath = path.replaceFirst(dir, "");
         if (relPath.charAt(0) == '/') return relPath.substring(1);
         else return relPath;
-    }
-
-    @NonNull
-    public static AriaFile find(List<AriaFile> objs, @NonNull AriaFile match) {
-        for (AriaFile obj : objs)
-            if (match.equals(obj))
-                return obj;
-
-        return match;
     }
 
     public static Integer[] allIndexes(Collection<AriaFile> files) {

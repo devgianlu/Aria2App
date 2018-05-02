@@ -2,7 +2,6 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
@@ -12,6 +11,7 @@ import com.gianlu.commonutils.CommonUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -75,7 +75,7 @@ public class Download {
         client.send(AriaRequests.getServers(gid), listener);
     }
 
-    public final void files(AbstractClient.OnResult<List<AriaFile>> listener) {
+    public final void files(AbstractClient.OnResult<AriaFiles> listener) {
         client.send(AriaRequests.getFiles(gid), listener);
     }
 
@@ -210,11 +210,10 @@ public class Download {
 
 
     public enum Status {
-        ACTIVE, PAUSED, WAITING, ERROR, REMOVED, COMPLETE, UNKNOWN;
+        ACTIVE, PAUSED, WAITING, ERROR, REMOVED, COMPLETE;
 
         @NonNull
-        public static Status parse(@Nullable String val) {
-            if (val == null) return Status.UNKNOWN;
+        public static Status parse(@NonNull String val) throws ParseException {
             switch (val.toLowerCase()) {
                 case "active":
                     return Status.ACTIVE;
@@ -229,7 +228,7 @@ public class Download {
                 case "removed":
                     return Status.REMOVED;
                 default:
-                    return Status.UNKNOWN;
+                    throw new ParseException(val, 0);
             }
         }
 
@@ -262,7 +261,6 @@ public class Download {
                 case COMPLETE:
                     val = context.getString(R.string.downloadStatus_complete);
                     break;
-                case UNKNOWN:
                 default:
                     val = context.getString(R.string.downloadStatus_unknown);
                     break;

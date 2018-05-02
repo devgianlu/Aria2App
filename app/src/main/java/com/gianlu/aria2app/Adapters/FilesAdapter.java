@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.R;
@@ -58,7 +59,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void update(DownloadWithUpdate download, List<AriaFile> files) {
+    public void update(DownloadWithUpdate download, AriaFiles files) {
         if (currentNode == null) {
             currentNode = TreeNode.create(download, files);
             notifyCurrentDirChanged();

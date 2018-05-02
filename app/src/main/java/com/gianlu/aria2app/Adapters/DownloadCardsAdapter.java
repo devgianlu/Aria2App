@@ -405,17 +405,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                     moveDown.setVisibility(View.GONE);
                     toggleNotification.setVisibility(View.GONE);
                     break;
-                case UNKNOWN:
-                    more.setVisibility(View.GONE);
-                    pause.setVisibility(View.GONE);
-                    start.setVisibility(View.GONE);
-                    stop.setVisibility(View.GONE);
-                    restart.setVisibility(View.GONE);
-                    remove.setVisibility(View.GONE);
-                    moveUp.setVisibility(View.GONE);
-                    moveDown.setVisibility(View.GONE);
-                    toggleNotification.setVisibility(View.GONE);
-                    break;
             }
         }
 

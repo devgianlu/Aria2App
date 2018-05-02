@@ -1,12 +1,10 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import java.util.List;
-
 public class SparseServersWithFiles {
     public final SparseServers servers;
-    public final List<AriaFile> files;
+    public final AriaFiles files;
 
-    public SparseServersWithFiles(SparseServers servers, List<AriaFile> files) {
+    public SparseServersWithFiles(SparseServers servers, AriaFiles files) {
         this.servers = servers;
         this.files = files;
     }

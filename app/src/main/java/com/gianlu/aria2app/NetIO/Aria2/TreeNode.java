@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,13 +64,15 @@ public class TreeNode {
         return true;
     }
 
+    @NonNull
     private static String guessSeparator(String path) {
         if (path.contains("/")) return "/";
         else if (path.contains("\\")) return "\\";
         else return "/";
     }
 
-    public static TreeNode create(DownloadWithUpdate download, List<AriaFile> files) {
+    @NonNull
+    public static TreeNode create(DownloadWithUpdate download, AriaFiles files) {
         String dir = download.update().dir;
         TreeNode rootNode = new TreeNode(download, null, TreeNode.guessSeparator(dir), "");
         for (AriaFile file : files) rootNode.addElement(file, dir);
@@ -82,11 +83,10 @@ public class TreeNode {
         return allSelected(this);
     }
 
-    public List<AriaFile> allObjs() {
-        if (isFile()) return Collections.singletonList(obj);
-        List<AriaFile> objs = new ArrayList<>(objs());
-        for (TreeNode dir : dirs) objs.addAll(dir.allObjs());
-        return objs;
+    @NonNull
+    public AriaFiles allObjs() {
+        if (isFile()) return AriaFiles.singleton(obj);
+        return AriaFiles.fromDirectory(this);
     }
 
     public Integer[] allIndexes() {
@@ -94,26 +94,26 @@ public class TreeNode {
         return AriaFile.allIndexes(allObjs());
     }
 
-    public List<AriaFile> objs() {
-        if (isFile()) return Collections.singletonList(obj);
-        List<AriaFile> objs = new ArrayList<>();
-        for (TreeNode file : files) objs.add(file.obj);
-        return objs;
+    @NonNull
+    public AriaFiles objs() {
+        if (isFile()) return AriaFiles.singleton(obj);
+        return AriaFiles.fromFiles(files);
     }
 
+    @NonNull
     private TreeNode root() {
         if (isRoot()) return this;
         return parent.root();
     }
 
-    public void updateHierarchy(List<AriaFile> objs) {
+    public void updateHierarchy(AriaFiles objs) {
         TreeNode root = root();
-        root.updateOrFall(new ArrayList<>(objs));
+        root.updateOrFall(objs.copy());
     }
 
-    private void updateOrFall(List<AriaFile> newFiles) {
+    private void updateOrFall(AriaFiles newFiles) {
         if (isFile()) {
-            update(AriaFile.find(newFiles, this.obj));
+            update(newFiles.opt(this.obj));
             return;
         }
 
