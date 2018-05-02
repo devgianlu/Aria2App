@@ -44,6 +44,12 @@ public final class UpdaterFramework {
             public void onPayload(@NonNull P payload) {
                 receiver.onLoad(payload);
             }
+
+            @Override
+            public boolean onException(@NonNull Exception ex) {
+                receiver.onCouldntLoad(ex);
+                return false;
+            }
         });
         return provider;
     }
@@ -58,7 +64,7 @@ public final class UpdaterFramework {
             if (provider.owns(owner)) provider.start(executorService);
     }
 
-    public void removeUpdaters(ReceiverOwner owner) {
+    public void removeUpdaters(@NonNull ReceiverOwner owner) {
         Iterator<PayloadProvider<?>> iterator = providers.values().iterator();
         while (iterator.hasNext()) {
             PayloadProvider<?> provider = iterator.next();

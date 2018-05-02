@@ -47,6 +47,9 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         }
     }
 
+    @Override
+    public abstract boolean onUpdateException(@NonNull Exception ex);
+
     @Nullable
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

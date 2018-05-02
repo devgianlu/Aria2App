@@ -11,6 +11,11 @@ public interface Receiver<P> {
 
     void onCouldntLoad(@NonNull Exception ex);
 
+    /**
+     * @see PayloadUpdater.OnPayload#onException(Exception)
+     */
+    boolean onUpdateException(@NonNull Exception ex);
+
     @NonNull
     Wants<P> wants();
 

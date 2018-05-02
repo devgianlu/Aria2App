@@ -31,6 +31,21 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     }
 
     @Override
+    public final boolean onException(@NonNull Exception ex) {
+        if (requireListener != null) {
+            boolean a = requireListener.onException(ex);
+            requireListener = null;
+            return a;
+        } else {
+            boolean handled = false;
+            for (Receiver<P> receiver : attachedReceivers)
+                if (receiver.onUpdateException(ex)) handled = true;
+
+            return handled;
+        }
+    }
+
+    @Override
     public final void onPayload(@NonNull P payload) {
         lastPayload = payload;
 

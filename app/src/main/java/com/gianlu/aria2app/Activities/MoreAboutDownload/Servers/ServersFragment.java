@@ -49,6 +49,16 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
+    public boolean onUpdateException(@NonNull Exception ex) {
+        if (ex instanceof AriaException && ((AriaException) ex).isNoServers()) {
+            onItemCountUpdated(0);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public void onServerSelected(Server server) {
         sheet.expand(server);
     }

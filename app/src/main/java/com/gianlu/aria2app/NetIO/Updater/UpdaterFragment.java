@@ -22,6 +22,11 @@ public abstract class UpdaterFragment<P> extends Fragment implements Receiver<P>
         calledLoad = true;
     }
 
+    @Override
+    public boolean onUpdateException(@NonNull Exception ex) {
+        return false;
+    }
+
     @NonNull
     @Override
     public final PayloadProvider<P> requireProvider() throws Aria2Helper.InitializingException {

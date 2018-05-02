@@ -33,7 +33,7 @@ public abstract class PayloadUpdater<P> implements Runnable {
     protected abstract void loop();
 
     protected final void errorOccurred(Exception ex) {
-        errorHandler.notifyException(ex, false);
+        if (!listener.onException(ex)) errorHandler.notifyException(ex, false);
     }
 
     protected final void hasResult(P result) {
@@ -96,5 +96,11 @@ public abstract class PayloadUpdater<P> implements Runnable {
 
     public interface OnPayload<P> {
         void onPayload(@NonNull P payload);
+
+        /**
+         * @return Whether the exception has been handled by the listener.
+         * If it hasn't been handled it will be reported to the {@link ErrorHandler}.
+         */
+        boolean onException(@NonNull Exception ex);
     }
 }

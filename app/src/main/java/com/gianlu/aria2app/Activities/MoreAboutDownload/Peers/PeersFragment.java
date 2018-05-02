@@ -82,6 +82,16 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
+    public boolean onUpdateException(@NonNull Exception ex) {
+        if (ex instanceof AriaException && ((AriaException) ex).isNoPeers()) {
+            onItemCountUpdated(0);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public void onPeerSelected(Peer peer) {
         sheet.expand(peer);
     }

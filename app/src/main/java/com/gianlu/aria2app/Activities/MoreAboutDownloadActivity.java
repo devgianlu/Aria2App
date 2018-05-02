@@ -110,6 +110,11 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
                 onBackPressed();
             }
 
+            @Override
+            public boolean onUpdateException(@NonNull Exception ex) {
+                return false;
+            }
+
             @NonNull
             @Override
             public Wants<DownloadWithUpdate.BigUpdate> wants() {

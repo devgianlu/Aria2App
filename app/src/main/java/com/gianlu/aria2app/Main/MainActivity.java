@@ -69,7 +69,6 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.VersionAndSession;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
-import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
@@ -343,9 +342,13 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onCouldntLoad(@NonNull Exception ex) {
-                ErrorHandler.get().notifyException(ex, true);
                 if (recyclerViewLayout != null)
                     recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
+            }
+
+            @Override
+            public boolean onUpdateException(@NonNull Exception ex) {
+                return false;
             }
 
             @NonNull
