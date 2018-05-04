@@ -33,7 +33,11 @@ public class BigUpdateProvider extends PayloadProvider<DownloadWithUpdate.BigUpd
 
         @Override
         protected void loop() {
-            helper.request(AriaRequests.tellStatus(gid), this);
+            if (lastPayload != null) {
+                helper.request(AriaRequests.tellStatus(lastPayload.download()), this);
+            } else {
+                helper.request(AriaRequests.tellStatus(gid), this);
+            }
         }
 
         @Override

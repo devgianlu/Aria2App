@@ -29,10 +29,12 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
         return download;
     }
 
-    private void update(JSONObject obj, boolean small) throws JSONException {
+    @NonNull
+    public DownloadWithUpdate update(JSONObject obj, boolean small) throws JSONException {
         synchronized (lock) {
             if (small) this.update = new SmallUpdate(obj);
             else this.update = new BigUpdate(obj);
+            return this;
         }
     }
 

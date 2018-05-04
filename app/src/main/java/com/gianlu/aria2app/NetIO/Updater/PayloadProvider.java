@@ -17,7 +17,7 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     private final Wants<P> provides;
     private final Set<Receiver<P>> attachedReceivers = new HashSet<>();
     private final Set<ReceiverOwner> owners = new HashSet<>();
-    private P lastPayload;
+    protected P lastPayload;
     private PayloadUpdater.OnPayload<P> requireListener = null;
 
     public PayloadProvider(@NonNull Context context, @NonNull Wants<P> provides) throws Aria2Helper.InitializingException {

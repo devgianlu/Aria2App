@@ -62,7 +62,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         if (getContext() == null) return null;
 
         CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_peers_and_servers, container, false);
-        topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries); // FIXME: Should show "no activity"
+        topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries);
         topUploadCountries = layout.findViewById(R.id.peersServersFragment_topUploadCountries);
         recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
         recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);

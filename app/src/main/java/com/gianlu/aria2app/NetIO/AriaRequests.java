@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public final class AriaRequests { // TODO: Reuse same download instance
+public final class AriaRequests {
     private static final AbstractClient.Processor<List<DownloadWithUpdate>> DOWNLOADS_LIST_PROCESSOR = new AbstractClient.Processor<List<DownloadWithUpdate>>() {
         @NonNull
         @Override
@@ -237,6 +237,16 @@ public final class AriaRequests { // TODO: Reuse same download instance
                 return DownloadWithUpdate.create(client, obj.getJSONObject("result"), false);
             }
         }, gid);
+    }
+
+    public static AbstractClient.AriaRequestWithResult<DownloadWithUpdate> tellStatus(@NonNull final DownloadWithUpdate download) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithUpdate>() {
+            @NonNull
+            @Override
+            public DownloadWithUpdate process(AbstractClient client, JSONObject obj) throws JSONException {
+                return download.update(obj.getJSONObject("result"), false);
+            }
+        }, download.gid);
     }
 
     public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellActiveSmall() {
