@@ -37,6 +37,7 @@ import com.gianlu.commonutils.Toaster;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -289,7 +290,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
         if (share) pickerHint.setText(R.string.pickProfile_someAction);
         else pickerHint.setText(R.string.pickProfile);
 
-        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, manager.getProfiles(), new ProfilesAdapter.IAdapter<MultiProfile>() {
+        List<MultiProfile> profiles = manager.getProfiles();
+        if (share && profiles.size() == 1) {
+            tryConnecting(profiles.get(0));
+            return;
+        }
+
+        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, profiles, new ProfilesAdapter.IAdapter<MultiProfile>() {
             @Override
             public void onProfileSelected(MultiProfile profile) {
                 tryConnecting(profile);
