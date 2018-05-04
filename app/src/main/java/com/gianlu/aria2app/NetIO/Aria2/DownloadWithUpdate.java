@@ -254,7 +254,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
         }
 
         @NonNull
-        private String getNameInternal() { // TODO: Error download has wrong name
+        private String getNameInternal() {
             try {
                 if (torrent != null && torrent.name != null) return torrent.name;
                 String[] splitted = files.get(0).path.split("/");
