@@ -235,6 +235,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             else
                 mimeType = null;
         } else {
+            // FIXME: Permission denial issue
             try (Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                     mimeType = cursor.getString(0);
