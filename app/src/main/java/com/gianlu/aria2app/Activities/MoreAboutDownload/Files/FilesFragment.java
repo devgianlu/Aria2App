@@ -113,7 +113,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
-        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 canGoBack(CODE_CLOSE_SHEET);
@@ -127,7 +127,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                     }
                 });
             }
-        });
+        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         DownloaderUtils.bindService(getContext(), FilesFragment.this);
     }
@@ -148,7 +148,6 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         fileSheet = new FileBottomSheet(layout, this);
         dirSheet = new DirBottomSheet(layout, this);

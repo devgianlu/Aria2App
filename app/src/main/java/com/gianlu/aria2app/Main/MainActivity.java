@@ -434,13 +434,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         recyclerViewLayout = findViewById(R.id.main_recyclerViewLayout);
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refresh(MAIN_WANTS, MainActivity.this);
             }
-        });
+        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         fabMenu = findViewById(R.id.main_fab);
         fabMenu.setOnFloatingActionsMenuUpdateListener(this);
