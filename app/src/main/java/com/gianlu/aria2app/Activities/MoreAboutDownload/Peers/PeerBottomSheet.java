@@ -100,7 +100,7 @@ public class PeerBottomSheet extends NiceBaseBottomSheet {
         Peer peer = (Peer) payloads[0];
 
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
-        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.IIPDetails() {
+        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.OnIpDetails() {
             @Override
             public void onDetails(IPDetails details) {
                 ipDetails.setup(details);

@@ -89,7 +89,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.IIPDetails() {
+            freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
                 @Override
                 public void onDetails(IPDetails details) {
                     notifyItemChanged(holder.getAdapterPosition(), details);

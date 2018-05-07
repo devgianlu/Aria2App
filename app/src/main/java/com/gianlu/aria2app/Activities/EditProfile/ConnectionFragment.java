@@ -127,7 +127,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                     @Override
                     public void run() {
                         if (lastAddress != null) {
-                            FreeGeoIPApi.get().getIPDetails(lastAddress, new FreeGeoIPApi.IIPDetails() {
+                            FreeGeoIPApi.get().getIPDetails(lastAddress, new FreeGeoIPApi.OnIpDetails() {
                                 @Override
                                 public void onDetails(IPDetails details) {
                                     if (isAdded()) {

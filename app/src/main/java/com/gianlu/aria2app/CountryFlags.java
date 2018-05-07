@@ -24,6 +24,7 @@ public final class CountryFlags {
         };
     }
 
+    @NonNull
     public static CountryFlags get() {
         if (instance == null) instance = new CountryFlags();
         return instance;

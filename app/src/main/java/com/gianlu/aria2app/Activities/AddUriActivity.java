@@ -69,12 +69,10 @@ public class AddUriActivity extends ActivityWithDialog {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
     }

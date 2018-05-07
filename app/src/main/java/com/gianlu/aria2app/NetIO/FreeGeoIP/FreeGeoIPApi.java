@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO.FreeGeoIP;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.LruCache;
 
@@ -33,6 +34,7 @@ public final class FreeGeoIPApi {
         cache = new LruCache<>(50);
     }
 
+    @NonNull
     public static FreeGeoIPApi get() {
         if (instance == null) instance = new FreeGeoIPApi();
         return instance;
@@ -43,8 +45,12 @@ public final class FreeGeoIPApi {
         return cache.get(ip);
     }
 
-    public void getIPDetails(final String ip, final IIPDetails listener) {
-        if (ip == null) return;
+    public void getIPDetails(final String ip, final OnIpDetails listener) {
+        if (ip == null) {
+            listener.onException(new NullPointerException("ip is null!"));
+            return;
+        }
+
         final IPDetails cachedDetails = cache.get(ip);
         if (cachedDetails != null) {
             handler.post(new Runnable() {
@@ -92,7 +98,7 @@ public final class FreeGeoIPApi {
         }
     }
 
-    public interface IIPDetails {
+    public interface OnIpDetails {
         void onDetails(IPDetails details);
 
         void onException(Exception ex);
