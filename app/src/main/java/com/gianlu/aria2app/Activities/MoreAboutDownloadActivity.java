@@ -43,6 +43,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     public static void start(Context context, @NonNull DownloadWithUpdate download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
                 .putExtra("theme", download.update().isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar)
+                .putExtra("title", download.update().getName())
                 .putExtra("gid", download.gid));
     }
 
@@ -71,14 +72,16 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     protected void onPreCreate(@Nullable Bundle savedInstanceState) {
         int theme = getIntent().getIntExtra("theme", 0);
         final String gid = getIntent().getStringExtra("gid");
-        if (gid == null || theme == 0) {
+        String title = getIntent().getStringExtra("title");
+        if (gid == null || theme == 0 || title == null) {
             super.onCreate(savedInstanceState);
-            Toaster.show(this, Utils.Messages.FAILED_LOADING, new IllegalArgumentException("gid = " + gid + ", theme = " + theme));
+            Toaster.show(this, Utils.Messages.FAILED_LOADING, new IllegalArgumentException("gid = " + gid + ", theme = " + theme + ", title = " + title));
             onBackPressed();
             return;
         }
 
         setTheme(theme);
+        setTitle(title);
 
         attachReceiver(this, new Receiver<DownloadWithUpdate.BigUpdate>() {
             @Override
@@ -93,8 +96,6 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
             public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
                 if (currentStatus == null) currentStatus = payload.status;
                 setTitle(payload.getName());
-
-                String gid = payload.download().gid;
 
                 adapter = new PagerAdapter<UpdaterFragment<?>>(getSupportFragmentManager(),
                         InfoFragment.getInstance(MoreAboutDownloadActivity.this, gid),

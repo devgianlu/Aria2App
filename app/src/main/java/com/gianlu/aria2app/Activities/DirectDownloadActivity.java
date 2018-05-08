@@ -42,13 +42,12 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
 
         layout.setLayoutManager(new SuppressingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         layout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        layout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-        layout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        layout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (downloaderMessenger != null) DownloaderUtils.listDownloads(downloaderMessenger);
             }
-        });
+        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         layout.showMessage(R.string.noDirectDownloads, false);
     }

@@ -72,7 +72,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
             }
         });
 
-        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.IIPDetails() {
+        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.OnIpDetails() {
             @Override
             public void onDetails(IPDetails details) {
                 notifyItemChanged(holder.getAdapterPosition(), details);

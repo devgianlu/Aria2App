@@ -251,7 +251,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                     try {
                         URI uri = new URI(url);
 
-                        freeGeoIPApi.getIPDetails(uri.getHost(), new FreeGeoIPApi.IIPDetails() {
+                        freeGeoIPApi.getIPDetails(uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
                             @Override
                             public void onDetails(IPDetails details) {
                                 if (isAdded())

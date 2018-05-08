@@ -65,14 +65,13 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries);
         topUploadCountries = layout.findViewById(R.id.peersServersFragment_topUploadCountries);
         recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
-        recyclerViewLayout.enableSwipeRefresh(R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
         recyclerViewLayout.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = getAdapter(getContext());
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
         sheet = getSheet(layout);
-        recyclerViewLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refresh(new OnRefresh() {
@@ -84,7 +83,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
                     }
                 });
             }
-        });
+        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);
 

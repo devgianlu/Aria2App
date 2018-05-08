@@ -123,8 +123,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         enableNotifs = findViewById(R.id.editProfile_enableNotifs);
 
         if (editProfile != null) {
-            //noinspection ConstantConditions
-            profileName.getEditText().setText(editProfile.name);
+            CommonUtils.getEditText(profileName).setText(editProfile.name);
             enableNotifs.setChecked(editProfile.notificationsEnabled);
         }
 
@@ -230,12 +229,10 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         ssidField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -250,17 +247,6 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                     WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                     if (manager == null) return;
                     ssidField.setAdapter(new WifisAdapter(EditProfileActivity.this, manager.getConfiguredNetworks()));
-                    ssidField.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-
-                        }
-                    });
                     ssidField.setThreshold(1);
                     ssid.setVisibility(View.VISIBLE);
                 } else {

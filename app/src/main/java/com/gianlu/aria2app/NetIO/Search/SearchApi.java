@@ -49,13 +49,14 @@ public final class SearchApi {
         handler = new Handler(Looper.getMainLooper());
     }
 
+    @NonNull
     public static SearchApi get() {
         if (instance == null) instance = new SearchApi();
         return instance;
     }
 
     @NonNull
-    private String request(Request get) throws IOException, StatusCodeException {
+    private String request(@NonNull Request get) throws IOException, StatusCodeException {
         try (Response resp = client.newCall(get).execute()) {
             if (resp.code() != 200) throw new StatusCodeException(resp);
 
