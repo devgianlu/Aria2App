@@ -1206,7 +1206,7 @@
 
         <!-- Chooser service -->
         <service
-            android:name="com.gianlu.aria2app.Services.ProfileChooserService"
+            android:name=".Services.ProfileChooserService"
             android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
             <intent-filter>
                 <action android:name="android.service.chooser.ChooserTargetService" />

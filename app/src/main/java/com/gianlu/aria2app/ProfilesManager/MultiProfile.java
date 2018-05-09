@@ -1,12 +1,20 @@
 package com.gianlu.aria2app.ProfilesManager;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.service.chooser.ChooserTarget;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Base64;
 
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
@@ -18,6 +26,7 @@ import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
+import com.gianlu.commonutils.LettersIcons.DrawingHelper;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
@@ -39,6 +48,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final String name;
     public final boolean notificationsEnabled;
     public TestStatus status;
+    private ChooserTarget chooserTarget;
 
     public MultiProfile(String name, boolean enableNotifs) {
         this.name = name;
@@ -110,6 +120,20 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         this.profiles = new ArrayList<>();
         this.profiles.add(new UserProfile(token, port));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public ChooserTarget getChooserTarget(DrawingHelper helper, ComponentName targetActivity) {
+        if (chooserTarget == null) {
+            Bundle bundle = new Bundle();
+            bundle.putString("profileId", id);
+
+            Bitmap bitmap = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
+            helper.draw(name.length() <= 2 ? name : name.substring(0, 2), false, new Canvas(bitmap));
+            chooserTarget = new ChooserTarget(name, Icon.createWithBitmap(bitmap), 1, targetActivity, bundle);
+        }
+
+        return chooserTarget;
     }
 
     @Nullable

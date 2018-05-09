@@ -149,16 +149,16 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
             }
         }
 
-        if (getIntent().getBooleanExtra("fromNotification", false)) {
-            String profileId = getIntent().getStringExtra("profileId");
-            if (manager.profileExists(profileId)) {
-                try {
-                    fromNotifGid = getIntent().getStringExtra("gid");
-                    tryConnecting(manager.retrieveProfile(profileId));
-                    return;
-                } catch (IOException | JSONException ex) {
-                    Logging.log(ex);
-                }
+        String profileId = getIntent().getStringExtra("profileId");
+        if (profileId != null && manager.profileExists(profileId)) {
+            if (getIntent().getBooleanExtra("fromNotification", false))
+                fromNotifGid = getIntent().getStringExtra("gid");
+
+            try {
+                tryConnecting(manager.retrieveProfile(profileId));
+                return;
+            } catch (IOException | JSONException ex) {
+                Logging.log(ex);
             }
         }
 
@@ -195,6 +195,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
         return Objects.equals(action, Intent.ACTION_SEND) || Objects.equals(action, Intent.ACTION_VIEW);
     }
 
+    @Nullable
     private Uri getShareData() {
         Uri stream = getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
         if (stream == null) {
