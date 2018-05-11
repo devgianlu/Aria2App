@@ -2,14 +2,11 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
-import android.util.SparseArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 public class Server {
@@ -21,16 +18,6 @@ public class Server {
         uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");
         downloadSpeed = obj.getInt("downloadSpeed");
-    }
-
-    @Nullable
-    public static Server find(SparseArray<List<Server>> servers, Server current) {
-        for (int i = 0; i < servers.size(); i++)
-            for (Server server : servers.valueAt(i))
-                if (Objects.equals(server, current))
-                    return server;
-
-        return null;
     }
 
     @Override

@@ -32,7 +32,7 @@ public class PeerBottomSheet extends NiceBaseBottomSheet {
     private IPDetailsView ipDetails;
     private Peer currentPeer = null;
 
-    public PeerBottomSheet(ViewGroup parent) {
+    PeerBottomSheet(ViewGroup parent) {
         super(parent, R.layout.sheet_header_peer, R.layout.sheet_peer, false);
         freeGeoIPApi = FreeGeoIPApi.get();
     }

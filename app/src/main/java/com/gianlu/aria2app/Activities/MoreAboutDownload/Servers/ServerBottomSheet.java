@@ -1,12 +1,12 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
 import android.support.annotation.NonNull;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.Aria2.Server;
+import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
@@ -20,8 +20,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-import java.util.List;
-
 public class ServerBottomSheet extends NiceBaseBottomSheet {
     private final FreeGeoIPApi freeGeoIPApi;
     private SuperTextView downloadSpeed;
@@ -31,17 +29,16 @@ public class ServerBottomSheet extends NiceBaseBottomSheet {
     private IPDetailsView ipDetails;
     private Server currentServer = null;
 
-    public ServerBottomSheet(ViewGroup parent) {
+    ServerBottomSheet(ViewGroup parent) {
         super(parent, R.layout.sheet_header_server, R.layout.sheet_server, false);
         freeGeoIPApi = FreeGeoIPApi.get();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onUpdateViews(Object... payloads) {
         if (currentServer == null) return;
 
-        Server server = Server.find((SparseArray<List<Server>>) payloads[0], currentServer);
+        Server server = ((SparseServers) payloads[0]).find(currentServer);
         if (server != null) {
             updateHeaderViews(server);
             updateContentViews(server);
