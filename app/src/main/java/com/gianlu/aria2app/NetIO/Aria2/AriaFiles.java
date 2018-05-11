@@ -30,12 +30,11 @@ public class AriaFiles extends ArrayList<AriaFile> {
         return files;
     }
 
-
     @NonNull
     public static AriaFiles fromDirectory(TreeNode dir) {
         AriaFiles files = new AriaFiles();
-        files.addAll(dir.allObjs());
-        for (TreeNode node : dir.dirs) files.addAll(node.allObjs());
+        files.addAll(fromFiles(dir.files));
+        for (TreeNode node : dir.dirs) files.addAll(fromDirectory(node));
         return files;
     }
 
