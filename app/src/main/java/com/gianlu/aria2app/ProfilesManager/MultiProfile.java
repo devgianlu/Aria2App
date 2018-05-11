@@ -47,8 +47,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final String id;
     public final String name;
     public final boolean notificationsEnabled;
-    public TestStatus status;
-    private ChooserTarget chooserTarget;
+    public transient TestStatus status;
+    private transient ChooserTarget chooserTarget;
 
     public MultiProfile(String name, boolean enableNotifs) {
         this.name = name;
@@ -432,7 +432,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
     }
 
-    public static class TestStatus implements Serializable {
+    public static class TestStatus {
         public final Status status;
         public final long latency;
         public final Throwable ex;
