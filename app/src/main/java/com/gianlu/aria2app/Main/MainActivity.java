@@ -218,11 +218,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     private void setupAdapterFiltersAndSorting() {
+        if (adapter == null) return;
+
         List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
         Set<String> checkedFiltersSet = Prefs.getSet(this, PKeys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
-
         adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PKeys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
@@ -1034,7 +1035,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        adapter.filterWithQuery(query);
+        if (adapter != null) adapter.filterWithQuery(query);
         return true;
     }
 
