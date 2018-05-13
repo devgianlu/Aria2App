@@ -42,7 +42,8 @@ import java.util.Objects;
 
 import okhttp3.HttpUrl;
 
-public class MultiProfile implements BaseDrawerProfile {
+public class MultiProfile implements BaseDrawerProfile, Serializable {
+    private static final long serialVersionUID = 1L;
     public final ArrayList<UserProfile> profiles;
     public final String id;
     public final String name;
@@ -217,16 +218,19 @@ public class MultiProfile implements BaseDrawerProfile {
         return getProfile(activeNet.getType(), wifiManager);
     }
 
+    @NonNull
     @Override
     public String getProfileName(Context context) {
         return getProfile(context).getProfileName(context);
     }
 
+    @NonNull
     @Override
     public String getSecondaryText(Context context) {
         return getProfile(context).getSecondaryText(context);
     }
 
+    @NonNull
     @Override
     public String getInitials(Context context) {
         return getProfile(context).getInitials(context);
@@ -399,6 +403,7 @@ public class MultiProfile implements BaseDrawerProfile {
     }
 
     public static class DirectDownload implements Serializable {
+        private static final long serialVersionUID = 1L;
         public final String address;
         public final boolean auth;
         public final String username;
@@ -451,6 +456,7 @@ public class MultiProfile implements BaseDrawerProfile {
     }
 
     public class UserProfile implements BaseDrawerProfile, Serializable {
+        private static final long serialVersionUID = 1L;
         public final String serverAddr;
         public final int serverPort;
         public final String serverEndpoint;
@@ -555,10 +561,12 @@ public class MultiProfile implements BaseDrawerProfile {
             return encodedCredentials;
         }
 
+        @NonNull
         public MultiProfile getParent() {
             return MultiProfile.this;
         }
 
+        @NonNull
         String getFullServerAddress() throws NetUtils.InvalidUrlException {
             if (fullServerAddress == null) {
                 switch (connectionMethod) {
@@ -575,6 +583,7 @@ public class MultiProfile implements BaseDrawerProfile {
             return fullServerAddress;
         }
 
+        @NonNull
         JSONObject toJson() throws JSONException {
             JSONObject profile = new JSONObject();
             profile.put("serverAddr", serverAddr)
@@ -623,11 +632,13 @@ public class MultiProfile implements BaseDrawerProfile {
             return connectivityCondition.equals(profile.connectivityCondition);
         }
 
+        @NonNull
         @Override
         public String getProfileName(Context context) {
             return name;
         }
 
+        @NonNull
         @Override
         public String getSecondaryText(Context context) {
             try {
@@ -638,6 +649,7 @@ public class MultiProfile implements BaseDrawerProfile {
             }
         }
 
+        @NonNull
         @Override
         public String getInitials(Context context) {
             String name = getProfileName(context);
