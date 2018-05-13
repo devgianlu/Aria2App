@@ -74,8 +74,7 @@ public class ProfilesManager {
 
     @NonNull
     public MultiProfile.UserProfile getCurrentSpecific() throws NoCurrentProfileException {
-        MultiProfile profile = getCurrent();
-        return profile.getProfile(this);
+        return getCurrent().getProfile(this);
     }
 
     @NonNull

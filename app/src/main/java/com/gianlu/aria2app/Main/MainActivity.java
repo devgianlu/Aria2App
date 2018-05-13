@@ -150,7 +150,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onProfileSelected(final MultiProfile profile) {
+    public void onProfileSelected(MultiProfile profile) {
         ProfilesManager.get(this).setLastProfile(this, profile);
         LoadingActivity.startActivity(this);
     }

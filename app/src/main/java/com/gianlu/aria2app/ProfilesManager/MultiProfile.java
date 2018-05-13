@@ -464,8 +464,8 @@ public class MultiProfile implements BaseDrawerProfile {
         public final DirectDownload directDownload;
         public final ConnectionMethod connectionMethod;
         public final ConnectivityCondition connectivityCondition;
-        private String encodedCredentials;
-        private String fullServerAddress;
+        private transient String encodedCredentials;
+        private transient String fullServerAddress;
 
         public UserProfile(JSONObject obj) throws JSONException {
             this(obj, null);
