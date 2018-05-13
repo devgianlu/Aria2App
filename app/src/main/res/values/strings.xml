@@ -76,7 +76,7 @@
     <string name="globalOptions">Global options</string>
     <string name="downloadOptions">Download options</string>
     <string name="general">General</string>
-    <string name="hideLinkedMetadata">Hide linked meta-data</string>
+    <string name="hideLinkedMetadata">Hide linked meta-data (a restart is required)</string>
     <string name="visibleMetadata">Linked meta-data visible</string>
     <string name="hiddenMetadata">Linked meta-data hidden</string>
     <string name="refreshRate">Refresh rate</string>
