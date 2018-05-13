@@ -109,7 +109,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
             adapter.notifyItemsChanged(payload.servers, payload.files);
 
         if (sheet != null && sheet.isExpanded())
-            sheet.update(payload);
+            sheet.update(payload.servers);
     }
 
     @Override
