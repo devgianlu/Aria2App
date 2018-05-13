@@ -7,10 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BitTorrent implements Serializable {
+public class BitTorrent {
     public final ArrayList<String> announceList;
     public final Mode mode;
     public final String comment;

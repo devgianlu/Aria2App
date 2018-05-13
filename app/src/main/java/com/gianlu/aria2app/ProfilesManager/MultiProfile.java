@@ -403,7 +403,7 @@ public class MultiProfile implements BaseDrawerProfile {
         public final boolean auth;
         public final String username;
         public final String password;
-        private HttpUrl cachedUri;
+        private transient HttpUrl cachedUri;
 
         public DirectDownload(JSONObject obj) throws JSONException {
             address = obj.getString("addr");

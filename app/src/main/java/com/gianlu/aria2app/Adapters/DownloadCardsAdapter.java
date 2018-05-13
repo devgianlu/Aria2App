@@ -298,16 +298,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 recyclerView.post(new Runnable() {
                     @Override
                     public void run() {
-                        switch (intent.getAction()) {
-                            case NotificationService.ACTION_IS_NOTIFICABLE:
-                                int index = indexOf(intent.getStringExtra("gid"));
-                                if (index != -1)
-                                    notifyItemChanged(index, intent.getBooleanExtra("notificable", false));
-                                break;
-                            case NotificationService.ACTION_STOPPED:
-                                for (int i = 0; i < getItemCount(); i++)
-                                    notifyItemChanged(i, false);
-                                break;
+                        if (Objects.equals(intent.getAction(), NotificationService.ACTION_IS_NOTIFICABLE)) {
+                            int index = indexOf(intent.getStringExtra("gid"));
+                            if (index != -1)
+                                notifyItemChanged(index, intent.getBooleanExtra("notificable", false));
+                        } else if (Objects.equals(intent.getAction(), NotificationService.ACTION_STOPPED)) {
+                            for (int i = 0; i < getItemCount(); i++)
+                                notifyItemChanged(i, false);
                         }
                     }
                 });

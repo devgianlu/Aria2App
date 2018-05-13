@@ -15,6 +15,7 @@ import android.content.ServiceConnection;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -24,6 +25,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -61,14 +63,15 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class NotificationService extends Service {
-    public static final String ACTION_STOPPED = "com.gianlu.aria2app.notifs.STOPPED";
-    public static final String ACTION_IS_NOTIFICABLE = "com.gianlu.aria2app.notifs.IS_NOTIFICABLE";
-    public static final String ACTION_TOGGLE_NOTIFICABLE = "com.gianlu.aria2app.notifs.TOGGLE_NOTIFICABLE";
+    public static final String ACTION_STOPPED = NotificationService.class.getName() + ".STOPPED";
+    public static final String ACTION_IS_NOTIFICABLE = NotificationService.class.getName() + ".IS_NOTIFICABLE";
+    public static final String ACTION_TOGGLE_NOTIFICABLE = NotificationService.class.getName() + ".TOGGLE_NOTIFICABLE";
     public static final int MESSENGER_IS_NOTIFICABLE = 0;
     public static final int MESSENGER_TOGGLE_NOTIFICABLE = 1;
     private static final int FOREGROUND_SERVICE_NOTIF_ID = 1;
     private static final String CHANNEL_FOREGROUND_SERVICE = "foreground";
-    private static final String ACTION_STOP = "com.gianlu.aria2app.notifs.STOP";
+    private static final String ACTION_START = NotificationService.class.getName() + ".START";
+    private static final String ACTION_STOP = NotificationService.class.getName() + ".STOP";
     private static final java.lang.String SERVICE_NAME = "aria2app notification service";
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
@@ -138,10 +141,10 @@ public class NotificationService extends Service {
         }, BIND_AUTO_CREATE);
     }
 
-    public static void start(Context context, boolean notificable) { // FIXME: Not working
+    public static void start(Context context, boolean notificable) {
         if (ProfilesManager.get(context).hasNotificationProfiles()) {
             context.startService(new Intent(context, NotificationService.class)
-                    .putExtra("notificable", notificable));
+                    .setAction(ACTION_START).putExtra("notificable", notificable));
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
         }
@@ -169,7 +172,6 @@ public class NotificationService extends Service {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         broadcastManager = LocalBroadcastManager.getInstance(this);
 
@@ -180,13 +182,15 @@ public class NotificationService extends Service {
             if (Objects.equals(intent.getAction(), ACTION_STOP)) {
                 stopForeground(true);
                 stopSelf();
-            } else if (intent.hasExtra("profiles")) {
+            } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                 profiles = loadProfiles(this);
 
-                createMainChannel();
-                createEventsChannels();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    createMainChannel();
+                    createEventsChannels();
+                }
 
                 recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                 getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -204,6 +208,7 @@ public class NotificationService extends Service {
         return START_NOT_STICKY; // Process will stop
     }
 
+    @NonNull
     private String describeServiceStatus() {
         if (startedNotificable)
             return CommonUtils.join(profiles, ", ") + " for " + CommonUtils.join(notificableDownloads, ", ");
@@ -211,6 +216,7 @@ public class NotificationService extends Service {
             return CommonUtils.join(profiles, ", ");
     }
 
+    @NonNull
     private Notification createForegroundServiceNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setShowWhen(false)
@@ -318,20 +324,18 @@ public class NotificationService extends Service {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void createMainChannel() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_FOREGROUND_SERVICE, "Foreground service", NotificationManager.IMPORTANCE_LOW);
-            channel.setShowBadge(false);
-            notificationManager.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel(CHANNEL_FOREGROUND_SERVICE, "Foreground service", NotificationManager.IMPORTANCE_LOW);
+        channel.setShowBadge(false);
+        notificationManager.createNotificationChannel(channel);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void createEventsChannels() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            for (EventType type : EventType.values()) {
-                NotificationChannel channel = new NotificationChannel(type.channelName(), type.getFormal(this), NotificationManager.IMPORTANCE_DEFAULT);
-                notificationManager.createNotificationChannel(channel);
-            }
+        for (EventType type : EventType.values()) {
+            NotificationChannel channel = new NotificationChannel(type.channelName(), type.getFormal(this), NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
         }
     }
 

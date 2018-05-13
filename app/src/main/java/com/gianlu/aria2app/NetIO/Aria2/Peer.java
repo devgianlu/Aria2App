@@ -7,12 +7,11 @@ import com.gianlu.commonutils.Adapters.NotFilterable;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class Peer implements Serializable, Filterable<NotFilterable> {
+public class Peer implements Filterable<NotFilterable> {
     public final String peerId;
     public final boolean amChoking;
     public final boolean peerChoking;
