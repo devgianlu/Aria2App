@@ -43,11 +43,13 @@ public class ProfilesManager {
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
+    @NonNull
     public static ProfilesManager get(Context context) {
         if (instance == null) instance = new ProfilesManager(context);
         return instance;
     }
 
+    @NonNull
     public static String getId(String name) {
         return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
     }
@@ -103,6 +105,7 @@ public class ProfilesManager {
         Prefs.putString(context, Prefs.Keys.LAST_USED_PROFILE, null);
     }
 
+    @NonNull
     public MultiProfile retrieveProfile(@NonNull String id) throws IOException, JSONException {
         if (!profileExists(id))
             throw new FileNotFoundException("Profile " + id + " doesn't exists!");
@@ -122,6 +125,24 @@ public class ProfilesManager {
     }
 
     public boolean hasProfiles() {
+        return getProfileIds().length > 0;
+    }
+
+    public boolean hasNotificationProfiles() {
+        for (String id : getProfileIds()) {
+            try {
+                if (retrieveProfile(id).notificationsEnabled)
+                    return true;
+            } catch (IOException | JSONException ex) {
+                Logging.log(ex);
+            }
+        }
+
+        return false;
+    }
+
+    @NonNull
+    private String[] getProfileIds() {
         String[] profiles = PROFILES_PATH.list(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -129,21 +150,31 @@ public class ProfilesManager {
             }
         });
 
-        return profiles.length > 0;
+        for (int i = 0; i < profiles.length; i++) {
+            String id = profiles[i];
+            profiles[i] = id.substring(0, id.length() - 8);
+        }
+
+        return profiles;
     }
 
-    public List<MultiProfile> getProfiles() {
-        String[] profilesId = PROFILES_PATH.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".profile");
-            }
-        });
+    @NonNull
+    public List<MultiProfile> getNotificationProfiles() {
+        return getProfiles(true);
+    }
 
+    @NonNull
+    public List<MultiProfile> getProfiles() {
+        return getProfiles(false);
+    }
+
+    @NonNull
+    private List<MultiProfile> getProfiles(boolean notification) {
         List<MultiProfile> profiles = new ArrayList<>();
-        for (String id : profilesId) {
+        for (String id : getProfileIds()) {
             try {
-                profiles.add(retrieveProfile(id.replace(".profile", "")));
+                MultiProfile profile = retrieveProfile(id);
+                if (!notification || profile.notificationsEnabled) profiles.add(profile);
             } catch (IOException | JSONException ex) {
                 Logging.log(ex);
             }

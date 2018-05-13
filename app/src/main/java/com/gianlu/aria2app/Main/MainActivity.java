@@ -167,7 +167,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditProfileActivity.start(MainActivity.this, items.get(which));
+                        EditProfileActivity.start(MainActivity.this, items.get(which).id);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null));

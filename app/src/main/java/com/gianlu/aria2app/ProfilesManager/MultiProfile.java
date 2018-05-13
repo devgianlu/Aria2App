@@ -42,8 +42,8 @@ import java.util.Objects;
 
 import okhttp3.HttpUrl;
 
-public class MultiProfile implements BaseDrawerProfile, Serializable {
-    public final List<UserProfile> profiles;
+public class MultiProfile implements BaseDrawerProfile {
+    public final ArrayList<UserProfile> profiles;
     public final String id;
     public final String name;
     public final boolean notificationsEnabled;

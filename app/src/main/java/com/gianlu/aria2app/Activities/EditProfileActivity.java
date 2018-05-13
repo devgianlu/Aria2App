@@ -44,6 +44,7 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
@@ -72,7 +73,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 .putExtra("firstProfile", firstProfile));
     }
 
-    public static void start(Context context, MultiProfile edit) {
+    public static void start(Context context, String edit) {
         context.startActivity(new Intent(context, EditProfileActivity.class)
                 .putExtra("firstProfile", false)
                 .putExtra("edit", edit));
@@ -100,7 +101,12 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             bar.setDisplayShowTitleEnabled(false);
         }
 
-        editProfile = (MultiProfile) getIntent().getSerializableExtra("edit");
+        try {
+            editProfile = ProfilesManager.get(this).retrieveProfile(getIntent().getStringExtra("edit"));
+        } catch (IOException | JSONException ex) {
+            Logging.log(ex);
+            editProfile = null;
+        }
 
         if (editProfile == null) setTitle(R.string.addProfile);
         else setTitle(R.string.editProfile);

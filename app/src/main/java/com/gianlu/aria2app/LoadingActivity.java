@@ -218,12 +218,11 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
         super.onRestart();
 
         ProfilesManager manager = ProfilesManager.get(this);
-        if (!manager.hasProfiles()) {
+        if (manager.hasProfiles()) {
+            displayPicker(hasShareData());
+        } else {
             EditProfileActivity.start(this, true);
-            return;
         }
-
-        displayPicker(hasShareData());
     }
 
     private void tryConnecting(MultiProfile profile) {
@@ -305,7 +304,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
         }, false, new CustomProfilesAdapter.IEdit() {
             @Override
             public void onEditProfile(MultiProfile profile) {
-                EditProfileActivity.start(LoadingActivity.this, profile);
+                EditProfileActivity.start(LoadingActivity.this, profile.id);
             }
         });
 

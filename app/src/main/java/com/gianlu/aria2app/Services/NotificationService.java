@@ -22,6 +22,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
@@ -73,7 +74,7 @@ public class NotificationService extends Service {
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
     private final List<String> notificableDownloads = new ArrayList<>();
     private Set<WebSocket> webSockets;
-    private ArrayList<MultiProfile> profiles;
+    private List<MultiProfile> profiles;
     private WifiManager wifiManager;
     private NotificationManager notificationManager;
     private Messenger messenger;
@@ -137,16 +138,18 @@ public class NotificationService extends Service {
         }, BIND_AUTO_CREATE);
     }
 
-    public static void start(Context context, boolean notificable) {
-        ArrayList<MultiProfile> profiles = new ArrayList<>();
-        for (MultiProfile profile : ProfilesManager.get(context).getProfiles())
-            if (profile.notificationsEnabled) profiles.add(profile);
+    public static void start(Context context, boolean notificable) { // FIXME: Not working
+        if (ProfilesManager.get(context).hasNotificationProfiles()) {
+            context.startService(new Intent(context, NotificationService.class)
+                    .putExtra("notificable", notificable));
+        } else {
+            Logging.log("Tried to start notification service, but there are no candidates.", false);
+        }
+    }
 
-        if (profiles.isEmpty()) return;
-
-        context.startService(new Intent(context, NotificationService.class)
-                .putExtra("notificable", notificable)
-                .putExtra("profiles", profiles));
+    @NonNull
+    private static List<MultiProfile> loadProfiles(Context context) {
+        return ProfilesManager.get(context).getNotificationProfiles();
     }
 
     public static void stop(Context context) {
@@ -180,7 +183,7 @@ public class NotificationService extends Service {
             } else if (intent.hasExtra("profiles")) {
                 notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                profiles = (ArrayList<MultiProfile>) intent.getSerializableExtra("profiles");
+                profiles = loadProfiles(this);
 
                 createMainChannel();
                 createEventsChannels();
