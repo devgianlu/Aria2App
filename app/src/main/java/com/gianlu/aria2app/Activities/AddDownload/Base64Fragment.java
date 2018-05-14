@@ -149,7 +149,7 @@ public class Base64Fragment extends Fragment {
             int read;
             while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
             return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
-        } catch (IOException ex) {
+        } catch (IOException | SecurityException ex) {
             Toaster.show(getContext(), Utils.Messages.INVALID_FILE, ex);
             return null;
         }
