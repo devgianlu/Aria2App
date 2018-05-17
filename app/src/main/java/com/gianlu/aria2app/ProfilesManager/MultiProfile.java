@@ -49,7 +49,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final String name;
     public final boolean notificationsEnabled;
     public transient TestStatus status;
-    private transient ChooserTarget chooserTarget;
+    private transient ChooserTargetHolder chooserTarget;
 
     public MultiProfile(String name, boolean enableNotifs) {
         this.name = name;
@@ -131,10 +131,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
             Bitmap bitmap = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
             helper.draw(name.length() <= 2 ? name : name.substring(0, 2), false, new Canvas(bitmap));
-            chooserTarget = new ChooserTarget(name, Icon.createWithBitmap(bitmap), 1, targetActivity, bundle);
+            chooserTarget = new ChooserTargetHolder(new ChooserTarget(name, Icon.createWithBitmap(bitmap), 1, targetActivity, bundle));
         }
 
-        return chooserTarget;
+        return chooserTarget.target;
     }
 
     @Nullable
@@ -278,7 +278,16 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         ONLINE
     }
 
+    private static class ChooserTargetHolder {
+        private final ChooserTarget target;
+
+        ChooserTargetHolder(@NonNull ChooserTarget target) {
+            this.target = target;
+        }
+    }
+
     public static class ConnectivityCondition implements Serializable {
+        private static final long serialVersionUID = 1L;
         public final Type type;
         public final String[] ssids;
         public final boolean isDefault;
