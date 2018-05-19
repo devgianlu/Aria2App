@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:src="@drawable/logo" />
+            android:src="@drawable/ic_launcher" />
 
         <View
             android:layout_width="0dp"
