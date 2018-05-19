@@ -92,13 +92,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
-    protected void onBindViewHolder(ViewHolder holder, int position, @NonNull DownloadWithUpdate payload) {
+    protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull DownloadWithUpdate payload) {
         holder.update(payload);
         CommonUtils.setRecyclerViewTopMargin(context, holder);
     }
 
     @Override
-    protected void onBindViewHolder(ViewHolder holder, int position, Object payload) {
+    protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull Object payload) {
         if (payload instanceof Boolean) { // Notification toggle
             if ((Boolean) payload)
                 holder.toggleNotification.setImageResource(R.drawable.ic_notifications_active_black_48dp);
@@ -108,14 +108,14 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final DownloadWithUpdate item = objs.get(position);
+    public void onSetupViewHolder(@NonNull final ViewHolder holder, int position, final @NonNull DownloadWithUpdate item) {
         DownloadWithUpdate.SmallUpdate update = item.update();
 
         final int color;
         if (update.isTorrent())
             color = ContextCompat.getColor(context, R.color.colorTorrent_pressed);
-        else color = ContextCompat.getColor(context, R.color.colorAccent);
+        else
+            color = ContextCompat.getColor(context, R.color.colorAccent);
 
         Utils.setupChart(holder.detailsChart, true, R.color.colorPrimaryDark);
         holder.detailsChart.setNoDataTextColor(color);

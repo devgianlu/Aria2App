@@ -155,7 +155,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         recyclerViewLayout.showList();
         topDownloadCountries.setPeers(payload, true);
         topUploadCountries.setPeers(payload, false);
-        if (adapter != null) adapter.notifyItemsChanged(payload);
+        if (adapter != null) adapter.itemsChanged(payload);
         if (sheet != null && sheet.isExpanded()) sheet.update(payload);
     }
 

@@ -46,21 +46,20 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     }
 
     @Override
-    protected void onBindViewHolder(ViewHolder holder, int position, @NonNull Peer payload) {
+    protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull Peer payload) {
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(payload.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(payload.uploadSpeed, false));
     }
 
     @Override
-    protected void onBindViewHolder(ViewHolder holder, int position, Object payload) {
+    protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull Object payload) {
         if (payload instanceof IPDetails)
             holder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        final Peer peer = objs.get(position);
+    public void onSetupViewHolder(@NonNull final ViewHolder holder, int position, @NonNull final Peer peer) {
         holder.address.setText(peer.ip + ":" + peer.port);
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
