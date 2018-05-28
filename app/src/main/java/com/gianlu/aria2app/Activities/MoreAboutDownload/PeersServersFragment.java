@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.NiceBaseBottomSheet;
+import com.gianlu.commonutils.BottomSheet.NiceBaseBottomSheet;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 
