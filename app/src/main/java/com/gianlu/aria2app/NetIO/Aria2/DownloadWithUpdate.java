@@ -1,9 +1,12 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.os.Build;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Logging;
 
@@ -277,6 +280,21 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
 
         public boolean canDeselectFiles() {
             return isTorrent() && files.size() > 1 && status != Status.REMOVED && status != Status.ERROR;
+        }
+
+        @StyleRes
+        public int getThemeResource() {
+            return isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar;
+        }
+
+        @ColorRes
+        public int getBackgroundColor() {
+            return isTorrent() ? R.color.colorTorrent : R.color.colorAccent_light;
+        }
+
+        @ColorRes
+        public int getColorAccent() {
+            return isTorrent() ? R.color.colorTorrent_pressed : R.color.colorAccent;
         }
     }
 }

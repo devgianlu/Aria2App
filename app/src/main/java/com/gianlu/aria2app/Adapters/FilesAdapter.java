@@ -35,12 +35,12 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final List<TreeNode> currentNodes = new ArrayList<>();
     private final LayoutInflater inflater;
     private final int color;
-    private final IAdapter handler;
+    private final Listener handler;
     private final Set<AriaFile> selectedFiles = new HashSet<>();
     private TreeNode currentNode;
     private boolean isInActionMode = false;
 
-    public FilesAdapter(Context context, @ColorRes int colorRes, IAdapter handler) {
+    public FilesAdapter(Context context, @ColorRes int colorRes, Listener handler) {
         this.inflater = LayoutInflater.from(context);
         this.color = ContextCompat.getColor(context, colorRes);
         this.handler = handler;
@@ -239,16 +239,16 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public interface IAdapter {
-        void onFileSelected(AriaFile file);
+    public interface Listener {
+        void onFileSelected(@NonNull AriaFile file);
 
-        boolean onFileLongClick(AriaFile file);
+        boolean onFileLongClick(@NonNull AriaFile file);
 
         void exitActionMode();
 
-        void onDirectoryChanged(TreeNode dir);
+        void onDirectoryChanged(@NonNull TreeNode dir);
 
-        void onDirectorySelected(TreeNode dir);
+        void onDirectorySelected(@NonNull TreeNode dir);
     }
 
     private class DirViewHolder extends RecyclerView.ViewHolder {
@@ -279,7 +279,6 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             percentage = itemView.findViewById(R.id.fileItem_percentage);
             status = itemView.findViewById(R.id.fileItem_status);
             fileType = itemView.findViewById(R.id.fileItem_fileType);
-            fileType.setWidth(32);
         }
 
         void updateStatus(AriaFile file) {

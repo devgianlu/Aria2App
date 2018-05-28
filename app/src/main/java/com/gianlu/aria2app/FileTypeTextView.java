@@ -1,18 +1,20 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.TypedValue;
+import android.view.Gravity;
+
+import com.gianlu.commonutils.FontsManager;
 
 import java.util.Objects;
 
-public class FileTypeTextView extends AppCompatTextView {
+public class FileTypeTextView extends AppCompatTextView { // FIXME: Height isn't right
     private int mWidth;
+    private String mText;
 
     public FileTypeTextView(Context context) {
         this(context, null, 0);
@@ -24,23 +26,11 @@ public class FileTypeTextView extends AppCompatTextView {
 
     public FileTypeTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        setWidth(32);
-        setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Black.ttf"));
+        setTextSize(36);
+        setTypeface(FontsManager.get().get(context, FontsManager.ROBOTO_BLACK));
+        setGravity(Gravity.CENTER_VERTICAL);
 
         if (isInEditMode()) setExtension("XML");
-    }
-
-    public void setWidth(int dip) {
-        mWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, getResources().getDisplayMetrics());
-        setTextSize(dip);
-        requestLayout();
-        invalidate();
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(MeasureSpec.makeMeasureSpec(mWidth, MeasureSpec.EXACTLY), heightMeasureSpec);
     }
 
     public void setFilename(@NonNull String filename) {
@@ -52,15 +42,27 @@ public class FileTypeTextView extends AppCompatTextView {
     public void setExtension(@Nullable String ext) {
         if (Objects.equals(getText(), ext)) return;
         if (ext == null || ext.length() > 4) ext = "...";
-        setText(ext.toUpperCase());
-        adjustTextSize();
+        mText = ext.toUpperCase();
+        invalidate();
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        if (changed) {
+            mWidth = right - left;
+            adjustTextSize();
+        }
     }
 
     private void adjustTextSize() {
-        TextPaint paint = getPaint();
-        String text = String.valueOf(getText());
+        if (mText != null) {
+            TextPaint paint = getPaint();
+            while (paint.measureText(mText) > mWidth)
+                paint.setTextSize(paint.getTextSize() - 1);
 
-        while (paint.measureText(text) > mWidth)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, getTextSize() - 1);
+            setText(mText);
+        }
     }
 }

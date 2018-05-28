@@ -50,6 +50,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private ViewHolder holder;
 
+    @NonNull
     public static InfoFragment getInstance(Context context, String gid) {
         InfoFragment fragment = new InfoFragment();
         Bundle args = new Bundle();

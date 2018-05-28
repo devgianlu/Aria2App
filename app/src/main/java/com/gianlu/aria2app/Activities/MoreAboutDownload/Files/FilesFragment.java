@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -61,19 +60,21 @@ import com.gianlu.commonutils.Toaster;
 
 import java.util.Collection;
 
-public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.IAdapter, BreadcrumbSegment.IBreadcrumb, ServiceConnection, FileBottomSheet.ISheet, DirBottomSheet.ISheet, OnBackPressed {
+// FIXME: May review this
+public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.Listener, BreadcrumbSegment.IBreadcrumb, ServiceConnection, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener {
     private FilesAdapter adapter;
-    private FileBottomSheet fileSheet;
-    private DirBottomSheet dirSheet;
+    private FileSheet fileSheet;
+    private DirectorySheet dirSheet;
     private LinearLayout breadcrumbsContainer;
     private HorizontalScrollView breadcrumbs;
     private boolean isShowingHint;
     private RecyclerViewLayout recyclerViewLayout;
     private Messenger downloaderMessenger = null;
-    private IWaitBinder boundWaiter;
+    private OnWaitBinder boundWaiter;
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
 
+    @NonNull
     public static FilesFragment getInstance(Context context, String gid) {
         FilesFragment fragment = new FilesFragment();
         Bundle args = new Bundle();
@@ -86,16 +87,22 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public boolean canGoBack(int code) {
         if (code == CODE_CLOSE_SHEET) {
-            if (fileSheet != null) fileSheet.collapse();
             if (actionMode != null) actionMode.finish();
+            if (fileSheet != null) {
+                fileSheet.dismiss();
+                fileSheet = null;
+                DialogUtils.dismissDialog(getActivity());
+            }
             return true;
         }
 
         if (actionMode != null) { // Unluckily ActionMode intercepts the event (useless condition)
             actionMode.finish();
             return false;
-        } else if (fileSheet != null && fileSheet.isExpanded()) { // We don't need to do this for dirSheet too, it would be redundant
-            fileSheet.collapse();
+        } else if (DialogUtils.hasVisibleDialog(getActivity())) { // We don't need to do this for dirSheet too, it would be redundant
+            DialogUtils.dismissDialog(getActivity());
+            fileSheet = null;
+            dirSheet = null;
             return false;
         } else if (adapter != null && adapter.canGoUp()) {
             adapter.navigateUp();
@@ -141,16 +148,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        CoordinatorLayout layout = (CoordinatorLayout) inflater.inflate(R.layout.fragment_files, parent, false);
-        if (getContext() == null) return layout;
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_files, parent, false);
         breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
         recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
-        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-
-        fileSheet = new FileBottomSheet(layout, this);
-        dirSheet = new DirBottomSheet(layout, this);
+        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         recyclerViewLayout.startLoading();
 
@@ -158,12 +161,13 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onFileSelected(AriaFile file) {
-        fileSheet.expand(download, file);
+    public void onFileSelected(@NonNull AriaFile file) {
+        fileSheet = FileSheet.get();
+        fileSheet.show(getActivity(), download, file, this);
     }
 
     @Override
-    public boolean onFileLongClick(AriaFile file) {
+    public boolean onFileLongClick(@NonNull AriaFile file) {
         if (getActivity() == null || download.update().files.size() == 1) return false;
 
         adapter.enteredActionMode(file);
@@ -237,8 +241,9 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onDirectorySelected(TreeNode dir) {
-        dirSheet.expand(download, new AriaDirectory(dir, download));
+    public void onDirectorySelected(@NonNull TreeNode dir) {
+        dirSheet = DirectorySheet.get();
+        dirSheet.show(getActivity(), download, dir, this);
     }
 
     private void showTutorial(TreeNode dir) {
@@ -292,7 +297,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onDirectoryChanged(TreeNode dir) {
+    public void onDirectoryChanged(@NonNull TreeNode dir) {
         breadcrumbsContainer.removeAllViews();
 
         TreeNode node = dir;
@@ -358,8 +363,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onDownloadFile(final MultiProfile profile, final AriaFile file) {
-        if (fileSheet != null) fileSheet.collapse();
+    public void onDownloadFile(@NonNull final MultiProfile profile, @NonNull final AriaFile file) {
+        if (fileSheet != null) {
+            fileSheet.dismiss();
+            fileSheet = null;
+            DialogUtils.dismissDialog(getActivity());
+        }
 
         String mime = file.getMimeType();
         if (mime != null) {
@@ -398,7 +407,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         if (downloaderMessenger != null) {
             startDownloadInternal(profile, file, null);
         } else {
-            boundWaiter = new IWaitBinder() {
+            boundWaiter = new OnWaitBinder() {
                 @Override
                 public void onBound() {
                     startDownloadInternal(profile, file, null);
@@ -410,24 +419,17 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void showToast(Toaster.Message message) {
-        Toaster.show(getActivity(), message, new Runnable() {
-            @Override
-            public void run() {
-                if (dirSheet != null)
-                    dirSheet.collapse(); // We don't need to do this for dirSheet too, it would be redundant
-            }
-        });
-    }
-
-    @Override
-    public void onDownloadDirectory(final MultiProfile profile, final AriaDirectory dir) {
-        if (dirSheet != null) dirSheet.collapse();
+    public void onDownloadDirectory(@NonNull final MultiProfile profile, @NonNull final AriaDirectory dir) {
+        if (dirSheet != null) {
+            dirSheet.dismiss();
+            dirSheet = null;
+            DialogUtils.dismissDialog(getActivity());
+        }
 
         if (downloaderMessenger != null) {
             startDownloadInternal(profile, null, dir);
         } else {
-            boundWaiter = new IWaitBinder() {
+            boundWaiter = new OnWaitBinder() {
                 @Override
                 public void onBound() {
                     startDownloadInternal(profile, null, dir);
@@ -471,7 +473,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         return Wants.bigUpdate(args.getString("gid"));
     }
 
-    private interface IWaitBinder {
+    private interface OnWaitBinder {
         void onBound();
     }
 }

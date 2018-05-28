@@ -1,62 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <HorizontalScrollView
+        android:id="@+id/filesFragment_breadcrumbs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <HorizontalScrollView
-            android:id="@+id/filesFragment_breadcrumbs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:id="@+id/filesFragment_breadcrumbsContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp" />
-        </HorizontalScrollView>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_gravity="top"
-                android:background="@drawable/shadow_bottom" />
-
-            <com.gianlu.commonutils.RecyclerViewLayout
-                android:id="@+id/filesFragment_recyclerViewLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <View
-        android:id="@+id/niceBottomSheet_mask"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-    <include layout="@layout/nice_bottom_sheet" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/niceBottomSheet_action"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_file_download_white_48dp"
-        android:visibility="gone"
-        app:layout_anchor="@+id/niceBottomSheet_header"
-        app:layout_anchorGravity="top|end" />
-</android.support.design.widget.CoordinatorLayout>
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/filesFragment_breadcrumbsContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp" />
+    </HorizontalScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="top"
+            android:background="@drawable/shadow_bottom" />
+
+        <com.gianlu.commonutils.RecyclerViewLayout
+            android:id="@+id/filesFragment_recyclerViewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+    </FrameLayout>
+</LinearLayout>
