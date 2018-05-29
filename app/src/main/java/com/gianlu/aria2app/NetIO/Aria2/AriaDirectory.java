@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+// FIXME: Kinda shitty along with TreeNode
 public class AriaDirectory extends TreeNode {
     public final long totalLength;
     public final long completedLength;

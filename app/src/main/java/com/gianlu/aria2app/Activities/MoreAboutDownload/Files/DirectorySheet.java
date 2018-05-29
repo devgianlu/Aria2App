@@ -30,6 +30,7 @@ import com.gianlu.commonutils.Toaster;
 
 import java.util.Locale;
 
+// FIXME: Update not working (should also rewrite AriaDirectory)
 public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupPayload, DirectorySheet.UpdatePayload> {
     private SuperTextView length;
     private CheckBox selected;
@@ -88,6 +89,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                     download.changeSelection(dir.allIndexes(), isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                         @Override
                         public void onResult(@NonNull Download.ChangeSelectionResult result) {
+                            // FIXME: Behaving badly
                             Toaster.Message msg;
                             switch (result) {
                                 case EMPTY:

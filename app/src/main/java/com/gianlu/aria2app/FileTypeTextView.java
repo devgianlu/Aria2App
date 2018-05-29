@@ -12,7 +12,7 @@ import com.gianlu.commonutils.FontsManager;
 
 import java.util.Objects;
 
-public class FileTypeTextView extends AppCompatTextView { // FIXME: Height isn't right
+public class FileTypeTextView extends AppCompatTextView {
     private int mWidth;
     private String mText;
 
