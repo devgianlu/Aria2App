@@ -16,7 +16,6 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
@@ -30,7 +29,6 @@ import com.gianlu.commonutils.Toaster;
 
 import java.util.Locale;
 
-// FIXME: Update not working (should also rewrite AriaDirectory)
 public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupPayload, DirectorySheet.UpdatePayload> {
     private SuperTextView length;
     private CheckBox selected;
@@ -64,16 +62,15 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     @Override
     protected void onCreateBody(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull SetupPayload payload) {
         inflater.inflate(R.layout.sheet_dir, parent, true);
-        currentDir = new AriaDirectory(payload.dir, payload.download);
+        currentDir = payload.dir;
 
         final DownloadWithUpdate download = payload.download;
-        final TreeNode dir = payload.dir;
 
         SuperTextView indexes = parent.findViewById(R.id.dirSheet_indexes);
         indexes.setHtml(R.string.indexes, CommonUtils.join(currentDir.indexes, ", "));
 
         SuperTextView path = parent.findViewById(R.id.dirSheet_path);
-        path.setHtml(R.string.path, currentDir.fullPath);
+        path.setHtml(R.string.path, download.update().dir + currentDir.path);
 
         length = parent.findViewById(R.id.dirSheet_length);
         selected = parent.findViewById(R.id.dirSheet_selected);
@@ -86,10 +83,9 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
             selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    download.changeSelection(dir.allIndexes(), isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
+                    download.changeSelection(currentDir.indexes.toArray(new Integer[0]), isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                         @Override
                         public void onResult(@NonNull Download.ChangeSelectionResult result) {
-                            // FIXME: Behaving badly
                             Toaster.Message msg;
                             switch (result) {
                                 case EMPTY:
@@ -106,11 +102,13 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                                     break;
                             }
 
+                            dismiss();
                             Toaster.show(getActivity(), msg, result.toString());
                         }
 
                         @Override
                         public void onException(Exception ex, boolean shouldForce) {
+                            dismiss();
                             Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
                         }
                     });
@@ -155,17 +153,22 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
 
     private void update(AriaDirectory dir) {
         percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) dir.getProgress()));
-        length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(dir.totalLength, false));
-        completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(dir.completedLength, false));
-        selected.setChecked(dir.allSelected());
+        length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(dir.length(), false));
+        completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(dir.completedLength(), false));
+        selected.setChecked(dir.areAllFilesSelected());
     }
 
     @Override
     protected void onRequestedUpdate(@NonNull UpdatePayload payload) {
-        currentDir = currentDir.update(payload.download, payload.files);
+        AriaDirectory dir = AriaDirectory.createRoot(payload.download, payload.files);
+        AriaDirectory currentDirUpdated = dir.findDirectory(currentDir.path);
+
+        if (currentDirUpdated == null) currentDir = dir;
+        else currentDir = currentDirUpdated;
+        update(currentDir);
     }
 
-    public void show(FragmentActivity activity, DownloadWithUpdate download, TreeNode dir, Listener listener) {
+    public void show(FragmentActivity activity, DownloadWithUpdate download, AriaDirectory dir, Listener listener) {
         show(activity, new SetupPayload(download, dir, listener));
     }
 
@@ -180,10 +183,10 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
 
     protected static class SetupPayload {
         private final DownloadWithUpdate download;
-        private final TreeNode dir;
+        private final AriaDirectory dir;
         private final DirectorySheet.Listener listener;
 
-        SetupPayload(@NonNull DownloadWithUpdate download, @NonNull TreeNode dir, @NonNull DirectorySheet.Listener listener) {
+        SetupPayload(@NonNull DownloadWithUpdate download, @NonNull AriaDirectory dir, @NonNull DirectorySheet.Listener listener) {
             this.download = download;
             this.dir = dir;
             this.listener = listener;

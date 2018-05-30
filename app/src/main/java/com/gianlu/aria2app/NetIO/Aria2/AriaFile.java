@@ -42,13 +42,6 @@ public class AriaFile {
         }
     }
 
-    private static String getRelativePath(String path, @NonNull String dir) {
-        if (dir.contains("\\")) dir = dir.replaceAll("\\\\", "\\\\");
-        String relPath = path.replaceFirst(dir, "");
-        if (relPath.charAt(0) == '/') return relPath.substring(1);
-        else return relPath;
-    }
-
     public static Integer[] allIndexes(Collection<AriaFile> files) {
         Integer[] indexes = new Integer[files.size()];
         Iterator<AriaFile> iterator = files.iterator();
@@ -56,10 +49,11 @@ public class AriaFile {
         return indexes;
     }
 
+    @NonNull
     public String getName() {
         if (name == null) {
-            String[] splitted = path.split("/");
-            name = splitted[splitted.length - 1];
+            int last = path.lastIndexOf(AriaDirectory.SEPARATOR);
+            name = path.substring(last + 1);
         }
 
         return name;
@@ -79,11 +73,12 @@ public class AriaFile {
     }
 
     public float getProgress() {
-        return ((float) completedLength) / ((float) length) * 100;
+        return ((float) completedLength / (float) length) * 100;
     }
 
-    public String getRelativePath(String dir) {
-        return getRelativePath(path, dir);
+    @NonNull
+    public String getRelativePath(@NonNull String dir) {
+        return path.substring(dir.length() + 1);
     }
 
     public boolean completed() {

@@ -43,7 +43,6 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.NetIO.Aria2.TreeNode;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
@@ -60,8 +59,7 @@ import com.gianlu.commonutils.Toaster;
 
 import java.util.Collection;
 
-// FIXME: May review this
-public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.Listener, BreadcrumbSegment.IBreadcrumb, ServiceConnection, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener {
+public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.Listener, BreadcrumbSegment.Listener, ServiceConnection, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener {
     private FilesAdapter adapter;
     private FileSheet fileSheet;
     private DirectorySheet dirSheet;
@@ -99,7 +97,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         if (actionMode != null) { // Unluckily ActionMode intercepts the event (useless condition)
             actionMode.finish();
             return false;
-        } else if (DialogUtils.hasVisibleDialog(getActivity())) { // We don't need to do this for dirSheet too, it would be redundant
+        } else if (DialogUtils.hasVisibleDialog(getActivity())) {
             DialogUtils.dismissDialog(getActivity());
             fileSheet = null;
             dirSheet = null;
@@ -110,33 +108,6 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         } else {
             return true;
         }
-    }
-
-    private void setupView() {
-        if (getContext() == null) return;
-        final int colorRes = download.update().isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
-
-        adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
-        recyclerViewLayout.loadListData(adapter);
-        recyclerViewLayout.startLoading();
-
-        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                canGoBack(CODE_CLOSE_SHEET);
-
-                refresh(new OnRefresh() {
-                    @Override
-                    public void refreshed() {
-                        adapter = new FilesAdapter(getContext(), colorRes, FilesFragment.this);
-                        recyclerViewLayout.loadListData(adapter);
-                        recyclerViewLayout.startLoading();
-                    }
-                });
-            }
-        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-
-        DownloaderUtils.bindService(getContext(), FilesFragment.this);
     }
 
     @NonNull
@@ -241,13 +212,14 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onDirectorySelected(@NonNull TreeNode dir) {
+    public boolean onDirectoryLongClick(@NonNull AriaDirectory dir) {
         dirSheet = DirectorySheet.get();
         dirSheet.show(getActivity(), download, dir, this);
+        return true;
     }
 
-    private void showTutorial(TreeNode dir) {
-        if (isVisible() && !isShowingHint && dir.files != null && dir.dirs != null && dir.files.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FILES)) {
+    private void showTutorial(@NonNull AriaDirectory dir) {
+        if (isVisible() && !isShowingHint && dir.files.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FILES)) {
             RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(dir.dirs.size());
             if (holder != null && getActivity() != null) {
                 isShowingHint = true;
@@ -271,7 +243,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
         }
 
-        if (isVisible() && !isShowingHint && dir.dirs != null && dir.dirs.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FOLDERS)) {
+        if (isVisible() && !isShowingHint && dir.dirs.size() >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.FOLDERS)) {
             RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
             if (holder != null) {
                 isShowingHint = true;
@@ -297,10 +269,10 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onDirectoryChanged(@NonNull TreeNode dir) {
+    public void onDirectoryChanged(@NonNull AriaDirectory dir) {
         breadcrumbsContainer.removeAllViews();
 
-        TreeNode node = dir;
+        AriaDirectory node = dir;
         do {
             addPathToBreadcrumbs(node);
             node = node.parent;
@@ -316,15 +288,15 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         showTutorial(dir);
     }
 
-    private void addPathToBreadcrumbs(TreeNode dir) {
+    private void addPathToBreadcrumbs(AriaDirectory dir) {
         Context context = getContext();
         if (context != null)
             breadcrumbsContainer.addView(new BreadcrumbSegment(context, dir, this), 0);
     }
 
     @Override
-    public void onDirSelected(TreeNode node) {
-        if (adapter != null) adapter.rebaseTo(node);
+    public void onDirSelected(@NonNull AriaDirectory node) {
+        if (adapter != null) adapter.changeDir(node);
     }
 
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
@@ -450,14 +422,38 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             if (adapter != null) adapter.update(payload.download(), files);
             if (fileSheet != null) fileSheet.update(files);
             if (dirSheet != null) dirSheet.update(payload.download(), files);
-            if (adapter != null) showTutorial(adapter.getCurrentNode());
+            if (adapter != null && adapter.getCurrentDir() != null)
+                showTutorial(adapter.getCurrentDir());
         }
     }
 
     @Override
     public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
         this.download = payload.download();
-        setupView();
+
+        if (getContext() == null) return;
+
+        adapter = new FilesAdapter(getContext(), FilesFragment.this);
+        recyclerViewLayout.loadListData(adapter);
+        recyclerViewLayout.startLoading();
+
+        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                canGoBack(CODE_CLOSE_SHEET);
+
+                refresh(new OnRefresh() {
+                    @Override
+                    public void refreshed() {
+                        adapter = new FilesAdapter(getContext(), FilesFragment.this);
+                        recyclerViewLayout.loadListData(adapter);
+                        recyclerViewLayout.startLoading();
+                    }
+                });
+            }
+        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+
+        DownloaderUtils.bindService(getContext(), FilesFragment.this);
     }
 
     @Override

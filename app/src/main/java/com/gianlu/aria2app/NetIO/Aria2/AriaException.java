@@ -31,6 +31,10 @@ public class AriaException extends Exception {
         return reason.endsWith("is not found");
     }
 
+    public boolean isCannotChangeOptions() {
+        return reason.startsWith("Cannot change option");
+    }
+
     @Override
     public String toString() {
         return "AriaException #" + code + ": " + getMessage();

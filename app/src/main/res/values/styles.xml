@@ -65,4 +65,8 @@
     <style name="BigTabLayout">
         <item name="tabMode">scrollable</item>
     </style>
+
+    <declare-styleable name="FileTypeTextView">
+        <attr name="textColor" format="color" />
+    </declare-styleable>
 </resources>

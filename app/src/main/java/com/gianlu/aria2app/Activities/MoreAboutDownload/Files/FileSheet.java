@@ -32,7 +32,6 @@ import com.gianlu.commonutils.Toaster;
 
 import java.util.Locale;
 
-// FIXME: Update not working
 public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, AriaFiles> {
     private TextView percentage;
     private int fileIndex = -1;
@@ -96,7 +95,6 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                     download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                         @Override
                         public void onResult(@NonNull Download.ChangeSelectionResult result) {
-                            // FIXME: Behaving badly
                             Toaster.Message msg;
                             switch (result) {
                                 case EMPTY:
@@ -115,11 +113,13 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                                     break;
                             }
 
+                            dismiss();
                             Toaster.show(getActivity(), msg, result.toString());
                         }
 
                         @Override
                         public void onException(Exception ex, boolean shouldForce) {
+                            dismiss();
                             Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
                         }
                     });
@@ -171,7 +171,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
 
     @Override
     protected void onRequestedUpdate(@NonNull AriaFiles payload) {
-        AriaFile file = payload.findFileIndex(fileIndex);
+        AriaFile file = payload.findFileByIndex(fileIndex);
         if (file != null) update(file);
     }
 

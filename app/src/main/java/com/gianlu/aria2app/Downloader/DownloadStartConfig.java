@@ -40,7 +40,7 @@ public class DownloadStartConfig {
         File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
 
-        for (AriaFile file : dir.allObjs()) {
+        for (AriaFile file : dir.allFiles()) {
             String relativePath = file.getRelativePath(download.update().dir);
             File destFile = new File(downloadPath, relativePath);
 
