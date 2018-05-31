@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -19,9 +18,10 @@ import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 
-public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerBottomSheet, SparseServersWithFiles> implements ServersAdapter.IAdapter {
+public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerSheet, SparseServersWithFiles> implements ServersAdapter.Listener {
     private boolean isShowingHint = false;
 
     public static ServersFragment getInstance(Context context, String gid) {
@@ -44,11 +44,6 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    protected ServerBottomSheet getSheet(@NonNull CoordinatorLayout layout) {
-        return new ServerBottomSheet(layout);
-    }
-
-    @Override
     public boolean onUpdateException(@NonNull Exception ex) {
         if (ex instanceof AriaException && ((AriaException) ex).isNoServers()) {
             onItemCountUpdated(0);
@@ -59,8 +54,9 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    public void onServerSelected(Server server) {
-        sheet.expand(server);
+    public void onServerSelected(@NonNull Server server) {
+        sheet = ServerSheet.get();
+        sheet.show(getActivity(), server);
     }
 
     @Override
@@ -68,7 +64,11 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         if (count == 0) {
             recyclerViewLayout.showMessage(R.string.noServers, false);
             topDownloadCountries.clear();
-            if (sheet != null) sheet.collapse();
+            if (sheet != null) {
+                sheet.dismiss();
+                sheet = null;
+                DialogUtils.dismissDialog(getActivity());
+            }
         } else {
             recyclerViewLayout.showList();
         }
@@ -108,8 +108,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
         if (adapter != null && payload.files != null)
             adapter.notifyItemsChanged(payload.servers, payload.files);
 
-        if (sheet != null && sheet.isExpanded())
-            sheet.update(payload.servers);
+        if (sheet != null) sheet.update(payload.servers);
     }
 
     @Override

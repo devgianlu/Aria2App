@@ -1,6 +1,9 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -12,7 +15,7 @@ import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
 import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.BottomSheet.NiceBaseBottomSheet;
+import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
@@ -20,52 +23,36 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
-public class ServerBottomSheet extends NiceBaseBottomSheet {
-    private final FreeGeoIPApi freeGeoIPApi;
+public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
+    private final FreeGeoIPApi ipApi = FreeGeoIPApi.get();
+    private Server currentServer;
     private SuperTextView downloadSpeed;
     private LineChart chart;
     private SuperTextView currentUri;
     private SuperTextView uri;
     private IPDetailsView ipDetails;
-    private Server currentServer = null;
 
-    ServerBottomSheet(ViewGroup parent) {
-        super(parent, R.layout.sheet_header_server, R.layout.sheet_server, false);
-        freeGeoIPApi = FreeGeoIPApi.get();
+    @NonNull
+    public static ServerSheet get() {
+        return new ServerSheet();
     }
 
     @Override
-    protected void onUpdateViews(Object... payloads) {
-        if (currentServer == null) return;
+    protected int getCustomTheme(@NonNull Server payload) {
+        return R.style.AppTheme_NoActionBar;
+    }
 
-        Server server = ((SparseServers) payloads[0]).find(currentServer);
-        if (server != null) {
-            updateHeaderViews(server);
-            updateContentViews(server);
+    @Override
+    protected void onRequestedUpdate(@NonNull SparseServers payload) {
+        Server updatedServer = payload.find(currentServer);
+        if (updatedServer != null) {
+            currentServer = updatedServer;
+            update(updatedServer);
         }
     }
 
-    @Override
-    protected void cleanUp() {
-        currentServer = null;
-    }
-
-    @Override
-    protected void onCreateHeaderView(@NonNull ViewGroup parent, Object... payloads) {
-        downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
-        TextView title = parent.findViewById(R.id.serverSheet_title);
-        Server server = (Server) payloads[0];
-
-        parent.setBackgroundResource(R.color.colorAccent_light);
-        title.setText(server.currentUri);
-        updateHeaderViews(server);
-    }
-
-    private void updateHeaderViews(Server server) {
+    private void update(@NonNull Server server) {
         downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
-    }
-
-    private void updateContentViews(Server server) {
         LineData data = chart.getLineData();
         if (data != null) {
             int pos = data.getEntryCount() + 1;
@@ -81,18 +68,30 @@ public class ServerBottomSheet extends NiceBaseBottomSheet {
     }
 
     @Override
-    protected void onCreateContentView(@NonNull ViewGroup parent, Object... payloads) {
+    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull Server server) {
+        inflater.inflate(R.layout.sheet_header_server, parent, true);
+        parent.setBackgroundResource(R.color.colorAccent_light);
+
+        downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
+
+        TextView title = parent.findViewById(R.id.serverSheet_title);
+        title.setText(server.currentUri);
+
+        return true;
+    }
+
+    @Override
+    protected void onCreateBody(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull Server server) {
         chart = parent.findViewById(R.id.serverSheet_chart);
         currentUri = parent.findViewById(R.id.serverSheet_currentUri);
         uri = parent.findViewById(R.id.serverSheet_uri);
         ipDetails = parent.findViewById(R.id.serverSheet_ipDetails);
         ipDetails.setVisibility(View.GONE);
 
-        Server server = (Server) payloads[0];
-        currentServer = server;
-
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
-        freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
+        update(server);
+
+        ipApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
             @Override
             public void onDetails(IPDetails details) {
                 ipDetails.setup(details);
@@ -105,7 +104,16 @@ public class ServerBottomSheet extends NiceBaseBottomSheet {
                 ipDetails.setVisibility(View.GONE);
             }
         });
+    }
 
-        updateContentViews(server);
+    @Override
+    protected void onCustomizeToolbar(@NonNull Toolbar toolbar, @NonNull Server payload) {
+        toolbar.setBackgroundResource(R.color.colorAccent_light);
+        toolbar.setTitle(payload.currentUri);
+    }
+
+    @Override
+    protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull Server payload) {
+        return false;
     }
 }

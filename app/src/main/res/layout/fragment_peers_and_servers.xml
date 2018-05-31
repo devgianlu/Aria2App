@@ -1,109 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:alpha="0.54"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_file_download_black_48dp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
-                    android:id="@+id/peersServersFragment_topDownloadCountries"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/peersServersFragment_topUploadCountriesContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:alpha="0.54"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_file_upload_black_48dp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
-                    android:id="@+id/peersServersFragment_topUploadCountries"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:alpha="0.54"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_file_download_black_48dp" />
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_gravity="top"
-                android:background="@drawable/shadow_bottom" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
-            <com.gianlu.commonutils.RecyclerViewLayout
-                android:id="@+id/peersServersFragment_recyclerViewLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
+                android:id="@+id/peersServersFragment_topDownloadCountries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        </FrameLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/peersServersFragment_topUploadCountriesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:alpha="0.54"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_file_upload_black_48dp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <com.gianlu.aria2app.Activities.MoreAboutDownload.TopCountriesView
+                android:id="@+id/peersServersFragment_topUploadCountries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <View
-        android:id="@+id/niceBottomSheet_mask"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:layout_height="match_parent">
 
-    <include layout="@layout/nice_bottom_sheet" />
-</android.support.design.widget.CoordinatorLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="top"
+            android:background="@drawable/shadow_bottom" />
+
+        <com.gianlu.commonutils.RecyclerViewLayout
+            android:id="@+id/peersServersFragment_recyclerViewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+</LinearLayout>
 
 

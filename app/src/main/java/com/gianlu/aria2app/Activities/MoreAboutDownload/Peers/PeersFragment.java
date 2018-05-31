@@ -5,7 +5,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,11 +22,13 @@ import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 
-public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottomSheet, Peers> implements PeersAdapter.IAdapter {
+public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
     private boolean isShowingHint = false;
 
+    @NonNull
     public static PeersFragment getInstance(Context context, String gid) {
         PeersFragment fragment = new PeersFragment();
         fragment.setHasOptionsMenu(true);
@@ -77,11 +78,6 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
-    protected PeerBottomSheet getSheet(@NonNull CoordinatorLayout layout) {
-        return new PeerBottomSheet(layout);
-    }
-
-    @Override
     public boolean onUpdateException(@NonNull Exception ex) {
         if (ex instanceof AriaException && ((AriaException) ex).isNoPeers()) {
             onItemCountUpdated(0);
@@ -92,8 +88,9 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
     }
 
     @Override
-    public void onPeerSelected(Peer peer) {
-        sheet.expand(peer);
+    public void onPeerSelected(@NonNull Peer peer) {
+        sheet = PeerSheet.get();
+        sheet.show(getActivity(), peer);
     }
 
     @Override
@@ -102,7 +99,11 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
             recyclerViewLayout.showMessage(R.string.noPeers, false);
             topDownloadCountries.clear();
             topUploadCountries.clear();
-            if (sheet != null) sheet.collapse();
+            if (sheet != null) {
+                sheet.dismiss();
+                sheet = null;
+                DialogUtils.dismissDialog(getActivity());
+            }
         } else {
             recyclerViewLayout.showList();
         }
@@ -156,7 +157,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerBottom
         topDownloadCountries.setPeers(payload, true);
         topUploadCountries.setPeers(payload, false);
         if (adapter != null) adapter.itemsChanged(payload);
-        if (sheet != null && sheet.isExpanded()) sheet.update(payload);
+        if (sheet != null) sheet.update(payload);
     }
 
     @Override

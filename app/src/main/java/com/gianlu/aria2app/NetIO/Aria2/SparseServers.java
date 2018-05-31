@@ -27,10 +27,10 @@ public class SparseServers extends SparseArray<Servers> {
     }
 
     @Nullable
-    public Server find(Server current) {
+    public Server find(Server match) {
         for (int i = 0; i < size(); i++)
             for (Server server : valueAt(i))
-                if (Objects.equals(server, current))
+                if (Objects.equals(server, match))
                     return server;
 
         return null;

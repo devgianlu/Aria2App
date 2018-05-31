@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -15,6 +17,7 @@ public class Servers extends ArrayList<Server> {
     private Servers() {
     }
 
+    @NonNull
     public static Servers empty() {
         return new Servers();
     }

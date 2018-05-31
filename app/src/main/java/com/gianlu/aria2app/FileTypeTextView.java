@@ -55,7 +55,13 @@ public class FileTypeTextView extends View {
 
     public void setExtension(@Nullable String ext) {
         if (Objects.equals(mText, ext)) return;
-        if (ext == null || ext.length() > 4) ext = "...";
+        if (ext == null) {
+            ext = "???";
+        } else {
+            ext = ext.trim();
+            if (ext.length() > 4) ext = ext.substring(0, 4);
+        }
+
         mText = ext.toUpperCase();
         invalidate();
     }

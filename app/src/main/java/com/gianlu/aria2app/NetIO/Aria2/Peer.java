@@ -1,14 +1,11 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.NonNull;
-
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Adapters.NotFilterable;
 
 import org.json.JSONObject;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 public class Peer implements Filterable<NotFilterable> {
@@ -32,15 +29,6 @@ public class Peer implements Filterable<NotFilterable> {
         downloadSpeed = obj.optInt("downloadSpeed", 0);
         uploadSpeed = obj.optInt("uploadSpeed", 0);
         seeder = obj.optBoolean("seeder", false);
-    }
-
-    @NonNull
-    public static Peer find(List<Peer> peers, Peer match) {
-        for (Peer peer : peers)
-            if (peer.equals(match))
-                return peer;
-
-        return match;
     }
 
     @Override

@@ -24,14 +24,14 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
+public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> { // FIXME
     private final Context context;
-    private final IAdapter handler;
+    private final Listener handler;
     private final LayoutInflater inflater;
     private final FreeGeoIPApi freeGeoIPApi;
     private final CountryFlags flags = CountryFlags.get();
 
-    public PeersAdapter(Context context, IAdapter handler) {
+    public PeersAdapter(Context context, Listener handler) {
         super(new ArrayList<Peer>(), SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
         this.context = context;
@@ -118,8 +118,8 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         UPLOAD_SPEED
     }
 
-    public interface IAdapter {
-        void onPeerSelected(Peer peer);
+    public interface Listener {
+        void onPeerSelected(@NonNull Peer peer);
 
         void onItemCountUpdated(int count);
 

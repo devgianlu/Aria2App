@@ -26,17 +26,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> { // FIXME
     private static final int ITEM_SERVER = 0;
     private static final int ITEM_HEADER = 1;
     private final List<Object> objs;
     private final LayoutInflater inflater;
-    private final IAdapter listener;
+    private final Listener listener;
     private final Context context;
     private final FreeGeoIPApi freeGeoIPApi;
     private final CountryFlags flags = CountryFlags.get();
 
-    public ServersAdapter(Context context, IAdapter listener) {
+    public ServersAdapter(Context context, Listener listener) {
         this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();
@@ -173,8 +173,8 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public interface IAdapter {
-        void onServerSelected(Server server);
+    public interface Listener {
+        void onServerSelected(@NonNull Server server);
 
         void onItemCountUpdated(int count);
     }
