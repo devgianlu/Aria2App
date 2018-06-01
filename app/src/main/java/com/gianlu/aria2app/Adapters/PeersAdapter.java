@@ -65,7 +65,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onPeerSelected(peer);
+                if (listener != null) listener.onPeerSelected(peer);
             }
         });
 
@@ -85,7 +85,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     @Nullable
     @Override
     protected RecyclerView getRecyclerView() {
-        return listener.getRecyclerView();
+        return listener == null ? null : listener.getRecyclerView();
     }
 
     @Override
@@ -95,7 +95,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
     @Override
     protected void shouldUpdateItemCount(int count) {
-        listener.onItemCountUpdated(count);
+        if (listener != null) listener.onItemCountUpdated(count);
     }
 
     @NonNull

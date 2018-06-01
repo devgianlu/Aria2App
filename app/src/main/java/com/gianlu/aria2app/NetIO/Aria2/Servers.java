@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class Servers extends ArrayList<Server> {
 
-    public Servers(JSONArray servers) throws JSONException {
-        for (int i = 0; i < servers.length(); i++)
-            add(new Server(servers.getJSONObject(i)));
+    public Servers(JSONArray array) throws JSONException {
+        super(array.length());
+        for (int i = 0; i < array.length(); i++) add(new Server(array.getJSONObject(i)));
     }
 
     private Servers() {

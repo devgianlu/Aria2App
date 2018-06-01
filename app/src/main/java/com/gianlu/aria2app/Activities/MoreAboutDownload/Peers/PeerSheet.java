@@ -84,8 +84,7 @@ public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
 
     @Override
     protected void onCreateBody(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull Peer payload) {
-        inflater.inflate(R.layout.sheet_peer, parent, false);
-        parent.setBackgroundResource(R.color.colorTorrent_pressed);
+        inflater.inflate(R.layout.sheet_peer, parent, true);
 
         chart = parent.findViewById(R.id.peerSheet_chart);
         seeder = parent.findViewById(R.id.peerSheet_seeder);
@@ -110,6 +109,8 @@ public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
                 ipDetails.setVisibility(View.GONE);
             }
         });
+
+        isLoading(false);
     }
 
     @Override

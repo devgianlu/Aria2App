@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,11 +14,23 @@ public class Server {
     public final Uri uri;
     public final String currentUri;
     public final int downloadSpeed;
+    private String shortUri;
 
     Server(JSONObject obj) throws JSONException {
         uri = Uri.parse(obj.getString("uri"));
         currentUri = obj.getString("currentUri");
         downloadSpeed = obj.getInt("downloadSpeed");
+    }
+
+    @NonNull
+    public String getShortUri() {
+        if (shortUri == null) {
+            int pos = currentUri.lastIndexOf('?');
+            if (pos == -1) shortUri = currentUri;
+            else shortUri = currentUri.substring(0, pos);
+        }
+
+        return shortUri;
     }
 
     @Override

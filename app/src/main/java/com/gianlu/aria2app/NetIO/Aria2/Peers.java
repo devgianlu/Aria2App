@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Peers extends ArrayList<Peer> {
 
     public Peers(JSONArray array) throws JSONException {
+        super(array.length());
         for (int i = 0; i < array.length(); i++) add(new Peer(array.getJSONObject(i)));
     }
 

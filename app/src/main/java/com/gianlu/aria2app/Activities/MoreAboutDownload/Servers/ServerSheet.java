@@ -75,18 +75,21 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
         downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
 
         TextView title = parent.findViewById(R.id.serverSheet_title);
-        title.setText(server.currentUri);
+        title.setText(server.getShortUri());
 
         return true;
     }
 
     @Override
     protected void onCreateBody(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull Server server) {
+        inflater.inflate(R.layout.sheet_server, parent, true);
         chart = parent.findViewById(R.id.serverSheet_chart);
         currentUri = parent.findViewById(R.id.serverSheet_currentUri);
         uri = parent.findViewById(R.id.serverSheet_uri);
         ipDetails = parent.findViewById(R.id.serverSheet_ipDetails);
         ipDetails.setVisibility(View.GONE);
+
+        currentServer = server;
 
         Utils.setupChart(chart, true, R.color.colorPrimaryDark);
         update(server);
@@ -104,12 +107,14 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
                 ipDetails.setVisibility(View.GONE);
             }
         });
+
+        isLoading(false);
     }
 
     @Override
     protected void onCustomizeToolbar(@NonNull Toolbar toolbar, @NonNull Server payload) {
         toolbar.setBackgroundResource(R.color.colorAccent_light);
-        toolbar.setTitle(payload.currentUri);
+        toolbar.setTitle(payload.getShortUri());
     }
 
     @Override

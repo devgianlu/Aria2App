@@ -10,6 +10,8 @@ import java.util.ArrayList;
 public class AriaFiles extends ArrayList<AriaFile> {
 
     public AriaFiles(JSONArray array) throws JSONException {
+        super(array.length());
+
         for (int i = 0; i < array.length(); i++)
             add(new AriaFile(array.getJSONObject(i)));
 

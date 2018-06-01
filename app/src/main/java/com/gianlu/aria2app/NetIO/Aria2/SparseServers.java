@@ -12,6 +12,8 @@ import java.util.Objects;
 
 public class SparseServers extends SparseArray<Servers> {
     public SparseServers(JSONArray array) throws JSONException {
+        super(array.length());
+
         for (int i = 0; i < array.length(); i++) {
             JSONObject server = array.getJSONObject(i);
             put(server.getInt("index"), new Servers(server.getJSONArray("servers")));
