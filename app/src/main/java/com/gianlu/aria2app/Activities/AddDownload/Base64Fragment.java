@@ -39,6 +39,7 @@ public class Base64Fragment extends Fragment {
     private TextView path;
     private Uri data;
 
+    @NonNull
     public static Base64Fragment getInstance(Context context, boolean torrent, @Nullable Uri uri) {
         Base64Fragment fragment = new Base64Fragment();
         Bundle args = new Bundle();
@@ -149,7 +150,8 @@ public class Base64Fragment extends Fragment {
             int read;
             while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
             return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
-        } catch (IOException | SecurityException ex) {
+        } catch (IOException | SecurityException | OutOfMemoryError ex) {
+            System.gc();
             Toaster.show(getContext(), Utils.Messages.INVALID_FILE, ex);
             return null;
         }
