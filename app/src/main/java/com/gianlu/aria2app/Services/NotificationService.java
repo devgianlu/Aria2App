@@ -143,7 +143,7 @@ public class NotificationService extends Service {
 
     public static void start(Context context, boolean notificable) {
         if (ProfilesManager.get(context).hasNotificationProfiles()) {
-            context.startService(new Intent(context, NotificationService.class)
+            ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
                     .setAction(ACTION_START).putExtra("notificable", notificable));
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
