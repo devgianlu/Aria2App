@@ -129,7 +129,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                         if (lastAddress != null) {
                             FreeGeoIPApi.get().getIPDetails(lastAddress, new FreeGeoIPApi.OnIpDetails() {
                                 @Override
-                                public void onDetails(IPDetails details) {
+                                public void onDetails(@NonNull IPDetails details) {
                                     if (isAdded()) {
                                         addressFlag.setVisibility(View.VISIBLE);
                                         addressFlag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
@@ -137,7 +137,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                                 }
 
                                 @Override
-                                public void onException(Exception ex) {
+                                public void onException(@NonNull Exception ex) {
                                     addressFlag.setVisibility(View.GONE);
                                     Logging.log(ex);
                                 }

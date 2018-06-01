@@ -93,13 +93,13 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
 
         ipApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
             @Override
-            public void onDetails(IPDetails details) {
+            public void onDetails(@NonNull IPDetails details) {
                 ipDetails.setup(details);
                 ipDetails.setVisibility(View.VISIBLE);
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 Logging.log(ex);
                 ipDetails.setVisibility(View.GONE);
             }

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> { // FIXME
+public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_SERVER = 0;
     private static final int ITEM_HEADER = 1;
     private final List<Object> objs;
@@ -36,13 +36,13 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final FreeGeoIPApi freeGeoIPApi;
     private final CountryFlags flags = CountryFlags.get();
 
-    public ServersAdapter(Context context, Listener listener) {
+    public ServersAdapter(Context context, @NonNull Listener listener) {
         this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();
         this.freeGeoIPApi = FreeGeoIPApi.get();
         this.inflater = LayoutInflater.from(context);
-        if (listener != null) listener.onItemCountUpdated(objs.size());
+        listener.onItemCountUpdated(objs.size());
     }
 
     private void createObjs(SparseServers servers, AriaFiles files) {
@@ -56,7 +56,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
 
-        if (listener != null) listener.onItemCountUpdated(objs.size());
+        listener.onItemCountUpdated(objs.size());
     }
 
     @Override
@@ -85,18 +85,18 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             castHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (listener != null) listener.onServerSelected(server);
+                    listener.onServerSelected(server);
                 }
             });
 
             freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
                 @Override
-                public void onDetails(IPDetails details) {
+                public void onDetails(@NonNull IPDetails details) {
                     notifyItemChanged(holder.getAdapterPosition(), details);
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(@NonNull Exception ex) {
                     Logging.log(ex);
                 }
             });

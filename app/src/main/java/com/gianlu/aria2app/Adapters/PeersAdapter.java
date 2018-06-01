@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,18 +23,18 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> { // FIXME
+public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
     private final Context context;
-    private final Listener handler;
+    private final Listener listener;
     private final LayoutInflater inflater;
     private final FreeGeoIPApi freeGeoIPApi;
     private final CountryFlags flags = CountryFlags.get();
 
-    public PeersAdapter(Context context, Listener handler) {
+    public PeersAdapter(Context context, @NonNull Listener listener) {
         super(new ArrayList<Peer>(), SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
         this.context = context;
-        this.handler = handler;
+        this.listener = listener;
         this.freeGeoIPApi = FreeGeoIPApi.get();
     }
 
@@ -57,7 +56,6 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
             holder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onSetupViewHolder(@NonNull final ViewHolder holder, int position, @NonNull final Peer peer) {
         holder.address.setText(peer.ip + ":" + peer.port);
@@ -67,18 +65,18 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onPeerSelected(peer);
+                listener.onPeerSelected(peer);
             }
         });
 
         freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.OnIpDetails() {
             @Override
-            public void onDetails(IPDetails details) {
+            public void onDetails(@NonNull IPDetails details) {
                 notifyItemChanged(holder.getAdapterPosition(), details);
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 Logging.log(ex);
             }
         });
@@ -87,8 +85,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     @Nullable
     @Override
     protected RecyclerView getRecyclerView() {
-        if (handler != null) return handler.getRecyclerView();
-        else return null;
+        return listener.getRecyclerView();
     }
 
     @Override
@@ -98,7 +95,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
     @Override
     protected void shouldUpdateItemCount(int count) {
-        if (handler != null) handler.onItemCountUpdated(count);
+        listener.onItemCountUpdated(count);
     }
 
     @NonNull

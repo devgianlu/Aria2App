@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.util.LruCache;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
@@ -99,8 +100,10 @@ public final class FreeGeoIPApi {
     }
 
     public interface OnIpDetails {
-        void onDetails(IPDetails details);
+        @UiThread
+        void onDetails(@NonNull IPDetails details);
 
-        void onException(Exception ex);
+        @UiThread
+        void onException(@NonNull Exception ex);
     }
 }
