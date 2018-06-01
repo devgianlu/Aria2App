@@ -2,6 +2,7 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
@@ -31,6 +32,8 @@ public class Download {
         this.client = client;
     }
 
+    @WorkerThread
+    @NonNull
     private static ChangeSelectionResult performSelectIndexesOperation(AbstractClient client, String gid, Integer[] currIndexes, Integer[] selIndexes, boolean select) throws Exception {
         Collection<Integer> newIndexes = new HashSet<>(Arrays.asList(currIndexes));
         if (select) {
@@ -40,7 +43,7 @@ public class Download {
             if (newIndexes.isEmpty()) return ChangeSelectionResult.EMPTY;
         }
 
-        client.sendSync(AriaRequests.changeOptions(gid, Collections.singletonMap("select-file", CommonUtils.join(newIndexes, ","))));
+        client.sendSync(AriaRequests.changeDownloadOptions(gid, Collections.singletonMap("select-file", CommonUtils.join(newIndexes, ","))));
         if (select) return ChangeSelectionResult.SELECTED;
         else return ChangeSelectionResult.DESELECTED;
     }
@@ -68,7 +71,7 @@ public class Download {
     }
 
     public final void options(AbstractClient.OnResult<Map<String, String>> listener) {
-        client.send(AriaRequests.getOptions(gid), listener);
+        client.send(AriaRequests.getDownloadOptions(gid), listener);
     }
 
     public final void servers(AbstractClient.OnResult<SparseServers> listener) {
@@ -88,7 +91,7 @@ public class Download {
     }
 
     public final void changeOptions(Map<String, String> options, AbstractClient.OnSuccess listener) throws JSONException {
-        client.send(AriaRequests.changeOptions(gid, options), listener);
+        client.send(AriaRequests.changeDownloadOptions(gid, options), listener);
     }
 
     public final void pause(final AbstractClient.OnSuccess listener) {
@@ -123,7 +126,7 @@ public class Download {
             @Override
             public String sandbox(AbstractClient client, boolean shouldForce) throws Exception {
                 DownloadWithUpdate old = client.sendSync(AriaRequests.tellStatus(gid));
-                Map<String, String> oldOptions = client.sendSync(AriaRequests.getOptions(gid));
+                Map<String, String> oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
 
                 Set<String> newUrls = new HashSet<>();
                 for (AriaFile file : old.update().files) {
@@ -173,7 +176,7 @@ public class Download {
         client.batch(new AbstractClient.BatchSandbox<ChangeSelectionResult>() {
             @Override
             public ChangeSelectionResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
-                Map<String, String> options = client.sendSync(AriaRequests.getOptions(gid));
+                Map<String, String> options = client.sendSync(AriaRequests.getDownloadOptions(gid));
                 String currIndexes = options.get("select-file");
                 if (currIndexes == null)
                     return performSelectIndexesOperation(client, gid, client.sendSync(AriaRequests.getFileIndexes(gid)), selIndexes, select);

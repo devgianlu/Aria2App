@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class Option implements Comparable<Option> {
+public class Option implements Comparable<Option> { // TODO: Could be improved
     public final String name;
     public final String value;
     public String newValue;
@@ -26,14 +26,11 @@ public class Option implements Comparable<Option> {
         value = entry.getValue();
     }
 
-    public static List<Option> fromOptionsMap(Map<String, String> map, List<String> allOptions) {
-        return fromOptionsMap(map, allOptions, null);
-    }
-
-    public static List<Option> fromOptionsMap(Map<String, String> map, List<String> allOptions, @Nullable Set<String> filter) {
+    @NonNull
+    public static List<Option> fromOptionsMap(Map<String, String> map, List<String> all, @Nullable Set<String> filter) {
         List<Option> options = new ArrayList<>();
 
-        Map<String, String> allowedOptions = filterMap(map, allOptions);
+        Map<String, String> allowedOptions = filterMap(map, all);
         for (Map.Entry<String, String> entry : allowedOptions.entrySet()) {
             if (filter == null) {
                 options.add(new Option(entry));
@@ -48,6 +45,7 @@ public class Option implements Comparable<Option> {
         return options;
     }
 
+    @NonNull
     private static Map<String, String> filterMap(Map<String, String> map, List<String> allowedOptions) {
         Map<String, String> newMap = new HashMap<>();
 

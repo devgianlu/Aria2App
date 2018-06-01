@@ -28,7 +28,7 @@ import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
-import com.gianlu.aria2app.Options.OptionsUtils;
+import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
@@ -193,10 +193,10 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
                 onBackPressed();
                 return true;
             case R.id.moreAboutDownload_options:
-                OptionsUtils.showDownloadDialog(this, gid, false);
+                showDialog(OptionsDialog.getDownload(gid, false));
                 return true;
             case R.id.moreAboutDownload_quickOptions:
-                OptionsUtils.showDownloadDialog(this, gid, true);
+                showDialog(OptionsDialog.getDownload(gid, true));
                 return true;
         }
 

@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -19,39 +18,20 @@ import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.R;
 
 public class OptionsView extends FrameLayout {
-    private RecyclerView list;
+    private final RecyclerView list;
     private OptionsAdapter adapter;
 
     public OptionsView(Context context) {
-        super(context);
-        init();
+        this(context, null, 0);
     }
 
     public OptionsView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public OptionsView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-    }
 
-    public void setAdapter(OptionsAdapter adapter) {
-        this.adapter = adapter;
-        list.setAdapter(adapter);
-    }
-
-    public void setIsDialog(boolean dialog) {
-        if (dialog) {
-            int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-            setPadding(padding, 0, padding, 0);
-        } else {
-            setPadding(0, 0, 0, 0);
-        }
-    }
-
-    private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_options, this, true);
 
         list = findViewById(R.id.optionsView_list);
@@ -59,17 +39,13 @@ public class OptionsView extends FrameLayout {
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         final EditText query = findViewById(R.id.optionsView_query);
-        ImageButton search = findViewById(R.id.optionsView_search);
-
         query.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -78,11 +54,22 @@ public class OptionsView extends FrameLayout {
             }
         });
 
+        ImageButton search = findViewById(R.id.optionsView_search);
         search.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.filter(query.getText().toString());
+                if (adapter != null) adapter.filter(query.getText().toString());
             }
         });
+    }
+
+    @Nullable
+    public OptionsAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(OptionsAdapter adapter) {
+        this.adapter = adapter;
+        this.list.setAdapter(adapter);
     }
 }

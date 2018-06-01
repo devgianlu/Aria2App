@@ -95,16 +95,6 @@ public final class AriaRequests {
         }, gid);
     }
 
-    public static AbstractClient.AriaRequestWithResult<Map<String, String>> getOptions(String gid) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_OPTIONS, new AbstractClient.Processor<Map<String, String>>() {
-            @NonNull
-            @Override
-            public Map<String, String> process(AbstractClient client, JSONObject obj) throws JSONException {
-                return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
-            }
-        }, gid);
-    }
-
     public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
         Object[] params = new Object[3];
         params[0] = CommonUtils.toJSONArray(uris, true);
@@ -137,8 +127,8 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.ADD_METALINK, STRING_PROCESSOR, params);
     }
 
-    public static AbstractClient.AriaRequest changeOptions(String gid, Map<String, String> options) throws JSONException {
-        return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_OPTIONS, gid, OptionsUtils.toJson(options));
+    public static AbstractClient.AriaRequest changeDownloadOptions(String gid, Map<String, String> options) throws JSONException {
+        return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_DOWNLOAD_OPTIONS, gid, OptionsUtils.toJson(options));
     }
 
     public static AbstractClient.AriaRequest changeGlobalOptions(Map<String, String> options) throws JSONException {
@@ -153,6 +143,16 @@ public final class AriaRequests {
                 return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
             }
         });
+    }
+
+    public static AbstractClient.AriaRequestWithResult<Map<String, String>> getDownloadOptions(@NonNull String gid) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_DOWNLOAD_OPTIONS, new AbstractClient.Processor<Map<String, String>>() {
+            @NonNull
+            @Override
+            public Map<String, String> process(AbstractClient client, JSONObject obj) throws JSONException {
+                return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
+            }
+        }, gid);
     }
 
     public static AbstractClient.AriaRequestWithResult<GlobalStats> getGlobalStats() {

@@ -77,7 +77,7 @@ import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
-import com.gianlu.aria2app.Options.OptionsUtils;
+import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.PreferencesActivity;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
@@ -272,10 +272,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
                 return false;
             case DrawerConst.QUICK_OPTIONS:
-                OptionsUtils.showGlobalDialog(this, true);
+                showDialog(OptionsDialog.getGlobal(true));
                 return true;
             case DrawerConst.GLOBAL_OPTIONS:
-                OptionsUtils.showGlobalDialog(this, false);
+                showDialog(OptionsDialog.getGlobal(false));
                 return true;
             case DrawerConst.PREFERENCES:
                 startActivity(new Intent(MainActivity.this, PreferencesActivity.class));

@@ -14,30 +14,54 @@ import android.widget.ImageButton;
 
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.Options.OptionsManager;
+import com.gianlu.aria2app.PKeys;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.SuperTextView;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder> {
     private final List<Option> options;
     private final List<Option> originalOptions;
     private final LayoutInflater inflater;
     private final boolean global;
+    private final Listener listener;
     private final Context context;
-    private IAdapter handler;
 
-    public OptionsAdapter(Context context, List<Option> options, boolean global, boolean quickOnTop) {
+    private OptionsAdapter(Context context, List<Option> options, boolean global, Listener listener) {
         this.context = context;
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);
         this.global = global;
+        this.listener = listener;
+    }
 
+    @NonNull
+    public static OptionsAdapter setup(Context context, Map<String, String> map, boolean global, boolean quick, boolean quickOnTop, Listener listener) throws IOException, JSONException {
+        List<String> all;
+        if (global) all = OptionsManager.get(context).loadGlobalOptions();
+        else all = OptionsManager.get(context).loadDownloadOptions();
+
+        Set<String> filter = null;
+        if (quick) {
+            if (global) filter = Prefs.getSet(context, PKeys.A2_GLOBAL_QUICK_OPTIONS, null);
+            else filter = Prefs.getSet(context, PKeys.A2_QUICK_OPTIONS, null);
+        }
+
+        List<Option> options = Option.fromOptionsMap(map, all, filter);
         if (quickOnTop)
-            Collections.sort(this.options, new OptionsManager.IsQuickComparator(context, global)); // Assumes that options are already ordered alphabetically
+            Collections.sort(options, new OptionsManager.IsQuickComparator(context, global));
+
+        return new OptionsAdapter(context, options, global, listener);
     }
 
     @Override
@@ -46,11 +70,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         return new ViewHolder(parent);
     }
 
-    public void setHandler(IAdapter handler) {
-        this.handler = handler;
-    }
-
-    public void notifyItemChanged(Option option) {
+    public void optionChanged(Option option) {
         int pos = options.indexOf(option);
         if (pos != -1) {
             options.set(pos, option);
@@ -98,7 +118,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onEditOption(option);
+                if (listener != null) listener.onEditOption(option);
             }
         });
 
@@ -136,8 +156,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         return originalOptions;
     }
 
-    public interface IAdapter {
-        void onEditOption(Option option);
+    public interface Listener {
+        void onEditOption(@NonNull Option option);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

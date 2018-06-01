@@ -243,10 +243,10 @@ public abstract class AbstractClient implements Closeable {
         ADD_METALINK("aria2.addMetalink"),
         GET_SERVERS("aria2.getServers"),
         GET_PEERS("aria2.getPeers"),
-        GET_OPTIONS("aria2.getOption"),
+        GET_DOWNLOAD_OPTIONS("aria2.getOption"),
         GET_FILES("aria2.getFiles"),
         CHANGE_POSITION("aria2.changePosition"),
-        CHANGE_OPTIONS("aria2.changeOption");
+        CHANGE_DOWNLOAD_OPTIONS("aria2.changeOption");
 
         private final String method;
 

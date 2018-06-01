@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Options;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 
@@ -26,31 +27,34 @@ public class OptionsManager {
         manager = context.getAssets();
     }
 
+    @NonNull
     public static OptionsManager get(Context context) {
         if (instance == null) instance = new OptionsManager(context);
         return instance;
     }
 
-    List<String> loadGlobalOptions() throws IOException, JSONException {
+    @NonNull
+    public List<String> loadGlobalOptions() throws IOException, JSONException {
         openOptions();
 
-        JSONArray globalOptions = options.getJSONArray("global");
-        List<String> options = new ArrayList<>();
-        for (int i = 0; i < globalOptions.length(); i++)
-            options.add(globalOptions.getString(i));
+        JSONArray array = options.getJSONArray("global");
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++)
+            list.add(array.getString(i));
 
-        return options;
+        return list;
     }
 
+    @NonNull
     public List<String> loadDownloadOptions() throws IOException, JSONException {
         openOptions();
 
-        JSONArray downloadOptions = options.getJSONArray("download");
-        List<String> options = new ArrayList<>();
-        for (int i = 0; i < downloadOptions.length(); i++)
-            options.add(downloadOptions.getString(i));
+        JSONArray array = options.getJSONArray("download");
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++)
+            list.add(array.getString(i));
 
-        return options;
+        return list;
     }
 
     private void openOptions() throws IOException, JSONException {
@@ -69,7 +73,7 @@ public class OptionsManager {
         }
 
         @Override
-        public int compare(Option o1, Option o2) {
+        public int compare(Option o1, Option o2) {  // Assumes that options are already ordered alphabetically
             boolean b1 = o1.isQuick(context, global);
             boolean b2 = o2.isQuick(context, global);
             if (b1 && b2) return 0; // b1 && b2
