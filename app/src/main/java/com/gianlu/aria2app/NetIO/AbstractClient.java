@@ -29,8 +29,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.WeakHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.net.ssl.SSLContext;
@@ -38,7 +38,7 @@ import javax.net.ssl.SSLContext;
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient implements Closeable {
-    private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
+    private static final List<OnConnectivityChanged> listeners = new ArrayList<>();
     protected final OkHttpClient client;
     protected final boolean shouldForce;
     protected final Handler handler;
@@ -62,15 +62,15 @@ public abstract class AbstractClient implements Closeable {
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
-    public static void addConnectivityListener(@NonNull String key, OnConnectivityChanged listener) {
+    public static void addConnectivityListener(OnConnectivityChanged listener) {
         synchronized (listeners) {
-            listeners.put(key, listener);
+            listeners.add(listener);
         }
     }
 
-    public static void removeConnectivityListener(@NonNull String key) {
+    public static void removeConnectivityListener(OnConnectivityChanged listener) {
         synchronized (listeners) {
-            listeners.remove(key);
+            listeners.remove(listener);
         }
     }
 
@@ -83,6 +83,7 @@ public abstract class AbstractClient implements Closeable {
     }
 
     @Override
+    @WorkerThread
     public final void close() {
         shouldIgnoreCommunication = true;
 
@@ -90,6 +91,7 @@ public abstract class AbstractClient implements Closeable {
         listeners.clear();
     }
 
+    @WorkerThread
     protected abstract void closeClient();
 
     public final <R> void send(@NonNull final AriaRequestWithResult<R> request, final OnResult<R> listener) {
@@ -203,7 +205,18 @@ public abstract class AbstractClient implements Closeable {
 
     protected abstract <R> void batch(BatchSandbox<R> sandbox, DoBatch<R> listener);
 
+    @WorkerThread
     protected abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;
+
+    @WorkerThread
+    private void connectivityChangedInternal(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
+        if (this.profile.connectionMethod == profile.connectionMethod) {
+            connectivityChanged(context, profile);
+        } else {
+            WebSocketClient.clear();
+            HttpClient.clear();
+        }
+    }
 
     @NonNull
     private JSONArray baseRequestParams() {
@@ -330,16 +343,24 @@ public abstract class AbstractClient implements Closeable {
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
 
         private void switchClients(final Context context, final MultiProfile.UserProfile updated) {
+            synchronized (listeners) {
+                for (final OnConnectivityChanged listener : listeners) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.connectivityChanged(updated);
+                        }
+                    });
+                }
+            }
+
             new Thread() {
                 @Override
+                @WorkerThread
                 public void run() {
                     try {
-                        connectivityChanged(context, updated);
+                        connectivityChangedInternal(context, updated);
                         profile = updated;
-
-                        for (OnConnectivityChanged listener : new ArrayList<>(listeners.values()))
-                            if (listener != null)
-                                listener.connectivityChanged(updated);
                     } catch (Exception ex) {
                         ErrorHandler.get().notifyException(ex, true);
                     }

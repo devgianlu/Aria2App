@@ -49,6 +49,7 @@ public class WebSocketClient extends AbstractClient {
         connectionListener = listener;
     }
 
+    @NonNull
     public static WebSocketClient instantiate(Context context) throws InitializationException {
         if (instance == null) {
             try {

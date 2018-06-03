@@ -415,8 +415,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
-        AbstractClient.addConnectivityListener(MainActivity.class.getName(), this);
-
         setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
 
         active = findViewById(R.id.main_active);
@@ -576,7 +574,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     protected void onDestroy() {
-        AbstractClient.removeConnectivityListener(MainActivity.class.getName());
+        AbstractClient.removeConnectivityListener(this);
         if (adapter != null) adapter.activityDestroying(this);
         super.onDestroy();
     }
@@ -1002,6 +1000,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     protected void onStart() {
         super.onStart();
 
+        AbstractClient.addConnectivityListener(this);
+
         if (broadcastReceiver == null) {
             broadcastReceiver = new InternalBroadcastReceiver();
             DownloaderUtils.registerReceiver(this, broadcastReceiver, false);
@@ -1056,7 +1056,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (drawerManager != null) drawerManager.setCurrentProfile(profile.getParent());
 
         List<MultiProfile.UserProfile> profiles = profile.getParent().profiles;
-        if (!(profiles.size() == 1 && profiles.get(0).connectivityCondition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)) {
+        if (!(profiles.size() >= 1 && profiles.get(0).connectivityCondition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)) {
             Toaster.with(this).message(R.string.connectivityChanged).extra(profile.connectivityCondition).show();
         }
     }

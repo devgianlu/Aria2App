@@ -80,6 +80,7 @@ public class HttpClient extends AbstractClient {
         });
     }
 
+    @NonNull
     public static HttpClient instantiate(Context context) throws InitializationException {
         if (instance == null) {
             try {
