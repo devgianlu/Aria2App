@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,10 +50,11 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     private Aria2Helper helper;
 
     @NonNull
-    public static OptionsDialog getDownload(String gid, boolean quick) {
+    public static OptionsDialog getDownload(String gid, boolean quick, @StyleRes int theme) {
         OptionsDialog dialog = new OptionsDialog();
         Bundle args = new Bundle();
         args.putBoolean("global", false);
+        args.putInt("theme", theme);
         args.putBoolean("quick", quick);
         args.putString("gid", gid);
         dialog.setArguments(args);
@@ -65,6 +67,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         Bundle args = new Bundle();
         args.putBoolean("global", true);
         args.putBoolean("quick", quick);
+        args.putInt("theme", R.style.NormalDialog);
         dialog.setArguments(args);
         return dialog;
     }
@@ -72,8 +75,15 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setTitle(R.string.options); // FIXME: Not showing
+        final Dialog dialog;
+        Bundle args = getArguments();
+        int theme;
+        if (args != null && (theme = args.getInt("theme", 0)) != 0)
+            dialog = new Dialog(requireContext(), theme);
+        else
+            dialog = super.onCreateDialog(savedInstanceState);
+
+        dialog.setTitle(R.string.options);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
@@ -168,6 +178,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             @Override
             public void onSuccess() {
                 Toaster.show(getContext(), global ? Utils.Messages.GLOBAL_OPTIONS_CHANGED : Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
+                dismiss();
                 AnalyticsApplication.sendAnalytics(getContext(), global ? Utils.ACTION_CHANGED_GLOBAL_OPTIONS : Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
             }
 
@@ -210,6 +221,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             return;
         }
 
+        dismiss();
         Toaster.show(getContext(), getString(R.string.exportedOptions, file.getAbsolutePath()), Toast.LENGTH_LONG, null, null, null);
     }
 

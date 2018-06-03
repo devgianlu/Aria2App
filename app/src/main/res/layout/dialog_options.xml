@@ -31,8 +31,6 @@
         android:layout_margin="4dp"
         android:orientation="horizontal">
 
-        <!-- FIXME: Buttons color -->
-
         <Button
             android:id="@+id/optionsDialog_cancel"
             style="?android:borderlessButtonStyle"

@@ -159,7 +159,7 @@
                         fab:fab_addButtonColorNormal="@color/colorAccent"
                         fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
                         fab:fab_addButtonPlusIconColor="@android:color/white"
-                        fab:fab_labelStyle="@style/menu_labels_style">
+                        fab:fab_labelStyle="@style/FabLabel">
 
                         <com.getbase.floatingactionbutton.FloatingActionButton
                             android:id="@+id/mainFab_search"

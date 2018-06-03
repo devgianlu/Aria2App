@@ -39,7 +39,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
 
     @Override
     protected int getCustomTheme(@NonNull Server payload) {
-        return R.style.AppTheme_NoActionBar;
+        return R.style.AppTheme_NoActionBar_URI;
     }
 
     @Override

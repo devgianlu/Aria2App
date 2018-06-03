@@ -42,7 +42,8 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
     public static void start(Context context, @NonNull DownloadWithUpdate download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
-                .putExtra("theme", download.update().isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar)
+                .putExtra("theme", download.update().getThemeResource())
+                .putExtra("dialogTheme", download.update().getDialogThemeResource())
                 .putExtra("title", download.update().getName())
                 .putExtra("gid", download.gid));
     }
@@ -185,18 +186,21 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
         String gid = getIntent().getStringExtra("gid");
-        if (gid == null) return false;
+        int theme = getIntent().getIntExtra("dialogTheme", 0);
+        if (gid == null || theme == 0) return false;
 
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             case R.id.moreAboutDownload_options:
-                showDialog(OptionsDialog.getDownload(gid, false));
+                showDialog(OptionsDialog.getDownload(gid, false, theme));
                 return true;
             case R.id.moreAboutDownload_quickOptions:
-                showDialog(OptionsDialog.getDownload(gid, true));
+                showDialog(OptionsDialog.getDownload(gid, true, theme));
                 return true;
         }
 

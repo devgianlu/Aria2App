@@ -7,22 +7,55 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
+    <!-- Normal dialog -->
+    <style name="NormalDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">false</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:buttonStyle">@style/NormalButton</item>
+    </style>
+
+    <style name="NormalButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <!-- Torrent dialog -->
+    <style name="TorrentDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">false</item>
+        <item name="colorAccent">@color/colorTorrent_pressed</item>
+        <item name="android:buttonStyle">@style/TorrentButton</item>
+    </style>
+
+    <style name="TorrentButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/colorTorrent_pressed</item>
+    </style>
+
+    <!-- Fullscreen -->
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@null</item>
     </style>
 
+    <!-- No action bar -->
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
     </style>
 
+    <!-- No action bar with drawer-->
     <style name="AppTheme.NoActionBar.Drawer" parent="AppTheme.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme">
@@ -32,14 +65,6 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="windowActionModeOverlay">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="AppTheme.NoActionBar.Metalink" parent="AppTheme">
@@ -55,7 +80,7 @@
         <item name="android:background">@color/colorPrimary</item>
     </style>
 
-    <style name="menu_labels_style">
+    <style name="FabLabel">
         <item name="android:background">@drawable/fab_label_layout</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
