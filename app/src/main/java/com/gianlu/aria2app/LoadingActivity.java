@@ -143,7 +143,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
                     tryConnecting(profile);
                     return;
                 } catch (IOException | JSONException ex) {
-                    Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
+                    Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
                     return;
                 }
             }
@@ -322,28 +322,24 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
     }
 
     @Override
-    public boolean onConnected(AbstractClient client) {
+    public boolean onConnected(@NonNull AbstractClient client) {
         goTo(MainActivity.class);
         return false;
     }
 
     @Override
-    public void onPingTested(AbstractClient client, long latency) {
+    public void onPingTested(@NonNull AbstractClient client, long latency) {
     }
 
     @Override
-    public void onFailedConnecting(final Throwable ex) {
-        Toaster.show(LoadingActivity.this, Utils.Messages.FAILED_CONNECTING, ex, new Runnable() {
+    public void onFailedConnecting(@NonNull final Throwable ex) {
+        Toaster.with(this).message(R.string.failedConnecting).ex(ex).show();
+        displayPicker(hasShareData());
+        seeError.setVisibility(View.VISIBLE);
+        seeError.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                displayPicker(hasShareData());
-                seeError.setVisibility(View.VISIBLE);
-                seeError.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showErrorDialog(ex);
-                    }
-                });
+            public void onClick(View v) {
+                showErrorDialog(ex);
             }
         });
 

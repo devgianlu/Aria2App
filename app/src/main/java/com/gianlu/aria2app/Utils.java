@@ -21,7 +21,6 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
-import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -121,7 +120,7 @@ public final class Utils {
         return intent.resolveActivity(context.getPackageManager()) != null;
     }
 
-    public static void setupChart(LineChart chart, boolean small, @ColorRes int textColor) {
+    public static void setupChart(@NonNull LineChart chart, boolean small, @ColorRes int textColor) {
         chart.clear();
 
         chart.setDescription(null);
@@ -156,6 +155,7 @@ public final class Utils {
         chart.invalidate();
     }
 
+    @NonNull
     private static LineDataSet initDownloadSet(Context context) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.downloadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -168,6 +168,7 @@ public final class Utils {
         return set;
     }
 
+    @NonNull
     private static LineDataSet initUploadSet(Context context) {
         LineDataSet set = new LineDataSet(null, context.getString(R.string.uploadSpeed));
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -223,6 +224,7 @@ public final class Utils {
         }
     }
 
+    @NonNull
     public static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -233,58 +235,6 @@ public final class Utils {
             first = false;
         }
         return sb.toString();
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public static class Messages {
-        public static final Toaster.Message FAILED_GATHERING_INFORMATION = new Toaster.Message(R.string.failedGatheringInfo, true);
-        public static final Toaster.Message FAILED_DOWNLOAD_FILE = new Toaster.Message(R.string.failedDownloadingFile, true);
-        public static final Toaster.Message DOWNLOAD_ADDED = new Toaster.Message(R.string.downloadAdded, false);
-        public static final Toaster.Message SESSION_SAVED = new Toaster.Message(R.string.sessionSaved, false);
-        public static final Toaster.Message FAILED_SAVE_SESSION = new Toaster.Message(R.string.failedSavingSession, true);
-        public static final Toaster.Message NO_URIS = new Toaster.Message(R.string.atLeastOneUri, false);
-        public static final Toaster.Message FAILED_ADD_DOWNLOAD = new Toaster.Message(R.string.failedAddingDownload, true);
-        public static final Toaster.Message DOWNLOAD_OPTIONS_CHANGED = new Toaster.Message(R.string.downloadOptionsChanged, false);
-        public static final Toaster.Message FAILED_CHANGE_FILE_SELECTION = new Toaster.Message(R.string.failedFileChangeSelection, true);
-        public static final Toaster.Message NO_QUICK_OPTIONS = new Toaster.Message(R.string.noQuickOptions, false);
-        public static final Toaster.Message INVALID_DOWNLOAD_PATH = new Toaster.Message(R.string.invalidDownloadPath, false);
-        public static final Toaster.Message INVALID_FILE = new Toaster.Message(R.string.invalidFile, false);
-        public static final Toaster.Message FAILED_CONNECTING = new Toaster.Message(R.string.failedConnecting, true);
-        public static final Toaster.Message FAILED_LOADING = new Toaster.Message(R.string.failedLoading, true);
-        public static final Toaster.Message CANNOT_SAVE_PROFILE = new Toaster.Message(R.string.cannotSaveProfile, true);
-        public static final Toaster.Message FAILED_PERFORMING_ACTION = new Toaster.Message(R.string.failedAction, true);
-        public static final Toaster.Message PAUSED = new Toaster.Message(R.string.downloadPaused, false);
-        public static final Toaster.Message RESTARTED = new Toaster.Message(R.string.downloadRestarted, false);
-        public static final Toaster.Message RESUMED = new Toaster.Message(R.string.downloadResumed, false);
-        public static final Toaster.Message MOVED = new Toaster.Message(R.string.downloadMoved, false);
-        public static final Toaster.Message REMOVED = new Toaster.Message(R.string.downloadRemoved, false);
-        public static final Toaster.Message RESULT_REMOVED = new Toaster.Message(R.string.downloadResultRemoved, false);
-        public static final Toaster.Message GLOBAL_OPTIONS_CHANGED = new Toaster.Message(R.string.globalOptionsChanged, false);
-        public static final Toaster.Message ONLY_ONE_TORRENT = new Toaster.Message(R.string.onlyOneTorrentUri, false);
-        public static final Toaster.Message NO_FILE_MANAGER = new Toaster.Message(R.string.noFilemanager, true);
-        public static final Toaster.Message FILES_DESELECTED = new Toaster.Message(R.string.fileDeselected, false);
-        public static final Toaster.Message FILES_SELECTED = new Toaster.Message(R.string.fileSelected, false);
-        public static final Toaster.Message DIR_DESELECTED = new Toaster.Message(R.string.dirFilesDeselected, false);
-        public static final Toaster.Message DIR_SELECTED = new Toaster.Message(R.string.dirFilesSelected, false);
-        public static final Toaster.Message CANT_DESELECT_ALL_FILES = new Toaster.Message(R.string.cannotDeselectAllFiles, false);
-        public static final Toaster.Message FAILED_DOWNLOAD_DIR = new Toaster.Message(R.string.failedDownloadingDir, true);
-        public static final Toaster.Message DUPLICATED_CONDITION = new Toaster.Message(R.string.duplicatedCondition, false);
-        public static final Toaster.Message HAS_ALWAYS_CONDITION = new Toaster.Message(R.string.hasAlwaysCondition, false);
-        public static final Toaster.Message CANNOT_ADD_ALWAYS = new Toaster.Message(R.string.cannotAddAlwaysCondition, false);
-        public static final Toaster.Message FAILED_CHANGE_OPTIONS = new Toaster.Message(R.string.failedChangingOptions, true);
-        public static final Toaster.Message CONNECTIVITY_CHANGED = new Toaster.Message(R.string.connectivityChanged, false);
-        public static final Toaster.Message NO_ENGINES_SELECTED = new Toaster.Message(R.string.noEnginesSelected, false);
-        public static final Toaster.Message INVALID_MAX_SIMULTANEOUS_DOWNLOADS = new Toaster.Message(R.string.invalidMaxSimultaneousDownloads, false);
-        public static final Toaster.Message FAILED_OPENING_DOWNLOAD = new Toaster.Message(R.string.failedOpeningDownload, true);
-        public static final Toaster.Message DD_NOT_ENABLED = new Toaster.Message(R.string.ddNotEnabled, false);
-        public static final Toaster.Message PROFILE_DOES_NOT_EXIST = new Toaster.Message(R.string.profileDoesntExist, false);
-        public static final Toaster.Message FAILED_LOADING_CERTIFICATE = new Toaster.Message(R.string.invalidCertificate, true);
-        public static final Toaster.Message PAUSED_ALL = new Toaster.Message(R.string.pausedAll, false);
-        public static final Toaster.Message RESUMED_ALL = new Toaster.Message(R.string.resumedAll, false);
-        public static final Toaster.Message PURGED_DOWNLOAD_RESULT = new Toaster.Message(R.string.purgedDownloadResult, false);
-        public static final Toaster.Message EXPORT_OPTIONS_GRANT_WRITE = new Toaster.Message(R.string.exportOptionsGrantWrite, false);
-        public static final Toaster.Message FAILED_EXPORTING_OPTIONS = new Toaster.Message(R.string.failedExportingOptions, true);
-        public static final Toaster.Message FAILED_STREAM_VIDEO = new Toaster.Message(R.string.failedStreamVideo, true);
     }
 
     private static class CustomYAxisValueFormatter implements IAxisValueFormatter {

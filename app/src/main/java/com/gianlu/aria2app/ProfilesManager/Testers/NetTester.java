@@ -32,13 +32,13 @@ public class NetTester extends BaseTester<AbstractClient> {
 
         OnConnect listener = new OnConnect() {
             @Override
-            public boolean onConnected(AbstractClient client) {
+            public boolean onConnected(@NonNull AbstractClient client) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.ONLINE, -1));
                 return true;
             }
 
             @Override
-            public void onPingTested(AbstractClient client, long latency) {
+            public void onPingTested(@NonNull AbstractClient client, long latency) {
                 publishPing(profile, latency);
                 synchronized (lock) {
                     lock.set(client);
@@ -47,7 +47,7 @@ public class NetTester extends BaseTester<AbstractClient> {
             }
 
             @Override
-            public void onFailedConnecting(Throwable ex) {
+            public void onFailedConnecting(@NonNull Throwable ex) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, ex));
                 synchronized (lock) {
                     lock.set(null);

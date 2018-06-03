@@ -114,22 +114,18 @@ public class AddTorrentActivity extends ActivityWithDialog {
                 @Override
                 public void onResult(@NonNull String result) {
                     dismissDialog();
-                    Toaster.show(AddTorrentActivity.this, Utils.Messages.DOWNLOAD_ADDED, result, new Runnable() {
-                        @Override
-                        public void run() {
-                            onBackPressed();
-                        }
-                    });
+                    Toaster.with(AddTorrentActivity.this).message(R.string.downloadAdded).extra(result).show();
+                    onBackPressed();
                 }
 
                 @Override
                 public void onException(Exception ex, boolean shouldForce) {
                     dismissDialog();
-                    Toaster.show(AddTorrentActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                    Toaster.with(AddTorrentActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
                 }
             });
         } catch (Aria2Helper.InitializingException | JSONException ex) {
-            Toaster.show(this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+            Toaster.with(this).message(R.string.failedAddingDownload).ex(ex).show();
         }
 
         AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);

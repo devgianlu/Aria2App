@@ -223,7 +223,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
     private void createNewCondition(final boolean compulsory) {
         if (hasAlwaysCondition()) {
-            Toaster.show(this, Utils.Messages.HAS_ALWAYS_CONDITION);
+            Toaster.with(this).message(R.string.hasAlwaysCondition).show();
             return;
         }
 
@@ -309,12 +309,12 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                         }
 
                         if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
-                            Toaster.show(EditProfileActivity.this, Utils.Messages.CANNOT_ADD_ALWAYS);
+                            Toaster.with(EditProfileActivity.this).message(R.string.cannotAddAlwaysCondition).show();
                             return;
                         }
 
                         if (conditions.contains(condition)) {
-                            Toaster.show(EditProfileActivity.this, Utils.Messages.DUPLICATED_CONDITION);
+                            Toaster.with(EditProfileActivity.this).message(R.string.duplicatedCondition).show();
                             return;
                         }
 
@@ -363,7 +363,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         try {
             MultiProfile profile = buildProfile();
             if (profile == null) {
-                Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE);
+                Toaster.with(this).message(R.string.cannotSaveProfile).ex(new NullPointerException("profile is null!")).show();
                 return;
             }
 
@@ -375,7 +375,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
         } catch (JSONException | IOException ex) {
-            Toaster.show(this, Utils.Messages.CANNOT_SAVE_PROFILE, ex);
+            Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
         }
 
         AnalyticsApplication.sendAnalytics(this, Utils.ACTION_NEW_PROFILE);

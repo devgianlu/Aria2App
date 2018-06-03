@@ -1,7 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.os.Environment;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
@@ -80,7 +79,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onFatal(Throwable ex) {
         WebSocketClient.clear();
         HttpClient.clear();
-        Toaster.show(this, getString(R.string.fatalExceptionMessage), Toast.LENGTH_LONG, null, ex, null);
+        Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
         LoadingActivity.startActivity(this, ex);
 
         Crashlytics.logException(ex);

@@ -3,6 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -102,7 +103,7 @@ public class WebSocketClient extends AbstractClient {
 
         send(request, new OnJson() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(@NonNull JSONObject response) {
                 synchronized (lock) {
                     lock.set(response);
                     lock.notifyAll();
@@ -110,7 +111,7 @@ public class WebSocketClient extends AbstractClient {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 synchronized (lock) {
                     lock.set(ex);
                     lock.notifyAll();
@@ -137,6 +138,7 @@ public class WebSocketClient extends AbstractClient {
         instance = new WebSocketClient(context, profile, null);
     }
 
+    @WorkerThread
     private class Listener extends WebSocketListener {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
@@ -165,19 +167,29 @@ public class WebSocketClient extends AbstractClient {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             if (connectionListener != null) {
-                if (connectionListener.onConnected(WebSocketClient.this)) {
-                    connectionListener.onPingTested(WebSocketClient.this, System.currentTimeMillis() - initializedAt);
-                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (connectionListener.onConnected(WebSocketClient.this)) {
+                            connectionListener.onPingTested(WebSocketClient.this, System.currentTimeMillis() - initializedAt);
+                        }
 
-                connectionListener = null;
+                        connectionListener = null;
+                    }
+                });
             }
         }
 
         @Override
-        public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
+        public void onFailure(WebSocket webSocket, final Throwable throwable, Response response) {
             if (connectionListener != null) {
-                connectionListener.onFailedConnecting(throwable);
-                connectionListener = null;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionListener.onFailedConnecting(throwable);
+                        connectionListener = null;
+                    }
+                });
             }
         }
     }

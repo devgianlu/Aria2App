@@ -13,7 +13,6 @@ import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.ArrayList;
@@ -158,61 +157,61 @@ public class Aria2Helper {
 
         @Override
         public void onSuccess() {
-            Toaster.Message msg;
+            Toaster toaster = Toaster.build();
+            toaster.extra(download.gid);
             switch (what) {
                 case RESTART:
-                    msg = Utils.Messages.RESTARTED;
+                    toaster.message(R.string.downloadRestarted);
                     break;
                 case RESUME:
-                    msg = Utils.Messages.RESUMED;
+                    toaster.message(R.string.downloadResumed);
                     break;
                 case PAUSE:
-                    msg = Utils.Messages.PAUSED;
+                    toaster.message(R.string.downloadPaused);
                     break;
                 case MOVE_DOWN:
                 case MOVE_UP:
-                    msg = Utils.Messages.MOVED;
+                    toaster.message(R.string.downloadMoved);
                     break;
                 case STOP: // Not called here
                 case REMOVE: // Not called here
                 default:
-                    msg = Utils.Messages.FAILED_PERFORMING_ACTION;
+                    toaster.message(R.string.failedAction).error(true);
                     break;
             }
 
-            listener.showToast(msg, download.gid);
+            listener.showToast(toaster);
         }
 
         @Override
         public void onResult(@NonNull Download.RemoveResult result) {
-            Toaster.Message msg;
+            Toaster toaster = Toaster.build();
+            toaster.extra(download.gid);
             switch (result) {
                 case REMOVED:
-                    msg = Utils.Messages.REMOVED;
+                    toaster.message(R.string.downloadRemoved);
                     break;
                 case REMOVED_RESULT:
                 case REMOVED_RESULT_AND_METADATA:
-                    msg = Utils.Messages.RESULT_REMOVED;
+                    toaster.message(R.string.downloadResultRemoved);
                     break;
                 default:
-                    msg = Utils.Messages.FAILED_PERFORMING_ACTION;
+                    toaster.message(R.string.failedAction).error(true);
                     break;
             }
 
-            listener.showToast(msg, download.gid);
+            listener.showToast(toaster);
         }
 
         @Override
         public void onException(Exception ex, boolean shouldForce) {
-            listener.showToast(Utils.Messages.FAILED_PERFORMING_ACTION, ex);
+            listener.showToast(Toaster.build().message(R.string.failedAction).ex(ex));
         }
 
         public interface Listener {
-            void showDialog(AlertDialog.Builder builder);
+            void showDialog(@NonNull AlertDialog.Builder builder);
 
-            void showToast(Toaster.Message msg, Exception ex);
-
-            void showToast(Toaster.Message msg, String extra);
+            void showToast(@NonNull Toaster toaster);
         }
     }
 

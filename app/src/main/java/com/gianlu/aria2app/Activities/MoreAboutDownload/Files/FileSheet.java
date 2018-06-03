@@ -22,9 +22,9 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.FontsManager;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
@@ -95,32 +95,33 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                     download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                         @Override
                         public void onResult(@NonNull Download.ChangeSelectionResult result) {
-                            Toaster.Message msg;
+                            Toaster toaster = Toaster.build();
+                            toaster.extra(result);
                             switch (result) {
                                 case EMPTY:
-                                    msg = Utils.Messages.CANT_DESELECT_ALL_FILES;
+                                    toaster.message(R.string.cannotDeselectAllFiles);
                                     break;
                                 case SELECTED:
                                     file.selected = true;
-                                    msg = Utils.Messages.FILES_SELECTED;
+                                    toaster.message(R.string.fileSelected);
                                     break;
                                 case DESELECTED:
                                     file.selected = false;
-                                    msg = Utils.Messages.FILES_DESELECTED;
+                                    toaster.message(R.string.fileDeselected);
                                     break;
                                 default:
-                                    msg = Utils.Messages.FAILED_LOADING;
+                                    toaster.message(R.string.failedAction);
                                     break;
                             }
 
                             dismiss();
-                            Toaster.show(getActivity(), msg, result.toString());
+                            DialogUtils.showToast(getContext(), toaster);
                         }
 
                         @Override
                         public void onException(Exception ex, boolean shouldForce) {
                             dismiss();
-                            Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
+                            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
                         }
                     });
                 }

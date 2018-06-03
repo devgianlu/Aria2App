@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -24,6 +23,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-public class Base64Fragment extends Fragment {
+public class Base64Fragment extends FragmentWithDialog {
     private final int FILE_SELECT_CODE = 7;
     private TextView path;
     private Uri data;
@@ -61,7 +61,7 @@ public class Base64Fragment extends Fragment {
         try {
             startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
         } catch (android.content.ActivityNotFoundException ex) {
-            Toaster.show(getContext(), Utils.Messages.NO_FILE_MANAGER, ex);
+            showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
             return;
         }
 
@@ -152,7 +152,7 @@ public class Base64Fragment extends Fragment {
             return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
         } catch (IOException | SecurityException | OutOfMemoryError ex) {
             System.gc();
-            Toaster.show(getContext(), Utils.Messages.INVALID_FILE, ex);
+            showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
             return null;
         }
     }

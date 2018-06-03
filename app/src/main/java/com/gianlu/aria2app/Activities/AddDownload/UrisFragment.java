@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.Toaster;
@@ -63,7 +62,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
                     public void onClick(DialogInterface dialog, int which) {
                         if (uri.getText().toString().trim().startsWith("magnet:")) {
                             if (!adapter.getUris().isEmpty()) {
-                                Toaster.show(getContext(), Utils.Messages.ONLY_ONE_TORRENT);
+                                showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
                                 return;
                             }
                         }
@@ -90,7 +89,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
             @Override
             public void onClick(View v) {
                 if (adapter.canAddUri()) showAddUriDialog(-1, null);
-                else Toaster.show(getContext(), Utils.Messages.ONLY_ONE_TORRENT);
+                else showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
             }
         });
 

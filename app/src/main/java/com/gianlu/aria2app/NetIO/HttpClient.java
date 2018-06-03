@@ -3,6 +3,7 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -49,16 +50,31 @@ public class HttpClient extends AbstractClient {
 
         executorService.submit(new Runnable() {
             @Override
+            @WorkerThread
             public void run() {
                 try (Socket socket = new Socket()) {
-                    long initializedAt = System.currentTimeMillis();
+                    final long initializedAt = System.currentTimeMillis();
                     socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
-                    if (connectionListener != null)
-                        if (connectionListener.onConnected(HttpClient.this))
-                            connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
-                } catch (IOException ex) {
-                    if (connectionListener != null) connectionListener.onFailedConnecting(ex);
-                    else Logging.log(ex);
+                    if (connectionListener != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (connectionListener.onConnected(HttpClient.this))
+                                    connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
+                            }
+                        });
+                    }
+                } catch (final IOException ex) {
+                    if (connectionListener != null) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                connectionListener.onFailedConnecting(ex);
+                            }
+                        });
+                    } else {
+                        Logging.log(ex);
+                    }
                 }
             }
         });
@@ -146,6 +162,7 @@ public class HttpClient extends AbstractClient {
         }
 
         @Override
+        @WorkerThread
         public void run() {
             try {
                 listener.onSandboxReturned(sandbox.sandbox(HttpClient.this, shouldForce));
@@ -165,6 +182,7 @@ public class HttpClient extends AbstractClient {
         }
 
         @Override
+        @WorkerThread
         public void run() {
             try {
                 listener.onResponse(sendSync(request));

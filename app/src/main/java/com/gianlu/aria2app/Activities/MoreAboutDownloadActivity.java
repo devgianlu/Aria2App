@@ -30,7 +30,6 @@ import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
@@ -76,7 +75,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
         String title = getIntent().getStringExtra("title");
         if (gid == null || theme == 0 || title == null) {
             super.onCreate(savedInstanceState);
-            Toaster.show(this, Utils.Messages.FAILED_LOADING, new IllegalArgumentException("gid = " + gid + ", theme = " + theme + ", title = " + title));
+            Toaster.with(MoreAboutDownloadActivity.this).message(R.string.failedLoading).ex(new IllegalArgumentException("gid = " + gid + ", theme = " + theme + ", title = " + title)).show();
             onBackPressed();
             return;
         }
@@ -107,7 +106,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
             @Override
             public boolean onCouldntLoad(@NonNull Exception ex) {
-                Toaster.show(MoreAboutDownloadActivity.this, Utils.Messages.FAILED_LOADING, ex);
+                Toaster.with(MoreAboutDownloadActivity.this).message(R.string.failedLoading).ex(ex).show();
                 onBackPressed();
                 return false;
             }

@@ -86,7 +86,7 @@ public class AddUriActivity extends ActivityWithDialog {
     private void done() {
         List<String> uris = urisFragment.getUris();
         if (uris == null || uris.isEmpty()) {
-            Toaster.show(this, Utils.Messages.NO_URIS);
+            Toaster.with(this).message(R.string.noUris).show();
             pager.setCurrentItem(0, true);
             return;
         }
@@ -103,22 +103,18 @@ public class AddUriActivity extends ActivityWithDialog {
                 @Override
                 public void onResult(@NonNull String result) {
                     dismissDialog();
-                    Toaster.show(AddUriActivity.this, Utils.Messages.DOWNLOAD_ADDED, result, new Runnable() {
-                        @Override
-                        public void run() {
-                            onBackPressed();
-                        }
-                    });
+                    Toaster.with(AddUriActivity.this).message(R.string.downloadAdded).extra(result).show();
+                    onBackPressed();
                 }
 
                 @Override
                 public void onException(Exception ex, boolean shouldForce) {
                     dismissDialog();
-                    Toaster.show(AddUriActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                    Toaster.with(AddUriActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
                 }
             });
         } catch (Aria2Helper.InitializingException | JSONException ex) {
-            Toaster.show(this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+            Toaster.with(this).message(R.string.failedAddingDownload).ex(ex).show();
         }
 
         AnalyticsApplication.sendAnalytics(AddUriActivity.this, Utils.ACTION_NEW_URI);

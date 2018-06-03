@@ -52,6 +52,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
@@ -183,24 +184,30 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         download.changeSelection(AriaFile.allIndexes(files), select, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
             @Override
             public void onResult(@NonNull Download.ChangeSelectionResult result) {
+                Toaster toaster = Toaster.build();
+                toaster.extra(result);
                 switch (result) {
                     case EMPTY:
-                        Toaster.show(getActivity(), Utils.Messages.CANT_DESELECT_ALL_FILES);
+                        toaster.message(R.string.cannotDeselectAllFiles);
                         break;
                     case SELECTED:
-                        Toaster.show(getActivity(), Utils.Messages.FILES_SELECTED);
+                        toaster.message(R.string.fileSelected);
                         break;
                     case DESELECTED:
-                        Toaster.show(getActivity(), Utils.Messages.FILES_DESELECTED);
+                        toaster.message(R.string.fileDeselected);
+                        break;
+                    default:
+                        toaster.message(R.string.failedAction);
                         break;
                 }
 
+                DialogUtils.showToast(getContext(), toaster);
                 exitActionMode();
             }
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                Toaster.show(getActivity(), Utils.Messages.FAILED_CHANGE_FILE_SELECTION, ex);
+                showToast(Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
             }
         });
     }
@@ -308,7 +315,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                             DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) :
                             DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
         } catch (DownloaderUtils.InvalidPathException | DownloadStartConfig.CannotCreateStartConfigException ex) {
-            Toaster.show(getActivity(), Utils.Messages.FAILED_DOWNLOAD_DIR, ex);
+            showToast(Toaster.build().message(R.string.failedDownloadingDir).ex(ex));
             return;
         }
 

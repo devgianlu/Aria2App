@@ -20,7 +20,6 @@ import com.gianlu.aria2app.Downloader.DownloadTask;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.GeneralFileProvider;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
@@ -173,17 +172,17 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                             if (ex instanceof DownloadStartConfig.CannotCreateStartConfigException)
                                 ((DownloadStartConfig.CannotCreateStartConfigException) ex).showAppropriateToast(DirectDownloadActivity.this);
                             else
-                                Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_DOWNLOAD_FILE, ex);
+                                Toaster.with(DirectDownloadActivity.this).message(R.string.failedDownloadingFile).ex(ex).show();
                             break;
                         case DownloaderUtils.ACTION_GET_DOWNLOAD:
                             DownloadTask task = (DownloadTask) intent.getSerializableExtra("task");
                             if (task == null) {
-                                Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD);
+                                Toaster.with(DirectDownloadActivity.this).message(R.string.failedOpeningDownload).ex(new NullPointerException("task is null!")).show();
                             } else {
                                 try {
                                     startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
                                 } catch (ActivityNotFoundException exx) {
-                                    Toaster.show(DirectDownloadActivity.this, Utils.Messages.FAILED_OPENING_DOWNLOAD, exx);
+                                    Toaster.with(DirectDownloadActivity.this).message(R.string.failedOpeningDownload).ex(exx).show();
                                 }
                             }
                             break;

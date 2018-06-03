@@ -9,7 +9,7 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
@@ -133,25 +133,32 @@ public class DownloadStartConfig {
             this.cause = cause;
         }
 
-        public void showAppropriateToast(Context context) {
+        public void showAppropriateToast(@NonNull Context context) {
+            Toaster toaster = Toaster.with(context);
+            toaster.ex(this);
+
             switch (cause) {
                 default:
+                case INVALID_URL:
                 case INTERNAL:
-                    Toaster.show(context, Utils.Messages.FAILED_DOWNLOAD_FILE, this);
+                    toaster.message(R.string.failedDownloadingFile);
                     break;
                 case DD_NOT_ENABLED:
-                    Toaster.show(context, Utils.Messages.DD_NOT_ENABLED, this);
+                    toaster.message(R.string.ddNotEnabled);
                     break;
                 case PROFILE_DOES_NOT_EXIST:
-                    Toaster.show(context, Utils.Messages.PROFILE_DOES_NOT_EXIST, this);
+                    toaster.message(R.string.profileDoesntExist);
                     break;
             }
+
+            toaster.show();
         }
 
         public enum Cause {
             INTERNAL,
             DD_NOT_ENABLED,
-            INVALID_URL, PROFILE_DOES_NOT_EXIST
+            INVALID_URL,
+            PROFILE_DOES_NOT_EXIST
         }
     }
 

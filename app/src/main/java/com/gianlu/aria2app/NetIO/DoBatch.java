@@ -1,7 +1,12 @@
 package com.gianlu.aria2app.NetIO;
 
-public interface DoBatch<R> {
-    void onSandboxReturned(R result);
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
-    void onException(Exception ex);
+public interface DoBatch<R> {
+    @WorkerThread
+    void onSandboxReturned(@NonNull R result);
+
+    @WorkerThread
+    void onException(@NonNull Exception ex);
 }

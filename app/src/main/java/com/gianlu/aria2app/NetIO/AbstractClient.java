@@ -9,6 +9,8 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.PKeys;
@@ -39,7 +41,7 @@ public abstract class AbstractClient implements Closeable {
     private static final WeakHashMap<String, OnConnectivityChanged> listeners = new WeakHashMap<>();
     protected final OkHttpClient client;
     protected final boolean shouldForce;
-    private final Handler handler;
+    protected final Handler handler;
     private final WifiManager wifiManager;
     private final WeakReference<Context> context;
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
@@ -94,7 +96,7 @@ public abstract class AbstractClient implements Closeable {
         try {
             send(request.build(this), new OnJson() {
                 @Override
-                public void onResponse(JSONObject response) throws JSONException {
+                public void onResponse(@NonNull JSONObject response) throws JSONException {
                     final R result = request.processor.process(AbstractClient.this, response);
                     handler.post(new Runnable() {
                         @Override
@@ -105,7 +107,7 @@ public abstract class AbstractClient implements Closeable {
                 }
 
                 @Override
-                public void onException(final Exception ex) {
+                public void onException(@NonNull final Exception ex) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -137,7 +139,7 @@ public abstract class AbstractClient implements Closeable {
         try {
             send(request.build(this), new OnJson() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onResponse(@NonNull JSONObject response) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -147,7 +149,7 @@ public abstract class AbstractClient implements Closeable {
                 }
 
                 @Override
-                public void onException(final Exception ex) {
+                public void onException(@NonNull final Exception ex) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -178,7 +180,7 @@ public abstract class AbstractClient implements Closeable {
     public final <R> void batch(BatchSandbox<R> sandbox, final OnResult<R> listener) {
         batch(sandbox, new DoBatch<R>() {
             @Override
-            public void onSandboxReturned(final R result) {
+            public void onSandboxReturned(@NonNull final R result) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -188,7 +190,7 @@ public abstract class AbstractClient implements Closeable {
             }
 
             @Override
-            public void onException(final Exception ex) {
+            public void onException(@NonNull final Exception ex) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -256,28 +258,35 @@ public abstract class AbstractClient implements Closeable {
     }
 
     public interface BatchSandbox<R> {
+        @WorkerThread
         R sandbox(AbstractClient client, boolean shouldForce) throws Exception;
     }
 
     public interface OnResult<R> {
+        @UiThread
         void onResult(@NonNull R result);
 
+        @UiThread
         void onException(Exception ex, boolean shouldForce);
     }
 
     public interface OnSuccess {
+        @UiThread
         void onSuccess();
 
+        @UiThread
         void onException(Exception ex, boolean shouldForce);
     }
 
     public interface OnConnectivityChanged {
+        @UiThread
         void connectivityChanged(@NonNull MultiProfile.UserProfile profile);
     }
 
     public abstract static class Processor<R> {
 
         @NonNull
+        @WorkerThread
         public abstract R process(AbstractClient client, JSONObject obj) throws JSONException;
     }
 

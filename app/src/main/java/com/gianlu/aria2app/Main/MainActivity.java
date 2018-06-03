@@ -116,7 +116,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, HideSecondSpace, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.IAdapter, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, HideSecondSpace, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile> drawerManager;
@@ -196,12 +196,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                                 helper.request(AriaRequests.saveSession(), new AbstractClient.OnSuccess() {
                                     @Override
                                     public void onSuccess() {
-                                        Toaster.show(MainActivity.this, Utils.Messages.SESSION_SAVED);
+                                        Toaster.with(MainActivity.this).message(R.string.sessionSaved).show();
                                     }
 
                                     @Override
                                     public void onException(Exception ex, boolean shouldForce) {
-                                        Toaster.show(MainActivity.this, Utils.Messages.FAILED_SAVE_SESSION, ex);
+                                        Toaster.with(MainActivity.this).message(R.string.failedSavingSession).ex(ex).show();
                                     }
                                 });
                             }
@@ -211,7 +211,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                Toaster.show(MainActivity.this, Utils.Messages.FAILED_GATHERING_INFORMATION, ex);
+                Toaster.with(MainActivity.this).message(R.string.failedGatheringInfo).ex(ex).show();
                 dismissDialog();
             }
         });
@@ -240,11 +240,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                     mimeType = cursor.getString(0);
                 } else {
-                    Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cursor is empty: " + uri));
+                    Toaster.with(this).message(R.string.invalidFile).ex(new Exception("Cursor is empty: " + uri)).show();
                     return;
                 }
             } catch (RuntimeException ex) {
-                Toaster.show(this, Utils.Messages.INVALID_FILE, ex);
+                Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
                 return;
             }
         }
@@ -255,10 +255,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
                 AddMetalinkActivity.startAndAdd(this, uri);
             } else {
-                Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("File type not supported: " + mimeType));
+                Toaster.with(this).message(R.string.invalidFile).ex(new Exception("File type not supported: " + mimeType)).show();
             }
         } else {
-            Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot determine file type: " + uri));
+            Toaster.with(this).message(R.string.invalidFile).ex(new Exception("Cannot determine file type: " + uri)).show();
         }
     }
 
@@ -586,7 +586,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         try {
             uri = new URI(shareData.toString());
         } catch (URISyntaxException ex) {
-            Toaster.show(this, Utils.Messages.INVALID_FILE, new Exception("Cannot identify shared file/url: " + shareData, ex));
+            Toaster.with(this).message(R.string.invalidFile).ex(new Exception("Cannot identify shared file/url: " + shareData, ex)).show();
             return;
         }
 
@@ -800,13 +800,13 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onSuccess() {
-                Toaster.show(MainActivity.this, Utils.Messages.PAUSED_ALL);
+                Toaster.with(MainActivity.this).message(R.string.pausedAll).show();
             }
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
                 if (!retried && shouldForce) helper.request(AriaRequests.forcePauseAll(), this);
-                else Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
+                else Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
                 retried = true;
             }
         });
@@ -816,12 +816,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         helper.request(AriaRequests.unpauseAll(), new AbstractClient.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toaster.show(MainActivity.this, Utils.Messages.RESUMED_ALL);
+                Toaster.with(MainActivity.this).message(R.string.resumedAll).show();
             }
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
+                Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
     }
@@ -830,12 +830,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         helper.request(AriaRequests.purgeDownloadResults(), new AbstractClient.OnSuccess() {
             @Override
             public void onSuccess() {
-                Toaster.show(MainActivity.this, Utils.Messages.PURGED_DOWNLOAD_RESULT);
+                Toaster.with(MainActivity.this).message(R.string.purgedDownloadResult).show();
             }
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                Toaster.show(MainActivity.this, Utils.Messages.FAILED_PERFORMING_ACTION, ex);
+                Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
     }
@@ -1024,16 +1024,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void showToast(Toaster.Message msg, Exception ex) {
-        Toaster.show(this, msg, ex);
-    }
-
-    @Override
-    public void showToast(Toaster.Message msg, String extra) {
-        Toaster.show(this, msg, extra);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         if (adapter != null) adapter.filterWithQuery(query);
         return true;
@@ -1062,19 +1052,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public void connectivityChanged(@NonNull final MultiProfile.UserProfile profile) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (drawerManager != null)
-                    drawerManager.setCurrentProfile(profile.getParent());
-            }
-        });
+        if (drawerManager != null) drawerManager.setCurrentProfile(profile.getParent());
 
         List<MultiProfile.UserProfile> profiles = profile.getParent().profiles;
         if (!(profiles.size() == 1 && profiles.get(0).connectivityCondition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)) {
-            Toaster.show(this, Utils.Messages.CONNECTIVITY_CHANGED, profile.connectivityCondition.toString());
+            Toaster.with(this).message(R.string.connectivityChanged).extra(profile.connectivityCondition).show();
         }
     }
 
@@ -1093,7 +1076,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void refreshed() {
-        adapter = new DownloadCardsAdapter(MainActivity.this, new ArrayList<DownloadWithUpdate>(), MainActivity.this);
+        adapter = new DownloadCardsAdapter(this, new ArrayList<DownloadWithUpdate>(), this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
@@ -1106,13 +1089,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             switch (intent.getAction()) {
                 case DownloaderUtils.ACTION_COUNT_CHANGED:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (drawerManager != null)
-                                drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
-                        }
-                    });
+                    if (drawerManager != null)
+                        drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
                     break;
             }
         }

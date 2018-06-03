@@ -16,7 +16,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -84,7 +83,11 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         else
             dialog = super.onCreateDialog(savedInstanceState);
 
-        dialog.setTitle(R.string.options);
+        if (args != null && args.getBoolean("global", false))
+            dialog.setTitle(R.string.globalOptions);
+        else
+            dialog.setTitle(R.string.downloadOptions);
+
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
@@ -146,7 +149,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         try {
             helper = Aria2Helper.instantiate(requireContext());
         } catch (Aria2Helper.InitializingException ex) {
-            Toaster.show(getContext(), Utils.Messages.FAILED_LOADING, ex);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
             dismiss();
             return null;
         }
@@ -170,7 +173,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             if (global) req = AriaRequests.changeGlobalOptions(map);
             else req = AriaRequests.changeDownloadOptions(gid, map);
         } catch (JSONException ex) {
-            Toaster.show(getContext(), Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions).ex(ex));
             return;
         }
 
@@ -182,7 +185,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             @Override
             public void onSuccess() {
                 pd.dismiss();
-                Toaster.show(getContext(), global ? Utils.Messages.GLOBAL_OPTIONS_CHANGED : Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
+                DialogUtils.showToast(getContext(), Toaster.build().message(global ? R.string.globalOptionsChanged : R.string.downloadOptionsChanged));
                 dismiss();
                 AnalyticsApplication.sendAnalytics(getContext(), global ? Utils.ACTION_CHANGED_GLOBAL_OPTIONS : Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
             }
@@ -190,7 +193,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             @Override
             public void onException(Exception ex, boolean shouldForce) {
                 pd.dismiss();
-                Toaster.show(getContext(), Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions).ex(ex));
             }
         });
     }
@@ -211,7 +214,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         }
 
         if (!Utils.requestWritePermission(getActivity(), 3)) {
-            Toaster.show(getContext(), Utils.Messages.EXPORT_OPTIONS_GRANT_WRITE);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.exportOptionsGrantWrite));
             return;
         }
 
@@ -223,12 +226,12 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             writer.append(builder.toString());
             writer.flush();
         } catch (IOException ex) {
-            Toaster.show(getContext(), Utils.Messages.FAILED_EXPORTING_OPTIONS, ex);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedExportingOptions).ex(ex));
             return;
         }
 
         dismiss();
-        Toaster.show(getContext(), getString(R.string.exportedOptions, file.getAbsolutePath()), Toast.LENGTH_LONG, null, null, null);
+        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.exportedOptions, file.getAbsolutePath()));
     }
 
     @Override
@@ -247,7 +250,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
     @Override
     public void onException(Exception ex, boolean shouldForce) {
-        Toaster.show(getContext(), Utils.Messages.FAILED_LOADING, ex);
+        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
         dismiss();
     }
 

@@ -78,12 +78,12 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     File path = new File(((String) o).trim());
                     if (!path.exists() || !path.isDirectory()) {
-                        Toaster.show(getActivity(), Utils.Messages.INVALID_DOWNLOAD_PATH, (String) o);
+                        Toaster.with(getActivity()).message(R.string.invalidDownloadPath).extra(o).show();
                         return false;
                     }
 
                     if (!path.canWrite()) {
-                        Toaster.show(getActivity(), Utils.Messages.INVALID_DOWNLOAD_PATH, (String) o);
+                        Toaster.with(getActivity()).message(R.string.invalidDownloadPath).extra(o).show();
                         return false;
                     }
 
@@ -96,7 +96,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Integer val = Integer.parseInt((String) newValue);
                     if (val > 10 || val <= 0) {
-                        Toaster.show(getActivity(), Utils.Messages.INVALID_MAX_SIMULTANEOUS_DOWNLOADS, String.valueOf(val));
+                        Toaster.with(getActivity()).message(R.string.invalidMaxSimultaneousDownloads).extra(val).show();
                         return false;
                     }
 

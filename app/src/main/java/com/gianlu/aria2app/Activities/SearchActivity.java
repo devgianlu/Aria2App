@@ -118,7 +118,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                             if (checkedEngines[i]) set.add(engines.get(i).id);
 
                         if (set.isEmpty()) {
-                            Toaster.show(SearchActivity.this, Utils.Messages.NO_ENGINES_SELECTED);
+                            Toaster.with(SearchActivity.this).message(R.string.noEnginesSelected).show();
                         } else {
                             Prefs.putSet(SearchActivity.this, PKeys.A2_SEARCH_ENGINES, set);
                             if (query != null) onQueryTextSubmit(query);
@@ -206,7 +206,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                     @Override
                     public void onException(Exception ex) {
                         dismissDialog();
-                        Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
+                        Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
                     }
                 });
                 return true;
@@ -228,7 +228,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
             @Override
             public void onException(Exception ex) {
                 dismissDialog();
-                Toaster.show(SearchActivity.this, Utils.Messages.FAILED_LOADING, ex);
+                Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
             }
         });
     }
@@ -322,11 +322,12 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
                                         @Override
                                         public void onException(Exception ex, boolean shouldForce) {
-                                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                                            Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
                                         }
                                     });
                         } catch (Aria2Helper.InitializingException | JSONException ex) {
-                            Toaster.show(SearchActivity.this, Utils.Messages.FAILED_ADD_DOWNLOAD, ex);
+                            Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                            return;
                         }
 
                         AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_DOWNLOAD);

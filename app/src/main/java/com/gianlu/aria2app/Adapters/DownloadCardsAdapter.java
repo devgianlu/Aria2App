@@ -50,13 +50,13 @@ import java.util.Objects;
 
 public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, DownloadWithUpdate, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection, Aria2Helper.DownloadActionClick.Listener {
     private final Context context;
-    private final IAdapter listener;
+    private final Listener listener;
     private final LayoutInflater inflater;
     private final LocalReceiver receiver;
     private final LocalBroadcastManager broadcastManager;
     private Messenger notificationMessenger;
 
-    public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, IAdapter listener) {
+    public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, Listener listener) {
         super(objs, SortBy.STATUS);
         this.context = context;
         this.listener = listener;
@@ -248,18 +248,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
-    public void showDialog(AlertDialog.Builder builder) {
+    public void showDialog(@NonNull AlertDialog.Builder builder) {
         listener.showDialog(builder);
     }
 
     @Override
-    public void showToast(Toaster.Message msg, Exception ex) {
-        listener.showToast(msg, ex);
-    }
-
-    @Override
-    public void showToast(Toaster.Message msg, String extra) {
-        listener.showToast(msg, extra);
+    public void showToast(@NonNull Toaster toaster) {
+        toaster.show(context);
     }
 
     public enum SortBy {
@@ -272,7 +267,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         LENGTH
     }
 
-    public interface IAdapter {
+    public interface Listener {
         void onMoreClick(DownloadWithUpdate item);
 
         void onItemCountUpdated(int count);
@@ -281,10 +276,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         RecyclerView getRecyclerView();
 
         void showDialog(AlertDialog.Builder builder);
-
-        void showToast(Toaster.Message msg, Exception ex);
-
-        void showToast(Toaster.Message msg, String extra);
     }
 
     private class LocalReceiver extends BroadcastReceiver {

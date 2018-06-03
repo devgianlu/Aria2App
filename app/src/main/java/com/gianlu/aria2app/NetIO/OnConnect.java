@@ -1,12 +1,18 @@
 package com.gianlu.aria2app.NetIO;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
+
 public interface OnConnect {
     /**
      * @return Whether we want a ping test
      */
-    boolean onConnected(AbstractClient client);
+    @UiThread
+    boolean onConnected(@NonNull AbstractClient client);
 
-    void onPingTested(AbstractClient client, long latency);
+    @UiThread
+    void onPingTested(@NonNull AbstractClient client, long latency);
 
-    void onFailedConnecting(Throwable ex);
+    @UiThread
+    void onFailedConnecting(@NonNull Throwable ex);
 }

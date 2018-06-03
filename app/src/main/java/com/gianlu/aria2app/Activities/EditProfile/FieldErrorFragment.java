@@ -1,7 +1,7 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
-import android.support.v4.app.Fragment;
+import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 
-public abstract class FieldErrorFragment extends Fragment implements OnFieldError {
+public abstract class FieldErrorFragment extends FragmentWithDialog implements OnFieldError {
     protected boolean created = false;
 }

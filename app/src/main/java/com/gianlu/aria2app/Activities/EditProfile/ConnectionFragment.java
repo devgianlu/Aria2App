@@ -338,11 +338,11 @@ public class ConnectionFragment extends FieldErrorFragment {
             if (in != null) {
                 certificate = CertUtils.loadCertificateFromStream(in);
             } else {
-                Toaster.show(getContext(), Utils.Messages.FAILED_LOADING_CERTIFICATE, new NullPointerException("InputStream is null!"));
+                showToast(Toaster.build().message(R.string.invalidCertificate).ex(new NullPointerException("InputStream is null!")));
                 return;
             }
         } catch (FileNotFoundException | CertificateException ex) {
-            Toaster.show(getContext(), Utils.Messages.FAILED_LOADING_CERTIFICATE, ex);
+            showToast(Toaster.build().message(R.string.invalidCertificate).ex(ex));
             return;
         }
 

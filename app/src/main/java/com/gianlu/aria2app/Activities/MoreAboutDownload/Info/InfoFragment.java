@@ -33,7 +33,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
-import com.gianlu.commonutils.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -111,16 +110,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     @Override
     public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
         holder.setup(payload.download());
-    }
-
-    @Override
-    public void showToast(Toaster.Message msg, Exception ex) {
-        Toaster.show(getActivity(), msg, ex);
-    }
-
-    @Override
-    public void showToast(Toaster.Message msg, String extra) {
-        Toaster.show(getActivity(), msg, extra);
     }
 
     public class ViewHolder {
