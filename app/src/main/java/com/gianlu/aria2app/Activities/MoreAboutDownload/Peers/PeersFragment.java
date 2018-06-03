@@ -22,7 +22,6 @@ import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
@@ -102,7 +101,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
             if (sheet != null) {
                 sheet.dismiss();
                 sheet = null;
-                DialogUtils.dismissDialog(getActivity());
+                dismissDialog();
             }
         } else {
             recyclerViewLayout.showList();

@@ -16,7 +16,6 @@ import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BottomSheet.BaseModalBottomSheet;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 
@@ -37,13 +36,13 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
             if (sheet != null) {
                 sheet.dismiss();
                 sheet = null;
-                DialogUtils.dismissDialog(getActivity());
+                dismissDialog();
             }
             return true;
         }
 
-        if (DialogUtils.hasVisibleDialog(getActivity())) {
-            DialogUtils.dismissDialog(getActivity());
+        if (hasVisibleDialog()) {
+            dismissDialog();
             sheet = null;
             return false;
         } else {

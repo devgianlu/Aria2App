@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 
-public abstract class UpdaterFragment<P> extends Fragment implements Receiver<P>, ReceiverOwner {
+public abstract class UpdaterFragment<P> extends FragmentWithDialog implements Receiver<P>, ReceiverOwner {
     private boolean calledLoad = false;
     private PayloadProvider<P> provider;
     private Wants<P> wants;

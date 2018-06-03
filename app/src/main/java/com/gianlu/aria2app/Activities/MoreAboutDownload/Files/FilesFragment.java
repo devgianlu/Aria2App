@@ -52,7 +52,6 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
@@ -89,7 +88,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             if (fileSheet != null) {
                 fileSheet.dismiss();
                 fileSheet = null;
-                DialogUtils.dismissDialog(getActivity());
+                dismissDialog();
             }
             return true;
         }
@@ -97,8 +96,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         if (actionMode != null) { // Unluckily ActionMode intercepts the event (useless condition)
             actionMode.finish();
             return false;
-        } else if (DialogUtils.hasVisibleDialog(getActivity())) {
-            DialogUtils.dismissDialog(getActivity());
+        } else if (hasVisibleDialog()) {
+            dismissDialog();
             fileSheet = null;
             dirSheet = null;
             return false;
@@ -339,7 +338,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         if (fileSheet != null) {
             fileSheet.dismiss();
             fileSheet = null;
-            DialogUtils.dismissDialog(getActivity());
+            dismissDialog();
         }
 
         String mime = file.getMimeType();
@@ -366,7 +365,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                                 }
                             });
 
-                    DialogUtils.showDialog(getActivity(), builder);
+                    showDialog(builder);
                     return;
                 }
             }
@@ -395,7 +394,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         if (dirSheet != null) {
             dirSheet.dismiss();
             dirSheet = null;
-            DialogUtils.dismissDialog(getActivity());
+            dismissDialog();
         }
 
         if (downloaderMessenger != null) {

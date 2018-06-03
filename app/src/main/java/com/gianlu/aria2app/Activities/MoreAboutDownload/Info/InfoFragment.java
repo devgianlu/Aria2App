@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,6 @@ import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 import com.gianlu.commonutils.SuperTextView;
@@ -113,11 +111,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     @Override
     public void onLoadUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
         holder.setup(payload.download());
-    }
-
-    @Override
-    public void showDialog(AlertDialog.Builder builder) {
-        DialogUtils.showDialog(getActivity(), builder);
     }
 
     @Override

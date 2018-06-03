@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.Options.OptionsView;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
+import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageLayout;
 
@@ -31,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OptionsFragment extends Fragment implements OptionsAdapter.Listener {
+public class OptionsFragment extends FragmentWithDialog implements OptionsAdapter.Listener {
     private EditText position;
     private EditText filename;
     private OptionsAdapter adapter;
@@ -129,6 +128,6 @@ public class OptionsFragment extends Fragment implements OptionsAdapter.Listener
     @Override
     public void onEditOption(@NonNull Option option) {
         if (getContext() == null) return;
-        DialogUtils.showDialog(getActivity(), OptionsUtils.getEditOptionDialog(getContext(), option, adapter));
+        showDialog(OptionsUtils.getEditOptionDialog(getContext(), option, adapter));
     }
 }
