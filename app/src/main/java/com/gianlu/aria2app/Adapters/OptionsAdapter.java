@@ -32,16 +32,14 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final List<Option> options;
     private final List<Option> originalOptions;
     private final LayoutInflater inflater;
-    private final boolean global;
     private final Listener listener;
     private final Context context;
 
-    private OptionsAdapter(Context context, List<Option> options, boolean global, Listener listener) {
+    private OptionsAdapter(Context context, List<Option> options, Listener listener) {
         this.context = context;
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);
-        this.global = global;
         this.listener = listener;
     }
 
@@ -51,17 +49,15 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         if (global) all = OptionsManager.get(context).loadGlobalOptions();
         else all = OptionsManager.get(context).loadDownloadOptions();
 
-        Set<String> filter = null;
-        if (quick) {
-            if (global) filter = Prefs.getSet(context, PKeys.A2_GLOBAL_QUICK_OPTIONS, null);
-            else filter = Prefs.getSet(context, PKeys.A2_QUICK_OPTIONS, null);
-        }
+        Set<String> filter;
+        if (quick) filter = Prefs.getSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, null);
+        else filter = null;
 
         List<Option> options = Option.fromOptionsMap(map, all, filter);
         if (quickOnTop)
-            Collections.sort(options, new OptionsManager.IsQuickComparator(context, global));
+            Collections.sort(options, new OptionsManager.IsQuickComparator(context));
 
-        return new OptionsAdapter(context, options, global, listener);
+        return new OptionsAdapter(context, options, listener);
     }
 
     @Override
@@ -110,7 +106,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             holder.value.setTextColor(ContextCompat.getColor(context, android.R.color.secondary_text_light));
         }
 
-        if (option.isQuick(context, global))
+        if (option.isQuick(context))
             holder.toggleFavourite.setImageResource(R.drawable.ic_favorite_black_48dp);
         else
             holder.toggleFavourite.setImageResource(R.drawable.ic_favorite_border_black_48dp);
@@ -125,14 +121,14 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         holder.toggleFavourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isQuick = !option.isQuick(context, global);
-                option.setQuick(context, global, isQuick);
+                boolean isQuick = !option.isQuick(context);
+                option.setQuick(context, isQuick);
 
                 int oldIndex = holder.getAdapterPosition();
                 notifyItemChanged(oldIndex);
 
                 if (!isQuick) Collections.sort(options);  // Order alphabetically
-                Collections.sort(options, new OptionsManager.IsQuickComparator(context, global));
+                Collections.sort(options, new OptionsManager.IsQuickComparator(context));
 
                 int newIndex = options.indexOf(option);
                 if (newIndex != -1) notifyItemMoved(oldIndex, newIndex);

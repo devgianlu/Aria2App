@@ -51,18 +51,29 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
 
+        Logging.clearLogs(this);
+
+        if (!Prefs.has(this, PKeys.DD_DOWNLOAD_PATH))
+            Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH,
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+
         // Backward compatibility
-        if (!Prefs.has(getApplicationContext(), PKeys.A2_CUSTOM_INFO)) {
+        if (!Prefs.has(this, PKeys.A2_CUSTOM_INFO)) {
             Set<String> defaultValues = new HashSet<>();
             defaultValues.add(CustomDownloadInfo.Info.DOWNLOAD_SPEED.name());
             defaultValues.add(CustomDownloadInfo.Info.REMAINING_TIME.name());
             Prefs.putSet(getApplicationContext(), PKeys.A2_CUSTOM_INFO, defaultValues);
         }
 
-        Logging.clearLogs(this);
-
-        if (Prefs.getString(this, PKeys.DD_DOWNLOAD_PATH, null) == null)
-            Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+        // Backward compatibility
+        if (Prefs.has(this, PKeys.A2_QUICK_OPTIONS) || Prefs.has(this, PKeys.A2_GLOBAL_QUICK_OPTIONS)) {
+            Set<String> set = new HashSet<>();
+            set.addAll(Prefs.getSet(this, PKeys.A2_QUICK_OPTIONS, new HashSet<String>()));
+            set.addAll(Prefs.getSet(this, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
+            Prefs.putSet(this, PKeys.A2_QUICK_OPTIONS_MIXED, set);
+            Prefs.remove(this, PKeys.A2_QUICK_OPTIONS);
+            Prefs.remove(this, PKeys.A2_GLOBAL_QUICK_OPTIONS);
+        }
     }
 
     @Override

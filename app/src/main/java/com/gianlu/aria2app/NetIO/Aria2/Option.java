@@ -9,55 +9,40 @@ import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class Option implements Comparable<Option> { // TODO: Could be improved
+public class Option implements Comparable<Option> {
     public final String name;
     public final String value;
     public String newValue;
 
-    private Option(Map.Entry<String, String> entry) {
-        name = entry.getKey();
-        value = entry.getValue();
+    private Option(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
     @NonNull
     public static List<Option> fromOptionsMap(Map<String, String> map, List<String> all, @Nullable Set<String> filter) {
         List<Option> options = new ArrayList<>();
 
-        Map<String, String> allowedOptions = filterMap(map, all);
-        for (Map.Entry<String, String> entry : allowedOptions.entrySet()) {
-            if (filter == null) {
-                options.add(new Option(entry));
-            } else {
-                if (filter.contains(entry.getKey()))
-                    options.add(new Option(entry));
+        for (String key : all) {
+            if (map.get(key) == null) map.put(key, "");
+        }
+
+        for (String key : map.keySet()) {
+            if (all.contains(key)) {
+                if (filter == null || filter.contains(key))
+                    options.add(new Option(key, map.get(key)));
             }
         }
 
         Collections.sort(options);
 
         return options;
-    }
-
-    @NonNull
-    private static Map<String, String> filterMap(Map<String, String> map, List<String> allowedOptions) {
-        Map<String, String> newMap = new HashMap<>();
-
-        for (Map.Entry<String, String> entry : map.entrySet())
-            if (allowedOptions.contains(entry.getKey()))
-                newMap.put(entry.getKey(), entry.getValue());
-
-        for (String allowedOption : allowedOptions)
-            if (!map.containsKey(allowedOption))
-                newMap.put(allowedOption, null);
-
-        return newMap;
     }
 
     public void setNewValue(String value) {
@@ -68,15 +53,13 @@ public class Option implements Comparable<Option> { // TODO: Could be improved
         return newValue != null && !Objects.equals(value, newValue);
     }
 
-    public boolean isQuick(Context context, boolean global) {
-        return Prefs.getSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, new HashSet<String>()).contains(name);
+    public boolean isQuick(Context context) {
+        return Prefs.getSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, new HashSet<String>()).contains(name);
     }
 
-    public void setQuick(Context context, boolean global, boolean quick) {
-        if (quick)
-            Prefs.addToSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, name);
-        else
-            Prefs.removeFromSet(context, global ? PKeys.A2_GLOBAL_QUICK_OPTIONS : PKeys.A2_QUICK_OPTIONS, name);
+    public void setQuick(Context context, boolean quick) {
+        if (quick) Prefs.addToSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, name);
+        else Prefs.removeFromSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, name);
     }
 
     @Override

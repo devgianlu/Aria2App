@@ -15,6 +15,7 @@ public enum PKeys implements Prefs.PrefKey {
     A2_UPDATE_INTERVAL("a2_updateRate"),
     A2_HIDE_METADATA("a2_hideMetadata"),
     A2_GLOBAL_QUICK_OPTIONS("a2_globalQuickOptions"),
+    A2_QUICK_OPTIONS_MIXED("a2_quickOptionsMixed"),
     A2_CHECK_VERSION("a2_runVersionCheckAtStartup"),
     A2_QUICK_OPTIONS("a2_quickOptions"),
     A2_MAIN_SORTING("a2_mainSorting"),
