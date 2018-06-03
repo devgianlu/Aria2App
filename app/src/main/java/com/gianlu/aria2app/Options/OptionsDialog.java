@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Options;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -173,10 +174,14 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             return;
         }
 
-        // TODO: ProgressDialog
+        if (getContext() == null) return;
+
+        final ProgressDialog pd = DialogUtils.progressDialog(getContext(), R.string.gathering_information);
+        DialogUtils.showDialog(getActivity(), pd);
         helper.request(req, new AbstractClient.OnSuccess() {
             @Override
             public void onSuccess() {
+                pd.dismiss();
                 Toaster.show(getContext(), global ? Utils.Messages.GLOBAL_OPTIONS_CHANGED : Utils.Messages.DOWNLOAD_OPTIONS_CHANGED);
                 dismiss();
                 AnalyticsApplication.sendAnalytics(getContext(), global ? Utils.ACTION_CHANGED_GLOBAL_OPTIONS : Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
@@ -184,6 +189,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
+                pd.dismiss();
                 Toaster.show(getContext(), Utils.Messages.FAILED_CHANGE_OPTIONS, ex);
             }
         });
