@@ -37,6 +37,7 @@ public class OptionsView extends FrameLayout {
         list = findViewById(R.id.optionsView_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        list.setHasFixedSize(true);
 
         final EditText query = findViewById(R.id.optionsView_query);
         query.addTextChangedListener(new TextWatcher() {

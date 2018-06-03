@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Options;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
@@ -8,9 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -18,7 +14,6 @@ import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.SuperTextView;
 
 import org.json.JSONException;
@@ -46,36 +41,6 @@ public final class OptionsUtils {
         }
 
         return json;
-    }
-
-    // FIXME: Apply this to the other dialog, scrolling is slow!!
-    private static void _showDialog(final ActivityWithDialog activity, final OptionsView layout, final AlertDialog.Builder builder) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                final Dialog dialog = builder.create();
-                final Window window = dialog.getWindow();
-                if (window != null) {
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-                    ViewTreeObserver vto = layout.getViewTreeObserver();
-                    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-                            params.copyFrom(window.getAttributes());
-                            params.width = dialog.getWindow().getDecorView().getWidth();
-                            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                            dialog.getWindow().setAttributes(params);
-
-                            layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
-                    });
-                }
-
-                activity.showDialog(builder);
-            }
-        });
     }
 
     @NonNull
