@@ -12,7 +12,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,6 +35,7 @@ import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
@@ -79,6 +80,7 @@ public class ConnectionFragment extends FieldErrorFragment {
     private SuperTextView certificateDetailsSubjectName;
     private ImageView addressFlag;
 
+    @NonNull
     public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         ConnectionFragment fragment = new ConnectionFragment();
         fragment.setRetainInstance(true);
@@ -208,13 +210,25 @@ public class ConnectionFragment extends FieldErrorFragment {
         pickCertificateFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getContext() == null) return;
+                if (getActivity() == null) return;
 
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    showCertPicker();
-                } else {
-                    Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_certMessage, READ_PERMISSION_CODE);
-                }
+                AskPermission.ask(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                    @Override
+                    public void permissionGranted(@NonNull String permission) {
+                        showCertPicker();
+                    }
+
+                    @Override
+                    public void permissionDenied(@NonNull String permission) {
+                        showToast(Toaster.build().message(R.string.readPermissionDenied).error(true));
+                    }
+
+                    @Override
+                    public void askRationale(@NonNull AlertDialog.Builder builder) {
+                        builder.setTitle(R.string.readExternalStorageRequest_title)
+                                .setMessage(R.string.readExternalStorageRequest_certMessage);
+                    }
+                });
             }
         });
 

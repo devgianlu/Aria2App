@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Options;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
 
@@ -198,7 +201,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         });
     }
 
-    private void export() {
+    private void doExportOptions() {
         OptionsAdapter adapter = optionsView.getAdapter();
         if (adapter == null) return;
 
@@ -211,11 +214,6 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             if (option.newValue != null) builder.append(option.newValue);
             else builder.append(option.value);
             builder.append('\n');
-        }
-
-        if (!Utils.requestWritePermission(getActivity(), 3)) {
-            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.exportOptionsGrantWrite));
-            return;
         }
 
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "aria2app-exported-" + (global ? "global" : "download") + ".conf");
@@ -232,6 +230,28 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
         dismiss();
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.exportedOptions, file.getAbsolutePath()));
+    }
+
+    private void export() {
+        if (getActivity() == null) return;
+
+        AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
+            @Override
+            public void permissionGranted(@NonNull String permission) {
+                doExportOptions();
+            }
+
+            @Override
+            public void permissionDenied(@NonNull String permission) {
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.writePermissionDenied).error(true));
+            }
+
+            @Override
+            public void askRationale(@NonNull AlertDialog.Builder builder) {
+                builder.setTitle(R.string.writeExternalStorageRequest_title)
+                        .setMessage(R.string.exportOptionsGrantWrite);
+            }
+        });
     }
 
     @Override

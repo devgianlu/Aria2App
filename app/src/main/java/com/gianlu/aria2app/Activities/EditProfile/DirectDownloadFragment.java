@@ -1,11 +1,13 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
+import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,8 +20,9 @@ import android.widget.ScrollView;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Toaster;
 
 import java.net.URL;
 
@@ -33,6 +36,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     private TextInputLayout username;
     private TextInputLayout password;
 
+    @NonNull
     public static DirectDownloadFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
         DirectDownloadFragment fragment = new DirectDownloadFragment();
         fragment.setRetainInstance(true);
@@ -52,7 +56,24 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 container.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                if (isChecked) Utils.requestWritePermission(getActivity(), 10);
+                if (isChecked && getActivity() != null) {
+                    AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                        @Override
+                        public void permissionGranted(@NonNull String permission) {
+                        }
+
+                        @Override
+                        public void permissionDenied(@NonNull String permission) {
+                            showToast(Toaster.build().message(R.string.writePermissionDenied).error(true));
+                        }
+
+                        @Override
+                        public void askRationale(@NonNull AlertDialog.Builder builder) {
+                            builder.setTitle(R.string.writeExternalStorageRequest_title)
+                                    .setMessage(R.string.writeExternalStorageRequest_message);
+                        }
+                    });
+                }
             }
         });
         container = layout.findViewById(R.id.editProfile_dd_container);
@@ -60,12 +81,10 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         CommonUtils.getEditText(address).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -85,12 +104,10 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         CommonUtils.getEditText(username).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -102,12 +119,10 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         CommonUtils.getEditText(password).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override

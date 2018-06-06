@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Main;
 
+import android.Manifest;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -20,7 +21,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -88,6 +88,7 @@ import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
@@ -483,7 +484,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         String shortcutAction = getIntent().getStringExtra("shortcutAction");
-        Uri shareData = getIntent().getParcelableExtra("shareData");
+        final Uri shareData = getIntent().getParcelableExtra("shareData");
         if (shortcutAction != null) {
             switch (shortcutAction) {
                 case LoadingActivity.SHORTCUT_ADD_URI:
@@ -505,12 +506,25 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 if (scheme.equals("magnet") || scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
                     processUrl(shareData);
                 } else {
-                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        _sharedUri = shareData;
-                        Utils.requestReadPermission(this, R.string.readExternalStorageRequest_base64Message, REQUEST_READ_CODE);
-                    } else {
-                        processFileUri(shareData);
-                    }
+                    AskPermission.ask(this, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                        @Override
+                        public void permissionGranted(@NonNull String permission) {
+                            processFileUri(shareData);
+                        }
+
+                        @Override
+                        public void permissionDenied(@NonNull String permission) {
+                            Toaster.with(MainActivity.this).message(R.string.readPermissionDenied).error(true).show();
+                        }
+
+                        @Override
+                        public void askRationale(@NonNull AlertDialog.Builder builder) {
+                            _sharedUri = shareData;
+
+                            builder.setTitle(R.string.readExternalStorageRequest_title)
+                                    .setMessage(R.string.readExternalStorageRequest_base64Message);
+                        }
+                    });
                 }
             }
         }

@@ -4,14 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +21,7 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
@@ -119,11 +118,25 @@ public class Base64Fragment extends FragmentWithDialog {
         pick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAdded() && (getContext() == null || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                    Utils.requestReadPermission(getActivity(), R.string.readExternalStorageRequest_base64Message, 12);
-                } else {
-                    showFilePicker();
-                }
+                if (getActivity() == null) return;
+
+                AskPermission.ask(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                    @Override
+                    public void permissionGranted(@NonNull String permission) {
+                        showFilePicker();
+                    }
+
+                    @Override
+                    public void permissionDenied(@NonNull String permission) {
+                        showToast(Toaster.build().message(R.string.readPermissionDenied).error(true));
+                    }
+
+                    @Override
+                    public void askRationale(@NonNull AlertDialog.Builder builder) {
+                        builder.setTitle(R.string.readExternalStorageRequest_title)
+                                .setMessage(R.string.readExternalStorageRequest_base64Message);
+                    }
+                });
             }
         });
 
