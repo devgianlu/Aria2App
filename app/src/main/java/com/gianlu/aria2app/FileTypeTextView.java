@@ -13,7 +13,7 @@ import com.gianlu.commonutils.FontsManager;
 
 import java.util.Objects;
 
-public class FileTypeTextView extends AppCompatTextView {
+public class FileTypeTextView extends AppCompatTextView { // FIXME: Still having issues
     public FileTypeTextView(Context context) {
         this(context, null, 0);
     }

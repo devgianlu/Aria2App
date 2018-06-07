@@ -24,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -32,7 +31,6 @@ import com.getkeepsafe.taptargetview.TapTargetView;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
-import com.gianlu.aria2app.Adapters.BreadcrumbSegment;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
@@ -52,19 +50,22 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.BreadcrumbsView;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.Listener, BreadcrumbSegment.Listener, ServiceConnection, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener {
+public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements FilesAdapter.Listener, ServiceConnection, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
     private FilesAdapter adapter;
     private FileSheet fileSheet;
     private DirectorySheet dirSheet;
-    private LinearLayout breadcrumbsContainer;
-    private HorizontalScrollView breadcrumbs;
+    private BreadcrumbsView breadcrumbs;
     private boolean isShowingHint;
     private RecyclerViewLayout recyclerViewLayout;
     private Messenger downloaderMessenger = null;
@@ -120,8 +121,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_files, parent, false);
-        breadcrumbsContainer = layout.findViewById(R.id.filesFragment_breadcrumbsContainer);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
+        breadcrumbs.setListener(this);
         recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
@@ -276,33 +277,19 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
     @Override
     public void onDirectoryChanged(@NonNull AriaDirectory dir) {
-        breadcrumbsContainer.removeAllViews();
+        breadcrumbs.clear();
 
-        AriaDirectory node = dir;
+        List<BreadcrumbsView.Item> items = new ArrayList<>();
+        AriaDirectory current = dir;
         do {
-            addPathToBreadcrumbs(node);
-            node = node.parent;
-        } while (node != null);
+            items.add(new BreadcrumbsView.Item(current.name, 0, current));
+            current = current.parent;
+        } while (current != null);
 
-        breadcrumbs.post(new Runnable() {
-            @Override
-            public void run() {
-                breadcrumbs.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-            }
-        });
+        Collections.reverse(items);
+        breadcrumbs.addItems(items.toArray(new BreadcrumbsView.Item[items.size()]));
 
         showTutorial(dir);
-    }
-
-    private void addPathToBreadcrumbs(AriaDirectory dir) {
-        Context context = getContext();
-        if (context != null)
-            breadcrumbsContainer.addView(new BreadcrumbSegment(context, dir, this), 0);
-    }
-
-    @Override
-    public void onDirSelected(@NonNull AriaDirectory node) {
-        if (adapter != null) adapter.changeDir(node);
     }
 
     private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
@@ -473,6 +460,11 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public Wants<DownloadWithUpdate.BigUpdate> wants(@NonNull Bundle args) {
         return Wants.bigUpdate(args.getString("gid"));
+    }
+
+    @Override
+    public void onSegmentSelected(@NonNull BreadcrumbsView.Item item) {
+        if (adapter != null && item.data != null) adapter.changeDir((AriaDirectory) item.data);
     }
 
     private interface OnWaitBinder {
