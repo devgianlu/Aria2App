@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -18,7 +19,6 @@ import com.gianlu.aria2app.Adapters.DownloadTasksAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloadTask;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
-import com.gianlu.aria2app.GeneralFileProvider;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
@@ -180,7 +180,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
                                 Toaster.with(DirectDownloadActivity.this).message(R.string.failedOpeningDownload).ex(new NullPointerException("task is null!")).show();
                             } else {
                                 try {
-                                    startActivity(new Intent(Intent.ACTION_VIEW, GeneralFileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+                                    startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(DirectDownloadActivity.this, "com.gianlu.aria2app", task.task.destFile)).setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
                                 } catch (ActivityNotFoundException exx) {
                                     Toaster.with(DirectDownloadActivity.this).message(R.string.failedOpeningDownload).ex(exx).show();
                                 }
