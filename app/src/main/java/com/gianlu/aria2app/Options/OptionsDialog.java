@@ -256,6 +256,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
     @Override
     public void onResult(@NonNull Map<String, String> result) {
+        if (getContext() == null) return;
+
         loading.setVisibility(View.GONE);
         optionsView.setVisibility(View.VISIBLE);
         apply.setVisibility(View.VISIBLE);
@@ -270,6 +272,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
     @Override
     public void onException(Exception ex, boolean shouldForce) {
+        if (!isAdded()) return;
+
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
         dismiss();
     }

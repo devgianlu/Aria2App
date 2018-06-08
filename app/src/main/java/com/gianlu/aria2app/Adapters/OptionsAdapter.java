@@ -35,7 +35,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final Listener listener;
     private final Context context;
 
-    private OptionsAdapter(Context context, List<Option> options, Listener listener) {
+    private OptionsAdapter(@NonNull Context context, List<Option> options, Listener listener) {
         this.context = context;
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
@@ -44,7 +44,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     @NonNull
-    public static OptionsAdapter setup(Context context, Map<String, String> map, boolean global, boolean quick, boolean quickOnTop, Listener listener) throws IOException, JSONException {
+    public static OptionsAdapter setup(@NonNull Context context, Map<String, String> map, boolean global, boolean quick, boolean quickOnTop, Listener listener) throws IOException, JSONException {
         List<String> all;
         if (global) all = OptionsManager.get(context).loadGlobalOptions();
         else all = OptionsManager.get(context).loadDownloadOptions();

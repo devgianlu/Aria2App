@@ -74,6 +74,8 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
             @Override
             public void onResult(@NonNull Map<String, String> result) {
+                if (getContext() == null) return;
+
                 try {
                     adapter = OptionsAdapter.setup(getContext(), result, false, false, true, OptionsFragment.this);
                 } catch (IOException | JSONException ex) {
