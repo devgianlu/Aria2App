@@ -99,8 +99,12 @@
             android:layout_gravity="center"
             android:paddingTop="48dp" />
 
-        <include
-            layout="@layout/message_layout"
+        <com.gianlu.commonutils.MessageView
+            android:id="@+id/optionsFragment_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="48dp"
             android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

@@ -21,7 +21,7 @@ import com.gianlu.aria2app.Options.OptionsView;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.MessageView;
 
 import org.json.JSONException;
 
@@ -46,11 +46,14 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         return fragment;
     }
 
+    private MessageView message;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_options, container, false);
         final ProgressBar loading = layout.findViewById(R.id.optionsFragment_loading);
+        message = layout.findViewById(R.id.optionsFragment_message);
         position = layout.findViewById(R.id.optionsFragment_position);
         filename = layout.findViewById(R.id.optionsFragment_filename);
         optionsView = layout.findViewById(R.id.optionsFragment_options);
@@ -62,7 +65,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         try {
             helper = Aria2Helper.instantiate(getContext());
         } catch (Aria2Helper.InitializingException ex) {
-            MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
+            message.setError(R.string.failedLoading);
             optionsView.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             return layout;
@@ -86,7 +89,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
 
             @Override
             public void onException(Exception ex, boolean shouldForce) {
-                MessageLayout.show(layout, R.string.failedLoading, R.drawable.ic_error_black_48dp);
+                message.setError(R.string.failedLoading);
                 optionsView.setVisibility(View.GONE);
                 loading.setVisibility(View.GONE);
             }

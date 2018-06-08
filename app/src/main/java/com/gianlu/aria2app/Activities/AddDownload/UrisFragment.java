@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
-import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.Toaster;
 
 import java.net.URI;
@@ -32,7 +32,6 @@ import java.util.List;
 
 
 public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAdapter {
-    private LinearLayout layout;
     private UrisAdapter adapter;
     private RecyclerView list;
 
@@ -75,12 +74,15 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
         showDialog(builder);
     }
 
+    private MessageView message;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getContext() == null) return null;
 
-        layout = (LinearLayout) inflater.inflate(R.layout.fragment_uris, container, false);
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_uris, container, false);
+        message = layout.findViewById(R.id.urisFragment_message);
         list = layout.findViewById(R.id.urisFragment_list);
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
@@ -152,12 +154,12 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
         if (count == 0) {
             list.setVisibility(View.GONE);
             if (getArguments() != null && getArguments().getBoolean("compulsory", false))
-                MessageLayout.show(layout, R.string.noUris_help, R.drawable.ic_info_outline_black_48dp);
+                message.setInfo(R.string.noUris_help);
             else
-                MessageLayout.show(layout, R.string.noUris, R.drawable.ic_info_outline_black_48dp);
+                message.setInfo(R.string.noUris);
         } else {
             list.setVisibility(View.VISIBLE);
-            MessageLayout.hide(layout);
+            message.hide();
         }
     }
 

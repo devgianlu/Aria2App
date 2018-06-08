@@ -61,7 +61,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     @Override
     public void onItemCountUpdated(int count) {
         if (count == 0) {
-            recyclerViewLayout.showMessage(R.string.noServers, false);
+            recyclerViewLayout.showInfo(R.string.noServers);
             topDownloadCountries.clear();
             if (sheet != null) {
                 sheet.dismiss();
@@ -112,7 +112,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
     @Override
     public void onCouldntLoadChecked(@NonNull Exception ex) {
-        recyclerViewLayout.showMessage(getString(R.string.failedLoading_reason, ex.getMessage()), true);
+        recyclerViewLayout.showError(R.string.failedLoading_reason, ex.getMessage());
         Logging.log(ex);
     }
 

@@ -31,7 +31,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -46,6 +46,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     private final CountryFlags flags = CountryFlags.get();
     private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
     private ViewHolder holder;
+    private MessageView message;
 
     @NonNull
     public static InfoFragment getInstance(Context context, String gid) {
@@ -61,7 +62,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         holder = new ViewHolder((ViewGroup) inflater.inflate(R.layout.fragment_info, container, false));
-        MessageLayout.setPaddingTop(holder.rootView, 48);
+        message = holder.rootView.findViewById(R.id.infoFragment_message);
         return holder.rootView;
     }
 
@@ -90,7 +91,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     @Override
     public boolean onCouldntLoad(@NonNull Exception ex) {
         holder.loading.setVisibility(View.GONE);
-        MessageLayout.show(holder.rootView, R.string.failedLoading, R.drawable.ic_error_outline_black_48dp);
+        message.setError(R.string.failedLoading);
         Logging.log(ex);
         return false;
     }
@@ -315,7 +316,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
         void update(DownloadWithUpdate.BigUpdate update) {
             if (!isAdded()) return;
 
-            MessageLayout.hide(rootView);
+            message.hide();
             loading.setVisibility(View.GONE);
             container.setVisibility(View.VISIBLE);
 

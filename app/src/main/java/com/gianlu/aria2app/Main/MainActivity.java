@@ -95,7 +95,7 @@ import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageLayout;
+import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
@@ -141,6 +141,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private PagerAdapter<? extends OnBackPressed> secondSpaceAdapter = null;
     private TabLayout secondSpaceTabs = null;
     private LinearLayout secondSpaceContainer = null;
+    private MessageView secondSpaceMessage;
 
     @Override
     protected void onRestart() {
@@ -344,7 +345,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             @Override
             public boolean onCouldntLoad(@NonNull Exception ex) {
                 if (recyclerViewLayout != null)
-                    recyclerViewLayout.showMessage(R.string.failedLoadingDownloads, true);
+                    recyclerViewLayout.showError(R.string.failedLoadingDownloads);
 
                 return false;
             }
@@ -533,6 +534,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)
         if (secondSpace != null) {
+            secondSpaceMessage = secondSpace.findViewById(R.id.mainSecondSpace_message);
             secondSpaceContainer = secondSpace.findViewById(R.id.mainSecondSpace_container);
             secondSpaceTabs = secondSpace.findViewById(R.id.mainSecondSpace_tabs);
             secondSpacePager = secondSpace.findViewById(R.id.mainSecondSpace_pager);
@@ -916,12 +918,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         secondSpaceTabs.setupWithViewPager(secondSpacePager);
 
         secondSpaceContainer.setVisibility(View.VISIBLE);
-        MessageLayout.hide(secondSpace);
+        secondSpaceMessage.hide();
     }
 
     @Override
     public void hideSecondSpace() {
-        MessageLayout.show(secondSpace, R.string.secondSpace_selectDownload, R.drawable.ic_info_outline_black_48dp);
+        secondSpaceMessage.setInfo(R.string.secondSpace_selectDownload);
         secondSpaceContainer.setVisibility(View.GONE);
         secondSpaceAdapter = null;
     }
@@ -938,7 +940,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         if (count == 0) {
             if (!recyclerViewLayout.isLoading())
-                recyclerViewLayout.showMessage(R.string.noDownloads, false);
+                recyclerViewLayout.showInfo(R.string.noDownloads);
         } else {
             recyclerViewLayout.showList();
         }

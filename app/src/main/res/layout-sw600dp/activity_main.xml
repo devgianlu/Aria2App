@@ -214,11 +214,15 @@
                 android:id="@+id/main_secondSpace"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                tools:ignore="InconsistentLayout">
+                android:layout_weight="1">
 
-                <!-- Keep this as first child -->
-                <include layout="@layout/message_layout" />
+                <com.gianlu.commonutils.MessageView
+                    android:id="@+id/mainSecondSpace_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="48dp"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/mainSecondSpace_container"

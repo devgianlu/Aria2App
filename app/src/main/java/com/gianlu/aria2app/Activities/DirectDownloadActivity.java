@@ -48,7 +48,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
             }
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
-        layout.showMessage(R.string.noDirectDownloads, false);
+        layout.showInfo(R.string.noDirectDownloads);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class DirectDownloadActivity extends AppCompatActivity implements Service
     }
 
     private void countUpdated(int count) {
-        if (count == 0) layout.showMessage(R.string.noDirectDownloads, false);
+        if (count == 0) layout.showInfo(R.string.noDirectDownloads);
         else layout.showList();
     }
 

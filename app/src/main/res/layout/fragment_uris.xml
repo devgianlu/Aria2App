@@ -16,8 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <include
-            layout="@layout/message_layout"
+        <com.gianlu.commonutils.MessageView
+            android:id="@+id/urisFragment_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="48dp"
             android:visibility="gone" />
     </FrameLayout>
 

@@ -187,7 +187,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     @Override
     public void onException(Exception ex) {
         message.setVisibility(View.GONE);
-        recyclerViewLayout.showMessage(R.string.searchEngine_offline, true);
+        recyclerViewLayout.showError(R.string.searchEngine_offline);
         Logging.log(ex);
     }
 

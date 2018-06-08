@@ -409,7 +409,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
         AriaFiles files = payload.files;
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
-            recyclerViewLayout.showMessage(R.string.noFiles, false);
+            recyclerViewLayout.showInfo(R.string.noFiles);
         } else {
             recyclerViewLayout.showList();
             if (adapter != null) adapter.update(payload.download(), files);
@@ -451,7 +451,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
     @Override
     public boolean onCouldntLoad(@NonNull Exception ex) {
-        recyclerViewLayout.showMessage(R.string.failedLoading, true);
+        recyclerViewLayout.showError(R.string.failedLoading);
         Logging.log(ex);
         return false;
     }
