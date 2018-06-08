@@ -315,6 +315,9 @@
     <string name="select">选择</string>
     <string name="deselect">取消选择</string>
     <string name="selectAll">选择全部</string>
+    <string name="writePermissionDenied">您拒绝了写入权限！</string>
+    <string name="readPermissionDenied">您拒绝了读取权限！</string>
+    <string name="secondSpace_selectDownload">点击下载更多信息以提供更多信息。</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
@@ -324,5 +327,4 @@
         <item>4 秒</item>
         <item>5 秒</item>
     </string-array>
-    <string name="secondSpace_selectDownload">点击下载更多信息以提供更多信息。</string>
 </resources>
