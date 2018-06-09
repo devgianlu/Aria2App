@@ -23,12 +23,12 @@ public class OptionsManager {
     private final AssetManager manager;
     private JSONObject options;
 
-    private OptionsManager(Context context) {
+    private OptionsManager(@NonNull Context context) {
         manager = context.getAssets();
     }
 
     @NonNull
-    public static OptionsManager get(Context context) {
+    public static OptionsManager get(@NonNull Context context) {
         if (instance == null) instance = new OptionsManager(context);
         return instance;
     }

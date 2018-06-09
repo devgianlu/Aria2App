@@ -48,7 +48,8 @@ public class AriaDirectory {
             try {
                 dir.addElement("", file.path.substring(path.length() + 1).split(Pattern.quote(SEPARATOR)), file);
             } catch (StringIndexOutOfBoundsException ex) {
-                Crashlytics.log(path + "; " + file.path);
+                Crashlytics.setString("path", path);
+                Crashlytics.setString("file-path", file.path);
                 Crashlytics.logException(ex);
                 throw ex;
             }
