@@ -75,19 +75,29 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
+    <!-- Download card top section style -->
     <style name="CardViewTopSection">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/colorPrimary</item>
     </style>
 
+    <!-- Fab label style -->
     <style name="FabLabel">
         <item name="android:background">@drawable/fab_label_layout</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <!-- ?? -->
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
+    <!-- Big layout tabbing -->
     <style name="BigTabLayout">
         <item name="tabMode">scrollable</item>
     </style>
+
+    <!-- Custom style for FileTypeTextView -->
+    <declare-styleable name="FileTypeTextView">
+        <attr name="textColor" format="color" />
+        <attr name="maxHeight" format="dimension" />
+    </declare-styleable>
 </resources>
