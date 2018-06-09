@@ -271,7 +271,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 refresh(MAIN_WANTS, this);
                 return true;
             case DrawerConst.DIRECT_DOWNLOAD:
-                startActivity(new Intent(MainActivity.this, DirectDownloadActivity.class));
+                startActivity(new Intent(this, DirectDownloadActivity.class));
                 return false;
             case DrawerConst.QUICK_OPTIONS:
                 showDialog(OptionsDialog.getGlobal(true));
@@ -280,10 +280,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 showDialog(OptionsDialog.getGlobal(false));
                 return true;
             case DrawerConst.PREFERENCES:
-                startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+                startActivity(new Intent(this, PreferencesActivity.class));
                 return false;
             case DrawerConst.SUPPORT:
-                CommonUtils.sendEmail(MainActivity.this, getString(R.string.app_name), null);
+                CommonUtils.sendEmail(this, getString(R.string.app_name), null);
                 return true;
             case DrawerConst.ABOUT_ARIA2:
                 showAboutDialog();
@@ -966,7 +966,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
                 @Override
                 public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
                 }
 
                 @Override
@@ -1000,7 +999,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
                             @Override
                             public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-
                             }
 
                             @Override
