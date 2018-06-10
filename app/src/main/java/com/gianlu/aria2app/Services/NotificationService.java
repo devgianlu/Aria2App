@@ -84,7 +84,7 @@ public class NotificationService extends Service {
     private LocalBroadcastManager broadcastManager;
     private Boolean startedNotificable = null;
 
-    public static void toggleNotification(final Context context, final LocalBroadcastManager broadcastManager, final String gid, final OnIsNotificable listener) {
+    public static void toggleNotification(@NonNull final Context context, @NonNull final LocalBroadcastManager broadcastManager, @NonNull final String gid, @NonNull final OnIsNotificable listener) {
         final Object waitToUnbind = new Object();
 
         final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -141,7 +141,7 @@ public class NotificationService extends Service {
         }, BIND_AUTO_CREATE);
     }
 
-    public static void start(Context context, boolean notificable) {
+    public static void start(@NonNull Context context, boolean notificable) {
         if (ProfilesManager.get(context).hasNotificationProfiles()) {
             ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
                     .setAction(ACTION_START).putExtra("notificable", notificable));
@@ -151,11 +151,11 @@ public class NotificationService extends Service {
     }
 
     @NonNull
-    private static List<MultiProfile> loadProfiles(Context context) {
+    private static List<MultiProfile> loadProfiles(@NonNull Context context) {
         return ProfilesManager.get(context).getNotificationProfiles();
     }
 
-    public static void stop(Context context) {
+    public static void stop(@NonNull Context context) {
         context.startService(new Intent(context, NotificationService.class).setAction(ACTION_STOP));
     }
 
@@ -193,7 +193,7 @@ public class NotificationService extends Service {
                 }
 
                 recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
-                getApplicationContext().registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                 return super.onStartCommand(intent, flags, startId);
@@ -226,7 +226,7 @@ public class NotificationService extends Service {
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
                 .setSmallIcon(R.drawable.ic_notification_icon)
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
                 .addAction(new NotificationCompat.Action(R.drawable.ic_clear_black_48dp, getString(R.string.stopNotificationService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
                 .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
@@ -246,7 +246,7 @@ public class NotificationService extends Service {
         return messenger.getBinder();
     }
 
-    private void handleEvent(MultiProfile.UserProfile profile, String gid, EventType type) {
+    private void handleEvent(@NonNull MultiProfile.UserProfile profile, @NonNull String gid, @NonNull EventType type) {
         if (startedNotificable && !notificableDownloads.contains(gid)) return;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
@@ -259,7 +259,7 @@ public class NotificationService extends Service {
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_new_releases_grey_48dp))
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         Bundle bundle = new Bundle();
         bundle.putBoolean("fromNotification", true);
@@ -271,7 +271,7 @@ public class NotificationService extends Service {
         notificationManager.notify(ThreadLocalRandom.current().nextInt(), builder.build());
     }
 
-    private void notifyError(MultiProfile.UserProfile profile, String title, String message) {
+    private void notifyError(@NonNull MultiProfile.UserProfile profile, @NonNull String title, @NonNull String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setContentTitle(title)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -280,7 +280,7 @@ public class NotificationService extends Service {
                 .setCategory(Notification.CATEGORY_ERROR)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
                 .setSmallIcon(R.drawable.ic_notification_icon)
-                .setColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent))
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_error_outline_grey_48dp));
 
         Integer id = errorNotifications.get(profile.getParent().id);
@@ -292,11 +292,11 @@ public class NotificationService extends Service {
         notificationManager.notify(id, builder.build());
     }
 
-    private void notifyUnsupportedConnectionMethod(MultiProfile.UserProfile profile) {
+    private void notifyUnsupportedConnectionMethod(@NonNull MultiProfile.UserProfile profile) {
         notifyError(profile, getString(R.string.notificationUnsupportedConnMethod, profile.getProfileName(this)), getString(R.string.notificationUnsupportedConnMethod_details));
     }
 
-    private void notifyException(MultiProfile.UserProfile profile, Throwable ex) {
+    private void notifyException(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
         Logging.log(ex);
         notifyError(profile, getString(R.string.notificationException, profile.getProfileName(this)), ex.getMessage());
     }
@@ -353,7 +353,8 @@ public class NotificationService extends Service {
             this.prefValue = prefValue;
         }
 
-        public static List<EventType> parseFromPrefs(Set<String> set) {
+        @NonNull
+        public static List<EventType> parseFromPrefs(@NonNull Set<String> set) {
             List<EventType> types = new ArrayList<>();
             for (String name : set) {
                 EventType type = parseFromPrefs(name);
@@ -364,7 +365,7 @@ public class NotificationService extends Service {
         }
 
         @Nullable
-        public static EventType parseFromPrefs(String name) {
+        public static EventType parseFromPrefs(@NonNull String name) {
             for (EventType type : values())
                 if (Objects.equals(type.prefValue, name))
                     return type;
@@ -372,6 +373,7 @@ public class NotificationService extends Service {
             return null;
         }
 
+        @NonNull
         public static Set<String> prefsValues() {
             Set<String> set = new HashSet<>();
             for (EventType type : values()) set.add(type.prefValue);
@@ -379,7 +381,7 @@ public class NotificationService extends Service {
         }
 
         @Nullable
-        public static EventType parse(String method) {
+        public static EventType parse(@NonNull String method) {
             switch (method) {
                 case "aria2.onDownloadStart":
                     return DOWNLOAD_START;
@@ -398,11 +400,13 @@ public class NotificationService extends Service {
             }
         }
 
+        @NonNull
         public String channelName() {
             return name().toLowerCase();
         }
 
-        public String getFormal(Context context) {
+        @NonNull
+        public String getFormal(@NonNull Context context) {
             switch (this) {
                 case DOWNLOAD_START:
                     return context.getString(R.string.notificationStarted);
@@ -483,7 +487,7 @@ public class NotificationService extends Service {
         private final MultiProfile.UserProfile profile;
         private final List<EventType> enabledNotifs;
 
-        NotificationsHandler(MultiProfile.UserProfile profile) {
+        NotificationsHandler(@NonNull MultiProfile.UserProfile profile) {
             this.profile = profile;
             this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PKeys.A2_SELECTED_NOTIFS_TYPE, EventType.prefsValues()));
         }
@@ -493,6 +497,7 @@ public class NotificationService extends Service {
             try {
                 JSONObject json = new JSONObject(text);
                 EventType type = EventType.parse(json.getString("method"));
+                if (type == null) return;
                 if (enabledNotifs.contains(type)) {
                     JSONArray events = json.getJSONArray("params");
                     for (int i = 0; i < events.length(); i++) {
