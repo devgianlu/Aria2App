@@ -2,14 +2,10 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.service.chooser.ChooserTarget;
 import android.support.annotation.NonNull;
@@ -49,9 +45,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     public final String name;
     public final boolean notificationsEnabled;
     public transient TestStatus status;
-    private transient ChooserTargetHolder chooserTarget;
 
-    public MultiProfile(String name, boolean enableNotifs) {
+    public MultiProfile(@NonNull String name, boolean enableNotifs) {
         this.name = name;
         this.notificationsEnabled = enableNotifs;
         this.id = ProfilesManager.getId(name);
@@ -124,17 +119,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public ChooserTarget getChooserTarget(DrawingHelper helper, ComponentName targetActivity) {
-        if (chooserTarget == null) {
-            Bundle bundle = new Bundle();
-            bundle.putString("profileId", id);
-
-            Bitmap bitmap = Bitmap.createBitmap(64, 64, Bitmap.Config.ARGB_8888);
-            helper.draw(name.length() <= 2 ? name : name.substring(0, 2), false, new Canvas(bitmap));
-            chooserTarget = new ChooserTargetHolder(new ChooserTarget(name, Icon.createWithBitmap(bitmap), 1, targetActivity, bundle));
-        }
-
-        return chooserTarget.target;
+    public ChooserTarget getChooserTarget(@NonNull DrawingHelper helper, @NonNull ComponentName targetActivity) {
+        return ChooserTargetsCache.get().getOrGenerate(this, helper, targetActivity);
     }
 
     @Nullable
@@ -277,14 +263,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         ERROR,
         UNKNOWN,
         ONLINE
-    }
-
-    private static class ChooserTargetHolder {
-        private final ChooserTarget target;
-
-        ChooserTargetHolder(@NonNull ChooserTarget target) {
-            this.target = target;
-        }
     }
 
     public static class ConnectivityCondition implements Serializable {
