@@ -19,7 +19,7 @@ class DirectDownloadTester extends BaseTester<Boolean> {
     private static final int TIMEOUT = 5;
     private final OkHttpClient client;
 
-    DirectDownloadTester(Context context, MultiProfile.UserProfile profile, @Nullable IPublish<Boolean> listener) {
+    DirectDownloadTester(Context context, MultiProfile.UserProfile profile, @Nullable PublishListener<Boolean> listener) {
         super(context, profile, listener);
 
         client = new OkHttpClient.Builder()

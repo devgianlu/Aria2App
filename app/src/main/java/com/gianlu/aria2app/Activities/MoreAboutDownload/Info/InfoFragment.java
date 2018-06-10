@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Info;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.FontsManager;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.SuperTextView;
@@ -192,19 +194,20 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             btAnnounceList = rootView.findViewById(R.id.infoFragment_btAnnounceList);
         }
 
-        void setup(final DownloadWithUpdate download) {
+        void setup(@NonNull DownloadWithUpdate download) {
             if (getContext() == null) return;
 
             DownloadWithUpdate.BigUpdate update = download.bigUpdate();
 
             Utils.setupChart(chart, false, R.color.colorPrimaryDark);
-            int colorRes = update.isTorrent() ? R.color.colorTorrent : R.color.colorAccent;
-            chart.setNoDataTextColor(ContextCompat.getColor(getContext(), colorRes));
-            bitfield.setColor(colorRes);
-            progress.setTypeface("fonts/Roboto-Light.ttf");
-            downloadSpeed.setTypeface("fonts/Roboto-Light.ttf");
-            uploadSpeed.setTypeface("fonts/Roboto-Light.ttf");
-            remainingTime.setTypeface("fonts/Roboto-Light.ttf");
+            Typeface robotoLight = FontsManager.get().get(getContext(), FontsManager.ROBOTO_LIGHT);
+            int colorAccent = ContextCompat.getColor(getContext(), update.getColorAccent());
+            chart.setNoDataTextColor(colorAccent);
+            bitfield.setColor(colorAccent);
+            progress.setTypeface(robotoLight);
+            downloadSpeed.setTypeface(robotoLight);
+            uploadSpeed.setTypeface(robotoLight);
+            remainingTime.setTypeface(robotoLight);
 
             pause.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.PAUSE, InfoFragment.this));
             start.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.RESUME, InfoFragment.this));
@@ -214,17 +217,18 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.MOVE_UP, InfoFragment.this));
             moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.MOVE_DOWN, InfoFragment.this));
 
-            toggleBtAnnounceList.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    CommonUtils.handleCollapseClick(toggleBtAnnounceList, btAnnounceList);
-                }
-            });
-
             if (update.torrent == null || update.torrent.announceList.isEmpty()) {
                 btAnnounceListContainer.setVisibility(View.GONE);
             } else {
                 btAnnounceListContainer.setVisibility(View.VISIBLE);
+
+                toggleBtAnnounceList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CommonUtils.handleCollapseClick(toggleBtAnnounceList, btAnnounceList);
+                    }
+                });
+
                 btAnnounceList.removeAllViews();
                 for (String url : update.torrent.announceList) {
                     final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.item_bt_announce, btAnnounceList, false);
@@ -254,7 +258,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             }
         }
 
-        void setActionsState(DownloadWithUpdate.BigUpdate update) {
+        void setActionsState(@NonNull DownloadWithUpdate.BigUpdate update) {
             start.setVisibility(View.VISIBLE);
             stop.setVisibility(View.VISIBLE);
             restart.setVisibility(View.VISIBLE);
@@ -297,7 +301,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             }
         }
 
-        boolean setChartState(DownloadWithUpdate.BigUpdate update) {
+        boolean setChartState(@NonNull DownloadWithUpdate.BigUpdate update) {
             switch (update.status) {
                 case ACTIVE:
                     return true;
@@ -313,7 +317,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             }
         }
 
-        void update(DownloadWithUpdate.BigUpdate update) {
+        void update(@NonNull DownloadWithUpdate.BigUpdate update) {
             if (!isAdded()) return;
 
             message.hide();

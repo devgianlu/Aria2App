@@ -75,12 +75,6 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
-    <!-- Download card top section style -->
-    <style name="CardViewTopSection">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/colorPrimary</item>
-    </style>
-
     <!-- Fab label style -->
     <style name="FabLabel">
         <item name="android:background">@drawable/fab_label_layout</item>

@@ -62,7 +62,8 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
-                android:alpha="0.54" />
+                android:tint="@color/icon_inactive_light"
+                android:tintMode="src_in" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

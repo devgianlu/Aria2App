@@ -3,6 +3,7 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
@@ -14,14 +15,14 @@ import com.gianlu.commonutils.Logging;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class NetTester extends BaseTester<AbstractClient> {
-    private final IProfileTester profileListener;
+    private final ProfileTesterCallback profileListener;
 
-    NetTester(Context context, MultiProfile.UserProfile profile, IPublish<AbstractClient> listener) {
+    NetTester(Context context, MultiProfile.UserProfile profile, PublishListener<AbstractClient> listener) {
         super(context, profile, listener);
         this.profileListener = null;
     }
 
-    public NetTester(Context context, MultiProfile.UserProfile profile, IProfileTester profileListener) {
+    public NetTester(Context context, MultiProfile.UserProfile profile, ProfileTesterCallback profileListener) {
         super(context, profile, null);
         this.profileListener = profileListener;
     }
@@ -84,6 +85,7 @@ public class NetTester extends BaseTester<AbstractClient> {
         return "connection test";
     }
 
+    @UiThread
     private void publishResult(MultiProfile.UserProfile profile, MultiProfile.TestStatus status) {
         if (profileListener != null) {
             profileListener.statusUpdated(profile.getParent().id, status);
@@ -116,6 +118,7 @@ public class NetTester extends BaseTester<AbstractClient> {
         }
     }
 
+    @UiThread
     private void publishPing(MultiProfile.UserProfile profile, long ping) {
         if (profileListener != null) {
             profileListener.pingUpdated(profile.getParent().id, ping);
@@ -125,9 +128,11 @@ public class NetTester extends BaseTester<AbstractClient> {
         publishMessage("Latency is " + ping + "ms", Level.INFO);
     }
 
-    public interface IProfileTester {
-        void statusUpdated(String profileId, MultiProfile.TestStatus status);
+    public interface ProfileTesterCallback {
+        @UiThread
+        void statusUpdated(@NonNull String profileId, @NonNull MultiProfile.TestStatus status);
 
-        void pingUpdated(String profileId, long ping);
+        @UiThread
+        void pingUpdated(@NonNull String profileId, long ping);
     }
 }

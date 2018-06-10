@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
@@ -11,9 +12,9 @@ import com.gianlu.aria2app.R;
 public abstract class BaseTester<T> implements Runnable {
     protected final Context context;
     protected final MultiProfile.UserProfile profile;
-    private final IPublish<T> listener;
+    private final PublishListener<T> listener;
 
-    BaseTester(Context context, MultiProfile.UserProfile profile, @Nullable IPublish<T> listener) {
+    BaseTester(Context context, MultiProfile.UserProfile profile, @Nullable PublishListener<T> listener) {
         this.context = context;
         this.profile = profile;
         this.listener = listener;
@@ -24,6 +25,7 @@ public abstract class BaseTester<T> implements Runnable {
         start(null);
     }
 
+    @UiThread
     protected final void publishMessage(String message, Level level) {
         if (listener != null) listener.publishGeneralMessage(message, level.color);
     }
@@ -56,11 +58,14 @@ public abstract class BaseTester<T> implements Runnable {
     @NonNull
     public abstract String describe();
 
-    public interface IPublish<T> {
-        void startedNewTest(BaseTester tester);
+    public interface PublishListener<T> {
+        @UiThread
+        void startedNewTest(@NonNull BaseTester tester);
 
-        void publishGeneralMessage(String message, @ColorRes int color);
+        @UiThread
+        void publishGeneralMessage(@NonNull String message, @ColorRes int color);
 
-        void endedTest(BaseTester tester, @Nullable T result);
+        @UiThread
+        void endedTest(@NonNull BaseTester tester, @Nullable T result);
     }
 }

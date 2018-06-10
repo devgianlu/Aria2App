@@ -1,15 +1,21 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.StyleRes;
+import android.support.v7.widget.RecyclerView;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.Testers.NetTester;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 
@@ -20,15 +26,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> implements NetTester.IProfileTester {
-    private final IEdit editListener;
-    private final ExecutorService service = Executors.newCachedThreadPool();
-    private final Handler handler;
+public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomProfilesAdapter.ViewHolder> implements NetTester.ProfileTesterCallback {
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final LayoutInflater inflater;
 
-    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, IAdapter<MultiProfile> listener, boolean black, @Nullable IEdit editListener) {
-        super(context, profiles, R.color.colorAccent, black, listener);
-        this.editListener = editListener;
-        this.handler = new Handler(Looper.getMainLooper());
+    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, @StyleRes int profileItemsStyle, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
+        super(context, profiles, listener);
+        this.inflater = LayoutInflater.from(new ContextThemeWrapper(context, profileItemsStyle));
     }
 
     @Override
@@ -36,26 +40,24 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         return profiles.get(pos);
     }
 
+    @NonNull
     @Override
-    public void onBindViewHolder(@NonNull ProfilesAdapter.ViewHolder holder, int position) {
-        final MultiProfile multi = getItem(position);
-        final MultiProfile.UserProfile profile = multi.getProfile(context);
+    public CustomProfilesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(parent);
+    }
 
-        holder.globalName.setVisibility(View.GONE);
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull MultiProfile multi) {
+        MultiProfile.UserProfile profile = multi.getProfile(context);
+
         holder.name.setText(profile.getProfileName(context));
+        holder.secondary.setText(profile.getSecondaryText(context));
 
         try {
             holder.secondary.setText(profile.getFullServerAddress());
         } catch (NetUtils.InvalidUrlException ex) {
             Logging.log(ex);
             holder.secondary.setText(null);
-        }
-
-        if (multi.status.latency != -1) {
-            holder.ping.setVisibility(View.VISIBLE);
-            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", multi.status.latency));
-        } else {
-            holder.ping.setVisibility(View.GONE);
         }
 
         if (multi.status.status == MultiProfile.Status.UNKNOWN) {
@@ -67,31 +69,23 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
 
             switch (multi.status.status) {
                 case ONLINE:
-                    holder.status.setImageResource(black ? R.drawable.ic_done_black_48dp : R.drawable.ic_done_white_48dp);
+                    holder.status.setImageResource(R.drawable.ic_done_black_48dp);
                     break;
                 case OFFLINE:
-                    holder.status.setImageResource(black ? R.drawable.ic_clear_black_48dp : R.drawable.ic_clear_white_48dp);
+                    holder.status.setImageResource(R.drawable.ic_clear_black_48dp);
                     break;
                 case ERROR:
-                    holder.status.setImageResource(black ? R.drawable.ic_error_black_48dp : R.drawable.ic_error_white_48dp);
+                    holder.status.setImageResource(R.drawable.ic_error_black_48dp);
                     break;
             }
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) listener.onProfileSelected(multi);
-            }
-        });
-
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (editListener != null) editListener.onEditProfile(multi);
-                return editListener != null;
-            }
-        });
+        if (multi.status.latency != -1) {
+            holder.ping.setVisibility(View.VISIBLE);
+            holder.ping.setText(String.format(Locale.getDefault(), "%s ms", multi.status.latency));
+        } else {
+            holder.ping.setVisibility(View.GONE);
+        }
     }
 
     private int indexOf(String profileId) {
@@ -102,7 +96,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         return -1;
     }
 
-    private void notifyItemChanged(String profileId, MultiProfile.TestStatus status) {
+    private void itemChanged(@NonNull String profileId, @NonNull MultiProfile.TestStatus status) {
         int pos = indexOf(profileId);
         if (pos != -1) {
             MultiProfile profile = profiles.get(pos);
@@ -111,7 +105,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
         }
     }
 
-    private void notifyItemChanged(String profileId, long ping) {
+    private void itemChanged(@NonNull String profileId, long ping) {
         int pos = indexOf(profileId);
         if (pos != -1) {
             MultiProfile profile = profiles.get(pos);
@@ -122,30 +116,34 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile> impleme
 
     @Override
     protected void runTest(int pos) {
-        service.execute(new NetTester(context, getItem(pos).getProfile(context), this));
+        executorService.execute(new NetTester(context, getItem(pos).getProfile(context), this));
     }
 
     @Override
-    public void statusUpdated(final String profileId, final MultiProfile.TestStatus status) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyItemChanged(profileId, status);
-            }
-        });
+    public void statusUpdated(@NonNull String profileId, @NonNull MultiProfile.TestStatus status) {
+        itemChanged(profileId, status);
     }
 
     @Override
-    public void pingUpdated(final String profileId, final long ping) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyItemChanged(profileId, ping);
-            }
-        });
+    public void pingUpdated(@NonNull String profileId, long ping) {
+        itemChanged(profileId, ping);
     }
 
-    public interface IEdit {
-        void onEditProfile(MultiProfile profile);
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        final TextView name;
+        final TextView secondary;
+        final ProgressBar loading;
+        final ImageView status;
+        final TextView ping;
+
+        public ViewHolder(ViewGroup parent) {
+            super(inflater.inflate(R.layout.item_profile, parent, false));
+
+            name = itemView.findViewById(R.id.profileItem_name);
+            secondary = itemView.findViewById(R.id.profileItem_secondary);
+            loading = itemView.findViewById(R.id.profileItem_loading);
+            status = itemView.findViewById(R.id.profileItem_status);
+            ping = itemView.findViewById(R.id.profileItem_ping);
+        }
     }
 }

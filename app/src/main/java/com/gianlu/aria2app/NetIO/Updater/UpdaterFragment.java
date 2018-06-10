@@ -18,7 +18,8 @@ public abstract class UpdaterFragment<P> extends FragmentWithDialog implements R
 
     @Override
     public final void onLoad(@NonNull P payload) {
-        if (!calledLoad) onLoadUi(payload);
+        if (!calledLoad)
+            onLoadUi(payload);
         calledLoad = true;
     }
 

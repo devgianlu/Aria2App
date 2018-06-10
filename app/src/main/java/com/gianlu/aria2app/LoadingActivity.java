@@ -30,7 +30,7 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Drawer.ProfilesAdapter;
+import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 
@@ -42,7 +42,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LoadingActivity extends ActivityWithDialog implements OnConnect {
+public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile> {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
     public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
     public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
@@ -296,20 +296,20 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect {
             return;
         }
 
-        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, profiles, new ProfilesAdapter.IAdapter<MultiProfile>() {
-            @Override
-            public void onProfileSelected(MultiProfile profile) {
-                tryConnecting(profile);
-            }
-        }, false, new CustomProfilesAdapter.IEdit() {
-            @Override
-            public void onEditProfile(MultiProfile profile) {
-                EditProfileActivity.start(LoadingActivity.this, profile.id);
-            }
-        });
-
+        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, profiles, R.style.TextOnDark, this);
         pickerList.setAdapter(adapter);
         adapter.startProfilesTest();
+    }
+
+    @Override
+    public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
+        tryConnecting(profile);
+    }
+
+    @Override
+    public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
+        EditProfileActivity.start(LoadingActivity.this, profile.id);
+        return true;
     }
 
     private void goTo(Class goTo) {

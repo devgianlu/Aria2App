@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -15,7 +16,7 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class TestersFlow extends Thread implements BaseTester.IPublish {
+public class TestersFlow extends Thread implements BaseTester.PublishListener {
     private final Queue<BaseTester<?>> testers;
     private final Context context;
     private final ITestFlow listener;
@@ -61,12 +62,12 @@ public class TestersFlow extends Thread implements BaseTester.IPublish {
     }
 
     @Override
-    public void startedNewTest(BaseTester tester) {
+    public void startedNewTest(@NonNull BaseTester tester) {
         publishGeneralMessage("Started " + tester.describe() + "...", android.R.color.secondary_text_light);
     }
 
     @Override
-    public void publishGeneralMessage(String message, @ColorRes final int color) {
+    public void publishGeneralMessage(@NonNull String message, @ColorRes final int color) {
         final String finalMessage = (System.currentTimeMillis() - startTime) + ": " + message;
         handler.post(new Runnable() {
             @Override
@@ -78,7 +79,7 @@ public class TestersFlow extends Thread implements BaseTester.IPublish {
     }
 
     @Override
-    public void endedTest(BaseTester tester, @Nullable Object result) {
+    public void endedTest(@NonNull BaseTester tester, @Nullable Object result) {
         publishGeneralMessage("Finished " + tester.describe(), result != null ? android.R.color.secondary_text_light : R.color.red);
     }
 

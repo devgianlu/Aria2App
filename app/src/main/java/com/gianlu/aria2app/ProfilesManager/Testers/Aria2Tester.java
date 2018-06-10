@@ -15,7 +15,7 @@ import com.gianlu.commonutils.Logging;
 import java.util.concurrent.atomic.AtomicReference;
 
 class Aria2Tester extends BaseTester<Boolean> {
-    Aria2Tester(Context context, MultiProfile.UserProfile profile, IPublish<Boolean> listener) {
+    Aria2Tester(Context context, MultiProfile.UserProfile profile, PublishListener<Boolean> listener) {
         super(context, profile, listener);
     }
 

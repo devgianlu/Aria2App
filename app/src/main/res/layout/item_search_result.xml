@@ -19,7 +19,7 @@
             android:layout_gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="3"
-            android:textColor="@android:color/primary_text_light"
+            android:textColor="?android:textColorPrimary"
             android:textSize="14sp" />
 
         <TextView

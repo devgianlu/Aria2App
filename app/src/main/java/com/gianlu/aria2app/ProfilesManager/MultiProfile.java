@@ -220,22 +220,23 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     @NonNull
     @Override
-    public String getProfileName(Context context) {
+    public String getProfileName(@NonNull Context context) {
         return getProfile(context).getProfileName(context);
     }
 
     @NonNull
     @Override
-    public String getSecondaryText(Context context) {
+    public String getSecondaryText(@NonNull Context context) {
         return getProfile(context).getSecondaryText(context);
     }
 
     @NonNull
     @Override
-    public String getInitials(Context context) {
+    public String getInitials(@NonNull Context context) {
         return getProfile(context).getInitials(context);
     }
 
+    @NonNull
     JSONObject toJson() throws JSONException {
         if (profiles.isEmpty()) throw new IllegalStateException("profiles cannot be empty!");
 
@@ -643,13 +644,13 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         @NonNull
         @Override
-        public String getProfileName(Context context) {
+        public String getProfileName(@NonNull Context context) {
             return name;
         }
 
         @NonNull
         @Override
-        public String getSecondaryText(Context context) {
+        public String getSecondaryText(@NonNull Context context) {
             try {
                 return getFullServerAddress();
             } catch (NetUtils.InvalidUrlException ex) {
@@ -660,10 +661,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         @NonNull
         @Override
-        public String getInitials(Context context) {
-            String name = getProfileName(context);
+        public String getInitials(@NonNull Context context) {
             if (name.length() < 2) return name;
-            else return getProfileName(context).substring(0, 2);
+            else return name.substring(0, 2);
         }
     }
 }

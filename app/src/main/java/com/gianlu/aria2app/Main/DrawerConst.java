@@ -8,4 +8,5 @@ public class DrawerConst {
     public static final int PREFERENCES = 4;
     public static final int SUPPORT = 5;
     public static final int ABOUT_ARIA2 = 6;
+    public static final int ADD_PROFILE = 7;
 }

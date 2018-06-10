@@ -3,7 +3,7 @@ package com.gianlu.aria2app.Adapters;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.ColorRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -79,8 +79,8 @@ public class BitfieldVisualizer extends View {
         return Arrays.copyOfRange(array, 0, num);
     }
 
-    public void setColor(@ColorRes int color) {
-        paint.setColor(ContextCompat.getColor(getContext(), color));
+    public void setColor(@ColorInt int color) {
+        paint.setColor(color);
         invalidate();
     }
 

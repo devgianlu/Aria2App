@@ -34,7 +34,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -117,7 +116,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, HideSecondSpace, DrawerManager.IDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, DrawerManager.MenuDrawerListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile> drawerManager;
@@ -142,37 +141,26 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private TabLayout secondSpaceTabs = null;
     private LinearLayout secondSpaceContainer = null;
     private MessageView secondSpaceMessage;
+    private ProfilesManager profilesManager;
 
     @Override
     protected void onRestart() {
         super.onRestart();
 
         if (drawerManager != null && drawerManager.isOpen())
-            drawerManager.refreshProfiles(ProfilesManager.get(this).getProfiles());
+            drawerManager.refreshProfiles(profilesManager.getProfiles());
     }
 
     @Override
-    public void onProfileSelected(MultiProfile profile) {
-        ProfilesManager.get(this).setLastProfile(this, profile);
+    public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
+        profilesManager.setLastProfile(this, profile);
         LoadingActivity.startActivity(this);
     }
 
     @Override
-    public void addProfile() {
-        EditProfileActivity.start(this, false);
-    }
-
-    @Override
-    public void editProfile(final List<MultiProfile> items) {
-        showDialog(new AlertDialog.Builder(this)
-                .setTitle(R.string.editProfile)
-                .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditProfileActivity.start(MainActivity.this, items.get(which).id);
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, null));
+    public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
+        EditProfileActivity.start(this, profile.id);
+        return true;
     }
 
     private void showAboutDialog() {
@@ -265,7 +253,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public boolean onMenuItemSelected(BaseDrawerItem which) {
+    public boolean onDrawerMenuItemSelected(@NonNull BaseDrawerItem which) {
         switch (which.id) {
             case DrawerConst.HOME:
                 refresh(MAIN_WANTS, this);
@@ -287,6 +275,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 return true;
             case DrawerConst.ABOUT_ARIA2:
                 showAboutDialog();
+                return true;
+            case DrawerConst.ADD_PROFILE:
+                EditProfileActivity.start(this, false);
                 return true;
             default:
                 return true;
@@ -379,7 +370,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         setRequestedOrientation(getResources().getBoolean(R.bool.isTablet) ? ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        drawerManager = new DrawerManager.Config<MultiProfile>(R.drawable.drawer_background)
+        profilesManager = ProfilesManager.get(this);
+        drawerManager = new DrawerManager.Config<MultiProfile>(this, R.drawable.drawer_background)
                 .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
@@ -388,36 +380,32 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 .addMenuItemSeparator()
                 .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.ic_settings_black_48dp, getString(R.string.preferences)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.ic_report_problem_black_48dp, getString(R.string.support)))
-                .addProfiles(ProfilesManager.get(this).getProfiles(), new DrawerManager.Config.AdapterProvider<MultiProfile>() {
+                .addProfiles(profilesManager.getProfiles(), this, new DrawerManager.Config.AdapterProvider<MultiProfile>() {
+                    @NonNull
                     @Override
-                    public ProfilesAdapter<MultiProfile> provide(@NonNull Context context, @NonNull List<MultiProfile> profiles, final DrawerManager.IDrawerListener<MultiProfile> listener) {
-                        return new CustomProfilesAdapter(context, profiles, new ProfilesAdapter.IAdapter<MultiProfile>() {
-                            @Override
-                            public void onProfileSelected(MultiProfile profile) {
-                                if (listener != null) listener.onProfileSelected(profile);
-                                if (drawerManager != null) drawerManager.performUnlock();
-                            }
-                        }, true, null);
+                    public ProfilesAdapter<MultiProfile, ?> provide(@NonNull Context context, @NonNull List<MultiProfile> profiles, @NonNull DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
+                        return new CustomProfilesAdapter(context, profiles, R.style.TextOnLight, listener);
                     }
                 })
+                .addProfilesMenuItem(new BaseDrawerItem(DrawerConst.ADD_PROFILE, R.drawable.ic_add_black_48dp, getString(R.string.addProfile)))
                 .build(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar);
 
-        ProfilesManager manager = ProfilesManager.get(this);
         MultiProfile currentProfile;
         try {
-            currentProfile = manager.getCurrent();
+            currentProfile = profilesManager.getCurrent();
             helper = Aria2Helper.instantiate(this);
         } catch (ProfilesManager.NoCurrentProfileException | Aria2Helper.InitializingException ex) {
             Logging.log(ex);
             WebSocketClient.clear();
             HttpClient.clear();
-            manager.unsetLastProfile(this);
+            profilesManager.unsetLastProfile(this);
             LoadingActivity.startActivity(this, ex);
             return;
         }
 
-        drawerManager.setCurrentProfile(currentProfile).setDrawerListener(this);
+        drawerManager.setCurrentProfile(currentProfile);
         setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
+        drawerManager.setActiveItem(DrawerConst.HOME);
 
         active = findViewById(R.id.main_active);
         paused = findViewById(R.id.main_paused);
@@ -566,7 +554,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     @Override
                     public void onResult(@NonNull VersionInfo result) {
                         try {
-                            String skipVersion = ProfilesManager.get(MainActivity.this).getCurrent().shouldSkipVersionCheck(MainActivity.this);
+                            String skipVersion = profilesManager.getCurrent().shouldSkipVersionCheck(MainActivity.this);
                             if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
                                 showOutdatedDialog(latestVersion, result.version);
                         } catch (ProfilesManager.NoCurrentProfileException ex) {
@@ -623,7 +611,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         try {
-                            ProfilesManager.get(MainActivity.this).getCurrent().skipVersionCheck(MainActivity.this, latest);
+                            profilesManager.getCurrent().skipVersionCheck(MainActivity.this, latest);
                         } catch (ProfilesManager.NoCurrentProfileException ex) {
                             Logging.log(ex);
                         }
@@ -653,12 +641,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (fabMenu != null) fabMenu.collapseImmediately();
 
         try {
-            ProfilesManager.get(this).reloadCurrentProfile(this);
+            profilesManager.reloadCurrentProfile(this);
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.log(ex);
             WebSocketClient.clear();
             HttpClient.clear();
-            ProfilesManager.get(this).unsetLastProfile(this);
+            profilesManager.unsetLastProfile(this);
             LoadingActivity.startActivity(this, ex);
             return;
         }
@@ -908,7 +896,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         mask.setClickable(false);
     }
 
-    private void showSecondSpace(DownloadWithUpdate download) {
+    private void showSecondSpace(@NonNull DownloadWithUpdate download) {
         secondSpaceAdapter = new PagerAdapter<>(getSupportFragmentManager(),
                 InfoFragment.getInstance(this, download.gid),
                 download.update().isTorrent() ? PeersFragment.getInstance(this, download.gid) : ServersFragment.getInstance(this, download.gid),

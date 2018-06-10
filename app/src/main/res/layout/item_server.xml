@@ -42,7 +42,8 @@
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:alpha="0.54"
+            android:tint="@color/icon_inactive_light"
+            android:tintMode="src_in"
             android:src="@drawable/ic_file_download_black_48dp" />
 
         <com.gianlu.commonutils.SuperTextView
