@@ -417,7 +417,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 }
             } else {
                 detailsChart.clear();
-                detailsChart.setNoDataText(context.getString(R.string.downloadIs, last.status.getFormal(context, false)));
+                detailsChart.setNoDataText(last.status.getFormal(context, true));
             }
 
             donutProgress.setProgress(last.getProgress());

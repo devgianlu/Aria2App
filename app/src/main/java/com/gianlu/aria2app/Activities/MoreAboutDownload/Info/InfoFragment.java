@@ -312,7 +312,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                 case REMOVED:
                 case COMPLETE:
                     chart.clear();
-                    chart.setNoDataText(getString(R.string.downloadIs, update.status.getFormal(getContext(), false)));
+                    chart.setNoDataText(update.status.getFormal(getContext(), true));
                     return false;
             }
         }

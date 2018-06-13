@@ -42,7 +42,6 @@
     <string name="profileName">配置名称</string>
     <string name="profile_help">如果你不知道如何配置，你可以参照我网站的教程: http://gianlu.xyz/apps/docs/aria2app/create-profile.html</string>
     <string name="address">地址</string>
-    <string name="downloadIs">下载 is %s.</string>
     <string name="peers">Peers</string>
     <string name="servers">服务器</string>
     <string name="addProfile">添加配置</string>
