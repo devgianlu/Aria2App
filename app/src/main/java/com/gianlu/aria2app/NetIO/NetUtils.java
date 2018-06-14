@@ -71,7 +71,7 @@ public final class NetUtils {
         return context;
     }
 
-    private static void setSslSocketFactory(OkHttpClient.Builder builder, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+    private static void setSslSocketFactory(@NonNull OkHttpClient.Builder builder, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
         TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
@@ -85,11 +85,13 @@ public final class NetUtils {
         builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
     }
 
-    public static OkHttpClient buildClient(MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    @NonNull
+    public static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
         return buildClient(profile, createSSLContext(profile.certificate));
     }
 
-    static OkHttpClient buildClient(MultiProfile.UserProfile profile, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    @NonNull
+    static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
@@ -111,7 +113,7 @@ public final class NetUtils {
     }
 
     @NonNull
-    public static URI createHttpURL(MultiProfile.UserProfile profile) throws InvalidUrlException {
+    public static URI createHttpURL(@NonNull MultiProfile.UserProfile profile) throws InvalidUrlException {
         try {
             return new URI(profile.serverSSL ? "https" : "http", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
         } catch (Exception ex) {
@@ -120,7 +122,7 @@ public final class NetUtils {
     }
 
     @NonNull
-    public static URI createWebSocketURL(MultiProfile.UserProfile profile) throws InvalidUrlException {
+    public static URI createWebSocketURL(@NonNull MultiProfile.UserProfile profile) throws InvalidUrlException {
         try {
             return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
         } catch (Exception ex) {
@@ -129,7 +131,7 @@ public final class NetUtils {
     }
 
     @NonNull
-    static Request createPostRequest(MultiProfile.UserProfile profile, @Nullable URI url, @Nullable JSONObject request) throws InvalidUrlException {
+    static Request createPostRequest(@NonNull MultiProfile.UserProfile profile, @Nullable URI url, @Nullable JSONObject request) throws InvalidUrlException {
         if (url == null) url = createHttpURL(profile);
         Request.Builder builder = new Request.Builder();
         builder.url(url.toString());
@@ -149,7 +151,7 @@ public final class NetUtils {
     }
 
     @NonNull
-    public static Request createWebsocketRequest(MultiProfile.UserProfile profile) throws InvalidUrlException {
+    public static Request createWebsocketRequest(@NonNull MultiProfile.UserProfile profile) throws InvalidUrlException {
         Request.Builder builder = new Request.Builder();
         builder.url(createWebSocketURL(profile).toString());
         return builder.build();
