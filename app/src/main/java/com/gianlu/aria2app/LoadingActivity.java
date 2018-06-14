@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -39,8 +40,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile> {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
@@ -59,6 +58,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private Button cancel;
     private ProfilesManager manager;
     private String shortcutAction;
+    private Handler handler;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -102,7 +102,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
-        new Handler().postDelayed(new Runnable() {
+        handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 finished = true;
@@ -241,19 +242,14 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 HttpClient.instantiate(this, single, this);
             }
 
-            new Timer().schedule(new TimerTask() {
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    runOnUiThread(new Runnable() {
+                    cancel.setVisibility(View.VISIBLE);
+                    cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void run() {
-                            cancel.setVisibility(View.VISIBLE);
-                            cancel.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    cancelConnection();
-                                }
-                            });
+                        public void onClick(View view) {
+                            cancelConnection();
                         }
                     });
                 }

@@ -16,8 +16,6 @@ import android.view.View;
 
 import com.gianlu.commonutils.FontsManager;
 
-import java.util.Objects;
-
 public class FileTypeTextView extends View {
     private final TextPaint textPaint;
     private final float mDefaultTextSize;
@@ -60,8 +58,8 @@ public class FileTypeTextView extends View {
     }
 
     public void setFilename(@NonNull String filename) {
-        String[] split = filename.split("\\.");
-        if (split.length > 0) setExtension(split[split.length - 1]);
+        int pos = filename.lastIndexOf('.');
+        if (pos != -1) setExtension(filename.substring(pos + 1, filename.length()));
         else setExtension(null);
     }
 
@@ -81,19 +79,20 @@ public class FileTypeTextView extends View {
             }
 
             int height = Math.min(mLayout.getHeight() - mLayout.getTopPadding() - mLayout.getBottomPadding(), mMaxHeight);
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mLayout.draw(canvas);
+        if (mLayout != null) mLayout.draw(canvas);
     }
 
     public void setExtension(@Nullable String ext) {
-        if (Objects.equals(mText, ext)) return;
         if (ext == null) {
-            ext = "???";
+            ext = "?";
         } else {
             ext = ext.trim();
             if (ext.length() > 4) ext = ext.substring(0, 4);
