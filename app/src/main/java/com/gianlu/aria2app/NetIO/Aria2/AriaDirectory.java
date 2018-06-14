@@ -3,8 +3,6 @@ package com.gianlu.aria2app.NetIO.Aria2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,15 +42,11 @@ public class AriaDirectory {
         String path = download.update().dir;
         AriaDirectory dir = new AriaDirectory(SEPARATOR, null);
 
-        for (AriaFile file : files) {
-            try {
+        if (download.update().isMetadata() && files.size() == 1) {
+            dir.addElement("", new String[]{files.get(0).path}, files.get(0));
+        } else {
+            for (AriaFile file : files)
                 dir.addElement("", file.path.substring(path.length() + 1).split(Pattern.quote(SEPARATOR)), file);
-            } catch (StringIndexOutOfBoundsException ex) {
-                Crashlytics.setString("path", path);
-                Crashlytics.setString("file-path", file.path);
-                Crashlytics.logException(ex);
-                throw ex;
-            }
         }
 
         return dir;
