@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 
 import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.aria2app.Tutorial.TutorialManager;
 import com.gianlu.commonutils.LogsActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceFragment;

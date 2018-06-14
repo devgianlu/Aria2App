@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,8 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetView;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.PeersAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -21,11 +19,11 @@ import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.aria2app.Tutorial.BaseTutorial;
+import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.Logging;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
-    private boolean isShowingHint = false;
 
     @NonNull
     public static PeersFragment getInstance(Context context, String gid) {
@@ -105,30 +103,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
             }
         } else {
             recyclerViewLayout.showList();
-        }
-
-        if (isVisible() && !isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.PEERS_SERVERS)) {
-            RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
-            if (holder != null && getActivity() != null) {
-                isShowingHint = true;
-
-                recyclerViewLayout.getList().scrollToPosition(0);
-
-                Rect rect = new Rect();
-                holder.itemView.getGlobalVisibleRect(rect);
-                rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
-
-                TapTargetView.showFor(getActivity(), TapTarget.forBounds(rect, getString(R.string.peerDetails), getString(R.string.peerDetails_desc))
-                                .tintTarget(false)
-                                .transparentTarget(true),
-                        new TapTargetView.Listener() {
-                            @Override
-                            public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
-                                TutorialManager.setHintShown(getContext(), TutorialManager.Discovery.PEERS_SERVERS);
-                                isShowingHint = false;
-                            }
-                        });
-            }
+            tutorialManager.tryShowingTutorials(getActivity());
         }
     }
 
@@ -167,5 +142,10 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     protected void onLoadUi(@NonNull Peers payload) {
+    }
+
+    @Override
+    public boolean buildSequence(@NonNull BaseTutorial tutorial, @NonNull TapTargetSequence sequence) {
+        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForPeers(requireContext(), sequence, recyclerViewLayout.getList());
     }
 }

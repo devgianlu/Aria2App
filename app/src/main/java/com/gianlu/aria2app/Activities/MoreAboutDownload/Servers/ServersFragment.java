@@ -1,13 +1,10 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetView;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -17,12 +14,13 @@ import com.gianlu.aria2app.NetIO.Aria2.SparseServersWithFiles;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.aria2app.Tutorial.BaseTutorial;
+import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.Logging;
 
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerSheet, SparseServersWithFiles> implements ServersAdapter.Listener {
-    private boolean isShowingHint = false;
 
+    @NonNull
     public static ServersFragment getInstance(Context context, String gid) {
         ServersFragment fragment = new ServersFragment();
         Bundle args = new Bundle();
@@ -70,30 +68,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
             }
         } else {
             recyclerViewLayout.showList();
-        }
-
-        if (isVisible() && !isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(getContext(), TutorialManager.Discovery.PEERS_SERVERS)) {
-            RecyclerView.ViewHolder holder = recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
-            if (holder != null && getActivity() != null) {
-                isShowingHint = true;
-
-                recyclerViewLayout.getList().scrollToPosition(0);
-
-                Rect rect = new Rect();
-                holder.itemView.getGlobalVisibleRect(rect);
-                rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
-
-                TapTargetView.showFor(getActivity(), TapTarget.forBounds(rect, getString(R.string.serverDetails), getString(R.string.serverDetails_desc))
-                                .tintTarget(false)
-                                .transparentTarget(true),
-                        new TapTargetView.Listener() {
-                            @Override
-                            public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
-                                TutorialManager.setHintShown(getContext(), TutorialManager.Discovery.PEERS_SERVERS);
-                                isShowingHint = false;
-                            }
-                        });
-            }
+            tutorialManager.tryShowingTutorials(getActivity());
         }
     }
 
@@ -130,6 +105,11 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
     @Override
     public void onLoadUi(@NonNull SparseServersWithFiles payload) {
+    }
+
+    @Override
+    public boolean buildSequence(@NonNull BaseTutorial tutorial, @NonNull TapTargetSequence sequence) {
+        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForServers(requireContext(), sequence, recyclerViewLayout.getList());
     }
 }
 

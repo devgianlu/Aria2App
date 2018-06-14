@@ -8,3 +8,7 @@
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+
+-keepclassmembers public class * extends com.gianlu.aria2app.Tutorial.BaseTutorial {
+   public <init>(...);
+}

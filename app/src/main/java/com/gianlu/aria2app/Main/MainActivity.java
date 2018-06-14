@@ -12,7 +12,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -42,7 +41,6 @@ import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
@@ -85,7 +83,10 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.ThisApplication;
-import com.gianlu.aria2app.TutorialManager;
+import com.gianlu.aria2app.Tutorial.BaseTutorial;
+import com.gianlu.aria2app.Tutorial.DownloadCardsTutorial;
+import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
+import com.gianlu.aria2app.Tutorial.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
@@ -116,7 +117,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, DrawerManager.MenuDrawerListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, DrawerManager.MenuDrawerListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile> drawerManager;
@@ -125,7 +126,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private SearchView searchView;
     private Uri _sharedUri;
     private Toolbar toolbar;
-    private boolean isShowingHint = false;
     private TextView active;
     private TextView paused;
     private ImageButton toggleChart;
@@ -142,6 +142,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private LinearLayout secondSpaceContainer = null;
     private MessageView secondSpaceMessage;
     private ProfilesManager profilesManager;
+    private TutorialManager tutorialManager;
 
     @Override
     protected void onRestart() {
@@ -544,6 +545,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             hideSecondSpace();
         }
+
+        tutorialManager = new TutorialManager(this, this,
+                TutorialManager.Discovery.DOWNLOADS_CARDS, TutorialManager.Discovery.DOWNLOADS_TOOLBAR);
     }
 
     private void doVersionCheck() {
@@ -933,69 +937,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             recyclerViewLayout.showList();
         }
 
-        if (!isShowingHint && toolbar != null && count >= 5 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.TOOLBAR)) {
-            isShowingHint = true;
-
-            TapTargetSequence sequence = new TapTargetSequence(this)
-                    .continueOnCancel(true);
-
-            if (toolbar.findViewById(R.id.main_search) != null)
-                sequence.target(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, getString(R.string.search), getString(R.string.search_desc)));
-
-            if (toolbar.findViewById(R.id.main_filter) != null)
-                sequence.target(TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, getString(R.string.filters), getString(R.string.filters_desc)));
-
-            sequence.listener(new TapTargetSequence.Listener() {
-                @Override
-                public void onSequenceFinish() {
-                    TutorialManager.setHintShown(MainActivity.this, TutorialManager.Discovery.TOOLBAR);
-                    isShowingHint = false;
-                }
-
-                @Override
-                public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-                }
-
-                @Override
-                public void onSequenceCanceled(TapTarget lastTarget) {
-                    onSequenceFinish();
-                }
-            }).start();
-        }
-
-        if (!isShowingHint && count >= 1 && TutorialManager.shouldShowHintFor(this, TutorialManager.Discovery.CARD)) {
-            DownloadCardsAdapter.ViewHolder holder = (DownloadCardsAdapter.ViewHolder) recyclerViewLayout.getList().findViewHolderForLayoutPosition(0);
-            if (holder != null && !CommonUtils.isExpanded(holder.details)) {
-                isShowingHint = true;
-
-                recyclerViewLayout.getList().scrollToPosition(0);
-
-                Rect rect = new Rect();
-                holder.itemView.getGlobalVisibleRect(rect);
-                rect.offset((int) (holder.itemView.getWidth() * 0.3), (int) (-holder.itemView.getHeight() * 0.2));
-
-                new TapTargetSequence(this)
-                        .continueOnCancel(true)
-                        .targets(TapTarget.forBounds(rect, getString(R.string.moreDetails), getString(R.string.moreDetails_desc)).tintTarget(false),
-                                TapTarget.forView(holder.more, getString(R.string.evenMoreDetails), getString(R.string.evenMoreDetails_desc)))
-                        .listener(new TapTargetSequence.Listener() {
-                            @Override
-                            public void onSequenceFinish() {
-                                TutorialManager.setHintShown(MainActivity.this, TutorialManager.Discovery.CARD);
-                                isShowingHint = false;
-                            }
-
-                            @Override
-                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {
-                            }
-
-                            @Override
-                            public void onSequenceCanceled(TapTarget lastTarget) {
-                                onSequenceFinish();
-                            }
-                        }).start();
-            }
-        }
+        tutorialManager.tryShowingTutorials(this);
     }
 
     @Override
@@ -1082,6 +1024,26 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();
+    }
+
+    @Override
+    public boolean canShow(@NonNull BaseTutorial tutorial) {
+        if (tutorial instanceof DownloadsToolbarTutorial)
+            return ((DownloadsToolbarTutorial) tutorial).canShow(toolbar, adapter);
+        else if (tutorial instanceof DownloadCardsTutorial)
+            return ((DownloadCardsTutorial) tutorial).canShow(adapter);
+
+        return false;
+    }
+
+    @Override
+    public boolean buildSequence(@NonNull BaseTutorial tutorial, @NonNull TapTargetSequence sequence) {
+        if (tutorial instanceof DownloadsToolbarTutorial)
+            ((DownloadsToolbarTutorial) tutorial).buildSequence(this, sequence, toolbar);
+        else if (tutorial instanceof DownloadCardsTutorial)
+            return ((DownloadCardsTutorial) tutorial).buildSequence(this, sequence, recyclerViewLayout.getList());
+
+        return true;
     }
 
     private class InternalBroadcastReceiver extends BroadcastReceiver {
