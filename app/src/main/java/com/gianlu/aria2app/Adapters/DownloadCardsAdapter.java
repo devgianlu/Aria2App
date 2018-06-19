@@ -28,7 +28,7 @@ import com.gianlu.aria2app.DonutProgress;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.Utils;
@@ -176,7 +176,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             }
         }
 
-        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PKeys.A2_CUSTOM_INFO, new HashSet<String>()), update.isTorrent()));
+        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PK.A2_CUSTOM_INFO, new HashSet<String>()), update.isTorrent()));
         holder.update(item);
         CommonUtils.setRecyclerViewTopMargin(context, holder);
     }

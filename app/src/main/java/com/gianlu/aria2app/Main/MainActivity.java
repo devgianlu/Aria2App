@@ -75,7 +75,7 @@ import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.Options.OptionsDialog;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.PreferencesActivity;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -83,10 +83,9 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.ThisApplication;
-import com.gianlu.aria2app.Tutorial.BaseTutorial;
+import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.DownloadCardsTutorial;
 import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
-import com.gianlu.aria2app.Tutorial.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
@@ -100,6 +99,8 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
+import com.gianlu.commonutils.Tutorial.TutorialManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -212,10 +213,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (adapter == null) return;
 
         List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
-        Set<String> checkedFiltersSet = Prefs.getSet(this, PKeys.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
+        Set<String> checkedFiltersSet = Prefs.getSet(this, PK.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
-        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PKeys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
+        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PK.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
     }
 
     private void processFileUri(Uri uri) {
@@ -463,12 +464,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
         });
 
-        if (Prefs.getBoolean(this, PKeys.A2_ENABLE_NOTIFS, true))
+        if (Prefs.getBoolean(this, PK.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this, false);
 
         recyclerViewLayout.startLoading();
 
-        if (Prefs.getBoolean(this, PKeys.A2_CHECK_VERSION, true) && ((ThisApplication) getApplication()).shouldCheckVersion()) {
+        if (Prefs.getBoolean(this, PK.A2_CHECK_VERSION, true) && ((ThisApplication) getApplication()).shouldCheckVersion()) {
             ((ThisApplication) getApplication()).checkedVersion();
             doVersionCheck();
         }
@@ -519,7 +520,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
         }
 
-        DownloaderUtils.startService(this, Prefs.getBoolean(this, PKeys.DD_RESUME, true));
+        DownloaderUtils.startService(this, Prefs.getBoolean(this, PK.DD_RESUME, true));
 
         secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)
         if (secondSpace != null) {
@@ -547,7 +548,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         tutorialManager = new TutorialManager(this, this,
-                TutorialManager.Discovery.DOWNLOADS_CARDS, TutorialManager.Discovery.DOWNLOADS_TOOLBAR);
+                Discovery.DOWNLOADS_CARDS, Discovery.DOWNLOADS_TOOLBAR);
     }
 
     private void doVersionCheck() {
@@ -683,7 +684,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (sortingMenu != null) {
             sortingMenu.setGroupCheckable(0, true, true);
 
-            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PKeys.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
+            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PK.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
             MenuItem item;
             switch (sorting) {
                 case NAME:
@@ -738,7 +739,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             stringFilters[i] = filters[i].getFormal(this, true);
 
         final boolean[] checkedFilters = new boolean[filters.length];
-        Set<String> checkedFiltersSet = Prefs.getSet(this, PKeys.A2_MAIN_FILTERS, null);
+        Set<String> checkedFiltersSet = Prefs.getSet(this, PK.A2_MAIN_FILTERS, null);
 
         if (checkedFiltersSet == null) {
             for (int i = 0; i < checkedFilters.length; i++) checkedFilters[i] = true;
@@ -770,7 +771,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                         for (int i = 0; i < checkedFilters.length; i++)
                             if (checkedFilters[i]) set.add(filters[i].name());
 
-                        Prefs.putSet(MainActivity.this, PKeys.A2_MAIN_FILTERS, set);
+                        Prefs.putSet(MainActivity.this, PK.A2_MAIN_FILTERS, set);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
@@ -877,7 +878,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {
         if (adapter != null) adapter.sort(sorting);
-        Prefs.putString(this, PKeys.A2_MAIN_SORTING, sorting.name());
+        Prefs.putString(this, PK.A2_MAIN_SORTING, sorting.name());
     }
 
     @Override

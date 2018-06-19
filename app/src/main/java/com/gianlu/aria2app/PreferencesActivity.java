@@ -10,13 +10,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 
 import com.gianlu.aria2app.Services.NotificationService;
-import com.gianlu.aria2app.Tutorial.TutorialManager;
 import com.gianlu.commonutils.LogsActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceFragment;
 import com.gianlu.commonutils.Preferences.BaseAboutFragment;
 import com.gianlu.commonutils.Preferences.BaseThirdPartProjectsFragment;
 import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.Tutorial.TutorialManager;
 
 import java.io.File;
 import java.util.List;
@@ -46,7 +46,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             getActivity().setTitle(R.string.general);
             setHasOptionsMenu(true);
 
-            MultiSelectListPreference customInfo = ((MultiSelectListPreference) findPreference(PKeys.A2_CUSTOM_INFO.getKey()));
+            MultiSelectListPreference customInfo = ((MultiSelectListPreference) findPreference(PK.A2_CUSTOM_INFO.getKey()));
             customInfo.setEntryValues(CustomDownloadInfo.Info.stringValues());
             customInfo.setEntries(CustomDownloadInfo.Info.formalValues(getActivity()));
 
@@ -74,7 +74,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             getActivity().setTitle(R.string.directDownload);
             setHasOptionsMenu(true);
 
-            findPreference(PKeys.DD_DOWNLOAD_PATH.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(PK.DD_DOWNLOAD_PATH.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
                     File path = new File(((String) o).trim());
@@ -92,7 +92,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 }
             });
 
-            findPreference(PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Integer val = Integer.parseInt((String) newValue);
@@ -120,7 +120,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             getActivity().setTitle(R.string.notifications);
             setHasOptionsMenu(true);
 
-            findPreference(PKeys.A2_ENABLE_NOTIFS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            findPreference(PK.A2_ENABLE_NOTIFS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     if ((boolean) newValue) NotificationService.start(getActivity(), false);

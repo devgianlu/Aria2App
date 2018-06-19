@@ -14,7 +14,7 @@ import android.widget.ImageButton;
 
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.Options.OptionsManager;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.SuperTextView;
@@ -50,7 +50,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         else all = OptionsManager.get(context).loadDownloadOptions();
 
         Set<String> filter;
-        if (quick) filter = Prefs.getSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, null);
+        if (quick) filter = Prefs.getSet(context, PK.A2_QUICK_OPTIONS_MIXED, null);
         else filter = null;
 
         List<Option> options = Option.fromOptionsMap(map, all, filter);

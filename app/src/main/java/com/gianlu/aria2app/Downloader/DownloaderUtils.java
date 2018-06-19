@@ -12,7 +12,7 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.io.File;
@@ -89,7 +89,7 @@ public class DownloaderUtils {
     }
 
     public static File getAndValidateDownloadPath(Context context) throws InvalidPathException {
-        File path = new File(Prefs.getString(context, PKeys.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()));
+        File path = new File(Prefs.getString(context, PK.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()));
         if (!path.exists()) {
             if (!path.mkdirs()) throw new InvalidPathException();
         }

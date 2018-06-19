@@ -44,10 +44,9 @@ import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Tutorial.BaseTutorial;
+import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.FilesTutorial;
 import com.gianlu.aria2app.Tutorial.FoldersTutorial;
-import com.gianlu.aria2app.Tutorial.TutorialManager;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.BreadcrumbsView;
@@ -55,6 +54,8 @@ import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
+import com.gianlu.commonutils.Tutorial.TutorialManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,7 +129,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         tutorialManager = new TutorialManager(requireContext(), this,
-                TutorialManager.Discovery.FILES, TutorialManager.Discovery.FOLDERS);
+                Discovery.FILES, Discovery.FOLDERS);
 
         recyclerViewLayout.startLoading();
 

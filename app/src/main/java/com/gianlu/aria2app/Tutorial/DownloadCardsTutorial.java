@@ -12,12 +12,13 @@ import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
 public class DownloadCardsTutorial extends BaseTutorial {
 
     @Keep
     public DownloadCardsTutorial() {
-        super(TutorialManager.Discovery.DOWNLOADS_CARDS);
+        super(Discovery.DOWNLOADS_CARDS);
     }
 
     public boolean canShow(DownloadCardsAdapter adapter) {

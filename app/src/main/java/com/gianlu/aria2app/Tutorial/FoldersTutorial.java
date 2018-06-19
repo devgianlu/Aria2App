@@ -12,12 +12,13 @@ import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
 public class FoldersTutorial extends BaseTutorial {
 
     @Keep
     public FoldersTutorial() {
-        super(TutorialManager.Discovery.FOLDERS);
+        super(Discovery.FOLDERS);
     }
 
     public final boolean buildSequence(@NonNull Context context, @NonNull TapTargetSequence seq, @NonNull RecyclerView list) {

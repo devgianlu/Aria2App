@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 
@@ -27,7 +27,7 @@ public abstract class PayloadUpdater<P> implements Runnable {
         this.listener = listener;
         this.handler = new Handler(Looper.getMainLooper());
         this.errorHandler = ErrorHandler.get();
-        this.updateInterval = Prefs.getFakeInt(context, PKeys.A2_UPDATE_INTERVAL, 1) * 1000;
+        this.updateInterval = Prefs.getFakeInt(context, PK.A2_UPDATE_INTERVAL, 1) * 1000;
     }
 
     protected abstract void loop();

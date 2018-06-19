@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.gianlu.commonutils.Preferences.Prefs;
 
-public enum PKeys implements Prefs.PrefKey {
+public enum PK implements Prefs.PrefKey {
     DD_DOWNLOAD_PATH("dd_downloadPath"),
     DD_RESUME("dd_resume"),
     DD_MAX_SIMULTANEOUS_DOWNLOADS("dd_maxSimultaneousDownloads"),
@@ -14,19 +14,22 @@ public enum PKeys implements Prefs.PrefKey {
     A2_ENABLE_NOTIFS("a2_enableNotifications"),
     A2_UPDATE_INTERVAL("a2_updateRate"),
     A2_HIDE_METADATA("a2_hideMetadata"),
-    A2_GLOBAL_QUICK_OPTIONS("a2_globalQuickOptions"),
     A2_QUICK_OPTIONS_MIXED("a2_quickOptionsMixed"),
     A2_CHECK_VERSION("a2_runVersionCheckAtStartup"),
-    A2_QUICK_OPTIONS("a2_quickOptions"),
     A2_MAIN_SORTING("a2_mainSorting"),
     A2_SELECTED_NOTIFS_TYPE("a2_selectedNotifications"),
-    A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries"),
     A2_SEARCH_ENGINES("a2_searchEngines"),
-    A2_CUSTOM_INFO("a2_customInfo");
+    A2_CUSTOM_INFO("a2_customInfo"),
+    @Deprecated
+    A2_GLOBAL_QUICK_OPTIONS("a2_globalQuickOptions"),
+    @Deprecated
+    A2_QUICK_OPTIONS("a2_quickOptions"),
+    @Deprecated
+    A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries");
 
     private final String key;
 
-    PKeys(String key) {
+    PK(String key) {
         this.key = key;
     }
 

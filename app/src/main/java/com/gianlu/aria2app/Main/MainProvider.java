@@ -9,7 +9,7 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.PayloadUpdater;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
@@ -29,7 +29,7 @@ class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
 
         Updater(Context context) throws Aria2Helper.InitializingException {
             super(context, MainProvider.this);
-            this.hideMetadata = Prefs.getBoolean(context, PKeys.A2_HIDE_METADATA, false);
+            this.hideMetadata = Prefs.getBoolean(context, PK.A2_HIDE_METADATA, false);
         }
 
         @Override

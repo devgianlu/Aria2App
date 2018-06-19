@@ -30,7 +30,7 @@ import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Search.SearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchResult;
 import com.gianlu.aria2app.NetIO.Search.Torrent;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -91,7 +91,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         }
 
         final boolean[] checkedEngines = new boolean[engines.size()];
-        Set<String> checkedEnginesSet = Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null);
+        Set<String> checkedEnginesSet = Prefs.getSet(this, PK.A2_SEARCH_ENGINES, null);
 
         if (checkedEnginesSet == null) {
             for (int i = 0; i < checkedEngines.length; i++) checkedEngines[i] = true;
@@ -120,7 +120,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                         if (set.isEmpty()) {
                             Toaster.with(SearchActivity.this).message(R.string.noEnginesSelected).show();
                         } else {
-                            Prefs.putSet(SearchActivity.this, PKeys.A2_SEARCH_ENGINES, set);
+                            Prefs.putSet(SearchActivity.this, PK.A2_SEARCH_ENGINES, set);
                             if (query != null) onQueryTextSubmit(query);
                         }
                     }
@@ -154,7 +154,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.startLoading();
         this.query = query;
 
-        SearchApi.get().search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(this, PKeys.A2_SEARCH_ENGINES, null), this);
+        SearchApi.get().search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(this, PK.A2_SEARCH_ENGINES, null), this);
 
         AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH);
         return true;

@@ -14,12 +14,13 @@ import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
 public class FilesTutorial extends BaseTutorial {
 
     @Keep
     public FilesTutorial() {
-        super(TutorialManager.Discovery.FILES);
+        super(Discovery.FILES);
     }
 
     public final boolean buildSequence(@NonNull Context context, @NonNull TapTargetSequence seq, @NonNull RecyclerView list, @Nullable AriaDirectory dir) {

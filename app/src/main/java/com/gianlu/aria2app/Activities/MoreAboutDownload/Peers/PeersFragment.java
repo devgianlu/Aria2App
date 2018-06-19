@@ -19,9 +19,9 @@ import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Tutorial.BaseTutorial;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
 

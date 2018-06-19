@@ -11,11 +11,12 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
 public class PeersServersTutorial extends BaseTutorial {
     @Keep
     public PeersServersTutorial() {
-        super(TutorialManager.Discovery.PEERS_SERVERS);
+        super(Discovery.PEERS_SERVERS);
     }
 
     public final boolean canShow(Fragment fragment, RecyclerView.Adapter adapter) {

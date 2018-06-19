@@ -48,30 +48,40 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
         SearchApi.get().cacheSearchEngines();
 
-        ErrorHandler.setup(Prefs.getFakeInt(this, PKeys.A2_UPDATE_INTERVAL, 1) * 1000, this);
+        ErrorHandler.setup(Prefs.getFakeInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
 
         Logging.clearLogs(this);
 
-        if (!Prefs.has(this, PKeys.DD_DOWNLOAD_PATH))
-            Prefs.putString(this, PKeys.DD_DOWNLOAD_PATH,
+        if (!Prefs.has(this, PK.DD_DOWNLOAD_PATH))
+            Prefs.putString(this, PK.DD_DOWNLOAD_PATH,
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
 
         // Backward compatibility
-        if (!Prefs.has(this, PKeys.A2_CUSTOM_INFO)) {
+        if (!Prefs.has(this, PK.A2_CUSTOM_INFO)) {
             Set<String> defaultValues = new HashSet<>();
             defaultValues.add(CustomDownloadInfo.Info.DOWNLOAD_SPEED.name());
             defaultValues.add(CustomDownloadInfo.Info.REMAINING_TIME.name());
-            Prefs.putSet(getApplicationContext(), PKeys.A2_CUSTOM_INFO, defaultValues);
+            Prefs.putSet(getApplicationContext(), PK.A2_CUSTOM_INFO, defaultValues);
         }
 
-        // Backward compatibility
-        if (Prefs.has(this, PKeys.A2_QUICK_OPTIONS) || Prefs.has(this, PKeys.A2_GLOBAL_QUICK_OPTIONS)) {
+        deprecatedBackwardCompatibility();
+    }
+
+    @SuppressWarnings("deprecation")
+    private void deprecatedBackwardCompatibility() {
+        if (Prefs.has(this, PK.A2_QUICK_OPTIONS) || Prefs.has(this, PK.A2_GLOBAL_QUICK_OPTIONS)) {
             Set<String> set = new HashSet<>();
-            set.addAll(Prefs.getSet(this, PKeys.A2_QUICK_OPTIONS, new HashSet<String>()));
-            set.addAll(Prefs.getSet(this, PKeys.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
-            Prefs.putSet(this, PKeys.A2_QUICK_OPTIONS_MIXED, set);
-            Prefs.remove(this, PKeys.A2_QUICK_OPTIONS);
-            Prefs.remove(this, PKeys.A2_GLOBAL_QUICK_OPTIONS);
+            set.addAll(Prefs.getSet(this, PK.A2_QUICK_OPTIONS, new HashSet<String>()));
+            set.addAll(Prefs.getSet(this, PK.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
+            Prefs.putSet(this, PK.A2_QUICK_OPTIONS_MIXED, set);
+            Prefs.remove(this, PK.A2_QUICK_OPTIONS);
+            Prefs.remove(this, PK.A2_GLOBAL_QUICK_OPTIONS);
+        }
+
+        if (Prefs.has(this, PK.A2_TUTORIAL_DISCOVERIES)) {
+            Set<String> set = Prefs.getSet(this, PK.A2_TUTORIAL_DISCOVERIES, null);
+            if (set != null) Prefs.putSet(this, Prefs.Keys.TUTORIAL_DISCOVERIES, set);
+            Prefs.remove(this, PK.A2_TUTORIAL_DISCOVERIES);
         }
     }
 

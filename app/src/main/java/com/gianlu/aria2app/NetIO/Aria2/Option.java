@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.util.ArrayList;
@@ -54,12 +54,12 @@ public class Option implements Comparable<Option> {
     }
 
     public boolean isQuick(Context context) {
-        return Prefs.getSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, new HashSet<String>()).contains(name);
+        return Prefs.getSet(context, PK.A2_QUICK_OPTIONS_MIXED, new HashSet<String>()).contains(name);
     }
 
     public void setQuick(Context context, boolean quick) {
-        if (quick) Prefs.addToSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, name);
-        else Prefs.removeFromSet(context, PKeys.A2_QUICK_OPTIONS_MIXED, name);
+        if (quick) Prefs.addToSet(context, PK.A2_QUICK_OPTIONS_MIXED, name);
+        else Prefs.removeFromSet(context, PK.A2_QUICK_OPTIONS_MIXED, name);
     }
 
     @Override

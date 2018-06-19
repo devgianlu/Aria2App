@@ -15,12 +15,13 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Tutorial.BaseTutorial;
+import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
-import com.gianlu.aria2app.Tutorial.TutorialManager;
 import com.gianlu.commonutils.BottomSheet.BaseModalBottomSheet;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
+import com.gianlu.commonutils.Tutorial.TutorialManager;
 
 public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends BaseModalBottomSheet<?, ?>, P> extends UpdaterFragment<P> implements TutorialManager.Listener, OnBackPressed {
     protected TopCountriesView topDownloadCountries;
@@ -93,7 +94,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
 
         layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);
 
-        tutorialManager = new TutorialManager(requireContext(), this, TutorialManager.Discovery.PEERS_SERVERS);
+        tutorialManager = new TutorialManager(requireContext(), this, Discovery.PEERS_SERVERS);
 
         return layout;
     }

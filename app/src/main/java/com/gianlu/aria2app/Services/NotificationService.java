@@ -32,7 +32,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
@@ -489,7 +489,7 @@ public class NotificationService extends Service {
 
         NotificationsHandler(@NonNull MultiProfile.UserProfile profile) {
             this.profile = profile;
-            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PKeys.A2_SELECTED_NOTIFS_TYPE, EventType.prefsValues()));
+            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PK.A2_SELECTED_NOTIFS_TYPE, EventType.prefsValues()));
         }
 
         @Override

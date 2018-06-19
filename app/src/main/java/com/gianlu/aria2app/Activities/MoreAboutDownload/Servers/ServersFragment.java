@@ -14,9 +14,9 @@ import com.gianlu.aria2app.NetIO.Aria2.SparseServersWithFiles;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Tutorial.BaseTutorial;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerSheet, SparseServersWithFiles> implements ServersAdapter.Listener {
 

@@ -14,7 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public class DownloaderService extends Service {
 
         downloads.notifyCountChanged();
 
-        int maxSimultaneousDownloads = Prefs.getFakeInt(this, PKeys.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
+        int maxSimultaneousDownloads = Prefs.getFakeInt(this, PK.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
         if (maxSimultaneousDownloads <= 0) maxSimultaneousDownloads = 3;
         else if (maxSimultaneousDownloads > 10) maxSimultaneousDownloads = 10;
         executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);

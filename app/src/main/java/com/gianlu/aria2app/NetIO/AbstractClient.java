@@ -13,7 +13,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
-import com.gianlu.aria2app.PKeys;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Preferences.Prefs;
 
@@ -57,7 +57,7 @@ public abstract class AbstractClient implements Closeable {
         this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
-        this.shouldForce = Prefs.getBoolean(context, PKeys.A2_FORCE_ACTION, true);
+        this.shouldForce = Prefs.getBoolean(context, PK.A2_FORCE_ACTION, true);
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
