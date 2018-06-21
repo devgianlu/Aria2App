@@ -126,7 +126,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                dismissAllowingStateLoss();
             }
         });
 
@@ -137,7 +137,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
         Bundle args = getArguments();
         if (args == null) {
-            dismiss();
+            dismissAllowingStateLoss();
             return null;
         }
 
@@ -153,7 +153,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             helper = Aria2Helper.instantiate(requireContext());
         } catch (Aria2Helper.InitializingException ex) {
             DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
-            dismiss();
+            dismissAllowingStateLoss();
             return null;
         }
 
@@ -189,7 +189,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             public void onSuccess() {
                 pd.dismiss();
                 DialogUtils.showToast(getContext(), Toaster.build().message(global ? R.string.globalOptionsChanged : R.string.downloadOptionsChanged));
-                dismiss();
+                dismissAllowingStateLoss();
                 AnalyticsApplication.sendAnalytics(getContext(), global ? Utils.ACTION_CHANGED_GLOBAL_OPTIONS : Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
             }
 
@@ -228,7 +228,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             return;
         }
 
-        dismiss();
+        dismissAllowingStateLoss();
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.exportedOptions, file.getAbsolutePath()));
     }
 
@@ -275,7 +275,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         if (!isAdded()) return;
 
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
-        dismiss();
+        dismissAllowingStateLoss();
     }
 
     @Override

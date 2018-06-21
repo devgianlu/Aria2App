@@ -103,13 +103,13 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                                     break;
                             }
 
-                            dismiss();
+                            dismissAllowingStateLoss();
                             DialogUtils.showToast(getContext(), toaster);
                         }
 
                         @Override
                         public void onException(Exception ex, boolean shouldForce) {
-                            dismiss();
+                            dismissAllowingStateLoss();
                             DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
                         }
                     });
