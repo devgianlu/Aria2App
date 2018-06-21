@@ -7,6 +7,7 @@ import android.service.chooser.ChooserTarget;
 import android.service.chooser.ChooserTargetService;
 import android.support.annotation.RequiresApi;
 
+import com.gianlu.aria2app.ProfilesManager.ChooserTargetsCache;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.LettersIcons.DrawingHelper;
@@ -21,8 +22,9 @@ public class ProfileChooserService extends ChooserTargetService {
         DrawingHelper helper = new DrawingHelper(this);
         List<MultiProfile> profiles = ProfilesManager.get(this).getProfiles();
         List<ChooserTarget> targets = new ArrayList<>();
+        ChooserTargetsCache cache = ChooserTargetsCache.get();
         for (MultiProfile profile : profiles)
-            targets.add(profile.getChooserTarget(helper, targetActivityName));
+            targets.add(cache.getOrGenerate(profile, helper, targetActivityName));
         return targets;
     }
 }

@@ -1,16 +1,12 @@
 package com.gianlu.aria2app.ProfilesManager;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
-import android.service.chooser.ChooserTarget;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Base64;
 
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
@@ -22,7 +18,6 @@ import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
-import com.gianlu.commonutils.LettersIcons.DrawingHelper;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
@@ -116,11 +111,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         this.profiles = new ArrayList<>();
         this.profiles.add(new UserProfile(token, port));
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public ChooserTarget getChooserTarget(@NonNull DrawingHelper helper, @NonNull ComponentName targetActivity) {
-        return ChooserTargetsCache.get().getOrGenerate(this, helper, targetActivity);
     }
 
     @Nullable
