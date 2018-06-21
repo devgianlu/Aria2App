@@ -223,6 +223,11 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
+    public void postOnList(@NonNull Runnable runnable) {
+        recyclerViewLayout.getList().post(runnable);
+    }
+
+    @Override
     public boolean onDirectoryLongClick(@NonNull AriaDirectory dir) {
         dirSheet = DirectorySheet.get();
         dirSheet.show(getActivity(), download, dir, this);

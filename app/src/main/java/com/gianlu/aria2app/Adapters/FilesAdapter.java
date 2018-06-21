@@ -84,7 +84,12 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void changeDir(@NonNull AriaDirectory dir) {
         currentDir = dir;
         listener.onDirectoryChanged(dir);
-        notifyDataSetChanged();
+        listener.postOnList(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -221,6 +226,8 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         boolean onDirectoryLongClick(@NonNull AriaDirectory dir);
 
         void exitActionMode();
+
+        void postOnList(@NonNull Runnable runnable);
     }
 
     private class DirViewHolder extends RecyclerView.ViewHolder {
