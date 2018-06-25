@@ -165,11 +165,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         return true;
     }
 
-    @Override
-    public void postOnList(@NonNull Runnable action) {
-        recyclerViewLayout.getList().post(action);
-    }
-
     private void showAboutDialog() {
         showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
         helper.getVersionAndSession(new AbstractClient.OnResult<VersionAndSession>() {

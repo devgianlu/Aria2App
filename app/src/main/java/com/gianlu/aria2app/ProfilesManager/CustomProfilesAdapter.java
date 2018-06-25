@@ -101,7 +101,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
         if (pos != -1) {
             MultiProfile profile = profiles.get(pos);
             profile.setStatus(status);
-            listener.postOnList(new Runnable() {
+            post(new Runnable() {
                 @Override
                 public void run() {
                     notifyItemChanged(pos);
@@ -115,7 +115,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
         if (pos != -1) {
             MultiProfile profile = profiles.get(pos);
             profile.updateStatusPing(ping);
-            listener.postOnList(new Runnable() {
+            post(new Runnable() {
                 @Override
                 public void run() {
                     notifyItemChanged(pos);
