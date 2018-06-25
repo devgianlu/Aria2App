@@ -50,8 +50,6 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
 
-        Logging.clearLogs(this);
-
         if (!Prefs.has(this, PK.DD_DOWNLOAD_PATH))
             Prefs.putString(this, PK.DD_DOWNLOAD_PATH,
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
