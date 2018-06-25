@@ -97,20 +97,30 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
     }
 
     private void itemChanged(@NonNull String profileId, @NonNull MultiProfile.TestStatus status) {
-        int pos = indexOf(profileId);
+        final int pos = indexOf(profileId);
         if (pos != -1) {
             MultiProfile profile = profiles.get(pos);
             profile.setStatus(status);
-            notifyItemChanged(pos);
+            listener.postOnList(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemChanged(pos);
+                }
+            });
         }
     }
 
     private void itemChanged(@NonNull String profileId, long ping) {
-        int pos = indexOf(profileId);
+        final int pos = indexOf(profileId);
         if (pos != -1) {
             MultiProfile profile = profiles.get(pos);
             profile.updateStatusPing(ping);
-            notifyItemChanged(pos);
+            listener.postOnList(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemChanged(pos);
+                }
+            });
         }
     }
 

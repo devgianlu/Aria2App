@@ -149,6 +149,8 @@ public class ProfilesManager {
             }
         });
 
+        if (profiles == null) return new String[0];
+
         for (int i = 0; i < profiles.length; i++) {
             String id = profiles[i];
             profiles[i] = id.substring(0, id.length() - 8);
