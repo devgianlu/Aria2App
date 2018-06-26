@@ -133,12 +133,4 @@ public class AddUriActivity extends ActivityWithDialog {
 
         return true;
     }
-
-    @Override
-    public void onBackPressed() {
-        try {
-            super.onBackPressed();
-        } catch (IllegalStateException ignored) {
-        }
-    }
 }

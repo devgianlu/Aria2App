@@ -108,7 +108,6 @@ public class AddTorrentActivity extends ActivityWithDialog {
         Integer position = optionsFragment.getPosition();
 
         try {
-
             showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
             Aria2Helper.instantiate(this).request(AriaRequests.addTorrent(base64, uris, position, options), new AbstractClient.OnResult<String>() {
                 @Override
