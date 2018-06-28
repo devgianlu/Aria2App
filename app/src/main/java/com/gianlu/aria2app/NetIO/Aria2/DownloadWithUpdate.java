@@ -264,11 +264,14 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
             try {
                 if (torrent != null && torrent.name != null) return torrent.name;
 
-                String[] splitted = files.get(0).path.split("/");
+                AriaFile file = files.get(0);
+
+                String[] splitted = file.path.split("/");
                 if (splitted.length >= 1) name = splitted[splitted.length - 1];
 
                 if (name.trim().isEmpty()) {
-                    List<String> urls = files.get(0).uris.findByStatus(AriaFile.Status.USED);
+                    List<String> urls = file.uris.findByStatus(AriaFile.Status.USED);
+                    if (urls.isEmpty()) urls = file.uris.findByStatus(AriaFile.Status.WAITING);
                     if (!urls.isEmpty()) name = urls.get(0);
                 }
             } catch (Exception ex) {
