@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class DownloadWithUpdate extends Download implements Filterable<Download.Status> {
@@ -258,15 +259,25 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
 
         @NonNull
         private String getNameInternal() {
+            String name = "";
+
             try {
                 if (torrent != null && torrent.name != null) return torrent.name;
+
                 String[] splitted = files.get(0).path.split("/");
-                if (splitted.length >= 1) return splitted[splitted.length - 1];
+                if (splitted.length >= 1) name = splitted[splitted.length - 1];
+
+                if (name.trim().isEmpty()) {
+                    List<String> urls = files.get(0).uris.findByStatus(AriaFile.Status.USED);
+                    if (!urls.isEmpty()) name = urls.get(0);
+                }
             } catch (Exception ex) {
                 Logging.log(ex);
             }
 
-            return "Unknown";
+            name = name.trim();
+            if (name.isEmpty()) return "???";
+            else return name;
         }
 
         public float getProgress() {

@@ -129,12 +129,8 @@ public class Download {
                 Map<String, String> oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
 
                 Set<String> newUrls = new HashSet<>();
-                for (AriaFile file : old.update().files) {
-                    for (String url : file.uris.keySet()) {
-                        if (file.uris.get(url) == AriaFile.Status.USED)
-                            newUrls.add(url);
-                    }
-                }
+                for (AriaFile file : old.update().files)
+                    newUrls.addAll(file.uris.findByStatus(AriaFile.Status.USED));
 
                 String newGid = client.sendSync(AriaRequests.addUri(newUrls, null, oldOptions));
                 client.sendSync(AriaRequests.removeDownloadResult(gid));

@@ -8,9 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.HttpUrl;
@@ -20,7 +21,7 @@ public class AriaFile {
     public final long length;
     public final String path;
     public final Integer index;
-    public final HashMap<String, Status> uris;
+    public final Uris uris;
     public boolean selected;
     private String mime;
     private String name;
@@ -32,13 +33,11 @@ public class AriaFile {
         completedLength = obj.getLong("completedLength");
         selected = obj.getBoolean("selected");
 
-        uris = new HashMap<>();
+
         if (obj.has("uris")) {
-            JSONArray array = obj.getJSONArray("uris");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject uri = array.getJSONObject(i);
-                uris.put(uri.getString("uri"), Status.parse(uri.getString("status")));
-            }
+            uris = new Uris(obj.getJSONArray("uris"));
+        } else {
+            uris = Uris.empty();
         }
     }
 
@@ -117,6 +116,40 @@ public class AriaFile {
                 default:
                     return Status.WAITING;
             }
+        }
+    }
+
+    public static class Uris {
+        private final String[] uris;
+        private final Status[] statuses;
+
+        private Uris() {
+            uris = new String[0];
+            statuses = new Status[0];
+        }
+
+        private Uris(JSONArray array) throws JSONException {
+            uris = new String[array.length()];
+            statuses = new Status[array.length()];
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject uri = array.getJSONObject(i);
+                uris[i] = uri.getString("uri");
+                statuses[i] = Status.parse(uri.getString("status"));
+            }
+        }
+
+        @NonNull
+        private static Uris empty() {
+            return new Uris();
+        }
+
+        @NonNull
+        public List<String> findByStatus(Status match) {
+            List<String> list = new ArrayList<>(uris.length);
+            for (int i = 0; i < statuses.length; i++)
+                if (statuses[i] == match) list.add(uris[i]);
+            return list;
         }
     }
 }
