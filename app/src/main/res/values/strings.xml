@@ -41,7 +41,7 @@
     <string name="info">Info</string>
     <string name="files">Files</string>
     <string name="profileName">Profile name</string>
-    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: http://gianlu.xyz/apps/docs/aria2app/create-profile.html</string>
+    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: https://gianlu.xyz/documents/Aria2App/create-profile/</string>
     <string name="address">Address</string>
     <string name="peers">Peers</string>
     <string name="servers">Servers</string>
@@ -68,7 +68,7 @@
     <string name="uploadSpeed">Upload speed</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration: the address must be pointing to a directory listing of the aria2 download directory. This will require the permission to write to the external storage. You can follow this guide to set it up: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration: the address must be pointing to a directory listing of the aria2 download directory. This will require the permission to write to the external storage. You can follow this guide to set it up: https://gianlu.xyz/documents/Aria2App/setup-directdownload</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="more">More</string>
@@ -271,7 +271,7 @@
     <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>
     <string name="dd_resume">Resume downloads</string>
     <string name="dd_resume_summary">Resume paused downloads when the app is opened</string>
-    <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: https://gianlu.xyz/documents/Aria2App/setup-directdownload</string>
     <string name="downloadDisplayInfo">Download display info</string>
     <string name="downloadDisplayInfoSummary">Customize the info shown under the download name</string>
     <string name="remainingTime">Remaining time</string>

@@ -40,7 +40,7 @@
     <string name="info">信息</string>
     <string name="files">文件</string>
     <string name="profileName">配置名称</string>
-    <string name="profile_help">如果你不知道如何配置，你可以参照我网站的教程: http://gianlu.xyz/apps/docs/aria2app/create-profile.html</string>
+    <string name="profile_help">如果你不知道如何配置，你可以参照我网站的教程: https://gianlu.xyz/documents/Aria2App/create-profile</string>
     <string name="address">地址</string>
     <string name="peers">Peers</string>
     <string name="servers">服务器</string>
@@ -67,7 +67,7 @@
     <string name="uploadSpeed">上传速度</string>
     <string name="none">无</string>
     <string name="enableDirectDownload">启用 DirectDownload</string>
-    <string name="directDownload_help">DirectDownload 功能可以将远程服务器中的文件直接下载至你的设备。你只需要输入指向 Aria2 的下载目录的地址。此功能需要存储权限。 你可以参照这里来搭建: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="directDownload_help">DirectDownload 功能可以将远程服务器中的文件直接下载至你的设备。你只需要输入指向 Aria2 的下载目录的地址。此功能需要存储权限。 你可以参照这里来搭建: https://gianlu.xyz/documents/Aria2App/setup-directdownload</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="more">更多</string>
@@ -269,7 +269,7 @@
     <string name="profileDoesntExist">此配置还不存在！</string>
     <string name="dd_resume">恢复下载</string>
     <string name="dd_resume_summary">当应用启动时恢复暂停的下载</string>
-    <string name="noDirectDownloads">当前没有下载。你可以从文件栏下载一个文件。了解更多有关 DirectDownload: http://gianlu.xyz/apps/docs/aria2app/setup-directdownload.html</string>
+    <string name="noDirectDownloads">当前没有下载。你可以从文件栏下载一个文件。了解更多有关 DirectDownload: https://gianlu.xyz/documents/Aria2App/setup-directdownload</string>
     <string name="downloadDisplayInfo">下载显示信息</string>
     <string name="downloadDisplayInfoSummary">自定义下载名下面显示的信息</string>
     <string name="remainingTime">剩余时间</string>
