@@ -23,7 +23,6 @@ import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
-import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
@@ -50,12 +49,13 @@ public class Base64Fragment extends FragmentWithDialog {
     }
 
     private void showFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         if (getArguments() == null || getArguments().getBoolean("torrent", true))
             intent.setType("application/x-bittorrent");
-        else intent.setType("application/metalink4+xml,application/metalink+xml");
+        else
+            intent.setType("application/metalink4+xml,application/metalink+xml");
 
         try {
             startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
@@ -86,12 +86,18 @@ public class Base64Fragment extends FragmentWithDialog {
             name = file.getName();
         } else {
             if (getContext() == null) return;
-            try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0)
+            try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE}, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                     name = cursor.getString(0);
-                else return;
+
+                    long size = cursor.getLong(1);
+                    if (size > 26214400 /* 25MB */)
+                        throw new IllegalArgumentException("File is too big: " + size);
+                } else {
+                    throw new IllegalArgumentException("Failed query: " + cursor);
+                }
             } catch (Exception ex) {
-                Logging.log(ex);
+                showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
                 return;
             }
         }
