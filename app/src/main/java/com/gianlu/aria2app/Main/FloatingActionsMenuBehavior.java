@@ -17,6 +17,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 @Keep
 public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionsMenu> {
     private static final Interpolator FAST_OUT_SLOW_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
+    private static final int DURATION = 150;
     private int mTotalDy = 0;
 
     public FloatingActionsMenuBehavior() {
@@ -32,7 +33,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
 
     private static void scaleTo(View view, float value) {
         ViewPropertyAnimatorCompat viewPropertyAnimatorCompat = ViewCompat.animate(view)
-                .scaleX(value).scaleY(value).setDuration(100)
+                .scaleX(value).scaleY(value).setDuration(DURATION)
                 .setInterpolator(FAST_OUT_SLOW_IN_INTERPOLATOR);
         viewPropertyAnimatorCompat.start();
     }
@@ -55,7 +56,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
     @Override
     public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionsMenu child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @ViewCompat.NestedScrollType int type) {
         mTotalDy = dyConsumed < 0 && mTotalDy > 0 || dyConsumed > 0 && mTotalDy < 0 ? 0 : mTotalDy;
-        attemptCancelAnimation(child);
+        if (mTotalDy == 0) ViewCompat.animate(child).cancel();
         mTotalDy += dyConsumed;
 
         int totalHeight = child.getHeight();
@@ -94,13 +95,6 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
         }
 
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
-    }
-
-    private void attemptCancelAnimation(FloatingActionsMenu child) {
-        if (mTotalDy == 0) {
-            ViewCompat.animate(child).cancel();
-            ViewCompat.animate(child.getChildAt(child.getChildCount() - 1)).cancel();
-        }
     }
 
     @Override
