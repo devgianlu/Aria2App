@@ -3,20 +3,18 @@ package com.gianlu.aria2app.Main;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorCompat;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.Interpolator;
 
+import com.getbase.floatingactionbutton.AddFloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 @Keep
 public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<FloatingActionsMenu> {
-    private static final Interpolator FAST_OUT_SLOW_IN_INTERPOLATOR = new FastOutLinearInInterpolator();
     private static final int DURATION = 150;
     private int mTotalDy = 0;
 
@@ -27,25 +25,27 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
         super(context, attrs);
     }
 
-    private static boolean isScaleX(View v, float value) {
-        return v.getScaleX() == value;
+    private static boolean isScale(@NonNull FloatingActionsMenu view, float value) {
+        View animateView = findInnerMenu(view);
+        if (animateView == null) animateView = view;
+        return animateView.getScaleX() == value;
     }
 
-    private static void scaleTo(View view, float value) {
-        ViewPropertyAnimatorCompat viewPropertyAnimatorCompat = ViewCompat.animate(view)
-                .scaleX(value).scaleY(value).setDuration(DURATION)
-                .setInterpolator(FAST_OUT_SLOW_IN_INTERPOLATOR);
-        viewPropertyAnimatorCompat.start();
+    private static void scaleTo(@NonNull FloatingActionsMenu view, float value) {
+        View animateView = findInnerMenu(view);
+        if (animateView == null) animateView = view;
+        animateView.animate().scaleY(value).scaleX(value).setDuration(DURATION).start();
     }
 
-    @Override
-    public boolean onDependentViewChanged(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
-        if (dependency instanceof Snackbar.SnackbarLayout) {
-            float translationY = Math.min(0, dependency.getTranslationY() - dependency.getHeight());
-            child.setTranslationY(translationY);
+    @Nullable
+    private static FloatingActionButton findInnerMenu(FloatingActionsMenu menu) {
+        for (int i = 0; i < menu.getChildCount(); i++) {
+            View v = menu.getChildAt(i);
+            if (v instanceof AddFloatingActionButton)
+                return (AddFloatingActionButton) v;
         }
 
-        return false;
+        return null;
     }
 
     @Override
@@ -60,9 +60,9 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
         mTotalDy += dyConsumed;
 
         int totalHeight = child.getHeight();
-        if (mTotalDy > totalHeight && isScaleX(child, 1f)) {
+        if (mTotalDy > totalHeight && isScale(child, 1f)) {
             scaleTo(child, 0f);
-        } else if (mTotalDy < 0 && Math.abs(mTotalDy) >= totalHeight && isScaleX(child, 0f)) {
+        } else if (mTotalDy < 0 && Math.abs(mTotalDy) >= totalHeight && isScale(child, 0f)) {
             scaleTo(child, 1f);
         }
     }
@@ -85,23 +85,15 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
 
                     @Override
                     public void onMenuCollapsed() {
-                        if (isScaleX(child, 1f))
+                        if (isScale(child, 1f))
                             scaleTo(child, 0f);
                     }
                 });
             } else {
-                if (isScaleX(child, 1f)) scaleTo(child, 0f);
+                if (isScale(child, 1f)) scaleTo(child, 0f);
             }
         }
 
         return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
-    }
-
-    @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent, FloatingActionsMenu child, View dependency) {
-        if (dependency instanceof Snackbar.SnackbarLayout && child.getTranslationY() != 0.0F) {
-            ViewCompat.animate(child).translationY(0.0F).scaleX(1.0F).scaleY(1.0F).alpha(1.0F)
-                    .setInterpolator(FAST_OUT_SLOW_IN_INTERPOLATOR).setListener(null);
-        }
     }
 }
