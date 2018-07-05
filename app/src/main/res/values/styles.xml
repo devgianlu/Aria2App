@@ -1,6 +1,7 @@
 <resources>
 
     <attr name="colorAccentRef" format="reference|color" />
+    <attr name="colorBackgroundFloatingRef" format="reference|color" />
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -9,16 +10,20 @@
         <item name="colorAccentRef">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="dialogTheme">@style/DialogFix</item>
+        <item name="colorBackgroundFloatingRef">?android:attr/colorBackgroundFloating</item>
     </style>
 
     <!-- Dialog fix -->
-    <style name="DialogFix" parent="@style/Theme.AppCompat.DayNight.Dialog">
+    <style name="DialogFixCommon" parent="@style/Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowNoTitle">false</item>
         <item name="colorAccent">?attr/colorAccentRef</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:background">?android:attr/colorBackgroundFloating</item>
         <item name="buttonStyle">@style/DialogFixButton</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="DialogFix" parent="DialogFixCommon">
+        <item name="android:background">?android:attr/colorBackgroundFloating</item>
     </style>
 
     <style name="DialogFixButton" parent="@android:style/Widget.Material.Light.Button">
