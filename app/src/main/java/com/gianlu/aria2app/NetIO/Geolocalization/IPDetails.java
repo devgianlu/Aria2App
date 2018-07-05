@@ -6,12 +6,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class IPDetails {
-    public final float latitude;
-    public final float longitude;
     public final String countryCode;
-    public final String countryName;
-    public final String regionName;
-    public final String city;
+    private final String countryName;
+    private final String regionName;
+    private final String city;
     private final String ipName;
     private final String query;
     private final String isp;
@@ -20,8 +18,6 @@ public class IPDetails {
     public IPDetails(JSONObject obj) throws JSONException {
         ipName = obj.getString("ipName");
         query = obj.getString("query");
-        latitude = (float) obj.getDouble("lat");
-        longitude = (float) obj.getDouble("lon");
         countryCode = obj.getString("countryCode");
         countryName = obj.getString("country");
         regionName = obj.getString("region");
