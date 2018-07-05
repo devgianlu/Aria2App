@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-// FIXME: Action mode not working
 public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_DIR = 0;
     private static final int ITEM_FILE = 1;
