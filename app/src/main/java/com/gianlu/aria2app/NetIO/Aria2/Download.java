@@ -63,11 +63,11 @@ public class Download {
     }
 
     public void moveUp(AbstractClient.OnSuccess listener) {
-        moveRelative(1, listener);
+        moveRelative(-1, listener);
     }
 
     public void moveDown(AbstractClient.OnSuccess listener) {
-        moveRelative(-1, listener);
+        moveRelative(1, listener);
     }
 
     public final void options(AbstractClient.OnResult<Map<String, String>> listener) {

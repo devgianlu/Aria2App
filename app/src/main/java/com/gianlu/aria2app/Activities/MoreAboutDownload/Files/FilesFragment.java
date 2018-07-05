@@ -363,8 +363,10 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         AriaFiles files = payload.files;
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
             recyclerViewLayout.showInfo(R.string.noFiles);
+            breadcrumbs.setVisibility(View.GONE);
         } else {
             recyclerViewLayout.showList();
+            breadcrumbs.setVisibility(View.VISIBLE);
             if (adapter != null) adapter.update(payload.download(), files);
             if (fileSheet != null) fileSheet.update(files);
             if (dirSheet != null) dirSheet.update(payload.download(), files);
