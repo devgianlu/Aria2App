@@ -16,14 +16,15 @@
         <ImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/baseline_folder_24" />
+            android:src="@drawable/baseline_folder_24"
+            android:tint="@color/bright_foreground_dark" />
 
         <TextView
             android:id="@+id/dirSheet_percentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-8dp"
-            android:textColor="@color/white"
+            android:textColor="@color/bright_foreground_dark"
             android:textSize="30sp" />
 
     </LinearLayout>
@@ -34,7 +35,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="3"
-        android:textColor="@color/white"
+        android:textColor="@color/bright_foreground_dark"
         android:textSize="20sp" />
 
 </LinearLayout>

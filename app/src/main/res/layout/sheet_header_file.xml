@@ -20,13 +20,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="-6dp"
             app:maxHeight="36dp"
-            app:textColor="@color/white" />
+            app:textColor="@color/bright_foreground_dark" />
 
         <TextView
             android:id="@+id/fileSheet_percentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/bright_foreground_dark"
             android:textSize="30sp" />
 
     </LinearLayout>
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="3"
-        android:textColor="@color/white"
+        android:textColor="@color/bright_foreground_dark"
         android:textSize="20sp" />
 
 </LinearLayout>

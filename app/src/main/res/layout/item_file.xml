@@ -23,7 +23,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="8dp"
         app:maxHeight="20dp"
-        app:textColor="@android:color/black" />
+        app:textColor="?attr/colorControlNormal" />
 
     <LinearLayout
         android:layout_width="match_parent"
