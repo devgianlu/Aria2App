@@ -17,8 +17,8 @@ import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.SuperTextView;
@@ -34,7 +34,7 @@ import java.util.Map;
 
 public final class TopCountriesView extends FlowLayout {
     private final static int DISPLAYED_COUNTRIES = 3;
-    private final FreeGeoIPApi freeGeoIp = FreeGeoIPApi.get();
+    private final GeoIP freeGeoIp = GeoIP.get();
     private final Map<String, Integer> topCountries;
     private final LayoutInflater inflater;
     private final CountryFlags flags = CountryFlags.get();

@@ -11,8 +11,8 @@ import android.widget.ImageView;
 
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Adapters.NotFilterable;
 import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
@@ -28,7 +28,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     private final Context context;
     private final Listener listener;
     private final LayoutInflater inflater;
-    private final FreeGeoIPApi freeGeoIPApi;
+    private final GeoIP geoIP;
     private final CountryFlags flags = CountryFlags.get();
 
     public PeersAdapter(Context context, @NonNull Listener listener) {
@@ -36,7 +36,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         this.inflater = LayoutInflater.from(context);
         this.context = context;
         this.listener = listener;
-        this.freeGeoIPApi = FreeGeoIPApi.get();
+        this.geoIP = GeoIP.get();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
             }
         });
 
-        freeGeoIPApi.getIPDetails(peer.ip, new FreeGeoIPApi.OnIpDetails() {
+        geoIP.getIPDetails(peer.ip, new GeoIP.OnIpDetails() {
             @Override
             public void onDetails(@NonNull IPDetails details) {
                 notifyItemChanged(holder.getAdapterPosition(), details);

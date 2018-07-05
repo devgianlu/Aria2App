@@ -23,8 +23,8 @@ import com.gianlu.aria2app.Main.HideSecondSpace;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
@@ -46,7 +46,7 @@ import java.util.Locale;
 
 public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
-    private final FreeGeoIPApi freeGeoIPApi = FreeGeoIPApi.get();
+    private final GeoIP geoIP = GeoIP.get();
     private ViewHolder holder;
     private MessageView message;
 
@@ -239,7 +239,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                     try {
                         URI uri = new URI(url);
 
-                        freeGeoIPApi.getIPDetails(uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
+                        geoIP.getIPDetails(uri.getHost(), new GeoIP.OnIpDetails() {
                             @Override
                             public void onDetails(@NonNull IPDetails details) {
                                 if (isAdded())

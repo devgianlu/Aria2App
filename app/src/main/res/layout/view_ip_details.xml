@@ -29,7 +29,7 @@
             android:layout_height="wrap_content" />
 
         <com.gianlu.commonutils.SuperTextView
-            android:id="@+id/ipDetailView_timezone"
+            android:id="@+id/ipDetailView_isp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.NetIO.FreeGeoIP;
+package com.gianlu.aria2app.NetIO.Geolocalization;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.util.LruCache;
-
-import com.gianlu.aria2app.NetIO.StatusCodeException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,14 +19,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public final class FreeGeoIPApi {
-    private static FreeGeoIPApi instance;
+public final class GeoIP {
+    private static GeoIP instance;
     private final ExecutorService executorService;
     private final Handler handler;
     private final OkHttpClient client;
     private final LruCache<String, IPDetails> cache;
 
-    private FreeGeoIPApi() {
+    private GeoIP() {
         handler = new Handler(Looper.getMainLooper());
         client = new OkHttpClient();
         executorService = Executors.newCachedThreadPool();
@@ -36,8 +34,8 @@ public final class FreeGeoIPApi {
     }
 
     @NonNull
-    public static FreeGeoIPApi get() {
-        if (instance == null) instance = new FreeGeoIPApi();
+    public static GeoIP get() {
+        if (instance == null) instance = new GeoIP();
         return instance;
     }
 
@@ -69,14 +67,16 @@ public final class FreeGeoIPApi {
                         realIP = realIP.substring(1, ip.length() - 1);
 
                     try (Response resp = client.newCall(new Request.Builder()
-                            .get().url("http://freegeoip.net/json/" + realIP).build()).execute()) {
-
-                        if (resp.code() != 200) throw new StatusCodeException(resp);
+                            .get().url("https://extreme-ip-lookup.com/json/" + realIP).build()).execute()) {
 
                         ResponseBody body = resp.body();
                         if (body == null) throw new IOException("Empty body!");
 
-                        final IPDetails details = new IPDetails(new JSONObject(body.string()));
+                        JSONObject obj = new JSONObject(body.string());
+                        String status = obj.getString("status");
+                        if (status.equals("fail")) throw new ServiceException(obj);
+
+                        final IPDetails details = new IPDetails(obj);
                         cache.put(ip, details);
 
                         handler.post(new Runnable() {
@@ -85,7 +85,7 @@ public final class FreeGeoIPApi {
                                 listener.onDetails(details);
                             }
                         });
-                    } catch (IOException | StatusCodeException | JSONException | NullPointerException | IllegalArgumentException ex) {
+                    } catch (IOException | JSONException | NullPointerException | IllegalArgumentException | ServiceException ex) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -105,5 +105,11 @@ public final class FreeGeoIPApi {
 
         @UiThread
         void onException(@NonNull Exception ex);
+    }
+
+    private static class ServiceException extends Exception {
+        private ServiceException(JSONObject obj) throws JSONException {
+            super(obj.getString("message"));
+        }
     }
 }

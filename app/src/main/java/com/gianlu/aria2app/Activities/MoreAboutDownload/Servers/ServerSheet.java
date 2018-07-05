@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
@@ -24,7 +24,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
 public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
-    private final FreeGeoIPApi ipApi = FreeGeoIPApi.get();
+    private final GeoIP ipApi = GeoIP.get();
     private Server currentServer;
     private SuperTextView downloadSpeed;
     private LineChart chart;
@@ -94,7 +94,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
         Utils.setupChart(chart, true);
         update(server);
 
-        ipApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
+        ipApi.getIPDetails(server.uri.getHost(), new GeoIP.OnIpDetails() {
             @Override
             public void onDetails(@NonNull IPDetails details) {
                 ipDetails.setup(details);

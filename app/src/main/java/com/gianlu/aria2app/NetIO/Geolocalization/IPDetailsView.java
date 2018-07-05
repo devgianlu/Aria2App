@@ -1,11 +1,10 @@
-package com.gianlu.aria2app.NetIO.FreeGeoIP;
+package com.gianlu.aria2app.NetIO.Geolocalization;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -13,13 +12,11 @@ import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
-import java.util.TimeZone;
-
 public class IPDetailsView extends LinearLayout {
     private final ImageView flag;
     private final SuperTextView ip;
     private final SuperTextView localization;
-    private final SuperTextView timezone;
+    private final SuperTextView isp;
     private final CountryFlags flags = CountryFlags.get();
 
     public IPDetailsView(Context context) {
@@ -38,19 +35,13 @@ public class IPDetailsView extends LinearLayout {
         flag = findViewById(R.id.ipDetailView_flag);
         ip = findViewById(R.id.ipDetailView_ip);
         localization = findViewById(R.id.ipDetailView_localization);
-        timezone = findViewById(R.id.ipDetailView_timezone);
+        isp = findViewById(R.id.ipDetailView_isp);
     }
 
     public void setup(@NonNull IPDetails details) {
         flag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
-        ip.setHtml(R.string.ip, details.ip);
+        ip.setHtml(R.string.ip, details.getIp());
         localization.setHtml(R.string.localization, details.getNiceLocalizationString());
-
-        if (details.timeZone.isEmpty()) {
-            timezone.setVisibility(View.GONE);
-        } else {
-            timezone.setHtml(R.string.timezone, TimeZone.getTimeZone(details.timeZone).getDisplayName());
-            timezone.setVisibility(View.VISIBLE);
-        }
+        isp.setHtml(R.string.isp, details.getIsp());
     }
 }

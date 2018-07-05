@@ -29,8 +29,8 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.CertUtils;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
@@ -129,7 +129,7 @@ public class ConnectionFragment extends FieldErrorFragment {
                     @Override
                     public void run() {
                         if (lastAddress != null) {
-                            FreeGeoIPApi.get().getIPDetails(lastAddress, new FreeGeoIPApi.OnIpDetails() {
+                            GeoIP.get().getIPDetails(lastAddress, new GeoIP.OnIpDetails() {
                                 @Override
                                 public void onDetails(@NonNull IPDetails details) {
                                     if (isAdded()) {

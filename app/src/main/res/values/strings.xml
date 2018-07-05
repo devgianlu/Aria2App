@@ -288,7 +288,6 @@
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">Alternative names: %s</string>
     <string name="ip">IP address: %s</string>
-    <string name="timezone">Timezone: %s</string>
     <string name="localization">Localization: %s</string>
     <string name="ipDetails">IP details</string>
     <string name="ssids_help">You can provide a list of comma separated SSIDs.</string>
@@ -326,6 +325,7 @@
     <string name="nightMode">Night mode (dark theme)</string>
     <string name="nightModeOff">Night mode is following system defult.</string>
     <string name="nightModeOn">Night mode is permanenly enabled.</string>
+    <string name="isp">Internet service provider: %s</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

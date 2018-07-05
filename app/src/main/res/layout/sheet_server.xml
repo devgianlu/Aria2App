@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView
+    <com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView
         android:id="@+id/serverSheet_ipDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

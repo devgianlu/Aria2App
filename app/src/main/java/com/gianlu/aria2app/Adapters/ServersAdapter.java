@@ -15,8 +15,8 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.Servers;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
@@ -33,14 +33,14 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final LayoutInflater inflater;
     private final Listener listener;
     private final Context context;
-    private final FreeGeoIPApi freeGeoIPApi;
+    private final GeoIP geoIP;
     private final CountryFlags flags = CountryFlags.get();
 
     public ServersAdapter(Context context, @NonNull Listener listener) {
         this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();
-        this.freeGeoIPApi = FreeGeoIPApi.get();
+        this.geoIP = GeoIP.get();
         this.inflater = LayoutInflater.from(context);
         listener.onItemCountUpdated(objs.size());
     }
@@ -89,7 +89,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            freeGeoIPApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {
+            geoIP.getIPDetails(server.uri.getHost(), new GeoIP.OnIpDetails() {
                 @Override
                 public void onDetails(@NonNull IPDetails details) {
                     notifyItemChanged(holder.getAdapterPosition(), details);

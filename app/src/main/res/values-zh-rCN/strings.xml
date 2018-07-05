@@ -285,7 +285,6 @@
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">可选名称: %s</string>
     <string name="ip">IP 地址: %s</string>
-    <string name="timezone">时区: %s</string>
     <string name="localization">地址: %s</string>
     <string name="ipDetails">IP 详情</string>
     <string name="ssids_help">你可以提供多个 SSID（半角逗号分隔 ）</string>

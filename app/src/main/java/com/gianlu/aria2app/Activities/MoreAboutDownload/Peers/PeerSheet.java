@@ -10,9 +10,9 @@ import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.FreeGeoIPApi;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetails;
-import com.gianlu.aria2app.NetIO.FreeGeoIP.IPDetailsView;
+import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
+import com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
@@ -26,7 +26,7 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.Locale;
 
 public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
-    private final FreeGeoIPApi ipApi = FreeGeoIPApi.get();
+    private final GeoIP ipApi = GeoIP.get();
     private SuperTextView downloadSpeed;
     private SuperTextView uploadSpeed;
     private LineChart chart;
@@ -98,7 +98,7 @@ public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
         Utils.setupChart(chart, true);
         update(payload);
 
-        ipApi.getIPDetails(payload.ip, new FreeGeoIPApi.OnIpDetails() {
+        ipApi.getIPDetails(payload.ip, new GeoIP.OnIpDetails() {
             @Override
             public void onDetails(@NonNull IPDetails details) {
                 ipDetails.setup(details);
