@@ -11,8 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,6 +24,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public final class GeoIP {
+    private static final Pattern IPV4_PATTERN = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+    private static final Pattern IPV6_PATTERN = Pattern.compile("^(?:[0-9a-f]|:){1,4}(?::(?:[0-9a-f]{0,4})*){1,7}$");
     private static GeoIP instance;
     private final ExecutorService executorService;
     private final Handler handler;
@@ -39,17 +45,17 @@ public final class GeoIP {
         return instance;
     }
 
+    @NonNull
+    private static String buildIpString(byte[] addr) {
+        return (addr[0] & 0xFF) + "." + (addr[1] & 0xFF) + "." + (addr[2] & 0xFF) + "." + (addr[3] & 0xFF);
+    }
+
     @Nullable
     public IPDetails getCached(String ip) {
         return cache.get(ip);
     }
 
-    public void getIPDetails(final String ip, final OnIpDetails listener) {
-        if (ip == null) {
-            listener.onException(new NullPointerException("ip is null!"));
-            return;
-        }
-
+    private boolean hitCache(@NonNull String ip, @NonNull final OnIpDetails listener) {
         final IPDetails cachedDetails = cache.get(ip);
         if (cachedDetails != null) {
             handler.post(new Runnable() {
@@ -58,13 +64,30 @@ public final class GeoIP {
                     listener.onDetails(cachedDetails);
                 }
             });
-        } else {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    String realIP = ip;
-                    if (ip.startsWith("[") && ip.endsWith("]"))
-                        realIP = realIP.substring(1, ip.length() - 1);
+            return true;
+        }
+
+        return false;
+    }
+
+    public void getIPDetails(@NonNull final String ip, @NonNull final OnIpDetails listener) {
+        if (hitCache(ip, listener)) return;
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String realIP;
+                    if (IPV4_PATTERN.matcher(ip).matches() || IPV6_PATTERN.matcher(ip).matches()) {
+                        realIP = ip;
+                    } else {
+                        List<InetAddress> ips = client.dns().lookup(ip);
+                        if (ips.isEmpty()) throw new UnknownHostException(ip);
+                        realIP = buildIpString(ips.get(0).getAddress());
+                    }
+
+                    if (realIP.startsWith("[") && realIP.endsWith("]"))
+                        realIP = realIP.substring(1, realIP.length() - 1);
 
                     try (Response resp = client.newCall(new Request.Builder()
                             .get().url("https://extreme-ip-lookup.com/json/" + realIP).build()).execute()) {
@@ -74,7 +97,7 @@ public final class GeoIP {
 
                         JSONObject obj = new JSONObject(body.string());
                         String status = obj.getString("status");
-                        if (status.equals("fail")) throw new ServiceException(obj);
+                        if (status.equals("fail")) throw new ServiceException(realIP, obj);
 
                         final IPDetails details = new IPDetails(obj);
                         cache.put(ip, details);
@@ -85,18 +108,18 @@ public final class GeoIP {
                                 listener.onDetails(details);
                             }
                         });
-                    } catch (IOException | JSONException | NullPointerException | IllegalArgumentException | ServiceException ex) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onException(ex);
-
-                            }
-                        });
                     }
+                } catch (IOException | JSONException | NullPointerException | IllegalArgumentException | ServiceException ex) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onException(ex);
+
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 
     public interface OnIpDetails {
@@ -108,8 +131,8 @@ public final class GeoIP {
     }
 
     private static class ServiceException extends Exception {
-        private ServiceException(JSONObject obj) throws JSONException {
-            super(obj.getString("message"));
+        private ServiceException(String ip, JSONObject obj) throws JSONException {
+            super(ip + ": " + obj.getString("message"));
         }
     }
 }

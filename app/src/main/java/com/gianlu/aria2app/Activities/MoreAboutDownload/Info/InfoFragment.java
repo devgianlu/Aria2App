@@ -238,7 +238,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
                     try {
                         URI uri = new URI(url);
-
                         geoIP.getIPDetails(uri.getHost(), new GeoIP.OnIpDetails() {
                             @Override
                             public void onDetails(@NonNull IPDetails details) {
