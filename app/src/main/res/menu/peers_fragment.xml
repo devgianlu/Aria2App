@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/peersFragment_sorting"
-        android:icon="@drawable/ic_sort_white_48dp"
+        android:icon="@drawable/baseline_sort_24"
         android:title="@string/sorting"
         app:showAsAction="always">
         <menu><!-- SubMenu placeholder --></menu>

@@ -323,6 +323,9 @@
     <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
+    <string name="nightMode">Night mode (dark theme)</string>
+    <string name="nightModeOff">Night mode is following system defult.</string>
+    <string name="nightModeOn">Night mode is permanenly enabled.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

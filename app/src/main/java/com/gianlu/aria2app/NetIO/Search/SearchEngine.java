@@ -1,9 +1,13 @@
 package com.gianlu.aria2app.NetIO.Search;
 
-import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchEngine {
     public final String id;
@@ -12,12 +16,18 @@ public class SearchEngine {
     public final int alexaRank;
     public final boolean proxyed;
 
-    @Keep
-    public SearchEngine(JSONObject obj) throws JSONException {
+    private SearchEngine(JSONObject obj) throws JSONException {
         id = obj.getString("id");
         name = obj.getString("name");
         url = obj.getString("url");
         alexaRank = obj.optInt("alexaRank", -1);
         proxyed = obj.getBoolean("proxyed");
+    }
+
+    @NonNull
+    public static List<SearchEngine> list(JSONArray array) throws JSONException {
+        List<SearchEngine> list = new ArrayList<>(array.length());
+        for (int i = 0; i < array.length(); i++) list.add(new SearchEngine(array.getJSONObject(i)));
+        return list;
     }
 }

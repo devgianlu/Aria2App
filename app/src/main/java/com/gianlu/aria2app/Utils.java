@@ -2,6 +2,7 @@ package com.gianlu.aria2app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.ColorRes;
@@ -112,24 +113,41 @@ public final class Utils {
         return intent.resolveActivity(context.getPackageManager()) != null;
     }
 
+    public static void setupChart(@NonNull LineChart chart, boolean small) {
+        setupChart(chart, small, 0);
+    }
+
     public static void setupChart(@NonNull LineChart chart, boolean small, @ColorRes int textColor) {
         chart.clear();
+
+        int textInt;
+        Context context = chart.getContext();
+        if (textColor == 0) {
+            TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{R.attr.colorControlNormal});
+            try {
+                textInt = a.getColor(0, Color.BLACK);
+            } finally {
+                a.recycle();
+            }
+        } else {
+            textInt = ContextCompat.getColor(chart.getContext(), textColor);
+        }
 
         chart.setDescription(null);
         chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.alpha(0));
         chart.setTouchEnabled(false);
         Legend legend = chart.getLegend();
-        legend.setTextColor(ContextCompat.getColor(chart.getContext(), textColor));
+        legend.setTextColor(textInt);
         legend.setEnabled(true);
 
         LineData data = new LineData();
-        data.setValueTextColor(ContextCompat.getColor(chart.getContext(), textColor));
+        data.setValueTextColor(textInt);
         chart.setData(data);
 
         YAxis ya = chart.getAxisLeft();
-        ya.setAxisLineColor(ContextCompat.getColor(chart.getContext(), textColor));
-        ya.setTextColor(ContextCompat.getColor(chart.getContext(), textColor));
+        ya.setAxisLineColor(textInt);
+        ya.setTextColor(textInt);
         ya.setTextSize(small ? 8 : 9);
         ya.setAxisMinimum(0);
         ya.setDrawAxisLine(false);

@@ -1,6 +1,7 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -146,24 +147,25 @@ public class CustomDownloadInfo extends FlowLayout {
             setGravity(Gravity.CENTER_VERTICAL);
 
             ImageView icon = new ImageView(context);
+            icon.setColorFilter(Color.WHITE);
             switch (info) {
                 case DOWNLOAD_SPEED:
-                    icon.setImageResource(R.drawable.ic_file_download_white_48dp);
+                    icon.setImageResource(R.drawable.baseline_download_24);
                     break;
                 case UPLOAD_SPEED:
-                    icon.setImageResource(R.drawable.ic_file_upload_white_48dp);
+                    icon.setImageResource(R.drawable.baseline_upload_24);
                     break;
                 case REMAINING_TIME:
-                    icon.setImageResource(R.drawable.ic_access_time_white_48dp);
+                    icon.setImageResource(R.drawable.baseline_access_time_24);
                     break;
                 case COMPLETED_LENGTH:
-                    icon.setImageResource(R.drawable.ic_folder_white_48dp);
+                    icon.setImageResource(R.drawable.baseline_folder_24);
                     break;
                 case CONNECTIONS:
-                    icon.setImageResource(R.drawable.ic_link_white_48dp);
+                    icon.setImageResource(R.drawable.baseline_link_24);
                     break;
                 case SEEDERS:
-                    icon.setImageResource(R.drawable.ic_people_white_48dp);
+                    icon.setImageResource(R.drawable.baseline_people_24);
                     break;
             }
 

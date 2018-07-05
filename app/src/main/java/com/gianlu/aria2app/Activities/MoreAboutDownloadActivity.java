@@ -42,7 +42,6 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     public static void start(Context context, @NonNull DownloadWithUpdate download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
                 .putExtra("theme", download.update().getThemeResource())
-                .putExtra("dialogTheme", download.update().getDialogThemeResource())
                 .putExtra("title", download.update().getName())
                 .putExtra("gid", download.gid));
     }
@@ -191,15 +190,14 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
         }
 
         String gid = getIntent().getStringExtra("gid");
-        int theme = getIntent().getIntExtra("dialogTheme", 0);
-        if (gid == null || theme == 0) return false;
+        if (gid == null) return false;
 
         switch (item.getItemId()) {
             case R.id.moreAboutDownload_options:
-                showDialog(OptionsDialog.getDownload(gid, false, theme));
+                showDialog(OptionsDialog.getDownload(gid, false));
                 return true;
             case R.id.moreAboutDownload_quickOptions:
-                showDialog(OptionsDialog.getDownload(gid, true, theme));
+                showDialog(OptionsDialog.getDownload(gid, true));
                 return true;
         }
 

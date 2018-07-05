@@ -228,7 +228,7 @@ public class NotificationService extends Service {
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                .addAction(new NotificationCompat.Action(R.drawable.ic_clear_black_48dp, getString(R.string.stopNotificationService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
+                .addAction(new NotificationCompat.Action(R.drawable.baseline_clear_24, getString(R.string.stopNotificationService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
                 .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
 
         return builder.build();

@@ -1,10 +1,9 @@
 package com.gianlu.aria2app.Downloader;
 
 import android.content.Context;
-import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
@@ -47,7 +46,7 @@ public class SavedDownloadsManager {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 String line = reader.readLine();
                 if (line == null || line.isEmpty()) line = "[]";
-                savedStates = CommonUtils.toTList(new JSONArray(line), SavedState.class);
+                savedStates = SavedState.list(new JSONArray(line));
             }
         } catch (IOException | JSONException ex) {
             Logging.log(ex);
@@ -108,8 +107,6 @@ public class SavedDownloadsManager {
         public final File tempFile;
         public final String fileName;
 
-        @Keep
-        @SuppressWarnings("unused")
         public SavedState(JSONObject obj) throws JSONException {
             id = obj.getInt("id");
             path = obj.getString("path");
@@ -126,6 +123,15 @@ public class SavedDownloadsManager {
             this.fileName = fileName;
         }
 
+        @NonNull
+        public static List<SavedState> list(JSONArray array) throws JSONException {
+            List<SavedState> list = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++)
+                list.add(new SavedState(array.getJSONObject(i)));
+            return list;
+        }
+
+        @NonNull
         private JSONObject toJson() throws JSONException {
             return new JSONObject()
                     .put("profileId", profileId)

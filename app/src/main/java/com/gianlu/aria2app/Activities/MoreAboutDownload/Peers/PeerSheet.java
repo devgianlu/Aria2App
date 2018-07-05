@@ -23,6 +23,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 
+import java.util.Locale;
+
 public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
     private final FreeGeoIPApi ipApi = FreeGeoIPApi.get();
     private SuperTextView downloadSpeed;
@@ -74,7 +76,7 @@ public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
         currentPeer = payload;
 
         TextView title = parent.findViewById(R.id.peerSheet_title);
-        title.setText(payload.ip + ":" + payload.port);
+        title.setText(String.format(Locale.getDefault(), "%s:%d", payload.ip, payload.port));
 
         downloadSpeed = parent.findViewById(R.id.peerSheet_downloadSpeed);
         uploadSpeed = parent.findViewById(R.id.peerSheet_uploadSpeed);
@@ -93,7 +95,7 @@ public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
         ipDetails = parent.findViewById(R.id.peerSheet_ipDetails);
         ipDetails.setVisibility(View.GONE);
 
-        Utils.setupChart(chart, true, R.color.colorPrimaryDark);
+        Utils.setupChart(chart, true);
         update(payload);
 
         ipApi.getIPDetails(payload.ip, new FreeGeoIPApi.OnIpDetails() {

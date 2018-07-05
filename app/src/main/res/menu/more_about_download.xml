@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/moreAboutDownload_quickOptions"
-        android:icon="@drawable/ic_favorite_white_48dp"
+        android:icon="@drawable/baseline_favorite_24"
         android:title="@string/menu_downloadQuickOptions"
         app:showAsAction="ifRoom" />
 

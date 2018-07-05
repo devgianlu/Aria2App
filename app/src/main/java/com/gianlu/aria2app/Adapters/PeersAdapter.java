@@ -22,6 +22,7 @@ import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Locale;
 
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
     private final Context context;
@@ -58,7 +59,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
     @Override
     public void onSetupViewHolder(@NonNull final ViewHolder holder, int position, @NonNull final Peer peer) {
-        holder.address.setText(peer.ip + ":" + peer.port);
+        holder.address.setText(String.format(Locale.getDefault(), "%s:%d", peer.ip, peer.port));
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
         holder.flag.setImageResource(R.drawable.ic_list_country_unknown);

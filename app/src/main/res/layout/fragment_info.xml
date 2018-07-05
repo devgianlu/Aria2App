@@ -38,9 +38,7 @@
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_file_download_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_download_24" />
 
                 <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_downloadSpeed"
@@ -52,9 +50,7 @@
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_file_upload_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_upload_24" />
 
                 <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_uploadSpeed"
@@ -66,9 +62,7 @@
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_access_time_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_access_time_24" />
 
                 <com.gianlu.commonutils.SuperTextView
                     android:id="@+id/infoFragment_remainingTime"
@@ -90,9 +84,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_pause_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_pause_24" />
 
                 <ImageButton
                     android:id="@+id/infoFragment_start"
@@ -101,9 +93,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_play_arrow_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_play_arrow_24" />
 
                 <ImageButton
                     android:id="@+id/infoFragment_stop"
@@ -112,9 +102,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_stop_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_stop_24" />
 
                 <ImageButton
                     android:id="@+id/infoFragment_restart"
@@ -123,9 +111,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_refresh_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_refresh_24" />
 
                 <ImageButton
                     android:id="@+id/infoFragment_remove"
@@ -134,9 +120,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_clear_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_clear_24" />
 
                 <ImageButton
                     android:id="@+id/infoFragment_moveUp"
@@ -145,9 +129,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_arrow_upward_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_arrow_upward_24" />
 
                 <ImageButton
                     android:id="@+id/infoFragment_moveDown"
@@ -156,9 +138,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_arrow_downward_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_arrow_downward_24" />
             </LinearLayout>
 
             <com.github.mikephil.charting.charts.LineChart
@@ -280,9 +260,7 @@
                             android:background="?android:attr/selectableItemBackgroundBorderless"
                             android:padding="2dp"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/ic_keyboard_arrow_down_black_48dp"
-                            android:tint="@color/icon_inactive_light"
-                            android:tintMode="src_in" />
+                            android:src="@drawable/baseline_keyboard_arrow_down_24" />
                     </LinearLayout>
 
                     <LinearLayout

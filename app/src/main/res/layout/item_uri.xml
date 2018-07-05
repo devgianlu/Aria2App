@@ -19,22 +19,18 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:adjustViewBounds="true"
-        android:tint="@color/icon_inactive_light"
-        android:tintMode="src_in"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:padding="5dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_edit_black_48dp" />
+        android:src="@drawable/baseline_edit_24" />
 
     <ImageButton
         android:id="@+id/uriItem_remove"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:adjustViewBounds="true"
-        android:tint="@color/icon_inactive_light"
-        android:tintMode="src_in"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:padding="5dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_delete_black_48dp" />
+        android:src="@drawable/baseline_delete_24" />
 </LinearLayout>

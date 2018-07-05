@@ -75,8 +75,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_loading);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.hide();
 
@@ -292,7 +292,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             return;
         }
 
-        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, profiles, R.style.TextOnDark, this);
+        CustomProfilesAdapter adapter = new CustomProfilesAdapter(this, profiles, this);
         pickerList.setAdapter(adapter);
         adapter.startProfilesTest();
     }

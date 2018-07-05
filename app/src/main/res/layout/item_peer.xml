@@ -30,9 +30,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="8dp"
             android:scaleType="fitCenter" />
-
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,9 +41,7 @@
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:tint="@color/icon_inactive_light"
-            android:tintMode="src_in"
-            android:src="@drawable/ic_file_download_black_48dp" />
+            android:src="@drawable/baseline_download_24" />
 
         <com.gianlu.commonutils.SuperTextView
             android:id="@+id/peerItem_downloadSpeed"
@@ -57,9 +53,7 @@
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:tint="@color/icon_inactive_light"
-            android:tintMode="src_in"
-            android:src="@drawable/ic_file_upload_black_48dp" />
+            android:src="@drawable/baseline_upload_24" />
 
         <com.gianlu.commonutils.SuperTextView
             android:id="@+id/peerItem_uploadSpeed"

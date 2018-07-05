@@ -61,9 +61,7 @@
                 android:id="@+id/fileItem_status"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:layout_gravity="bottom" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -1,9 +1,13 @@
 package com.gianlu.aria2app.NetIO.Search;
 
-import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchResult {
     public final String url;
@@ -12,8 +16,7 @@ public class SearchResult {
     public final Integer leeches;
     public final String engineId;
 
-    @Keep
-    public SearchResult(JSONObject obj) throws JSONException {
+    private SearchResult(JSONObject obj) throws JSONException {
         url = obj.getString("url");
         title = obj.getString("title");
         engineId = obj.getString("engine");
@@ -23,5 +26,12 @@ public class SearchResult {
 
         int leeches = obj.optInt("leeches", -1);
         this.leeches = leeches == -1 ? null : leeches;
+    }
+
+    @NonNull
+    public static List<SearchResult> list(JSONArray array) throws JSONException {
+        List<SearchResult> list = new ArrayList<>(array.length());
+        for (int i = 0; i < array.length(); i++) list.add(new SearchResult(array.getJSONObject(i)));
+        return list;
     }
 }

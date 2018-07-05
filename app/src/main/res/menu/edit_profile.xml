@@ -4,31 +4,31 @@
 
     <item
         android:id="@+id/editProfile_createNew"
-        android:icon="@drawable/ic_add_white_48dp"
+        android:icon="@drawable/baseline_add_24"
         android:title="@string/newCondition"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/editProfile_doneAll"
-        android:icon="@drawable/ic_done_all_white_48dp"
+        android:icon="@drawable/baseline_done_all_24"
         android:title="@string/save"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/editProfile_setDefault"
-        android:icon="@drawable/ic_bookmark_white_48dp"
+        android:icon="@drawable/baseline_bookmark_24"
         android:title="@string/setDefaultCondition"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/editProfile_deleteCondition"
-        android:icon="@drawable/ic_delete_white_48dp"
+        android:icon="@drawable/baseline_delete_24"
         android:title="@string/deleteCondition"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/editProfile_deleteProfile"
-        android:icon="@drawable/ic_delete_forever_white_48dp"
+        android:icon="@drawable/baseline_delete_forever_24"
         android:title="@string/deleteProfile"
         app:showAsAction="ifRoom" />
 </menu>

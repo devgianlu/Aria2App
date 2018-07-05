@@ -374,22 +374,22 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         profilesManager = ProfilesManager.get(this);
         drawerManager = new DrawerManager.Config<MultiProfile>(this, R.drawable.drawer_background)
-                .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.ic_home_black_48dp, getString(R.string.home)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.ic_cloud_download_black_48dp, getString(R.string.directDownload)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.ic_favorite_black_48dp, getString(R.string.quickGlobalOptions)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.ic_list_black_48dp, getString(R.string.globalOptions)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.ABOUT_ARIA2, R.drawable.ic_cloud_black_48dp, getString(R.string.about_aria2)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.baseline_home_24, getString(R.string.home)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.baseline_cloud_download_24, getString(R.string.directDownload)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.baseline_favorite_24, getString(R.string.quickGlobalOptions)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.baseline_list_24, getString(R.string.globalOptions)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.ABOUT_ARIA2, R.drawable.baseline_cloud_24, getString(R.string.about_aria2)))
                 .addMenuItemSeparator()
-                .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.ic_settings_black_48dp, getString(R.string.preferences)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.ic_report_problem_black_48dp, getString(R.string.support)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.baseline_settings_24, getString(R.string.preferences)))
+                .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.baseline_report_problem_24, getString(R.string.support)))
                 .addProfiles(profilesManager.getProfiles(), this, new DrawerManager.Config.AdapterProvider<MultiProfile>() {
                     @NonNull
                     @Override
                     public ProfilesAdapter<MultiProfile, ?> provide(@NonNull Context context, @NonNull List<MultiProfile> profiles, @NonNull DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
-                        return new CustomProfilesAdapter(context, profiles, R.style.TextOnLight, listener);
+                        return new CustomProfilesAdapter(context, profiles, listener);
                     }
                 })
-                .addProfilesMenuItem(new BaseDrawerItem(DrawerConst.ADD_PROFILE, R.drawable.ic_add_black_48dp, getString(R.string.addProfile)))
+                .addProfilesMenuItem(new BaseDrawerItem(DrawerConst.ADD_PROFILE, R.drawable.baseline_add_24, getString(R.string.addProfile)))
                 .build(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar);
 
         MultiProfile currentProfile;

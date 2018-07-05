@@ -101,9 +101,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull Object payload) {
         if (payload instanceof Boolean) { // Notification toggle
             if ((Boolean) payload)
-                holder.toggleNotification.setImageResource(R.drawable.ic_notifications_active_black_48dp);
+                holder.toggleNotification.setImageResource(R.drawable.baseline_notifications_active_24);
             else
-                holder.toggleNotification.setImageResource(R.drawable.ic_notifications_none_black_48dp);
+                holder.toggleNotification.setImageResource(R.drawable.baseline_notifications_none_24);
         }
     }
 
@@ -117,7 +117,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         else
             color = ContextCompat.getColor(context, R.color.colorAccent);
 
-        Utils.setupChart(holder.detailsChart, true, R.color.colorPrimaryDark);
+        Utils.setupChart(holder.detailsChart, true);
         holder.detailsChart.setNoDataTextColor(color);
         holder.donutProgress.setFinishedStrokeColor(color);
 
@@ -401,7 +401,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             if (last.status == Download.Status.ACTIVE) {
                 LineData data = detailsChart.getData();
                 if (data == null) {
-                    Utils.setupChart(detailsChart, true, R.color.colorPrimaryDark);
+                    Utils.setupChart(detailsChart, true);
                     data = detailsChart.getData();
                 }
 

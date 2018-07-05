@@ -103,59 +103,46 @@
                 android:id="@+id/directDownloadItem_open"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_open_in_new_black_48dp" />
+                android:src="@drawable/baseline_open_in_new_24" />
 
             <ImageButton
                 android:id="@+id/directDownloadItem_pause"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_pause_black_48dp" />
+                android:src="@drawable/baseline_pause_24" />
 
             <ImageButton
                 android:id="@+id/directDownloadItem_start"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_play_arrow_black_48dp" />
+                android:src="@drawable/baseline_play_arrow_24" />
 
             <ImageButton
                 android:id="@+id/directDownloadItem_restart"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_refresh_black_48dp" />
+                android:src="@drawable/baseline_refresh_24" />
 
             <ImageButton
                 android:id="@+id/directDownloadItem_remove"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_clear_black_48dp" />
+                android:src="@drawable/baseline_clear_24" />
         </LinearLayout>
-
     </LinearLayout>
-
-
 </LinearLayout>

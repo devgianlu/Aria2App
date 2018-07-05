@@ -199,7 +199,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
             DownloadWithUpdate.BigUpdate update = download.bigUpdate();
 
-            Utils.setupChart(chart, false, R.color.colorPrimaryDark);
+            Utils.setupChart(chart, false);
             Typeface robotoLight = FontsManager.get().get(getContext(), FontsManager.ROBOTO_LIGHT);
             int colorAccent = ContextCompat.getColor(getContext(), update.getColorAccent());
             chart.setNoDataTextColor(colorAccent);
@@ -329,7 +329,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             if (setChartState(update)) {
                 LineData data = chart.getLineData();
                 if (data == null) {
-                    Utils.setupChart(chart, true, R.color.colorPrimaryDark);
+                    Utils.setupChart(chart, true);
                     data = chart.getLineData();
                 }
 

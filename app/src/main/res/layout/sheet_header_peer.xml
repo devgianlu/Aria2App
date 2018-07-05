@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_file_download_white_48dp" />
+            android:src="@drawable/baseline_download_24" />
 
         <com.gianlu.commonutils.SuperTextView
             android:id="@+id/peerSheet_downloadSpeed"
@@ -36,7 +36,7 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_file_upload_white_48dp" />
+            android:src="@drawable/baseline_upload_24" />
 
         <com.gianlu.commonutils.SuperTextView
             android:id="@+id/peerSheet_uploadSpeed"

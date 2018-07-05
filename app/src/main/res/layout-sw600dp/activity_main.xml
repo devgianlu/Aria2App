@@ -58,7 +58,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_play_circle_filled_white_48dp" />
+                    android:src="@drawable/baseline_play_circle_outline_24" />
 
                 <TextView
                     android:id="@+id/main_active"
@@ -74,7 +74,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_pause_circle_filled_white_48dp" />
+                    android:src="@drawable/baseline_pause_circle_outline_24" />
 
                 <TextView
                     android:id="@+id/main_paused"
@@ -90,7 +90,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_clear_circle_filled_white_48dp" />
+                    android:src="@drawable/baseline_clear_outline_24" />
 
                 <TextView
                     android:id="@+id/main_stopped"
@@ -115,7 +115,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
+                    android:src="@drawable/baseline_keyboard_arrow_down_24" />
             </LinearLayout>
 
         </android.support.design.widget.AppBarLayout>
@@ -167,7 +167,7 @@
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorSearch"
                             fab:fab_colorPressed="@color/colorSearch_pressed"
-                            fab:fab_icon="@drawable/ic_search_white_48dp"
+                            fab:fab_icon="@drawable/baseline_search_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/search" />
 
@@ -177,7 +177,7 @@
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorMetalink"
                             fab:fab_colorPressed="@color/colorMetalink_pressed"
-                            fab:fab_icon="@drawable/ic_link_white_48dp"
+                            fab:fab_icon="@drawable/baseline_link_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addMetalink" />
 
@@ -197,7 +197,7 @@
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorURI"
                             fab:fab_colorPressed="@color/colorURI_pressed"
-                            fab:fab_icon="@drawable/ic_playlist_add_white_48dp"
+                            fab:fab_icon="@drawable/baseline_playlist_add_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addUri" />
                     </com.getbase.floatingactionbutton.FloatingActionsMenu>

@@ -25,7 +25,8 @@ public enum PK implements Prefs.PrefKey {
     @Deprecated
     A2_QUICK_OPTIONS("a2_quickOptions"),
     @Deprecated
-    A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries");
+    A2_TUTORIAL_DISCOVERIES("a2_tutorialDiscoveries"),
+    NIGHT_MODE("nightModeEnabled");
 
     private final String key;
 

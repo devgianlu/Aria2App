@@ -142,9 +142,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_insert_drive_file_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_insert_drive_file_24" />
 
                 <ImageButton
                     android:id="@+id/editProfile_removeCertificateFile"
@@ -154,9 +152,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_delete_black_48dp"
-                    android:tint="@color/icon_inactive_light"
-                    android:tintMode="src_in" />
+                    android:src="@drawable/baseline_delete_24" />
             </LinearLayout>
 
             <TextView

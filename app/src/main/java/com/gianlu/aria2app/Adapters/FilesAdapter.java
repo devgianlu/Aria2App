@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+// FIXME: Action mode not working
 public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_DIR = 0;
     private static final int ITEM_FILE = 1;
@@ -35,6 +36,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Set<AriaFile> selectedFiles = new HashSet<>();
     private AriaDirectory currentDir;
     private boolean isInActionMode = false;
+    private RecyclerView list;
 
     public FilesAdapter(Context context, @NonNull Listener listener) {
         this.inflater = LayoutInflater.from(context);
@@ -45,13 +47,23 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         isInActionMode = true;
         selectedFiles.clear();
         selectedFiles.add(trigger);
-        notifyDataSetChanged();
+        if (list != null) list.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public void selectAllInDirectory() {
         if (!isInActionMode || currentDir == null) return;
         selectedFiles.addAll(currentDir.files);
-        notifyDataSetChanged();
+        if (list != null) list.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @UiThread
@@ -84,7 +96,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void changeDir(@NonNull AriaDirectory dir) {
         currentDir = dir;
         listener.onDirectoryChanged(dir);
-        listener.postOnList(new Runnable() {
+        if (list != null) list.post(new Runnable() {
             @Override
             public void run() {
                 notifyDataSetChanged();
@@ -131,7 +143,12 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void exitedActionMode() {
         isInActionMode = false;
         selectedFiles.clear();
-        notifyDataSetChanged();
+        if (list != null) list.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @NonNull
@@ -206,6 +223,16 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        list = recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        list = null;
+    }
+
+    @Override
     public int getItemCount() {
         if (currentDir == null) return 0;
         else return currentDir.dirs.size() + currentDir.files.size();
@@ -226,8 +253,6 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         boolean onDirectoryLongClick(@NonNull AriaDirectory dir);
 
         void exitActionMode();
-
-        void postOnList(@NonNull Runnable runnable);
     }
 
     private class DirViewHolder extends RecyclerView.ViewHolder {
@@ -261,11 +286,11 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void updateStatus(@NonNull AriaFile file) {
             if (file.completed())
-                status.setImageResource(R.drawable.ic_cloud_done_black_48dp);
+                status.setImageResource(R.drawable.baseline_cloud_done_24);
             else if (file.selected)
-                status.setImageResource(R.drawable.ic_cloud_download_black_48dp);
+                status.setImageResource(R.drawable.baseline_cloud_download_24);
             else
-                status.setImageResource(R.drawable.ic_cloud_off_black_48dp);
+                status.setImageResource(R.drawable.baseline_cloud_off_24);
         }
     }
 }

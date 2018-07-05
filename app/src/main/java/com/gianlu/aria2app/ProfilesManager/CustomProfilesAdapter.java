@@ -2,9 +2,7 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +28,9 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final LayoutInflater inflater;
 
-    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, @StyleRes int profileItemsStyle, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
+    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
         super(context, profiles, listener);
-        this.inflater = LayoutInflater.from(new ContextThemeWrapper(context, profileItemsStyle));
+        this.inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -69,13 +67,13 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
 
             switch (multi.status.status) {
                 case ONLINE:
-                    holder.status.setImageResource(R.drawable.ic_done_black_48dp);
+                    holder.status.setImageResource(R.drawable.baseline_done_24);
                     break;
                 case OFFLINE:
-                    holder.status.setImageResource(R.drawable.ic_clear_black_48dp);
+                    holder.status.setImageResource(R.drawable.baseline_clear_24);
                     break;
                 case ERROR:
-                    holder.status.setImageResource(R.drawable.ic_error_black_48dp);
+                    holder.status.setImageResource(R.drawable.baseline_error_24);
                     break;
             }
         }

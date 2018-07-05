@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -93,7 +93,7 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add_circle_white_48dp" />
+                android:src="@drawable/baseline_add_circle_24" />
         </LinearLayout>
 
         <View
@@ -111,4 +111,4 @@
         android:layout_margin="8dp"
         android:text="@string/seeError"
         android:visibility="gone" />
-</FrameLayout>
+</merge>

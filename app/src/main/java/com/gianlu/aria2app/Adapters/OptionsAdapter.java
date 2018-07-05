@@ -107,9 +107,9 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         }
 
         if (option.isQuick(context))
-            holder.toggleFavourite.setImageResource(R.drawable.ic_favorite_black_48dp);
+            holder.toggleFavourite.setImageResource(R.drawable.baseline_favorite_24);
         else
-            holder.toggleFavourite.setImageResource(R.drawable.ic_favorite_border_black_48dp);
+            holder.toggleFavourite.setImageResource(R.drawable.baseline_favorite_border_24);
 
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override

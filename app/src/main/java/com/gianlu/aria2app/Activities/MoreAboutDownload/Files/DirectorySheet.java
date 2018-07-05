@@ -135,7 +135,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
             if (payload.download.update().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
                 return false;
             } else {
-                action.setImageResource(R.drawable.ic_file_download_white_48dp);
+                action.setImageResource(R.drawable.baseline_download_24);
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
                 action.setOnClickListener(new View.OnClickListener() {
                     @Override

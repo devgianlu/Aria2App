@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -63,6 +64,7 @@ public class FileTypeTextView extends View {
         else setExtension(null);
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (mText != null) {

@@ -18,8 +18,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:orientation="horizontal"
-            android:padding="8dp"
-            android:theme="@style/TextOnDark">
+            android:padding="8dp">
 
             <com.gianlu.aria2app.DonutProgress
                 android:id="@+id/downloadCard_donutProgress"
@@ -38,6 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textColor="@color/dim_foreground_dark"
                     android:textSize="13sp" />
 
                 <com.gianlu.commonutils.SuperTextView
@@ -45,6 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
+                    android:textColor="@color/bright_foreground_dark"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -105,9 +106,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_pause_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_pause_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_start"
@@ -116,9 +115,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_play_arrow_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_play_arrow_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_stop"
@@ -127,9 +124,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_stop_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_stop_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_restart"
@@ -138,9 +133,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_refresh_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_refresh_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_remove"
@@ -149,9 +142,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_clear_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_clear_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_moveUp"
@@ -160,9 +151,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_arrow_upward_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_arrow_upward_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_moveDown"
@@ -171,9 +160,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_arrow_downward_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_arrow_downward_24" />
 
             <ImageButton
                 android:id="@+id/downloadCard_toggleNotification"
@@ -182,9 +169,7 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_notifications_none_black_48dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in" />
+                android:src="@drawable/baseline_notifications_none_24" />
 
             <View
                 android:layout_width="0dp"

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -53,11 +52,10 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     private Aria2Helper helper;
 
     @NonNull
-    public static OptionsDialog getDownload(String gid, boolean quick, @StyleRes int theme) {
+    public static OptionsDialog getDownload(String gid, boolean quick) {
         OptionsDialog dialog = new OptionsDialog();
         Bundle args = new Bundle();
         args.putBoolean("global", false);
-        args.putInt("theme", theme);
         args.putBoolean("quick", quick);
         args.putString("gid", gid);
         dialog.setArguments(args);
@@ -70,7 +68,6 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         Bundle args = new Bundle();
         args.putBoolean("global", true);
         args.putBoolean("quick", quick);
-        args.putInt("theme", R.style.NormalDialog);
         dialog.setArguments(args);
         return dialog;
     }
@@ -78,14 +75,9 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog;
         Bundle args = getArguments();
-        int theme;
-        if (args != null && (theme = args.getInt("theme", 0)) != 0)
-            dialog = new Dialog(requireContext(), theme);
-        else
-            dialog = super.onCreateDialog(savedInstanceState);
 
+        final Dialog dialog = super.onCreateDialog(savedInstanceState);
         if (args != null && args.getBoolean("global", false))
             dialog.setTitle(R.string.globalOptions);
         else
@@ -100,6 +92,13 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             }
         });
         return dialog;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogFix);
     }
 
     @Nullable

@@ -19,11 +19,9 @@
             <ImageView
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:padding="4dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_file_download_black_48dp" />
+                android:src="@drawable/baseline_download_24" />
 
             <View
                 android:layout_width="0dp"
@@ -39,7 +37,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -53,11 +50,9 @@
             <ImageView
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:tint="@color/icon_inactive_light"
-                android:tintMode="src_in"
                 android:padding="4dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_file_upload_black_48dp" />
+                android:src="@drawable/baseline_upload_24" />
 
             <View
                 android:layout_width="0dp"
@@ -91,7 +86,6 @@
             android:id="@+id/peersServersFragment_recyclerViewLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
     </FrameLayout>
 </LinearLayout>
 

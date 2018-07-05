@@ -15,6 +15,7 @@ import com.gianlu.commonutils.Preferences.AppCompatPreferenceActivity;
 import com.gianlu.commonutils.Preferences.AppCompatPreferenceFragment;
 import com.gianlu.commonutils.Preferences.BaseAboutFragment;
 import com.gianlu.commonutils.Preferences.BaseThirdPartProjectsFragment;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
 
@@ -30,7 +31,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
 
     @Override
     public void onHeaderClick(Header header, int position) {
-        if (header.iconRes == R.drawable.ic_announcement_black_24dp) {
+        if (header.iconRes == R.drawable.baseline_announcement_24) {
             startActivity(new Intent(this, LogsActivity.class));
             return;
         }
@@ -55,6 +56,14 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceClick(Preference preference) {
                     TutorialManager.restartTutorial(getActivity());
                     NavUtils.navigateUpFromSameTask(getActivity());
+                    return true;
+                }
+            });
+
+            findPreference(Prefs.Keys.NIGHT_MODE.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    ((AppCompatPreferenceActivity) getActivity()).applyNight();
                     return true;
                 }
             });

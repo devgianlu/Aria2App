@@ -58,7 +58,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_play_circle_filled_white_48dp" />
+                    android:src="@drawable/baseline_play_circle_outline_24"
+                    android:tint="@color/bright_foreground_dark" />
 
                 <TextView
                     android:id="@+id/main_active"
@@ -74,7 +75,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_pause_circle_filled_white_48dp" />
+                    android:src="@drawable/baseline_pause_circle_outline_24"
+                    android:tint="@color/bright_foreground_dark" />
 
                 <TextView
                     android:id="@+id/main_paused"
@@ -90,7 +92,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_clear_circle_filled_white_48dp" />
+                    android:src="@drawable/baseline_clear_outline_24"
+                    android:tint="@color/bright_foreground_dark" />
 
                 <TextView
                     android:id="@+id/main_stopped"
@@ -115,82 +118,83 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ic_keyboard_arrow_down_white_48dp" />
+                    android:src="@drawable/baseline_keyboard_arrow_down_24"
+                    android:tint="@color/bright_foreground_dark" />
             </LinearLayout>
 
         </android.support.design.widget.AppBarLayout>
 
         <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="false">
+
+            <com.gianlu.commonutils.RecyclerViewLayout
+                android:id="@+id/main_recyclerViewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <View
+                android:id="@+id/main_mask"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fitsSystemWindows="false">
+                android:background="@android:color/transparent"
+                android:visibility="gone" />
 
-                <com.gianlu.commonutils.RecyclerViewLayout
-                    android:id="@+id/main_recyclerViewLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/main_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
+                fab:fab_addButtonColorNormal="@color/colorAccent"
+                fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
+                fab:fab_addButtonPlusIconColor="@android:color/white"
+                fab:fab_labelStyle="@style/FabLabel">
 
-                <View
-                    android:id="@+id/main_mask"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:visibility="gone" />
-
-                <com.getbase.floatingactionbutton.FloatingActionsMenu xmlns:fab="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/main_fab"
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
-                    fab:fab_addButtonColorNormal="@color/colorAccent"
-                    fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
-                    fab:fab_addButtonPlusIconColor="@android:color/white"
-                    fab:fab_labelStyle="@style/FabLabel">
+                    fab:fab_colorNormal="@color/colorSearch"
+                    fab:fab_colorPressed="@color/colorSearch_pressed"
+                    fab:fab_icon="@drawable/baseline_search_24"
+                    fab:fab_size="mini"
+                    fab:fab_title="@string/search" />
 
-                    <com.getbase.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/mainFab_search"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        fab:fab_colorNormal="@color/colorSearch"
-                        fab:fab_colorPressed="@color/colorSearch_pressed"
-                        fab:fab_icon="@drawable/ic_search_white_48dp"
-                        fab:fab_size="mini"
-                        fab:fab_title="@string/search" />
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_addMetalink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorMetalink"
+                    fab:fab_colorPressed="@color/colorMetalink_pressed"
+                    fab:fab_icon="@drawable/baseline_link_24"
+                    fab:fab_size="mini"
+                    fab:fab_title="@string/addMetalink" />
 
-                    <com.getbase.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/mainFab_addMetalink"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        fab:fab_colorNormal="@color/colorMetalink"
-                        fab:fab_colorPressed="@color/colorMetalink_pressed"
-                        fab:fab_icon="@drawable/ic_link_white_48dp"
-                        fab:fab_size="mini"
-                        fab:fab_title="@string/addMetalink" />
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_addTorrent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorTorrent"
+                    fab:fab_colorPressed="@color/colorTorrent_pressed"
+                    fab:fab_icon="@drawable/ic_torrent_white_48dp"
+                    fab:fab_size="mini"
+                    fab:fab_title="@string/addTorrent" />
 
-                    <com.getbase.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/mainFab_addTorrent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        fab:fab_colorNormal="@color/colorTorrent"
-                        fab:fab_colorPressed="@color/colorTorrent_pressed"
-                        fab:fab_icon="@drawable/ic_torrent_white_48dp"
-                        fab:fab_size="mini"
-                        fab:fab_title="@string/addTorrent" />
-
-                    <com.getbase.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/mainFab_addURI"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        fab:fab_colorNormal="@color/colorURI"
-                        fab:fab_colorPressed="@color/colorURI_pressed"
-                        fab:fab_icon="@drawable/ic_playlist_add_white_48dp"
-                        fab:fab_size="mini"
-                        fab:fab_title="@string/addUri" />
-                </com.getbase.floatingactionbutton.FloatingActionsMenu>
-            </android.support.design.widget.CoordinatorLayout>
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_addURI"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorURI"
+                    fab:fab_colorPressed="@color/colorURI_pressed"
+                    fab:fab_icon="@drawable/baseline_playlist_add_24"
+                    fab:fab_size="mini"
+                    fab:fab_title="@string/addUri" />
+            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+        </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
 
     <include layout="@layout/drawer_layout" />

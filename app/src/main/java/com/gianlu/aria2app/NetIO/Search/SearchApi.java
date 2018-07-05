@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONArray;
@@ -94,7 +93,7 @@ public final class SearchApi {
             public void run() {
                 try {
                     JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
-                    final List<SearchResult> results = CommonUtils.toTList(obj.getJSONArray("result"), SearchResult.class);
+                    final List<SearchResult> results = SearchResult.list(obj.getJSONArray("result"));
 
                     cacheEnginesBlocking();
                     JSONArray missingEnginesArray = obj.getJSONArray("missing");
@@ -199,7 +198,7 @@ public final class SearchApi {
 
     private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
         JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL + "listEngines").build()));
-        return cachedEngines = CommonUtils.toTList(array, SearchEngine.class);
+        return cachedEngines = SearchEngine.list(array);
     }
 
     private void cacheEnginesBlocking() throws IOException, StatusCodeException, JSONException {

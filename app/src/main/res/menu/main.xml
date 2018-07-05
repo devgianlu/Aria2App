@@ -4,14 +4,14 @@
 
     <item
         android:id="@+id/main_search"
-        android:icon="@drawable/ic_search_white_48dp"
+        android:icon="@drawable/baseline_search_24"
         android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="collapseActionView|always" />
 
     <item
         android:id="@+id/main_filter"
-        android:icon="@drawable/ic_filter_list_white_48dp"
+        android:icon="@drawable/baseline_filter_list_24"
         android:title="@string/filters"
         app:showAsAction="ifRoom" />
 

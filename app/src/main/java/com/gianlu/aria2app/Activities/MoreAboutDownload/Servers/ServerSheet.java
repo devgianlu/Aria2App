@@ -91,7 +91,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
 
         currentServer = server;
 
-        Utils.setupChart(chart, true, R.color.colorPrimaryDark);
+        Utils.setupChart(chart, true);
         update(server);
 
         ipApi.getIPDetails(server.uri.getHost(), new FreeGeoIPApi.OnIpDetails() {

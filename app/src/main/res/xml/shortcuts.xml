@@ -5,7 +5,7 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_playlist_add_colored_48dp"
+        android:icon="@drawable/baseline_playlist_add_colored_24"
         android:shortcutId="addUri"
         android:shortcutShortLabel="@string/addUri">
 
@@ -34,7 +34,7 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_metalink_colored_48dp"
+        android:icon="@drawable/baseline_link_colored_24"
         android:shortcutId="addMetalink"
         android:shortcutShortLabel="@string/addMetalink">
 
@@ -48,7 +48,7 @@
 
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_search_colored_48dp"
+        android:icon="@drawable/baseline_search_colored_24"
         android:shortcutId="search"
         android:shortcutShortLabel="@string/search">
 

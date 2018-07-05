@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_folder_white_48dp" />
+            android:src="@drawable/baseline_folder_24" />
 
         <TextView
             android:id="@+id/dirSheet_percentage"

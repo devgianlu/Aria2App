@@ -1,32 +1,28 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <attr name="colorAccentRef" format="reference|color" />
+
+    <style name="AppTheme" parent="@style/Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccentRef">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="dialogTheme">@style/DialogFix</item>
     </style>
 
-    <!-- Normal dialog -->
-    <style name="NormalDialog" parent="Theme.AppCompat.Light.Dialog">
+    <!-- Dialog fix -->
+    <style name="DialogFix" parent="@style/Theme.AppCompat.DayNight.Dialog">
         <item name="android:windowNoTitle">false</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:buttonStyle">@style/NormalButton</item>
+        <item name="colorAccent">?attr/colorAccentRef</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:background">?android:attr/colorBackgroundFloating</item>
+        <item name="buttonStyle">@style/DialogFixButton</item>
     </style>
 
-    <style name="NormalButton" parent="Widget.AppCompat.Button">
-        <item name="android:textColor">@color/colorAccent</item>
-    </style>
-
-    <!-- Torrent dialog -->
-    <style name="TorrentDialog" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowNoTitle">false</item>
-        <item name="colorAccent">@color/colorTorrent_pressed</item>
-        <item name="android:buttonStyle">@style/TorrentButton</item>
-    </style>
-
-    <style name="TorrentButton" parent="Widget.AppCompat.Button">
-        <item name="android:textColor">@color/colorTorrent_pressed</item>
+    <style name="DialogFixButton" parent="@android:style/Widget.Material.Light.Button">
+        <item name="android:textColor">?attr/colorAccentRef</item>
     </style>
 
     <!-- Fullscreen -->
@@ -54,6 +50,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccentRef">@color/colorAccent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
@@ -62,6 +59,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorTorrent_pressed</item>
+        <item name="colorAccentRef">@color/colorTorrent_pressed</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="windowActionModeOverlay">true</item>
@@ -71,6 +69,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorMetalink_pressed</item>
+        <item name="colorAccentRef">@color/colorMetalink_pressed</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
@@ -82,7 +81,7 @@
     </style>
 
     <!-- ?? -->
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+    <style name="AppTheme.PopupOverlay" parent="@style/ThemeOverlay.AppCompat.Dark" />
 
     <!-- Big layout tabbing -->
     <style name="BigTabLayout">
