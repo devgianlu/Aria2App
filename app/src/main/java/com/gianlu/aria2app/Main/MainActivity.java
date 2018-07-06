@@ -294,6 +294,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 if (adapter != null) {
                     adapter.itemsChanged(payload.downloads);
                     recyclerViewLayout.stopLoading();
+
+                    if (adapter.getItemCount() == 0)
+                        FloatingActionsMenuBehavior.scaleTo(fabMenu, 1);
                 }
 
                 String gid = getIntent().getStringExtra("gid");

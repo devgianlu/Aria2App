@@ -31,7 +31,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
         return animateView.getScaleX() == value;
     }
 
-    private static void scaleTo(@NonNull FloatingActionsMenu view, float value) {
+    static void scaleTo(@NonNull FloatingActionsMenu view, float value) {
         View animateView = findInnerMenu(view);
         if (animateView == null) animateView = view;
         animateView.animate().scaleY(value).scaleX(value).setDuration(DURATION).start();
