@@ -84,61 +84,8 @@ public class NotificationService extends Service {
     private LocalBroadcastManager broadcastManager;
     private Boolean startedNotificable = null;
 
-    public static void toggleNotification(@NonNull final Context context, @NonNull final LocalBroadcastManager broadcastManager, @NonNull final String gid, @NonNull final OnIsNotificable listener) {
-        final Object waitToUnbind = new Object();
-
-        final BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (Objects.equals(intent.getAction(), ACTION_TOGGLE_NOTIFICABLE)) {
-                    boolean has = intent.getBooleanExtra("has", false);
-                    listener.onResult(has);
-
-                    if (has) {
-                        start(context, true);
-                    } else {
-                        if (intent.getBooleanExtra("shouldStop", false))
-                            stop(context);
-                    }
-
-                    broadcastManager.unregisterReceiver(this);
-
-                    synchronized (waitToUnbind) {
-                        waitToUnbind.notify();
-                    }
-                }
-            }
-        };
-
-        context.bindService(new Intent(context, NotificationService.class), new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Messenger messenger = new Messenger(service);
-
-                broadcastManager.registerReceiver(receiver, new IntentFilter(ACTION_TOGGLE_NOTIFICABLE));
-
-                try {
-                    messenger.send(Message.obtain(null, MESSENGER_TOGGLE_NOTIFICABLE, gid));
-                } catch (RemoteException ex) {
-                    Logging.log(ex);
-                    listener.onResult(false);
-                }
-
-                synchronized (waitToUnbind) {
-                    try {
-                        waitToUnbind.wait();
-                        context.unbindService(this);
-                    } catch (InterruptedException ex) {
-                        Logging.log(ex);
-                    }
-                }
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                broadcastManager.unregisterReceiver(receiver);
-            }
-        }, BIND_AUTO_CREATE);
+    public static void toggleNotification(@NonNull Context context, @NonNull LocalBroadcastManager broadcastManager, @NonNull String gid, @NonNull OnIsNotificable listener) {
+        context.bindService(new Intent(context, NotificationService.class), new ToggleNotificationHelper(context, broadcastManager, gid, listener), BIND_AUTO_CREATE);
     }
 
     public static void start(@NonNull Context context, boolean notificable) {
@@ -428,6 +375,70 @@ public class NotificationService extends Service {
 
     public interface OnIsNotificable {
         void onResult(boolean notificable);
+    }
+
+    private static class ToggleNotificationHelper extends BroadcastReceiver implements ServiceConnection {
+        private final Object waitToUnbind = new Object();
+        private final Context context;
+        private final LocalBroadcastManager broadcastManager;
+        private final OnIsNotificable listener;
+        private final String gid;
+
+        private ToggleNotificationHelper(@NonNull Context context, @NonNull LocalBroadcastManager broadcastManager, @NonNull String gid, @NonNull OnIsNotificable listener) {
+            this.context = context;
+            this.broadcastManager = broadcastManager;
+            this.gid = gid;
+            this.listener = listener;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Objects.equals(intent.getAction(), ACTION_TOGGLE_NOTIFICABLE)) {
+                boolean has = intent.getBooleanExtra("has", false);
+                listener.onResult(has);
+
+                if (has) {
+                    start(context, true);
+                } else {
+                    if (intent.getBooleanExtra("shouldStop", false))
+                        stop(context);
+                }
+
+                broadcastManager.unregisterReceiver(this);
+
+                synchronized (waitToUnbind) {
+                    waitToUnbind.notifyAll();
+                }
+            }
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Messenger messenger = new Messenger(service);
+
+            broadcastManager.registerReceiver(this, new IntentFilter(ACTION_TOGGLE_NOTIFICABLE));
+
+            try {
+                messenger.send(Message.obtain(null, MESSENGER_TOGGLE_NOTIFICABLE, gid));
+            } catch (RemoteException ex) {
+                Logging.log(ex);
+                listener.onResult(false);
+            }
+
+            synchronized (waitToUnbind) {
+                try {
+                    waitToUnbind.wait();
+                    context.unbindService(this);
+                } catch (InterruptedException ex) {
+                    Logging.log(ex);
+                }
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            broadcastManager.unregisterReceiver(this);
+        }
     }
 
     @SuppressLint("HandlerLeak")
