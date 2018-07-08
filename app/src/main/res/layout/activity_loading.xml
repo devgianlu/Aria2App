@@ -42,7 +42,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/connecting"
                 android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:textColor="@color/bright_foreground_dark" />
 
             <Button
                 android:id="@+id/loading_cancel"
@@ -73,7 +73,7 @@
                 android:paddingStart="16dp"
                 android:text="@string/pickProfile"
                 android:textAlignment="center"
-                android:textColor="@color/white" />
+                android:textColor=" @color/bright_foreground_dark" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/loading_pickerList"
@@ -93,7 +93,8 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/baseline_add_circle_24" />
+                android:src="@drawable/baseline_add_circle_24"
+                android:tint="@color/bright_foreground_dark" />
         </LinearLayout>
 
         <View
@@ -102,13 +103,27 @@
             android:layout_weight="0.6" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/loading_seeError"
-        style="?android:attr/buttonBarButtonStyle"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_margin="8dp"
-        android:text="@string/seeError"
-        android:visibility="gone" />
+        android:layout_margin="24dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/loading_settings"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/preferences" />
+
+        <Button
+            android:id="@+id/loading_seeError"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/seeError"
+            android:visibility="gone" />
+    </LinearLayout>
 </merge>

@@ -2,7 +2,9 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +30,10 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final LayoutInflater inflater;
 
-    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
+    public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, @StyleRes int overrideStyle, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
         super(context, profiles, listener);
-        this.inflater = LayoutInflater.from(context);
+        if (overrideStyle == 0) this.inflater = LayoutInflater.from(context);
+        else this.inflater = LayoutInflater.from(new ContextThemeWrapper(context, overrideStyle));
     }
 
     @Override

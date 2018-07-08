@@ -55,7 +55,9 @@ public final class GeoIP {
         return cache.get(ip);
     }
 
-    private boolean hitCache(@NonNull String ip, @NonNull final OnIpDetails listener) {
+    private boolean hitCache(String ip, @NonNull final OnIpDetails listener) {
+        if (ip == null) return false;
+
         final IPDetails cachedDetails = cache.get(ip);
         if (cachedDetails != null) {
             handler.post(new Runnable() {

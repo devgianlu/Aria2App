@@ -30,6 +30,13 @@
         <item name="android:textColor">?attr/colorAccentRef</item>
     </style>
 
+    <!-- Force white -->
+    <style name="ForceWhite">
+        <item name="android:tint">@color/bright_foreground_dark</item>
+        <item name="android:textColorPrimary">@color/bright_foreground_dark</item>
+        <item name="android:textColorSecondary">@color/dim_foreground_dark</item>
+    </style>
+
     <!-- Fullscreen -->
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>

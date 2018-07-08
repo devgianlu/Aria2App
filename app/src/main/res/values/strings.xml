@@ -323,8 +323,8 @@
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
     <string name="nightMode">Night mode (dark theme)</string>
-    <string name="nightModeOff">Night mode is following system defult.</string>
-    <string name="nightModeOn">Night mode is permanenly enabled.</string>
+    <string name="nightModeOff">Night mode is following system default.</string>
+    <string name="nightModeOn">Night mode is permanently enabled.</string>
     <string name="isp">Internet service provider: %s</string>
 
     <!-- String-arrays -->

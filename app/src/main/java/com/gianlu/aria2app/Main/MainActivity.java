@@ -389,7 +389,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     @NonNull
                     @Override
                     public ProfilesAdapter<MultiProfile, ?> provide(@NonNull Context context, @NonNull List<MultiProfile> profiles, @NonNull DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
-                        return new CustomProfilesAdapter(context, profiles, listener);
+                        return new CustomProfilesAdapter(context, profiles, 0, listener);
                     }
                 })
                 .addProfilesMenuItem(new BaseDrawerItem(DrawerConst.ADD_PROFILE, R.drawable.baseline_add_24, getString(R.string.addProfile)))

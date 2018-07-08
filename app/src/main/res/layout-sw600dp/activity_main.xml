@@ -58,7 +58,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/baseline_play_circle_outline_24" />
+                    android:src="@drawable/baseline_play_circle_outline_24"
+                    android:tint="@color/bright_foreground_dark" />
 
                 <TextView
                     android:id="@+id/main_active"
@@ -74,7 +75,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/baseline_pause_circle_outline_24" />
+                    android:src="@drawable/baseline_pause_circle_outline_24"
+                    android:tint="@color/bright_foreground_dark" />
 
                 <TextView
                     android:id="@+id/main_paused"
@@ -90,7 +92,8 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/baseline_clear_outline_24" />
+                    android:src="@drawable/baseline_clear_outline_24"
+                    android:tint="@color/bright_foreground_dark" />
 
                 <TextView
                     android:id="@+id/main_stopped"
@@ -115,7 +118,8 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="4dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/baseline_keyboard_arrow_down_24" />
+                    android:src="@drawable/baseline_keyboard_arrow_down_24"
+                    android:tint="@color/bright_foreground_dark" />
             </LinearLayout>
 
         </android.support.design.widget.AppBarLayout>
