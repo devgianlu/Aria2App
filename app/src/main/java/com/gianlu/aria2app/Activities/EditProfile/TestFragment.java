@@ -22,6 +22,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     private LinearLayout testResults;
     private Button test;
 
+    @NonNull
     public static TestFragment getInstance(Context context) {
         TestFragment fragment = new TestFragment();
         fragment.setRetainInstance(true);
@@ -40,7 +41,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     }
 
     @Override
-    public void addView(View view) {
+    public void addView(@NonNull View view) {
         if (testResults != null) {
             testResults.addView(view);
             testResults.postDelayed(new Runnable() {
@@ -63,6 +64,8 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     }
 
     private void startTest(@NonNull MultiProfile.UserProfile profile) {
+        if (getContext() == null) return;
+
         TestersFlow flow = new TestersFlow(getContext(), profile, this);
         flow.start();
     }

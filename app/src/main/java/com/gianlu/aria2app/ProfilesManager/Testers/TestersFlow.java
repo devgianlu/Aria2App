@@ -3,14 +3,11 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
 
 import java.util.LinkedList;
@@ -24,7 +21,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
     private long startTime;
 
     @SuppressWarnings("unchecked")
-    public TestersFlow(Context context, MultiProfile.UserProfile profile, ITestFlow listener) {
+    public TestersFlow(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull ITestFlow listener) {
         this.context = context;
         this.listener = listener;
         this.testers = new LinkedList<>();
@@ -63,28 +60,28 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
 
     @Override
     public void startedNewTest(@NonNull BaseTester tester) {
-        publishGeneralMessage("Started " + tester.describe() + "...", android.R.color.secondary_text_light);
+        publishGeneralMessage("Started " + tester.describe() + "...", BaseTester.Color.PRIMARY);
     }
 
     @Override
-    public void publishGeneralMessage(@NonNull String message, @ColorRes final int color) {
+    public void publishGeneralMessage(@NonNull String message, @NonNull final BaseTester.Color color) {
         final String finalMessage = (System.currentTimeMillis() - startTime) + ": " + message;
         handler.post(new Runnable() {
             @Override
             public void run() {
                 if (listener != null)
-                    listener.addView(new SuperTextView(context, finalMessage, ContextCompat.getColor(context, color)));
+                    listener.addView(new SuperTextView(context, finalMessage, color.getResource(context)));
             }
         });
     }
 
     @Override
     public void endedTest(@NonNull BaseTester tester, @Nullable Object result) {
-        publishGeneralMessage("Finished " + tester.describe(), result != null ? android.R.color.secondary_text_light : R.color.red);
+        publishGeneralMessage("Finished " + tester.describe(), result != null ? BaseTester.Color.PRIMARY : BaseTester.Color.RED);
     }
 
     public interface ITestFlow {
-        void addView(View view);
+        void addView(@NonNull View view);
 
         void clearViews();
 

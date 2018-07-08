@@ -1,13 +1,15 @@
 package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
-import android.support.annotation.ColorRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.v4.content.ContextCompat;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 public abstract class BaseTester<T> implements Runnable {
     protected final Context context;
@@ -26,20 +28,8 @@ public abstract class BaseTester<T> implements Runnable {
     }
 
     @UiThread
-    protected final void publishMessage(String message, Level level) {
+    final void publishMessage(String message, Level level) {
         if (listener != null) listener.publishGeneralMessage(message, level.color);
-    }
-
-    public enum Level {
-        INFO(android.R.color.tertiary_text_light),
-        ERROR(R.color.red),
-        SUCCESS(R.color.green);
-
-        private final int color;
-
-        Level(@ColorRes int color) {
-            this.color = color;
-        }
     }
 
     public final T start(@Nullable Object prevResult) {
@@ -58,12 +48,45 @@ public abstract class BaseTester<T> implements Runnable {
     @NonNull
     public abstract String describe();
 
+    public enum Level {
+        INFO(Color.TERTIARY),
+        ERROR(Color.RED),
+        SUCCESS(Color.GREEN);
+
+        private final Color color;
+
+        Level(Color color) {
+            this.color = color;
+        }
+    }
+
+    public enum Color {
+        PRIMARY(android.R.attr.textColorPrimary, true),
+        TERTIARY(android.R.attr.textColorTertiary, true),
+        GREEN(R.color.green, false),
+        RED(R.color.red, false);
+
+        private final int res;
+        private final boolean resolve;
+
+        Color(int res, boolean resolve) {
+            this.res = res;
+            this.resolve = resolve;
+        }
+
+        @ColorInt
+        public int getResource(Context context) {
+            if (resolve) return CommonUtils.resolveAttrAsColor(context, res);
+            else return ContextCompat.getColor(context, res);
+        }
+    }
+
     public interface PublishListener<T> {
         @UiThread
         void startedNewTest(@NonNull BaseTester tester);
 
         @UiThread
-        void publishGeneralMessage(@NonNull String message, @ColorRes int color);
+        void publishGeneralMessage(@NonNull String message, @NonNull Color color);
 
         @UiThread
         void endedTest(@NonNull BaseTester tester, @Nullable T result);
