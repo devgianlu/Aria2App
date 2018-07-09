@@ -14,11 +14,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class UpdaterFramework {
+    private static UpdaterFramework instance;
     private final Map<Wants<?>, PayloadProvider<?>> providers;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    UpdaterFramework() {
+    private UpdaterFramework() {
         this.providers = new HashMap<>();
+    }
+
+    @NonNull
+    public static UpdaterFramework get() {
+        if (instance == null) instance = new UpdaterFramework();
+        return instance;
     }
 
     @Nullable

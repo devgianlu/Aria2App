@@ -17,12 +17,13 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     private final Wants<P> provides;
     private final Set<Receiver<P>> attachedReceivers = new HashSet<>();
     private final Set<ReceiverOwner> owners = new HashSet<>();
+    private final Set<PayloadUpdater.OnPayload<P>> requireListeners;
     protected P lastPayload;
-    private PayloadUpdater.OnPayload<P> requireListener = null;
 
     public PayloadProvider(@NonNull Context context, @NonNull Wants<P> provides) throws Aria2Helper.InitializingException {
         this.updater = requireUpdater(context);
         this.provides = provides;
+        this.requireListeners = new HashSet<>();
     }
 
     @NonNull
@@ -32,10 +33,13 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
 
     @Override
     public final boolean onException(@NonNull Exception ex) {
-        if (requireListener != null) {
-            boolean a = requireListener.onException(ex);
-            requireListener = null;
-            return a;
+        if (!requireListeners.isEmpty()) {
+            boolean handled = false;
+            for (PayloadUpdater.OnPayload<P> listener : requireListeners)
+                if (listener.onException(ex)) handled = true;
+
+            requireListeners.clear();
+            return handled;
         } else {
             boolean handled = false;
             for (Receiver<P> receiver : attachedReceivers)
@@ -49,9 +53,11 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     public final void onPayload(@NonNull P payload) {
         lastPayload = payload;
 
-        if (requireListener != null) {
-            requireListener.onPayload(payload);
-            requireListener = null;
+        if (!requireListeners.isEmpty()) {
+            for (PayloadUpdater.OnPayload<P> listener : requireListeners)
+                listener.onPayload(payload);
+
+            requireListeners.clear();
         }
 
         for (Receiver<P> receiver : attachedReceivers) receiver.onUpdateUi(payload);
@@ -108,7 +114,7 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     }
 
     public void requirePayload(PayloadUpdater.OnPayload<P> listener) {
-        requireListener = listener;
+        requireListeners.add(listener);
     }
 
     @NonNull

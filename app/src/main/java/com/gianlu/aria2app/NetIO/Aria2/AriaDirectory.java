@@ -3,6 +3,8 @@ package com.gianlu.aria2app.NetIO.Aria2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.gianlu.commonutils.CommonUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,7 +13,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class AriaDirectory {
-    public static String SEPARATOR = "/";
+    public static volatile char SEPARATOR = '/';
     public final List<AriaDirectory> dirs;
     public final List<AriaFile> files;
     public final String path;
@@ -40,23 +42,23 @@ public class AriaDirectory {
     @NonNull
     public static AriaDirectory createRoot(@NonNull DownloadWithUpdate download, @NonNull AriaFiles files) {
         String path = download.update().dir;
-        AriaDirectory dir = new AriaDirectory(SEPARATOR, null);
+        AriaDirectory dir = new AriaDirectory(String.valueOf(SEPARATOR), null);
 
         if (download.update().isMetadata() && files.size() == 1) {
             dir.addElement("", new String[]{files.get(0).path}, files.get(0));
         } else {
             for (AriaFile file : files)
-                dir.addElement("", file.path.substring(path.length() + 1).split(Pattern.quote(SEPARATOR)), file);
+                dir.addElement("", file.path.substring(path.length() + 1).split(Pattern.quote(String.valueOf(SEPARATOR))), file);
         }
 
         return dir;
     }
 
     public static void guessSeparator(@NonNull AriaFile file) {
-        int slash = file.path.split("/").length;
-        int backslash = file.path.split("\\\\").length;
-        if (slash > backslash) SEPARATOR = "/";
-        else SEPARATOR = "\\";
+        int slash = CommonUtils.countOccurrences(file.path, '/');
+        int backslash = CommonUtils.countOccurrences(file.path, '\\');
+        if (slash >= backslash) SEPARATOR = '/';
+        else SEPARATOR = '\\';
     }
 
     public long completedLength() {

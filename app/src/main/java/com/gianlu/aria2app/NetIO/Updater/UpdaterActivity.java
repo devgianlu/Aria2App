@@ -12,7 +12,7 @@ public abstract class UpdaterActivity extends ActivityWithDialog implements Rece
     private final UpdaterFramework framework;
 
     public UpdaterActivity() {
-        framework = new UpdaterFramework();
+        framework = UpdaterFramework.get();
     }
 
     protected void onPreCreate(@Nullable Bundle savedInstanceState) {
