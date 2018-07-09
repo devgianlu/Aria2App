@@ -46,23 +46,13 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         isInActionMode = true;
         selectedFiles.clear();
         selectedFiles.add(trigger);
-        if (list != null) list.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
+        postNotifyDataSetChanged();
     }
 
     public void selectAllInDirectory() {
         if (!isInActionMode || currentDir == null) return;
         selectedFiles.addAll(currentDir.files);
-        if (list != null) list.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
+        postNotifyDataSetChanged();
     }
 
     @UiThread
@@ -95,24 +85,30 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void changeDir(@NonNull AriaDirectory dir) {
         currentDir = dir;
         listener.onDirectoryChanged(dir);
-        if (list != null) list.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
+        postNotifyDataSetChanged();
+    }
+
+    private void postNotifyDataSetChanged() {
+        if (list != null) {
+            list.post(new Runnable() {
+                @Override
+                public void run() {
+                    list.getRecycledViewPool().clear();
+                    notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position);
         } else {
             if (holder instanceof FileViewHolder) {
                 FileViewHolder castHolder = (FileViewHolder) holder;
-                WeakReference<AriaFile> ref = (WeakReference<AriaFile>) payloads.get(0);
-                AriaFile file = ref.get();
+                WeakReference ref = (WeakReference) payloads.get(0);
+                AriaFile file = (AriaFile) ref.get();
                 if (file != null) {
                     castHolder.progressBar.setProgress((int) file.getProgress());
                     castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", file.getProgress()));
@@ -142,12 +138,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void exitedActionMode() {
         isInActionMode = false;
         selectedFiles.clear();
-        if (list != null) list.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
+        postNotifyDataSetChanged();
     }
 
     @NonNull
