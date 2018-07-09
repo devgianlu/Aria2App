@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
+import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 
@@ -86,7 +87,7 @@ public class ProfilesManager {
 
     @Nullable
     public MultiProfile getLastProfile() {
-        String id = Prefs.getString(preferences, Prefs.Keys.LAST_USED_PROFILE, null);
+        String id = Prefs.getString(preferences, PK.LAST_USED_PROFILE, null);
         if (id == null || !profileExists(id)) return null;
         try {
             return retrieveProfile(id);
@@ -97,11 +98,11 @@ public class ProfilesManager {
     }
 
     public void setLastProfile(Context context, MultiProfile profile) {
-        Prefs.putString(context, Prefs.Keys.LAST_USED_PROFILE, profile.id);
+        Prefs.putString(context, PK.LAST_USED_PROFILE, profile.id);
     }
 
     public void unsetLastProfile(Context context) {
-        Prefs.putString(context, Prefs.Keys.LAST_USED_PROFILE, null);
+        Prefs.putString(context, PK.LAST_USED_PROFILE, null);
     }
 
     @NonNull

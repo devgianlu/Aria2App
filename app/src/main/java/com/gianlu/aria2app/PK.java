@@ -7,6 +7,7 @@ import com.gianlu.commonutils.Preferences.Prefs;
 public enum PK implements Prefs.PrefKey {
     DD_DOWNLOAD_PATH("dd_downloadPath"),
     DD_RESUME("dd_resume"),
+    LAST_USED_PROFILE("lastUsedProfile"),
     DD_MAX_SIMULTANEOUS_DOWNLOADS("dd_maxSimultaneousDownloads"),
     A2_NOTIFS_AT_BOOT("a2_enableNotificationsAtBoot"),
     A2_FORCE_ACTION("a2_forceAction"),
