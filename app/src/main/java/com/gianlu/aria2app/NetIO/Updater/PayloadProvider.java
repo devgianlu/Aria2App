@@ -33,19 +33,21 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
 
     @Override
     public final boolean onException(@NonNull Exception ex) {
-        if (!requireListeners.isEmpty()) {
-            boolean handled = false;
-            for (PayloadUpdater.OnPayload<P> listener : requireListeners)
-                if (listener.onException(ex)) handled = true;
+        synchronized (requireListeners) {
+            if (!requireListeners.isEmpty()) {
+                boolean handled = false;
+                for (PayloadUpdater.OnPayload<P> listener : requireListeners)
+                    if (listener.onException(ex)) handled = true;
 
-            requireListeners.clear();
-            return handled;
-        } else {
-            boolean handled = false;
-            for (Receiver<P> receiver : attachedReceivers)
-                if (receiver.onUpdateException(ex)) handled = true;
+                requireListeners.clear();
+                return handled;
+            } else {
+                boolean handled = false;
+                for (Receiver<P> receiver : attachedReceivers)
+                    if (receiver.onUpdateException(ex)) handled = true;
 
-            return handled;
+                return handled;
+            }
         }
     }
 
@@ -53,11 +55,13 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     public final void onPayload(@NonNull P payload) {
         lastPayload = payload;
 
-        if (!requireListeners.isEmpty()) {
-            for (PayloadUpdater.OnPayload<P> listener : requireListeners)
-                listener.onPayload(payload);
+        synchronized (requireListeners) {
+            if (!requireListeners.isEmpty()) {
+                for (PayloadUpdater.OnPayload<P> listener : requireListeners)
+                    listener.onPayload(payload);
 
-            requireListeners.clear();
+                requireListeners.clear();
+            }
         }
 
         for (Receiver<P> receiver : attachedReceivers) receiver.onUpdateUi(payload);
@@ -113,8 +117,10 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
         }
     }
 
-    public void requirePayload(PayloadUpdater.OnPayload<P> listener) {
-        requireListeners.add(listener);
+    public void requirePayload(@NonNull PayloadUpdater.OnPayload<P> listener) {
+        synchronized (requireListeners) {
+            requireListeners.add(listener);
+        }
     }
 
     @NonNull

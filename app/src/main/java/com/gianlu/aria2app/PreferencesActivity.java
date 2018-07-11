@@ -132,7 +132,7 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
             findPreference(PK.A2_ENABLE_NOTIFS.getKey()).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if ((boolean) newValue) NotificationService.start(getActivity(), false);
+                    if ((boolean) newValue) NotificationService.start(getActivity());
                     else NotificationService.stop(getActivity());
                     return true;
                 }

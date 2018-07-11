@@ -25,7 +25,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -81,7 +80,6 @@ import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.DownloadCardsTutorial;
@@ -291,6 +289,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         attachReceiver(this, new Receiver<DownloadsAndGlobalStats>() {
             @Override
             public void onUpdateUi(@NonNull DownloadsAndGlobalStats payload) {
+                System.out.println("UPDATE UI: " + adapter); // FIXME
                 if (adapter != null) {
                     adapter.itemsChanged(payload.downloads);
                     recyclerViewLayout.stopLoading();
@@ -333,6 +332,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onLoad(@NonNull DownloadsAndGlobalStats payload) {
+                System.out.println("LOAD UI CALLED"); // FIXME
                 adapter = new DownloadCardsAdapter(MainActivity.this, payload.downloads, MainActivity.this);
                 recyclerViewLayout.loadListData(adapter);
                 setupAdapterFiltersAndSorting();
@@ -452,23 +452,20 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 startActivity(new Intent(MainActivity.this, AddUriActivity.class));
             }
         });
-        final FloatingActionButton fabAddTorrent = findViewById(R.id.mainFab_addTorrent);
+        FloatingActionButton fabAddTorrent = findViewById(R.id.mainFab_addTorrent);
         fabAddTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AddTorrentActivity.class));
             }
         });
-        final FloatingActionButton fabAddMetalink = findViewById(R.id.mainFab_addMetalink);
+        FloatingActionButton fabAddMetalink = findViewById(R.id.mainFab_addMetalink);
         fabAddMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class));
             }
         });
-
-        if (Prefs.getBoolean(this, PK.A2_ENABLE_NOTIFS, true))
-            NotificationService.start(this, false);
 
         recyclerViewLayout.startLoading();
 
@@ -925,7 +922,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onMoreClick(DownloadWithUpdate item) {
+    public void onMoreClick(@NonNull DownloadWithUpdate item) {
         if (secondSpace != null) showSecondSpace(item);
         else MoreAboutDownloadActivity.start(this, item);
     }
@@ -934,12 +931,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     public void onItemCountUpdated(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerConst.HOME, count);
 
-        if (count == 0) {
-            if (!recyclerViewLayout.isLoading())
-                recyclerViewLayout.showInfo(R.string.noDownloads);
-        } else {
+        if (count == 0)
+            recyclerViewLayout.showInfo(R.string.noDownloads);
+        else
             recyclerViewLayout.showList();
-        }
 
         tutorialManager.tryShowingTutorials(this);
     }
@@ -963,12 +958,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         super.onStop();
 
         DownloaderUtils.unbindService(this, this);
-    }
-
-    @Nullable
-    @Override
-    public RecyclerView getRecyclerView() {
-        return recyclerViewLayout.getList();
     }
 
     @Override

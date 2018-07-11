@@ -29,6 +29,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.ArraySet;
 
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
@@ -63,38 +64,51 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class NotificationService extends Service {
-    public static final String ACTION_STOPPED = NotificationService.class.getName() + ".STOPPED";
-    public static final String ACTION_IS_NOTIFICABLE = NotificationService.class.getName() + ".IS_NOTIFICABLE";
-    public static final String ACTION_TOGGLE_NOTIFICABLE = NotificationService.class.getName() + ".TOGGLE_NOTIFICABLE";
-    public static final int MESSENGER_IS_NOTIFICABLE = 0;
-    public static final int MESSENGER_TOGGLE_NOTIFICABLE = 1;
+    public static final String EVENT_STOPPED = NotificationService.class.getName() + ".STOPPED";
+    public static final String EVENT_GET_MODE = NotificationService.class.getName() + ".GET_MODE";
+    private static final int MESSENGER_GET_MODE = 0;
+    private static final int MESSENGER_SET_MODE = 1;
     private static final int FOREGROUND_SERVICE_NOTIF_ID = 1;
     private static final String CHANNEL_FOREGROUND_SERVICE = "foreground";
     private static final String ACTION_START = NotificationService.class.getName() + ".START";
     private static final String ACTION_STOP = NotificationService.class.getName() + ".STOP";
-    private static final java.lang.String SERVICE_NAME = "aria2app notification service";
+    private static final String SERVICE_NAME = "aria2app notification service";
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
-    private final List<String> notificableDownloads = new ArrayList<>();
+    private final Map<String, Mode> gidToMode = new HashMap<>();
     private Set<WebSocket> webSockets;
     private List<MultiProfile> profiles;
     private WifiManager wifiManager;
     private NotificationManager notificationManager;
     private Messenger messenger;
     private LocalBroadcastManager broadcastManager;
-    private Boolean startedNotificable = null;
+    private StartedFrom startedFrom = StartedFrom.NOT;
+    private ConnectivityChangedReceiver connectivityChangedReceiver;
 
-    public static void toggleNotification(@NonNull Context context, @NonNull LocalBroadcastManager broadcastManager, @NonNull String gid, @NonNull OnIsNotificable listener) {
-        context.bindService(new Intent(context, NotificationService.class), new ToggleNotificationHelper(context, broadcastManager, gid, listener), BIND_AUTO_CREATE);
+    public static void setMode(@NonNull Context context, @NonNull String gid, @NonNull Mode mode) {
+        startInternal(context, StartedFrom.DOWNLOAD);
+        context.bindService(new Intent(context, NotificationService.class), new ToggleNotificationHelper(context, gid, mode), BIND_AUTO_CREATE);
     }
 
-    public static void start(@NonNull Context context, boolean notificable) {
+    public static void getMode(@NonNull Messenger messenger, @NonNull String gid) {
+        try {
+            messenger.send(Message.obtain(null, NotificationService.MESSENGER_GET_MODE, new MessengerPayload(gid, null)));
+        } catch (RemoteException ex) {
+            Logging.log(ex);
+        }
+    }
+
+    private static void startInternal(@NonNull Context context, @NonNull StartedFrom startedFrom) {
         if (ProfilesManager.get(context).hasNotificationProfiles()) {
             ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
-                    .setAction(ACTION_START).putExtra("notificable", notificable));
+                    .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
         }
+    }
+
+    public static void start(@NonNull Context context) {
+        startInternal(context, StartedFrom.GLOBAL);
     }
 
     @NonNull
@@ -108,13 +122,10 @@ public class NotificationService extends Service {
 
     private void clearWebsockets() {
         if (webSockets != null) {
-            for (WebSocket webSocket : webSockets) {
-                webSocket.close(1000, null);
-            }
-
+            for (WebSocket webSocket : webSockets) webSocket.close(1000, null);
             webSockets.clear();
         } else {
-            webSockets = new HashSet<>();
+            webSockets = new ArraySet<>(4);
         }
     }
 
@@ -123,13 +134,14 @@ public class NotificationService extends Service {
         broadcastManager = LocalBroadcastManager.getInstance(this);
 
         if (intent != null) {
-            if (startedNotificable == null)
-                startedNotificable = intent.getBooleanExtra("notificable", false);
-
             if (Objects.equals(intent.getAction(), ACTION_STOP)) {
+                startedFrom = StartedFrom.NOT;
                 stopForeground(true);
                 stopSelf();
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
+                if (startedFrom == StartedFrom.NOT || startedFrom == StartedFrom.DOWNLOAD)
+                    startedFrom = (StartedFrom) intent.getSerializableExtra("startedFrom");
+
                 notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                 profiles = loadProfiles(this);
@@ -140,27 +152,60 @@ public class NotificationService extends Service {
                 }
 
                 recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
-                registerReceiver(new ConnectivityChangedReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                connectivityChangedReceiver = new ConnectivityChangedReceiver();
+                registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
                 startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                 return super.onStartCommand(intent, flags, startId);
             }
         }
 
-        notificableDownloads.clear();
+        gidToMode.clear();
         if (profiles != null) profiles.clear();
         clearWebsockets();
-        broadcastManager.sendBroadcastSync(new Intent(ACTION_STOPPED));
+        broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
 
         return START_NOT_STICKY; // Process will stop
     }
 
     @NonNull
+    private List<String> getByMode(@NonNull Mode mode) {
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<String, Mode> entry : gidToMode.entrySet())
+            if (entry.getValue() == mode) list.add(entry.getKey());
+        return list;
+    }
+
+    private boolean isEmptyByMode(@NonNull Mode mode) {
+        for (Map.Entry<String, Mode> entry : gidToMode.entrySet())
+            if (entry.getValue() == mode) return false;
+
+        return true;
+    }
+
+    @NonNull
     private String describeServiceStatus() {
-        if (startedNotificable)
-            return CommonUtils.join(profiles, ", ") + " for " + CommonUtils.join(notificableDownloads, ", ");
-        else
-            return CommonUtils.join(profiles, ", ");
+        switch (startedFrom) {
+            case GLOBAL:
+                List<String> notNotify = getByMode(Mode.NOT_NOTIFY);
+                if (notNotify.isEmpty())
+                    return CommonUtils.join(profiles, ", ");
+                else
+                    return CommonUtils.join(profiles, ", ") + " except " + CommonUtils.join(notNotify, ", ");
+            case DOWNLOAD:
+                List<String> notify = getByMode(Mode.NOTIFY);
+                if (notify.isEmpty())
+                    return "Should stop, not notifying anything.";
+                else
+                    return CommonUtils.join(profiles, ", ") + " for " + CommonUtils.join(notify, ", ");
+            default:
+            case NOT:
+                return "Not started";
+        }
+    }
+
+    private void updateForegroundNotification() {
+        notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
     }
 
     @NonNull
@@ -193,8 +238,15 @@ public class NotificationService extends Service {
         return messenger.getBinder();
     }
 
+    @NonNull
+    private Mode getMode(@NonNull String gid) {
+        Mode mode = gidToMode.get(gid);
+        return mode == null ? (startedFrom == StartedFrom.NOT ? Mode.NOT_NOTIFY : Mode.STANDARD) : mode;
+    }
+
     private void handleEvent(@NonNull MultiProfile.UserProfile profile, @NonNull String gid, @NonNull EventType type) {
-        if (startedNotificable && !notificableDownloads.contains(gid)) return;
+        Mode mode = getMode(gid);
+        if (mode == Mode.NOT_NOTIFY) return;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
         builder.setContentTitle(type.getFormal(this))
@@ -286,6 +338,25 @@ public class NotificationService extends Service {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        startedFrom = StartedFrom.NOT;
+        if (connectivityChangedReceiver != null)
+            unregisterReceiver(connectivityChangedReceiver);
+    }
+
+    private enum StartedFrom {
+        GLOBAL,
+        DOWNLOAD,
+        NOT
+    }
+
+    public enum Mode {
+        NOTIFY,
+        NOT_NOTIFY,
+        STANDARD
+    }
+
     public enum EventType {
         DOWNLOAD_START("START"),
         DOWNLOAD_PAUSE("PAUSE"),
@@ -373,71 +444,40 @@ public class NotificationService extends Service {
         }
     }
 
-    public interface OnIsNotificable {
-        void onResult(boolean notificable);
-    }
-
-    private static class ToggleNotificationHelper extends BroadcastReceiver implements ServiceConnection {
-        private final Object waitToUnbind = new Object();
+    private static class ToggleNotificationHelper implements ServiceConnection {
         private final Context context;
-        private final LocalBroadcastManager broadcastManager;
-        private final OnIsNotificable listener;
-        private final String gid;
+        private final MessengerPayload payload;
 
-        private ToggleNotificationHelper(@NonNull Context context, @NonNull LocalBroadcastManager broadcastManager, @NonNull String gid, @NonNull OnIsNotificable listener) {
+        private ToggleNotificationHelper(@NonNull Context context, @NonNull String gid, @NonNull Mode mode) {
             this.context = context;
-            this.broadcastManager = broadcastManager;
-            this.gid = gid;
-            this.listener = listener;
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Objects.equals(intent.getAction(), ACTION_TOGGLE_NOTIFICABLE)) {
-                boolean has = intent.getBooleanExtra("has", false);
-                listener.onResult(has);
-
-                if (has) {
-                    start(context, true);
-                } else {
-                    if (intent.getBooleanExtra("shouldStop", false))
-                        stop(context);
-                }
-
-                broadcastManager.unregisterReceiver(this);
-
-                synchronized (waitToUnbind) {
-                    waitToUnbind.notifyAll();
-                }
-            }
+            this.payload = new MessengerPayload(gid, mode);
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Messenger messenger = new Messenger(service);
 
-            broadcastManager.registerReceiver(this, new IntentFilter(ACTION_TOGGLE_NOTIFICABLE));
-
             try {
-                messenger.send(Message.obtain(null, MESSENGER_TOGGLE_NOTIFICABLE, gid));
+                messenger.send(Message.obtain(null, MESSENGER_SET_MODE, payload));
             } catch (RemoteException ex) {
                 Logging.log(ex);
-                listener.onResult(false);
             }
 
-            synchronized (waitToUnbind) {
-                try {
-                    waitToUnbind.wait();
-                    context.unbindService(this);
-                } catch (InterruptedException ex) {
-                    Logging.log(ex);
-                }
-            }
+            context.unbindService(this);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            broadcastManager.unregisterReceiver(this);
+        }
+    }
+
+    private static class MessengerPayload {
+        private final String gid;
+        private final Mode mode;
+
+        private MessengerPayload(@NonNull String gid, @Nullable Mode mode) {
+            this.gid = gid;
+            this.mode = mode;
         }
     }
 
@@ -450,26 +490,35 @@ public class NotificationService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            String gid = (String) msg.obj;
+            MessengerPayload payload = (MessengerPayload) msg.obj;
 
             switch (msg.what) {
-                case MESSENGER_TOGGLE_NOTIFICABLE:
-                    boolean hasBefore = notificableDownloads.contains(gid);
-                    if (hasBefore) {
-                        notificableDownloads.remove(gid);
-                        broadcastManager.sendBroadcastSync(new Intent(ACTION_TOGGLE_NOTIFICABLE)
-                                .putExtra("has", startedNotificable != null && !startedNotificable) // || false
-                                .putExtra("shouldStop", notificableDownloads.isEmpty() && startedNotificable != null && startedNotificable));
-                    } else {
-                        notificableDownloads.add(gid);
-                        broadcastManager.sendBroadcastSync(new Intent(ACTION_TOGGLE_NOTIFICABLE)
-                                .putExtra("has", true));
+                case MESSENGER_SET_MODE:
+                    switch (startedFrom) {
+                        case GLOBAL:
+                            if (payload.mode == Mode.NOTIFY) break;
+                            gidToMode.put(payload.gid, payload.mode);
+                            break;
+                        case DOWNLOAD:
+                            if (payload.mode == Mode.NOT_NOTIFY) break;
+                            gidToMode.put(payload.gid, payload.mode);
+                            if (isEmptyByMode(Mode.NOTIFY)) {
+                                broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
+                                stopForeground(true);
+                                stopSelf();
+                            }
+                        case NOT:
+                            break;
                     }
-                    break;
-                case MESSENGER_IS_NOTIFICABLE:
-                    broadcastManager.sendBroadcastSync(new Intent(ACTION_IS_NOTIFICABLE)
-                            .putExtra("gid", gid)
-                            .putExtra("notificable", (startedNotificable != null && !startedNotificable) || notificableDownloads.contains(gid)));
+
+                    updateForegroundNotification();
+
+                    // Purposely missing break
+                case MESSENGER_GET_MODE:
+                    broadcastManager.sendBroadcast(new Intent(EVENT_GET_MODE)
+                            .putExtra("gid", payload.gid)
+                            .putExtra("disabled", startedFrom == StartedFrom.GLOBAL ? Mode.NOTIFY : Mode.NOT_NOTIFY)
+                            .putExtra("mode", getMode(payload.gid)));
                     break;
                 default:
                     super.handleMessage(msg);
@@ -480,7 +529,7 @@ public class NotificationService extends Service {
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
 
         @Override
-        public void onReceive(final Context context, final Intent intent) {
+        public void onReceive(Context context, Intent intent) {
             if (profiles != null && wifiManager != null && Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
                 boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
                 if (!noConnectivity) {
@@ -488,7 +537,7 @@ public class NotificationService extends Service {
                     if (networkType == ConnectivityManager.TYPE_DUMMY) return;
 
                     recreateWebsockets(networkType);
-                    notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                    updateForegroundNotification();
                 }
             }
         }

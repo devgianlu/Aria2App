@@ -3,8 +3,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -105,12 +103,6 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
             recyclerViewLayout.showList();
             tutorialManager.tryShowingTutorials(getActivity());
         }
-    }
-
-    @Nullable
-    @Override
-    public RecyclerView getRecyclerView() {
-        return recyclerViewLayout.getList();
     }
 
     @NonNull

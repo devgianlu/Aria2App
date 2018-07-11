@@ -1,5 +1,4 @@
 <resources>
-
     <attr name="colorAccentRef" format="reference|color" />
     <attr name="colorBackgroundFloatingRef" format="reference|color" />
 

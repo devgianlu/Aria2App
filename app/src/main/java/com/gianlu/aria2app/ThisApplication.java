@@ -8,6 +8,7 @@ import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -49,6 +50,9 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         SearchApi.get().cacheSearchEngines();
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
+
+        if (Prefs.getBoolean(this, PK.A2_ENABLE_NOTIFS, true))
+            NotificationService.start(this);
 
         if (!Prefs.has(this, PK.DD_DOWNLOAD_PATH))
             Prefs.putString(this, PK.DD_DOWNLOAD_PATH,

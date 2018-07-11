@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,12 +82,6 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         });
     }
 
-    @Nullable
-    @Override
-    protected RecyclerView getRecyclerView() {
-        return listener == null ? null : listener.getRecyclerView();
-    }
-
     @Override
     protected boolean matchQuery(@NonNull Peer item, String query) {
         return true;
@@ -120,9 +113,6 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         void onPeerSelected(@NonNull Peer peer);
 
         void onItemCountUpdated(int count);
-
-        @Nullable
-        RecyclerView getRecyclerView();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
