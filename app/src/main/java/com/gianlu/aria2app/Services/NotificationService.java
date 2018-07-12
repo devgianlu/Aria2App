@@ -249,7 +249,17 @@ public class NotificationService extends Service {
 
     private void handleEvent(@NonNull MultiProfile.UserProfile profile, @NonNull String gid, @NonNull EventType type) {
         Mode mode = getMode(gid);
-        if (startedFrom != StartedFrom.NOT && mode == Mode.NOT_NOTIFY_EXCLUSIVE) return;
+        switch (startedFrom) {
+            default:
+            case NOT:
+                return;
+            case GLOBAL:
+                if (mode == Mode.NOT_NOTIFY_EXCLUSIVE) return;
+                break;
+            case DOWNLOAD:
+                if (mode != Mode.NOTIFY_EXCLUSIVE) return;
+                break;
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
         builder.setContentTitle(type.getFormal(this))
