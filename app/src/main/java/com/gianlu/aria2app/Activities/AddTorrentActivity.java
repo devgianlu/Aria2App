@@ -114,7 +114,7 @@ public class AddTorrentActivity extends ActivityWithDialog {
                 public void onResult(@NonNull String result) {
                     dismissDialog();
                     Toaster.with(AddTorrentActivity.this).message(R.string.downloadAdded).extra(result).show();
-                    onBackPressed();
+                    if (!isDestroyed()) onBackPressed();
                 }
 
                 @Override

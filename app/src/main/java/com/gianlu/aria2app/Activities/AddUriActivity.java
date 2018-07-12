@@ -104,7 +104,7 @@ public class AddUriActivity extends ActivityWithDialog {
                 public void onResult(@NonNull String result) {
                     dismissDialog();
                     Toaster.with(AddUriActivity.this).message(R.string.downloadAdded).extra(result).show();
-                    onBackPressed();
+                    if (!isDestroyed()) onBackPressed();
                 }
 
                 @Override

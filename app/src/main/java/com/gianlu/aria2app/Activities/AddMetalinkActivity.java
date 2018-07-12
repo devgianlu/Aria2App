@@ -109,7 +109,7 @@ public class AddMetalinkActivity extends ActivityWithDialog {
                 public void onResult(@NonNull String result) {
                     dismissDialog();
                     Toaster.with(AddMetalinkActivity.this).message(R.string.downloadAdded).extra(result).show();
-                    onBackPressed();
+                    if (!isDestroyed()) onBackPressed();
                 }
 
                 @Override
