@@ -274,7 +274,6 @@ public class NotificationService extends Service {
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         Bundle bundle = new Bundle();
-        bundle.putBoolean("fromNotification", true);
         bundle.putString("profileId", profile.getParent().id);
         bundle.putString("gid", gid);
         builder.setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class)
@@ -586,8 +585,7 @@ public class NotificationService extends Service {
             try {
                 JSONObject json = new JSONObject(text);
                 EventType type = EventType.parse(json.getString("method"));
-                if (type == null) return;
-                if (enabledNotifs.contains(type)) {
+                if (type != null && enabledNotifs.contains(type)) {
                     JSONArray events = json.getJSONArray("params");
                     for (int i = 0; i < events.length(); i++) {
                         JSONObject event = events.getJSONObject(i);

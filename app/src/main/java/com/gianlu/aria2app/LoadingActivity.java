@@ -53,7 +53,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private RecyclerView pickerList;
     private boolean finished = false;
     private Uri shareData;
-    private String fromNotifGid;
+    private String launchGid;
     private Button seeError;
     private Button cancel;
     private ProfilesManager manager;
@@ -128,6 +128,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             return;
         }
 
+        launchGid = getIntent().getStringExtra("gid");
+
         if (hasShortcutAction()) {
             AnalyticsApplication.sendAnalytics(LoadingActivity.this, Utils.ACTION_SHORTCUT);
 
@@ -160,9 +162,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         String profileId = getIntent().getStringExtra("profileId");
         if (profileId != null && manager.profileExists(profileId)) {
-            if (getIntent().getBooleanExtra("fromNotification", false))
-                fromNotifGid = getIntent().getStringExtra("gid");
-
             try {
                 tryConnecting(manager.retrieveProfile(profileId));
                 return;
@@ -320,7 +319,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         Intent intent = new Intent(LoadingActivity.this, goTo).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if (shortcutAction != null) intent.putExtra("shortcutAction", shortcutAction);
         else if (shareData != null) intent.putExtra("shareData", shareData);
-        else if (fromNotifGid != null) intent.putExtra("gid", fromNotifGid);
+        else if (launchGid != null && !launchGid.isEmpty()) intent.putExtra("gid", launchGid);
         if (finished) startActivity(intent);
         else this.goTo = intent;
     }
