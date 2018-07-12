@@ -289,7 +289,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         attachReceiver(this, new Receiver<DownloadsAndGlobalStats>() {
             @Override
             public void onUpdateUi(@NonNull DownloadsAndGlobalStats payload) {
-                System.out.println("UPDATE UI: " + adapter); // FIXME
                 if (adapter != null) {
                     adapter.itemsChanged(payload.downloads);
                     recyclerViewLayout.stopLoading();
@@ -332,7 +331,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onLoad(@NonNull DownloadsAndGlobalStats payload) {
-                System.out.println("LOAD UI CALLED"); // FIXME
                 adapter = new DownloadCardsAdapter(MainActivity.this, payload.downloads, MainActivity.this);
                 recyclerViewLayout.loadListData(adapter);
                 setupAdapterFiltersAndSorting();

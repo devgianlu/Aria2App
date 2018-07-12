@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +30,11 @@ public final class UpdaterFramework {
         return instance;
     }
 
+    private static void debug(String msg) {
+        if (CommonUtils.isDebug() && ThisApplication.DEBUG_UPDATER)
+            System.out.println(UpdaterFramework.class.getSimpleName() + ": " + msg);
+    }
+
     @Nullable
     public <P> PayloadProvider<P> attachReceiver(@NonNull ReceiverOwner owner, @NonNull final Receiver<P> receiver) {
         Wants<P> wants = receiver.wants();
@@ -44,6 +51,8 @@ public final class UpdaterFramework {
                 if (!receiver.onCouldntLoad(ex)) ErrorHandler.get().notifyException(ex, false);
                 return null;
             }
+
+            debug("Created " + provider);
         }
 
         provider.attachReceiver(owner, receiver);

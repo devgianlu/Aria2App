@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.util.HashSet;
@@ -26,6 +27,11 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
         this.requireListeners = new HashSet<>();
     }
 
+    private static void debug(String msg) {
+        if (CommonUtils.isDebug() && ThisApplication.DEBUG_UPDATER)
+            System.out.println(PayloadProvider.class.getSimpleName() + ": " + msg);
+    }
+
     @NonNull
     public final Wants<P> provides() {
         return provides;
@@ -33,6 +39,8 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
 
     @Override
     public final boolean onException(@NonNull Exception ex) {
+        debug("Exception in " + this);
+
         synchronized (requireListeners) {
             if (!requireListeners.isEmpty()) {
                 boolean handled = false;
@@ -54,6 +62,8 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     @Override
     public final void onPayload(@NonNull P payload) {
         lastPayload = payload;
+
+        debug("Payload deployed by " + this);
 
         synchronized (requireListeners) {
             if (!requireListeners.isEmpty()) {
@@ -78,8 +88,7 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
         attachedReceivers.add(receiver);
         owners.add(owner);
 
-        if (CommonUtils.isDebug())
-            System.out.println("Attached receiver to " + provides() + " by " + owner.toString());
+        debug("Attached " + this + " to " + receiver + " by " + owner);
     }
 
     public boolean isOnlyOwner(ReceiverOwner owner) {
@@ -92,6 +101,7 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
 
     public void removeOwner(ReceiverOwner owner) {
         owners.remove(owner);
+        debug("Removed " + owner + " from " + this);
     }
 
     public void refresh(final ExecutorService executorService, @Nullable final OnRefresh listener) {
@@ -106,25 +116,36 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     }
 
     public void stop(@Nullable PayloadUpdater.OnStop listener) {
-        if (updater.safeStop(listener) && CommonUtils.isDebug())
-            System.out.println("Provider stopped " + provides());
+        if (updater.safeStop(listener))
+            debug("Stopped " + this);
     }
 
     public void start(@NonNull ExecutorService executorService) {
         if (!updater.isRunning()) {
             executorService.submit(updater);
-            if (CommonUtils.isDebug()) System.out.println("Provider started " + provides());
+            debug("Started " + this);
         }
     }
 
     public void requirePayload(@NonNull PayloadUpdater.OnPayload<P> listener) {
         synchronized (requireListeners) {
             requireListeners.add(listener);
+            debug("Required payload from " + this);
         }
     }
 
     @NonNull
     public Aria2Helper getHelper() {
         return updater.getHelper();
+    }
+
+    @Override
+    public String toString() {
+        return "PayloadProvider{" +
+                "provides=" + provides +
+                ", attachedReceivers=" + attachedReceivers +
+                ", owners=" + owners +
+                ", requireListeners=" + requireListeners +
+                '}';
     }
 }
