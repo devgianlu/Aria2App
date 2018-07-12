@@ -139,22 +139,24 @@ public class NotificationService extends Service {
                 stopForeground(true);
                 stopSelf();
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
-                if (startedFrom == StartedFrom.NOT || startedFrom == StartedFrom.DOWNLOAD)
-                    startedFrom = (StartedFrom) intent.getSerializableExtra("startedFrom");
+                if (startedFrom == StartedFrom.NOT) {
+                    notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                    profiles = loadProfiles(this);
 
-                notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                profiles = loadProfiles(this);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        createMainChannel();
+                        createEventsChannels();
+                    }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    createMainChannel();
-                    createEventsChannels();
+                    recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                    connectivityChangedReceiver = new ConnectivityChangedReceiver();
+                    registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
                 }
 
-                recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
-                connectivityChangedReceiver = new ConnectivityChangedReceiver();
-                registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-                startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                if (startedFrom == StartedFrom.NOT || startedFrom == StartedFrom.DOWNLOAD)
+                    startedFrom = (StartedFrom) intent.getSerializableExtra("startedFrom");
 
                 return super.onStartCommand(intent, flags, startId);
             }
@@ -187,13 +189,13 @@ public class NotificationService extends Service {
     private String describeServiceStatus() {
         switch (startedFrom) {
             case GLOBAL:
-                List<String> notNotify = getByMode(Mode.NOT_NOTIFY);
+                List<String> notNotify = getByMode(Mode.NOT_NOTIFY_EXCLUSIVE);
                 if (notNotify.isEmpty())
                     return CommonUtils.join(profiles, ", ");
                 else
                     return CommonUtils.join(profiles, ", ") + " except " + CommonUtils.join(notNotify, ", ");
             case DOWNLOAD:
-                List<String> notify = getByMode(Mode.NOTIFY);
+                List<String> notify = getByMode(Mode.NOTIFY_EXCLUSIVE);
                 if (notify.isEmpty())
                     return "Should stop, not notifying anything.";
                 else
@@ -205,7 +207,8 @@ public class NotificationService extends Service {
     }
 
     private void updateForegroundNotification() {
-        notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+        if (startedFrom != StartedFrom.NOT)
+            notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
     }
 
     @NonNull
@@ -241,12 +244,12 @@ public class NotificationService extends Service {
     @NonNull
     private Mode getMode(@NonNull String gid) {
         Mode mode = gidToMode.get(gid);
-        return mode == null ? (startedFrom == StartedFrom.NOT ? Mode.NOT_NOTIFY : Mode.STANDARD) : mode;
+        return mode == null ? (startedFrom == StartedFrom.NOT ? Mode.NOT_NOTIFY_STANDARD : Mode.NOTIFY_STANDARD) : mode;
     }
 
     private void handleEvent(@NonNull MultiProfile.UserProfile profile, @NonNull String gid, @NonNull EventType type) {
         Mode mode = getMode(gid);
-        if (mode == Mode.NOT_NOTIFY) return;
+        if (startedFrom != StartedFrom.NOT && mode == Mode.NOT_NOTIFY_EXCLUSIVE) return;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
         builder.setContentTitle(type.getFormal(this))
@@ -271,6 +274,8 @@ public class NotificationService extends Service {
     }
 
     private void notifyError(@NonNull MultiProfile.UserProfile profile, @NonNull String title, @NonNull String message) {
+        if (startedFrom == StartedFrom.NOT) return;
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setContentTitle(title)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -352,9 +357,22 @@ public class NotificationService extends Service {
     }
 
     public enum Mode {
-        NOTIFY,
-        NOT_NOTIFY,
-        STANDARD
+        /**
+         * Requested to be notified
+         */
+        NOTIFY_EXCLUSIVE,
+        /**
+         * Notified by default (aka notification service enabled)
+         */
+        NOTIFY_STANDARD,
+        /**
+         * Requested not to be notified
+         */
+        NOT_NOTIFY_EXCLUSIVE,
+        /**
+         * Not notified by default (aka notification service disabled)
+         */
+        NOT_NOTIFY_STANDARD
     }
 
     public enum EventType {
@@ -496,17 +514,19 @@ public class NotificationService extends Service {
                 case MESSENGER_SET_MODE:
                     switch (startedFrom) {
                         case GLOBAL:
-                            if (payload.mode == Mode.NOTIFY) break;
+                            if (payload.mode == Mode.NOTIFY_EXCLUSIVE) break;
                             gidToMode.put(payload.gid, payload.mode);
                             break;
                         case DOWNLOAD:
-                            if (payload.mode == Mode.NOT_NOTIFY) break;
+                            if (payload.mode == Mode.NOT_NOTIFY_EXCLUSIVE) break;
                             gidToMode.put(payload.gid, payload.mode);
-                            if (isEmptyByMode(Mode.NOTIFY)) {
+                            if (isEmptyByMode(Mode.NOTIFY_EXCLUSIVE)) {
                                 broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
                                 stopForeground(true);
                                 stopSelf();
+                                startedFrom = StartedFrom.NOT;
                             }
+                            break;
                         case NOT:
                             break;
                     }
@@ -517,7 +537,6 @@ public class NotificationService extends Service {
                 case MESSENGER_GET_MODE:
                     broadcastManager.sendBroadcast(new Intent(EVENT_GET_MODE)
                             .putExtra("gid", payload.gid)
-                            .putExtra("disabled", startedFrom == StartedFrom.GLOBAL ? Mode.NOTIFY : Mode.NOT_NOTIFY)
                             .putExtra("mode", getMode(payload.gid)));
                     break;
                 default:

@@ -13,11 +13,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -56,7 +53,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     private final LayoutInflater inflater;
     private final LocalReceiver receiver;
     private final LocalBroadcastManager broadcastManager;
-    private final Map<String, LittleModesPayload> notificationStates = new HashMap<>();
+    private final Map<String, NotificationService.Mode> notificationStates = new HashMap<>();
     private Messenger notificationMessenger;
 
     public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, Listener listener) {
@@ -105,8 +102,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     @Override
     protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull Object payload) {
-        if (payload instanceof LittleModesPayload) {
-            holder.setupNotification(objs.get(position), (LittleModesPayload) payload);
+        if (payload instanceof NotificationService.Mode) {
+            holder.setupNotification(objs.get(position), (NotificationService.Mode) payload);
         }
     }
 
@@ -134,31 +131,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 }
             }
         });
-
-        holder.notificationMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                NotificationService.Mode mode = null;
-                switch (menuItem.getItemId()) {
-                    case R.id.downloadNotification_notify:
-                        mode = NotificationService.Mode.NOTIFY;
-                        break;
-                    case R.id.downloadNotification_standard:
-                        mode = NotificationService.Mode.STANDARD;
-                        break;
-                    case R.id.downloadNotification_notNotify:
-                        mode = NotificationService.Mode.NOT_NOTIFY;
-                        break;
-                }
-
-                if (mode != null) {
-                    NotificationService.setMode(context, item.gid, mode);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
         holder.more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,12 +148,38 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(context, PK.A2_CUSTOM_INFO, new HashSet<String>()), update.isTorrent()));
         holder.update(item);
 
-        LittleModesPayload notificationPayload = notificationStates.get(item.gid);
-        if (notificationPayload != null) {
-            holder.setupNotification(item, notificationPayload);
-        } else if (notificationMessenger != null) {
+        holder.toggleNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NotificationService.Mode mode = notificationStates.get(item.gid);
+                if (mode != null) {
+                    NotificationService.Mode setMode;
+                    switch (mode) {
+                        case NOTIFY_EXCLUSIVE:
+                            setMode = NotificationService.Mode.NOT_NOTIFY_STANDARD;
+                            break;
+                        case NOTIFY_STANDARD:
+                            setMode = NotificationService.Mode.NOT_NOTIFY_EXCLUSIVE;
+                            break;
+                        case NOT_NOTIFY_EXCLUSIVE:
+                            setMode = NotificationService.Mode.NOTIFY_STANDARD;
+                            break;
+                        default:
+                        case NOT_NOTIFY_STANDARD:
+                            setMode = NotificationService.Mode.NOTIFY_EXCLUSIVE;
+                            break;
+                    }
+
+                    NotificationService.setMode(context, item.gid, setMode);
+                }
+            }
+        });
+
+        NotificationService.Mode mode = notificationStates.get(item.gid);
+        if (mode != null)
+            holder.setupNotification(item, mode);
+        else if (notificationMessenger != null)
             NotificationService.getMode(notificationMessenger, item.gid);
-        }
     }
 
     @Override
@@ -272,16 +270,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         void showDialog(@NonNull AlertDialog.Builder builder);
     }
 
-    private static class LittleModesPayload {
-        private final NotificationService.Mode mode;
-        private final NotificationService.Mode disabled;
-
-        private LittleModesPayload(NotificationService.Mode mode, NotificationService.Mode disabled) {
-            this.mode = mode;
-            this.disabled = disabled;
-        }
-    }
-
     private class LocalReceiver extends BroadcastReceiver {
 
         @Override
@@ -297,15 +285,14 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                     public void run() {
                         if (Objects.equals(intent.getAction(), NotificationService.EVENT_GET_MODE)) {
                             String gid = intent.getStringExtra("gid");
-                            LittleModesPayload payload = new LittleModesPayload((NotificationService.Mode) intent.getSerializableExtra("mode"), (NotificationService.Mode) intent.getSerializableExtra("disabled"));
-                            notificationStates.put(gid, payload);
+                            NotificationService.Mode mode = (NotificationService.Mode) intent.getSerializableExtra("mode");
+                            notificationStates.put(gid, mode);
                             int index = indexOf(gid);
-                            if (index != -1) notifyItemChanged(index, payload);
+                            if (index != -1) notifyItemChanged(index, mode);
                         } else if (Objects.equals(intent.getAction(), NotificationService.EVENT_STOPPED)) {
-                            LittleModesPayload payload = new LittleModesPayload(NotificationService.Mode.NOT_NOTIFY, NotificationService.Mode.NOT_NOTIFY);
                             for (String gid : notificationStates.keySet())
-                                notificationStates.put(gid, payload);
-                            notifyItemRangeChanged(0, getItemCount(), payload);
+                                notificationStates.put(gid, NotificationService.Mode.NOT_NOTIFY_STANDARD);
+                            notifyItemRangeChanged(0, getItemCount(), NotificationService.Mode.NOT_NOTIFY_STANDARD);
                         }
                     }
                 });
@@ -333,7 +320,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         final ImageButton moveDown;
         final ImageButton toggleNotification;
         final LineChart detailsChart;
-        final PopupMenu notificationMenu;
 
         ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.item_download, parent, false));
@@ -354,73 +340,36 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
             toggleNotification = itemView.findViewById(R.id.downloadCard_toggleNotification);
             toggleNotification.setVisibility(View.GONE);
-            toggleNotification.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    notificationMenu.show();
-                }
-            });
 
             detailsChart = itemView.findViewById(R.id.downloadCard_detailsChart);
             detailsGid = itemView.findViewById(R.id.downloadCard_detailsGid);
             detailsTotalLength = itemView.findViewById(R.id.downloadCard_detailsTotalLength);
             detailsCompletedLength = itemView.findViewById(R.id.downloadCard_detailsCompletedLength);
             detailsUploadLength = itemView.findViewById(R.id.downloadCard_detailsUploadLength);
-
-            notificationMenu = new PopupMenu(context, toggleNotification);
-            notificationMenu.inflate(R.menu.download_notification);
-            notificationMenu.getMenu().setGroupCheckable(0, true, true);
         }
 
-        private void setupNotification(@NonNull DownloadWithUpdate download, @NonNull LittleModesPayload mode) {
+        private void setupNotification(@NonNull DownloadWithUpdate download, @NonNull NotificationService.Mode mode) {
             DownloadWithUpdate.SmallUpdate last = download.update();
             if (last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED || last.status == Download.Status.COMPLETE) {
                 toggleNotification.setVisibility(View.GONE);
                 return;
             }
 
-            Menu menu = notificationMenu.getMenu();
             toggleNotification.setVisibility(View.VISIBLE);
-            int modeId;
-            switch (mode.mode) {
-                case NOTIFY:
+            switch (mode) {
+                case NOTIFY_EXCLUSIVE:
                     toggleNotification.setImageResource(R.drawable.baseline_notifications_active_24);
-                    modeId = R.id.downloadNotification_notify;
-                    break;
-                case NOT_NOTIFY:
-                    toggleNotification.setImageResource(R.drawable.baseline_notifications_off_24);
-                    modeId = R.id.downloadNotification_notNotify;
                     break;
                 default:
-                case STANDARD:
+                case NOTIFY_STANDARD:
                     toggleNotification.setImageResource(R.drawable.baseline_notifications_24);
-                    modeId = R.id.downloadNotification_standard;
                     break;
-            }
-
-            for (int i = 0; i < menu.size(); i++) {
-                MenuItem item = menu.getItem(i);
-                item.setChecked(item.getItemId() == modeId);
-            }
-
-
-            int disabledId;
-            switch (mode.disabled) {
-                case NOTIFY:
-                    disabledId = R.id.downloadNotification_notify;
+                case NOT_NOTIFY_EXCLUSIVE:
+                    toggleNotification.setImageResource(R.drawable.baseline_notifications_off_24);
                     break;
-                case NOT_NOTIFY:
-                    disabledId = R.id.downloadNotification_notNotify;
+                case NOT_NOTIFY_STANDARD:
+                    toggleNotification.setImageResource(R.drawable.baseline_notifications_none_24);
                     break;
-                default:
-                case STANDARD:
-                    disabledId = R.id.downloadNotification_standard;
-                    break;
-            }
-
-            for (int i = 0; i < menu.size(); i++) {
-                MenuItem item = menu.getItem(i);
-                item.setVisible(item.getItemId() != disabledId);
             }
         }
 
@@ -494,6 +443,11 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 detailsChart.clear();
                 detailsChart.setNoDataText(last.status.getFormal(context, true));
             }
+
+            if (last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED || last.status == Download.Status.COMPLETE)
+                toggleNotification.setVisibility(View.GONE);
+            else
+                toggleNotification.setVisibility(View.VISIBLE);
 
             donutProgress.setProgress(last.getProgress());
             downloadName.setText(last.getName());
