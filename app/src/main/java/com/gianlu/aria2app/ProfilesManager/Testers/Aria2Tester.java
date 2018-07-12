@@ -64,7 +64,7 @@ class Aria2Tester extends BaseTester<Boolean> {
         else
             throw new IllegalStateException("Previous result should be a client, but was " + prevResult);
 
-        Aria2Helper helper = new Aria2Helper(client);
+        Aria2Helper helper = new Aria2Helper(context, client);
         publishMessage("Started unauthenticated request...", Level.INFO);
 
         Object unauthenticatedResult = runRequest(AriaRequests.listMethods(), helper);

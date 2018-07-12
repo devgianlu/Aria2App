@@ -2,6 +2,8 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -10,23 +12,43 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Aria2Helper {
+    private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = new AbstractClient.BatchSandbox<VersionAndSession>() {
+        @Override
+        public VersionAndSession sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            return new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
+        }
+    };
     private final AbstractClient client;
+    private final SharedPreferences preferences;
+    private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = new AbstractClient.BatchSandbox<DownloadsAndGlobalStats>() {
+        @Override
+        public DownloadsAndGlobalStats sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            List<DownloadWithUpdate> all = new ArrayList<>();
+            all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
+            all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
+            all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
+            return new DownloadsAndGlobalStats(all, Prefs.getBoolean(preferences, PK.A2_HIDE_METADATA, false), client.sendSync(AriaRequests.getGlobalStats()));
+        }
+    };
 
-    public Aria2Helper(@NonNull AbstractClient client) {
+    public Aria2Helper(@NonNull Context context, @NonNull AbstractClient client) {
         this.client = client;
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
-    public static AbstractClient getClient(Context context) throws AbstractClient.InitializationException, ProfilesManager.NoCurrentProfileException {
+    private static AbstractClient getClient(@NonNull Context context) throws AbstractClient.InitializationException, ProfilesManager.NoCurrentProfileException {
         MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentSpecific();
         if (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
             return WebSocketClient.instantiate(context);
@@ -35,9 +57,9 @@ public class Aria2Helper {
     }
 
     @NonNull
-    public static Aria2Helper instantiate(Context context) throws InitializingException {
+    public static Aria2Helper instantiate(@NonNull Context context) throws InitializingException {
         try {
-            return new Aria2Helper(getClient(context));
+            return new Aria2Helper(context, getClient(context));
         } catch (AbstractClient.InitializationException | ProfilesManager.NoCurrentProfileException ex) {
             throw new InitializingException(ex);
         }
@@ -52,26 +74,11 @@ public class Aria2Helper {
     }
 
     public void getVersionAndSession(AbstractClient.OnResult<VersionAndSession> listener) {
-        client.batch(new AbstractClient.BatchSandbox<VersionAndSession>() {
-            @Override
-            public VersionAndSession sandbox(AbstractClient client, boolean shouldForce) throws Exception {
-                return new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
-            }
-        }, listener);
+        client.batch(VERSION_AND_SESSION_BATCH_SANDBOX, listener);
     }
 
-    public void tellAllAndGlobalStats(final boolean ignoreMetadata, final AbstractClient.OnResult<DownloadsAndGlobalStats> listener) {
-        client.batch(new AbstractClient.BatchSandbox<DownloadsAndGlobalStats>() {
-
-            @Override
-            public DownloadsAndGlobalStats sandbox(AbstractClient client, boolean shouldForce) throws Exception {
-                List<DownloadWithUpdate> all = new ArrayList<>();
-                all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
-                all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
-                all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
-                return new DownloadsAndGlobalStats(all, ignoreMetadata, client.sendSync(AriaRequests.getGlobalStats()));
-            }
-        }, listener);
+    public void tellAllAndGlobalStats(final AbstractClient.OnResult<DownloadsAndGlobalStats> listener) {
+        client.batch(DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX, listener);
     }
 
     public void getServersAndFiles(final String gid, AbstractClient.OnResult<SparseServersWithFiles> listener) {
