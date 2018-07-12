@@ -42,10 +42,12 @@ import com.github.mikephil.charting.data.LineData;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 
 public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCardsAdapter.ViewHolder, DownloadWithUpdate, DownloadCardsAdapter.SortBy, Download.Status> implements ServiceConnection, Aria2Helper.DownloadActionClick.Listener {
     private final Context context;
@@ -54,6 +56,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     private final LocalReceiver receiver;
     private final LocalBroadcastManager broadcastManager;
     private final Map<String, NotificationService.Mode> notificationStates = new HashMap<>();
+    private final Queue<String> pendingModeRequests = new LinkedList<>();
     private Messenger notificationMessenger;
 
     public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, Listener listener) {
@@ -180,6 +183,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             holder.setupNotification(item, mode);
         else if (notificationMessenger != null)
             NotificationService.getMode(notificationMessenger, item.gid);
+        else if (!pendingModeRequests.contains(item.gid))
+            pendingModeRequests.add(item.gid);
     }
 
     @Override
@@ -220,6 +225,10 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         notificationMessenger = new Messenger(service);
+
+        String gid;
+        while ((gid = pendingModeRequests.poll()) != null)
+            NotificationService.getMode(notificationMessenger, gid);
     }
 
     @Override
@@ -275,8 +284,6 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         @Override
         public void onReceive(Context context, final Intent intent) {
             if (intent.getAction() == null) return;
-
-            System.out.println("RECEIVED: " + intent + "; " + intent.getExtras()); // TODO
 
             RecyclerView list = getList();
             if (list != null) {
