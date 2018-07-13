@@ -21,6 +21,7 @@ import java.util.Set;
 public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.IErrorHandler {
     private final Set<String> checkedVersionFor = new HashSet<>();
     public static final boolean DEBUG_UPDATER = false;
+    public static final boolean DEBUG_NOTIFICATION = false;
 
     public boolean shouldCheckVersion() {
         try {

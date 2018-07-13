@@ -37,6 +37,7 @@ import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -85,12 +86,21 @@ public class NotificationService extends Service {
     private StartedFrom startedFrom = StartedFrom.NOT;
     private ConnectivityChangedReceiver connectivityChangedReceiver;
 
+    private static void debug(String msg) {
+        if (CommonUtils.isDebug() && ThisApplication.DEBUG_NOTIFICATION)
+            System.out.println(NotificationService.class.getSimpleName() + ": " + msg);
+    }
+
     public static void setMode(@NonNull Context context, @NonNull String gid, @NonNull Mode mode) {
+        debug("Called set mode for " + gid + ", mode=" + mode);
+
         startInternal(context, StartedFrom.DOWNLOAD);
         context.bindService(new Intent(context, NotificationService.class), new ToggleNotificationHelper(context, gid, mode), BIND_AUTO_CREATE);
     }
 
     public static void getMode(@NonNull Messenger messenger, @NonNull String gid) {
+        debug("Called get mode for " + gid);
+
         try {
             messenger.send(Message.obtain(null, NotificationService.MESSENGER_GET_MODE, new MessengerPayload(gid, null)));
         } catch (RemoteException ex) {
@@ -99,6 +109,7 @@ public class NotificationService extends Service {
     }
 
     private static void startInternal(@NonNull Context context, @NonNull StartedFrom startedFrom) {
+        debug("Called start service, startedFrom=" + startedFrom);
         if (ProfilesManager.get(context).hasNotificationProfiles()) {
             ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
                     .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
@@ -117,6 +128,7 @@ public class NotificationService extends Service {
     }
 
     public static void stop(@NonNull Context context) {
+        debug("Called stop service");
         context.startService(new Intent(context, NotificationService.class).setAction(ACTION_STOP));
     }
 
