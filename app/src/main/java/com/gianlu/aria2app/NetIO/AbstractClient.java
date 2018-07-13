@@ -31,7 +31,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.SSLContext;
 
@@ -45,6 +45,7 @@ public abstract class AbstractClient implements Closeable {
     private final WifiManager wifiManager;
     private final WeakReference<Context> context;
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
+    private final AtomicLong requestIds = new AtomicLong(Long.MIN_VALUE);
     protected MultiProfile.UserProfile profile;
     protected SSLContext sslContext;
     protected boolean shouldIgnoreCommunication = false;
@@ -225,6 +226,10 @@ public abstract class AbstractClient implements Closeable {
         return array;
     }
 
+    private long nextRequestId() {
+        return requestIds.getAndIncrement();
+    }
+
     public enum AuthMethod {
         NONE,
         HTTP,
@@ -316,7 +321,7 @@ public abstract class AbstractClient implements Closeable {
         JSONObject build(AbstractClient client) throws JSONException {
             JSONObject request = new JSONObject();
             request.put("jsonrpc", "2.0");
-            request.put("id", ThreadLocalRandom.current().nextInt());
+            request.put("id", client.nextRequestId());
             request.put("method", method.method);
             JSONArray params = client.baseRequestParams();
             for (Object obj : this.params) params.put(obj);

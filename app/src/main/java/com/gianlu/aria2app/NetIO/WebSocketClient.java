@@ -19,7 +19,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Response;
@@ -27,11 +28,11 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
-    private static final AtomicInteger sandboxCount = new AtomicInteger(0);
     private static WebSocketClient instance;
     private final Map<Integer, OnJson> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
     private final long initializedAt;
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private OnConnect connectionListener = null;
 
     private WebSocketClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
@@ -131,7 +132,7 @@ public class WebSocketClient extends AbstractClient {
 
     @Override
     protected <R> void batch(BatchSandbox<R> sandbox, DoBatch<R> listener) {
-        new SandboxThread<>(sandbox, listener).start();
+        executorService.execute(new SandboxRunnable<>(sandbox, listener));
     }
 
     @Override
@@ -195,12 +196,11 @@ public class WebSocketClient extends AbstractClient {
         }
     }
 
-    private class SandboxThread<R> extends Thread {
+    private class SandboxRunnable<R> implements Runnable {
         private final BatchSandbox<R> sandbox;
         private final DoBatch<R> listener;
 
-        SandboxThread(BatchSandbox<R> sandbox, DoBatch<R> listener) {
-            super("sandbox-thread-" + sandboxCount.getAndIncrement());
+        SandboxRunnable(BatchSandbox<R> sandbox, DoBatch<R> listener) {
             this.sandbox = sandbox;
             this.listener = listener;
         }
