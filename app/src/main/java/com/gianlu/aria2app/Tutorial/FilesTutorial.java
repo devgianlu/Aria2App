@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.gianlu.aria2app.Adapters.FilesAdapter;
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;

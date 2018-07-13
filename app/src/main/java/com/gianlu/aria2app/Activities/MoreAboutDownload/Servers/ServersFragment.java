@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
-import com.gianlu.aria2app.Adapters.ServersAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.Server;

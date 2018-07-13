@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Adapters;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -37,7 +37,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private boolean isInActionMode = false;
     private RecyclerView list;
 
-    public FilesAdapter(Context context, @NonNull Listener listener) {
+    FilesAdapter(Context context, @NonNull Listener listener) {
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
     }

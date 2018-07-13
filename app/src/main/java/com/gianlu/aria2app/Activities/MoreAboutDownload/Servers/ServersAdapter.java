@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Adapters;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
 import android.content.Context;
 import android.net.Uri;
@@ -36,7 +36,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final GeoIP geoIP;
     private final CountryFlags flags = CountryFlags.get();
 
-    public ServersAdapter(Context context, @NonNull Listener listener) {
+    ServersAdapter(Context context, @NonNull Listener listener) {
         this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();

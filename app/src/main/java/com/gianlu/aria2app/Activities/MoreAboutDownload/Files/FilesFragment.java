@@ -28,7 +28,6 @@ import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
-import com.gianlu.aria2app.Adapters.FilesAdapter;
 import com.gianlu.aria2app.Downloader.DownloadStartConfig;
 import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.NetIO.AbstractClient;

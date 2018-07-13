@@ -1,4 +1,4 @@
-package com.gianlu.aria2app.Adapters;
+package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -30,7 +30,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     private final GeoIP geoIP;
     private final CountryFlags flags = CountryFlags.get();
 
-    public PeersAdapter(Context context, @NonNull Listener listener) {
+    PeersAdapter(Context context, @NonNull Listener listener) {
         super(new ArrayList<Peer>(), SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
         this.context = context;
