@@ -63,7 +63,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
 
         Aria2Helper helper;
         try {
-            helper = Aria2Helper.instantiate(getContext());
+            helper = Aria2Helper.instantiate(requireContext());
         } catch (Aria2Helper.InitializingException ex) {
             message.setError(R.string.failedLoading);
             optionsView.setVisibility(View.GONE);

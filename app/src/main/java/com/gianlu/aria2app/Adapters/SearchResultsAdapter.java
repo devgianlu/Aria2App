@@ -66,8 +66,9 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         });
     }
 
+    @NonNull
     @Override
-    protected RecyclerView.ViewHolder createViewHolder(ViewGroup parent) {
+    protected RecyclerView.ViewHolder createViewHolder(@NonNull ViewGroup parent) {
         return new ViewHolder(parent);
     }
 
