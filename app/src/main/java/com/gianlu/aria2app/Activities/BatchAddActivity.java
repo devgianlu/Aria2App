@@ -51,12 +51,9 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         return super.onOptionsItemSelected(item);
     }
 
-    private void done() { // FIXME: Change messages
+    private void done() {
         List<AddDownloadBundle> bundles = adapter.getBundles();
-        if (bundles.isEmpty()) {
-            Toaster.with(this).message(R.string.noBatchAdd).show();
-            return;
-        }
+        if (bundles.isEmpty()) return;
 
         Bundle analytics = new Bundle();
         analytics.putInt("bundles", bundles.size());
@@ -68,14 +65,14 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                 @Override
                 public void onResult(@NonNull List<String> result) {
                     dismissDialog();
-                    Toaster.with(BatchAddActivity.this).message(R.string.downloadAdded).extra(result).show();
+                    Toaster.with(BatchAddActivity.this).message(R.string.downloadsAddedBatch).extra(result).show();
                     if (!isDestroyed()) onBackPressed();
                 }
 
                 @Override
                 public void onException(Exception ex, boolean shouldForce) {
                     dismissDialog();
-                    Toaster.with(BatchAddActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                    Toaster.with(BatchAddActivity.this).message(R.string.failedAddingDownloads).ex(ex).show();
                 }
             });
         } catch (Aria2Helper.InitializingException ex) {

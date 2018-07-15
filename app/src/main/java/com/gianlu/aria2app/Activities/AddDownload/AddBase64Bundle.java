@@ -8,9 +8,11 @@ import java.util.HashMap;
 
 public abstract class AddBase64Bundle extends AddDownloadBundle implements Serializable {
     public final String base64;
+    public final String filename;
 
-    public AddBase64Bundle(@NonNull String base64, @Nullable Integer position, @Nullable HashMap<String, String> options) {
+    public AddBase64Bundle(@NonNull String base64, @NonNull String filename, @Nullable Integer position, @Nullable HashMap<String, String> options) {
         super(position, options);
         this.base64 = base64;
+        this.filename = filename;
     }
 }

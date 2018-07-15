@@ -36,6 +36,7 @@ public class Base64Fragment extends FragmentWithDialog {
     private final int FILE_SELECT_CODE = 7;
     private TextView path;
     private Uri data;
+    private String name;
 
     @NonNull
     public static Base64Fragment getInstance(Context context, boolean torrent, @Nullable Uri uri) {
@@ -64,6 +65,7 @@ public class Base64Fragment extends FragmentWithDialog {
             return;
         }
 
+        name = null;
         path.setText(null);
     }
 
@@ -102,6 +104,7 @@ public class Base64Fragment extends FragmentWithDialog {
             }
         }
 
+        this.name = name;
         path.setText(name);
     }
 
@@ -153,6 +156,11 @@ public class Base64Fragment extends FragmentWithDialog {
             help.setHtml(R.string.pickMetalink_help);
 
         return layout;
+    }
+
+    @Nullable
+    public String getFilenameOnDevice() {
+        return name;
     }
 
     @Nullable

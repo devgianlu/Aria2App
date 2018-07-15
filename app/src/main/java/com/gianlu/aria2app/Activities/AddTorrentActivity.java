@@ -83,6 +83,7 @@ public class AddTorrentActivity extends AddDownloadActivity {
     public AddDownloadBundle createBundle() {
         AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);
 
+
         String base64 = null;
         try {
             base64 = base64Fragment.getBase64();
@@ -93,12 +94,13 @@ public class AddTorrentActivity extends AddDownloadActivity {
             }
         }
 
-        if (base64 == null) {
+        String filename = base64Fragment.getFilenameOnDevice();
+        if (base64 == null || filename == null) {
             pager.setCurrentItem(0, true);
             return null;
         }
 
-        return new AddTorrentBundle(base64, urisFragment.getUris(), optionsFragment.getPosition(), optionsFragment.getOptions());
+        return new AddTorrentBundle(base64, filename, urisFragment.getUris(), optionsFragment.getPosition(), optionsFragment.getOptions());
     }
 
     @Override

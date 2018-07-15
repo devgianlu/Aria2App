@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public class AddMetalinkBundle extends AddBase64Bundle implements Serializable {
-    public AddMetalinkBundle(@NonNull String base64, @Nullable Integer position, @Nullable HashMap<String, String> options) {
-        super(base64, position, options);
+    public AddMetalinkBundle(@NonNull String base64, @NonNull String filename, @Nullable Integer position, @Nullable HashMap<String, String> options) {
+        super(base64, filename, position, options);
     }
 }

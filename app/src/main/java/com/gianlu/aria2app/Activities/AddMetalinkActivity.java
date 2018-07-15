@@ -91,12 +91,13 @@ public class AddMetalinkActivity extends AddDownloadActivity {
             }
         }
 
-        if (base64 == null) {
+        String filename = base64Fragment.getFilenameOnDevice();
+        if (base64 == null || filename == null) {
             pager.setCurrentItem(0, true);
             return null;
         }
 
-        return new AddMetalinkBundle(base64, optionsFragment.getPosition(), optionsFragment.getOptions());
+        return new AddMetalinkBundle(base64, filename, optionsFragment.getPosition(), optionsFragment.getOptions());
     }
 
     @Override

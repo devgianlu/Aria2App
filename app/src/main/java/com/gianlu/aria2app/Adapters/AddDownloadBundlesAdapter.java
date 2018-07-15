@@ -15,6 +15,7 @@ import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,14 +50,23 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         AddDownloadBundle bundle = bundles.get(position);
 
-        holder.text.setText(bundle.toString()); // TODO: This doesn't mean a lot to the user
+        String text = null;
+        int textColorRes = 0;
         if (bundle instanceof AddUriBundle) {
-            holder.text.setTextColor(ContextCompat.getColor(context, R.color.colorURI_pressed));
+            text = CommonUtils.join(((AddUriBundle) bundle).uris, ", ");
+            textColorRes = R.color.colorURI_pressed;
         } else if (bundle instanceof AddTorrentBundle) {
-            holder.text.setTextColor(ContextCompat.getColor(context, R.color.colorTorrent_pressed));
+            text = ((AddTorrentBundle) bundle).filename;
+            textColorRes = R.color.colorTorrent_pressed;
         } else if (bundle instanceof AddMetalinkBundle) {
-            holder.text.setTextColor(ContextCompat.getColor(context, R.color.colorMetalink_pressed));
+            text = ((AddMetalinkBundle) bundle).filename;
+            textColorRes = R.color.colorMetalink_pressed;
         }
+
+        if (text != null)
+            holder.text.setText(text);
+        if (textColorRes != 0)
+            holder.text.setTextColor(ContextCompat.getColor(context, textColorRes));
 
         holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override

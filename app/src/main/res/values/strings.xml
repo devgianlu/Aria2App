@@ -331,6 +331,8 @@
     <string name="metalinks">Metalinks</string>
     <string name="addSingle">Add single</string>
     <string name="noBatchAdd">There are no batch operations. Add some with the buttons below.</string>
+    <string name="downloadsAddedBatch">All downloads added.</string>
+    <string name="failedAddingDownloads">Failed adding some downloads.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
