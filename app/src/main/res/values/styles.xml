@@ -85,6 +85,11 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="AppTheme.Batch" parent="AppTheme">
+        <item name="colorAccent">@color/colorBatch_pressed</item>
+        <item name="colorAccentRef">@color/colorBatch_pressed</item>
+    </style>
+
     <!-- Fab label style -->
     <style name="FabLabel">
         <item name="android:background">@drawable/fab_label_layout</item>

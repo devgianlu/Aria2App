@@ -14,6 +14,8 @@
     <color name="colorMetalink_pressed">#311b92</color>
     <color name="colorURI">#666666</color>
     <color name="colorURI_pressed">#323232</color>
+    <color name="colorBatch">#FDD835</color>
+    <color name="colorBatch_pressed">#F9A825</color>
 
     <color name="downloadColor">#ffc107</color>
     <color name="uploadColor">#009688</color>

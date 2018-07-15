@@ -3,6 +3,10 @@ package com.gianlu.aria2app.NetIO;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.GlobalStats;
@@ -93,6 +97,29 @@ public final class AriaRequests {
                 return indexes;
             }
         }, gid);
+    }
+
+    public static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddDownloadBundle bundle) throws JSONException {
+        if (bundle instanceof AddUriBundle)
+            return addDownload((AddUriBundle) bundle);
+        else if (bundle instanceof AddTorrentBundle)
+            return addDownload((AddTorrentBundle) bundle);
+        else if (bundle instanceof AddMetalinkBundle)
+            return addDownload((AddMetalinkBundle) bundle);
+        else
+            throw new IllegalArgumentException("Unknown bundle: " + bundle);
+    }
+
+    private static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddTorrentBundle bundle) throws JSONException {
+        return addTorrent(bundle.base64, bundle.uris, bundle.position, bundle.options);
+    }
+
+    private static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddUriBundle bundle) throws JSONException {
+        return addUri(bundle.uris, bundle.position, bundle.options);
+    }
+
+    private static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddMetalinkBundle bundle) throws JSONException {
+        return addMetalink(bundle.base64, bundle.position, bundle.options);
     }
 
     public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {

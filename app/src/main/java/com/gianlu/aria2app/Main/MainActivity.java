@@ -43,6 +43,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
+import com.gianlu.aria2app.Activities.BatchAddActivity;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesFragment;
@@ -461,6 +462,13 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class));
+            }
+        });
+        FloatingActionButton fabBatchAdd = findViewById(R.id.mainFab_batchAdd);
+        fabBatchAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BatchAddActivity.class));
             }
         });
 

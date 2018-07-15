@@ -12,10 +12,9 @@ import android.widget.TextView;
 import com.gianlu.aria2app.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
-    private final List<String> uris;
+    private final ArrayList<String> uris;
     private final LayoutInflater inflater;
     private final IAdapter handler;
 
@@ -56,7 +55,7 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         return uris.size();
     }
 
-    public List<String> getUris() {
+    public ArrayList<String> getUris() {
         return uris;
     }
 

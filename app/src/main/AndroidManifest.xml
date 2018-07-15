@@ -23,8 +23,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        tools:replace="android:supportsRtl"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:supportsRtl">
 
         <!-- General files provider -->
         <provider
@@ -41,7 +41,6 @@
         <activity
             android:name=".LoadingActivity"
             android:theme="@style/FullscreenTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -1126,7 +1125,6 @@
         <activity
             android:name=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Drawer">
-
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/main_searchable" />
@@ -1157,6 +1155,10 @@
             android:name=".Activities.AddMetalinkActivity"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Metalink" />
+        <activity
+            android:name=".Activities.BatchAddActivity"
+            android:parentActivityName=".Main.MainActivity"
+            android:theme="@style/AppTheme.Batch" />
 
         <!-- More about download activity -->
         <activity
@@ -1224,4 +1226,5 @@
                 android:resource="@xml/logs_paths" />
         </provider>
     </application>
+
 </manifest>

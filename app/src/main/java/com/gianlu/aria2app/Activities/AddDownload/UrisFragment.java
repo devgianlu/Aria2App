@@ -28,7 +28,7 @@ import com.gianlu.commonutils.Toaster;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 
 
 public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAdapter {
@@ -145,7 +145,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
     }
 
     @Nullable
-    public List<String> getUris() {
+    public ArrayList<String> getUris() {
         return adapter != null ? adapter.getUris() : null;
     }
 

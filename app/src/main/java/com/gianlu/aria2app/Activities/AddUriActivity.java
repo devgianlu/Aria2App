@@ -3,7 +3,7 @@ package com.gianlu.aria2app.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -11,26 +11,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
-import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
-import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
 
-import org.json.JSONException;
-
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class AddUriActivity extends ActivityWithDialog {
+public class AddUriActivity extends AddDownloadActivity {
     private UrisFragment urisFragment;
     private OptionsFragment optionsFragment;
     private ViewPager pager;
@@ -83,41 +76,20 @@ public class AddUriActivity extends ActivityWithDialog {
         return true;
     }
 
-    private void done() {
-        List<String> uris = urisFragment.getUris();
+    @Nullable
+    @Override
+    public AddDownloadBundle createBundle() {
+        ArrayList<String> uris = urisFragment.getUris();
         if (uris == null || uris.isEmpty()) {
             Toaster.with(this).message(R.string.noUris).show();
             pager.setCurrentItem(0, true);
-            return;
+            return null;
         }
 
-        Map<String, String> options = optionsFragment.getOptions();
-        Integer position = optionsFragment.getPosition();
+        HashMap<String, String> options = optionsFragment.getOptions();
         String filename = optionsFragment.getFilename();
-
         if (filename != null) options.put("out", filename);
-
-        try {
-            showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
-            Aria2Helper.instantiate(this).request(AriaRequests.addUri(uris, position, options), new AbstractClient.OnResult<String>() {
-                @Override
-                public void onResult(@NonNull String result) {
-                    dismissDialog();
-                    Toaster.with(AddUriActivity.this).message(R.string.downloadAdded).extra(result).show();
-                    if (!isDestroyed()) onBackPressed();
-                }
-
-                @Override
-                public void onException(Exception ex, boolean shouldForce) {
-                    dismissDialog();
-                    Toaster.with(AddUriActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
-                }
-            });
-        } catch (Aria2Helper.InitializingException | JSONException ex) {
-            Toaster.with(this).message(R.string.failedAddingDownload).ex(ex).show();
-        }
-
-        AnalyticsApplication.sendAnalytics(AddUriActivity.this, Utils.ACTION_NEW_URI);
+        return new AddUriBundle(uris, optionsFragment.getPosition(), options);
     }
 
     @Override

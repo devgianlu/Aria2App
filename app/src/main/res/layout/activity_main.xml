@@ -165,6 +165,16 @@
                     fab:fab_title="@string/search" />
 
                 <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/mainFab_batchAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/colorBatch"
+                    fab:fab_colorPressed="@color/colorBatch_pressed"
+                    fab:fab_icon="@drawable/baseline_all_inbox_24"
+                    fab:fab_size="mini"
+                    fab:fab_title="@string/batchAdd" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
                     android:id="@+id/mainFab_addMetalink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

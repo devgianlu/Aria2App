@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 
+import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.HttpClient;
@@ -20,6 +21,7 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Aria2Helper {
@@ -88,6 +90,18 @@ public class Aria2Helper {
                 SparseServers servers = client.sendSync(AriaRequests.getServers(gid));
                 AriaFiles files = client.sendSync(AriaRequests.getFiles(gid));
                 return new SparseServersWithFiles(servers, files);
+            }
+        }, listener);
+    }
+
+    public void addDownloads(@NonNull final Collection<AddDownloadBundle> bundles, AbstractClient.OnResult<List<String>> listener) {
+        client.batch(new AbstractClient.BatchSandbox<List<String>>() {
+            @Override
+            public List<String> sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+                List<String> results = new ArrayList<>(bundles.size());
+                for (AddDownloadBundle bundle : bundles)
+                    results.add(client.sendSync(AriaRequests.addDownload(bundle)));
+                return results;
             }
         }, listener);
     }

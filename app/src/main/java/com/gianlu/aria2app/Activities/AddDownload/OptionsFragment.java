@@ -108,10 +108,10 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
     }
 
     @NonNull
-    public Map<String, String> getOptions() {
+    public HashMap<String, String> getOptions() {
         if (adapter == null) return new HashMap<>();
         List<Option> options = adapter.getOptions();
-        Map<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
 
         for (Option option : options)
             if (option.isValueChanged())

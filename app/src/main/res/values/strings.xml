@@ -58,7 +58,7 @@
     <string name="filters">Filters</string>
     <string name="encryption">Enable TLS/SSL encryption</string>
     <string name="apply">Apply</string>
-    <string name="uris">URIs</string>
+    <string name="uris">Uris</string>
     <string name="save">Save</string>
     <string name="support">Support</string>
     <string name="add">Add</string>
@@ -149,9 +149,9 @@
     <string name="noUris_help">There are no uris. Please add at least one by clicking the button down below.</string>
     <string name="editUri">Edit uri</string>
     <string name="queuePosition_help">Leave empty to add the download to the end of the queue.</string>
-    <string name="uris_disclaimer">It\'s compulsory to add only HTTP/FTP/SFTP/BitTorrent URIs pointing to the same resource. If you mix URIs pointing to different resources, then the download may fail or be corrupted without aria2 complaining.</string>
+    <string name="uris_disclaimer">It\'s compulsory to add only HTTP/FTP/SFTP/BitTorrent uris pointing to the same resource. If you mix Uris pointing to different resources, then the download may fail or be corrupted without aria2 complaining.</string>
     <string name="noUris">There are no uris.</string>
-    <string name="torrentUris_disclaimer">URIs are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
+    <string name="torrentUris_disclaimer">Uris are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
     <string name="file">File</string>
     <string name="pickTorrent_help">Select a torrent file. The supported mime type is <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
@@ -326,6 +326,11 @@
     <string name="nightModeOff">Night mode is following system default.</string>
     <string name="nightModeOn">Night mode is permanently enabled.</string>
     <string name="isp">Internet service provider: %s</string>
+    <string name="batchAdd">Batch add</string>
+    <string name="torrents">Torrents</string>
+    <string name="metalinks">Metalinks</string>
+    <string name="addSingle">Add single</string>
+    <string name="noBatchAdd">There are no batch operations. Add some with the buttons below.</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
