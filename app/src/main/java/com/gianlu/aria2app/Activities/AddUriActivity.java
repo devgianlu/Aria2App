@@ -17,6 +17,8 @@ import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Toaster;
 
 import java.net.URI;
@@ -79,6 +81,8 @@ public class AddUriActivity extends AddDownloadActivity {
     @Nullable
     @Override
     public AddDownloadBundle createBundle() {
+        AnalyticsApplication.sendAnalytics(AddUriActivity.this, Utils.ACTION_NEW_URI);
+
         ArrayList<String> uris = urisFragment.getUris();
         if (uris == null || uris.isEmpty()) {
             Toaster.with(this).message(R.string.noUris).show();

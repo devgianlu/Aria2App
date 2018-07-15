@@ -33,11 +33,6 @@ public abstract class AddDownloadActivity extends ActivityWithDialog {
     protected final void done() {
         AddDownloadBundle bundle = createBundle();
 
-        // TODO: Analytics
-        // AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);
-        // AnalyticsApplication.sendAnalytics(AddUriActivity.this, Utils.ACTION_NEW_URI);
-        // AnalyticsApplication.sendAnalytics(AddMetalinkActivity.this, Utils.ACTION_NEW_METALINK);
-
         if (startedForResult) {
             if (bundle == null) setResult(RESULT_CANCELED, null);
             else setResult(RESULT_OK, new Intent().putExtra("bundle", bundle));

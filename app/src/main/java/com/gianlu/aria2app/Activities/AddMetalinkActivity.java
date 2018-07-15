@@ -19,6 +19,8 @@ import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 
 public class AddMetalinkActivity extends AddDownloadActivity {
     private ViewPager pager;
@@ -77,6 +79,8 @@ public class AddMetalinkActivity extends AddDownloadActivity {
     @Nullable
     @Override
     public AddDownloadBundle createBundle() {
+        AnalyticsApplication.sendAnalytics(AddMetalinkActivity.this, Utils.ACTION_NEW_METALINK);
+
         String base64 = null;
         try {
             base64 = base64Fragment.getBase64();

@@ -20,6 +20,8 @@ import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 
 public class AddTorrentActivity extends AddDownloadActivity {
     private ViewPager pager;
@@ -79,6 +81,8 @@ public class AddTorrentActivity extends AddDownloadActivity {
     @Nullable
     @Override
     public AddDownloadBundle createBundle() {
+        AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);
+
         String base64 = null;
         try {
             base64 = base64Fragment.getBase64();

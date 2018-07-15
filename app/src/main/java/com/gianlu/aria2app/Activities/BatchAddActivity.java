@@ -14,6 +14,8 @@ import com.gianlu.aria2app.Adapters.AddDownloadBundlesAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.RecyclerViewLayout;
@@ -55,6 +57,10 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
             Toaster.with(this).message(R.string.noBatchAdd).show();
             return;
         }
+
+        Bundle analytics = new Bundle();
+        analytics.putInt("bundles", bundles.size());
+        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_NEW_BATCH, analytics);
 
         try {
             showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));

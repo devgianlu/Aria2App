@@ -47,6 +47,7 @@ public final class Utils {
     public static final String ACTION_SEARCH_GET_MAGNET = "new_magnet_from_search";
     public static final String ACTION_SHORTCUT = "used_shortcut";
     public static final String ACTION_PLAY_VIDEO = "play_video";
+    public static final String ACTION_NEW_BATCH = "new_batch_add";
     private static final Collection<String> streamableMimeTypes = new HashSet<>();
 
     static {
