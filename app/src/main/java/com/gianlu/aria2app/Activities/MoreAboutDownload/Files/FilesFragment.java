@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
@@ -432,11 +431,11 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public boolean buildSequence(@NonNull BaseTutorial tutorial, @NonNull TapTargetSequence sequence) {
+    public boolean buildSequence(@NonNull BaseTutorial tutorial) {
         if (tutorial instanceof FilesTutorial)
-            return ((FilesTutorial) tutorial).buildSequence(requireContext(), sequence, recyclerViewLayout.getList(), adapter != null ? adapter.getCurrentDir() : null);
+            return ((FilesTutorial) tutorial).buildSequence(recyclerViewLayout.getList(), adapter != null ? adapter.getCurrentDir() : null);
         else if (tutorial instanceof FoldersTutorial)
-            return ((FoldersTutorial) tutorial).buildSequence(requireContext(), sequence, recyclerViewLayout.getList());
+            return ((FoldersTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
 
         return true;
     }

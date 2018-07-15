@@ -1,12 +1,9 @@
 package com.gianlu.aria2app.Tutorial;
 
-import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
@@ -22,11 +19,11 @@ public class DownloadsToolbarTutorial extends BaseTutorial {
         return toolbar != null && adapter != null && adapter.getItemCount() >= 5;
     }
 
-    public final void buildSequence(@NonNull Context context, @NonNull TapTargetSequence seq, @NonNull Toolbar toolbar) {
+    public final void buildSequence(@NonNull Toolbar toolbar) {
         if (toolbar.findViewById(R.id.main_search) != null)
-            seq.target(TapTarget.forToolbarMenuItem(toolbar, R.id.main_search, context.getString(R.string.search), context.getString(R.string.search_desc)));
+            forToolbarMenuItem(toolbar, R.id.main_search, R.string.search, R.string.search_desc);
 
         if (toolbar.findViewById(R.id.main_filter) != null)
-            seq.target(TapTarget.forToolbarMenuItem(toolbar, R.id.main_filter, context.getString(R.string.filters), context.getString(R.string.filters_desc)));
+            forToolbarMenuItem(toolbar, R.id.main_filter, R.string.filters, R.string.filters_desc);
     }
 }

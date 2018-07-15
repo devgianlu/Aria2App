@@ -40,7 +40,6 @@ import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
@@ -1028,11 +1027,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public boolean buildSequence(@NonNull BaseTutorial tutorial, @NonNull TapTargetSequence sequence) {
+    public boolean buildSequence(@NonNull BaseTutorial tutorial) {
         if (tutorial instanceof DownloadsToolbarTutorial)
-            ((DownloadsToolbarTutorial) tutorial).buildSequence(this, sequence, toolbar);
+            ((DownloadsToolbarTutorial) tutorial).buildSequence(toolbar);
         else if (tutorial instanceof DownloadCardsTutorial)
-            return ((DownloadCardsTutorial) tutorial).buildSequence(this, sequence, recyclerViewLayout.getList());
+            return ((DownloadCardsTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
 
         return true;
     }

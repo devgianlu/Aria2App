@@ -1,14 +1,11 @@
 package com.gianlu.aria2app.Tutorial;
 
-import android.content.Context;
 import android.graphics.Rect;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
@@ -21,7 +18,7 @@ public class FoldersTutorial extends BaseTutorial {
         super(Discovery.FOLDERS);
     }
 
-    public final boolean buildSequence(@NonNull Context context, @NonNull TapTargetSequence seq, @NonNull RecyclerView list) {
+    public final boolean buildSequence(@NonNull RecyclerView list) {
         RecyclerView.ViewHolder holder = list.findViewHolderForLayoutPosition(0);
         if (holder != null) {
             list.scrollToPosition(0);
@@ -30,9 +27,9 @@ public class FoldersTutorial extends BaseTutorial {
             holder.itemView.getGlobalVisibleRect(rect);
             rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
 
-            seq.target(TapTarget.forBounds(rect, context.getString(R.string.folderDetails), context.getString(R.string.folderDetails_desc))
+            forBounds(rect, R.string.folderDetails, R.string.folderDetails_desc)
                     .tintTarget(false)
-                    .transparentTarget(true));
+                    .transparentTarget(true);
 
             return true;
         }

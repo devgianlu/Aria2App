@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
@@ -107,8 +106,8 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     }
 
     @Override
-    public boolean buildSequence(@NonNull BaseTutorial tutorial, @NonNull TapTargetSequence sequence) {
-        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForServers(requireContext(), sequence, recyclerViewLayout.getList());
+    public boolean buildSequence(@NonNull BaseTutorial tutorial) {
+        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForServers(recyclerViewLayout.getList());
     }
 }
 
