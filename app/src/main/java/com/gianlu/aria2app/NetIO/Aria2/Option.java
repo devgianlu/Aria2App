@@ -19,14 +19,25 @@ public class Option implements Comparable<Option> {
     public final String name;
     public final String value;
     public String newValue;
+    private boolean dummyChanged;
 
-    private Option(String name, String value) {
+    private Option(String name, String value, boolean dummyChanged) {
         this.name = name;
         this.value = value;
+        this.dummyChanged = dummyChanged;
+        if (dummyChanged) this.newValue = value;
+        else this.newValue = null;
     }
 
     @NonNull
-    public static List<Option> fromOptionsMap(Map<String, String> map, List<String> all, @Nullable Set<String> filter) {
+    public static List<Option> fromMapSimpleChanged(@NonNull Map<String, String> map) {
+        List<Option> list = new ArrayList<>(map.size());
+        for (String key : map.keySet()) list.add(new Option(key, map.get(key), true));
+        return list;
+    }
+
+    @NonNull
+    public static List<Option> fromOptionsMap(@NonNull Map<String, String> map, @NonNull List<String> all, @Nullable Set<String> filter) {
         List<Option> options = new ArrayList<>();
 
         for (String key : all) {
@@ -36,7 +47,7 @@ public class Option implements Comparable<Option> {
         for (String key : map.keySet()) {
             if (all.contains(key)) {
                 if (filter == null || filter.contains(key))
-                    options.add(new Option(key, map.get(key)));
+                    options.add(new Option(key, map.get(key), false));
             }
         }
 
@@ -46,18 +57,19 @@ public class Option implements Comparable<Option> {
     }
 
     public void setNewValue(String value) {
+        if (!Objects.equals(newValue, value)) dummyChanged = false;
         newValue = value;
     }
 
     public boolean isValueChanged() {
-        return newValue != null && !Objects.equals(value, newValue);
+        return dummyChanged || (newValue != null && !Objects.equals(value, newValue));
     }
 
-    public boolean isQuick(Context context) {
+    public boolean isQuick(@NonNull Context context) {
         return Prefs.getSet(context, PK.A2_QUICK_OPTIONS_MIXED, new HashSet<String>()).contains(name);
     }
 
-    public void setQuick(Context context, boolean quick) {
+    public void setQuick(@NonNull Context context, boolean quick) {
         if (quick) Prefs.addToSet(context, PK.A2_QUICK_OPTIONS_MIXED, name);
         else Prefs.removeFromSet(context, PK.A2_QUICK_OPTIONS_MIXED, name);
     }

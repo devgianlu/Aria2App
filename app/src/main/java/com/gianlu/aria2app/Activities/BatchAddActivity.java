@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Adapters.AddDownloadBundlesAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -116,8 +119,12 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && data != null)
-            adapter.addItem((AddDownloadBundle) data.getSerializableExtra("bundle"));
+        if (resultCode == RESULT_OK && data != null) {
+            AddDownloadBundle bundle = (AddDownloadBundle) data.getSerializableExtra("bundle");
+            int pos = data.getIntExtra("pos", -1);
+            if (pos == -1) adapter.addItem(bundle);
+            else adapter.itemChanged(pos, bundle);
+        }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -126,5 +133,22 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
     public void onItemCountUpdated(int count) {
         if (count == 0) layout.showInfo(R.string.noBatchAdd);
         else layout.showList();
+    }
+
+    @Override
+    public void onEdit(int pos, @NonNull AddDownloadBundle bundle) {
+        if (bundle instanceof AddUriBundle) {
+            startActivityForResult(new Intent(BatchAddActivity.this, AddUriActivity.class)
+                    .putExtra("edit", bundle)
+                    .putExtra("startedForEdit", pos), REQUEST_URI);
+        } else if (bundle instanceof AddTorrentBundle) {
+            startActivityForResult(new Intent(BatchAddActivity.this, AddTorrentActivity.class)
+                    .putExtra("edit", bundle)
+                    .putExtra("startedForEdit", pos), REQUEST_TORRENT);
+        } else if (bundle instanceof AddMetalinkBundle) {
+            startActivityForResult(new Intent(BatchAddActivity.this, AddMetalinkActivity.class)
+                    .putExtra("edit", bundle)
+                    .putExtra("startedForEdit", pos), REQUEST_METALINK);
+        }
     }
 }

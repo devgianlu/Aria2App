@@ -12,18 +12,19 @@ import android.widget.TextView;
 import com.gianlu.aria2app.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
     private final ArrayList<String> uris;
     private final LayoutInflater inflater;
-    private final IAdapter handler;
+    private final Listener listener;
 
-    public UrisAdapter(Context context, IAdapter handler) {
-        this.handler = handler;
+    public UrisAdapter(Context context, Listener listener) {
+        this.listener = listener;
         inflater = LayoutInflater.from(context);
         uris = new ArrayList<>();
 
-        if (handler != null) handler.onUrisCountChanged(uris.size());
+        if (listener != null) listener.onUrisCountChanged(uris.size());
     }
 
     @Override
@@ -39,7 +40,7 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (handler != null) handler.onEditUri(holder.getAdapterPosition(), uri);
+                if (listener != null) listener.onEditUri(holder.getAdapterPosition(), uri);
             }
         });
         holder.remove.setOnClickListener(new View.OnClickListener() {
@@ -65,14 +66,23 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         uris.add(uri);
         notifyItemInserted(uris.size() - 1);
 
-        if (handler != null) handler.onUrisCountChanged(uris.size());
+        if (listener != null) listener.onUrisCountChanged(uris.size());
+    }
+
+    public void addUris(Collection<String> newUris) {
+        if (newUris.isEmpty()) return;
+
+        uris.addAll(newUris);
+        notifyItemRangeInserted(uris.size() - newUris.size(), newUris.size());
+
+        if (listener != null) listener.onUrisCountChanged(uris.size());
     }
 
     public void removeUri(int pos) {
         uris.remove(pos);
         notifyItemRemoved(pos);
 
-        if (handler != null) handler.onUrisCountChanged(uris.size());
+        if (listener != null) listener.onUrisCountChanged(uris.size());
     }
 
     public boolean canAddUri() {
@@ -83,10 +93,10 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
         return true;
     }
 
-    public interface IAdapter {
+    public interface Listener {
         void onUrisCountChanged(int count);
 
-        void onEditUri(int oldPos, String uri);
+        void onEditUri(int oldPos, @NonNull String uri);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

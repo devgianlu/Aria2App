@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.gianlu.aria2app.Activities.AddDownload.AddBase64Bundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
 import com.gianlu.aria2app.Activities.AddDownload.Base64Fragment;
@@ -29,13 +31,12 @@ public class AddTorrentActivity extends AddDownloadActivity {
     private OptionsFragment optionsFragment;
     private Base64Fragment base64Fragment;
 
-    public static void startAndAdd(Context context, Uri uri) {
+    public static void startAndAdd(Context context, @NonNull Uri uri) {
         context.startActivity(new Intent(context, AddTorrentActivity.class).putExtra("uri", uri));
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState, @Nullable AddDownloadBundle bundle) {
         setContentView(R.layout.activity_add_download);
         setTitle(R.string.addTorrent);
 
@@ -48,9 +49,15 @@ public class AddTorrentActivity extends AddDownloadActivity {
         pager = findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = findViewById(R.id.addDownload_tabs);
 
-        base64Fragment = Base64Fragment.getInstance(this, true, (Uri) getIntent().getParcelableExtra("uri"));
-        urisFragment = UrisFragment.getInstance(this, false, null);
-        optionsFragment = OptionsFragment.getInstance(this, false);
+        if (bundle instanceof AddTorrentBundle) {
+            base64Fragment = Base64Fragment.getInstance(this, (AddBase64Bundle) bundle);
+            urisFragment = UrisFragment.getInstance(this, bundle);
+            optionsFragment = OptionsFragment.getInstance(this, bundle);
+        } else {
+            base64Fragment = Base64Fragment.getInstance(this, true, (Uri) getIntent().getParcelableExtra("uri"));
+            urisFragment = UrisFragment.getInstance(this, false, null);
+            optionsFragment = OptionsFragment.getInstance(this, false);
+        }
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, urisFragment, optionsFragment));
         pager.setOffscreenPageLimit(2);
@@ -95,12 +102,13 @@ public class AddTorrentActivity extends AddDownloadActivity {
         }
 
         String filename = base64Fragment.getFilenameOnDevice();
-        if (base64 == null || filename == null) {
+        Uri fileUri = base64Fragment.getFileUri();
+        if (base64 == null || filename == null || fileUri == null) {
             pager.setCurrentItem(0, true);
             return null;
         }
 
-        return new AddTorrentBundle(base64, filename, urisFragment.getUris(), optionsFragment.getPosition(), optionsFragment.getOptions());
+        return new AddTorrentBundle(base64, filename, fileUri, urisFragment.getUris(), optionsFragment.getPosition(), optionsFragment.getOptions());
     }
 
     @Override

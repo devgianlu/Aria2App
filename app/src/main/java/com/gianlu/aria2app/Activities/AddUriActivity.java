@@ -35,8 +35,7 @@ public class AddUriActivity extends AddDownloadActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState, @Nullable AddDownloadBundle bundle) {
         setContentView(R.layout.activity_add_download);
         setTitle(R.string.addUri);
 
@@ -49,8 +48,13 @@ public class AddUriActivity extends AddDownloadActivity {
         pager = findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = findViewById(R.id.addDownload_tabs);
 
-        urisFragment = UrisFragment.getInstance(this, true, (URI) getIntent().getSerializableExtra("uri"));
-        optionsFragment = OptionsFragment.getInstance(this, true);
+        if (bundle instanceof AddUriBundle) {
+            urisFragment = UrisFragment.getInstance(this, bundle);
+            optionsFragment = OptionsFragment.getInstance(this, bundle);
+        } else {
+            urisFragment = UrisFragment.getInstance(this, true, (URI) getIntent().getSerializableExtra("uri"));
+            optionsFragment = OptionsFragment.getInstance(this, true);
+        }
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), urisFragment, optionsFragment));
         pager.setOffscreenPageLimit(2);

@@ -13,6 +13,16 @@
         android:layout_weight="1" />
 
     <ImageButton
+        android:id="@+id/addDownloadBundleItem_edit"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:adjustViewBounds="true"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/baseline_edit_24" />
+
+    <ImageButton
         android:id="@+id/addDownloadBundleItem_remove"
         android:layout_width="36dp"
         android:layout_height="36dp"

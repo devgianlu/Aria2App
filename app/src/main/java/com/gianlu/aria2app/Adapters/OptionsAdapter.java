@@ -67,7 +67,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         return new ViewHolder(parent);
     }
 
-    public void optionChanged(Option option) {
+    public void optionChanged(@NonNull Option option) {
         int pos = options.indexOf(option);
         if (pos != -1) {
             options.set(pos, option);

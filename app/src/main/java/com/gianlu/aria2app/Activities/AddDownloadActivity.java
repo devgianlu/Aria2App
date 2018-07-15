@@ -19,13 +19,19 @@ import org.json.JSONException;
 
 public abstract class AddDownloadActivity extends ActivityWithDialog {
     private boolean startedForResult = false;
+    private int startedForEdit = -1;
 
     @Override
     @CallSuper
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected final void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startedForResult = getIntent().getBooleanExtra("startedForResult", false);
+        startedForEdit = getIntent().getIntExtra("startedForEdit", -1);
+        if (startedForEdit >= 0) startedForResult = true;
+        onCreate(savedInstanceState, (AddDownloadBundle) getIntent().getSerializableExtra("edit"));
     }
+
+    protected abstract void onCreate(@Nullable Bundle savedInstanceState, @Nullable AddDownloadBundle bundle);
 
     @Nullable
     public abstract AddDownloadBundle createBundle();
@@ -35,7 +41,9 @@ public abstract class AddDownloadActivity extends ActivityWithDialog {
 
         if (startedForResult) {
             if (bundle == null) setResult(RESULT_CANCELED, null);
-            else setResult(RESULT_OK, new Intent().putExtra("bundle", bundle));
+            else setResult(RESULT_OK, new Intent()
+                    .putExtra("pos", startedForEdit)
+                    .putExtra("bundle", bundle));
             onBackPressed();
         } else {
             if (bundle == null) return;

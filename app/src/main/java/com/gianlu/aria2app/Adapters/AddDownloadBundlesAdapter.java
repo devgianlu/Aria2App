@@ -48,7 +48,7 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        AddDownloadBundle bundle = bundles.get(position);
+        final AddDownloadBundle bundle = bundles.get(position);
 
         String text = null;
         int textColorRes = 0;
@@ -74,6 +74,12 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
                 removeItem(holder.getAdapterPosition());
             }
         });
+        holder.edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) listener.onEdit(holder.getAdapterPosition(), bundle);
+            }
+        });
     }
 
     @Override
@@ -95,19 +101,28 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
         if (listener != null) listener.onItemCountUpdated(getItemCount());
     }
 
+    public void itemChanged(int pos, @NonNull AddDownloadBundle bundle) {
+        bundles.set(pos, bundle);
+        notifyItemChanged(pos);
+    }
+
     public interface Listener {
         void onItemCountUpdated(int count);
+
+        void onEdit(int pos, @NonNull AddDownloadBundle bundle);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final TextView text;
         final ImageButton remove;
+        final ImageButton edit;
 
         public ViewHolder(ViewGroup parent) {
             super(inflater.inflate(R.layout.item_add_download_bundle, parent, false));
 
             text = itemView.findViewById(R.id.addDownloadBundleItem_text);
             remove = itemView.findViewById(R.id.addDownloadBundleItem_remove);
+            edit = itemView.findViewById(R.id.addDownloadBundleItem_edit);
         }
     }
 }

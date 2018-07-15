@@ -35,6 +35,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
     private EditText filename;
     private OptionsAdapter adapter;
     private OptionsView optionsView;
+    private MessageView message;
 
     @NonNull
     public static OptionsFragment getInstance(Context context, boolean isUri) {
@@ -46,7 +47,16 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         return fragment;
     }
 
-    private MessageView message;
+    @NonNull
+    public static OptionsFragment getInstance(Context context, @NonNull AddDownloadBundle bundle) {
+        OptionsFragment fragment = new OptionsFragment();
+        Bundle args = new Bundle();
+        args.putString("title", context.getString(R.string.options));
+        args.putBoolean("isUri", bundle instanceof AddUriBundle);
+        args.putSerializable("edit", bundle);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -58,9 +68,6 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         filename = layout.findViewById(R.id.optionsFragment_filename);
         optionsView = layout.findViewById(R.id.optionsFragment_options);
 
-        layout.findViewById(R.id.optionsFragment_filenameContainer)
-                .setVisibility(getArguments() != null && getArguments().getBoolean("isUri", false) ? View.VISIBLE : View.GONE);
-
         Aria2Helper helper;
         try {
             helper = Aria2Helper.instantiate(requireContext());
@@ -70,6 +77,20 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
             loading.setVisibility(View.GONE);
             return layout;
         }
+
+        final AddDownloadBundle bundle;
+        boolean isAddUri = false;
+        Bundle args = getArguments();
+        if (args != null) {
+            bundle = (AddDownloadBundle) args.getSerializable("edit");
+            isAddUri = args.getBoolean("isUri", false);
+        } else {
+            bundle = null;
+        }
+
+        layout.findViewById(R.id.optionsFragment_filenameContainer).setVisibility(isAddUri ? View.VISIBLE : View.GONE);
+        if (isAddUri && bundle != null && bundle.options != null)
+            filename.setText(bundle.options.get("out"));
 
         helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
             @Override
@@ -83,10 +104,14 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
                     return;
                 }
 
+                if (bundle != null && bundle.options != null) {
+                    for (Option option : Option.fromMapSimpleChanged(bundle.options))
+                        adapter.optionChanged(option);
+                }
+
                 optionsView.setAdapter(adapter);
                 optionsView.setVisibility(View.VISIBLE);
                 loading.setVisibility(View.GONE);
-
             }
 
             @Override

@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.gianlu.aria2app.Activities.AddDownload.AddBase64Bundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
 import com.gianlu.aria2app.Activities.AddDownload.Base64Fragment;
@@ -33,8 +34,7 @@ public class AddMetalinkActivity extends AddDownloadActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState, @Nullable AddDownloadBundle bundle) {
         setContentView(R.layout.activity_add_download);
         setTitle(R.string.addMetalink);
 
@@ -47,8 +47,13 @@ public class AddMetalinkActivity extends AddDownloadActivity {
         pager = findViewById(R.id.addDownload_pager);
         final TabLayout tabLayout = findViewById(R.id.addDownload_tabs);
 
-        base64Fragment = Base64Fragment.getInstance(this, false, (Uri) getIntent().getParcelableExtra("uri"));
-        optionsFragment = OptionsFragment.getInstance(this, false);
+        if (bundle instanceof AddMetalinkBundle) {
+            base64Fragment = Base64Fragment.getInstance(this, (AddBase64Bundle) bundle);
+            optionsFragment = OptionsFragment.getInstance(this, bundle);
+        } else {
+            base64Fragment = Base64Fragment.getInstance(this, false, (Uri) getIntent().getParcelableExtra("uri"));
+            optionsFragment = OptionsFragment.getInstance(this, false);
+        }
 
         pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, optionsFragment));
         pager.setOffscreenPageLimit(2);
@@ -92,12 +97,13 @@ public class AddMetalinkActivity extends AddDownloadActivity {
         }
 
         String filename = base64Fragment.getFilenameOnDevice();
-        if (base64 == null || filename == null) {
+        Uri fileUri = base64Fragment.getFileUri();
+        if (base64 == null || filename == null || fileUri == null) {
             pager.setCurrentItem(0, true);
             return null;
         }
 
-        return new AddMetalinkBundle(base64, filename, optionsFragment.getPosition(), optionsFragment.getOptions());
+        return new AddMetalinkBundle(base64, filename, fileUri, optionsFragment.getPosition(), optionsFragment.getOptions());
     }
 
     @Override

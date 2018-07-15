@@ -29,18 +29,32 @@ import com.gianlu.commonutils.Toaster;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAdapter {
+public class UrisFragment extends FragmentWithDialog implements UrisAdapter.Listener {
     private UrisAdapter adapter;
     private RecyclerView list;
+    private MessageView message;
 
+    @NonNull
     public static UrisFragment getInstance(Context context, boolean compulsory, @Nullable URI uri) {
         UrisFragment fragment = new UrisFragment();
         Bundle args = new Bundle();
         args.putBoolean("compulsory", compulsory);
         args.putString("title", context.getString(R.string.uris));
         if (uri != null) args.putSerializable("uri", uri);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @NonNull
+    public static UrisFragment getInstance(Context context, @NonNull AddDownloadBundle bundle) {
+        UrisFragment fragment = new UrisFragment();
+        Bundle args = new Bundle();
+        args.putBoolean("compulsory", bundle instanceof AddUriBundle);
+        args.putString("title", context.getString(R.string.uris));
+        args.putSerializable("edit", bundle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,18 +88,14 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
         showDialog(builder);
     }
 
-    private MessageView message;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (getContext() == null) return null;
-
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_uris, container, false);
         message = layout.findViewById(R.id.urisFragment_message);
         list = layout.findViewById(R.id.urisFragment_list);
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        list.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        list.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         Button addNew = layout.findViewById(R.id.urisFragment_addNew);
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,14 +105,30 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
             }
         });
 
+        AddDownloadBundle bundle = null;
+        boolean compulsory = false;
+        Bundle args = getArguments();
+        if (args != null) {
+            compulsory = args.getBoolean("compulsory", false);
+            bundle = (AddDownloadBundle) args.getSerializable("edit");
+        }
+
         TextView disclaimer = layout.findViewById(R.id.urisFragment_disclaimer);
-        if (getArguments() != null && getArguments().getBoolean("compulsory", false))
+        if (compulsory)
             disclaimer.setText(R.string.uris_disclaimer);
         else
             disclaimer.setText(R.string.torrentUris_disclaimer);
 
-        adapter = new UrisAdapter(getContext(), this);
+        adapter = new UrisAdapter(requireContext(), this);
         list.setAdapter(adapter);
+
+        if (bundle != null) {
+            List<String> uris = null;
+            if (bundle instanceof AddUriBundle) uris = ((AddUriBundle) bundle).uris;
+            else if (bundle instanceof AddTorrentBundle) uris = ((AddTorrentBundle) bundle).uris;
+
+            if (uris != null) adapter.addUris(uris);
+        }
 
         return layout;
     }
@@ -141,7 +167,13 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
             }
         }
 
-        showAddUriDialog(-1, null);
+        AddDownloadBundle bundle = (AddDownloadBundle) getArguments().getSerializable("edit");
+        boolean hasUri = false;
+        if (bundle instanceof AddUriBundle) hasUri = !((AddUriBundle) bundle).uris.isEmpty();
+        else if (bundle instanceof AddTorrentBundle)
+            hasUri = !((AddTorrentBundle) bundle).uris.isEmpty();
+
+        if (!hasUri) showAddUriDialog(-1, null);
     }
 
     @Nullable
@@ -164,7 +196,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.IAda
     }
 
     @Override
-    public void onEditUri(int oldPos, String uri) {
+    public void onEditUri(int oldPos, @NonNull String uri) {
         showAddUriDialog(oldPos, uri);
     }
 }

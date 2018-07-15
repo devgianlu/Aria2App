@@ -35,7 +35,7 @@ import java.util.Objects;
 public class Base64Fragment extends FragmentWithDialog {
     private final int FILE_SELECT_CODE = 7;
     private TextView path;
-    private Uri data;
+    private Uri fileUri;
     private String name;
 
     @NonNull
@@ -47,6 +47,11 @@ public class Base64Fragment extends FragmentWithDialog {
         if (uri != null) args.putParcelable("uri", uri);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @NonNull
+    public static Base64Fragment getInstance(Context context, @NonNull AddBase64Bundle bundle) {
+        return getInstance(context, bundle instanceof AddTorrentBundle, bundle.fileUri());
     }
 
     private void showFilePicker() {
@@ -74,14 +79,15 @@ public class Base64Fragment extends FragmentWithDialog {
         switch (requestCode) {
             case FILE_SELECT_CODE:
                 if (resultCode == Activity.RESULT_OK && intent.getData() != null) {
-                    data = intent.getData();
-                    if (intent.getData() != null) setFilename(data);
+                    if (intent.getData() != null) setFilename(intent.getData());
                 }
                 break;
         }
     }
 
     private void setFilename(@NonNull Uri uri) {
+        this.fileUri = uri;
+
         String name;
         if (Objects.equals(uri.getScheme(), "file")) {
             File file = new File(uri.getPath());
@@ -112,10 +118,7 @@ public class Base64Fragment extends FragmentWithDialog {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (getArguments() == null) return;
         Uri uri = getArguments().getParcelable("uri");
-        if (uri != null) {
-            this.data = uri;
-            setFilename(uri);
-        }
+        if (uri != null) setFilename(uri);
     }
 
     @Nullable
@@ -167,10 +170,10 @@ public class Base64Fragment extends FragmentWithDialog {
     public String getBase64() throws InvalidFieldException {
         if (getContext() == null) return null;
 
-        if (data == null)
+        if (fileUri == null)
             throw new InvalidFieldException(Base64Fragment.class, R.id.base64Fragment_pick, getString(R.string.base64NotSelected));
 
-        try (InputStream in = getContext().getContentResolver().openInputStream(data); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (InputStream in = getContext().getContentResolver().openInputStream(fileUri); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             if (in == null) return null;
 
             byte[] buffer = new byte[4096];
@@ -182,5 +185,10 @@ public class Base64Fragment extends FragmentWithDialog {
             showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
             return null;
         }
+    }
+
+    @Nullable
+    public Uri getFileUri() {
+        return fileUri;
     }
 }
