@@ -1,10 +1,12 @@
 package com.gianlu.aria2app.Activities;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.RecyclerViewLayout;
@@ -87,7 +90,6 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         }
     }
 
-    // TODO: Must ask read permission before picking files
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,11 +107,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         urisFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(Intent.createChooser(intent, "Select some uris file (one URL every line)"), REQUEST_URIS_FILE);
+                openDocument("*/*", "Select some uris files", REQUEST_URIS_FILE);
             }
         });
 
@@ -124,11 +122,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         torrentFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("application/x-bittorrent");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(Intent.createChooser(intent, "Select some torrent files"), REQUEST_TORRENT_FILES);
+                openDocument("application/x-bittorrent", "Select some torrent files", REQUEST_TORRENT_FILES);
             }
         });
 
@@ -143,11 +137,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         metalinkFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("application/metalink4+xml,application/metalink+xml");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                startActivityForResult(Intent.createChooser(intent, "Select some Metalink files"), REQUEST_METALINK_FILES);
+                openDocument("application/metalink4+xml,application/metalink+xml", "Select some Metalink files", REQUEST_METALINK_FILES);
             }
         });
 
@@ -155,6 +145,30 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         layout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         adapter = new AddDownloadBundlesAdapter(this, this);
         layout.loadListData(adapter, false);
+    }
+
+    private void openDocument(@NonNull final String mime, @NonNull final String text, final int requestCode) {
+        AskPermission.ask(this, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+            @Override
+            public void permissionGranted(@NonNull String permission) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType(mime);
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(Intent.createChooser(intent, text), requestCode);
+            }
+
+            @Override
+            public void permissionDenied(@NonNull String permission) {
+                Toaster.with(BatchAddActivity.this).message(R.string.readPermissionDenied).error(true).show();
+            }
+
+            @Override
+            public void askRationale(@NonNull AlertDialog.Builder builder) {
+                builder.setTitle(R.string.readExternalStorageRequest_title)
+                        .setMessage(R.string.readExternalStorageRequest_base64Message);
+            }
+        });
     }
 
     @Override
