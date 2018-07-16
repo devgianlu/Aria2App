@@ -4,14 +4,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +22,6 @@ import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
 
 public class Base64Fragment extends FragmentWithDialog {
     private final int FILE_SELECT_CODE = 7;
@@ -86,31 +77,17 @@ public class Base64Fragment extends FragmentWithDialog {
     }
 
     private void setFilename(@NonNull Uri uri) {
-        this.fileUri = uri;
+        fileUri = uri;
 
-        String name;
-        if (Objects.equals(uri.getScheme(), "file")) {
-            File file = new File(uri.getPath());
-            name = file.getName();
-        } else {
-            if (getContext() == null) return;
-            try (Cursor cursor = getContext().getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE}, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
-                    name = cursor.getString(0);
+        if (getContext() == null) return;
 
-                    long size = cursor.getLong(1);
-                    if (size > 26214400 /* 25MB */)
-                        throw new IllegalArgumentException("File is too big: " + size);
-                } else {
-                    throw new IllegalArgumentException("Failed query: " + cursor);
-                }
-            } catch (Exception ex) {
-                showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
-                return;
-            }
+        try {
+            name = AddBase64Bundle.extractFilename(getContext(), uri);
+        } catch (AddBase64Bundle.CannotReadException ex) {
+            showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
+            return;
         }
 
-        this.name = name;
         path.setText(name);
     }
 
@@ -173,15 +150,9 @@ public class Base64Fragment extends FragmentWithDialog {
         if (fileUri == null)
             throw new InvalidFieldException(Base64Fragment.class, R.id.base64Fragment_pick, getString(R.string.base64NotSelected));
 
-        try (InputStream in = getContext().getContentResolver().openInputStream(fileUri); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            if (in == null) return null;
-
-            byte[] buffer = new byte[4096];
-            int read;
-            while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
-            return Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
-        } catch (IOException | SecurityException | OutOfMemoryError ex) {
-            System.gc();
+        try {
+            return AddBase64Bundle.readBase64(getContext(), fileUri);
+        } catch (AddBase64Bundle.CannotReadException ex) {
             showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
             return null;
         }

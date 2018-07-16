@@ -333,6 +333,9 @@
     <string name="noBatchAdd">There are no batch operations. Add some with the buttons below.</string>
     <string name="downloadsAddedBatch">All downloads added.</string>
     <string name="failedAddingDownloads">Failed adding some downloads.</string>
+    <string name="torrentFiles">Torrent files</string>
+    <string name="metalinkFiles">Metalink files</string>
+    <string name="urisFile">Uris file</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">

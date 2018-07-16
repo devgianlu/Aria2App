@@ -29,6 +29,14 @@
             android:text="@string/addSingle"
             android:textColor="@color/colorURI_pressed" />
 
+        <Button
+            android:id="@+id/batchAdd_urisFile"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/urisFile"
+            android:textColor="@color/colorURI_pressed" />
+
     </LinearLayout>
 
     <TextView
@@ -49,6 +57,14 @@
             android:text="@string/addSingle"
             android:textColor="@color/colorTorrent_pressed" />
 
+        <Button
+            android:id="@+id/batchAdd_torrentFiles"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/torrentFiles"
+            android:textColor="@color/colorTorrent_pressed" />
+
     </LinearLayout>
 
     <TextView
@@ -67,6 +83,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addSingle"
+            android:textColor="@color/colorMetalink_pressed" />
+
+        <Button
+            android:id="@+id/batchAdd_metalinkFiles"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/metalinkFiles"
             android:textColor="@color/colorMetalink_pressed" />
 
     </LinearLayout>

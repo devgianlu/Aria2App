@@ -94,6 +94,13 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
         if (listener != null) listener.onItemCountUpdated(getItemCount());
     }
 
+    public void addItems(List<? extends AddDownloadBundle> newBundles) {
+        bundles.addAll(newBundles);
+        notifyItemRangeInserted(bundles.size() - newBundles.size(), newBundles.size());
+
+        if (listener != null) listener.onItemCountUpdated(getItemCount());
+    }
+
     private void removeItem(int pos) {
         bundles.remove(pos);
         notifyItemRemoved(pos);

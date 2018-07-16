@@ -13,4 +13,14 @@ public abstract class AddDownloadBundle implements Serializable {
         this.position = position;
         this.options = options;
     }
+
+    public static class CannotReadException extends Exception {
+        CannotReadException(String message) {
+            super(message);
+        }
+
+        CannotReadException(Throwable cause) {
+            super(cause);
+        }
+    }
 }

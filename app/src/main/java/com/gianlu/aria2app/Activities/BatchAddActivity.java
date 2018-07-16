@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.Activities;
 
+import android.content.ClipData;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,11 +28,13 @@ import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
 
-// TODO: More practical ways to add downloads
 public class BatchAddActivity extends ActivityWithDialog implements AddDownloadBundlesAdapter.Listener {
+    public static final int REQUEST_URIS_FILE = 5;
     private final static int REQUEST_URI = 0;
     private final static int REQUEST_TORRENT = 1;
-    private final static int REQUEST_METALINK = 2;
+    private final static int REQUEST_TORRENT_FILES = 2;
+    private final static int REQUEST_METALINK = 3;
+    private static final int REQUEST_METALINK_FILES = 4;
     private AddDownloadBundlesAdapter adapter;
     private RecyclerViewLayout layout;
 
@@ -83,6 +87,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         }
     }
 
+    // TODO: Must ask read permission before picking files
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +101,18 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                 startActivityForResult(new Intent(BatchAddActivity.this, AddUriActivity.class).putExtra("startedForResult", true), REQUEST_URI);
             }
         });
+        Button urisFile = findViewById(R.id.batchAdd_urisFile);
+        urisFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(Intent.createChooser(intent, "Select some uris file (one URL every line)"), REQUEST_URIS_FILE);
+            }
+        });
+
         Button singleTorrent = findViewById(R.id.batchAdd_singleTorrent);
         singleTorrent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,11 +120,34 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                 startActivityForResult(new Intent(BatchAddActivity.this, AddTorrentActivity.class).putExtra("startedForResult", true), REQUEST_TORRENT);
             }
         });
+        Button torrentFiles = findViewById(R.id.batchAdd_torrentFiles);
+        torrentFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/x-bittorrent");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(Intent.createChooser(intent, "Select some torrent files"), REQUEST_TORRENT_FILES);
+            }
+        });
+
         Button singleMetalink = findViewById(R.id.batchAdd_singleMetalink);
         singleMetalink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(BatchAddActivity.this, AddMetalinkActivity.class).putExtra("startedForResult", true), REQUEST_METALINK);
+            }
+        });
+        Button metalinkFiles = findViewById(R.id.batchAdd_metalinkFiles);
+        metalinkFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/metalink4+xml,application/metalink+xml");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(Intent.createChooser(intent, "Select some Metalink files"), REQUEST_METALINK_FILES);
             }
         });
 
@@ -120,10 +160,47 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && data != null) {
-            AddDownloadBundle bundle = (AddDownloadBundle) data.getSerializableExtra("bundle");
-            int pos = data.getIntExtra("pos", -1);
-            if (pos == -1) adapter.addItem(bundle);
-            else adapter.itemChanged(pos, bundle);
+            ClipData clip = data.getClipData();
+            Uri uri = data.getData();
+
+            try {
+                switch (requestCode) {
+                    case REQUEST_TORRENT_FILES:
+                        if (uri != null) {
+                            adapter.addItem(AddTorrentBundle.fromUri(this, uri));
+                        } else if (clip != null) {
+                            for (int i = 0; i < clip.getItemCount(); i++)
+                                adapter.addItem(AddTorrentBundle.fromUri(this, clip.getItemAt(i).getUri()));
+                        }
+                        return;
+                    case REQUEST_METALINK_FILES:
+                        if (uri != null) {
+                            adapter.addItem(AddMetalinkBundle.fromUri(this, uri));
+                        } else if (clip != null) {
+                            for (int i = 0; i < clip.getItemCount(); i++)
+                                adapter.addItem(AddMetalinkBundle.fromUri(this, clip.getItemAt(i).getUri()));
+                        }
+                        return;
+                    case REQUEST_URIS_FILE:
+                        if (uri != null) {
+                            adapter.addItems(AddUriBundle.fromUri(this, uri));
+                        } else if (clip != null) {
+                            for (int i = 0; i < clip.getItemCount(); i++)
+                                adapter.addItems(AddUriBundle.fromUri(this, clip.getItemAt(i).getUri()));
+                        }
+                        return;
+                    case REQUEST_URI:
+                    case REQUEST_TORRENT:
+                    case REQUEST_METALINK:
+                        AddDownloadBundle bundle = (AddDownloadBundle) data.getSerializableExtra("bundle");
+                        int pos = data.getIntExtra("pos", -1);
+                        if (pos == -1) adapter.addItem(bundle);
+                        else adapter.itemChanged(pos, bundle);
+                        return;
+                }
+            } catch (AddDownloadBundle.CannotReadException ex) {
+                Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
