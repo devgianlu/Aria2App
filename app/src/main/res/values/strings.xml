@@ -336,6 +336,7 @@
     <string name="torrentFiles">Torrent files</string>
     <string name="metalinkFiles">Metalink files</string>
     <string name="urisFile">Uris file</string>
+    <string name="urisFile_help">To know more about URI files, visit this page: https://gianlu.xyz/documents/Aria2App/uri-file/</string>
 
     <!-- String-arrays -->
     <string-array name="updateRateValue" translatable="false">
