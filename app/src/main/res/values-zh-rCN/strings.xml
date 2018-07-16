@@ -316,6 +316,21 @@
     <string name="writePermissionDenied">您拒绝了写入权限！</string>
     <string name="readPermissionDenied">您拒绝了读取权限！</string>
     <string name="secondSpace_selectDownload">点击下载更多信息以提供更多信息。</string>
+    <string name="nightMode">夜间模式（黑暗主题）</string>
+    <string name="nightModeOff">夜间模式遵循系统默认值。</string>
+    <string name="nightModeOn">永久启用夜间模式。</string>
+    <string name="isp">因特网提供商：%s</string>
+    <string name="batchAdd">批量添加</string>
+    <string name="torrents">Torrent</string>
+    <string name="metalinks">Metalinks</string>
+    <string name="addSingle">添加单个</string>
+    <string name="noBatchAdd">没有批处理操作。使用下面的按钮添加一些。</string>
+    <string name="downloadsAddedBatch">添加了所有下载。</string>
+    <string name="failedAddingDownloads">添加一些下载失败。</string>
+    <string name="torrentFiles">Torrent文件</string>
+    <string name="metalinkFiles">Metalink文件</string>
+    <string name="urisFile">Uris文件</string>
+    <string name="urisFile_help">要了解有关URI文件的更多信息，请访问此页面：https://gianlu.xyz/documents/Aria2App/uri-file/</string>
 
     <!-- String-arrays -->
     <string-array name="updateRate">
