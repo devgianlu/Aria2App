@@ -33,19 +33,17 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
     }
 
     static void scaleTo(@NonNull final FloatingActionsMenu view, final boolean max) {
-        final View target;
         View animateView = findInnerMenu(view);
-        if (animateView == null) target = view;
-        else target = animateView;
-        target.animate().scaleY(max ? 1 : 0).scaleX(max ? 1 : 0).setDuration(DURATION).setListener(new Animator.AnimatorListener() {
+        if (animateView == null) animateView = view;
+        animateView.animate().scaleY(max ? 1 : 0).scaleX(max ? 1 : 0).setDuration(DURATION).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-
+                if (max) view.setTranslationX(0);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                view.setTranslationX(max ? 0 : target.getWidth());
+                if (!max) view.setTranslationX(view.getWidth());
             }
 
             @Override
