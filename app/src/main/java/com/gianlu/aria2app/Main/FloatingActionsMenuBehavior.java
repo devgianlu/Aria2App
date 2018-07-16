@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.Main;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -25,20 +26,42 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
         super(context, attrs);
     }
 
-    private static boolean isScale(@NonNull FloatingActionsMenu view, float value) {
+    private static boolean isScaleMax(@NonNull FloatingActionsMenu view) {
         View animateView = findInnerMenu(view);
         if (animateView == null) animateView = view;
-        return animateView.getScaleX() == value;
+        return animateView.getScaleX() == 1;
     }
 
-    static void scaleTo(@NonNull FloatingActionsMenu view, float value) {
+    static void scaleTo(@NonNull final FloatingActionsMenu view, final boolean max) {
+        final View target;
         View animateView = findInnerMenu(view);
-        if (animateView == null) animateView = view;
-        animateView.animate().scaleY(value).scaleX(value).setDuration(DURATION).start();
+        if (animateView == null) target = view;
+        else target = animateView;
+        target.animate().scaleY(max ? 1 : 0).scaleX(max ? 1 : 0).setDuration(DURATION).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setTranslationX(max ? 0 : target.getWidth());
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        }).start();
     }
 
     @Nullable
-    private static FloatingActionButton findInnerMenu(FloatingActionsMenu menu) {
+    private static FloatingActionButton findInnerMenu(@NonNull FloatingActionsMenu menu) {
         for (int i = 0; i < menu.getChildCount(); i++) {
             View v = menu.getChildAt(i);
             if (v instanceof AddFloatingActionButton)
@@ -60,10 +83,10 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
         mTotalDy += dyConsumed;
 
         int totalHeight = child.getHeight();
-        if (mTotalDy > totalHeight && isScale(child, 1f)) {
-            scaleTo(child, 0f);
-        } else if (mTotalDy < 0 && Math.abs(mTotalDy) >= totalHeight && isScale(child, 0f)) {
-            scaleTo(child, 1f);
+        if (mTotalDy > totalHeight && isScaleMax(child)) {
+            scaleTo(child, false);
+        } else if (mTotalDy < 0 && Math.abs(mTotalDy) >= totalHeight && !isScaleMax(child)) {
+            scaleTo(child, true);
         }
     }
 
@@ -73,7 +96,7 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
 
         if (velocityY < 0) {
             /* Velocity is negative, we are flinging up */
-            scaleTo(child, 1f);
+            scaleTo(child, true);
         } else if (velocityY > 0) {
             /* Velocity is positive, we are flinging down */
             if (child.isExpanded()) {
@@ -85,12 +108,12 @@ public class FloatingActionsMenuBehavior extends CoordinatorLayout.Behavior<Floa
 
                     @Override
                     public void onMenuCollapsed() {
-                        if (isScale(child, 1f))
-                            scaleTo(child, 0f);
+                        if (isScaleMax(child))
+                            scaleTo(child, false);
                     }
                 });
             } else {
-                if (isScale(child, 1f)) scaleTo(child, 0f);
+                if (isScaleMax(child)) scaleTo(child, false);
             }
         }
 
