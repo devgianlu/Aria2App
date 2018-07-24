@@ -111,7 +111,7 @@ public final class GeoIP {
                             }
                         });
                     }
-                } catch (IOException | JSONException | NullPointerException | IllegalArgumentException | ServiceException ex) {
+                } catch (IOException | JSONException | ServiceException | RuntimeException ex) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

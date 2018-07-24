@@ -82,7 +82,8 @@ public class NetTester extends BaseTester<AbstractClient> {
     @NonNull
     @Override
     public String describe() {
-        return "connection test";
+        return (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET ? "WebSocket" : "HTTP")
+                + " connection test";
     }
 
     @UiThread

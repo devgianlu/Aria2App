@@ -20,7 +20,7 @@ class Aria2Tester extends BaseTester<Boolean> {
     }
 
     private void publishError(Exception ex, boolean authenticated) {
-        publishMessage(ex.getMessage(), Level.ERROR);
+        publishMessage(ex.getClass().getName() + ": " + ex.getMessage(), Level.ERROR);
         if (authenticated)
             publishMessage("Your token or username and password may be wrong", Level.ERROR);
     }
