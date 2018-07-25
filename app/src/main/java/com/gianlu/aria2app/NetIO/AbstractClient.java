@@ -321,7 +321,7 @@ public abstract class AbstractClient implements Closeable {
         JSONObject build(AbstractClient client) throws JSONException {
             JSONObject request = new JSONObject();
             request.put("jsonrpc", "2.0");
-            request.put("id", client.nextRequestId());
+            request.put("id", String.valueOf(client.nextRequestId()));
             request.put("method", method.method);
             JSONArray params = client.baseRequestParams();
             for (Object obj : this.params) params.put(obj);
