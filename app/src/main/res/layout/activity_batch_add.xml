@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addSingle"
-            android:textColor="@color/colorURI_pressed" />
+            android:textColor="@color/colorAccent" />
 
         <Button
             android:id="@+id/batchAdd_urisFile"
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/urisFile"
-            android:textColor="@color/colorURI_pressed" />
+            android:textColor="@color/colorAccent" />
 
     </LinearLayout>
 
@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addSingle"
-            android:textColor="@color/colorTorrent_pressed" />
+            android:textColor="@color/colorTorrent" />
 
         <Button
             android:id="@+id/batchAdd_torrentFiles"
@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/torrentFiles"
-            android:textColor="@color/colorTorrent_pressed" />
+            android:textColor="@color/colorTorrent" />
 
     </LinearLayout>
 
@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addSingle"
-            android:textColor="@color/colorMetalink_pressed" />
+            android:textColor="@color/colorMetalink" />
 
         <Button
             android:id="@+id/batchAdd_metalinkFiles"
@@ -103,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/metalinkFiles"
-            android:textColor="@color/colorMetalink_pressed" />
+            android:textColor="@color/colorMetalink" />
 
     </LinearLayout>
 
