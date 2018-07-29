@@ -131,6 +131,7 @@
     <orderEntry type="library" name="Gradle: com.android.support:support-core-ui-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.llew:reflect:1.0.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.okio:okio:1.14.0@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.getkeepsafe.taptargetview:taptargetview-1.12.0" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-fragment-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.core:runtime-1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.github.PhilJay:MPAndroidChart:v3.0.1@jar" level="project" />
@@ -148,6 +149,7 @@
     <orderEntry type="library" name="Gradle: com.android.support:support-annotations:27.1.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:cardview-v7-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:animated-vector-drawable-27.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:3.11.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-compat-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:viewmodel-1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-base-15.0.1" level="project" />
@@ -155,12 +157,10 @@
     <orderEntry type="library" name="Gradle: com.android.support:support-core-utils-27.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-ads-identifier-15.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-measurement-connector-impl-16.0.1" level="project" />
-    <orderEntry type="library" name="Gradle: com.getkeepsafe.taptargetview:taptargetview-1.11.0" level="project" />
     <orderEntry type="library" name="Gradle: com.llew.huawei:verifier-1.0.6" level="project" />
     <orderEntry type="library" name="Gradle: com.michaelfotiadis:android-country-flags-1.0.3" level="project" />
     <orderEntry type="library" name="Gradle: com.google.android.gms:play-services-stats-15.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-iid-16.0.0" level="project" />
-    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:3.10.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-iid-interop-16.0.0" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:livedata-core-1.1.0" level="project" />
     <orderEntry type="library" name="Gradle: com.crashlytics.sdk.android:crashlytics-2.9.4" level="project" />
