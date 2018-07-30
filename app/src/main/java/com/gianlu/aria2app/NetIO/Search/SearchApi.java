@@ -32,7 +32,7 @@ import okhttp3.ResponseBody;
 public final class SearchApi {
     public static final int RESULTS_PER_REQUEST = 20;
     private static final int TIMEOUT = 15;
-    private static final String BASE_URL = "https://torrent-search-engine.herokuapp.com/";
+    private static final HttpUrl BASE_URL = HttpUrl.parse("http://api.tse.gianlu.xyz/");
     private static SearchApi instance;
     private final OkHttpClient client;
     private final ExecutorService executorService;
@@ -71,14 +71,10 @@ public final class SearchApi {
     }
 
     private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, final ISearch listener) {
-        HttpUrl baseUrl = HttpUrl.parse(BASE_URL + "search");
-        if (baseUrl == null) {
-            listener.onException(new NullPointerException("Invalid URL."));
-            return;
-        }
+        final HttpUrl.Builder builder = BASE_URL.newBuilder().
+                addPathSegment("search")
+                .addQueryParameter("m", String.valueOf(maxResults));
 
-        final HttpUrl.Builder builder = baseUrl.newBuilder();
-        builder.addQueryParameter("m", String.valueOf(maxResults));
         if (token != null) {
             builder.addQueryParameter("t", token);
         } else {
@@ -126,14 +122,9 @@ public final class SearchApi {
     }
 
     public void getTorrent(SearchResult result, final ITorrent listener) {
-        HttpUrl baseUrl = HttpUrl.parse(BASE_URL + "getTorrent");
-        if (baseUrl == null) {
-            listener.onException(new NullPointerException("Invalid URL."));
-            return;
-        }
-
-        final HttpUrl.Builder builder = baseUrl.newBuilder();
-        builder.addQueryParameter("e", result.engineId)
+        final HttpUrl.Builder builder = BASE_URL.newBuilder();
+        builder.addPathSegment("getTorrent")
+                .addQueryParameter("e", result.engineId)
                 .addQueryParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
 
         executorService.execute(new Runnable() {
@@ -197,7 +188,7 @@ public final class SearchApi {
     }
 
     private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
-        JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL + "listEngines").build()));
+        JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL.newBuilder().addPathSegment("listEngines").build()).build()));
         return cachedEngines = SearchEngine.list(array);
     }
 
