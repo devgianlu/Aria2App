@@ -49,7 +49,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onCreate() {
         super.onCreate();
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
-        SearchApi.get().cacheSearchEngines();
+        SearchApi.get(this).cacheSearchEngines();
 
         ErrorHandler.setup(Prefs.getFakeInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
 

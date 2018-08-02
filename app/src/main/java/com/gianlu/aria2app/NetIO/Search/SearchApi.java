@@ -1,14 +1,21 @@
 package com.gianlu.aria2app.NetIO.Search;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.StatusCodeException;
+import com.gianlu.aria2app.PK;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,20 +44,22 @@ public final class SearchApi {
     private final OkHttpClient client;
     private final ExecutorService executorService;
     private final Handler handler;
+    private final SharedPreferences preferences;
     private List<SearchEngine> cachedEngines = null;
 
-    private SearchApi() {
+    private SearchApi(Context context) {
         client = new OkHttpClient.Builder().connectTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .build();
         executorService = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
-    public static SearchApi get() {
-        if (instance == null) instance = new SearchApi();
+    public static SearchApi get(@NonNull Context context) {
+        if (instance == null) instance = new SearchApi(context);
         return instance;
     }
 
@@ -66,11 +75,11 @@ public final class SearchApi {
         }
     }
 
-    public void search(final String token, final int maxResults, final ISearch listener) {
+    public void search(final String token, final int maxResults, final OnSearch listener) {
         search(null, token, maxResults, null, listener);
     }
 
-    private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, final ISearch listener) {
+    private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, final OnSearch listener) {
         final HttpUrl.Builder builder = BASE_URL.newBuilder().
                 addPathSegment("search")
                 .addQueryParameter("m", String.valueOf(maxResults));
@@ -117,11 +126,11 @@ public final class SearchApi {
         });
     }
 
-    public void search(final String query, final int maxResults, @Nullable final Collection<String> engines, final ISearch listener) {
+    public void search(String query, int maxResults, @Nullable Collection<String> engines, OnSearch listener) {
         search(query, null, maxResults, engines, listener);
     }
 
-    public void getTorrent(SearchResult result, final ITorrent listener) {
+    public void getTorrent(SearchResult result, final OnResult<Torrent> listener) {
         final HttpUrl.Builder builder = BASE_URL.newBuilder();
         builder.addPathSegment("getTorrent")
                 .addQueryParameter("e", result.engineId)
@@ -137,7 +146,7 @@ public final class SearchApi {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onDone(torrent);
+                            listener.onResult(torrent);
                         }
                     });
                 } catch (IOException | StatusCodeException | JSONException ex) {
@@ -162,7 +171,7 @@ public final class SearchApi {
         return null;
     }
 
-    public void listSearchEngines(final IResult<List<SearchEngine>> listener) {
+    public void listSearchEngines(final OnResult<List<SearchEngine>> listener) {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -187,8 +196,19 @@ public final class SearchApi {
         });
     }
 
+    @NonNull
     private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
+        if (Prefs.has(preferences, PK.SEARCH_ENGINES_CACHE) && !CommonUtils.isDebug()) {
+            long age = Prefs.getLong(preferences, PK.SEARCH_ENGINES_CACHE_AGE, 0);
+            if (System.currentTimeMillis() - age < TimeUnit.HOURS.toMillis(6)) {
+                JSONArray array = Prefs.getJSONArray(preferences, PK.SEARCH_ENGINES_CACHE, new JSONArray());
+                if (array.length() > 0) return cachedEngines = SearchEngine.list(array);
+            }
+        }
+
         JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL.newBuilder().addPathSegment("listEngines").build()).build()));
+        Prefs.putLong(preferences, PK.SEARCH_ENGINES_CACHE_AGE, System.currentTimeMillis());
+        Prefs.putJSONArray(preferences, PK.SEARCH_ENGINES_CACHE, array);
         return cachedEngines = SearchEngine.list(array);
     }
 
@@ -197,33 +217,29 @@ public final class SearchApi {
     }
 
     public void cacheSearchEngines() {
-        listSearchEngines(new IResult<List<SearchEngine>>() {
+        executorService.execute(new Runnable() {
             @Override
-            public void onResult(List<SearchEngine> result) {
-            }
-
-            @Override
-            public void onException(Exception ex) {
-                Logging.log(ex);
+            public void run() {
+                try {
+                    listSearchEnginesSync();
+                } catch (IOException | StatusCodeException | JSONException ex) {
+                    Logging.log(ex);
+                }
             }
         });
     }
 
-    public interface ITorrent {
-        void onDone(Torrent torrent);
-
-        void onException(Exception ex);
-    }
-
-    public interface ISearch {
+    @UiThread
+    public interface OnSearch {
         void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
 
-        void onException(Exception ex);
+        void onException(@NonNull Exception ex);
     }
 
-    public interface IResult<E> {
-        void onResult(E result);
+    @UiThread
+    public interface OnResult<E> {
+        void onResult(@NonNull E result);
 
-        void onException(Exception ex);
+        void onException(@NonNull Exception ex);
     }
 }

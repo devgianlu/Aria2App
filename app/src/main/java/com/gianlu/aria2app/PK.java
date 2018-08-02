@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 public enum PK implements Prefs.PrefKey {
+    SEARCH_ENGINES_CACHE("searchEngineCache"),
+    SEARCH_ENGINES_CACHE_AGE("searchEngineCacheAge"),
     DD_DOWNLOAD_PATH("dd_downloadPath"),
     DD_RESUME("dd_resume"),
     LAST_USED_PROFILE("lastUsedProfile"),

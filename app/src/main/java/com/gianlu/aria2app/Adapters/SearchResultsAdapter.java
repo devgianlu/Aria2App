@@ -77,7 +77,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         if (token == null) {
             provider.onMoreContent(new ArrayList<SearchResult>());
         } else {
-            utils.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.ISearch() {
+            utils.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.OnSearch() {
                 @Override
                 public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;
@@ -87,7 +87,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(@NonNull Exception ex) {
                     provider.onFailed(ex);
                 }
             });
