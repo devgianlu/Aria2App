@@ -22,24 +22,22 @@ import java.util.List;
 
 public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<SearchResultsAdapter.ViewHolder, SearchResult> {
     private final LayoutInflater inflater;
-    private final SearchApi searchUtils;
-    private final IAdapter listener;
-    private final SearchApi utils;
+    private final Listener listener;
+    private final SearchApi searchApi;
     private String token;
 
-    public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, IAdapter listener) {
+    public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, Listener listener) {
         super(new Config<SearchResult>(context).noSeparators().undeterminedPages().items(results));
         this.inflater = LayoutInflater.from(context);
-        this.searchUtils = SearchApi.get();
+        this.searchApi = SearchApi.get(context);
         this.token = token;
-        this.utils = SearchApi.get();
         this.listener = listener;
     }
 
     @Override
     protected void userBindViewHolder(@NonNull ViewHolder holder, @NonNull ItemEnclosure<SearchResult> item, int position) {
         final SearchResult result = item.getItem();
-        SearchEngine engine = searchUtils.findEngine(result.engineId);
+        SearchEngine engine = searchApi.findEngine(result.engineId);
 
         holder.name.setText(result.title);
         if (engine != null) holder.engine.setText(engine.name);
@@ -77,7 +75,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         if (token == null) {
             provider.onMoreContent(new ArrayList<SearchResult>());
         } else {
-            utils.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.OnSearch() {
+            searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.OnSearch() {
                 @Override
                 public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;
@@ -100,10 +98,10 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         return null;
     }
 
-    public interface IAdapter {
-        void onResultSelected(SearchResult result);
+    public interface Listener {
+        void onResultSelected(@NonNull SearchResult result);
 
-        void notifyMissingEngines(List<MissingSearchEngine> missingEngines);
+        void notifyMissingEngines(@NonNull List<MissingSearchEngine> missingEngines);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

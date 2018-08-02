@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.OnSearch, SearchResultsAdapter.IAdapter, MenuItem.OnActionExpandListener {
+public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.OnSearch, SearchResultsAdapter.Listener, MenuItem.OnActionExpandListener {
     private RecyclerViewLayout recyclerViewLayout;
     private LinearLayout message;
     private String query = null;
@@ -219,7 +219,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     }
 
     @Override
-    public void onResultSelected(SearchResult result) {
+    public void onResultSelected(@NonNull SearchResult result) {
         showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
         searchApi.getTorrent(result, new SearchApi.OnResult<Torrent>() {
             @Override
@@ -237,7 +237,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     }
 
     @Override
-    public void notifyMissingEngines(final List<MissingSearchEngine> missingEngines) {
+    public void notifyMissingEngines(@NonNull final List<MissingSearchEngine> missingEngines) {
         if (missingEngines.isEmpty()) return;
 
         Snackbar.make(recyclerViewLayout, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
