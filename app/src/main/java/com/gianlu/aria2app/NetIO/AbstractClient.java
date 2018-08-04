@@ -227,7 +227,9 @@ public abstract class AbstractClient implements Closeable {
     }
 
     private long nextRequestId() {
-        return requestIds.getAndIncrement();
+        synchronized (requestIds) {
+            return requestIds.getAndIncrement(); // FIXME: Fucks up some stuff
+        }
     }
 
     public enum AuthMethod {

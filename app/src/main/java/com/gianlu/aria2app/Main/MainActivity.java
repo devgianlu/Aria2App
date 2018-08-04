@@ -26,7 +26,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -62,7 +61,6 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
-import com.gianlu.aria2app.NetIO.Aria2.VersionAndSession;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.GitHubApi;
@@ -87,7 +85,6 @@ import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
@@ -95,7 +92,6 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
-import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
@@ -161,50 +157,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
         EditProfileActivity.start(this, profile.id);
         return true;
-    }
-
-    private void showAboutDialog() {
-        showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
-        helper.getVersionAndSession(new AbstractClient.OnResult<VersionAndSession>() {
-            @Override
-            public void onResult(@NonNull VersionAndSession result) {
-                final LinearLayout layout = new LinearLayout(MainActivity.this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-                int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
-                layout.setPadding(padding, padding, padding, padding);
-                layout.addView(new SuperTextView(MainActivity.this, R.string.version, result.version.version));
-                layout.addView(new SuperTextView(MainActivity.this, R.string.features, CommonUtils.join(result.version.enabledFeatures, ", ")));
-                layout.addView(new SuperTextView(MainActivity.this, R.string.sessionId, result.session.sessionId));
-                dismissDialog();
-
-                showDialog(new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.about_aria2)
-                        .setView(layout)
-                        .setNeutralButton(R.string.saveSession, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                helper.request(AriaRequests.saveSession(), new AbstractClient.OnSuccess() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Toaster.with(MainActivity.this).message(R.string.sessionSaved).show();
-                                    }
-
-                                    @Override
-                                    public void onException(Exception ex, boolean shouldForce) {
-                                        Toaster.with(MainActivity.this).message(R.string.failedSavingSession).ex(ex).show();
-                                    }
-                                });
-                            }
-                        })
-                        .setPositiveButton(android.R.string.ok, null));
-            }
-
-            @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                Toaster.with(MainActivity.this).message(R.string.failedGatheringInfo).ex(ex).show();
-                dismissDialog();
-            }
-        });
     }
 
     private void setupAdapterFiltersAndSorting() {
@@ -274,7 +226,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 CommonUtils.sendEmail(this, getString(R.string.app_name), null);
                 return true;
             case DrawerConst.ABOUT_ARIA2:
-                showAboutDialog();
+                AboutAria2Dialog.get().show(getSupportFragmentManager(), null);
                 return true;
             case DrawerConst.ADD_PROFILE:
                 EditProfileActivity.start(this, false);
@@ -647,7 +599,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     @Override
     protected void onResume() {
         super.onResume();
-        if (drawerManager != null) drawerManager.syncTogglerState();
+        if (drawerManager != null) {
+            drawerManager.syncTogglerState();
+            drawerManager.reloadProfiles();
+        }
+
         if (fabMenu != null) fabMenu.collapseImmediately();
 
         try {

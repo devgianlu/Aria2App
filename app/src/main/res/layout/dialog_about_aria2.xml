@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp">
+
+        <ProgressBar
+            android:id="@+id/aboutAria2Dialog_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/aboutAria2Dialog_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/aboutAria2Dialog_features"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.gianlu.commonutils.SuperTextView
+                android:id="@+id/aboutAria2Dialog_sessionId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/aboutAria2Dialog_saveSession"
+            style="?android:borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/export" />
+
+        <Button
+            android:id="@+id/aboutAria2Dialog_ok"
+            style="?android:borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/ok" />
+
+    </LinearLayout>
+
+</LinearLayout>
