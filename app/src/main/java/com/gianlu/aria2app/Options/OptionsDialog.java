@@ -23,11 +23,13 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.NetIO.AriaRequests;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
@@ -143,6 +145,11 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         quick = args.getBoolean("quick", false);
         global = args.getBoolean("global", true);
         gid = args.getString("gid", null);
+
+        if (quick && Prefs.isSetEmpty(requireContext(), PK.A2_QUICK_OPTIONS_MIXED)) {
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.noQuickOptions));
+            return null;
+        }
 
         AbstractClient.AriaRequestWithResult<Map<String, String>> req;
         if (global || gid == null) req = AriaRequests.getGlobalOptions();
