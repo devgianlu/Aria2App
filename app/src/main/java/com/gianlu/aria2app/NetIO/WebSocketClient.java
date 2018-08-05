@@ -29,7 +29,7 @@ import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
     private static WebSocketClient instance;
-    private final Map<Integer, OnJson> requests = new ConcurrentHashMap<>();
+    private final Map<Long, OnJson> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
     private final long initializedAt;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -86,12 +86,12 @@ public class WebSocketClient extends AbstractClient {
     }
 
     @Override
-    public void send(@NonNull JSONObject request, @NonNull OnJson listener) {
+    public void send(long id, @NonNull JSONObject request, @NonNull OnJson listener) {
         if (shouldIgnoreCommunication) return;
         if (requests.size() > 10) requests.clear();
 
         try {
-            requests.put(request.getInt("id"), listener);
+            requests.put(id, listener);
             webSocket.send(request.toString());
         } catch (Exception ex) {
             listener.onException(ex);
@@ -100,10 +100,10 @@ public class WebSocketClient extends AbstractClient {
 
     @NonNull
     @Override
-    protected JSONObject sendSync(@NonNull JSONObject request) throws Exception {
+    protected JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception {
         final AtomicReference<Object> lock = new AtomicReference<>(null);
 
-        send(request, new OnJson() {
+        send(id, request, new OnJson() {
             @Override
             public void onResponse(@NonNull JSONObject response) {
                 synchronized (lock) {
@@ -152,7 +152,7 @@ public class WebSocketClient extends AbstractClient {
                 String method = response.optString("method", null);
                 if (method != null && method.startsWith("aria2.on")) return;
 
-                OnJson listener = requests.remove(response.getInt("id"));
+                OnJson listener = requests.remove(Long.parseLong(response.getString("id")));
                 if (listener == null) return;
 
                 try {

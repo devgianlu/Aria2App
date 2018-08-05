@@ -97,7 +97,8 @@ public abstract class AbstractClient implements Closeable {
 
     public final <R> void send(@NonNull final AriaRequestWithResult<R> request, final OnResult<R> listener) {
         try {
-            send(request.build(this), new OnJson() {
+            JSONObject obj = request.build(this);
+            send(request.id, obj, new OnJson() {
                 @Override
                 public void onResponse(@NonNull JSONObject response) throws JSONException {
                     final R result = request.processor.process(AbstractClient.this, response);
@@ -130,17 +131,20 @@ public abstract class AbstractClient implements Closeable {
     }
 
     public final void sendSync(@NonNull AriaRequest request) throws Exception {
-        sendSync(request.build(this));
+        JSONObject obj = request.build(this);
+        sendSync(request.id, obj);
     }
 
     @NonNull
     public final <R> R sendSync(@NonNull AriaRequestWithResult<R> request) throws Exception {
-        return request.processor.process(AbstractClient.this, sendSync(request.build(this)));
+        JSONObject obj = request.build(this);
+        return request.processor.process(AbstractClient.this, sendSync(request.id, obj));
     }
 
     public final void send(@NonNull AriaRequest request, final OnSuccess listener) {
         try {
-            send(request.build(this), new OnJson() {
+            JSONObject obj = request.build(this);
+            send(request.id, obj, new OnJson() {
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
                     handler.post(new Runnable() {
@@ -171,10 +175,10 @@ public abstract class AbstractClient implements Closeable {
         }
     }
 
-    protected abstract void send(@NonNull JSONObject request, @NonNull OnJson listener);
+    protected abstract void send(long id, @NonNull JSONObject request, @NonNull OnJson listener);
 
     @NonNull
-    protected abstract JSONObject sendSync(@NonNull JSONObject request) throws Exception;
+    protected abstract JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception;
 
     protected final void validateResponse(JSONObject resp) throws JSONException, AriaException {
         if (resp.has("error")) throw new AriaException(resp.getJSONObject("error"));
@@ -313,6 +317,7 @@ public abstract class AbstractClient implements Closeable {
     public static class AriaRequest {
         private final Method method;
         private final Object[] params;
+        public long id;
 
         AriaRequest(Method method, Object... params) {
             this.method = method;
@@ -320,10 +325,12 @@ public abstract class AbstractClient implements Closeable {
         }
 
         @NonNull
-        JSONObject build(AbstractClient client) throws JSONException {
+        JSONObject build(@NonNull AbstractClient client) throws JSONException {
+            id = client.nextRequestId();
+
             JSONObject request = new JSONObject();
             request.put("jsonrpc", "2.0");
-            request.put("id", String.valueOf(client.nextRequestId()));
+            request.put("id", String.valueOf(id));
             request.put("method", method.method);
             JSONArray params = client.baseRequestParams();
             for (Object obj : this.params) params.put(obj);
