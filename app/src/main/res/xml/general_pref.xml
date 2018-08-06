@@ -8,20 +8,24 @@
         android:summaryOn="@string/nightModeOn"
         android:title="@string/nightMode" />
 
+    <!--
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="a2_hideMetadata"
         android:summaryOff="@string/visibleMetadata"
         android:summaryOn="@string/hiddenMetadata"
-        android:title="@string/hideLinkedMetadata" />
+        android:title="@string/prefs_hideMetadata" />
+        -->
 
-    <ListPreference
-        android:defaultValue="1"
-        android:entries="@array/updateRate"
-        android:entryValues="@array/updateRateValue"
-        android:key="a2_updateRate"
-        android:summary="@string/refreshRateSummary"
-        android:title="@string/refreshRate" />
+    <!--
+   <ListPreference
+       android:defaultValue="1"
+       android:entries="@array/updateRate"
+       android:entryValues="@array/updateRateValue"
+       android:key="a2_updateRate"
+       android:summary="@string/refreshRateSummary"
+       android:title="@string/refreshRate" />
+       -->
 
     <MultiSelectListPreference
         android:defaultValue="@array/empty_array"

@@ -36,7 +36,7 @@
     <string name="noPeers">No peers</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
-    <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
+    <string name="version">Version</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
     <string name="info">Info</string>
     <string name="files">Files</string>
@@ -75,11 +75,6 @@
     <string name="globalOptions">Global options</string>
     <string name="downloadOptions">Download options</string>
     <string name="general">General</string>
-    <string name="hideLinkedMetadata">Hide linked meta-data (a restart is required)</string>
-    <string name="visibleMetadata">Linked meta-data visible</string>
-    <string name="hiddenMetadata">Linked meta-data hidden</string>
-    <string name="refreshRate">Refresh rate</string>
-    <string name="refreshRateSummary">Refreshing timeout in seconds</string>
     <string name="forceAction">Force action if it fails</string>
     <string name="forceActionOn">If action on download fails, we\'ll try to force it</string>
     <string name="forceActionOff">If action on download fails, we\'re going to do nothing</string>
@@ -338,21 +333,13 @@
     <string name="urisFile">Uris file</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://gianlu.xyz/documents/Aria2App/uri-file/</string>
 
+    <!-- Prefs -->
+    <string name="prefs_hideMetadata">Hide linked metadata</string>
+    <string name="prefs_hideMetadata_summary">Hide metadata that started another download</string>
+    <string name="prefs_updateRate">Update rate</string>
+    <string name="prefs_updateRate_summary">UI update rate in seconds</string>
+
     <!-- String-arrays -->
-    <string-array name="updateRateValue" translatable="false">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-    <string-array name="updateRate">
-        <item>1 sec</item>
-        <item>2 sec</item>
-        <item>3 sec</item>
-        <item>4 sec</item>
-        <item>5 sec</item>
-    </string-array>
     <string-array name="selectedNotificationsValue" translatable="false">
         <item>START</item>
         <item>PAUSE</item>

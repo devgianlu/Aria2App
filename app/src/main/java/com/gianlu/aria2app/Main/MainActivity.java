@@ -71,9 +71,9 @@ import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
-import com.gianlu.aria2app.NewPreferenceActivity;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.PreferenceActivity;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -220,7 +220,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 showDialog(OptionsDialog.getGlobal(false));
                 return true;
             case DrawerConst.PREFERENCES:
-                startActivity(new Intent(this, NewPreferenceActivity.class));
+                startActivity(new Intent(this, PreferenceActivity.class));
                 return false;
             case DrawerConst.SUPPORT:
                 CommonUtils.sendEmail(this, getString(R.string.app_name), null);

@@ -74,7 +74,7 @@
     <string name="globalOptions">全局选项</string>
     <string name="downloadOptions">下载选项</string>
     <string name="general">通常</string>
-    <string name="hideLinkedMetadata">隐藏关联的元数据（需要重启）</string>
+    <string name="prefs_hideMetadata">隐藏关联的元数据（需要重启）</string>
     <string name="visibleMetadata">元数据可见</string>
     <string name="hiddenMetadata">元数据已隐藏</string>
     <string name="refreshRate">刷新速率</string>
