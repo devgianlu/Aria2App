@@ -22,6 +22,7 @@ import com.gianlu.commonutils.Tutorial.TutorialManager;
 import java.io.File;
 import java.util.List;
 
+@Deprecated
 public class PreferencesActivity extends AppCompatPreferenceActivity {
 
     @Override

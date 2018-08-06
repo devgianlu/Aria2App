@@ -1166,8 +1166,11 @@
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <!-- Preferences activity -->
+        <!-- Preferences activity (FIXME) -->
         <activity android:name=".PreferencesActivity" />
+
+        <!-- Preferences activity -->
+        <activity android:name=".NewPreferenceActivity" />
 
         <!-- Logs activity -->
         <activity

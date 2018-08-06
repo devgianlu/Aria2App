@@ -99,7 +99,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoadingActivity.this, PreferencesActivity.class));
+                startActivity(new Intent(LoadingActivity.this, NewPreferenceActivity.class));
             }
         });
 
