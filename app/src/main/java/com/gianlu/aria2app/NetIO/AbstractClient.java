@@ -232,7 +232,7 @@ public abstract class AbstractClient implements Closeable {
 
     private long nextRequestId() {
         synchronized (requestIds) {
-            return requestIds.getAndIncrement(); // FIXME: Fucks up some stuff
+            return requestIds.getAndIncrement();
         }
     }
 

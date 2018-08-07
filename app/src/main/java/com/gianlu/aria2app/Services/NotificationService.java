@@ -52,6 +52,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -431,10 +432,21 @@ public class NotificationService extends Service {
         }
 
         @NonNull
-        public static Set<String> prefsValues() {
-            Set<String> set = new HashSet<>();
-            for (EventType type : values()) set.add(type.prefValue);
-            return set;
+        public static String[] prefsValues() {
+            EventType[] values = values();
+            String[] array = new String[values.length];
+            for (int i = 0; i < values.length; i++)
+                array[i] = values[i].prefValue;
+            return array;
+        }
+
+        @NonNull
+        public static String[] formalValues(Context context) {
+            EventType[] values = values();
+            String[] array = new String[values.length];
+            for (int i = 0; i < values.length; i++)
+                array[i] = values[i].getFormal(context);
+            return array;
         }
 
         @Nullable
@@ -589,7 +601,7 @@ public class NotificationService extends Service {
 
         NotificationsHandler(@NonNull MultiProfile.UserProfile profile) {
             this.profile = profile;
-            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PK.A2_SELECTED_NOTIFS_TYPE, EventType.prefsValues()));
+            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PK.A2_SELECTED_NOTIFS_TYPE, new HashSet<>(Arrays.asList(EventType.prefsValues()))));
         }
 
         @Override

@@ -1,6 +1,8 @@
 package com.gianlu.aria2app;
 
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
@@ -12,16 +14,18 @@ import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.Preferences.PrefsStorageModule;
 import com.gianlu.commonutils.Toaster;
 import com.llew.huawei.verifier.LoadedApkHuaWei;
+import com.yarolegovich.mp.io.MaterialPreferences;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.IErrorHandler {
-    private final Set<String> checkedVersionFor = new HashSet<>();
     public static final boolean DEBUG_UPDATER = false;
     public static final boolean DEBUG_NOTIFICATION = false;
+    private final Set<String> checkedVersionFor = new HashSet<>();
 
     public boolean shouldCheckVersion() {
         try {
@@ -50,8 +54,9 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         super.onCreate();
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
         SearchApi.get(this).cacheSearchEngines();
+        MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
 
-        ErrorHandler.setup(Prefs.getFakeInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
+        ErrorHandler.setup(Prefs.getInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
 
         if (Prefs.getBoolean(this, PK.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
@@ -69,6 +74,19 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         }
 
         deprecatedBackwardCompatibility();
+
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    @Override
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        if (key.equals(PK.A2_ENABLE_NOTIFS.getKey())) {
+                            if (Prefs.getBoolean(prefs, PK.A2_ENABLE_NOTIFS, true))
+                                NotificationService.start(ThisApplication.this);
+                            else
+                                NotificationService.stop(ThisApplication.this);
+                        }
+                    }
+                });
     }
 
     @SuppressWarnings("deprecation")
