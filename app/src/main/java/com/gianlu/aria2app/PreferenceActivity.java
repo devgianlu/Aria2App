@@ -27,6 +27,11 @@ public class PreferenceActivity extends BasePreferenceActivity {
                 new MaterialAboutPreferenceItem(R.string.notifications, R.drawable.baseline_sms_24, NotificationsFragment.class));
     }
 
+    @Override
+    protected int getAppIconRes() {
+        return R.mipmap.ic_launcher;
+    }
+
     public static class GeneralFragment extends BasePreferenceFragment {
 
         @Override
