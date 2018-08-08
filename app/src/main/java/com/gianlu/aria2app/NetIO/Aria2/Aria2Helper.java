@@ -27,7 +27,7 @@ import java.util.List;
 public class Aria2Helper {
     private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = new AbstractClient.BatchSandbox<VersionAndSession>() {
         @Override
-        public VersionAndSession sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+        public VersionAndSession sandbox(AbstractClient client) throws Exception {
             return new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
         }
     };
@@ -35,7 +35,7 @@ public class Aria2Helper {
     private final SharedPreferences preferences;
     private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = new AbstractClient.BatchSandbox<DownloadsAndGlobalStats>() {
         @Override
-        public DownloadsAndGlobalStats sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+        public DownloadsAndGlobalStats sandbox(AbstractClient client) throws Exception {
             List<DownloadWithUpdate> all = new ArrayList<>();
             all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
             all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
@@ -86,7 +86,7 @@ public class Aria2Helper {
     public void getServersAndFiles(final String gid, AbstractClient.OnResult<SparseServersWithFiles> listener) {
         client.batch(new AbstractClient.BatchSandbox<SparseServersWithFiles>() {
             @Override
-            public SparseServersWithFiles sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            public SparseServersWithFiles sandbox(AbstractClient client) throws Exception {
                 SparseServers servers = client.sendSync(AriaRequests.getServers(gid));
                 AriaFiles files = client.sendSync(AriaRequests.getFiles(gid));
                 return new SparseServersWithFiles(servers, files);
@@ -97,7 +97,7 @@ public class Aria2Helper {
     public void addDownloads(@NonNull final Collection<AddDownloadBundle> bundles, AbstractClient.OnResult<List<String>> listener) {
         client.batch(new AbstractClient.BatchSandbox<List<String>>() {
             @Override
-            public List<String> sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            public List<String> sandbox(AbstractClient client) throws Exception {
                 List<String> results = new ArrayList<>(bundles.size());
                 for (AddDownloadBundle bundle : bundles)
                     results.add(client.sendSync(AriaRequests.addDownload(bundle)));
@@ -225,7 +225,7 @@ public class Aria2Helper {
         }
 
         @Override
-        public void onException(Exception ex, boolean shouldForce) {
+        public void onException(Exception ex) {
             listener.showToast(Toaster.build().message(R.string.failedAction).ex(ex));
         }
 

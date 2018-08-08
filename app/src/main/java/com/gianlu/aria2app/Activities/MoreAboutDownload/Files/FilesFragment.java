@@ -209,7 +209,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
+            public void onException(Exception ex) {
                 showToast(Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
             }
         });

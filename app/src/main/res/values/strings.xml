@@ -75,22 +75,12 @@
     <string name="globalOptions">Global options</string>
     <string name="downloadOptions">Download options</string>
     <string name="general">General</string>
-    <string name="forceAction">Force action if it fails</string>
-    <string name="forceActionOn">If action on download fails, we\'ll try to force it</string>
-    <string name="forceActionOff">If action on download fails, we\'re going to do nothing</string>
     <string name="notifications">Notifications</string>
-    <string name="enableNotifications">Enable notification service</string>
-    <string name="notificationsOn">Notifications are enabled</string>
-    <string name="notificationsOff">Notifications are disabled</string>
-    <string name="notificationType">Notification type</string>
-    <string name="notificationTypeSummary">Select which type of notifications to receive</string>
+
     <string name="about_aria2">About aria2</string>
     <string name="saveSession">Save session</string>
     <string name="editProfile">Edit or delete profile</string>
     <string name="stopNotificationService">Stop service</string>
-    <string name="versionCheck">Check aria2 version at startup</string>
-    <string name="enabledVersionCheck">Version will be checked and you\'ll be notified if your version it\'s outdated</string>
-    <string name="disabledVersionCheck">No version check will be performed</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
     <string name="notificationService">Notification service</string>
     <string name="writeExternalStorageRequest_title">Write permission required</string>
@@ -103,8 +93,7 @@
     <string name="addUri">Add URI</string>
     <string name="directDownload">DirectDownload</string>
     <string name="quickGlobalOptions">Quick global options</string>
-    <string name="dd_downloadPath">Download path</string>
-    <string name="dd_downloadPath_summary">All files are going to be downloaded here.</string>
+
     <string name="connecting">Connecting…</string>
     <string name="completed">Completed</string>
     <string name="searchTorrent">Search for torrents</string>
@@ -153,9 +142,6 @@
     <string name="outdated_aria2">Outdated aria2 version</string>
     <string name="outdated_aria2_message">Your version of aria2 is outdated. Aria2App is developed to run on the latest aria2 version and so you should update it. You can disable this message in the preferences. \n\nCurrent version: %1$s \nLatest version: %2$s</string>
     <string name="selectFile_help">File can be selected or deselected from download only on multi-file torrents.</string>
-    <string name="enableNotificationsAtBoot">Start notification service at boot</string>
-    <string name="notificationsAtBootOn">Notification service will be started at boot</string>
-    <string name="notificationsAtBootOff">Notification service won\'t be started at boot</string>
     <string name="nameLabel">Name</string>
     <string name="searchDownloads">Search for download</string>
     <string name="failedLoadingDownloads">Failed loading downloads!</string>
@@ -252,9 +238,6 @@
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">Search engines</string>
     <string name="noEnginesSelected">Select at least one search engine!</string>
-    <string name="dd_maxSimultaneousDownloads_summary">Maximum number of downloads running at the same time</string>
-    <string name="dd_maxSimultaneousDownloads">Max simultaneous downloads</string>
-    <string name="invalidMaxSimultaneousDownloads">Value must be higher than 0 and lower or equal to 10</string>
     <string name="pending">Pending</string>
     <string name="started">Started</string>
     <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
@@ -264,11 +247,7 @@
     <string name="failedOpeningDownload">Failed opening the download!</string>
     <string name="ddNotEnabled">DirectDownload isn\'t enabled on this profile!</string>
     <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>
-    <string name="dd_resume">Resume downloads</string>
-    <string name="dd_resume_summary">Resume paused downloads when the app is opened</string>
     <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: https://gianlu.xyz/documents/Aria2App/setup-directdownload</string>
-    <string name="downloadDisplayInfo">Download display info</string>
-    <string name="downloadDisplayInfoSummary">Customize the info shown under the download name</string>
     <string name="remainingTime">Remaining time</string>
     <string name="connectionsLabel">Connections</string>
     <string name="numSeederLabel">Seeders</string>
@@ -317,9 +296,6 @@
     <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
-    <string name="nightMode">Night mode (dark theme)</string>
-    <string name="nightModeOff">Night mode is following system default.</string>
-    <string name="nightModeOn">Night mode is permanently enabled.</string>
     <string name="isp">Internet service provider: %s</string>
     <string name="batchAdd">Batch add</string>
     <string name="torrents">Torrents</string>
@@ -334,28 +310,31 @@
     <string name="urisFile_help">To know more about URI files, visit this page: https://gianlu.xyz/documents/Aria2App/uri-file/</string>
 
     <!-- Prefs -->
+    <!-- - General -->
     <string name="prefs_hideMetadata">Hide linked metadata</string>
-    <string name="prefs_hideMetadata_summary">Hide metadata that started another download</string>
+    <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
     <string name="prefs_updateRate">Update rate</string>
-    <string name="prefs_updateRate_summary">UI update rate in seconds</string>
+    <string name="prefs_updateRate_summary">UI update rate in seconds.</string>
+    <string name="prefs_nightMode">Enable night mode (dark theme)</string>
+    <string name="prefs_nightMode_summary">Always enable night mode, regarding of the system default.</string>
+    <string name="prefs_downloadDisplayInfo">Download display info</string>
+    <string name="prefs_downloadDisplayInfo_summary">Customize the info shown in the download card.</string>
+    <string name="prefs_versionCheck">Check aria2 version at startup</string>
+    <string name="prefs_versionCheck_summary">Check that the latest version of aria2 is running.</string>
 
-    <!-- String-arrays -->
-    <string-array name="selectedNotificationsValue" translatable="false">
-        <item>START</item>
-        <item>PAUSE</item>
-        <item>STOP</item>
-        <item>COMPLETE</item>
-        <item>BTCOMPLETE</item>
-        <item>ERROR</item>
-    </string-array>
-    <string-array name="selectedNotifications" translatable="false">
-        <item>@string/notificationStarted</item>
-        <item>@string/notificationPaused</item>
-        <item>@string/notificationStopped</item>
-        <item>@string/notificationComplete</item>
-        <item>@string/notificationBTComplete</item>
-        <item>@string/notificationError</item>
-    </string-array>
+    <!-- - DirectDownload -->
+    <string name="prefs_ddDownloadPath">Download path</string>
+    <string name="prefs_ddDownloadPath_summary">All files are going to be downloaded here.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Max simultaneous downloads</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximum number of downloads running at the same time.</string>
+    <string name="prefs_ddResume">Resume downloads</string>
+    <string name="prefs_ddResume_summary">Resume paused downloads at startup</string>
 
-    <string-array name="empty_array" translatable="false" />
+    <!-- - Notifications -->
+    <string name="prefs_enableNotifications">Enable notification service</string>
+    <string name="prefs_enableNotifications_summary">You\'ll receive notifications for your selected profiles</string>
+    <string name="prefs_notificationType">Notification types</string>
+    <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
+    <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
+    <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
 </resources>

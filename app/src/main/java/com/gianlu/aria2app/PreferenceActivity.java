@@ -35,8 +35,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .defaultValue(false)
                     .key(PK.NIGHT_MODE.getKey())
                     .build();
-            nightMode.setTitle(R.string.nightMode); // FIXME
-            nightMode.setSummary(R.string.nightMode); // FIXME
+            nightMode.setTitle(R.string.prefs_nightMode);
+            nightMode.setSummary(R.string.prefs_nightMode_summary);
             addPreference(nightMode);
 
             MaterialCheckboxPreference hideMetadata = new MaterialCheckboxPreference.Builder(context)
@@ -63,24 +63,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .showValueMode(AbsMaterialTextValuePreference.SHOW_ON_BOTTOM)
                     .key(PK.A2_CUSTOM_INFO.getKey())
                     .build();
-            customDownloadInfo.setTitle(R.string.downloadDisplayInfo); // FIXME
-            customDownloadInfo.setSummary(R.string.downloadDisplayInfoSummary); // FIXME
+            customDownloadInfo.setTitle(R.string.prefs_downloadDisplayInfo);
+            customDownloadInfo.setSummary(R.string.prefs_downloadDisplayInfo_summary);
             addPreference(customDownloadInfo);
-
-            MaterialCheckboxPreference forceAction = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.A2_FORCE_ACTION.getKey())
-                    .defaultValue(true)
-                    .build();
-            forceAction.setTitle(R.string.forceAction); // FIXME
-            forceAction.setSummary(R.string.forceAction); // FIXME
-            addPreference(forceAction);
 
             MaterialCheckboxPreference versionCheck = new MaterialCheckboxPreference.Builder(context)
                     .key(PK.A2_CHECK_VERSION.getKey())
                     .defaultValue(true)
                     .build();
-            versionCheck.setTitle(R.string.versionCheck); // FIXME
-            versionCheck.setSummary(R.string.versionCheck); // FIXME
+            versionCheck.setTitle(R.string.prefs_versionCheck);
+            versionCheck.setSummary(R.string.prefs_versionCheck_summary);
             addPreference(versionCheck);
         }
 
@@ -99,8 +91,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .key(PK.DD_DOWNLOAD_PATH.getKey())
                     .defaultValue(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())
                     .build();
-            downloadPath.setTitle(R.string.dd_downloadPath); // FIXME
-            downloadPath.setSummary(R.string.dd_downloadPath_summary); // FIXME
+            downloadPath.setTitle(R.string.prefs_ddDownloadPath);
+            downloadPath.setSummary(R.string.prefs_ddDownloadPath_summary);
             addPreference(downloadPath);
 
             MaterialSeekBarPreference concurrentDownloads = new MaterialSeekBarPreference.Builder(context)
@@ -108,16 +100,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .key(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS.getKey())
                     .defaultValue(3)
                     .build();
-            concurrentDownloads.setTitle(R.string.dd_maxSimultaneousDownloads); // FIXME
-            concurrentDownloads.setSummary(R.string.dd_maxSimultaneousDownloads_summary); // FIXME
+            concurrentDownloads.setTitle(R.string.prefs_ddMaxSimultaneousDownloads);
+            concurrentDownloads.setSummary(R.string.prefs_ddMaxSimultaneousDownloads_summary);
             addPreference(concurrentDownloads);
 
             MaterialCheckboxPreference resume = new MaterialCheckboxPreference.Builder(context)
                     .key(PK.DD_RESUME.getKey())
                     .defaultValue(true)
                     .build();
-            resume.setTitle(R.string.dd_resume); // FIXME
-            resume.setSummary(R.string.dd_resume_summary); // FIXME
+            resume.setTitle(R.string.prefs_ddResume);
+            resume.setSummary(R.string.prefs_ddResume_summary);
             addPreference(resume);
         }
 
@@ -135,17 +127,9 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .key(PK.A2_ENABLE_NOTIFS.getKey())
                     .defaultValue(true)
                     .build();
-            enable.setTitle(R.string.enableNotifications); // FIXME
-            enable.setSummary(R.string.enableNotifications); // FIXME
+            enable.setTitle(R.string.prefs_enableNotifications);
+            enable.setSummary(R.string.prefs_enableNotifications_summary);
             addPreference(enable);
-
-            MaterialCheckboxPreference startAtBoot = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.A2_NOTIFS_AT_BOOT.getKey())
-                    .defaultValue(true)
-                    .build();
-            startAtBoot.setTitle(R.string.enableNotificationsAtBoot); // FIXME
-            startAtBoot.setSummary(R.string.enableNotificationsAtBoot); // FIXME
-            addPreference(startAtBoot);
 
             MaterialMultiChoicePreference types = new MaterialMultiChoicePreference.Builder(context)
                     .entryValues(NotificationService.EventType.prefsValues())
@@ -154,9 +138,17 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .key(PK.A2_SELECTED_NOTIFS_TYPE.getKey())
                     .defaultValue(new HashSet<>(Arrays.asList(NotificationService.EventType.prefsValues())))
                     .build();
-            types.setTitle(R.string.notificationType); // FIXME
-            types.setSummary(R.string.notificationTypeSummary); // FIXME
+            types.setTitle(R.string.prefs_notificationType);
+            types.setSummary(R.string.prefs_notificationType_summary);
             addPreference(types);
+
+            MaterialCheckboxPreference startAtBoot = new MaterialCheckboxPreference.Builder(context)
+                    .key(PK.A2_NOTIFS_AT_BOOT.getKey())
+                    .defaultValue(true)
+                    .build();
+            startAtBoot.setTitle(R.string.prefs_enableNotificationsAtBoot);
+            startAtBoot.setSummary(R.string.prefs_enableNotificationsAtBoot_summary);
+            addPreference(startAtBoot);
 
             addController(enable, true, startAtBoot, types);
         }

@@ -41,7 +41,7 @@ public class ServersProvider extends PayloadProvider<SparseServersWithFiles> {
         }
 
         @Override
-        public void onException(Exception ex, boolean shouldForce) {
+        public void onException(Exception ex) {
             errorOccurred(ex);
         }
     }

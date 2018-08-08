@@ -100,7 +100,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
                 try {
                     adapter = OptionsAdapter.setup(getContext(), result, false, false, true, OptionsFragment.this);
                 } catch (IOException | JSONException ex) {
-                    onException(ex, false);
+                    onException(ex);
                     return;
                 }
 
@@ -115,7 +115,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
+            public void onException(Exception ex) {
                 message.setError(R.string.failedLoading);
                 optionsView.setVisibility(View.GONE);
                 loading.setVisibility(View.GONE);
