@@ -110,7 +110,7 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
 
     @Override
     public void onException(Exception ex) {
-        DialogUtils.showToast(requireContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
+        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
         dismissAllowingStateLoss();
     }
 }
