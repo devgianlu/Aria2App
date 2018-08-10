@@ -163,8 +163,6 @@
     <string name="certDisclaimer">A certificate isn\'t required if your server is already trusted by this system (usually if you installed the certificate or if your certificate is signed by a trusted source)</string>
     <string name="test">Test</string>
     <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
-    <string name="restartTutorial">Restart tutorial</string>
-    <string name="restartTutorialSummary">Show tutorial again</string>
     <string name="peerDetails">Peer details</string>
     <string name="peerDetails_desc">Tap on the item to reveal details about the peer</string>
     <string name="serverDetails">Server details</string>
@@ -182,7 +180,6 @@
     <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
     <string name="filename">Filename:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
-    <string name="failedGatheringInfo">Failed gathering information!</string>
     <string name="sessionSaved">Session saved correctly.</string>
     <string name="downloadAdded">Download added.</string>
     <string name="downloadPaused">Download paused.</string>
@@ -283,9 +280,6 @@
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
     <string name="stream">Stream</string>
     <string name="failedStreamVideo">Failed to stream the video!</string>
-    <string name="mpAndroidChart" translatable="false">MPAndroidChart</string>
-    <string name="tapTargetView" translatable="false">TapTargetView</string>
-    <string name="flowLayout" translatable="false">Android flow layout</string>
     <string name="select">Select</string>
     <string name="deselect">Deselect</string>
     <string name="selectAll">Select all</string>
