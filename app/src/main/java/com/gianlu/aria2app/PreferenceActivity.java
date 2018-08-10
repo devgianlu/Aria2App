@@ -3,6 +3,7 @@ package com.gianlu.aria2app;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Preferences.BasePreferenceActivity;
@@ -35,6 +36,12 @@ public class PreferenceActivity extends BasePreferenceActivity {
     @Override
     protected boolean hasTutorial() {
         return true;
+    }
+
+    @Nullable
+    @Override
+    protected String getOpenSourceUrl() {
+        return null;
     }
 
     public static class GeneralFragment extends BasePreferenceFragment {
