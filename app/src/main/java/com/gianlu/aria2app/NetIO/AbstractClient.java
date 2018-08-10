@@ -56,6 +56,7 @@ public abstract class AbstractClient implements Closeable {
         this.handler = new Handler(Looper.getMainLooper());
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
 
+
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
 
@@ -73,15 +74,20 @@ public abstract class AbstractClient implements Closeable {
 
     @Override
     protected void finalize() throws Throwable {
-        if (context.get() != null)
-            context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
-
+        removeReceiver();
         super.finalize();
+    }
+
+    private void removeReceiver() {
+        if (context.get() != null && !shouldIgnoreCommunication)
+            context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
     }
 
     @Override
     @WorkerThread
     public final void close() {
+        removeReceiver();
+
         shouldIgnoreCommunication = true;
 
         closeClient();
