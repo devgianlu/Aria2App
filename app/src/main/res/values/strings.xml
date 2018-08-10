@@ -75,7 +75,6 @@
     <string name="downloadOptions">Download options</string>
     <string name="general">General</string>
     <string name="notifications">Notifications</string>
-
     <string name="about_aria2">About aria2</string>
     <string name="saveSession">Save session</string>
     <string name="editProfile">Edit or delete profile</string>
