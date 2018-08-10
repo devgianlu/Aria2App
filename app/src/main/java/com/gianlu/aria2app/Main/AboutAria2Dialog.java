@@ -22,7 +22,6 @@ import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
-// TODO: Missing save session
 public class AboutAria2Dialog extends DialogFragment implements AbstractClient.OnResult<VersionAndSession> {
     private Aria2Helper helper;
     private SuperTextView version;

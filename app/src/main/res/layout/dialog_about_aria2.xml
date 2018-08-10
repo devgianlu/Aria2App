@@ -52,7 +52,7 @@
             style="?android:borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/export" />
+            android:text="@string/saveSession" />
 
         <Button
             android:id="@+id/aboutAria2Dialog_ok"
