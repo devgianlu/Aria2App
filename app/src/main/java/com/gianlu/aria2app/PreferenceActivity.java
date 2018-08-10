@@ -32,6 +32,11 @@ public class PreferenceActivity extends BasePreferenceActivity {
         return R.mipmap.ic_launcher;
     }
 
+    @Override
+    protected boolean hasTutorial() {
+        return true;
+    }
+
     public static class GeneralFragment extends BasePreferenceFragment {
 
         @Override

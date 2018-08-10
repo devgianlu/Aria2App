@@ -278,7 +278,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 .setNeutralButton(R.string.contactMe, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CommonUtils.sendEmail(LoadingActivity.this, getString(R.string.app_name), ex);
+                        CommonUtils.sendEmail(LoadingActivity.this, ex);
                     }
                 })
                 .setMessage(ex.toString());

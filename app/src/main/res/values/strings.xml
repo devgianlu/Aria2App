@@ -1,6 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Aria2App</string>
-    <string name="mpAndroidChart_details" translatable="false">Copyright 2016 Philipp Jahoda</string>
     <string name="downloadStatus_waiting">Waiting in queue</string>
     <string name="downloadStatus_error">Error</string>
     <string name="downloadStatus_paused">Paused</string>
@@ -182,7 +181,6 @@
     <string name="fileDetails_desc">Tap on a file to reveal details or to download it</string>
     <string name="folderDetails">Folder details</string>
     <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
-    <string name="tapTargetView_details" translatable="false">Copyright 2016 Keepsafe Software Inc.</string>
     <string name="filename">Filename:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
     <string name="failedGatheringInfo">Failed gathering information!</string>
@@ -251,7 +249,6 @@
     <string name="remainingTime">Remaining time</string>
     <string name="connectionsLabel">Connections</string>
     <string name="numSeederLabel">Seeders</string>
-    <string name="flowLayout_details" translatable="false">Copyright 2011, Artem Votincev (apmem.org)</string>
     <string name="selectCertificate">Select/change certificate</string>
     <string name="certificateDetails">Certificate details</string>
     <string name="serialNumber"><![CDATA[<b>Serial number:</b>]]> %s</string>
