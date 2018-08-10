@@ -88,6 +88,8 @@ public final class TopCountriesView extends FlowLayout {
         topCountries.clear();
 
         for (Peer peer : peers) {
+            if (peer.ip == null) continue;
+
             IPDetails details = freeGeoIp.getCached(peer.ip);
             if (details != null)
                 add(details.countryCode, download ? peer.downloadSpeed : peer.uploadSpeed);
