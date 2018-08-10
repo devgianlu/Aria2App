@@ -12,7 +12,6 @@ public enum PK implements Prefs.PrefKey {
     LAST_USED_PROFILE("lastUsedProfile"),
     DD_MAX_SIMULTANEOUS_DOWNLOADS("dd_maxSimultaneousDownloads"),
     A2_NOTIFS_AT_BOOT("a2_enableNotificationsAtBoot"),
-    A2_FORCE_ACTION("a2_forceAction"),
     A2_MAIN_FILTERS("a2_mainFilters"),
     A2_ENABLE_NOTIFS("a2_enableNotifications"),
     A2_UPDATE_INTERVAL("a2_updateRate"),

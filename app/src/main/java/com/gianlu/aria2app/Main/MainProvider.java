@@ -38,7 +38,7 @@ class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
         }
 
         @Override
-        public void onException(Exception ex, boolean shouldForce) {
+        public void onException(Exception ex) {
             errorOccurred(ex);
         }
     }

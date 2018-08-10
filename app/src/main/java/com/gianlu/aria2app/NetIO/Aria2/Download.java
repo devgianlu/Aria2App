@@ -11,7 +11,6 @@ import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,8 +55,8 @@ public class Download {
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                listener.onException(ex, shouldForce);
+            public void onException(Exception ex) {
+                listener.onException(ex);
             }
         });
     }
@@ -95,22 +94,7 @@ public class Download {
     }
 
     public final void pause(final AbstractClient.OnSuccess listener) {
-        client.send(AriaRequests.pause(gid), new AbstractClient.OnSuccess() {
-            private boolean retried = false;
-
-            @Override
-            public void onSuccess() {
-                listener.onSuccess();
-            }
-
-            @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                if (!retried && shouldForce)
-                    client.send(AriaRequests.forcePause(gid), this);
-                else listener.onException(ex, shouldForce);
-                retried = true;
-            }
-        });
+        client.send(AriaRequests.pause(gid), listener);
     }
 
     public final void unpause(AbstractClient.OnSuccess listener) {
@@ -124,7 +108,7 @@ public class Download {
     public final void restart(AbstractClient.OnResult<String> listener) {
         client.batch(new AbstractClient.BatchSandbox<String>() {
             @Override
-            public String sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            public String sandbox(AbstractClient client) throws Exception {
                 DownloadWithUpdate old = client.sendSync(AriaRequests.tellStatus(gid));
                 Map<String, String> oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
 
@@ -142,7 +126,7 @@ public class Download {
     public final void remove(final boolean removeMetadata, AbstractClient.OnResult<RemoveResult> listener) {
         client.batch(new AbstractClient.BatchSandbox<RemoveResult>() {
             @Override
-            public RemoveResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            public RemoveResult sandbox(AbstractClient client) throws Exception {
                 DownloadWithUpdate.SmallUpdate last = client.sendSync(AriaRequests.tellStatus(gid)).update();
                 if (last.status == Download.Status.COMPLETE || last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED) {
                     client.sendSync(AriaRequests.removeDownloadResult(gid));
@@ -153,15 +137,7 @@ public class Download {
                         return RemoveResult.REMOVED_RESULT;
                     }
                 } else {
-                    try {
-                        client.sendSync(AriaRequests.remove(gid));
-                    } catch (IOException ex) {
-                        if (shouldForce)
-                            client.sendSync(AriaRequests.forceRemove(gid));
-                        else
-                            throw ex;
-                    }
-
+                    client.sendSync(AriaRequests.remove(gid));
                     return RemoveResult.REMOVED;
                 }
             }
@@ -171,7 +147,7 @@ public class Download {
     public final void changeSelection(final Integer[] selIndexes, final boolean select, AbstractClient.OnResult<ChangeSelectionResult> listener) {
         client.batch(new AbstractClient.BatchSandbox<ChangeSelectionResult>() {
             @Override
-            public ChangeSelectionResult sandbox(AbstractClient client, boolean shouldForce) throws Exception {
+            public ChangeSelectionResult sandbox(AbstractClient client) throws Exception {
                 Map<String, String> options = client.sendSync(AriaRequests.getDownloadOptions(gid));
                 String currIndexes = options.get("select-file");
                 if (currIndexes == null)

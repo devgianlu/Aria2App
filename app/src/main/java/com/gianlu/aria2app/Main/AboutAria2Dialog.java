@@ -22,6 +22,7 @@ import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 
+// TODO: Missing save session
 public class AboutAria2Dialog extends DialogFragment implements AbstractClient.OnResult<VersionAndSession> {
     private Aria2Helper helper;
     private SuperTextView version;
@@ -80,7 +81,7 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
                     }
 
                     @Override
-                    public void onException(Exception ex, boolean shouldForce) {
+                    public void onException(Exception ex) {
                         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedSavingSession).ex(ex));
                     }
                 });
@@ -109,8 +110,8 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
     }
 
     @Override
-    public void onException(Exception ex, boolean shouldForce) {
-        DialogUtils.showToast(requireContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
+    public void onException(Exception ex) {
+        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
         dismissAllowingStateLoss();
     }
 }

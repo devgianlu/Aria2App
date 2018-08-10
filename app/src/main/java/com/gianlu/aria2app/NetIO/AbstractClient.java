@@ -13,9 +13,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
-import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +38,6 @@ import okhttp3.OkHttpClient;
 public abstract class AbstractClient implements Closeable {
     private static final List<OnConnectivityChanged> listeners = new ArrayList<>();
     protected final OkHttpClient client;
-    protected final boolean shouldForce;
     protected final Handler handler;
     private final WifiManager wifiManager;
     private final WeakReference<Context> context;
@@ -58,7 +55,7 @@ public abstract class AbstractClient implements Closeable {
         this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
-        this.shouldForce = Prefs.getBoolean(context, PK.A2_FORCE_ACTION, true);
+
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }
@@ -77,15 +74,20 @@ public abstract class AbstractClient implements Closeable {
 
     @Override
     protected void finalize() throws Throwable {
-        if (context.get() != null)
-            context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
-
+        removeReceiver();
         super.finalize();
+    }
+
+    private void removeReceiver() {
+        if (context.get() != null && !shouldIgnoreCommunication)
+            context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
     }
 
     @Override
     @WorkerThread
     public final void close() {
+        removeReceiver();
+
         shouldIgnoreCommunication = true;
 
         closeClient();
@@ -115,7 +117,7 @@ public abstract class AbstractClient implements Closeable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onException(ex, shouldForce);
+                            listener.onException(ex);
                         }
                     });
                 }
@@ -124,7 +126,7 @@ public abstract class AbstractClient implements Closeable {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onException(ex, shouldForce);
+                    listener.onException(ex);
                 }
             });
         }
@@ -160,7 +162,7 @@ public abstract class AbstractClient implements Closeable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onException(ex, shouldForce);
+                            listener.onException(ex);
                         }
                     });
                 }
@@ -169,7 +171,7 @@ public abstract class AbstractClient implements Closeable {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    listener.onException(ex, shouldForce);
+                    listener.onException(ex);
                 }
             });
         }
@@ -201,7 +203,7 @@ public abstract class AbstractClient implements Closeable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        listener.onException(ex, shouldForce);
+                        listener.onException(ex);
                     }
                 });
             }
@@ -232,7 +234,7 @@ public abstract class AbstractClient implements Closeable {
 
     private long nextRequestId() {
         synchronized (requestIds) {
-            return requestIds.getAndIncrement(); // FIXME: Fucks up some stuff
+            return requestIds.getAndIncrement();
         }
     }
 
@@ -283,7 +285,7 @@ public abstract class AbstractClient implements Closeable {
 
     public interface BatchSandbox<R> {
         @WorkerThread
-        R sandbox(AbstractClient client, boolean shouldForce) throws Exception;
+        R sandbox(AbstractClient client) throws Exception;
     }
 
     public interface OnResult<R> {
@@ -291,7 +293,7 @@ public abstract class AbstractClient implements Closeable {
         void onResult(@NonNull R result);
 
         @UiThread
-        void onException(Exception ex, boolean shouldForce);
+        void onException(Exception ex);
     }
 
     public interface OnSuccess {
@@ -299,7 +301,7 @@ public abstract class AbstractClient implements Closeable {
         void onSuccess();
 
         @UiThread
-        void onException(Exception ex, boolean shouldForce);
+        void onException(Exception ex);
     }
 
     public interface OnConnectivityChanged {

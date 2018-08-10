@@ -37,7 +37,7 @@ class Aria2Tester extends BaseTester<Boolean> {
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
+            public void onException(Exception ex) {
                 synchronized (lock) {
                     lock.set(ex);
                     lock.notify();

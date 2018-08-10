@@ -1167,12 +1167,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
-        <activity android:name=".PreferencesActivity" />
+        <activity android:name=".PreferenceActivity" />
 
         <!-- Logs activity -->
-        <activity
-            android:name="com.gianlu.commonutils.LogsActivity"
-            android:parentActivityName=".PreferencesActivity" />
+        <activity android:name="com.gianlu.commonutils.LogsActivity" />
 
         <!-- Search Torrent activity -->
         <activity

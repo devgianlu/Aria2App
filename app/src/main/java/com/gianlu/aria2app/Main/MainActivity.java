@@ -73,7 +73,7 @@ import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.PreferencesActivity;
+import com.gianlu.aria2app.PreferenceActivity;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -220,10 +220,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 showDialog(OptionsDialog.getGlobal(false));
                 return true;
             case DrawerConst.PREFERENCES:
-                startActivity(new Intent(this, PreferencesActivity.class));
+                startActivity(new Intent(this, PreferenceActivity.class));
                 return false;
             case DrawerConst.SUPPORT:
-                CommonUtils.sendEmail(this, getString(R.string.app_name), null);
+                CommonUtils.sendEmail(this, null);
                 return true;
             case DrawerConst.ABOUT_ARIA2:
                 AboutAria2Dialog.get().show(getSupportFragmentManager(), null);
@@ -525,7 +525,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     }
 
                     @Override
-                    public void onException(Exception ex, boolean shouldForce) {
+                    public void onException(Exception ex) {
                         Logging.log(ex);
                     }
                 });
@@ -764,18 +764,14 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     private void pauseAll() {
         helper.request(AriaRequests.pauseAll(), new AbstractClient.OnSuccess() {
-            private boolean retried = false;
-
             @Override
             public void onSuccess() {
                 Toaster.with(MainActivity.this).message(R.string.pausedAll).show();
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
-                if (!retried && shouldForce) helper.request(AriaRequests.forcePauseAll(), this);
-                else Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
-                retried = true;
+            public void onException(Exception ex) {
+                Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
     }
@@ -788,7 +784,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
+            public void onException(Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
@@ -802,7 +798,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
+            public void onException(Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });

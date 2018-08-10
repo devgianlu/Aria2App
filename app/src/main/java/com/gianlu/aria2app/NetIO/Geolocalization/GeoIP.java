@@ -51,7 +51,7 @@ public final class GeoIP {
     }
 
     @Nullable
-    public IPDetails getCached(String ip) {
+    public IPDetails getCached(@NonNull String ip) {
         return cache.get(ip);
     }
 

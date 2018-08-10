@@ -201,7 +201,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             }
 
             @Override
-            public void onException(Exception ex, boolean shouldForce) {
+            public void onException(Exception ex) {
                 pd.dismiss();
                 DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions).ex(ex));
             }
@@ -273,12 +273,12 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         try {
             optionsView.setAdapter(OptionsAdapter.setup(getContext(), result, global, quick, false, this));
         } catch (IOException | JSONException ex) {
-            onException(ex, false);
+            onException(ex);
         }
     }
 
     @Override
-    public void onException(Exception ex, boolean shouldForce) {
+    public void onException(Exception ex) {
         if (!isAdded()) return;
 
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));

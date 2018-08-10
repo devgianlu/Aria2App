@@ -60,7 +60,7 @@ public class DownloaderService extends Service {
 
         downloads.notifyCountChanged();
 
-        int maxSimultaneousDownloads = Prefs.getFakeInt(this, PK.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
+        int maxSimultaneousDownloads = Prefs.getInt(this, PK.DD_MAX_SIMULTANEOUS_DOWNLOADS, 3);
         if (maxSimultaneousDownloads <= 0) maxSimultaneousDownloads = 3;
         else if (maxSimultaneousDownloads > 10) maxSimultaneousDownloads = 10;
         executorService = Executors.newFixedThreadPool(maxSimultaneousDownloads);
