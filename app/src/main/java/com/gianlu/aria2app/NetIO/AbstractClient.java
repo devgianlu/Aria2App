@@ -22,16 +22,11 @@ import org.json.JSONObject;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-
-import javax.net.ssl.SSLContext;
 
 import okhttp3.OkHttpClient;
 
@@ -44,18 +39,15 @@ public abstract class AbstractClient implements Closeable {
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     private final AtomicLong requestIds = new AtomicLong(Long.MIN_VALUE);
     protected MultiProfile.UserProfile profile;
-    protected SSLContext sslContext;
     protected boolean shouldIgnoreCommunication = false;
 
-    AbstractClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+    AbstractClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        this.sslContext = NetUtils.createSSLContext(profile.certificate);
-        this.client = NetUtils.buildClient(profile, sslContext);
+        this.client = NetUtils.buildClient(profile);
         this.profile = profile;
         this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
-
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
     }

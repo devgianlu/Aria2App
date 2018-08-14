@@ -47,10 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -344,7 +341,7 @@ public class NotificationService extends Service {
 
             try {
                 webSockets.add(NetUtils.buildClient(profile).newWebSocket(NetUtils.createWebsocketRequest(profile), new NotificationsHandler(profile)));
-            } catch (IOException | NoSuchAlgorithmException | NetUtils.InvalidUrlException | CertificateException | KeyManagementException | KeyStoreException ex) {
+            } catch (IOException | NetUtils.InvalidUrlException | GeneralSecurityException ex) {
                 notifyException(profile, ex);
             }
         }

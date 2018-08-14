@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,18 +31,18 @@ public class HttpClient extends AbstractClient {
     private final ExecutorService executorService;
     private final URI url;
 
-    private HttpClient(Context context) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
+    private HttpClient(Context context) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrentSpecific());
     }
 
-    private HttpClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
+    private HttpClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         super(context, profile);
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
         this.url = NetUtils.createHttpURL(profile);
     }
 
-    private HttpClient(Context context, final MultiProfile.UserProfile profile, @Nullable final OnConnect connectionListener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
+    private HttpClient(Context context, final MultiProfile.UserProfile profile, @Nullable final OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         this(context, profile);
 
         executorService.submit(new Runnable() {
@@ -85,7 +82,7 @@ public class HttpClient extends AbstractClient {
         if (instance == null) {
             try {
                 instance = new HttpClient(context);
-            } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyManagementException | NetUtils.InvalidUrlException | KeyStoreException | ProfilesManager.NoCurrentProfileException ex) {
+            } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException ex) {
                 throw new InitializationException(ex);
             }
         }
@@ -96,7 +93,7 @@ public class HttpClient extends AbstractClient {
     public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull final OnConnect listener) {
         try {
             instance = new HttpClient(context, profile, listener);
-        } catch (CertificateException | IOException | KeyManagementException | NoSuchAlgorithmException | NetUtils.InvalidUrlException | KeyStoreException ex) {
+        } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException ex) {
             listener.onFailedConnecting(ex);
         }
     }

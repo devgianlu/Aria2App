@@ -12,17 +12,17 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
-import java.security.KeyManagementException;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -52,52 +52,36 @@ public final class NetUtils {
         }
     }
 
-    @NonNull
-    static SSLContext createSSLContext(@Nullable Certificate ca) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
-        if (ca == null) return SSLContext.getDefault();
-
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
+    private static void setSslSocketFactory(@NonNull OkHttpClient.Builder builder, @NonNull Certificate ca) throws GeneralSecurityException, IOException {
+        char[] password = "password".toCharArray();
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null, password);
         keyStore.setCertificateEntry("ca", ca);
 
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.getTrustManagers(), null);
-
-        return context;
-    }
-
-    private static void setSslSocketFactory(@NonNull OkHttpClient.Builder builder, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, password);
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init((KeyStore) null);
+        trustManagerFactory.init(keyStore);
         TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
         if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager))
-            return;
+            throw new GeneralSecurityException("Unexpected default trust managers:" + Arrays.toString(trustManagers));
 
-        X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
-        if (SSLContext.getDefault() != sslContext)
-            sslContext.init(null, new TrustManager[]{trustManager}, null);
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[]{trustManagers[0]}, null);
+        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
-        builder.sslSocketFactory(sslContext.getSocketFactory(), trustManager);
+        builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0]);
     }
 
     @NonNull
-    public static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-        return buildClient(profile, createSSLContext(profile.certificate));
-    }
-
-    @NonNull
-    static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile, @NonNull SSLContext sslContext) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS);
 
-        setSslSocketFactory(builder, sslContext);
+        if (profile.certificate != null)
+            setSslSocketFactory(builder, profile.certificate);
 
         if (!profile.hostnameVerifier) {
             builder.hostnameVerifier(new HostnameVerifier() {

@@ -13,10 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -35,17 +32,17 @@ public class WebSocketClient extends AbstractClient {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private OnConnect connectionListener = null;
 
-    private WebSocketClient(Context context, MultiProfile.UserProfile profile) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
+    private WebSocketClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
         super(context, profile);
         webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
         initializedAt = System.currentTimeMillis();
     }
 
-    private WebSocketClient(Context context) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException {
+    private WebSocketClient(Context context) throws GeneralSecurityException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException, IOException {
         this(context, ProfilesManager.get(context).getCurrentSpecific());
     }
 
-    private WebSocketClient(Context context, MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws CertificateException, IOException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException, NetUtils.InvalidUrlException {
+    private WebSocketClient(Context context, MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
         this(context, profile);
         connectionListener = listener;
     }
@@ -55,7 +52,7 @@ public class WebSocketClient extends AbstractClient {
         if (instance == null) {
             try {
                 instance = new WebSocketClient(context);
-            } catch (NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException | IOException | NoSuchAlgorithmException | KeyStoreException | CertificateException | KeyManagementException ex) {
+            } catch (NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException | GeneralSecurityException | IOException ex) {
                 throw new InitializationException(ex);
             }
         }
@@ -66,7 +63,7 @@ public class WebSocketClient extends AbstractClient {
     public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
             instance = new WebSocketClient(context, profile, listener);
-        } catch (CertificateException | NetUtils.InvalidUrlException | NoSuchAlgorithmException | KeyManagementException | KeyStoreException | IOException ex) {
+        } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             listener.onFailedConnecting(ex);
         }
     }
