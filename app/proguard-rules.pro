@@ -10,3 +10,4 @@
 -keep public class * extends java.lang.Exception
 
 -dontwarn com.pavelsikun.vintagechroma.ChromaPreferenceCompat
+-dontwarn com.mikepenz.aboutlibraries.ui.item.HeaderItem
