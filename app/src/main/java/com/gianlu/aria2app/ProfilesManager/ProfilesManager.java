@@ -2,10 +2,8 @@ package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -34,12 +32,10 @@ public class ProfilesManager {
     private final File PROFILES_PATH;
     private final WifiManager wifiManager;
     private final ConnectivityManager connectivityManager;
-    private final SharedPreferences preferences;
     private MultiProfile currentProfile;
 
     private ProfilesManager(Context context) {
         PROFILES_PATH = context.getFilesDir();
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
@@ -68,11 +64,6 @@ public class ProfilesManager {
         new File(PROFILES_PATH, profile.id + ".profile").delete();
     }
 
-    public void setCurrent(Context context, MultiProfile profile) {
-        currentProfile = profile;
-        setLastProfile(context, profile);
-    }
-
     @NonNull
     public MultiProfile.UserProfile getCurrentSpecific() throws NoCurrentProfileException {
         return getCurrent().getProfile(this);
@@ -85,9 +76,14 @@ public class ProfilesManager {
         return currentProfile;
     }
 
+    public void setCurrent(MultiProfile profile) {
+        currentProfile = profile;
+        setLastProfile(profile);
+    }
+
     @Nullable
     public MultiProfile getLastProfile() {
-        String id = Prefs.getString(preferences, PK.LAST_USED_PROFILE, null);
+        String id = Prefs.getString(PK.LAST_USED_PROFILE, null);
         if (id == null || !profileExists(id)) return null;
         try {
             return retrieveProfile(id);
@@ -97,12 +93,12 @@ public class ProfilesManager {
         }
     }
 
-    public void setLastProfile(Context context, MultiProfile profile) {
-        Prefs.putString(context, PK.LAST_USED_PROFILE, profile.id);
+    public void setLastProfile(MultiProfile profile) {
+        Prefs.putString(PK.LAST_USED_PROFILE, profile.id);
     }
 
-    public void unsetLastProfile(Context context) {
-        Prefs.putString(context, PK.LAST_USED_PROFILE, null);
+    public void unsetLastProfile() {
+        Prefs.remove(PK.LAST_USED_PROFILE);
     }
 
     @NonNull
@@ -193,8 +189,8 @@ public class ProfilesManager {
         }
     }
 
-    public void reloadCurrentProfile(Context context) throws IOException, JSONException, NoCurrentProfileException {
-        setCurrent(context, retrieveProfile(getCurrent().id));
+    public void reloadCurrentProfile() throws IOException, JSONException, NoCurrentProfileException {
+        setCurrent(retrieveProfile(getCurrent().id));
     }
 
     public WifiManager getWifiManager() {

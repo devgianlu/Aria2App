@@ -1,7 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -12,6 +11,7 @@ import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.CommonPK;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Preferences.PrefsStorageModule;
@@ -53,20 +53,16 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onCreate() {
         super.onCreate();
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
-        SearchApi.get(this).cacheSearchEngines();
+        SearchApi.get().cacheSearchEngines();
         MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
 
-        ErrorHandler.setup(Prefs.getInt(this, PK.A2_UPDATE_INTERVAL, 1) * 1000, this);
+        ErrorHandler.setup(Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000, this);
 
-        if (Prefs.getBoolean(this, PK.A2_ENABLE_NOTIFS, true))
+        if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
             NotificationService.start(this);
 
-        if (!Prefs.has(this, PK.DD_DOWNLOAD_PATH))
-            Prefs.putString(this, PK.DD_DOWNLOAD_PATH,
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
-
         // Backward compatibility
-        if (!Prefs.has(this, PK.A2_CUSTOM_INFO)) {
+        if (!Prefs.has(PK.A2_CUSTOM_INFO)) {
             Set<String> defaultValues = new HashSet<>();
             defaultValues.add(CustomDownloadInfo.Info.DOWNLOAD_SPEED.name());
             defaultValues.add(CustomDownloadInfo.Info.REMAINING_TIME.name());
@@ -79,8 +75,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
                 .registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
                     @Override
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                        if (key.equals(PK.A2_ENABLE_NOTIFS.getKey())) {
-                            if (Prefs.getBoolean(prefs, PK.A2_ENABLE_NOTIFS, true))
+                        if (key.equals(PK.A2_ENABLE_NOTIFS.key())) {
+                            if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
                                 NotificationService.start(ThisApplication.this);
                             else
                                 NotificationService.stop(ThisApplication.this);
@@ -91,19 +87,19 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     @SuppressWarnings("deprecation")
     private void deprecatedBackwardCompatibility() {
-        if (Prefs.has(this, PK.A2_QUICK_OPTIONS) || Prefs.has(this, PK.A2_GLOBAL_QUICK_OPTIONS)) {
+        if (Prefs.has(PK.A2_QUICK_OPTIONS) || Prefs.has(PK.A2_GLOBAL_QUICK_OPTIONS)) {
             Set<String> set = new HashSet<>();
-            set.addAll(Prefs.getSet(this, PK.A2_QUICK_OPTIONS, new HashSet<String>()));
-            set.addAll(Prefs.getSet(this, PK.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
+            set.addAll(Prefs.getSet(PK.A2_QUICK_OPTIONS, new HashSet<String>()));
+            set.addAll(Prefs.getSet(PK.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
             Prefs.putSet(this, PK.A2_QUICK_OPTIONS_MIXED, set);
-            Prefs.remove(this, PK.A2_QUICK_OPTIONS);
-            Prefs.remove(this, PK.A2_GLOBAL_QUICK_OPTIONS);
+            Prefs.remove(PK.A2_QUICK_OPTIONS);
+            Prefs.remove(PK.A2_GLOBAL_QUICK_OPTIONS);
         }
 
-        if (Prefs.has(this, PK.A2_TUTORIAL_DISCOVERIES)) {
-            Set<String> set = Prefs.getSet(this, PK.A2_TUTORIAL_DISCOVERIES, null);
-            if (set != null) Prefs.putSet(this, Prefs.Keys.TUTORIAL_DISCOVERIES, set);
-            Prefs.remove(this, PK.A2_TUTORIAL_DISCOVERIES);
+        if (Prefs.has(PK.A2_TUTORIAL_DISCOVERIES)) {
+            Set<String> set = Prefs.getSet(PK.A2_TUTORIAL_DISCOVERIES, null);
+            if (set != null) Prefs.putSet(this, CommonPK.TUTORIAL_DISCOVERIES, set);
+            Prefs.remove(PK.A2_TUTORIAL_DISCOVERIES);
         }
     }
 

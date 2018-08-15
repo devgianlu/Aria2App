@@ -29,7 +29,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, Listener listener) {
         super(new Config<SearchResult>(context).noSeparators().undeterminedPages().items(results));
         this.inflater = LayoutInflater.from(context);
-        this.searchApi = SearchApi.get(context);
+        this.searchApi = SearchApi.get();
         this.token = token;
         this.listener = listener;
     }

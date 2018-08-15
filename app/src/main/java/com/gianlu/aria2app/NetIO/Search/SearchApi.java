@@ -1,11 +1,8 @@
 package com.gianlu.aria2app.NetIO.Search;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -44,22 +41,20 @@ public final class SearchApi {
     private final OkHttpClient client;
     private final ExecutorService executorService;
     private final Handler handler;
-    private final SharedPreferences preferences;
     private List<SearchEngine> cachedEngines = null;
 
-    private SearchApi(Context context) {
+    private SearchApi() {
         client = new OkHttpClient.Builder().connectTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .build();
         executorService = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
-    public static SearchApi get(@NonNull Context context) {
-        if (instance == null) instance = new SearchApi(context);
+    public static SearchApi get() {
+        if (instance == null) instance = new SearchApi();
         return instance;
     }
 
@@ -198,17 +193,17 @@ public final class SearchApi {
 
     @NonNull
     private List<SearchEngine> listSearchEnginesSync() throws JSONException, IOException, StatusCodeException {
-        if (Prefs.has(preferences, PK.SEARCH_ENGINES_CACHE) && !CommonUtils.isDebug()) {
-            long age = Prefs.getLong(preferences, PK.SEARCH_ENGINES_CACHE_AGE, 0);
+        if (Prefs.has(PK.SEARCH_ENGINES_CACHE) && !CommonUtils.isDebug()) {
+            long age = Prefs.getLong(PK.SEARCH_ENGINES_CACHE_AGE, 0);
             if (System.currentTimeMillis() - age < TimeUnit.HOURS.toMillis(6)) {
-                JSONArray array = Prefs.getJSONArray(preferences, PK.SEARCH_ENGINES_CACHE, new JSONArray());
+                JSONArray array = Prefs.getJSONArray(PK.SEARCH_ENGINES_CACHE, new JSONArray());
                 if (array.length() > 0) return cachedEngines = SearchEngine.list(array);
             }
         }
 
         JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL.newBuilder().addPathSegment("listEngines").build()).build()));
-        Prefs.putLong(preferences, PK.SEARCH_ENGINES_CACHE_AGE, System.currentTimeMillis());
-        Prefs.putJSONArray(preferences, PK.SEARCH_ENGINES_CACHE, array);
+        Prefs.putLong(PK.SEARCH_ENGINES_CACHE_AGE, System.currentTimeMillis());
+        Prefs.putJSONArray(PK.SEARCH_ENGINES_CACHE, array);
         return cachedEngines = SearchEngine.list(array);
     }
 

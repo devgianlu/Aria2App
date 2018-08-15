@@ -1,7 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -16,7 +15,6 @@ import com.yarolegovich.mp.MaterialMultiChoicePreference;
 import com.yarolegovich.mp.MaterialSeekBarPreference;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 public class PreferenceActivity extends BasePreferenceActivity {
@@ -49,16 +47,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
         @Override
         protected void buildPreferences(@NonNull Context context) {
             MaterialCheckboxPreference nightMode = new MaterialCheckboxPreference.Builder(context)
-                    .defaultValue(false)
-                    .key(PK.NIGHT_MODE.getKey())
+                    .defaultValue(PK.NIGHT_MODE.fallback())
+                    .key(PK.NIGHT_MODE.key())
                     .build();
             nightMode.setTitle(R.string.prefs_nightMode);
             nightMode.setSummary(R.string.prefs_nightMode_summary);
             addPreference(nightMode);
 
             MaterialCheckboxPreference hideMetadata = new MaterialCheckboxPreference.Builder(context)
-                    .defaultValue(false)
-                    .key(PK.A2_HIDE_METADATA.getKey())
+                    .defaultValue(PK.A2_HIDE_METADATA.fallback())
+                    .key(PK.A2_HIDE_METADATA.key())
                     .build();
             hideMetadata.setTitle(R.string.prefs_hideMetadata);
             hideMetadata.setSummary(R.string.prefs_hideMetadata_summary);
@@ -66,8 +64,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
             MaterialSeekBarPreference updateRate = new MaterialSeekBarPreference.Builder(context)
                     .minValue(1).maxValue(10).showValue(true)
-                    .key(PK.A2_UPDATE_INTERVAL.getKey())
-                    .defaultValue(1)
+                    .key(PK.A2_UPDATE_INTERVAL.key())
+                    .defaultValue(PK.A2_UPDATE_INTERVAL.fallback())
                     .build();
             updateRate.setTitle(R.string.prefs_updateRate);
             updateRate.setSummary(R.string.prefs_updateRate_summary);
@@ -78,15 +76,15 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .entries(CustomDownloadInfo.Info.formalValues(context))
                     .defaultValue(CustomDownloadInfo.Info.DOWNLOAD_SPEED.name(), CustomDownloadInfo.Info.REMAINING_TIME.name())
                     .showValueMode(AbsMaterialTextValuePreference.SHOW_ON_BOTTOM)
-                    .key(PK.A2_CUSTOM_INFO.getKey())
+                    .key(PK.A2_CUSTOM_INFO.key())
                     .build();
             customDownloadInfo.setTitle(R.string.prefs_downloadDisplayInfo);
             customDownloadInfo.setSummary(R.string.prefs_downloadDisplayInfo_summary);
             addPreference(customDownloadInfo);
 
             MaterialCheckboxPreference versionCheck = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.A2_CHECK_VERSION.getKey())
-                    .defaultValue(true)
+                    .key(PK.A2_CHECK_VERSION.key())
+                    .defaultValue(PK.A2_CHECK_VERSION.fallback())
                     .build();
             versionCheck.setTitle(R.string.prefs_versionCheck);
             versionCheck.setSummary(R.string.prefs_versionCheck_summary);
@@ -105,8 +103,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
         protected void buildPreferences(@NonNull Context context) {
             MaterialEditTextPreference downloadPath = new MaterialEditTextPreference.Builder(context)
                     .showValueMode(AbsMaterialTextValuePreference.SHOW_ON_BOTTOM)
-                    .key(PK.DD_DOWNLOAD_PATH.getKey())
-                    .defaultValue(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())
+                    .key(PK.DD_DOWNLOAD_PATH.key())
+                    .defaultValue(PK.DD_DOWNLOAD_PATH.fallback())
                     .build();
             downloadPath.setTitle(R.string.prefs_ddDownloadPath);
             downloadPath.setSummary(R.string.prefs_ddDownloadPath_summary);
@@ -114,16 +112,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
             MaterialSeekBarPreference concurrentDownloads = new MaterialSeekBarPreference.Builder(context)
                     .minValue(1).maxValue(10).showValue(true)
-                    .key(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS.getKey())
-                    .defaultValue(3)
+                    .key(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS.key())
+                    .defaultValue(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS.fallback())
                     .build();
             concurrentDownloads.setTitle(R.string.prefs_ddMaxSimultaneousDownloads);
             concurrentDownloads.setSummary(R.string.prefs_ddMaxSimultaneousDownloads_summary);
             addPreference(concurrentDownloads);
 
             MaterialCheckboxPreference resume = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.DD_RESUME.getKey())
-                    .defaultValue(true)
+                    .key(PK.DD_RESUME.key())
+                    .defaultValue(PK.DD_RESUME.fallback())
                     .build();
             resume.setTitle(R.string.prefs_ddResume);
             resume.setSummary(R.string.prefs_ddResume_summary);
@@ -141,8 +139,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
         @Override
         protected void buildPreferences(@NonNull Context context) {
             MaterialCheckboxPreference enable = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.A2_ENABLE_NOTIFS.getKey())
-                    .defaultValue(true)
+                    .key(PK.A2_ENABLE_NOTIFS.key())
+                    .defaultValue(PK.A2_ENABLE_NOTIFS.fallback())
                     .build();
             enable.setTitle(R.string.prefs_enableNotifications);
             enable.setSummary(R.string.prefs_enableNotifications_summary);
@@ -152,16 +150,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .entryValues(NotificationService.EventType.prefsValues())
                     .entries(NotificationService.EventType.formalValues(context))
                     .showValueMode(AbsMaterialTextValuePreference.SHOW_ON_BOTTOM)
-                    .key(PK.A2_SELECTED_NOTIFS_TYPE.getKey())
-                    .defaultValue(new HashSet<>(Arrays.asList(NotificationService.EventType.prefsValues())))
+                    .key(PK.A2_SELECTED_NOTIFS_TYPE.key())
+                    .defaultValue(PK.A2_SELECTED_NOTIFS_TYPE.fallback())
                     .build();
             types.setTitle(R.string.prefs_notificationType);
             types.setSummary(R.string.prefs_notificationType_summary);
             addPreference(types);
 
             MaterialCheckboxPreference startAtBoot = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.A2_NOTIFS_AT_BOOT.getKey())
-                    .defaultValue(true)
+                    .key(PK.A2_NOTIFS_AT_BOOT.key())
+                    .defaultValue(PK.A2_NOTIFS_AT_BOOT.fallback())
                     .build();
             startAtBoot.setTitle(R.string.prefs_enableNotificationsAtBoot);
             startAtBoot.setSummary(R.string.prefs_enableNotificationsAtBoot_summary);

@@ -2,8 +2,6 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -32,7 +30,6 @@ public class Aria2Helper {
         }
     };
     private final AbstractClient client;
-    private final SharedPreferences preferences;
     private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = new AbstractClient.BatchSandbox<DownloadsAndGlobalStats>() {
         @Override
         public DownloadsAndGlobalStats sandbox(AbstractClient client) throws Exception {
@@ -40,13 +37,12 @@ public class Aria2Helper {
             all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
             all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
             all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
-            return new DownloadsAndGlobalStats(all, Prefs.getBoolean(preferences, PK.A2_HIDE_METADATA, false), client.sendSync(AriaRequests.getGlobalStats()));
+            return new DownloadsAndGlobalStats(all, Prefs.getBoolean(PK.A2_HIDE_METADATA), client.sendSync(AriaRequests.getGlobalStats()));
         }
     };
 
-    public Aria2Helper(@NonNull Context context, @NonNull AbstractClient client) {
+    public Aria2Helper(@NonNull AbstractClient client) {
         this.client = client;
-        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
@@ -61,7 +57,7 @@ public class Aria2Helper {
     @NonNull
     public static Aria2Helper instantiate(@NonNull Context context) throws InitializingException {
         try {
-            return new Aria2Helper(context, getClient(context));
+            return new Aria2Helper(getClient(context));
         } catch (AbstractClient.InitializationException | ProfilesManager.NoCurrentProfileException ex) {
             throw new InitializingException(ex);
         }

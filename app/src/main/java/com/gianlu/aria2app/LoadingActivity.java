@@ -241,7 +241,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         if (profile == null) {
             displayPicker(hasShareData());
         } else {
-            manager.setCurrent(this, profile);
+            manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
                 WebSocketClient.instantiate(this, single, this);

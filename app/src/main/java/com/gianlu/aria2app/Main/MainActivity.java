@@ -149,7 +149,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
-        profilesManager.setLastProfile(this, profile);
+        profilesManager.setLastProfile(profile);
         LoadingActivity.startActivity(this);
     }
 
@@ -163,10 +163,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (adapter == null) return;
 
         List<Download.Status> filters = new ArrayList<>(Arrays.asList(Download.Status.values()));
-        Set<String> checkedFiltersSet = Prefs.getSet(this, PK.A2_MAIN_FILTERS, new HashSet<>(Download.Status.stringValues()));
+        Set<String> checkedFiltersSet = Prefs.getSet(PK.A2_MAIN_FILTERS);
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
-        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PK.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name())));
+        adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(PK.A2_MAIN_SORTING)));
     }
 
     private void processFileUri(Uri uri) {
@@ -353,7 +353,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             Logging.log(ex);
             WebSocketClient.clear();
             HttpClient.clear();
-            profilesManager.unsetLastProfile(this);
+            profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
             return;
         }
@@ -426,7 +426,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         recyclerViewLayout.startLoading();
 
-        if (Prefs.getBoolean(this, PK.A2_CHECK_VERSION, true) && ((ThisApplication) getApplication()).shouldCheckVersion()) {
+        if (Prefs.getBoolean(PK.A2_CHECK_VERSION) && ((ThisApplication) getApplication()).shouldCheckVersion()) {
             ((ThisApplication) getApplication()).checkedVersion();
             doVersionCheck();
         }
@@ -477,7 +477,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
         }
 
-        DownloaderUtils.startService(this, Prefs.getBoolean(this, PK.DD_RESUME, true));
+        DownloaderUtils.startService(this, Prefs.getBoolean(PK.DD_RESUME));
 
         secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)
         if (secondSpace != null) {
@@ -504,7 +504,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             hideSecondSpace();
         }
 
-        tutorialManager = new TutorialManager(this, this,
+        tutorialManager = new TutorialManager(this,
                 Discovery.DOWNLOADS_CARDS, Discovery.DOWNLOADS_TOOLBAR);
     }
 
@@ -607,12 +607,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (fabMenu != null) fabMenu.collapseImmediately();
 
         try {
-            profilesManager.reloadCurrentProfile(this);
+            profilesManager.reloadCurrentProfile();
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.log(ex);
             WebSocketClient.clear();
             HttpClient.clear();
-            profilesManager.unsetLastProfile(this);
+            profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
             return;
         }
@@ -645,7 +645,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (sortingMenu != null) {
             sortingMenu.setGroupCheckable(0, true, true);
 
-            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(this, PK.A2_MAIN_SORTING, DownloadCardsAdapter.SortBy.STATUS.name()));
+            DownloadCardsAdapter.SortBy sorting = DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(PK.A2_MAIN_SORTING));
             MenuItem item;
             switch (sorting) {
                 case NAME:
@@ -700,16 +700,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             stringFilters[i] = filters[i].getFormal(this, true);
 
         final boolean[] checkedFilters = new boolean[filters.length];
-        Set<String> checkedFiltersSet = Prefs.getSet(this, PK.A2_MAIN_FILTERS, null);
+        Set<String> checkedFiltersSet = Prefs.getSet(PK.A2_MAIN_FILTERS);
 
-        if (checkedFiltersSet == null) {
-            for (int i = 0; i < checkedFilters.length; i++) checkedFilters[i] = true;
-        } else {
-            for (String checkedFilter : checkedFiltersSet) {
-                Download.Status filter = Download.Status.valueOf(checkedFilter);
-                int pos = CommonUtils.indexOf(filters, filter);
-                if (pos != -1) checkedFilters[pos] = true;
-            }
+        for (String checkedFilter : checkedFiltersSet) {
+            Download.Status filter = Download.Status.valueOf(checkedFilter);
+            int pos = CommonUtils.indexOf(filters, filter);
+            if (pos != -1) checkedFilters[pos] = true;
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -835,7 +831,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {
         if (adapter != null) adapter.sort(sorting);
-        Prefs.putString(this, PK.A2_MAIN_SORTING, sorting.name());
+        Prefs.putString(PK.A2_MAIN_SORTING, sorting.name());
     }
 
     @Override

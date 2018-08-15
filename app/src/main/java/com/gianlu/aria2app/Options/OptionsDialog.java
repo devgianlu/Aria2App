@@ -146,7 +146,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         global = args.getBoolean("global", true);
         gid = args.getString("gid", null);
 
-        if (quick && Prefs.isSetEmpty(requireContext(), PK.A2_QUICK_OPTIONS_MIXED)) {
+        if (quick && Prefs.isSetEmpty(PK.A2_QUICK_OPTIONS_MIXED)) {
             DialogUtils.showToast(getContext(), Toaster.build().message(R.string.noQuickOptions));
             dismissAllowingStateLoss();
             return null;

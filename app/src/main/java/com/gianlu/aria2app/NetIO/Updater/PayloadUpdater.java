@@ -27,7 +27,7 @@ public abstract class PayloadUpdater<P> implements Runnable {
         this.listener = listener;
         this.handler = new Handler(Looper.getMainLooper());
         this.errorHandler = ErrorHandler.get();
-        this.updateInterval = Prefs.getInt(context, PK.A2_UPDATE_INTERVAL, 1) * 1000;
+        this.updateInterval = Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000;
     }
 
     protected abstract void loop();

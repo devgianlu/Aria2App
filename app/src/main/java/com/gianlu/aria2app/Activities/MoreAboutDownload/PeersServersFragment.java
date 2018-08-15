@@ -94,7 +94,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
 
         layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);
 
-        tutorialManager = new TutorialManager(requireContext(), this, Discovery.PEERS_SERVERS);
+        tutorialManager = new TutorialManager(this, Discovery.PEERS_SERVERS);
 
         return layout;
     }

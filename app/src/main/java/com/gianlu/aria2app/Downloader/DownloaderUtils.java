@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Environment;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -88,13 +87,13 @@ public class DownloaderUtils {
         }
     }
 
-    public static File getAndValidateDownloadPath(Context context) throws InvalidPathException {
-        File path = new File(Prefs.getString(context, PK.DD_DOWNLOAD_PATH, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()));
-        if (!path.exists()) {
-            if (!path.mkdirs()) throw new InvalidPathException();
-        }
+    public static File getAndValidateDownloadPath() throws InvalidPathException {
+        File path = new File(Prefs.getString(PK.DD_DOWNLOAD_PATH));
+        if (!path.exists() && !path.mkdirs())
+            throw new InvalidPathException();
 
-        if (!path.canWrite()) throw new InvalidPathException();
+        if (!path.canWrite())
+            throw new InvalidPathException();
 
         return path;
     }

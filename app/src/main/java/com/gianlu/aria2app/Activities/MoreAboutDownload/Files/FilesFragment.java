@@ -126,8 +126,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        tutorialManager = new TutorialManager(requireContext(), this,
-                Discovery.FILES, Discovery.FOLDERS);
+        tutorialManager = new TutorialManager(this, Discovery.FILES, Discovery.FOLDERS);
 
         recyclerViewLayout.startLoading();
 

@@ -64,16 +64,13 @@ public class OptionsManager {
     }
 
     public static final class IsQuickComparator implements Comparator<Option> {
-        private final Context context;
-
-        public IsQuickComparator(Context context) {
-            this.context = context;
+        public IsQuickComparator() {
         }
 
         @Override
         public int compare(Option o1, Option o2) {  // Assumes that options are already ordered alphabetically
-            boolean b1 = o1.isQuick(context);
-            boolean b2 = o2.isQuick(context);
+            boolean b1 = o1.isQuick();
+            boolean b2 = o2.isQuick();
             if (b1 && b2) return 0; // b1 && b2
             else if (b1) return -1; // b1 && !b2
             else if (b2) return 1; // !b1 && b2

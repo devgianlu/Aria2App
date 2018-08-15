@@ -37,7 +37,7 @@ public class DownloadStartConfig {
     public static DownloadStartConfig create(@NonNull Context context, DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaDirectory dir) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
-        File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
+        File downloadPath = DownloaderUtils.getAndValidateDownloadPath();
         DownloadStartConfig config = new DownloadStartConfig(context, profile.getParent().id);
 
         for (AriaFile file : dir.allFiles()) {
@@ -61,7 +61,7 @@ public class DownloadStartConfig {
     public static DownloadStartConfig create(@NonNull Context context, DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaFile file) throws DownloaderUtils.InvalidPathException, CannotCreateStartConfigException {
         if (profile.directDownload == null) throw new IllegalArgumentException("WTF?!");
 
-        File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
+        File downloadPath = DownloaderUtils.getAndValidateDownloadPath();
         File destFile = new File(downloadPath, file.getName());
 
         MultiProfile.DirectDownload dd = profile.directDownload;
@@ -91,7 +91,7 @@ public class DownloadStartConfig {
         if (profile.directDownload == null)
             throw new CannotCreateStartConfigException(CannotCreateStartConfigException.Cause.DD_NOT_ENABLED);
 
-        File downloadPath = DownloaderUtils.getAndValidateDownloadPath(context);
+        File downloadPath = DownloaderUtils.getAndValidateDownloadPath();
         File destFile = new File(downloadPath, state.fileName);
 
         MultiProfile.DirectDownload dd = profile.directDownload;

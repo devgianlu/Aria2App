@@ -49,9 +49,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -598,7 +596,7 @@ public class NotificationService extends Service {
 
         NotificationsHandler(@NonNull MultiProfile.UserProfile profile) {
             this.profile = profile;
-            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(NotificationService.this, PK.A2_SELECTED_NOTIFS_TYPE, new HashSet<>(Arrays.asList(EventType.prefsValues()))));
+            this.enabledNotifs = EventType.parseFromPrefs(Prefs.getSet(PK.A2_SELECTED_NOTIFS_TYPE));
         }
 
         @Override

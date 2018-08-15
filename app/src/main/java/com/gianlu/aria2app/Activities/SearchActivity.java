@@ -82,7 +82,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
             }
         });
 
-        searchApi = SearchApi.get(this);
+        searchApi = SearchApi.get();
     }
 
     private void showEnginesDialog(final List<SearchEngine> engines) {
@@ -94,7 +94,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         }
 
         final boolean[] checkedEngines = new boolean[engines.size()];
-        Set<String> checkedEnginesSet = Prefs.getSet(this, PK.A2_SEARCH_ENGINES, null);
+        Set<String> checkedEnginesSet = Prefs.getSet(PK.A2_SEARCH_ENGINES, null);
 
         if (checkedEnginesSet == null) {
             for (int i = 0; i < checkedEngines.length; i++) checkedEngines[i] = true;
@@ -157,7 +157,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.startLoading();
         this.query = query;
 
-        searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(this, PK.A2_SEARCH_ENGINES, null), this);
+        searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), this);
 
         AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH);
         return true;
