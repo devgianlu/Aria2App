@@ -1,0 +1,6 @@
+[submodule "CommonUtils"]
+	path = CommonUtils
+	url = https://github.com/devgianlu/CommonUtils
+[submodule "MaterialPreferences"]
+	path = MaterialPreferences
+	url = https://github.com/devgianlu/MaterialPreferences
