@@ -190,6 +190,8 @@ public class WebSocketClient extends AbstractClient {
                     }
                 }
             });
+
+            close();
         }
     }
 

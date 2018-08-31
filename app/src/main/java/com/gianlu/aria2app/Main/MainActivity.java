@@ -11,12 +11,10 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -30,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -39,6 +36,8 @@ import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.gianlu.aria2app.Activities.AddDownload.AddBase64Bundle;
+import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
@@ -169,38 +168,21 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(PK.A2_MAIN_SORTING)));
     }
 
-    private void processFileUri(Uri uri) {
+    private void processFileUri(@NonNull Uri uri) {
         String mimeType;
-        if (Objects.equals(uri.getScheme(), "file")) {
-            String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath());
-            if (extension != null)
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            else
-                mimeType = null;
-        } else {
-            try (Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
-                    mimeType = cursor.getString(0);
-                } else {
-                    Toaster.with(this).message(R.string.invalidFile).ex(new Exception("Cursor is empty: " + uri)).show();
-                    return;
-                }
-            } catch (RuntimeException ex) {
-                Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
-                return;
-            }
+        try {
+            mimeType = AddBase64Bundle.extractMimeType(this, uri);
+        } catch (AddDownloadBundle.CannotReadException ex) {
+            Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
+            return;
         }
 
-        if (mimeType != null) {
-            if (Objects.equals(mimeType, "application/x-bittorrent")) {
-                AddTorrentActivity.startAndAdd(this, uri);
-            } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
-                AddMetalinkActivity.startAndAdd(this, uri);
-            } else {
-                Toaster.with(this).message(R.string.invalidFile).ex(new Exception("File type not supported: " + mimeType)).show();
-            }
+        if (Objects.equals(mimeType, "application/x-bittorrent")) {
+            AddTorrentActivity.startAndAdd(this, uri);
+        } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
+            AddMetalinkActivity.startAndAdd(this, uri);
         } else {
-            Toaster.with(this).message(R.string.invalidFile).ex(new Exception("Cannot determine file type: " + uri)).show();
+            Toaster.with(this).message(R.string.invalidFile).ex(new Exception("File type not supported: " + mimeType)).show();
         }
     }
 

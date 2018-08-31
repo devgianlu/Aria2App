@@ -1,0 +1,8 @@
+[submodule "CommonUtils"]
+	path = CommonUtils
+	url = https://github.com/devgianlu/CommonUtils
+	branch = master
+[submodule "MaterialPreferences"]
+	path = MaterialPreferences
+	url = https://github.com/devgianlu/MaterialPreferences
+	branch = master

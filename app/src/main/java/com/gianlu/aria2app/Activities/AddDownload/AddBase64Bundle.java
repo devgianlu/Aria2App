@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,9 +79,32 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
     }
 
     @NonNull
+    public static String extractMimeType(@NonNull Context context, @NonNull Uri uri) throws CannotReadException {
+        if (Objects.equals(uri.getScheme(), "file")) {
+            String ext = MimeTypeMap.getFileExtensionFromUrl(uri.getPath());
+            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+            if (mime != null) return mime;
+        }
+
+        try (Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
+                return cursor.getString(0);
+            } else {
+                String name = extractFilename(context, uri);
+                String[] split = name.split("\\.");
+                String ext = split[split.length - 1];
+                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                if (mime != null) return mime;
+            }
+        } catch (Exception ex) {
+            throw new CannotReadException(ex);
+        }
+
+        throw new CannotReadException("Cannot find mime type for " + uri);
+    }
+
+    @NonNull
     public Uri fileUri() {
         return Uri.parse(fileUri);
     }
-
-
 }
