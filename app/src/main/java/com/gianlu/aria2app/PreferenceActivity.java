@@ -42,6 +42,11 @@ public class PreferenceActivity extends BasePreferenceActivity {
         return null;
     }
 
+    @Override
+    protected boolean disablePayPalOnGooglePlay() {
+        return true;
+    }
+
     public static class GeneralFragment extends BasePreferenceFragment {
 
         @Override
