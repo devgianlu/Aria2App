@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.Activities;
 
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -74,11 +75,16 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        Button messageMore = findViewById(R.id.search_messageMore);
+        final Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
+                } catch (ActivityNotFoundException ex) {
+                    Logging.log(ex);
+                    messageMore.setVisibility(View.GONE);
+                }
             }
         });
 

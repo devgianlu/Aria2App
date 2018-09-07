@@ -70,8 +70,11 @@ public abstract class AbstractClient implements Closeable {
     }
 
     private void removeReceiver() {
-        if (context != null && !shouldIgnoreCommunication)
-            context.getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+        try {
+            if (context != null && !shouldIgnoreCommunication)
+                context.getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
     @Override
