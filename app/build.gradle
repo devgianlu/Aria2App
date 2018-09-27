@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+if (getGradle().getStartParameter().getTaskRequests().toString().contains("standard")) {
+    apply plugin: 'io.fabric'
+}
 
 android {
     compileSdkVersion 28
@@ -25,6 +27,9 @@ android {
         standard {
             dimension 'main'
         }
+        foss {
+            dimension 'main'
+        }
     }
 }
 
@@ -41,4 +46,6 @@ dependencies {
     api 'com.llew.huawei:verifier:1.0.6'
 }
 
-apply plugin: 'com.google.gms.google-services'
+if (getGradle().getStartParameter().getTaskRequests().toString().contains("standard")) {
+    apply plugin: 'com.google.gms.google-services'
+}
