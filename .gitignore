@@ -14,3 +14,5 @@ gradlew.bat
 settings.gradle
 Thumbs.db
 release/
+
+google-services.json
