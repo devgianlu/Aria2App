@@ -60,7 +60,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
         fileType.setFilename(payload.file.getName());
 
         percentage = parent.findViewById(R.id.fileSheet_percentage);
-        percentage.setTypeface(FontsManager.get().get(inflater.getContext(), FontsManager.ROBOTO_MEDIUM));
+        FontsManager.set(percentage, FontsManager.ROBOTO_MEDIUM);
 
         TextView title = parent.findViewById(R.id.fileSheet_title);
         title.setText(payload.file.getName());

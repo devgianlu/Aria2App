@@ -13,4 +13,4 @@ gradlew.bat
 /captures
 settings.gradle
 Thumbs.db
-/app/release
+release/

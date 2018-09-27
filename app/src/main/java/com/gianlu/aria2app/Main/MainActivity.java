@@ -710,7 +710,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                         for (int i = 0; i < checkedFilters.length; i++)
                             if (checkedFilters[i]) set.add(filters[i].name());
 
-                        Prefs.putSet(MainActivity.this, PK.A2_MAIN_FILTERS, set);
+                        Prefs.putSet(PK.A2_MAIN_FILTERS, set);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);

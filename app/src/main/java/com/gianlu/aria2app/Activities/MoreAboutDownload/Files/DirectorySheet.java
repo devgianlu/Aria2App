@@ -47,7 +47,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
         parent.setBackgroundResource(payload.download.update().getBackgroundColor());
 
         percentage = parent.findViewById(R.id.dirSheet_percentage);
-        percentage.setTypeface(FontsManager.get().get(inflater.getContext(), FontsManager.ROBOTO_MEDIUM));
+        FontsManager.set(percentage, FontsManager.ROBOTO_MEDIUM);
 
         TextView title = parent.findViewById(R.id.dirSheet_title);
         title.setText(payload.dir.name);

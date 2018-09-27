@@ -66,7 +66,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             Set<String> defaultValues = new HashSet<>();
             defaultValues.add(CustomDownloadInfo.Info.DOWNLOAD_SPEED.name());
             defaultValues.add(CustomDownloadInfo.Info.REMAINING_TIME.name());
-            Prefs.putSet(getApplicationContext(), PK.A2_CUSTOM_INFO, defaultValues);
+            Prefs.putSet(PK.A2_CUSTOM_INFO, defaultValues);
         }
 
         deprecatedBackwardCompatibility();
@@ -91,14 +91,14 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             Set<String> set = new HashSet<>();
             set.addAll(Prefs.getSet(PK.A2_QUICK_OPTIONS, new HashSet<String>()));
             set.addAll(Prefs.getSet(PK.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
-            Prefs.putSet(this, PK.A2_QUICK_OPTIONS_MIXED, set);
+            Prefs.putSet(PK.A2_QUICK_OPTIONS_MIXED, set);
             Prefs.remove(PK.A2_QUICK_OPTIONS);
             Prefs.remove(PK.A2_GLOBAL_QUICK_OPTIONS);
         }
 
         if (Prefs.has(PK.A2_TUTORIAL_DISCOVERIES)) {
             Set<String> set = Prefs.getSet(PK.A2_TUTORIAL_DISCOVERIES, null);
-            if (set != null) Prefs.putSet(this, CommonPK.TUTORIAL_DISCOVERIES, set);
+            if (set != null) Prefs.putSet(CommonPK.TUTORIAL_DISCOVERIES, set);
             Prefs.remove(PK.A2_TUTORIAL_DISCOVERIES);
         }
     }

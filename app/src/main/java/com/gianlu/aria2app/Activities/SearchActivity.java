@@ -129,7 +129,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                         if (set.isEmpty()) {
                             Toaster.with(SearchActivity.this).message(R.string.noEnginesSelected).show();
                         } else {
-                            Prefs.putSet(SearchActivity.this, PK.A2_SEARCH_ENGINES, set);
+                            Prefs.putSet(PK.A2_SEARCH_ENGINES, set);
                             if (query != null) onQueryTextSubmit(query);
                         }
                     }
