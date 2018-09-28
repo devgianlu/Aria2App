@@ -3,7 +3,6 @@ package com.gianlu.aria2app;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
@@ -12,7 +11,6 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonPK;
-import com.gianlu.commonutils.FossUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Preferences.PrefsStorageModule;
@@ -111,8 +109,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
         LoadingActivity.startActivity(this, ex);
 
-        if (FossUtils.hasCrashlytics())
-            Crashlytics.logException(ex);
+        Logging.log(ex);
     }
 
     @Override
