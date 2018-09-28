@@ -39,7 +39,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
     @Nullable
     @Override
     protected String getOpenSourceUrl() {
-        return null;
+        return "https://github.com/devgianlu/Aria2App";
     }
 
     @Override
