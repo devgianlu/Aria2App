@@ -12,6 +12,7 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonPK;
+import com.gianlu.commonutils.FossUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Preferences.PrefsStorageModule;
@@ -110,7 +111,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
         LoadingActivity.startActivity(this, ex);
 
-        Crashlytics.logException(ex);
+        if (FossUtils.hasCrashlytics())
+            Crashlytics.logException(ex);
     }
 
     @Override
