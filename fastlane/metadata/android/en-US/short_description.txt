@@ -1,1 +1,1 @@
-Aria2App allows you to handle your downloads on aria2 wherever you are!
+Aria2App allows you to handle your downloads on aria2, an open source download manager, wherever you are!

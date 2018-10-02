@@ -1,5 +1,7 @@
 Thanks to Aria2App you can handle as many aria2 servers as you want!
 
+aria2 is an open source download manager developed by Tatsuhiro Tsujikawa and available at https://github.com/aria2/aria2
+
 IMPORTANT: Aria2App uses the JSONRPC interface! See here for more: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
 
 Some of the features are:
@@ -17,9 +19,3 @@ Some of the features are:
 And even more
 
 Aria2App is developed to run on the latest aria2 version so keep your build updated to avoid problems and various bugs.
-
-This project is open source at https://github.com/devgianlu/Aria2App
----------------------------------------
-
-aria2 is developed by Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
-BitTorrent is a registered trademark by BitTorrent Inc.
