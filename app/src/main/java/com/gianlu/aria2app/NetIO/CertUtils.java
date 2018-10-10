@@ -18,7 +18,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public final class CertUtils {
     @Nullable
@@ -72,11 +71,12 @@ public final class CertUtils {
             type = Type.parse((Integer) pair.get(0));
 
             Object valObj = pair.get(1);
-            Class<?> componentType = valObj.getClass().getComponentType();
-            if (componentType != null && Objects.equals(componentType, Byte.class))
+            Class<?> clazz = valObj.getClass();
+            if (clazz.isArray() && clazz.getComponentType() == byte.class) {
                 val = Utils.toHexString((byte[]) valObj);
-            else
-                val = (String) valObj;
+            } else {
+                val = valObj.toString();
+            }
         }
 
         @Override
