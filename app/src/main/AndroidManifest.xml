@@ -1221,10 +1221,5 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/logs_paths" />
         </provider>
-
-        <!-- Fabric API key -->
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="5e876bfa4e25887f39e411cbc25e04a7a70de932" />
     </application>
 </manifest>
