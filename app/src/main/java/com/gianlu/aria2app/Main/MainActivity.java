@@ -2,19 +2,14 @@ package com.gianlu.aria2app.Main;
 
 import android.Manifest;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -53,7 +48,6 @@ import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
-import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -111,7 +105,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, ServiceConnection, OnRefresh, DrawerManager.MenuDrawerListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile> drawerManager;
@@ -125,8 +119,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private ImageButton toggleChart;
     private LineChart overallChart;
     private TextView stopped;
-    private InternalBroadcastReceiver broadcastReceiver;
-    private Messenger downloaderMessenger = null;
     private RecyclerViewLayout recyclerViewLayout;
     private Aria2Helper helper;
     private FrameLayout secondSpace = null;
@@ -459,8 +451,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
         }
 
-        DownloaderUtils.startService(this, Prefs.getBoolean(PK.DD_RESUME));
-
         secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)
         if (secondSpace != null) {
             secondSpaceMessage = secondSpace.findViewById(R.id.mainSecondSpace_message);
@@ -599,7 +589,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return;
         }
 
-        if (downloaderMessenger != null) DownloaderUtils.refreshCount(downloaderMessenger);
+        // TODO: Update downloads count
     }
 
     @Override
@@ -879,20 +869,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         super.onStart();
 
         AbstractClient.addConnectivityListener(this);
-
-        if (broadcastReceiver == null) {
-            broadcastReceiver = new InternalBroadcastReceiver();
-            DownloaderUtils.registerReceiver(this, broadcastReceiver, false);
-        }
-
-        DownloaderUtils.bindService(this, this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        DownloaderUtils.unbindService(this, this);
     }
 
     @Override
@@ -934,19 +910,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        downloaderMessenger = new Messenger(service);
-        DownloaderUtils.refreshCount(downloaderMessenger);
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        DownloaderUtils.unregisterReceiver(this, broadcastReceiver);
-        broadcastReceiver = null;
-        downloaderMessenger = null;
-    }
-
-    @Override
     public void refreshed() {
         adapter = new DownloadCardsAdapter(this, new ArrayList<DownloadWithUpdate>(), this);
         recyclerViewLayout.loadListData(adapter);
@@ -972,19 +935,5 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return ((DownloadCardsTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
 
         return true;
-    }
-
-    private class InternalBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, final Intent intent) {
-            if (intent.getAction() == null) return;
-
-            switch (intent.getAction()) {
-                case DownloaderUtils.ACTION_COUNT_CHANGED:
-                    if (drawerManager != null)
-                        drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, intent.getIntExtra("count", 0));
-                    break;
-            }
-        }
     }
 }
