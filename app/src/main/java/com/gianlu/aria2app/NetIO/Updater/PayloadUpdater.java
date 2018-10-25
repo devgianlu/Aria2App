@@ -98,7 +98,7 @@ public abstract class PayloadUpdater<P> implements Runnable {
         void onPayload(@NonNull P payload);
 
         /**
-         * @return Whether the exception has been handled by the listener.
+         * @return Whether the exception has been handled by the addListener.
          * If it hasn't been handled it will be reported to the {@link ErrorHandler}.
          */
         boolean onException(@NonNull Exception ex);

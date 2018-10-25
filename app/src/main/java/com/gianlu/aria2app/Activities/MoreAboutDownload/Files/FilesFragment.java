@@ -30,6 +30,8 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.Downloader.AriaFileWrapper;
+import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
@@ -63,6 +65,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
     private TutorialManager tutorialManager;
+    private FetchHelper helper;
 
     @NonNull
     public static FilesFragment getInstance(Context context, String gid) {
@@ -106,6 +109,13 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException {
         return new BigUpdateProvider(context, args.getString("gid"));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        helper = FetchHelper.get(context);
     }
 
     @Nullable
@@ -236,15 +246,29 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     private void startDownloadInternal(MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
-        // TODO: Start download
+        FetchHelper.StartListener listener = new FetchHelper.StartListener() {
+            @Override
+            public void onSuccess() {
+                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.show, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(getContext(), DirectDownloadActivity.class));
+                            }
+                        }).show();
+            }
 
-        Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
-                .setAction(R.string.show, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(getContext(), DirectDownloadActivity.class));
-                    }
-                }).show();
+            @Override
+            public void onFailed(Throwable ex) {
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedAddingDownload).ex(ex)); // FIXME: Download/S
+            }
+        };
+
+        if (file != null) {
+            helper.start(profile, new AriaFileWrapper(file, download), listener);
+        } else if (dir != null) {
+            helper.start(profile, dir, listener);
+        }
     }
 
     @Override
@@ -258,7 +282,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         String mime = file.getMimeType();
         if (mime != null) {
             if (Utils.isStreamable(mime) && getContext() != null) {
-                final Intent intent = Utils.getStreamIntent(download, profile.getProfile(getContext()), file);
+                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), new AriaFileWrapper(file, download));
                 if (intent != null && Utils.canHandleIntent(getContext(), intent)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle(R.string.couldStreamVideo)

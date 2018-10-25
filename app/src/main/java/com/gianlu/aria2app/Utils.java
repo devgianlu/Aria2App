@@ -10,8 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 
-import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.Downloader.AriaFileWrapper;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
@@ -96,15 +95,14 @@ public final class Utils {
     }
 
     @Nullable
-    public static Intent getStreamIntent(DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaFile file) {
+    public static Intent getStreamIntent(MultiProfile.UserProfile profile, AriaFileWrapper file) {
         MultiProfile.DirectDownload dd = profile.directDownload;
         if (dd == null) throw new IllegalStateException("WTF?!");
 
         HttpUrl base = dd.getUrl();
         if (base == null) return null;
 
-        HttpUrl url = file.getDownloadUrl(download.update().dir, base);
-
+        HttpUrl url = file.getDownloadUrl(base);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(url.toString()), file.getMimeType());
         return intent;

@@ -56,6 +56,7 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
+import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.GitHubApi;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
@@ -105,7 +106,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener, FetchHelper.FetchDownloadCountListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile> drawerManager;
@@ -589,7 +590,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return;
         }
 
-        // TODO: Update downloads count
+        FetchHelper.get(this).updateDownloadCount(this);
     }
 
     @Override
@@ -935,5 +936,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return ((DownloadCardsTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
 
         return true;
+    }
+
+    @Override
+    public void onFetchDownloadCount(int count) {
+        if (drawerManager != null) drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, count);
     }
 }
