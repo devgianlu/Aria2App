@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -147,6 +149,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                 return false;
             } else {
                 action.setImageResource(R.drawable.baseline_download_24);
+                action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
                 action.setOnClickListener(new View.OnClickListener() {
                     @Override
