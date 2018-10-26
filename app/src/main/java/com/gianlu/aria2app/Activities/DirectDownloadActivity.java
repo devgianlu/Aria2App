@@ -69,66 +69,65 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
     @Override
     public void onAdded(@NotNull Download download) {
-
+        adapter.add(download);
     }
 
     @Override
     public void onCancelled(@NotNull Download download) {
-
+        adapter.remove(download);
     }
 
     @Override
     public void onCompleted(@NotNull Download download) {
-
+        adapter.update(download);
     }
 
     @Override
     public void onDeleted(@NotNull Download download) {
-
+        onCancelled(download);
     }
 
     @Override
-    public void onDownloadBlockUpdated(@NotNull Download download, @NotNull DownloadBlock downloadBlock, int i) {
-
+    public void onDownloadBlockUpdated(@NotNull Download download, @NotNull DownloadBlock downloadBlock, int total) {
     }
 
     @Override
     public void onError(@NotNull Download download, @NotNull Error error, @Nullable Throwable throwable) {
-
+        adapter.update(download);
     }
 
     @Override
     public void onPaused(@NotNull Download download) {
-
+        adapter.update(download);
     }
 
     @Override
-    public void onProgress(@NotNull Download download, long l, long l1) {
-
+    public void onProgress(@NotNull Download download, long eta, long speed) {
+        adapter.updateProgress(download, eta, speed);
     }
 
     @Override
-    public void onQueued(@NotNull Download download, boolean b) {
-
+    public void onQueued(@NotNull Download download, boolean waitingOnNetwork) {
+        adapter.update(download);
     }
 
     @Override
     public void onRemoved(@NotNull Download download) {
-
+        adapter.update(download);
     }
 
     @Override
     public void onResumed(@NotNull Download download) {
-
+        adapter.update(download);
     }
 
     @Override
-    public void onStarted(@NotNull Download download, @NotNull List<? extends DownloadBlock> list, int i) {
-
+    public void onStarted(@NotNull Download download, @NotNull List<? extends DownloadBlock> list, int total) {
+        adapter.update(download);
     }
 
     @Override
     public void onWaitingNetwork(@NotNull Download download) {
-
+        adapter.update(download);
     }
 }
