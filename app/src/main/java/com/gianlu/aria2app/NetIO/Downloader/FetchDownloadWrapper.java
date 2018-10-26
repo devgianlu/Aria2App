@@ -91,4 +91,9 @@ public class FetchDownloadWrapper {
     public synchronized int getProgress() {
         return download.getProgress();
     }
+
+    @NotNull
+    public synchronized File getFile() {
+        return new File(download.getFile());
+    }
 }

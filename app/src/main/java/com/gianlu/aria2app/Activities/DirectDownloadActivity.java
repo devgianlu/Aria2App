@@ -74,7 +74,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
     @Override
     public void onCancelled(@NotNull Download download) {
-        adapter.remove(download);
+        adapter.update(download);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
     @Override
     public void onDeleted(@NotNull Download download) {
-        onCancelled(download);
+        onRemoved(download);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
     @Override
     public void onRemoved(@NotNull Download download) {
-        adapter.update(download);
+        adapter.remove(download);
     }
 
     @Override

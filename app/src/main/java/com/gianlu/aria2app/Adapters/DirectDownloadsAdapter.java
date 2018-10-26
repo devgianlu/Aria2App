@@ -1,10 +1,13 @@
 package com.gianlu.aria2app.Adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +17,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.Downloader.FetchDownloadWrapper;
+import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.FontsManager;
+import com.gianlu.commonutils.Toaster;
 import com.tonyodev.fetch2.Download;
 
 import org.jetbrains.annotations.NotNull;
@@ -28,11 +33,13 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     private final LayoutInflater inflater;
     private final List<FetchDownloadWrapper> downloads;
     private final Context context;
+    private final FetchHelper helper;
 
     public DirectDownloadsAdapter(Context context, List<Download> downloads) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.downloads = FetchDownloadWrapper.wrap(downloads);
+        this.helper = FetchHelper.get(context);
     }
 
     private static void updateDownloadInfo(ViewHolder holder, FetchDownloadWrapper download) {
@@ -66,7 +73,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) { // TODO: Can improve performance
-        FetchDownloadWrapper download = downloads.get(position);
+        final FetchDownloadWrapper download = downloads.get(position);
 
         holder.title.setText(download.getName());
         holder.uri.setText(download.getDecodedUrl());
@@ -144,7 +151,45 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
         }
 
-        // TODO: Add button listeners
+        holder.open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFile(download);
+            }
+        });
+        holder.start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.resume(download);
+            }
+        });
+        holder.pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.pause(download);
+            }
+        });
+        holder.restart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.restart(download);
+            }
+        });
+        holder.remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.remove(download);
+            }
+        });
+    }
+
+    private void openFile(FetchDownloadWrapper download) {
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(context, "com.gianlu.aria2app", download.getFile()))
+                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
+        } catch (ActivityNotFoundException ex) {
+            Toaster.with(context).message(R.string.failedOpeningDownload).ex(ex).show();
+        }
     }
 
     @Override

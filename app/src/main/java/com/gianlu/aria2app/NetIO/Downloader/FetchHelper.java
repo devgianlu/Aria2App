@@ -152,6 +152,22 @@ public class FetchHelper {
         });
     }
 
+    public void resume(@NotNull FetchDownloadWrapper download) {
+        fetch.resume(download.get().getId());
+    }
+
+    public void pause(@NotNull FetchDownloadWrapper download) {
+        fetch.pause(download.get().getId());
+    }
+
+    public void remove(@NotNull FetchDownloadWrapper download) {
+        fetch.remove(download.get().getId());
+    }
+
+    public void restart(@NotNull FetchDownloadWrapper download) {
+        throw new UnsupportedOperationException("Restart isn't supported yet!"); // TODO: Restart download
+    }
+
     @UiThread
     public interface FetchEventListener extends FetchListener {
         void onDownloads(List<Download> downloads);
