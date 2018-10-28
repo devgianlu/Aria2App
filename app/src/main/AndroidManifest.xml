@@ -1184,11 +1184,6 @@
                 android:resource="@xml/torrent_searchable" />
         </activity>
 
-        <!-- Downloader service -->
-        <service
-            android:name=".Downloader.DownloaderService"
-            android:exported="false" />
-
         <!-- Notification service -->
         <service
             android:name=".Services.NotificationService"

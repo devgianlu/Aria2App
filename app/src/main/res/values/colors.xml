@@ -27,7 +27,7 @@
     <color name="downloadFailed">#C62828</color>
     <color name="downloadPending">#283593</color>
     <color name="downloadCompleted">#2E7D32</color>
-    <color name="downloadStarted">#CDDC39</color>
+    <color name="downloadCancelled">#CDDC39</color>
     <color name="downloadRunning">#EF6C00</color>
     <color name="downloadPaused">#6A1B9A</color>
 </resources>

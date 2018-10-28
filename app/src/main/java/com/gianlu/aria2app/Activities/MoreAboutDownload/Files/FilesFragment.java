@@ -1,13 +1,9 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Messenger;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -27,8 +23,6 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
-import com.gianlu.aria2app.Downloader.DownloadStartConfig;
-import com.gianlu.aria2app.Downloader.DownloaderUtils;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
@@ -36,6 +30,7 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
@@ -60,17 +55,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, ServiceConnection, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
+public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
     private FilesAdapter adapter;
     private FileSheet fileSheet;
     private DirectorySheet dirSheet;
     private BreadcrumbsView breadcrumbs;
     private RecyclerViewLayout recyclerViewLayout;
-    private Messenger downloaderMessenger = null;
-    private OnWaitBinder boundWaiter;
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
     private TutorialManager tutorialManager;
+    private FetchHelper helper;
 
     @NonNull
     public static FilesFragment getInstance(Context context, String gid) {
@@ -114,6 +108,13 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     protected PayloadProvider<DownloadWithUpdate.BigUpdate> requireProvider(@NonNull Context context, @NonNull Bundle args) throws Aria2Helper.InitializingException {
         return new BigUpdateProvider(context, args.getString("gid"));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        helper = FetchHelper.get(context);
     }
 
     @Nullable
@@ -238,44 +239,39 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         } while (current != null);
 
         Collections.reverse(items);
-        breadcrumbs.addItems(items.toArray(new BreadcrumbsView.Item[items.size()]));
+        breadcrumbs.addItems(items.toArray(new BreadcrumbsView.Item[0]));
 
         tutorialManager.tryShowingTutorials(getActivity());
     }
 
-    private void startDownloadInternal(final MultiProfile profile, @Nullable final AriaFile file, @Nullable final AriaDirectory dir) {
-        try {
-            if (getContext() == null)
-                throw new DownloadStartConfig.CannotCreateStartConfigException(new NullPointerException("Context is null!"));
+    private void startDownloadInternal(MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
+        final boolean single = file != null;
+        FetchHelper.StartListener listener = new FetchHelper.StartListener() {
+            @Override
+            public void onSuccess() {
+                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.show, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(getContext(), DirectDownloadActivity.class));
+                            }
+                        }).show();
+            }
 
-            DownloaderUtils.startDownload(downloaderMessenger,
-                    file == null ?
-                            DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), dir) :
-                            DownloadStartConfig.create(getContext(), download, profile.getProfile(getContext()), file));
-        } catch (DownloaderUtils.InvalidPathException | DownloadStartConfig.CannotCreateStartConfigException ex) {
-            showToast(Toaster.build().message(R.string.failedDownloadingDir).ex(ex));
-            return;
+            @Override
+            public void onFailed(Throwable ex) {
+                DialogUtils.showToast(getContext(),
+                        Toaster.build()
+                                .message(single ? R.string.failedAddingDownload : R.string.failedAddingDownloads)
+                                .ex(ex));
+            }
+        };
+
+        if (file != null) {
+            helper.start(profile, download, file, listener);
+        } else if (dir != null) {
+            helper.start(profile, download, dir, listener);
         }
-
-        Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
-                .setAction(R.string.show, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(getContext(), DirectDownloadActivity.class));
-                    }
-                }).show();
-    }
-
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        downloaderMessenger = new Messenger(service);
-        if (boundWaiter != null) boundWaiter.onBound();
-        boundWaiter = null;
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        downloaderMessenger = null;
     }
 
     @Override
@@ -289,7 +285,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         String mime = file.getMimeType();
         if (mime != null) {
             if (Utils.isStreamable(mime) && getContext() != null) {
-                final Intent intent = Utils.getStreamIntent(download, profile.getProfile(getContext()), file);
+                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), download, file);
                 if (intent != null && Utils.canHandleIntent(getContext(), intent)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle(R.string.couldStreamVideo)
@@ -318,18 +314,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         shouldDownload(profile, file);
     }
 
-    private void shouldDownload(final MultiProfile profile, final AriaFile file) {
-        if (downloaderMessenger != null) {
-            startDownloadInternal(profile, file, null);
-        } else {
-            boundWaiter = new OnWaitBinder() {
-                @Override
-                public void onBound() {
-                    startDownloadInternal(profile, file, null);
-                }
-            };
-        }
-
+    private void shouldDownload(MultiProfile profile, AriaFile file) {
+        startDownloadInternal(profile, file, null);
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_FILE);
     }
 
@@ -341,17 +327,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             dismissDialog();
         }
 
-        if (downloaderMessenger != null) {
-            startDownloadInternal(profile, null, dir);
-        } else {
-            boundWaiter = new OnWaitBinder() {
-                @Override
-                public void onBound() {
-                    startDownloadInternal(profile, null, dir);
-                }
-            };
-        }
-
+        startDownloadInternal(profile, null, dir);
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_DIRECTORY);
     }
 
@@ -397,8 +373,6 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                 });
             }
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
-
-        DownloaderUtils.bindService(getContext(), FilesFragment.this);
     }
 
     @Override
@@ -437,9 +411,5 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             return ((FoldersTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
 
         return true;
-    }
-
-    private interface OnWaitBinder {
-        void onBound();
     }
 }

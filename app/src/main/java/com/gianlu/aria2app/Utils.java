@@ -96,7 +96,7 @@ public final class Utils {
     }
 
     @Nullable
-    public static Intent getStreamIntent(DownloadWithUpdate download, MultiProfile.UserProfile profile, AriaFile file) {
+    public static Intent getStreamIntent(MultiProfile.UserProfile profile, DownloadWithUpdate download, AriaFile file) {
         MultiProfile.DirectDownload dd = profile.directDownload;
         if (dd == null) throw new IllegalStateException("WTF?!");
 
@@ -104,7 +104,6 @@ public final class Utils {
         if (base == null) return null;
 
         HttpUrl url = file.getDownloadUrl(download.update().dir, base);
-
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(url.toString()), file.getMimeType());
         return intent;
