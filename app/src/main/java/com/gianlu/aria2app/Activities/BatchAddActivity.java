@@ -67,7 +67,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
 
         Bundle analytics = new Bundle();
         analytics.putInt("bundles", bundles.size());
-        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_NEW_BATCH, analytics);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_BATCH, analytics);
 
         try {
             showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));

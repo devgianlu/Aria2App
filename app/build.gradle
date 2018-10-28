@@ -45,7 +45,3 @@ dependencies {
     api 'com.michaelfotiadis:android-country-flags:1.0.3'
     api 'com.llew.huawei:verifier:1.0.6'
 }
-
-if (getGradle().getStartParameter().getTaskRequests().toString().contains("standard")) {
-    apply plugin: 'com.google.gms.google-services'
-}

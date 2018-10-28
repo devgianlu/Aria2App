@@ -299,7 +299,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     startActivity(intent);
-                                    AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_PLAY_VIDEO);
+                                    AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
                                 }
                             })
                             .setNegativeButton(R.string.download, new DialogInterface.OnClickListener() {
@@ -330,7 +330,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             };
         }
 
-        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_FILE);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_FILE);
     }
 
     @Override
@@ -352,7 +352,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             };
         }
 
-        AnalyticsApplication.sendAnalytics(getContext(), Utils.ACTION_DOWNLOAD_DIRECTORY);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_DIRECTORY);
     }
 
     @Override

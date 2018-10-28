@@ -378,7 +378,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
         }
 
-        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_NEW_PROFILE);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_PROFILE);
     }
 
     private void handleInvalidFieldException(InvalidFieldException ex) {
@@ -402,7 +402,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     private void deleteProfile() {
         if (editProfile == null) return;
 
-        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_DELETE_PROFILE);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_DELETE_PROFILE);
 
         ProfilesManager.get(this).delete(editProfile);
         onBackPressed();
@@ -482,7 +482,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     @Nullable
     @Override
     public MultiProfile.UserProfile getProfile() {
-        AnalyticsApplication.sendAnalytics(this, Utils.ACTION_STARTED_TEST);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_STARTED_TEST);
 
         try {
             MultiProfile profile = buildProfile();

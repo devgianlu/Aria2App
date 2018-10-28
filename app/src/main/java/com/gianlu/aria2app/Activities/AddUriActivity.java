@@ -85,7 +85,7 @@ public class AddUriActivity extends AddDownloadActivity {
     @Nullable
     @Override
     public AddDownloadBundle createBundle() {
-        AnalyticsApplication.sendAnalytics(AddUriActivity.this, Utils.ACTION_NEW_URI);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_URI);
 
         ArrayList<String> uris = urisFragment.getUris();
         if (uris == null || uris.isEmpty()) {
