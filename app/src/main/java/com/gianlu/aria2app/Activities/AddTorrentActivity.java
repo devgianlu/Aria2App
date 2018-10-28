@@ -88,7 +88,7 @@ public class AddTorrentActivity extends AddDownloadActivity {
     @Nullable
     @Override
     public AddDownloadBundle createBundle() {
-        AnalyticsApplication.sendAnalytics(AddTorrentActivity.this, Utils.ACTION_NEW_TORRENT);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_TORRENT);
 
 
         String base64 = null;

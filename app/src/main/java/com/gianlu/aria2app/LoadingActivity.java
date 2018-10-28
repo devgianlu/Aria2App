@@ -131,7 +131,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         launchGid = getIntent().getStringExtra("gid");
 
         if (hasShortcutAction()) {
-            AnalyticsApplication.sendAnalytics(LoadingActivity.this, Utils.ACTION_SHORTCUT);
+            AnalyticsApplication.sendAnalytics(Utils.ACTION_SHORTCUT);
 
             shortcutAction = getIntent().getAction();
             displayPicker(true);
@@ -139,7 +139,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         }
 
         if (hasShareData()) {
-            AnalyticsApplication.sendAnalytics(LoadingActivity.this, Utils.ACTION_SHARE);
+            AnalyticsApplication.sendAnalytics(Utils.ACTION_SHARE);
 
             shareData = getShareData();
             displayPicker(true);
@@ -315,8 +315,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         return true;
     }
 
-    private void goTo(Class goTo) {
-        Intent intent = new Intent(LoadingActivity.this, goTo).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+    private void launchMain() {
+        Intent intent = new Intent(LoadingActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if (shortcutAction != null) intent.putExtra("shortcutAction", shortcutAction);
         else if (shareData != null) intent.putExtra("shareData", shareData);
         else if (launchGid != null && !launchGid.isEmpty()) intent.putExtra("gid", launchGid);
@@ -326,7 +326,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onConnected(@NonNull AbstractClient client) {
-        goTo(MainActivity.class);
+        launchMain();
         return false;
     }
 

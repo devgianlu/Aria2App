@@ -165,7 +165,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
         searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), this);
 
-        AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH);
         return true;
     }
 
@@ -290,7 +290,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
 
-                        AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_GET_MAGNET);
+                        AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_MAGNET);
                     }
                 })
                 .setPositiveButton(R.string.download, null);
@@ -301,7 +301,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                 public void onClick(DialogInterface dialogInterface, int i) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(torrent.torrentFileUrl)));
 
-                    AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_GET_TORRENT);
+                    AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_TORRENT);
                 }
             });
         }
@@ -339,7 +339,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                             return;
                         }
 
-                        AnalyticsApplication.sendAnalytics(SearchActivity.this, Utils.ACTION_SEARCH_DOWNLOAD);
+                        AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_DOWNLOAD);
                     }
                 });
             }

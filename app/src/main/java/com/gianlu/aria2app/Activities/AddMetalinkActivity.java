@@ -84,7 +84,7 @@ public class AddMetalinkActivity extends AddDownloadActivity {
     @Nullable
     @Override
     public AddDownloadBundle createBundle() {
-        AnalyticsApplication.sendAnalytics(AddMetalinkActivity.this, Utils.ACTION_NEW_METALINK);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_METALINK);
 
         String base64 = null;
         try {

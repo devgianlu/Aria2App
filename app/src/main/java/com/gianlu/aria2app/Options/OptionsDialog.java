@@ -197,7 +197,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
                 pd.dismiss();
                 DialogUtils.showToast(getContext(), Toaster.build().message(global ? R.string.globalOptionsChanged : R.string.downloadOptionsChanged));
                 dismissAllowingStateLoss();
-                AnalyticsApplication.sendAnalytics(getContext(), global ? Utils.ACTION_CHANGED_GLOBAL_OPTIONS : Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
+                AnalyticsApplication.sendAnalytics(global ? Utils.ACTION_CHANGED_GLOBAL_OPTIONS : Utils.ACTION_CHANGED_DOWNLOAD_OPTIONS);
             }
 
             @Override
