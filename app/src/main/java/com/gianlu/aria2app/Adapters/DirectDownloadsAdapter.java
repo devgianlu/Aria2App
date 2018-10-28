@@ -157,6 +157,8 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
+                if (holder.progress.isIndeterminate())
+                    holder.progress.setProgress(0);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
