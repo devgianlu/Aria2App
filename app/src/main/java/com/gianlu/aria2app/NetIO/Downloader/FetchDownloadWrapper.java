@@ -14,6 +14,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.HttpUrl;
+
 public class FetchDownloadWrapper {
     private Download download;
     private ProgressBundle progress;
@@ -63,7 +65,7 @@ public class FetchDownloadWrapper {
     }
 
     public synchronized boolean is(@NotNull Download download) {
-        return download.getId() == download.getId();
+        return this.download.getId() == download.getId();
     }
 
     @NotNull
@@ -90,6 +92,11 @@ public class FetchDownloadWrapper {
 
     public long getEta() {
         return progress == null ? -1 : progress.eta;
+    }
+
+    @NonNull
+    public HttpUrl getUrl() {
+        return HttpUrl.get(download.getUrl());
     }
 
     public class ProgressBundle {

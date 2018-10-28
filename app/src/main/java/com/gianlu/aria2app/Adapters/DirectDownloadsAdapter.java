@@ -35,12 +35,14 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     private final List<FetchDownloadWrapper> downloads;
     private final Context context;
     private final FetchHelper helper;
+    private final FetchHelper.StartListener restartListener;
 
-    public DirectDownloadsAdapter(Context context, List<Download> downloads) {
+    public DirectDownloadsAdapter(Context context, List<Download> downloads, FetchHelper.StartListener restartListener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.downloads = FetchDownloadWrapper.wrap(downloads);
         this.helper = FetchHelper.get(context);
+        this.restartListener = restartListener;
     }
 
     @NonNull
@@ -49,8 +51,8 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         return new ViewHolder(parent);
     }
 
-    private void updateViewHolder(@NonNull ViewHolder holder, @Nullable FetchDownloadWrapper.ProgressBundle bundle) {
-        FetchDownloadWrapper download = downloads.get(holder.getAdapterPosition());
+    private void updateViewHolder(@NonNull ViewHolder holder, int pos, @Nullable FetchDownloadWrapper.ProgressBundle bundle) {
+        FetchDownloadWrapper download = downloads.get(pos);
 
         long eta = bundle == null ? download.getEta() : bundle.eta;
         if (eta == -1) {
@@ -83,7 +85,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         }
 
         FetchDownloadWrapper.ProgressBundle bundle = (FetchDownloadWrapper.ProgressBundle) payloads.get(0);
-        updateViewHolder(holder, bundle);
+        updateViewHolder(holder, position, bundle);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         holder.uri.setText(download.getDecodedUrl());
         holder.progress.setMax(100);
 
-        updateViewHolder(holder, null);
+        updateViewHolder(holder, position, null);
 
         switch (download.getStatus()) {
             case QUEUED:
@@ -205,7 +207,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         holder.restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper.restart(download);
+                helper.restart(download, restartListener);
             }
         });
         holder.remove.setOnClickListener(new View.OnClickListener() {

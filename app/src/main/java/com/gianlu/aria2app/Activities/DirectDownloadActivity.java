@@ -11,6 +11,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
+import com.gianlu.commonutils.Toaster;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2core.DownloadBlock;
@@ -55,7 +56,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
     @Override
     public void onDownloads(List<Download> downloads) {
-        adapter = new DirectDownloadsAdapter(this, downloads);
+        adapter = new DirectDownloadsAdapter(this, downloads, new RestartListener());
         layout.loadListData(adapter);
         countUpdated();
     }
@@ -129,5 +130,18 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
     @Override
     public void onWaitingNetwork(@NotNull Download download) {
         if (adapter != null) adapter.update(download);
+    }
+
+    private class RestartListener implements FetchHelper.StartListener {
+
+        @Override
+        public void onSuccess() {
+            Toaster.with(DirectDownloadActivity.this).message(R.string.downloadRestarted).show();
+        }
+
+        @Override
+        public void onFailed(Throwable ex) {
+            Toaster.with(DirectDownloadActivity.this).message(R.string.failedDownloadingFile).ex(ex).show();
+        }
     }
 }

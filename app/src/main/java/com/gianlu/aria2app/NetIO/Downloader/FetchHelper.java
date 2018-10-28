@@ -89,7 +89,7 @@ public class FetchHelper {
         });
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull AriaFileWrapper file, final StartListener listener) {
+    public void start(@NonNull MultiProfile profile, @NonNull AriaFileWrapper file, @NonNull StartListener listener) {
         MultiProfile.DirectDownload dd = profile.getProfile(profilesManager).directDownload;
         if (dd == null) {
             callFailed(listener, new PreparationException("DirectDownload not enabled!"));
@@ -110,8 +110,15 @@ public class FetchHelper {
             return;
         }
 
-        HttpUrl url = file.getDownloadUrl(base);
-        final Request request = new Request(url.toString(), new File(downloadDir, file.getName()).toString());
+        startInternal(file.getDownloadUrl(base), new File(downloadDir, file.getName()), listener);
+    }
+
+    public void start(@NonNull MultiProfile profile, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
+        throw new UnsupportedOperationException("Not supported ATM!"); // TODO: Start directory download
+    }
+
+    private void startInternal(@NonNull HttpUrl url, @NonNull final File dest, @NonNull final StartListener listener) {
+        final Request request = new Request(url.toString(), dest.toString());
         request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY); // TODO: Could be user settable
 
         fetch.enqueue(request, new Func<Request>() {
@@ -127,10 +134,6 @@ public class FetchHelper {
                 listener.onFailed(result.getThrowable());
             }
         });
-    }
-
-    public void start(@NonNull MultiProfile profile, @NonNull AriaDirectory dir, StartListener listener) {
-        throw new UnsupportedOperationException("Not supported ATM!"); // TODO: Start directory download
     }
 
     public void addListener(final FetchEventListener listener) {
@@ -164,8 +167,8 @@ public class FetchHelper {
         fetch.remove(download.get().getId());
     }
 
-    public void restart(@NotNull FetchDownloadWrapper download) {
-        throw new UnsupportedOperationException("Restart isn't supported yet!"); // TODO: Restart download
+    public void restart(@NotNull FetchDownloadWrapper download, @NonNull StartListener listener) {
+        startInternal(download.getUrl(), download.getFile(), listener);
     }
 
     @UiThread
