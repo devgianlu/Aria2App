@@ -16,8 +16,7 @@ import java.util.List;
 
 public class FetchDownloadWrapper {
     private Download download;
-    private long eta = -1;
-    private long speed = 0;
+    private ProgressBundle progress;
 
     private FetchDownloadWrapper(@NotNull Download download) {
         this.download = download;
@@ -54,34 +53,22 @@ public class FetchDownloadWrapper {
         }
     }
 
+    public synchronized ProgressBundle progress(long eta, long speed) {
+        return progress = new ProgressBundle(eta, speed);
+    }
+
     @NotNull
     public synchronized String getName() {
         return new File(download.getFile()).getName();
     }
 
     public synchronized boolean is(@NotNull Download download) {
-        return download.equals(this.download);
+        return download.getId() == download.getId();
     }
 
     @NotNull
     public synchronized Status getStatus() {
         return download.getStatus();
-    }
-
-    public synchronized long getSpeed() {
-        return speed;
-    }
-
-    public synchronized void setSpeed(long speed) {
-        this.speed = speed;
-    }
-
-    public synchronized long getEta() {
-        return eta;
-    }
-
-    public synchronized void setEta(long eta) {
-        this.eta = eta;
     }
 
     public synchronized long getDownloaded() {
@@ -95,5 +82,23 @@ public class FetchDownloadWrapper {
     @NotNull
     public synchronized File getFile() {
         return new File(download.getFile());
+    }
+
+    public synchronized long getSpeed() {
+        return progress == null ? 0 : progress.speed;
+    }
+
+    public long getEta() {
+        return progress == null ? -1 : progress.eta;
+    }
+
+    public class ProgressBundle {
+        public final long eta;
+        public final long speed;
+
+        private ProgressBundle(long eta, long speed) {
+            this.eta = eta;
+            this.speed = speed;
+        }
     }
 }

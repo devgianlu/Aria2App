@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -42,13 +43,21 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         this.helper = FetchHelper.get(context);
     }
 
-    private static void updateDownloadInfo(ViewHolder holder, FetchDownloadWrapper download) {
-        long eta = download.getEta();
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(parent);
+    }
+
+    private void updateViewHolder(@NonNull ViewHolder holder, @Nullable FetchDownloadWrapper.ProgressBundle bundle) {
+        FetchDownloadWrapper download = downloads.get(holder.getAdapterPosition());
+
+        long eta = bundle == null ? download.getEta() : bundle.eta;
         if (eta == -1) {
             holder.remainingTime.setVisibility(View.GONE);
         } else {
             holder.remainingTime.setVisibility(View.VISIBLE);
-            holder.remainingTime.setText(CommonUtils.timeFormatter(download.getEta()));
+            holder.remainingTime.setText(CommonUtils.timeFormatter(eta / 1000));
         }
 
         int progress = download.getProgress();
@@ -61,30 +70,39 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             holder.percentage.setText(String.format(Locale.getDefault(), "%d%%", progress));
         }
 
-        holder.speed.setText(CommonUtils.speedFormatter(download.getSpeed(), false));
+        long speed = bundle == null ? download.getSpeed() : bundle.speed;
+        holder.speed.setText(CommonUtils.speedFormatter(speed, false));
         holder.downloaded.setText(CommonUtils.dimensionFormatter(download.getDownloaded(), false));
     }
 
-    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(parent);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+            return;
+        }
+
+        FetchDownloadWrapper.ProgressBundle bundle = (FetchDownloadWrapper.ProgressBundle) payloads.get(0);
+        updateViewHolder(holder, bundle);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) { // TODO: Can improve performance
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final FetchDownloadWrapper download = downloads.get(position);
 
         holder.title.setText(download.getName());
         holder.uri.setText(download.getDecodedUrl());
         holder.progress.setMax(100);
 
-        updateDownloadInfo(holder, download);
+        updateViewHolder(holder, null);
 
         switch (download.getStatus()) {
             case QUEUED:
                 holder.status.setText(R.string.pending);
                 holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadPending));
+
+                holder.remainingTime.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
@@ -96,6 +114,9 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 holder.status.setText(R.string.running);
                 holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadRunning));
 
+                holder.remainingTime.setVisibility(View.VISIBLE);
+                holder.speed.setVisibility(View.VISIBLE);
+
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.VISIBLE);
@@ -105,6 +126,9 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             case PAUSED:
                 holder.status.setText(R.string.paused);
                 holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadPaused));
+
+                holder.remainingTime.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.VISIBLE);
@@ -116,6 +140,9 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 holder.status.setText(R.string.completed);
                 holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadCompleted));
 
+                holder.remainingTime.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
+
                 holder.open.setVisibility(View.VISIBLE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
@@ -126,6 +153,9 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 holder.status.setText(R.string.failed);
                 holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadFailed));
 
+                holder.remainingTime.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
+
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
                 holder.pause.setVisibility(View.GONE);
@@ -135,6 +165,9 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             case CANCELLED:
                 holder.status.setText(R.string.cancelled);
                 holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadCancelled));
+
+                holder.remainingTime.setVisibility(View.GONE);
+                holder.speed.setVisibility(View.GONE);
 
                 holder.open.setVisibility(View.GONE);
                 holder.start.setVisibility(View.GONE);
@@ -235,9 +268,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         if (index != -1) {
             FetchDownloadWrapper wrapper = downloads.get(index);
             wrapper.set(download);
-            wrapper.setEta(eta);
-            wrapper.setSpeed(speed);
-            notifyItemChanged(index);
+            notifyItemChanged(index, wrapper.progress(eta, speed));
         }
     }
 
