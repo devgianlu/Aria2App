@@ -30,7 +30,6 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.NetIO.Downloader.AriaFileWrapper;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
@@ -246,6 +245,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     private void startDownloadInternal(MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
+        final boolean single = file != null;
         FetchHelper.StartListener listener = new FetchHelper.StartListener() {
             @Override
             public void onSuccess() {
@@ -260,14 +260,17 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
             @Override
             public void onFailed(Throwable ex) {
-                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedAddingDownload).ex(ex)); // FIXME: Download/S
+                DialogUtils.showToast(getContext(),
+                        Toaster.build()
+                                .message(single ? R.string.failedAddingDownload : R.string.failedAddingDownloads)
+                                .ex(ex));
             }
         };
 
         if (file != null) {
-            helper.start(profile, new AriaFileWrapper(file, download), listener);
+            helper.start(profile, download, file, listener);
         } else if (dir != null) {
-            helper.start(profile, dir, listener);
+            helper.start(profile, download, dir, listener);
         }
     }
 
@@ -282,7 +285,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         String mime = file.getMimeType();
         if (mime != null) {
             if (Utils.isStreamable(mime) && getContext() != null) {
-                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), new AriaFileWrapper(file, download));
+                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), download, file);
                 if (intent != null && Utils.canHandleIntent(getContext(), intent)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle(R.string.couldStreamVideo)

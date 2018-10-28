@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
+import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -24,7 +26,9 @@ import com.tonyodev.fetch2okhttp.OkHttpDownloader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import okhttp3.HttpUrl;
 
@@ -70,6 +74,18 @@ public class FetchHelper {
         return path;
     }
 
+    @NonNull
+    private static Request createRequest(HttpUrl base, String dir, File downloadDir, AriaFile file) {
+        return createRequest(file.getDownloadUrl(dir, base), new File(downloadDir, file.getRelativePath(dir)));
+    }
+
+    @NonNull
+    private static Request createRequest(@NonNull HttpUrl url, @NonNull File dest) {
+        Request request = new Request(url.toString(), dest.getAbsolutePath());
+        request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY); // TODO: Could be user settable
+        return request;
+    }
+
     public void updateDownloadCount(final FetchDownloadCountListener listener) {
         fetch.getDownloads(new Func<List<Download>>() {
             @Override
@@ -89,7 +105,9 @@ public class FetchHelper {
         });
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull AriaFileWrapper file, @NonNull StartListener listener) {
+    public void start(@NonNull MultiProfile profile, @NonNull DownloadWithUpdate download, @NonNull AriaFile file, @NonNull StartListener listener) {
+        String ariaDir = download.update().dir;
+
         MultiProfile.DirectDownload dd = profile.getProfile(profilesManager).directDownload;
         if (dd == null) {
             callFailed(listener, new PreparationException("DirectDownload not enabled!"));
@@ -110,17 +128,50 @@ public class FetchHelper {
             return;
         }
 
-        startInternal(file.getDownloadUrl(base), new File(downloadDir, file.getName()), listener);
+        startInternal(createRequest(file.getDownloadUrl(ariaDir, base), new File(downloadDir, file.getRelativePath(ariaDir))), listener);
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
-        throw new UnsupportedOperationException("Not supported ATM!"); // TODO: Start directory download
+    public void start(@NonNull MultiProfile profile, @NonNull DownloadWithUpdate download, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
+        List<AriaFile> files = dir.allFiles();
+        if (files.size() == 1) {
+            start(profile, download, files.get(0), listener);
+            return;
+        }
+
+        MultiProfile.DirectDownload dd = profile.getProfile(profilesManager).directDownload;
+        if (dd == null) {
+            callFailed(listener, new PreparationException("DirectDownload not enabled!"));
+            return;
+        }
+
+        HttpUrl base = dd.getUrl();
+        if (base == null) {
+            callFailed(listener, new PreparationException("Invalid DirectDownload url: " + dd.address));
+            return;
+        }
+
+        File downloadDir;
+        try {
+            downloadDir = getAndValidateDownloadPath();
+        } catch (PreparationException ex) {
+            callFailed(listener, ex);
+            return;
+        }
+
+        int groupId = ThreadLocalRandom.current().nextInt();
+        String ariaDir = download.update().dir;
+
+        List<Request> requests = new ArrayList<>(files.size());
+        for (AriaFile file : files) {
+            Request request = createRequest(base, ariaDir, downloadDir, file);
+            request.setGroupId(groupId);
+            requests.add(request);
+        }
+
+        startInternal(requests, listener);
     }
 
-    private void startInternal(@NonNull HttpUrl url, @NonNull final File dest, @NonNull final StartListener listener) {
-        final Request request = new Request(url.toString(), dest.toString());
-        request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY); // TODO: Could be user settable
-
+    private void startInternal(@NonNull Request request, @NonNull final StartListener listener) {
         fetch.enqueue(request, new Func<Request>() {
             @Override
             @UiThread
@@ -136,7 +187,23 @@ public class FetchHelper {
         });
     }
 
-    public void addListener(final FetchEventListener listener) {
+    private void startInternal(@NonNull List<Request> requests, @NonNull final StartListener listener) {
+        fetch.enqueue(requests, new Func<List<Request>>() {
+            @Override
+            @UiThread
+            public void call(@NotNull List<Request> result) {
+                listener.onSuccess();
+            }
+        }, new Func<Error>() {
+            @Override
+            @UiThread
+            public void call(@NotNull Error result) {
+                listener.onFailed(result.getThrowable());
+            }
+        });
+    }
+
+    public void addListener(FetchEventListener listener) {
         fetch.addListener(listener);
         reloadListener(listener);
     }
@@ -168,7 +235,7 @@ public class FetchHelper {
     }
 
     public void restart(@NotNull FetchDownloadWrapper download, @NonNull StartListener listener) {
-        startInternal(download.getUrl(), download.getFile(), listener);
+        startInternal(createRequest(download.getUrl(), download.getFile()), listener);
     }
 
     @UiThread
