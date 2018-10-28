@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Preferences.BasePreferenceActivity;
 import com.gianlu.commonutils.Preferences.BasePreferenceFragment;
@@ -131,6 +132,13 @@ public class PreferenceActivity extends BasePreferenceActivity {
             resume.setTitle(R.string.prefs_ddResume);
             resume.setSummary(R.string.prefs_ddResume_summary);
             addPreference(resume);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+
+            FetchHelper.invalidate();
         }
 
         @Override

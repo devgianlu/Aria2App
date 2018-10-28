@@ -41,7 +41,9 @@ public class FetchHelper {
     private FetchHelper(@NonNull Context context) {
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(context)
                 .setDownloadConcurrentLimit(Prefs.getInt(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS))
-                .setHttpDownloader(new OkHttpDownloader(/* TODO: Select downloader type? */))
+                .setProgressReportingInterval(1000)
+                .enableAutoStart(Prefs.getBoolean(PK.DD_RESUME))
+                .setHttpDownloader(new OkHttpDownloader())
                 .build();
 
         fetch = Fetch.Impl.getInstance(fetchConfiguration);
@@ -49,7 +51,7 @@ public class FetchHelper {
         handler = new Handler(Looper.getMainLooper());
     }
 
-    public static void invalidate() { // TODO: Call when any preference changes
+    public static void invalidate() {
         if (instance != null) {
             instance.fetch.close();
             instance = null;
@@ -82,7 +84,7 @@ public class FetchHelper {
     @NonNull
     private static Request createRequest(@NonNull HttpUrl url, @NonNull File dest) {
         Request request = new Request(url.toString(), dest.getAbsolutePath());
-        request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY); // TODO: Could be user settable
+        request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY);
         return request;
     }
 
@@ -255,7 +257,7 @@ public class FetchHelper {
         void onFailed(Throwable ex);
     }
 
-    public static class PreparationException extends Exception {
+    private static class PreparationException extends Exception {
         private PreparationException(String msg) {
             super(msg);
         }
