@@ -5,7 +5,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.service.chooser.ChooserTarget;
 import android.service.chooser.ChooserTargetService;
-import android.support.annotation.RequiresApi;
 
 import com.gianlu.aria2app.ProfilesManager.ChooserTargetsCache;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -14,6 +13,8 @@ import com.gianlu.commonutils.LettersIcons.DrawingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.RequiresApi;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class ProfileChooserService extends ChooserTargetService {

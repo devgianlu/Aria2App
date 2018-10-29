@@ -1,8 +1,5 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.OnRefresh;
@@ -14,6 +11,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public final class UpdaterFramework {
     private static UpdaterFramework instance;

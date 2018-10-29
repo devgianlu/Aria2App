@@ -1,9 +1,8 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
@@ -21,6 +20,9 @@ import com.gianlu.commonutils.Toaster;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 public class Aria2Helper {
     private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = new AbstractClient.BatchSandbox<VersionAndSession>() {

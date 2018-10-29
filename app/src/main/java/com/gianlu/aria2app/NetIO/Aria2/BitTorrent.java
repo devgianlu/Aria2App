@@ -1,13 +1,13 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class BitTorrent {
     public final ArrayList<String> announceList;

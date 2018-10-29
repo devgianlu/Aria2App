@@ -1,7 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.os.Environment;
-import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
@@ -12,6 +11,8 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
 
 public final class PK extends CommonPK {
     public static final Prefs.Key SEARCH_ENGINES_CACHE = new Prefs.Key("searchEngineCache");

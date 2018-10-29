@@ -3,14 +3,15 @@ package com.gianlu.aria2app.NetIO.Updater;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public abstract class PayloadUpdater<P> implements Runnable {
     protected final Aria2Helper helper;

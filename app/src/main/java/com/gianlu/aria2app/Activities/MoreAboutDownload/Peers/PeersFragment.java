@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +17,8 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
+
+import androidx.annotation.NonNull;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
 

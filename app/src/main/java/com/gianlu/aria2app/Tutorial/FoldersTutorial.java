@@ -1,15 +1,16 @@
 package com.gianlu.aria2app.Tutorial;
 
 import android.graphics.Rect;
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
+
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class FoldersTutorial extends BaseTutorial {
 

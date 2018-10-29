@@ -1,9 +1,6 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
-import android.support.v7.widget.RecyclerView;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +21,10 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomProfilesAdapter.ViewHolder> implements NetTester.ProfileTesterCallback {

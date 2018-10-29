@@ -1,12 +1,12 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.support.annotation.Nullable;
-
 import com.gianlu.commonutils.Logging;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.Nullable;
 
 public final class ErrorHandler {
     private static ErrorHandler instance;

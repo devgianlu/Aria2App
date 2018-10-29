@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Main;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -9,6 +8,8 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.PayloadUpdater;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
+
+import androidx.annotation.NonNull;
 
 class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
 

@@ -1,12 +1,13 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public abstract class UpdaterActivity extends ActivityWithDialog implements ReceiverOwner {
     private final UpdaterFramework framework;

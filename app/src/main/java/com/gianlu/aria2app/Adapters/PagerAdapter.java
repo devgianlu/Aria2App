@@ -1,12 +1,13 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 public class PagerAdapter<F extends Fragment> extends FragmentStatePagerAdapter {
     private final List<F> fragments;

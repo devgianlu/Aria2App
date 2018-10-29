@@ -1,8 +1,6 @@
 package com.gianlu.aria2app.NetIO.Geolocalization;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -11,6 +9,9 @@ import android.widget.LinearLayout;
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class IPDetailsView extends LinearLayout {
     private final ImageView flag;

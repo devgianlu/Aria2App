@@ -3,11 +3,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +26,14 @@ import com.gianlu.commonutils.FontsManager;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
 
 public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, AriaFiles> {
     private TextView percentage;

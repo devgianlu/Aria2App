@@ -1,13 +1,13 @@
 package com.gianlu.aria2app.NetIO.Search;
 
-import android.support.annotation.NonNull;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class SearchEngine {
     public final String id;

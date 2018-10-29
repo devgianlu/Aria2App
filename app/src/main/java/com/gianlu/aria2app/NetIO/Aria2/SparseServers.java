@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.SparseArray;
 
 import org.json.JSONArray;
@@ -9,6 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class SparseServers extends SparseArray<Servers> {
     public SparseServers(JSONArray array) throws JSONException {

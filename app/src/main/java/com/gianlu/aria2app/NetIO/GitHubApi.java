@@ -1,17 +1,20 @@
 package com.gianlu.aria2app.NetIO;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public final class GitHubApi {
-    public static void getLatestVersion(final IRelease listener) {
+    public static void getLatestVersion(final OnRelease listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -32,9 +35,10 @@ public final class GitHubApi {
         }).start();
     }
 
-    public interface IRelease {
-        void onRelease(String release);
+    @WorkerThread
+    public interface OnRelease {
+        void onRelease(@NonNull String release);
 
-        void onException(Exception ex);
+        void onException(@NonNull Exception ex);
     }
 }

@@ -1,8 +1,6 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,9 @@ import com.gianlu.aria2app.R;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
     private final ArrayList<String> uris;

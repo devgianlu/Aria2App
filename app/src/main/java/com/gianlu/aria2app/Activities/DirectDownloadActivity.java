@@ -1,9 +1,6 @@
 package com.gianlu.aria2app.Activities;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 
 import com.gianlu.aria2app.Adapters.DirectDownloadsAdapter;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
@@ -20,6 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class DirectDownloadActivity extends ActivityWithDialog implements FetchHelper.FetchEventListener {
     private RecyclerViewLayout layout;

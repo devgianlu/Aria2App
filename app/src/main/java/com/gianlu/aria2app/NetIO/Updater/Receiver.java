@@ -1,8 +1,8 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
-import android.support.annotation.NonNull;
-
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+
+import androidx.annotation.NonNull;
 
 public interface Receiver<P> {
     void onUpdateUi(@NonNull P payload);

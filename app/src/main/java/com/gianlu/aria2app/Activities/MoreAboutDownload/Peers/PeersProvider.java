@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -10,6 +9,8 @@ import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.PayloadUpdater;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
+
+import androidx.annotation.NonNull;
 
 public class PeersProvider extends PayloadProvider<Peers> {
     private final String gid;

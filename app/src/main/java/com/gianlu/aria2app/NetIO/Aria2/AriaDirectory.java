@@ -1,8 +1,5 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.gianlu.commonutils.CommonUtils;
 
 import java.util.ArrayList;
@@ -11,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class AriaDirectory {
     public static volatile char SEPARATOR = '/';

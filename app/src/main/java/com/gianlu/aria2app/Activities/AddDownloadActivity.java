@@ -2,9 +2,6 @@ package com.gianlu.aria2app.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -16,6 +13,10 @@ import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
+
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public abstract class AddDownloadActivity extends ActivityWithDialog {
     private boolean startedForResult = false;

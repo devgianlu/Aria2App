@@ -8,10 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -19,31 +15,30 @@ import android.view.View;
 import java.util.Locale;
 import java.util.Random;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 public class DonutProgress extends View {
     private final Rect textBound = new Rect();
-    private Paint arcPaint;
-    private Paint transparentPaint;
-    private Paint textPaint;
+    private final Paint arcPaint;
+    private final Paint transparentPaint;
+    private final Paint textPaint;
+    private final float padding;
     private String percentage;
-    private float padding;
     private int sweepAngle;
 
     public DonutProgress(Context context) {
-        super(context);
-        init();
+        this(context, null, 0);
     }
 
     public DonutProgress(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs, 0);
     }
 
     public DonutProgress(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
         setLayerType(LAYER_TYPE_SOFTWARE, null);
 
         arcPaint = new Paint();

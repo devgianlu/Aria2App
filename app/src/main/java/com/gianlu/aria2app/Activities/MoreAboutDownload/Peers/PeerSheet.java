@@ -1,8 +1,5 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +19,12 @@ import com.gianlu.commonutils.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
     private final GeoIP ipApi = GeoIP.get();

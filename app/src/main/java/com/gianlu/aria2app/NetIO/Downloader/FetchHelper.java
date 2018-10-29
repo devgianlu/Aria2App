@@ -3,8 +3,6 @@ package com.gianlu.aria2app.NetIO.Downloader;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
@@ -30,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import okhttp3.HttpUrl;
 
 public class FetchHelper {

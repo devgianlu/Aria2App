@@ -1,10 +1,10 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
 public interface OnJson {
     @WorkerThread

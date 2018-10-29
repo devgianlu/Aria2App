@@ -1,11 +1,11 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.Nullable;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
 
 public class AriaFiles extends ArrayList<AriaFile> {
 

@@ -1,8 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.Services.NotificationService;
@@ -17,6 +15,9 @@ import com.yarolegovich.mp.MaterialSeekBarPreference;
 
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class PreferenceActivity extends BasePreferenceActivity {
     @NonNull

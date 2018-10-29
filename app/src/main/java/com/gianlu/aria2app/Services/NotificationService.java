@@ -23,13 +23,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.ArraySet;
 
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
@@ -56,6 +49,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.collection.ArraySet;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -224,7 +224,7 @@ public class NotificationService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setShowWhen(false)
                 .setContentTitle(getString(R.string.notificationService))
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentText(describeServiceStatus())
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
@@ -271,7 +271,7 @@ public class NotificationService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, type.channelName());
         builder.setContentTitle(type.getFormal(this))
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentText("GID#" + gid)
                 .setContentInfo(profile.getProfileName(this))
                 .setCategory(Notification.CATEGORY_EVENT)
@@ -295,7 +295,7 @@ public class NotificationService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FOREGROUND_SERVICE);
         builder.setContentTitle(title)
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(message))
                 .setContentText(message)
                 .setCategory(Notification.CATEGORY_ERROR)

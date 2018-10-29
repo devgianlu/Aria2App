@@ -1,9 +1,6 @@
 package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
@@ -13,6 +10,10 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Logging;
 
 import java.util.concurrent.atomic.AtomicReference;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 
 public class NetTester extends BaseTester<AbstractClient> {
     private final ProfileTesterCallback profileListener;

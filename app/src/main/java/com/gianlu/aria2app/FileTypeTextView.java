@@ -6,8 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -16,6 +14,9 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.gianlu.commonutils.FontsManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class FileTypeTextView extends View {
     private final TextPaint textPaint;

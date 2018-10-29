@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.NonNull;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.NonNull;
 
 public class AriaException extends Exception {
     public final int code;

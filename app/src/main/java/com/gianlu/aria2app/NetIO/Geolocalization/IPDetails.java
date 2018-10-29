@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.NetIO.Geolocalization;
 
-import android.support.annotation.NonNull;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.NonNull;
 
 public class IPDetails {
     public final String countryCode;

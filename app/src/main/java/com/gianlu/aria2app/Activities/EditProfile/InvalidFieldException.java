@@ -1,7 +1,7 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
 
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 
 public class InvalidFieldException extends Exception {
     public final Class fragmentClass;

@@ -1,7 +1,7 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 
 public interface DoBatch<R> {
     @WorkerThread

@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.gianlu.aria2app.Utils;
@@ -18,6 +16,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public final class CertUtils {
     @Nullable

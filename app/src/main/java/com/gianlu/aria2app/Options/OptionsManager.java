@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Options;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.support.annotation.NonNull;
 
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 
@@ -17,6 +16,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class OptionsManager {
     private static OptionsManager instance;

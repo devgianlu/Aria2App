@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.webkit.MimeTypeMap;
 
 import org.json.JSONArray;
@@ -14,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.HttpUrl;
 
 public class AriaFile {

@@ -2,13 +2,14 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Comparator;
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
 
 public class Server {
     public final Uri uri;

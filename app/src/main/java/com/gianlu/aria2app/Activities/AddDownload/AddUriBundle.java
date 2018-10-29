@@ -2,8 +2,6 @@ package com.gianlu.aria2app.Activities.AddDownload;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class AddUriBundle extends AddDownloadBundle implements Serializable {
     public final ArrayList<String> uris;

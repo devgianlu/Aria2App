@@ -10,15 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -92,6 +83,7 @@ import com.gianlu.commonutils.Tutorial.TutorialManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONException;
 
@@ -105,6 +97,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener, FetchHelper.FetchDownloadCountListener {
     private static final int REQUEST_READ_CODE = 12;
@@ -351,7 +353,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         });
 
         recyclerViewLayout = findViewById(R.id.main_recyclerViewLayout);
-        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -482,9 +484,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     private void doVersionCheck() {
-        GitHubApi.getLatestVersion(new GitHubApi.IRelease() {
+        GitHubApi.getLatestVersion(new GitHubApi.OnRelease() {
             @Override
-            public void onRelease(final String latestVersion) {
+            public void onRelease(@NonNull final String latestVersion) {
                 helper.request(AriaRequests.getVersion(), new AbstractClient.OnResult<VersionInfo>() {
                     @Override
                     public void onResult(@NonNull VersionInfo result) {
@@ -505,7 +507,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 Logging.log(ex);
             }
         });

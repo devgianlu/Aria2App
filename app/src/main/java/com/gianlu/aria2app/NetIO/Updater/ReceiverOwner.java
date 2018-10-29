@@ -1,6 +1,6 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface ReceiverOwner {
     @NonNull

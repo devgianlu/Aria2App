@@ -1,12 +1,12 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServersWithFiles;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public final class Wants<P> {
     private final Class<P> klass;

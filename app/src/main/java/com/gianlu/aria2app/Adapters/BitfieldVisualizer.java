@@ -3,9 +3,6 @@ package com.gianlu.aria2app.Adapters;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -14,6 +11,10 @@ import com.gianlu.aria2app.R;
 
 import java.util.Arrays;
 import java.util.Objects;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 public class BitfieldVisualizer extends View {
     private final int padding = 12;

@@ -2,8 +2,6 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
@@ -12,6 +10,8 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 

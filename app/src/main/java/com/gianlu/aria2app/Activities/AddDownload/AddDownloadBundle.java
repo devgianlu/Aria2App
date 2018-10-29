@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.Activities.AddDownload;
 
-import android.support.annotation.Nullable;
-
 import java.io.Serializable;
 import java.util.HashMap;
+
+import androidx.annotation.Nullable;
 
 public abstract class AddDownloadBundle implements Serializable {
     public final Integer position;

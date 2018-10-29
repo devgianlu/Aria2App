@@ -1,8 +1,6 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
@@ -13,6 +11,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> {
     protected final PayloadUpdater<P> updater;

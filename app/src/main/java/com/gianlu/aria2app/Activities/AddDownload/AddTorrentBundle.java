@@ -2,12 +2,13 @@ package com.gianlu.aria2app.Activities.AddDownload;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class AddTorrentBundle extends AddBase64Bundle implements Serializable {
     public final ArrayList<String> uris;
