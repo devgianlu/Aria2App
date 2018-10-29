@@ -46,6 +46,7 @@ import com.gianlu.commonutils.BreadcrumbsView;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
+import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
@@ -124,7 +125,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
         breadcrumbs.setListener(this);
         recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
-        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewLayout.setLayoutManager(new SuppressingLinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
         tutorialManager = new TutorialManager(this, Discovery.FILES, Discovery.FOLDERS);

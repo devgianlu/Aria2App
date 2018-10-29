@@ -9,6 +9,7 @@ import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.CommonUtils;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -24,7 +25,7 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     public PayloadProvider(@NonNull Context context, @NonNull Wants<P> provides) throws Aria2Helper.InitializingException {
         this.updater = requireUpdater(context);
         this.provides = provides;
-        this.requireListeners = new HashSet<>();
+        this.requireListeners = Collections.synchronizedSet(new HashSet<PayloadUpdater.OnPayload<P>>());
     }
 
     private static void debug(String msg) {
