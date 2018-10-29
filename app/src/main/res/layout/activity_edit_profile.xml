@@ -32,16 +32,16 @@
             android:paddingEnd="16dp"
             android:paddingStart="16dp">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editProfile_profileName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/profileName">
 
-                <android.support.design.widget.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <CheckBox
                 android:id="@+id/editProfile_enableNotifs"
