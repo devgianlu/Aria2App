@@ -386,6 +386,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final boolean auth;
         public final String username;
         public final String password;
+        public final boolean hostnameVerifier;
+        public final X509Certificate certificate;
+        public final boolean serverSsl;
         private transient HttpUrl cachedUri;
 
         public DirectDownload(JSONObject obj) throws JSONException {
@@ -393,18 +396,33 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             auth = obj.getBoolean("auth");
             username = obj.optString("username", null);
             password = obj.optString("password", null);
+            hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
+            serverSsl = obj.optBoolean("serverSsl", false);
+
+            String base64 = obj.optString("certificate", null);
+            if (base64 == null) certificate = null;
+            else certificate = CertUtils.decodeCertificate(base64);
         }
 
-        public DirectDownload(String address, boolean auth, @Nullable String username, @Nullable String password) {
+        public DirectDownload(String address, boolean auth, @Nullable String username, @Nullable String password, boolean serverSsl, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
             this.address = address;
             this.auth = auth;
             this.username = username;
             this.password = password;
+            this.serverSsl = serverSsl;
+            this.certificate = certificate;
+            this.hostnameVerifier = hostnameVerifier;
         }
 
         JSONObject toJson() throws JSONException {
             JSONObject obj = new JSONObject();
-            obj.put("addr", address).put("auth", auth).put("username", username).put("password", password);
+            obj.put("addr", address).put("auth", auth).put("serverSsl", serverSsl)
+                    .put("username", username).put("password", password)
+                    .put("hostnameVerifier", hostnameVerifier);
+
+            if (certificate != null && serverSsl)
+                obj.put("certificate", CertUtils.encodeCertificate(certificate));
+
             return obj;
         }
 
@@ -439,7 +457,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final int serverPort;
         public final String serverEndpoint;
         public final AbstractClient.AuthMethod authMethod;
-        public final boolean serverSSL;
+        public final boolean serverSsl;
         public final boolean hostnameVerifier;
         public final X509Certificate certificate;
         public final String serverUsername;
@@ -462,7 +480,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverPassword = authFields.password;
             serverToken = authFields.token;
             connectionMethod = connFields.connectionMethod;
-            serverSSL = connFields.encryption;
+            serverSsl = connFields.encryption;
             certificate = connFields.certificate;
             serverAddr = connFields.address;
             serverPort = connFields.port;
@@ -480,7 +498,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             connectionMethod = ConnectionMethod.WEBSOCKET;
             serverPort = port;
             serverEndpoint = "/jsonrpc";
-            serverSSL = false;
+            serverSsl = false;
             certificate = null;
             directDownload = null;
             connectivityCondition = ConnectivityCondition.newUniqueCondition();
@@ -497,7 +515,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverUsername = obj.optString("serverUsername", null);
             serverPassword = obj.optString("serverPassword", null);
             serverToken = obj.optString("serverToken", null);
-            serverSSL = obj.optBoolean("serverSSL", false);
+            serverSsl = obj.optBoolean("serverSsl", false);
 
             serverAddr = obj.getString("serverAddr");
             serverPort = obj.getInt("serverPort");
@@ -572,11 +590,11 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                     .put("serverUsername", serverUsername)
                     .put("serverPassword", serverPassword)
                     .put("hostnameVerifier", hostnameVerifier)
-                    .put("serverSSL", serverSSL)
+                    .put("serverSsl", serverSsl)
                     .put("connectionMethod", connectionMethod.name())
                     .put("connectivityCondition", connectivityCondition.toJson());
 
-            if (certificate != null)
+            if (certificate != null && serverSsl)
                 profile.put("certificate", CertUtils.encodeCertificate(certificate));
 
             if (directDownload != null)
@@ -594,7 +612,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             UserProfile profile = (UserProfile) o;
 
             if (serverPort != profile.serverPort) return false;
-            if (serverSSL != profile.serverSSL) return false;
+            if (serverSsl != profile.serverSsl) return false;
             if (!serverAddr.equals(profile.serverAddr)) return false;
             if (!serverEndpoint.equals(profile.serverEndpoint)) return false;
             if (authMethod != profile.authMethod) return false;

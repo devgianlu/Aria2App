@@ -52,7 +52,7 @@ public final class NetUtils {
         }
     }
 
-    private static void setSslSocketFactory(@NonNull OkHttpClient.Builder builder, @NonNull Certificate ca) throws GeneralSecurityException, IOException {
+    public static void setSslSocketFactory(@NonNull OkHttpClient.Builder builder, @NonNull Certificate ca) throws GeneralSecurityException, IOException {
         char[] password = "password".toCharArray();
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null, password);
@@ -99,7 +99,7 @@ public final class NetUtils {
     @NonNull
     public static URI createHttpURL(@NonNull MultiProfile.UserProfile profile) throws InvalidUrlException {
         try {
-            return new URI(profile.serverSSL ? "https" : "http", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
+            return new URI(profile.serverSsl ? "https" : "http", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
         } catch (Exception ex) {
             throw new InvalidUrlException(ex);
         }
@@ -108,7 +108,7 @@ public final class NetUtils {
     @NonNull
     public static URI createWebSocketURL(@NonNull MultiProfile.UserProfile profile) throws InvalidUrlException {
         try {
-            return new URI(profile.serverSSL ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
+            return new URI(profile.serverSsl ? "wss" : "ws", null, profile.serverAddr, profile.serverPort, profile.serverEndpoint, null, null);
         } catch (Exception ex) {
             throw new InvalidUrlException(ex);
         }

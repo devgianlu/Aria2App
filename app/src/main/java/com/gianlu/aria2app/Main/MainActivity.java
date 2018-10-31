@@ -267,6 +267,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public boolean onCouldntLoad(@NonNull Exception ex) {
+                Logging.log(ex);
+
                 if (recyclerViewLayout != null)
                     recyclerViewLayout.showError(R.string.failedLoadingDownloads);
 
@@ -592,7 +594,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return;
         }
 
-        FetchHelper.get(this).updateDownloadCount(this);
+        try {
+            FetchHelper.get(this).updateDownloadCount(this);
+        } catch (FetchHelper.InitializationException ex) {
+            Logging.log(ex);
+        }
     }
 
     @Override

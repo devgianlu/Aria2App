@@ -6,6 +6,7 @@ import com.gianlu.aria2app.Adapters.DirectDownloadsAdapter;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
@@ -45,8 +46,15 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
         layout.startLoading();
 
-        helper = FetchHelper.get(this);
-        helper.addListener(this);
+        try {
+            helper = FetchHelper.get(this);
+            helper.addListener(this);
+        } catch (FetchHelper.DirectDownloadNotEnabledException ex) {
+            layout.showInfo(R.string.noDirectDownloads);
+        } catch (FetchHelper.InitializationException ex) {
+            Logging.log(ex);
+            layout.showError(R.string.failedLoading_reason, ex.getMessage());
+        }
     }
 
     @Override
@@ -57,7 +65,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
     @Override
     public void onDownloads(List<Download> downloads) {
-        adapter = new DirectDownloadsAdapter(this, downloads, new RestartListener());
+        adapter = new DirectDownloadsAdapter(this, helper, downloads, new RestartListener());
         layout.loadListData(adapter);
         countUpdated();
     }

@@ -1,7 +1,9 @@
 package com.gianlu.aria2app.Activities.EditProfile;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,7 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-public class DirectDownloadFragment extends FieldErrorFragment {
+public class DirectDownloadFragment extends FieldErrorFragment implements CertificateInputView.ActivityProvider {
     private ScrollView layout;
     private CheckBox enableDirectDownload;
     private LinearLayout container;
@@ -36,6 +38,8 @@ public class DirectDownloadFragment extends FieldErrorFragment {
     private LinearLayout authContainer;
     private TextInputLayout username;
     private TextInputLayout password;
+    private CheckBox encryption;
+    private CertificateInputView certificate;
 
     @NonNull
     public static DirectDownloadFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
@@ -47,6 +51,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Nullable
     @Override
@@ -132,6 +137,17 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             }
         });
 
+        encryption = layout.findViewById(R.id.editProfile_dd_encryption);
+        encryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        certificate = layout.findViewById(R.id.editProfile_dd_certificate);
+        certificate.attachActivity(this);
+
         Bundle args = getArguments();
         MultiProfile.UserProfile edit;
         if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
@@ -139,6 +155,12 @@ public class DirectDownloadFragment extends FieldErrorFragment {
             if (edit.directDownload != null) {
                 CommonUtils.setText(address, edit.directDownload.address);
                 auth.setChecked(edit.directDownload.auth);
+                encryption.setChecked(edit.directDownload.serverSsl);
+                if (edit.directDownload.certificate != null && edit.directDownload.serverSsl) {
+                    certificate.showCertificateDetails(edit.directDownload.certificate);
+                    certificate.hostnameVerifier(edit.directDownload.hostnameVerifier);
+                }
+
                 if (edit.directDownload.auth) {
                     CommonUtils.setText(username, edit.directDownload.username);
                     CommonUtils.setText(password, edit.directDownload.password);
@@ -151,7 +173,14 @@ public class DirectDownloadFragment extends FieldErrorFragment {
         return layout;
     }
 
-    public Fields getFields(Context context) throws InvalidFieldException {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CertificateInputView.CODE_PICK_CERT && resultCode == Activity.RESULT_OK && isAdded())
+            certificate.loadCertificateUri(data.getData());
+    }
+
+    @Nullable
+    public Fields getFields(@NonNull Context context) throws InvalidFieldException {
         if (!created) {
             Bundle args = getArguments();
             MultiProfile.UserProfile edit;
@@ -183,7 +212,7 @@ public class DirectDownloadFragment extends FieldErrorFragment {
                     throw new InvalidFieldException(getClass(), R.id.editProfile_dd_password, context.getString(R.string.emptyPassword));
             }
 
-            dd = new MultiProfile.DirectDownload(address, auth, username, password);
+            dd = new MultiProfile.DirectDownload(address, auth, username, password, encryption.isChecked(), certificate.lastLoadedCertificate(), certificate.hostnameVerifier());
         }
 
         return new Fields(dd);

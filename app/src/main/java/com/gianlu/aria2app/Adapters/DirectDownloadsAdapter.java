@@ -38,11 +38,11 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
     private final FetchHelper helper;
     private final FetchHelper.StartListener restartListener;
 
-    public DirectDownloadsAdapter(Context context, List<Download> downloads, FetchHelper.StartListener restartListener) {
+    public DirectDownloadsAdapter(Context context, FetchHelper helper, List<Download> downloads, FetchHelper.StartListener restartListener) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.downloads = FetchDownloadWrapper.wrap(downloads);
-        this.helper = FetchHelper.get(context);
+        this.helper = helper;
         this.restartListener = restartListener;
     }
 

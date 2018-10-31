@@ -1,12 +1,15 @@
 package com.gianlu.aria2app.NetIO.Downloader;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -24,13 +27,21 @@ import com.tonyodev.fetch2okhttp.OkHttpDownloader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class FetchHelper {
     private static FetchHelper instance;
@@ -38,12 +49,30 @@ public class FetchHelper {
     private final Fetch fetch;
     private final Handler handler;
 
-    private FetchHelper(@NonNull Context context) {
+    private FetchHelper(@NonNull Context context) throws GeneralSecurityException, IOException, ProfilesManager.NoCurrentProfileException, InitializationException {
+        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentSpecific();
+        MultiProfile.DirectDownload dd = profile.directDownload;
+        if (dd == null) throw new DirectDownloadNotEnabledException();
+
+        OkHttpClient.Builder client = new OkHttpClient.Builder();
+        if (!dd.hostnameVerifier) {
+            client.hostnameVerifier(new HostnameVerifier() {
+                @SuppressLint("BadHostnameVerifier")
+                @Override
+                public boolean verify(String s, SSLSession sslSession) {
+                    return true;
+                }
+            });
+        }
+
+        if (dd.certificate != null) NetUtils.setSslSocketFactory(client, dd.certificate);
+        if (dd.auth) client.addInterceptor(new BasicAuthInterceptor(dd.username, dd.password));
+
         FetchConfiguration fetchConfiguration = new FetchConfiguration.Builder(context)
                 .setDownloadConcurrentLimit(Prefs.getInt(PK.DD_MAX_SIMULTANEOUS_DOWNLOADS))
                 .setProgressReportingInterval(1000)
                 .enableAutoStart(Prefs.getBoolean(PK.DD_RESUME))
-                .setHttpDownloader(new OkHttpDownloader())
+                .setHttpDownloader(new OkHttpDownloader(client.build()))
                 .build();
 
         fetch = Fetch.Impl.getInstance(fetchConfiguration);
@@ -59,8 +88,15 @@ public class FetchHelper {
     }
 
     @NonNull
-    public static FetchHelper get(@NonNull Context context) {
-        if (instance == null) instance = new FetchHelper(context);
+    public static FetchHelper get(@NonNull Context context) throws InitializationException {
+        if (instance == null) {
+            try {
+                instance = new FetchHelper(context);
+            } catch (GeneralSecurityException | ProfilesManager.NoCurrentProfileException | IOException ex) {
+                throw new InitializationException(ex);
+            }
+        }
+
         return instance;
     }
 
@@ -255,6 +291,36 @@ public class FetchHelper {
         void onSuccess();
 
         void onFailed(Throwable ex);
+    }
+
+    public static class DirectDownloadNotEnabledException extends InitializationException {
+    }
+
+    private static class BasicAuthInterceptor implements Interceptor {
+        private final String username;
+        private final String password;
+
+        BasicAuthInterceptor(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            okhttp3.Request request = chain.request();
+            return chain.proceed(request.newBuilder()
+                    .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP))
+                    .build());
+        }
+    }
+
+    public static class InitializationException extends Exception {
+        InitializationException() {
+        }
+
+        InitializationException(Throwable cause) {
+            super(cause);
+        }
     }
 
     private static class PreparationException extends Exception {

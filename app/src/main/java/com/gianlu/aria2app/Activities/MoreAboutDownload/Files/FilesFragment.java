@@ -116,7 +116,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        helper = FetchHelper.get(context);
+        try {
+            helper = FetchHelper.get(context);
+        } catch (FetchHelper.InitializationException ex) {
+            Logging.log(ex);
+            showToast(Toaster.build().message(R.string.failedLoading_reason, ex.getMessage()));
+        }
     }
 
     @Nullable

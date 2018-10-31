@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
+import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
 import org.json.JSONArray;
@@ -279,7 +280,7 @@ public abstract class AbstractClient implements Closeable {
 
     public interface BatchSandbox<R> {
         @WorkerThread
-        R sandbox(AbstractClient client) throws Exception;
+        R sandbox(@NonNull AbstractClient client) throws Exception;
     }
 
     public interface OnResult<R> {
@@ -287,7 +288,7 @@ public abstract class AbstractClient implements Closeable {
         void onResult(@NonNull R result);
 
         @UiThread
-        void onException(Exception ex);
+        void onException(@NonNull Exception ex);
     }
 
     public interface OnSuccess {
@@ -295,7 +296,7 @@ public abstract class AbstractClient implements Closeable {
         void onSuccess();
 
         @UiThread
-        void onException(Exception ex);
+        void onException(@NonNull Exception ex);
     }
 
     public interface OnConnectivityChanged {
@@ -307,7 +308,7 @@ public abstract class AbstractClient implements Closeable {
 
         @NonNull
         @WorkerThread
-        public abstract R process(AbstractClient client, JSONObject obj) throws JSONException;
+        public abstract R process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException;
     }
 
     public static class AriaRequest {
@@ -353,6 +354,8 @@ public abstract class AbstractClient implements Closeable {
     private class ConnectivityChangedReceiver extends BroadcastReceiver {
 
         private void switchClients(final Context context, final MultiProfile.UserProfile updated) {
+            FetchHelper.invalidate();
+
             synchronized (listeners) {
                 for (final OnConnectivityChanged listener : listeners) {
                     handler.post(new Runnable() {

@@ -57,13 +57,15 @@
             android:id="@+id/editProfile_userAndPasswd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
             android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editProfile_username"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:hint="@string/username">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -73,8 +75,9 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editProfile_password"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:hint="@string/password">
 
                 <com.google.android.material.textfield.TextInputEditText
