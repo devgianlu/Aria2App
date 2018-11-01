@@ -40,7 +40,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
         layout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                helper.reloadListener(DirectDownloadActivity.this);
+                if (helper != null) helper.reloadListener(DirectDownloadActivity.this);
             }
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
@@ -60,7 +60,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        helper.removeListener(this);
+        if (helper != null) helper.removeListener(this);
     }
 
     @Override
