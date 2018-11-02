@@ -79,7 +79,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final Server server = (Server) objs.get(position);
             ItemViewHolder castHolder = (ItemViewHolder) holder;
 
-            castHolder.flag.setImageResource(R.drawable.ic_list_country_unknown);
+            castHolder.flag.setImageResource(R.drawable.ic_list_unknown);
             castHolder.address.setText(server.currentUri);
             castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
 

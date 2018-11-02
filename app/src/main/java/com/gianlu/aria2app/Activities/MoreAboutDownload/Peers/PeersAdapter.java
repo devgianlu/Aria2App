@@ -62,7 +62,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.address.setText(String.format(Locale.getDefault(), "%s:%d", peer.ip, peer.port));
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
-        holder.flag.setImageResource(R.drawable.ic_list_country_unknown);
+        holder.flag.setImageResource(R.drawable.ic_list_unknown);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -232,7 +232,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                 for (String url : update.torrent.announceList) {
                     final LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.item_bt_announce, btAnnounceList, false);
                     ((TextView) layout.getChildAt(0)).setText(url);
-                    ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_country_unknown);
+                    ((ImageView) layout.getChildAt(1)).setImageResource(R.drawable.ic_list_unknown);
                     btAnnounceList.addView(layout);
 
                     try {

@@ -6,3 +6,7 @@
 	path = MaterialPreferences
 	url = https://github.com/devgianlu/MaterialPreferences
 	branch = master
+[submodule "Android--Library-Country-Flags"]
+	path = Android--Library-Country-Flags
+	url = https://github.com/devgianlu/Android--Library-Country-Flags
+	branch = master

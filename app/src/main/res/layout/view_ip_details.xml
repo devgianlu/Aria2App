@@ -41,5 +41,5 @@
         android:layout_height="36dp"
         android:layout_gravity="center_vertical"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_list_country_unknown" />
+        android:src="@drawable/ic_list_unknown" />
 </merge>
