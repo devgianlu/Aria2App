@@ -106,7 +106,10 @@ public final class TopCountriesView extends FlowLayout {
             Servers list = servers.get(file.index);
             if (list == null) continue;
             for (Server server : list) {
-                IPDetails details = freeGeoIp.getCached(server.uri.getHost());
+                String host = server.uri.getHost();
+                if (host == null) continue;
+
+                IPDetails details = freeGeoIp.getCached(host);
                 if (details != null)
                     add(details.countryCode, server.downloadSpeed);
             }
