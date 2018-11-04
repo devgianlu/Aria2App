@@ -13,7 +13,7 @@ import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
 import com.gianlu.aria2app.Activities.AddDownload.Base64Fragment;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
-import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.Adapters.StatePagerAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -56,7 +56,7 @@ public class AddMetalinkActivity extends AddDownloadActivity {
             optionsFragment = OptionsFragment.getInstance(this, false);
         }
 
-        pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), base64Fragment, optionsFragment));
+        pager.setAdapter(new StatePagerAdapter<>(getSupportFragmentManager(), base64Fragment, optionsFragment));
         pager.setOffscreenPageLimit(2);
 
         tabLayout.setupWithViewPager(pager);

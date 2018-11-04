@@ -24,9 +24,9 @@ import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Activities.EditProfile.TestFragment;
 import com.gianlu.aria2app.Activities.EditProfile.WifisAdapter;
-import com.gianlu.aria2app.Adapters.PagerAdapter;
 import com.gianlu.aria2app.Adapters.RadioConditionsAdapter;
 import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
+import com.gianlu.aria2app.Adapters.StatePagerAdapter;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
@@ -65,7 +65,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     private List<DirectDownloadFragment> ddFragments;
     private TestFragment testFragment;
     private ViewPager pager;
-    private PagerAdapter<Fragment> pagerAdapter;
+    private StatePagerAdapter<Fragment> pagerAdapter;
     private Spinner conditionsSpinner;
     private TabLayout tabLayout;
 
@@ -201,7 +201,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         int tabPos = pager.getCurrentItem();
         if (pos != -1) {
             if (testFragment == null) testFragment = TestFragment.getInstance(this);
-            pagerAdapter = new PagerAdapter<>(getSupportFragmentManager(), connectionFragments.get(pos), authFragments.get(pos), ddFragments.get(pos), testFragment);
+            pagerAdapter = new StatePagerAdapter<>(getSupportFragmentManager(), connectionFragments.get(pos), authFragments.get(pos), ddFragments.get(pos), testFragment);
             pager.setAdapter(pagerAdapter);
             tabLayout.setupWithViewPager(pager);
             pager.setCurrentItem(tabPos, false);

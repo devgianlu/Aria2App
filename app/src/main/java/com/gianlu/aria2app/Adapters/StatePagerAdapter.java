@@ -7,18 +7,18 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
-public class PagerAdapter<F extends Fragment> extends FragmentPagerAdapter {
+public class StatePagerAdapter<F extends Fragment> extends FragmentStatePagerAdapter {
     private final List<F> fragments;
 
-    public PagerAdapter(FragmentManager fm, List<F> fragments) {
+    public StatePagerAdapter(FragmentManager fm, List<F> fragments) {
         super(fm);
         this.fragments = fragments;
     }
 
     @SafeVarargs
-    public PagerAdapter(FragmentManager fm, F... fragments) {
+    public StatePagerAdapter(FragmentManager fm, F... fragments) {
         super(fm);
         this.fragments = Arrays.asList(fragments);
     }

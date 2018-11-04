@@ -10,7 +10,7 @@ import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
-import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.Adapters.StatePagerAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -57,7 +57,7 @@ public class AddUriActivity extends AddDownloadActivity {
             optionsFragment = OptionsFragment.getInstance(this, true);
         }
 
-        pager.setAdapter(new PagerAdapter<>(getSupportFragmentManager(), urisFragment, optionsFragment));
+        pager.setAdapter(new StatePagerAdapter<>(getSupportFragmentManager(), urisFragment, optionsFragment));
         pager.setOffscreenPageLimit(2);
 
         tabLayout.setupWithViewPager(pager);
