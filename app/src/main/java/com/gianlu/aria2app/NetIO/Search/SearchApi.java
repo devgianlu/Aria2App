@@ -36,7 +36,7 @@ import okhttp3.ResponseBody;
 public final class SearchApi {
     public static final int RESULTS_PER_REQUEST = 20;
     private static final int TIMEOUT = 15;
-    private static final HttpUrl BASE_URL = HttpUrl.parse("http://api.tse.gianlu.xyz/");
+    private static final HttpUrl BASE_URL = HttpUrl.parse("https://tse-api.gianlu.xyz/");
     private static SearchApi instance;
     private final OkHttpClient client;
     private final ExecutorService executorService;
