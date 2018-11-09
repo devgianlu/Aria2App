@@ -103,6 +103,8 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
     }
 
     private void removeItem(int pos) {
+        if (pos == -1) return;
+
         bundles.remove(pos);
         notifyItemRemoved(pos);
 
@@ -110,6 +112,8 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
     }
 
     public void itemChanged(int pos, @NonNull AddDownloadBundle bundle) {
+        if (pos == -1) return;
+
         bundles.set(pos, bundle);
         notifyItemChanged(pos);
     }
