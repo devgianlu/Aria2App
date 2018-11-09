@@ -40,7 +40,7 @@
     <string name="info">Info</string>
     <string name="files">Files</string>
     <string name="profileName">Profile name</string>
-    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: https://gianlu.xyz/documents/Aria2App/create-profile/</string>
+    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: https://gianlu.xyz/projects/Aria2App/documents/create-profile/</string>
     <string name="address">Address</string>
     <string name="peers">Peers</string>
     <string name="servers">Servers</string>
@@ -297,7 +297,7 @@
     <string name="torrentFiles">Torrent files</string>
     <string name="metalinkFiles">Metalink files</string>
     <string name="urisFile">Uris file</string>
-    <string name="urisFile_help">To know more about URI files, visit this page: https://gianlu.xyz/documents/Aria2App/uri-file/</string>
+    <string name="urisFile_help">To know more about URI files, visit this page: https://gianlu.xyz/projects/Aria2App/documents/uri-file/</string>
 
     <!-- Prefs -->
     <!-- - General -->
