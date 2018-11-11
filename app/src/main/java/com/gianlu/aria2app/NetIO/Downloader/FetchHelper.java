@@ -38,6 +38,7 @@ import javax.net.ssl.SSLSession;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
+import kotlin.Pair;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -226,17 +227,10 @@ public class FetchHelper {
     }
 
     private void startInternal(@NonNull List<Request> requests, @NonNull final StartListener listener) {
-        fetch.enqueue(requests, new Func<List<Request>>() {
+        fetch.enqueue(requests, new Func<List<Pair<Request, Error>>>() {
             @Override
-            @UiThread
-            public void call(@NotNull List<Request> result) {
+            public void call(@NotNull List<Pair<Request, Error>> result) {
                 listener.onSuccess();
-            }
-        }, new Func<Error>() {
-            @Override
-            @UiThread
-            public void call(@NotNull Error result) {
-                listener.onFailed(result.getThrowable());
             }
         });
     }

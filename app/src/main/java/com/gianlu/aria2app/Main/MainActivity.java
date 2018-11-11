@@ -200,7 +200,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 startActivity(new Intent(this, PreferenceActivity.class));
                 return false;
             case DrawerConst.SUPPORT:
-                CommonUtils.sendEmail(this, null);
+                Logging.sendEmail(this, null);
                 return true;
             case DrawerConst.ABOUT_ARIA2:
                 AboutAria2Dialog.get().show(getSupportFragmentManager(), null);

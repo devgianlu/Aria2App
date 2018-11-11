@@ -34,10 +34,10 @@ android {
 dependencies {
     api project(':CommonUtils')
     api project(':CountryFlags')
-    api 'com.tonyodev.fetch2:fetch2:2.2.0-RC16'
-    api 'com.tonyodev.fetch2okhttp:fetch2okhttp:2.2.0-RC16'
+    api 'com.tonyodev.fetch2:fetch2:2.3.0-RC1'
+    api 'com.tonyodev.fetch2okhttp:fetch2okhttp:2.3.0-RC1'
     api 'com.squareup.okhttp3:okhttp:3.11.0'
-    api 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+    api 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     api 'com.getbase:floatingactionbutton:1.10.1'
     api 'org.apmem.tools:layouts:1.10@aar'
     api 'com.llew.huawei:verifier:1.0.6'

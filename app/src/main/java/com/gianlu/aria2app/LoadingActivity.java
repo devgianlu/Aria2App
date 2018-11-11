@@ -23,7 +23,6 @@ import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Logging;
@@ -279,7 +278,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 .setNeutralButton(R.string.contactMe, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        CommonUtils.sendEmail(LoadingActivity.this, ex);
+                        Logging.sendEmail(LoadingActivity.this, ex);
                     }
                 })
                 .setMessage(ex.toString());
