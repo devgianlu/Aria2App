@@ -594,11 +594,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return;
         }
 
-        try {
-            FetchHelper.get(this).updateDownloadCount(this);
-        } catch (FetchHelper.InitializationException ex) {
-            Logging.log(ex);
-        }
+        FetchHelper.updateDownloadCount(this, this);
     }
 
     @Override

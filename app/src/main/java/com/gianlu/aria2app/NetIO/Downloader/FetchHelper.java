@@ -125,7 +125,16 @@ public class FetchHelper {
         return request;
     }
 
-    public void updateDownloadCount(final FetchDownloadCountListener listener) {
+    @UiThread
+    public static void updateDownloadCount(@NonNull Context context, @NonNull FetchDownloadCountListener listener) {
+        try {
+            FetchHelper.get(context).updateDownloadCountInternal(listener);
+        } catch (InitializationException ex) {
+            listener.onFetchDownloadCount(0);
+        }
+    }
+
+    private void updateDownloadCountInternal(final FetchDownloadCountListener listener) {
         fetch.getDownloads(new Func<List<Download>>() {
             @Override
             @UiThread
