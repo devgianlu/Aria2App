@@ -86,7 +86,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         pickerList = findViewById(R.id.loading_pickerList);
         seeError = findViewById(R.id.loading_seeError);
         cancel = findViewById(R.id.loading_cancel);
-        pickerList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        pickerList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         ImageButton pickerAdd = findViewById(R.id.loading_pickerAdd);
         pickerAdd.setOnClickListener(new View.OnClickListener() {
             @Override

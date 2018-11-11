@@ -35,7 +35,7 @@ public final class CountryFlags {
     public Drawable loadFlag(@NonNull Context context, @NonNull String countryCode) {
         Drawable cachedDrawable = cache.get(countryCode);
         if (cachedDrawable == null) {
-            int id = context.getResources().getIdentifier("ic_list_country_" + countryCode.toLowerCase(), "drawable", context.getPackageName());
+            int id = context.getResources().getIdentifier("ic_list_" + countryCode.toLowerCase(), "drawable", context.getPackageName());
             if (id == 0) {
                 // Don't cache the unknown flag
                 return ContextCompat.getDrawable(context, R.drawable.ic_list_unknown);
