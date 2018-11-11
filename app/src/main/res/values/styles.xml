@@ -1,33 +1,6 @@
 <resources>
-    <attr name="colorAccentRef" format="reference|color" />
-    <attr name="colorBackgroundFloatingRef" format="reference|color" />
 
-    <style name="AppTheme" parent="@style/Theme.AppCompat.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorAccentRef">@color/colorAccent</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="dialogTheme">@style/DialogFix</item>
-        <item name="colorBackgroundFloatingRef">?android:attr/colorBackgroundFloating</item>
-    </style>
-
-    <!-- Dialog fix -->
-    <style name="DialogFixCommon" parent="@style/Theme.AppCompat.DayNight.Dialog">
-        <item name="android:windowNoTitle">false</item>
-        <item name="colorAccent">?attr/colorAccentRef</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="buttonStyle">@style/DialogFixButton</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    </style>
-
-    <style name="DialogFix" parent="DialogFixCommon">
-        <item name="android:background">?android:attr/colorBackgroundFloating</item>
-    </style>
-
-    <style name="DialogFixButton" parent="@android:style/Widget.Material.Light.Button">
-        <item name="android:textColor">?attr/colorAccentRef</item>
-    </style>
+    <style name="AppTheme" parent="BaseAppTheme" />
 
     <!-- Force white -->
     <style name="ForceWhite">
@@ -36,27 +9,7 @@
         <item name="android:textColorSecondary">@color/dim_foreground_dark</item>
     </style>
 
-    <!-- Fullscreen -->
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-    </style>
-
-    <!-- No action bar -->
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
-    <!-- No action bar with drawer-->
-    <style name="AppTheme.NoActionBar.Drawer" parent="AppTheme.NoActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
+    <!-- App theme variants -->
     <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -97,7 +50,7 @@
     </style>
 
     <!-- ?? -->
-    <style name="AppTheme.PopupOverlay" parent="@style/ThemeOverlay.AppCompat.Dark" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
     <!-- Big layout tabbing -->
     <style name="BigTabLayout">
