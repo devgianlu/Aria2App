@@ -43,6 +43,8 @@ import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,6 +120,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
         try {
             helper = FetchHelper.get(context);
+        } catch (FetchHelper.DirectDownloadNotEnabledException ignored) {
         } catch (FetchHelper.InitializationException ex) {
             Logging.log(ex);
             showToast(Toaster.build().message(R.string.failedLoading_reason, ex.getMessage()));
@@ -216,7 +219,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NotNull Exception ex) {
                 showToast(Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
             }
         });
@@ -252,6 +255,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     private void startDownloadInternal(MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
+        if (helper == null) return;
+
         final boolean single = file != null;
         FetchHelper.StartListener listener = new FetchHelper.StartListener() {
             @Override
@@ -274,11 +279,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
         };
 
-        if (file != null) {
-            helper.start(profile, download, file, listener);
-        } else if (dir != null) {
-            helper.start(profile, download, dir, listener);
-        }
+        if (file != null) helper.start(profile, download, file, listener);
+        else if (dir != null) helper.start(profile, download, dir, listener);
     }
 
     @Override
