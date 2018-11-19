@@ -88,35 +88,21 @@ public final class SearchApi {
                     builder.addQueryParameter("e", engineId);
         }
 
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
-                    final List<SearchResult> results = SearchResult.list(obj.getJSONArray("result"));
+        executorService.execute(() -> {
+            try {
+                JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
+                final List<SearchResult> results = SearchResult.list(obj.getJSONArray("result"));
 
-                    cacheEnginesBlocking();
-                    JSONArray missingEnginesArray = obj.getJSONArray("missing");
-                    final List<MissingSearchEngine> missingEngines = new ArrayList<>();
-                    for (int i = 0; i < missingEnginesArray.length(); i++)
-                        missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
+                cacheEnginesBlocking();
+                JSONArray missingEnginesArray = obj.getJSONArray("missing");
+                final List<MissingSearchEngine> missingEngines = new ArrayList<>();
+                for (int i = 0; i < missingEnginesArray.length(); i++)
+                    missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
 
-                    final String token = obj.optString("token", null);
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onResult(results, missingEngines, token);
-                        }
-                    });
-                } catch (IOException | StatusCodeException | JSONException ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-                        }
-                    });
-                }
+                final String token1 = obj.optString("token", null);
+                handler.post(() -> listener.onResult(results, missingEngines, token1));
+            } catch (IOException | StatusCodeException | JSONException ex) {
+                handler.post(() -> listener.onException(ex));
             }
         });
     }
@@ -131,27 +117,13 @@ public final class SearchApi {
                 .addQueryParameter("e", result.engineId)
                 .addQueryParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
 
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
-                    final Torrent torrent = new Torrent(obj);
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onResult(torrent);
-                        }
-                    });
-                } catch (IOException | StatusCodeException | JSONException ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-                        }
-                    });
-                }
+        executorService.execute(() -> {
+            try {
+                JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
+                final Torrent torrent = new Torrent(obj);
+                handler.post(() -> listener.onResult(torrent));
+            } catch (IOException | StatusCodeException | JSONException ex) {
+                handler.post(() -> listener.onException(ex));
             }
         });
     }
@@ -167,26 +139,12 @@ public final class SearchApi {
     }
 
     public void listSearchEngines(final OnResult<List<SearchEngine>> listener) {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final List<SearchEngine> engines = listSearchEnginesSync();
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onResult(engines);
-                        }
-                    });
-                } catch (IOException | StatusCodeException | JSONException ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-                        }
-                    });
-                }
+        executorService.execute(() -> {
+            try {
+                final List<SearchEngine> engines = listSearchEnginesSync();
+                handler.post(() -> listener.onResult(engines));
+            } catch (IOException | StatusCodeException | JSONException ex) {
+                handler.post(() -> listener.onException(ex));
             }
         });
     }
@@ -212,14 +170,11 @@ public final class SearchApi {
     }
 
     public void cacheSearchEngines() {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    listSearchEnginesSync();
-                } catch (IOException | StatusCodeException | JSONException ex) {
-                    Logging.log(ex);
-                }
+        executorService.execute(() -> {
+            try {
+                listSearchEnginesSync();
+            } catch (IOException | StatusCodeException | JSONException ex) {
+                Logging.log(ex);
             }
         });
     }

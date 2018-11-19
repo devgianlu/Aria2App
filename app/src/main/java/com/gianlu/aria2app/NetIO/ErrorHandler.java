@@ -6,15 +6,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public final class ErrorHandler {
     private static ErrorHandler instance;
-    private final IErrorHandler handler;
+    private final Listener handler;
     private final AtomicInteger errorCount = new AtomicInteger(0);
     private volatile boolean locked = false;
 
-    private ErrorHandler(int updateInterval, @Nullable IErrorHandler handler) {
+    private ErrorHandler(int updateInterval, @Nullable Listener handler) {
         this.handler = handler;
 
         new Timer().schedule(new TimerTask() {
@@ -29,7 +30,7 @@ public final class ErrorHandler {
         return setup(0, null);
     }
 
-    public static ErrorHandler setup(int updateInterval, IErrorHandler handler) {
+    public static ErrorHandler setup(int updateInterval, Listener handler) {
         if (instance == null) instance = new ErrorHandler(updateInterval, handler);
         return instance;
     }
@@ -60,11 +61,11 @@ public final class ErrorHandler {
         Logging.log(ex);
     }
 
-    public interface IErrorHandler {
-        void onFatal(Throwable ex);
+    public interface Listener {
+        void onFatal(@NonNull Throwable ex);
 
         void onSubsequentExceptions();
 
-        void onException(Throwable ex);
+        void onException(@NonNull Throwable ex);
     }
 }

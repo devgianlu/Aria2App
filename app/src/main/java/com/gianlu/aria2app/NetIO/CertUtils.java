@@ -80,6 +80,7 @@ public final class CertUtils {
             }
         }
 
+        @NonNull
         @Override
         public String toString() {
             return val + " (" + type.name() + ")";

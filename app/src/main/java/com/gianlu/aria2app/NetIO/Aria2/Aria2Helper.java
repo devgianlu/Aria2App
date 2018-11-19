@@ -2,7 +2,6 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.View;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
@@ -25,22 +24,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 public class Aria2Helper {
-    private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = new AbstractClient.BatchSandbox<VersionAndSession>() {
-        @Override
-        public VersionAndSession sandbox(AbstractClient client) throws Exception {
-            return new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
-        }
-    };
+    private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = client -> new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
     private final AbstractClient client;
-    private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = new AbstractClient.BatchSandbox<DownloadsAndGlobalStats>() {
-        @Override
-        public DownloadsAndGlobalStats sandbox(AbstractClient client) throws Exception {
-            List<DownloadWithUpdate> all = new ArrayList<>();
-            all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
-            all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
-            all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
-            return new DownloadsAndGlobalStats(all, Prefs.getBoolean(PK.A2_HIDE_METADATA), client.sendSync(AriaRequests.getGlobalStats()));
-        }
+    private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = client -> {
+        List<DownloadWithUpdate> all = new ArrayList<>();
+        all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
+        all.addAll(client.sendSync(AriaRequests.tellWaitingSmall(0, Integer.MAX_VALUE)));
+        all.addAll(client.sendSync(AriaRequests.tellStoppedSmall(0, Integer.MAX_VALUE)));
+        return new DownloadsAndGlobalStats(all, Prefs.getBoolean(PK.A2_HIDE_METADATA), client.sendSync(AriaRequests.getGlobalStats()));
     };
 
     public Aria2Helper(@NonNull AbstractClient client) {
@@ -82,25 +73,19 @@ public class Aria2Helper {
     }
 
     public void getServersAndFiles(final String gid, AbstractClient.OnResult<SparseServersWithFiles> listener) {
-        client.batch(new AbstractClient.BatchSandbox<SparseServersWithFiles>() {
-            @Override
-            public SparseServersWithFiles sandbox(AbstractClient client) throws Exception {
-                SparseServers servers = client.sendSync(AriaRequests.getServers(gid));
-                AriaFiles files = client.sendSync(AriaRequests.getFiles(gid));
-                return new SparseServersWithFiles(servers, files);
-            }
+        client.batch(client -> {
+            SparseServers servers = client.sendSync(AriaRequests.getServers(gid));
+            AriaFiles files = client.sendSync(AriaRequests.getFiles(gid));
+            return new SparseServersWithFiles(servers, files);
         }, listener);
     }
 
     public void addDownloads(@NonNull final Collection<AddDownloadBundle> bundles, AbstractClient.OnResult<List<String>> listener) {
-        client.batch(new AbstractClient.BatchSandbox<List<String>>() {
-            @Override
-            public List<String> sandbox(AbstractClient client) throws Exception {
-                List<String> results = new ArrayList<>(bundles.size());
-                for (AddDownloadBundle bundle : bundles)
-                    results.add(client.sendSync(AriaRequests.addDownload(bundle)));
-                return results;
-            }
+        client.batch(client -> {
+            List<String> results = new ArrayList<>(bundles.size());
+            for (AddDownloadBundle bundle : bundles)
+                results.add(client.sendSync(AriaRequests.addDownload(bundle)));
+            return results;
         }, listener);
     }
 
@@ -130,18 +115,8 @@ public class Aria2Helper {
                 listener.showDialog(new AlertDialog.Builder(context)
                         .setTitle(context.getString(R.string.removeMetadataName, update.getName()))
                         .setMessage(R.string.removeDownload_removeMetadata)
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                download.remove(false, DownloadActionClick.this);
-                            }
-                        })
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                download.remove(true, DownloadActionClick.this);
-                            }
-                        }));
+                        .setNegativeButton(android.R.string.no, (dialog, which) -> download.remove(false, DownloadActionClick.this))
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> download.remove(true, DownloadActionClick.this)));
             } else {
                 download.remove(false, this);
             }
@@ -223,7 +198,7 @@ public class Aria2Helper {
         }
 
         @Override
-        public void onException(Exception ex) {
+        public void onException(@NonNull Exception ex) {
             listener.showToast(Toaster.build().message(R.string.failedAction).ex(ex));
         }
 

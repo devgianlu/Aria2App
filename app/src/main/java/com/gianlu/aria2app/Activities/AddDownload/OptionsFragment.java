@@ -116,7 +116,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 message.setError(R.string.failedLoading);
                 optionsView.setVisibility(View.GONE);
                 loading.setVisibility(View.GONE);

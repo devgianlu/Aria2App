@@ -64,11 +64,8 @@ public abstract class PayloadUpdater<P> implements Runnable {
         shouldStop = false;
         running = false;
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (stopListener != null) stopListener.onStopped();
-            }
+        handler.post(() -> {
+            if (stopListener != null) stopListener.onStopped();
         });
     }
 

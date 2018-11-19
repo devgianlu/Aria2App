@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.NetIO.Downloader;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,12 +15,10 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.EnqueueAction;
-import com.tonyodev.fetch2.Error;
 import com.tonyodev.fetch2.Fetch;
 import com.tonyodev.fetch2.FetchConfiguration;
 import com.tonyodev.fetch2.FetchListener;
 import com.tonyodev.fetch2.Request;
-import com.tonyodev.fetch2core.Func;
 import com.tonyodev.fetch2okhttp.OkHttpDownloader;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,12 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
-import kotlin.Pair;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -57,13 +50,7 @@ public class FetchHelper {
 
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         if (!dd.hostnameVerifier) {
-            client.hostnameVerifier(new HostnameVerifier() {
-                @SuppressLint("BadHostnameVerifier")
-                @Override
-                public boolean verify(String s, SSLSession sslSession) {
-                    return true;
-                }
-            });
+            client.hostnameVerifier((s, sslSession) -> true);
         }
 
         if (dd.certificate != null) NetUtils.setSslSocketFactory(client, dd.certificate);
@@ -135,22 +122,11 @@ public class FetchHelper {
     }
 
     private void updateDownloadCountInternal(final FetchDownloadCountListener listener) {
-        fetch.getDownloads(new Func<List<Download>>() {
-            @Override
-            @UiThread
-            public void call(final @NotNull List<Download> result) {
-                listener.onFetchDownloadCount(result.size());
-            }
-        });
+        fetch.getDownloads(result -> listener.onFetchDownloadCount(result.size()));
     }
 
     private void callFailed(final StartListener listener, final Throwable ex) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onFailed(ex);
-            }
-        });
+        handler.post(() -> listener.onFailed(ex));
     }
 
     public void start(@NonNull MultiProfile profile, @NonNull DownloadWithUpdate download, @NonNull AriaFile file, @NonNull StartListener listener) {
@@ -220,28 +196,11 @@ public class FetchHelper {
     }
 
     private void startInternal(@NonNull Request request, @NonNull final StartListener listener) {
-        fetch.enqueue(request, new Func<Request>() {
-            @Override
-            @UiThread
-            public void call(@NotNull Request result) {
-                listener.onSuccess();
-            }
-        }, new Func<Error>() {
-            @Override
-            @UiThread
-            public void call(@NotNull Error result) {
-                listener.onFailed(result.getThrowable());
-            }
-        });
+        fetch.enqueue(request, result -> listener.onSuccess(), result -> listener.onFailed(result.getThrowable()));
     }
 
     private void startInternal(@NonNull List<Request> requests, @NonNull final StartListener listener) {
-        fetch.enqueue(requests, new Func<List<Pair<Request, Error>>>() {
-            @Override
-            public void call(@NotNull List<Pair<Request, Error>> result) {
-                listener.onSuccess();
-            }
-        });
+        fetch.enqueue(requests, result -> listener.onSuccess());
     }
 
     public void addListener(FetchEventListener listener) {
@@ -254,13 +213,7 @@ public class FetchHelper {
     }
 
     public void reloadListener(final FetchEventListener listener) {
-        fetch.getDownloads(new Func<List<Download>>() {
-            @Override
-            @UiThread
-            public void call(@NotNull List<Download> result) {
-                listener.onDownloads(result);
-            }
-        });
+        fetch.getDownloads(listener::onDownloads);
     }
 
     public void resume(@NotNull FetchDownloadWrapper download) {

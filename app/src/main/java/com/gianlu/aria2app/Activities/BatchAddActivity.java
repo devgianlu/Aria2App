@@ -81,7 +81,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                 }
 
                 @Override
-                public void onException(Exception ex) {
+                public void onException(@NonNull Exception ex) {
                     dismissDialog();
                     Toaster.with(BatchAddActivity.this).message(R.string.failedAddingDownloads).ex(ex).show();
                 }

@@ -43,7 +43,7 @@ public class PeersProvider extends PayloadProvider<Peers> {
         }
 
         @Override
-        public void onException(Exception ex) {
+        public void onException(@NonNull Exception ex) {
             errorOccurred(ex);
         }
     }

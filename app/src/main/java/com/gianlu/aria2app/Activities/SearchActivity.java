@@ -332,7 +332,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                                         }
 
                                         @Override
-                                        public void onException(Exception ex) {
+                                        public void onException(@NonNull Exception ex) {
                                             Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
                                         }
                                     });

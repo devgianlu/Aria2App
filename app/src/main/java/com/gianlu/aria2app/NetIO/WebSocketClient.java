@@ -165,29 +165,23 @@ public class WebSocketClient extends AbstractClient {
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (connectionListener != null) {
-                        if (connectionListener.onConnected(WebSocketClient.this)) {
-                            connectionListener.onPingTested(WebSocketClient.this, System.currentTimeMillis() - initializedAt);
-                        }
-
-                        connectionListener = null;
+            handler.post(() -> {
+                if (connectionListener != null) {
+                    if (connectionListener.onConnected(WebSocketClient.this)) {
+                        connectionListener.onPingTested(WebSocketClient.this, System.currentTimeMillis() - initializedAt);
                     }
+
+                    connectionListener = null;
                 }
             });
         }
 
         @Override
         public void onFailure(WebSocket webSocket, final Throwable throwable, Response response) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (connectionListener != null) {
-                        connectionListener.onFailedConnecting(throwable);
-                        connectionListener = null;
-                    }
+            handler.post(() -> {
+                if (connectionListener != null) {
+                    connectionListener.onFailedConnecting(throwable);
+                    connectionListener = null;
                 }
             });
 

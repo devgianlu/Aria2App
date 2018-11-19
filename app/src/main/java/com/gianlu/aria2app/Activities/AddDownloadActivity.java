@@ -60,7 +60,7 @@ public abstract class AddDownloadActivity extends ActivityWithDialog {
                     }
 
                     @Override
-                    public void onException(Exception ex) {
+                    public void onException(@NonNull Exception ex) {
                         dismissDialog();
                         Toaster.with(AddDownloadActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
                     }

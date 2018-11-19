@@ -202,7 +202,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 pd.dismiss();
                 DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions).ex(ex));
             }
@@ -279,7 +279,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     }
 
     @Override
-    public void onException(Exception ex) {
+    public void onException(@NonNull Exception ex) {
         if (!isAdded()) return;
 
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));

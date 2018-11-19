@@ -30,7 +30,7 @@ public final class AriaRequests {
     private static final AbstractClient.Processor<List<DownloadWithUpdate>> DOWNLOADS_LIST_PROCESSOR = new AbstractClient.Processor<List<DownloadWithUpdate>>() {
         @NonNull
         @Override
-        public List<DownloadWithUpdate> process(AbstractClient client, JSONObject obj) throws JSONException {
+        public List<DownloadWithUpdate> process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
             List<DownloadWithUpdate> list = new ArrayList<>();
             JSONArray array = obj.getJSONArray("result");
             for (int i = 0; i < array.length(); i++)
@@ -41,7 +41,7 @@ public final class AriaRequests {
     private static final AbstractClient.Processor<String> STRING_PROCESSOR = new AbstractClient.Processor<String>() {
         @NonNull
         @Override
-        public String process(AbstractClient client, JSONObject obj) throws JSONException {
+        public String process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
             return obj.getString("result");
         }
     };
@@ -59,7 +59,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SERVERS, new AbstractClient.Processor<SparseServers>() {
             @NonNull
             @Override
-            public SparseServers process(AbstractClient client, JSONObject obj) throws JSONException {
+            public SparseServers process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return new SparseServers(obj.getJSONArray("result"));
             }
         }, gid);
@@ -69,7 +69,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_PEERS, new AbstractClient.Processor<Peers>() {
             @NonNull
             @Override
-            public Peers process(AbstractClient client, JSONObject obj) throws JSONException {
+            public Peers process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return new Peers(obj.getJSONArray("result"));
             }
         }, gid);
@@ -79,7 +79,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<AriaFiles>() {
             @NonNull
             @Override
-            public AriaFiles process(AbstractClient client, JSONObject obj) throws JSONException {
+            public AriaFiles process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return new AriaFiles(obj.getJSONArray("result"));
             }
         }, gid);
@@ -89,7 +89,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<Integer[]>() {
             @NonNull
             @Override
-            public Integer[] process(AbstractClient client, JSONObject obj) throws JSONException {
+            public Integer[] process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 JSONArray array = obj.getJSONArray("result");
                 Integer[] indexes = new Integer[array.length()];
                 for (int i = 0; i < array.length(); i++)
@@ -166,7 +166,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_GLOBAL_OPTIONS, new AbstractClient.Processor<Map<String, String>>() {
             @NonNull
             @Override
-            public Map<String, String> process(AbstractClient client, JSONObject obj) throws JSONException {
+            public Map<String, String> process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
             }
         });
@@ -176,7 +176,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_DOWNLOAD_OPTIONS, new AbstractClient.Processor<Map<String, String>>() {
             @NonNull
             @Override
-            public Map<String, String> process(AbstractClient client, JSONObject obj) throws JSONException {
+            public Map<String, String> process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
             }
         }, gid);
@@ -186,7 +186,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_GLOBAL_STATS, new AbstractClient.Processor<GlobalStats>() {
             @NonNull
             @Override
-            public GlobalStats process(AbstractClient client, JSONObject obj) throws JSONException {
+            public GlobalStats process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return new GlobalStats(obj.getJSONObject("result"));
             }
         });
@@ -196,7 +196,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.LIST_METHODS, new AbstractClient.Processor<List<String>>() {
             @NonNull
             @Override
-            public List<String> process(AbstractClient client, JSONObject obj) throws JSONException {
+            public List<String> process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return CommonUtils.toStringsList(obj.getJSONArray("result"), false);
             }
         });
@@ -206,7 +206,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SESSION_INFO, new AbstractClient.Processor<SessionInfo>() {
             @NonNull
             @Override
-            public SessionInfo process(AbstractClient client, JSONObject obj) throws JSONException {
+            public SessionInfo process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return new SessionInfo(obj.getJSONObject("result"));
             }
         });
@@ -260,7 +260,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithUpdate>() {
             @NonNull
             @Override
-            public DownloadWithUpdate process(AbstractClient client, JSONObject obj) throws JSONException {
+            public DownloadWithUpdate process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return DownloadWithUpdate.create(client, obj.getJSONObject("result"), false);
             }
         }, gid);
@@ -270,7 +270,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithUpdate>() {
             @NonNull
             @Override
-            public DownloadWithUpdate process(AbstractClient client, JSONObject obj) throws JSONException {
+            public DownloadWithUpdate process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return download.update(obj.getJSONObject("result"), false);
             }
         }, download.gid);
@@ -292,7 +292,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_VERSION, new AbstractClient.Processor<VersionInfo>() {
             @NonNull
             @Override
-            public VersionInfo process(AbstractClient client, JSONObject obj) throws JSONException {
+            public VersionInfo process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
                 return new VersionInfo(obj.getJSONObject("result"));
             }
         });

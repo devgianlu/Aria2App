@@ -108,13 +108,10 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     }
 
     public void refresh(final ExecutorService executorService, @Nullable final OnRefresh listener) {
-        updater.safeStop(new PayloadUpdater.OnStop() {
-            @Override
-            public void onStopped() {
-                stop(null);
-                start(executorService);
-                if (listener != null) listener.refreshed();
-            }
+        updater.safeStop(() -> {
+            stop(null);
+            start(executorService);
+            if (listener != null) listener.refreshed();
         });
     }
 

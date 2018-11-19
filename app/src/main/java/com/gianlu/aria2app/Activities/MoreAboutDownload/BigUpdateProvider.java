@@ -47,7 +47,7 @@ public class BigUpdateProvider extends PayloadProvider<DownloadWithUpdate.BigUpd
         }
 
         @Override
-        public void onException(Exception ex) {
+        public void onException(@NonNull Exception ex) {
             errorOccurred(ex);
         }
     }

@@ -21,7 +21,9 @@ import com.yarolegovich.mp.io.MaterialPreferences;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.IErrorHandler {
+import androidx.annotation.NonNull;
+
+public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.Listener {
     public static final boolean DEBUG_UPDATER = false;
     public static final boolean DEBUG_NOTIFICATION = false;
     private final Set<String> checkedVersionFor = new HashSet<>();
@@ -103,7 +105,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     }
 
     @Override
-    public void onFatal(Throwable ex) {
+    public void onFatal(@NonNull Throwable ex) {
         WebSocketClient.clear();
         HttpClient.clear();
         Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
@@ -120,7 +122,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     }
 
     @Override
-    public void onException(Throwable ex) {
+    public void onException(@NonNull Throwable ex) {
         Logging.log(ex);
     }
 }

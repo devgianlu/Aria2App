@@ -111,7 +111,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                         }
 
                         @Override
-                        public void onException(Exception ex) {
+                        public void onException(@NonNull Exception ex) {
                             dismissAllowingStateLoss();
                             DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
                         }

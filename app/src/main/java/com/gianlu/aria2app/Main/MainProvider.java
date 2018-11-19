@@ -39,7 +39,7 @@ class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
         }
 
         @Override
-        public void onException(Exception ex) {
+        public void onException(@NonNull Exception ex) {
             errorOccurred(ex);
         }
     }

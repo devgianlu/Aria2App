@@ -45,36 +45,24 @@ public class HttpClient extends AbstractClient {
     private HttpClient(Context context, final MultiProfile.UserProfile profile, @Nullable final OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         this(context, profile);
 
-        executorService.submit(new Runnable() {
-            @Override
-            @WorkerThread
-            public void run() {
-                try (Socket socket = new Socket()) {
-                    final long initializedAt = System.currentTimeMillis();
-                    socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
-                    if (connectionListener != null) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (connectionListener.onConnected(HttpClient.this))
-                                    connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
-                            }
-                        });
-                    }
-                } catch (final IOException ex) {
-                    if (connectionListener != null) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                connectionListener.onFailedConnecting(ex);
-                            }
-                        });
-                    } else {
-                        Logging.log(ex);
-                    }
-
-                    close();
+        executorService.submit(() -> {
+            try (Socket socket = new Socket()) {
+                final long initializedAt = System.currentTimeMillis();
+                socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
+                if (connectionListener != null) {
+                    handler.post(() -> {
+                        if (connectionListener.onConnected(HttpClient.this))
+                            connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
+                    });
                 }
+            } catch (final IOException ex) {
+                if (connectionListener != null) {
+                    handler.post(() -> connectionListener.onFailedConnecting(ex));
+                } else {
+                    Logging.log(ex);
+                }
+
+                close();
             }
         });
     }

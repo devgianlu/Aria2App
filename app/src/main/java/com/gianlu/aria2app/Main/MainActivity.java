@@ -2,8 +2,6 @@ package com.gianlu.aria2app.Main;
 
 import android.Manifest;
 import android.app.SearchManager;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -72,7 +70,6 @@ import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
-import com.gianlu.commonutils.Drawer.ProfilesAdapter;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -103,10 +100,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener {
@@ -315,15 +310,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 .addMenuItemSeparator()
                 .addMenuItem(new BaseDrawerItem<>(DrawerItem.PREFERENCES, R.drawable.baseline_settings_24, getString(R.string.preferences)))
                 .addMenuItem(new BaseDrawerItem<>(DrawerItem.SUPPORT, R.drawable.baseline_report_problem_24, getString(R.string.support)))
-                .addProfiles(profilesManager.getProfiles(), this, new DrawerManager.Config.AdapterProvider<MultiProfile>() {
-                    @NonNull
-                    @Override
-                    public ProfilesAdapter<MultiProfile, ?> provide(@NonNull Context context, @NonNull List<MultiProfile> profiles, @NonNull DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
-                        return new CustomProfilesAdapter(context, profiles, 0, listener);
-                    }
-                })
+                .addProfiles(profilesManager.getProfiles(), this, (context, profiles, listener) -> new CustomProfilesAdapter(context, profiles, 0, listener))
                 .addProfilesMenuItem(new BaseDrawerItem<>(DrawerItem.ADD_PROFILE, R.drawable.baseline_add_24, getString(R.string.addProfile)))
-                .build(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar);
+                .build(this, findViewById(R.id.main_drawer), toolbar);
 
         MultiProfile currentProfile;
         try {
@@ -348,61 +337,26 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         overallChart = findViewById(R.id.main_overallChart);
         final FrameLayout overallChartContainer = findViewById(R.id.main_overallChartContainer);
         toggleChart = findViewById(R.id.main_toggleChart);
-        toggleChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CommonUtils.handleCollapseClick(toggleChart, overallChartContainer);
-            }
-        });
+        toggleChart.setOnClickListener(view -> CommonUtils.handleCollapseClick(toggleChart, overallChartContainer));
 
         recyclerViewLayout = findViewById(R.id.main_recyclerViewLayout);
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh(MAIN_WANTS, MainActivity.this);
-            }
-        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        recyclerViewLayout.enableSwipeRefresh(() -> refresh(MAIN_WANTS, MainActivity.this), R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         fabMenu = findViewById(R.id.main_fab);
         fabMenu.setOnFloatingActionsMenuUpdateListener(this);
 
         FloatingActionButton fabSearch = findViewById(R.id.mainFab_search);
-        fabSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SearchActivity.class));
-            }
-        });
+        fabSearch.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
         FloatingActionButton fabAddURI = findViewById(R.id.mainFab_addURI);
-        fabAddURI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddUriActivity.class));
-            }
-        });
+        fabAddURI.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AddUriActivity.class)));
         FloatingActionButton fabAddTorrent = findViewById(R.id.mainFab_addTorrent);
-        fabAddTorrent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddTorrentActivity.class));
-            }
-        });
+        fabAddTorrent.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AddTorrentActivity.class)));
         FloatingActionButton fabAddMetalink = findViewById(R.id.mainFab_addMetalink);
-        fabAddMetalink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class));
-            }
-        });
+        fabAddMetalink.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class)));
         FloatingActionButton fabBatchAdd = findViewById(R.id.mainFab_batchAdd);
-        fabBatchAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, BatchAddActivity.class));
-            }
-        });
+        fabBatchAdd.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, BatchAddActivity.class)));
 
         recyclerViewLayout.startLoading();
 
@@ -503,7 +457,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     }
 
                     @Override
-                    public void onException(@NotNull Exception ex) {
+                    public void onException(@NonNull @NotNull Exception ex) {
                         Logging.log(ex);
                     }
                 });
@@ -547,14 +501,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.outdated_aria2)
                 .setMessage(getString(R.string.outdated_aria2_message, current, latest))
-                .setNeutralButton(R.string.skipThisVersion, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        try {
-                            profilesManager.getCurrent().skipVersionCheck(MainActivity.this, latest);
-                        } catch (ProfilesManager.NoCurrentProfileException ex) {
-                            Logging.log(ex);
-                        }
+                .setNeutralButton(R.string.skipThisVersion, (dialogInterface, i) -> {
+                    try {
+                        profilesManager.getCurrent().skipVersionCheck(MainActivity.this, latest);
+                    } catch (ProfilesManager.NoCurrentProfileException ex) {
+                        Logging.log(ex);
                     }
                 })
                 .setPositiveButton(android.R.string.ok, null);
@@ -688,26 +639,18 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.filters)
-                .setMultiChoiceItems(stringFilters, checkedFilters, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        checkedFilters[which] = isChecked;
-                    }
-                })
-                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        List<Download.Status> toApplyFilters = new ArrayList<>();
-                        for (int i = 0; i < checkedFilters.length; i++)
-                            if (!checkedFilters[i]) toApplyFilters.add(filters[i]);
+                .setMultiChoiceItems(stringFilters, checkedFilters, (dialog, which, isChecked) -> checkedFilters[which] = isChecked)
+                .setPositiveButton(R.string.apply, (dialog, which) -> {
+                    List<Download.Status> toApplyFilters = new ArrayList<>();
+                    for (int i = 0; i < checkedFilters.length; i++)
+                        if (!checkedFilters[i]) toApplyFilters.add(filters[i]);
 
-                        if (adapter != null) adapter.setFilters(toApplyFilters);
-                        Set<String> set = new HashSet<>();
-                        for (int i = 0; i < checkedFilters.length; i++)
-                            if (checkedFilters[i]) set.add(filters[i].name());
+                    if (adapter != null) adapter.setFilters(toApplyFilters);
+                    Set<String> set = new HashSet<>();
+                    for (int i = 0; i < checkedFilters.length; i++)
+                        if (checkedFilters[i]) set.add(filters[i].name());
 
-                        Prefs.putSet(PK.A2_MAIN_FILTERS, set);
-                    }
+                    Prefs.putSet(PK.A2_MAIN_FILTERS, set);
                 })
                 .setNegativeButton(android.R.string.cancel, null);
 
@@ -744,7 +687,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(@NotNull Exception ex) {
+            public void onException(@NonNull @NotNull Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
@@ -758,7 +701,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(@NotNull Exception ex) {
+            public void onException(@NonNull @NotNull Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
@@ -772,7 +715,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(@NotNull Exception ex) {
+            public void onException(@NonNull @NotNull Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
@@ -817,12 +760,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         final View mask = findViewById(R.id.main_mask);
         mask.setVisibility(View.VISIBLE);
         mask.setClickable(true);
-        mask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fabMenu.collapse();
-            }
-        });
+        mask.setOnClickListener(view -> fabMenu.collapse());
     }
 
     @Override
@@ -917,7 +855,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void refreshed() {
-        adapter = new DownloadCardsAdapter(this, new ArrayList<DownloadWithUpdate>(), this);
+        adapter = new DownloadCardsAdapter(this, new ArrayList<>(), this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
         setupAdapterFiltersAndSorting();

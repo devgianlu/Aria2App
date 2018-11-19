@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.annotation.SuppressLint;
 import android.util.Base64;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -16,10 +15,8 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -84,13 +81,7 @@ public final class NetUtils {
             setSslSocketFactory(builder, profile.certificate);
 
         if (!profile.hostnameVerifier) {
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @SuppressLint("BadHostnameVerifier")
-                @Override
-                public boolean verify(String s, SSLSession sslSession) {
-                    return true;
-                }
-            });
+            builder.hostnameVerifier((s, sslSession) -> true);
         }
 
         return builder.build();

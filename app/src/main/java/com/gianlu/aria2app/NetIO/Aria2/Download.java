@@ -56,7 +56,7 @@ public class Download {
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 listener.onException(ex);
             }
         });
@@ -107,55 +107,46 @@ public class Download {
     }
 
     public final void restart(AbstractClient.OnResult<String> listener) {
-        client.batch(new AbstractClient.BatchSandbox<String>() {
-            @Override
-            public String sandbox(AbstractClient client) throws Exception {
-                DownloadWithUpdate old = client.sendSync(AriaRequests.tellStatus(gid));
-                Map<String, String> oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
+        client.batch(client -> {
+            DownloadWithUpdate old = client.sendSync(AriaRequests.tellStatus(gid));
+            Map<String, String> oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
 
-                Set<String> newUrls = new HashSet<>();
-                for (AriaFile file : old.update().files)
-                    newUrls.addAll(file.uris.findByStatus(AriaFile.Status.USED));
+            Set<String> newUrls = new HashSet<>();
+            for (AriaFile file : old.update().files)
+                newUrls.addAll(file.uris.findByStatus(AriaFile.Status.USED));
 
-                String newGid = client.sendSync(AriaRequests.addUri(newUrls, null, oldOptions));
-                client.sendSync(AriaRequests.removeDownloadResult(gid));
-                return newGid;
-            }
+            String newGid = client.sendSync(AriaRequests.addUri(newUrls, null, oldOptions));
+            client.sendSync(AriaRequests.removeDownloadResult(gid));
+            return newGid;
         }, listener);
     }
 
     public final void remove(final boolean removeMetadata, AbstractClient.OnResult<RemoveResult> listener) {
-        client.batch(new AbstractClient.BatchSandbox<RemoveResult>() {
-            @Override
-            public RemoveResult sandbox(AbstractClient client) throws Exception {
-                DownloadWithUpdate.SmallUpdate last = client.sendSync(AriaRequests.tellStatus(gid)).update();
-                if (last.status == Download.Status.COMPLETE || last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED) {
-                    client.sendSync(AriaRequests.removeDownloadResult(gid));
-                    if (removeMetadata) {
-                        client.sendSync(AriaRequests.removeDownloadResult(last.following));
-                        return RemoveResult.REMOVED_RESULT_AND_METADATA;
-                    } else {
-                        return RemoveResult.REMOVED_RESULT;
-                    }
+        client.batch(client -> {
+            DownloadWithUpdate.SmallUpdate last = client.sendSync(AriaRequests.tellStatus(gid)).update();
+            if (last.status == Status.COMPLETE || last.status == Status.ERROR || last.status == Status.REMOVED) {
+                client.sendSync(AriaRequests.removeDownloadResult(gid));
+                if (removeMetadata) {
+                    client.sendSync(AriaRequests.removeDownloadResult(last.following));
+                    return RemoveResult.REMOVED_RESULT_AND_METADATA;
                 } else {
-                    client.sendSync(AriaRequests.remove(gid));
-                    return RemoveResult.REMOVED;
+                    return RemoveResult.REMOVED_RESULT;
                 }
+            } else {
+                client.sendSync(AriaRequests.remove(gid));
+                return RemoveResult.REMOVED;
             }
         }, listener);
     }
 
     public final void changeSelection(final Integer[] selIndexes, final boolean select, AbstractClient.OnResult<ChangeSelectionResult> listener) {
-        client.batch(new AbstractClient.BatchSandbox<ChangeSelectionResult>() {
-            @Override
-            public ChangeSelectionResult sandbox(AbstractClient client) throws Exception {
-                Map<String, String> options = client.sendSync(AriaRequests.getDownloadOptions(gid));
-                String currIndexes = options.get("select-file");
-                if (currIndexes == null)
-                    return performSelectIndexesOperation(client, gid, client.sendSync(AriaRequests.getFileIndexes(gid)), selIndexes, select);
-                else
-                    return performSelectIndexesOperation(client, gid, CommonUtils.toIntsList(currIndexes, ","), selIndexes, select);
-            }
+        client.batch(client -> {
+            Map<String, String> options = client.sendSync(AriaRequests.getDownloadOptions(gid));
+            String currIndexes = options.get("select-file");
+            if (currIndexes == null)
+                return performSelectIndexesOperation(client, gid, client.sendSync(AriaRequests.getFileIndexes(gid)), selIndexes, select);
+            else
+                return performSelectIndexesOperation(client, gid, CommonUtils.toIntsList(currIndexes, ","), selIndexes, select);
         }, listener);
     }
 

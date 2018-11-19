@@ -71,30 +71,20 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
         loading.setVisibility(View.VISIBLE);
 
         Button saveSession = layout.findViewById(R.id.aboutAria2Dialog_saveSession);
-        saveSession.setOnClickListener(new View.OnClickListener() {
+        saveSession.setOnClickListener(view -> helper.request(AriaRequests.saveSession(), new AbstractClient.OnSuccess() {
             @Override
-            public void onClick(View view) {
-                helper.request(AriaRequests.saveSession(), new AbstractClient.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.sessionSaved));
-                    }
-
-                    @Override
-                    public void onException(@NonNull Exception ex) {
-                        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedSavingSession).ex(ex));
-                    }
-                });
+            public void onSuccess() {
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.sessionSaved));
             }
-        });
+
+            @Override
+            public void onException(@NonNull Exception ex) {
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedSavingSession).ex(ex));
+            }
+        }));
 
         Button ok = layout.findViewById(R.id.aboutAria2Dialog_ok);
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismissAllowingStateLoss();
-            }
-        });
+        ok.setOnClickListener(view -> dismissAllowingStateLoss());
 
         helper.getVersionAndSession(this);
 

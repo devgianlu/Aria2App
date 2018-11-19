@@ -60,12 +60,7 @@ public final class GeoIP {
 
         final IPDetails cachedDetails = cache.get(ip);
         if (cachedDetails != null) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onDetails(cachedDetails);
-                }
-            });
+            handler.post(() -> listener.onDetails(cachedDetails));
             return true;
         }
 
@@ -75,51 +70,37 @@ public final class GeoIP {
     public void getIPDetails(@NonNull final String ip, @NonNull final OnIpDetails listener) {
         if (hitCache(ip, listener)) return;
 
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String realIP;
-                    if (IPV4_PATTERN.matcher(ip).matches() || IPV6_PATTERN.matcher(ip).matches()) {
-                        realIP = ip;
-                    } else {
-                        List<InetAddress> ips = client.dns().lookup(ip);
-                        if (ips.isEmpty()) throw new UnknownHostException(ip);
-                        realIP = buildIpString(ips.get(0).getAddress());
-                    }
-
-                    if (realIP.startsWith("[") && realIP.endsWith("]"))
-                        realIP = realIP.substring(1, realIP.length() - 1);
-
-                    try (Response resp = client.newCall(new Request.Builder()
-                            .get().url("https://extreme-ip-lookup.com/json/" + realIP).build()).execute()) {
-
-                        ResponseBody body = resp.body();
-                        if (body == null) throw new IOException("Empty body!");
-
-                        JSONObject obj = new JSONObject(body.string());
-                        String status = obj.getString("status");
-                        if (status.equals("fail")) throw new ServiceException(realIP, obj);
-
-                        final IPDetails details = new IPDetails(obj);
-                        cache.put(ip, details);
-
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onDetails(details);
-                            }
-                        });
-                    }
-                } catch (IOException | JSONException | ServiceException | RuntimeException ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-
-                        }
-                    });
+        executorService.execute(() -> {
+            try {
+                String realIP;
+                if (IPV4_PATTERN.matcher(ip).matches() || IPV6_PATTERN.matcher(ip).matches()) {
+                    realIP = ip;
+                } else {
+                    List<InetAddress> ips = client.dns().lookup(ip);
+                    if (ips.isEmpty()) throw new UnknownHostException(ip);
+                    realIP = buildIpString(ips.get(0).getAddress());
                 }
+
+                if (realIP.startsWith("[") && realIP.endsWith("]"))
+                    realIP = realIP.substring(1, realIP.length() - 1);
+
+                try (Response resp = client.newCall(new Request.Builder()
+                        .get().url("https://extreme-ip-lookup.com/json/" + realIP).build()).execute()) {
+
+                    ResponseBody body = resp.body();
+                    if (body == null) throw new IOException("Empty body!");
+
+                    JSONObject obj = new JSONObject(body.string());
+                    String status = obj.getString("status");
+                    if (status.equals("fail")) throw new ServiceException(realIP, obj);
+
+                    final IPDetails details = new IPDetails(obj);
+                    cache.put(ip, details);
+
+                    handler.post(() -> listener.onDetails(details));
+                }
+            } catch (IOException | JSONException | ServiceException | RuntimeException ex) {
+                handler.post(() -> listener.onException(ex));
             }
         });
     }

@@ -99,31 +99,16 @@ public abstract class AbstractClient implements Closeable {
                 @Override
                 public void onResponse(@NonNull JSONObject response) throws JSONException {
                     final R result = request.processor.process(AbstractClient.this, response);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onResult(result);
-                        }
-                    });
+                    handler.post(() -> listener.onResult(result));
                 }
 
                 @Override
                 public void onException(@NonNull final Exception ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-                        }
-                    });
+                    handler.post(() -> listener.onException(ex));
                 }
             });
         } catch (final JSONException ex) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onException(ex);
-                }
-            });
+            handler.post(() -> listener.onException(ex));
         }
     }
 
@@ -144,31 +129,16 @@ public abstract class AbstractClient implements Closeable {
             send(request.id, obj, new OnJson() {
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onSuccess();
-                        }
-                    });
+                    handler.post(listener::onSuccess);
                 }
 
                 @Override
                 public void onException(@NonNull final Exception ex) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onException(ex);
-                        }
-                    });
+                    handler.post(() -> listener.onException(ex));
                 }
             });
         } catch (final JSONException ex) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    listener.onException(ex);
-                }
-            });
+            handler.post(() -> listener.onException(ex));
         }
     }
 
@@ -185,22 +155,12 @@ public abstract class AbstractClient implements Closeable {
         batch(sandbox, new DoBatch<R>() {
             @Override
             public void onSandboxReturned(@NonNull final R result) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onResult(result);
-                    }
-                });
+                handler.post(() -> listener.onResult(result));
             }
 
             @Override
             public void onException(@NonNull final Exception ex) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onException(ex);
-                    }
-                });
+                handler.post(() -> listener.onException(ex));
             }
         });
     }
@@ -358,12 +318,7 @@ public abstract class AbstractClient implements Closeable {
 
             synchronized (listeners) {
                 for (final OnConnectivityChanged listener : listeners) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.connectivityChanged(updated);
-                        }
-                    });
+                    handler.post(() -> listener.connectivityChanged(updated));
                 }
             }
 
