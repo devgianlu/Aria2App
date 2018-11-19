@@ -206,5 +206,5 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </LinearLayout>
 
-    <include layout="@layout/drawer_layout" />
+    <include layout="@layout/layout_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

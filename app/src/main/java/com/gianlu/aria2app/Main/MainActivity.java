@@ -85,6 +85,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.google.android.material.tabs.TabLayout;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -305,7 +306,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         setRequestedOrientation(getResources().getBoolean(R.bool.isTablet) ? ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         profilesManager = ProfilesManager.get(this);
-        drawerManager = new DrawerManager.Config<MultiProfile>(this, R.drawable.drawer_background)
+        drawerManager = new DrawerManager.Config<MultiProfile>(this)
                 .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.baseline_home_24, getString(R.string.home)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.baseline_cloud_download_24, getString(R.string.directDownload)))
                 .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.baseline_favorite_24, getString(R.string.quickGlobalOptions)))
@@ -338,7 +339,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         drawerManager.setCurrentProfile(currentProfile);
-        setTitle(currentProfile.getProfileName(this) + " - " + getString(R.string.app_name));
+        setTitle(currentProfile.getPrimaryText(this) + " - " + getString(R.string.app_name));
         drawerManager.setActiveItem(DrawerConst.HOME);
 
         active = findViewById(R.id.main_active);
@@ -502,7 +503,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     }
 
                     @Override
-                    public void onException(Exception ex) {
+                    public void onException(@NotNull Exception ex) {
                         Logging.log(ex);
                     }
                 });
@@ -743,7 +744,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NotNull Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
@@ -757,7 +758,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NotNull Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });
@@ -771,7 +772,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onException(@NotNull Exception ex) {
                 Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
             }
         });

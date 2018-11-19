@@ -273,7 +273,7 @@ public class NotificationService extends Service {
         builder.setContentTitle(type.getFormal(this))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentText("GID#" + gid)
-                .setContentInfo(profile.getProfileName(this))
+                .setContentInfo(profile.getPrimaryText(this))
                 .setCategory(Notification.CATEGORY_EVENT)
                 .setGroup(gid)
                 .setAutoCancel(true)
@@ -314,12 +314,12 @@ public class NotificationService extends Service {
     }
 
     private void notifyUnsupportedConnectionMethod(@NonNull MultiProfile.UserProfile profile) {
-        notifyError(profile, getString(R.string.notificationUnsupportedConnMethod, profile.getProfileName(this)), getString(R.string.notificationUnsupportedConnMethod_details));
+        notifyError(profile, getString(R.string.notificationUnsupportedConnMethod, profile.getPrimaryText(this)), getString(R.string.notificationUnsupportedConnMethod_details));
     }
 
     private void notifyException(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
         Logging.log(ex);
-        notifyError(profile, getString(R.string.notificationException, profile.getProfileName(this)), ex.getMessage());
+        notifyError(profile, getString(R.string.notificationException, profile.getPrimaryText(this)), ex.getMessage());
     }
 
     private void recreateWebsockets(int networkType) {

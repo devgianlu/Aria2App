@@ -18,6 +18,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 import com.gianlu.commonutils.Logging;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -196,20 +197,14 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     @NonNull
     @Override
-    public String getProfileName(@NonNull Context context) {
-        return getProfile(context).getProfileName(context);
+    public String getPrimaryText(@NonNull Context context) {
+        return getProfile(context).getPrimaryText(context);
     }
 
     @NonNull
     @Override
     public String getSecondaryText(@NonNull Context context) {
         return getProfile(context).getSecondaryText(context);
-    }
-
-    @NonNull
-    @Override
-    public String getInitials(@NonNull Context context) {
-        return getProfile(context).getInitials(context);
     }
 
     @NonNull
@@ -226,6 +221,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return obj;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return name;
@@ -323,6 +319,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return new ConnectivityCondition(Type.ALWAYS, true, null);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return "ConnectivityCondition{" +
@@ -630,7 +627,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
         @NonNull
         @Override
-        public String getProfileName(@NonNull Context context) {
+        public String getPrimaryText(@NonNull Context context) {
             return name;
         }
 
@@ -643,13 +640,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
                 Logging.log(ex);
                 return "";
             }
-        }
-
-        @NonNull
-        @Override
-        public String getInitials(@NonNull Context context) {
-            if (name.length() < 2) return name;
-            else return name.substring(0, 2);
         }
     }
 }

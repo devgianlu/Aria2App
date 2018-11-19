@@ -52,7 +52,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
     public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull MultiProfile multi) {
         MultiProfile.UserProfile profile = multi.getProfile(context);
 
-        holder.name.setText(profile.getProfileName(context));
+        holder.name.setText(profile.getPrimaryText(context));
         holder.secondary.setText(profile.getSecondaryText(context));
 
         try {

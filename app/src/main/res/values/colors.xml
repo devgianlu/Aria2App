@@ -2,9 +2,11 @@
 <resources>
     <color name="colorPrimary">#3d3c3b</color>
     <color name="colorPrimaryDark">#282726</color>
-    <color name="colorAccent_light">#ff784e</color>
-    <color name="colorAccent">#ff5722</color>
+
     <color name="colorAccent_pressed">#cc451b</color>
+    <color name="colorAccent">#ff5722</color>
+    <color name="colorAccent_light">#ff784e</color>
+    <color name="colorAccent_translucent">#40ff5722</color>
 
     <color name="colorSearch">#795548</color>
     <color name="colorSearch_pressed">#4e342e</color>
