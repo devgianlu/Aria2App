@@ -81,7 +81,7 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
                     }
 
                     @Override
-                    public void onException(Exception ex) {
+                    public void onException(@NonNull Exception ex) {
                         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedSavingSession).ex(ex));
                     }
                 });
@@ -110,7 +110,7 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
     }
 
     @Override
-    public void onException(Exception ex) {
+    public void onException(@NonNull Exception ex) {
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
         dismissAllowingStateLoss();
     }

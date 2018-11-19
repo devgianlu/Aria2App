@@ -109,10 +109,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener, FetchHelper.FetchDownloadCountListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
-    private DrawerManager<MultiProfile> drawerManager;
+    private DrawerManager<MultiProfile, DrawerItem> drawerManager;
     private FloatingActionsMenu fabMenu;
     private DownloadCardsAdapter adapter;
     private SearchView searchView;
@@ -183,30 +183,30 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public boolean onDrawerMenuItemSelected(@NonNull BaseDrawerItem which) {
+    public boolean onDrawerMenuItemSelected(@NonNull BaseDrawerItem<DrawerItem> which) {
         switch (which.id) {
-            case DrawerConst.HOME:
+            case HOME:
                 refresh(MAIN_WANTS, this);
                 return true;
-            case DrawerConst.DIRECT_DOWNLOAD:
+            case DIRECT_DOWNLOAD:
                 startActivity(new Intent(this, DirectDownloadActivity.class));
                 return false;
-            case DrawerConst.QUICK_OPTIONS:
+            case QUICK_OPTIONS:
                 showDialog(OptionsDialog.getGlobal(true));
                 return true;
-            case DrawerConst.GLOBAL_OPTIONS:
+            case GLOBAL_OPTIONS:
                 showDialog(OptionsDialog.getGlobal(false));
                 return true;
-            case DrawerConst.PREFERENCES:
+            case PREFERENCES:
                 startActivity(new Intent(this, PreferenceActivity.class));
                 return false;
-            case DrawerConst.SUPPORT:
+            case SUPPORT:
                 Logging.sendEmail(this, null);
                 return true;
-            case DrawerConst.ABOUT_ARIA2:
+            case ABOUT_ARIA2:
                 AboutAria2Dialog.get().show(getSupportFragmentManager(), null);
                 return true;
-            case DrawerConst.ADD_PROFILE:
+            case ADD_PROFILE:
                 EditProfileActivity.start(this, false);
                 return true;
             default:
@@ -306,15 +306,15 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         setRequestedOrientation(getResources().getBoolean(R.bool.isTablet) ? ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         profilesManager = ProfilesManager.get(this);
-        drawerManager = new DrawerManager.Config<MultiProfile>(this)
-                .addMenuItem(new BaseDrawerItem(DrawerConst.HOME, R.drawable.baseline_home_24, getString(R.string.home)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.DIRECT_DOWNLOAD, R.drawable.baseline_cloud_download_24, getString(R.string.directDownload)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.QUICK_OPTIONS, R.drawable.baseline_favorite_24, getString(R.string.quickGlobalOptions)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.GLOBAL_OPTIONS, R.drawable.baseline_list_24, getString(R.string.globalOptions)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.ABOUT_ARIA2, R.drawable.baseline_cloud_24, getString(R.string.about_aria2)))
+        drawerManager = new DrawerManager.Config<MultiProfile, DrawerItem>(this)
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.HOME, R.drawable.baseline_home_24, getString(R.string.home)))
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.DIRECT_DOWNLOAD, R.drawable.baseline_cloud_download_24, getString(R.string.directDownload)))
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.QUICK_OPTIONS, R.drawable.baseline_favorite_24, getString(R.string.quickGlobalOptions)))
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.GLOBAL_OPTIONS, R.drawable.baseline_list_24, getString(R.string.globalOptions)))
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.ABOUT_ARIA2, R.drawable.baseline_cloud_24, getString(R.string.about_aria2)))
                 .addMenuItemSeparator()
-                .addMenuItem(new BaseDrawerItem(DrawerConst.PREFERENCES, R.drawable.baseline_settings_24, getString(R.string.preferences)))
-                .addMenuItem(new BaseDrawerItem(DrawerConst.SUPPORT, R.drawable.baseline_report_problem_24, getString(R.string.support)))
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.PREFERENCES, R.drawable.baseline_settings_24, getString(R.string.preferences)))
+                .addMenuItem(new BaseDrawerItem<>(DrawerItem.SUPPORT, R.drawable.baseline_report_problem_24, getString(R.string.support)))
                 .addProfiles(profilesManager.getProfiles(), this, new DrawerManager.Config.AdapterProvider<MultiProfile>() {
                     @NonNull
                     @Override
@@ -322,7 +322,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                         return new CustomProfilesAdapter(context, profiles, 0, listener);
                     }
                 })
-                .addProfilesMenuItem(new BaseDrawerItem(DrawerConst.ADD_PROFILE, R.drawable.baseline_add_24, getString(R.string.addProfile)))
+                .addProfilesMenuItem(new BaseDrawerItem<>(DrawerItem.ADD_PROFILE, R.drawable.baseline_add_24, getString(R.string.addProfile)))
                 .build(this, (DrawerLayout) findViewById(R.id.main_drawer), toolbar);
 
         MultiProfile currentProfile;
@@ -340,7 +340,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         drawerManager.setCurrentProfile(currentProfile);
         setTitle(currentProfile.getPrimaryText(this) + " - " + getString(R.string.app_name));
-        drawerManager.setActiveItem(DrawerConst.HOME);
+        drawerManager.setActiveItem(DrawerItem.HOME);
 
         active = findViewById(R.id.main_active);
         paused = findViewById(R.id.main_paused);
@@ -860,7 +860,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onItemCountUpdated(int count) {
-        if (drawerManager != null) drawerManager.updateBadge(DrawerConst.HOME, count);
+        if (drawerManager != null) drawerManager.updateBadge(DrawerItem.HOME, count);
 
         if (count == 0)
             recyclerViewLayout.showInfo(R.string.noDownloads);
@@ -945,6 +945,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void onFetchDownloadCount(int count) {
-        if (drawerManager != null) drawerManager.updateBadge(DrawerConst.DIRECT_DOWNLOAD, count);
+        if (drawerManager != null) drawerManager.updateBadge(DrawerItem.DIRECT_DOWNLOAD, count);
     }
 }
