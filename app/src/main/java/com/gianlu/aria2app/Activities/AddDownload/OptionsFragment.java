@@ -148,6 +148,9 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
 
     @Nullable
     public Integer getPosition() {
+        if (position.getText().toString().trim().isEmpty())
+            return null;
+
         try {
             return Integer.parseInt(position.getText().toString());
         } catch (Exception ex) {
