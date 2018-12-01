@@ -35,7 +35,7 @@
     <string name="noPeers">No peers</string>
     <string name="features"><![CDATA[<b>Enabled features:</b>]]> %s</string>
     <string name="sessionId"><![CDATA[<b>Session ID:</b>]]> %s</string>
-    <string name="version"><![CDATA[<b>Version:</b>]]> %s</string>
+    <string name="versionLabel"><![CDATA[<b>Version:</b>]]> %s</string>
     <string name="gathering_information">Gathering information. Please wait…</string>
     <string name="info">Info</string>
     <string name="files">Files</string>
