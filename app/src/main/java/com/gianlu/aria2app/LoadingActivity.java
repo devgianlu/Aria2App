@@ -1,7 +1,6 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -88,20 +87,10 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         cancel = findViewById(R.id.loading_cancel);
         pickerList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         ImageButton pickerAdd = findViewById(R.id.loading_pickerAdd);
-        pickerAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditProfileActivity.start(LoadingActivity.this, false);
-            }
-        });
+        pickerAdd.setOnClickListener(v -> EditProfileActivity.start(LoadingActivity.this, false));
 
         Button settings = findViewById(R.id.loading_settings);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoadingActivity.this, PreferenceActivity.class));
-            }
-        });
+        settings.setOnClickListener(v -> startActivity(new Intent(LoadingActivity.this, PreferenceActivity.class)));
 
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -111,18 +100,29 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
         handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finished = true;
-                if (goTo != null) startActivity(goTo);
-            }
+        handler.postDelayed(() -> {
+            finished = true;
+            if (goTo != null) startActivity(goTo);
         }, 1000);
 
         WebSocketClient.clear();
         HttpClient.clear();
 
         manager = ProfilesManager.get(this);
+        if (getIntent().getBooleanExtra("external", false)) {
+            MultiProfile profile = ProfilesManager.createExternalProfile(getIntent());
+            if (profile != null) {
+                try {
+                    manager.save(profile);
+                    tryConnecting(profile);
+                    return;
+                } catch (IOException | JSONException ex) {
+                    Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
+                    return;
+                }
+            }
+        }
+
         if (!manager.hasProfiles()) {
             EditProfileActivity.start(this, true);
             return;
@@ -146,20 +146,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             return;
         }
 
-        if (getIntent().getBooleanExtra("external", false)) {
-            MultiProfile profile = ProfilesManager.createExternalProfile(getIntent());
-            if (profile != null) {
-                try {
-                    manager.save(profile);
-                    tryConnecting(profile);
-                    return;
-                } catch (IOException | JSONException ex) {
-                    Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
-                    return;
-                }
-            }
-        }
-
         String profileId = getIntent().getStringExtra("profileId");
         if (profileId != null && manager.profileExists(profileId)) {
             try {
@@ -173,12 +159,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         final Throwable ex = (Throwable) getIntent().getSerializableExtra("ex");
         if (ex != null) {
             seeError.setVisibility(View.VISIBLE);
-            seeError.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showErrorDialog(ex);
-                }
-            });
+            seeError.setOnClickListener(v -> showErrorDialog(ex));
             getIntent().removeExtra("ex");
         } else {
             seeError.setVisibility(View.GONE);
@@ -226,14 +207,11 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         super.onRestart();
 
         ProfilesManager manager = ProfilesManager.get(this);
-        if (manager.hasProfiles()) {
-            displayPicker(hasShareData());
-        } else {
-            EditProfileActivity.start(this, true);
-        }
+        if (manager.hasProfiles()) displayPicker(hasShareData());
+        else EditProfileActivity.start(this, true);
     }
 
-    private void tryConnecting(MultiProfile profile) {
+    private void tryConnecting(@Nullable MultiProfile profile) {
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
         seeError.setVisibility(View.GONE);
@@ -249,17 +227,9 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 HttpClient.instantiate(this, single, this);
             }
 
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    cancel.setVisibility(View.VISIBLE);
-                    cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            cancelConnection();
-                        }
-                    });
-                }
+            handler.postDelayed(() -> {
+                cancel.setVisibility(View.VISIBLE);
+                cancel.setOnClickListener(view -> cancelConnection());
             }, 2000);
         }
     }
@@ -275,12 +245,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
-                .setNeutralButton(R.string.contactMe, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Logging.sendEmail(LoadingActivity.this, ex);
-                    }
-                })
+                .setNeutralButton(R.string.contactMe, (dialog, which) -> Logging.sendEmail(LoadingActivity.this, ex))
                 .setMessage(ex.toString());
 
         showDialog(builder);
@@ -334,18 +299,33 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public void onPingTested(@NonNull AbstractClient client, long latency) {
     }
 
-    @Override
-    public void onFailedConnecting(@NonNull final Throwable ex) {
-        Toaster.with(this).message(R.string.failedConnecting).ex(ex).show();
-        displayPicker(hasShareData());
-        seeError.setVisibility(View.VISIBLE);
-        seeError.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showErrorDialog(ex);
-            }
-        });
+    private void mayStartAria2Android() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("HELLO!!!")
+                .setMessage("HI!!!")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> startAria2Android())
+                .setNegativeButton(android.R.string.no, null);
+        showDialog(builder);
+    }
 
-        Logging.log(ex);
+    private void startAria2Android() {
+        Intent intent = getPackageManager().getLaunchIntentForPackage("com.gianlu.aria2android");
+        if (intent == null) return;
+
+        intent.setAction("com.gianlu.aria2android.START_SERVICE"); // TODO: Needs testing
+        startActivity(intent);
+    }
+
+    @Override
+    public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
+        if (profile.couldBeAria2Android(this)) {
+            mayStartAria2Android();
+        } else {
+            Toaster.with(this).message(R.string.failedConnecting).ex(ex).show();
+            displayPicker(hasShareData());
+            seeError.setVisibility(View.VISIBLE);
+            seeError.setOnClickListener(v -> showErrorDialog(ex));
+            Logging.log(ex);
+        }
     }
 }

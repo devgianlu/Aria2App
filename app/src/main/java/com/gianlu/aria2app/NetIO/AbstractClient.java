@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public abstract class AbstractClient implements Closeable {
     protected final OkHttpClient client;
     protected final Handler handler;
     private final WifiManager wifiManager;
-    private final Context context;
+    private final WeakReference<Context> context;
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     private final AtomicLong requestIds = new AtomicLong(Long.MIN_VALUE);
     protected MultiProfile.UserProfile profile;
@@ -45,7 +46,7 @@ public abstract class AbstractClient implements Closeable {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         this.client = NetUtils.buildClient(profile);
         this.profile = profile;
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
 
@@ -72,8 +73,8 @@ public abstract class AbstractClient implements Closeable {
 
     private void removeReceiver() {
         try {
-            if (context != null && !shouldIgnoreCommunication)
-                context.getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+            if (context.get() != null && !shouldIgnoreCommunication)
+                context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
         } catch (IllegalArgumentException ignored) {
         }
     }

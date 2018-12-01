@@ -32,23 +32,23 @@ public class WebSocketClient extends AbstractClient {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private OnConnect connectionListener = null;
 
-    private WebSocketClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+    private WebSocketClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
         super(context, profile);
         webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
         initializedAt = System.currentTimeMillis();
     }
 
-    private WebSocketClient(Context context) throws GeneralSecurityException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException, IOException {
+    private WebSocketClient(@NonNull Context context) throws GeneralSecurityException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException, IOException {
         this(context, ProfilesManager.get(context).getCurrentSpecific());
     }
 
-    private WebSocketClient(Context context, MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+    private WebSocketClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
         this(context, profile);
         connectionListener = listener;
     }
 
     @NonNull
-    public static WebSocketClient instantiate(Context context) throws InitializationException {
+    public static WebSocketClient instantiate(@NonNull Context context) throws InitializationException {
         if (instance == null) {
             try {
                 instance = new WebSocketClient(context);
@@ -60,11 +60,11 @@ public class WebSocketClient extends AbstractClient {
         return instance;
     }
 
-    public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    public static void instantiate(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
             instance = new WebSocketClient(context, profile, listener);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
-            listener.onFailedConnecting(ex);
+            listener.onFailedConnecting(profile, ex);
         }
     }
 
@@ -177,10 +177,10 @@ public class WebSocketClient extends AbstractClient {
         }
 
         @Override
-        public void onFailure(WebSocket webSocket, final Throwable throwable, Response response) {
+        public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
             handler.post(() -> {
                 if (connectionListener != null) {
-                    connectionListener.onFailedConnecting(throwable);
+                    connectionListener.onFailedConnecting(profile, throwable); // TODO: Not being called
                     connectionListener = null;
                 }
             });
