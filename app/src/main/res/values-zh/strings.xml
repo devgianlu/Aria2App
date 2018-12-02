@@ -4,7 +4,7 @@
     <string name="downloadStatus_paused">已暂停</string>
     <string name="downloadStatus_complete">完成</string>
     <string name="downloadStatus_removed">删除</string>
-    <string name="version">版本</string>
+    <string name="versionLabel">版本</string>
     <string name="gathering_information">收集信息。请耐心等待…</string>
     <string name="profile_help">如果您不知道如何正确设置配置文件，请查看我的网站上的指南：https：/gianlu.xyz/Projects/Aria2App/Documents/create-profile/</string>
     <string name="address">地址</string>
