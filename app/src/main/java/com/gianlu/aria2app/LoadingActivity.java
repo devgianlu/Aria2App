@@ -322,7 +322,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 1) {
+        if (requestCode == 1 && aria2AndroidProfile != null) {
             if (resultCode == 1) {
                 tryConnecting(aria2AndroidProfile.getParent());
             } else {
