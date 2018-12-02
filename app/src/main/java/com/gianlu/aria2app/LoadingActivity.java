@@ -58,6 +58,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private ProfilesManager manager;
     private String shortcutAction;
     private Handler handler;
+    private MultiProfile.UserProfile aria2AndroidProfile = null;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -299,33 +300,51 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public void onPingTested(@NonNull AbstractClient client, long latency) {
     }
 
-    private void mayStartAria2Android() {
+    private void mayStartAria2Android(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("HELLO!!!")
-                .setMessage("HI!!!")
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> startAria2Android())
-                .setNegativeButton(android.R.string.no, null);
+        builder.setTitle(R.string.startAria2Android)
+                .setMessage(R.string.startAria2Android_message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> startAria2Android(profile))
+                .setNegativeButton(android.R.string.no, (dialog, which) -> failedConnecting(ex));
         showDialog(builder);
     }
 
-    private void startAria2Android() {
-        Intent intent = getPackageManager().getLaunchIntentForPackage("com.gianlu.aria2android");
-        if (intent == null) return;
+    private void startAria2Android(@NonNull MultiProfile.UserProfile profile) {
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_START_ARIA2ANDROID);
 
-        intent.setAction("com.gianlu.aria2android.START_SERVICE"); // TODO: Needs testing
-        startActivity(intent);
+        aria2AndroidProfile = profile;
+
+        Intent intent = new Intent("com.gianlu.aria2android.START_SERVICE");
+        intent.setClassName("com.gianlu.aria2android", "com.gianlu.aria2android.MainActivity");
+        intent.putExtra("goBack", true);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == 1) {
+                tryConnecting(aria2AndroidProfile.getParent());
+            } else {
+                aria2AndroidProfile = null;
+                Toaster.with(this).message(R.string.failedStartingAria2Android).error(false).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void failedConnecting(@NonNull Throwable ex) {
+        Toaster.with(this).message(R.string.failedConnecting).ex(ex).show();
+        displayPicker(hasShareData());
+        seeError.setVisibility(View.VISIBLE);
+        seeError.setOnClickListener(v -> showErrorDialog(ex));
+        Logging.log(ex);
     }
 
     @Override
     public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
-        if (profile.couldBeAria2Android(this)) {
-            mayStartAria2Android();
-        } else {
-            Toaster.with(this).message(R.string.failedConnecting).ex(ex).show();
-            displayPicker(hasShareData());
-            seeError.setVisibility(View.VISIBLE);
-            seeError.setOnClickListener(v -> showErrorDialog(ex));
-            Logging.log(ex);
-        }
+        if (profile.couldBeAria2Android(this)) mayStartAria2Android(profile, ex);
+        else failedConnecting(ex);
     }
 }
