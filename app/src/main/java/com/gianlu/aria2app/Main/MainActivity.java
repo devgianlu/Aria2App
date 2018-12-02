@@ -530,13 +530,14 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         super.onResume();
         if (drawerManager != null) {
             drawerManager.syncTogglerState();
-            drawerManager.reloadProfiles();
+            if (profilesManager != null)
+                drawerManager.refreshProfiles(profilesManager.getProfiles());
         }
 
         if (fabMenu != null) fabMenu.collapseImmediately();
 
         try {
-            profilesManager.reloadCurrentProfile();
+            if (profilesManager != null) profilesManager.reloadCurrentProfile();
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.log(ex);
             WebSocketClient.clear();
