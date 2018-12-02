@@ -12,6 +12,7 @@ import android.os.Looper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.ThisApplication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +52,7 @@ public abstract class AbstractClient implements Closeable {
         this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
 
         context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        ThisApplication.setCrashlyticsString("connectionMethod", profile.connectionMethod.name());
     }
 
     public static void addConnectivityListener(OnConnectivityChanged listener) {
