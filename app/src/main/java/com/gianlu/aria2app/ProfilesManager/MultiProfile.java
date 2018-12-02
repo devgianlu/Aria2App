@@ -1,10 +1,12 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 
@@ -552,17 +554,19 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public boolean couldBeAria2Android(@NonNull Context context) {
-            boolean isLocal = Objects.equals(serverAddr, "localhost") || Objects.equals(serverAddr, "127.0.0.1");
-
-            boolean aria2AndroidInstalled;
+            boolean installed;
             try {
-                context.getPackageManager().getPackageInfo("com.gianlu.aria2app", 0);
-                aria2AndroidInstalled = true;
+                PackageInfo info = context.getPackageManager().getPackageInfo("com.gianlu.aria2app", 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                    installed = info.getLongVersionCode() >= 40;
+                else
+                    installed = info.versionCode >= 40;
             } catch (PackageManager.NameNotFoundException ex) {
-                aria2AndroidInstalled = false;
+                installed = false;
             }
 
-            return aria2AndroidInstalled && (isLocal || aria2AndroidInitiated);
+            boolean isLocal = Objects.equals(serverAddr, "localhost") || Objects.equals(serverAddr, "127.0.0.1");
+            return installed && (isLocal || aria2AndroidInitiated);
         }
 
         @Nullable
