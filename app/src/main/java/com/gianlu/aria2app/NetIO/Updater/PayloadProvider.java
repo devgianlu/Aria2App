@@ -9,7 +9,9 @@ import com.gianlu.commonutils.CommonUtils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
@@ -46,8 +48,13 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
 
         synchronized (requireListeners) {
             if (!requireListeners.isEmpty()) {
+                List<PayloadUpdater.OnPayload<P>> copy;
+                synchronized (requireListeners) {
+                    copy = new ArrayList<>(requireListeners);
+                }
+
                 boolean handled = false;
-                for (PayloadUpdater.OnPayload<P> listener : requireListeners)
+                for (PayloadUpdater.OnPayload<P> listener : copy)
                     if (listener.onException(ex)) handled = true;
 
                 requireListeners.clear();
@@ -68,13 +75,16 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
 
         debug("Payload deployed by " + this);
 
-        synchronized (requireListeners) {
-            if (!requireListeners.isEmpty()) {
-                for (PayloadUpdater.OnPayload<P> listener : requireListeners)
-                    listener.onPayload(payload);
-
-                requireListeners.clear();
+        if (!requireListeners.isEmpty()) {
+            List<PayloadUpdater.OnPayload<P>> copy;
+            synchronized (requireListeners) {
+                copy = new ArrayList<>(requireListeners);
             }
+
+            for (PayloadUpdater.OnPayload<P> listener : copy)
+                listener.onPayload(payload);
+
+            requireListeners.clear();
         }
 
         for (Receiver<P> receiver : attachedReceivers) receiver.onUpdateUi(payload);

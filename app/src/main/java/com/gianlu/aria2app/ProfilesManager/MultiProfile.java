@@ -1,9 +1,12 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 
@@ -463,6 +466,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final DirectDownload directDownload;
         public final ConnectionMethod connectionMethod;
         public final ConnectivityCondition connectivityCondition;
+        private final boolean aria2AndroidInitiated;
         private transient String encodedCredentials;
         private transient String fullServerAddress;
 
@@ -484,6 +488,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverEndpoint = connFields.endpoint;
             directDownload = ddFields.dd;
             hostnameVerifier = connFields.hostnameVerifier;
+            aria2AndroidInitiated = false;
         }
 
         private UserProfile(String token, int port) {
@@ -501,6 +506,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             connectivityCondition = ConnectivityCondition.newUniqueCondition();
             hostnameVerifier = false;
             status = new TestStatus(Status.UNKNOWN, null);
+            aria2AndroidInitiated = true;
         }
 
         public UserProfile(JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
@@ -544,6 +550,23 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             status = new TestStatus(Status.UNKNOWN, null);
+            aria2AndroidInitiated = obj.optBoolean("aria2Android", false);
+        }
+
+        public boolean couldBeAria2Android(@NonNull Context context) {
+            boolean installed;
+            try {
+                PackageInfo info = context.getPackageManager().getPackageInfo("com.gianlu.aria2app", 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                    installed = info.getLongVersionCode() >= 40;
+                else
+                    installed = info.versionCode >= 40;
+            } catch (PackageManager.NameNotFoundException ex) {
+                installed = false;
+            }
+
+            boolean isLocal = Objects.equals(serverAddr, "localhost") || Objects.equals(serverAddr, "127.0.0.1");
+            return installed && (isLocal || aria2AndroidInitiated);
         }
 
         @Nullable

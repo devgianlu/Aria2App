@@ -135,7 +135,7 @@ public class CertificateInputView extends LinearLayout {
 
         detailsContainer.setVisibility(View.VISIBLE);
 
-        detailsVersion.setHtml(R.string.version, String.valueOf(certificate.getVersion()));
+        detailsVersion.setHtml(R.string.versionLabel, String.valueOf(certificate.getVersion()));
         detailsSerialNumber.setHtml(R.string.serialNumber, Utils.toHexString(certificate.getSerialNumber().toByteArray()));
 
         detailsSigAlgName.setHtml(R.string.name, certificate.getSigAlgName());

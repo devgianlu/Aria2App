@@ -49,7 +49,7 @@ public class NetTester extends BaseTester<AbstractClient> {
             }
 
             @Override
-            public void onFailedConnecting(@NonNull Throwable ex) {
+            public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
                 publishResult(profile, new MultiProfile.TestStatus(MultiProfile.Status.OFFLINE, ex));
                 synchronized (lock) {
                     lock.set(null);
