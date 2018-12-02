@@ -165,10 +165,11 @@ public class WebSocketClient extends AbstractClient {
 
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
+            long ping = System.currentTimeMillis() - initializedAt;
             handler.post(() -> {
                 if (connectionListener != null) {
                     if (connectionListener.onConnected(WebSocketClient.this)) {
-                        connectionListener.onPingTested(WebSocketClient.this, System.currentTimeMillis() - initializedAt);
+                        connectionListener.onPingTested(WebSocketClient.this, ping);
                     }
 
                     connectionListener = null;
@@ -180,12 +181,12 @@ public class WebSocketClient extends AbstractClient {
         public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
             handler.post(() -> {
                 if (connectionListener != null) {
-                    connectionListener.onFailedConnecting(profile, throwable); // TODO: Not being called
+                    connectionListener.onFailedConnecting(profile, throwable);
                     connectionListener = null;
                 }
-            });
 
-            close();
+                close();
+            });
         }
     }
 
