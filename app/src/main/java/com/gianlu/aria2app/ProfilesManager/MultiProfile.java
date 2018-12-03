@@ -556,7 +556,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public boolean couldBeAria2Android(@NonNull Context context) {
             boolean installed;
             try {
-                PackageInfo info = context.getPackageManager().getPackageInfo("com.gianlu.aria2app", 0);
+                PackageInfo info = context.getPackageManager().getPackageInfo("com.gianlu.aria2android", 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                     installed = info.getLongVersionCode() >= 40;
                 else
