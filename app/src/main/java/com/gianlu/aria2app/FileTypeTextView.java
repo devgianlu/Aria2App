@@ -61,7 +61,7 @@ public class FileTypeTextView extends View {
 
     public void setFilename(@NonNull String filename) {
         int pos = filename.lastIndexOf('.');
-        if (pos != -1) setExtension(filename.substring(pos + 1, filename.length()));
+        if (pos != -1) setExtension(filename.substring(pos + 1));
         else setExtension(null);
     }
 

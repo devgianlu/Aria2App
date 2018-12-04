@@ -25,6 +25,8 @@ public class DownloadCardsTutorial extends BaseTutorial {
 
     public boolean buildSequence(@NonNull RecyclerView list) {
         LinearLayoutManager llm = (LinearLayoutManager) list.getLayoutManager();
+        if (llm == null) return false;
+
         int pos = llm.findFirstCompletelyVisibleItemPosition();
         if (pos == -1) pos = 0;
 

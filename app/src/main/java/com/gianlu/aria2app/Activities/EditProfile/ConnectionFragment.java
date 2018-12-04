@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -72,12 +71,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         completeAddress = layout.findViewById(R.id.editProfile_completeAddress);
         addressFlag = layout.findViewById(R.id.editProfile_addressFlag);
         connectionMethod = layout.findViewById(R.id.editProfile_connectionMethod);
-        connectionMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                updateCompleteAddress();
-            }
-        });
+        connectionMethod.setOnCheckedChangeListener((group, checkedId) -> updateCompleteAddress());
         address = layout.findViewById(R.id.editProfile_address);
         CommonUtils.getEditText(address).addTextChangedListener(new TextWatcher() {
             private final Timer timer = new Timer();
@@ -108,7 +102,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
                                 public void onDetails(@NonNull IPDetails details) {
                                     if (isAdded()) {
                                         addressFlag.setVisibility(View.VISIBLE);
-                                        addressFlag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
+                                        addressFlag.setImageDrawable(flags.loadFlag(address.getContext(), details.countryCode));
                                     }
                                 }
 
@@ -158,12 +152,9 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
             }
         });
         encryption = layout.findViewById(R.id.editProfile_encryption);
-        encryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                updateCompleteAddress();
-            }
+        encryption.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            updateCompleteAddress();
         });
 
         certificate = layout.findViewById(R.id.editProfile_certificate);

@@ -80,6 +80,7 @@ public class Option implements Comparable<Option> {
         return name.equals(option.name);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name;

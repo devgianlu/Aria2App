@@ -24,7 +24,6 @@ import com.gianlu.commonutils.SuperTextView;
 import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,11 +62,7 @@ public final class TopCountriesView extends FlowLayout {
 
     private void buildLayout() {
         List<Map.Entry<String, Integer>> list = new LinkedList<>(topCountries.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o2.getValue().compareTo(o1.getValue());
-            }
-        });
+        Collections.sort(list, (o1, o2) -> o2.getValue().compareTo(o1.getValue()));
 
         topCountries.clear();
         for (Map.Entry<String, Integer> entry : list)

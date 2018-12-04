@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -22,8 +21,10 @@ import java.util.Comparator;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
+@UiThread
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
     private final Context context;
     private final Listener listener;
@@ -32,7 +33,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     private final CountryFlags flags = CountryFlags.get();
 
     PeersAdapter(Context context, @NonNull Listener listener) {
-        super(new ArrayList<Peer>(), SortBy.DOWNLOAD_SPEED);
+        super(new ArrayList<>(), SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
         this.context = context;
         this.listener = listener;
@@ -63,11 +64,8 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
         holder.flag.setImageResource(R.drawable.ic_list_unknown);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) listener.onPeerSelected(peer);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onPeerSelected(peer);
         });
 
         geoIP.getIPDetails(peer.ip, new GeoIP.OnIpDetails() {

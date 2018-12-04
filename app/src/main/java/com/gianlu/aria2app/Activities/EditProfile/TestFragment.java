@@ -45,12 +45,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     public void addView(@NonNull View view) {
         if (testResults != null) {
             testResults.addView(view);
-            testResults.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ((ScrollView) testResults.getParent()).fullScroll(ScrollView.FOCUS_DOWN);
-                }
-            }, 100);
+            testResults.postDelayed(() -> ((ScrollView) testResults.getParent()).fullScroll(ScrollView.FOCUS_DOWN), 100);
         }
     }
 
@@ -76,13 +71,10 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_edit_profile_test, container, false);
         test = layout.findViewById(R.id.editProfile_test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    MultiProfile.UserProfile profile = listener.getProfile();
-                    if (profile != null) startTest(profile);
-                }
+        test.setOnClickListener(v -> {
+            if (listener != null) {
+                MultiProfile.UserProfile profile = listener.getProfile();
+                if (profile != null) startTest(profile);
             }
         });
 

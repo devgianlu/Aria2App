@@ -75,20 +75,10 @@ public class CertificateInputView extends LinearLayout {
         hostnameVerifier = findViewById(R.id.certificateInputView_hostnameVerifier);
 
         ImageButton removeCertificateFile = findViewById(R.id.certificateInputView_removeCertificateFile);
-        removeCertificateFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadCertificateUri(null);
-            }
-        });
+        removeCertificateFile.setOnClickListener(v -> loadCertificateUri(null));
 
         ImageButton pickCertificateFile = findViewById(R.id.certificateInputView_pickCertificateFile);
-        pickCertificateFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPicker();
-            }
-        });
+        pickCertificateFile.setOnClickListener(v -> showPicker());
     }
 
     void attachActivity(@NonNull ActivityProvider activityProvider) {

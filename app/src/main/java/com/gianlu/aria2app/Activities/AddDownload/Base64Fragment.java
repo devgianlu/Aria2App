@@ -105,29 +105,26 @@ public class Base64Fragment extends FragmentWithDialog {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_base64, container, false);
         path = layout.findViewById(R.id.base64Fragment_path);
         Button pick = layout.findViewById(R.id.base64Fragment_pick);
-        pick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity() == null) return;
+        pick.setOnClickListener(v -> {
+            if (getActivity() == null) return;
 
-                AskPermission.ask(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
-                    @Override
-                    public void permissionGranted(@NonNull String permission) {
-                        showFilePicker();
-                    }
+            AskPermission.ask(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                @Override
+                public void permissionGranted(@NonNull String permission) {
+                    showFilePicker();
+                }
 
-                    @Override
-                    public void permissionDenied(@NonNull String permission) {
-                        showToast(Toaster.build().message(R.string.readPermissionDenied).error(true));
-                    }
+                @Override
+                public void permissionDenied(@NonNull String permission) {
+                    showToast(Toaster.build().message(R.string.readPermissionDenied).error(true));
+                }
 
-                    @Override
-                    public void askRationale(@NonNull AlertDialog.Builder builder) {
-                        builder.setTitle(R.string.readExternalStorageRequest_title)
-                                .setMessage(R.string.readExternalStorageRequest_base64Message);
-                    }
-                });
-            }
+                @Override
+                public void askRationale(@NonNull AlertDialog.Builder builder) {
+                    builder.setTitle(R.string.readExternalStorageRequest_title)
+                            .setMessage(R.string.readExternalStorageRequest_base64Message);
+                }
+            });
         });
 
         SuperTextView help = layout.findViewById(R.id.base64Fragment_help);

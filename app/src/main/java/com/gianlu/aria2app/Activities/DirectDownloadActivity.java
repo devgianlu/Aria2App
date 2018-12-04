@@ -21,7 +21,6 @@ import java.util.List;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class DirectDownloadActivity extends ActivityWithDialog implements FetchHelper.FetchEventListener {
     private RecyclerViewLayout layout;
@@ -37,11 +36,8 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
         layout.setLayoutManager(new SuppressingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         layout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        layout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (helper != null) helper.reloadListener(DirectDownloadActivity.this);
-            }
+        layout.enableSwipeRefresh(() -> {
+            if (helper != null) helper.reloadListener(DirectDownloadActivity.this);
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         layout.startLoading();

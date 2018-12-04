@@ -35,6 +35,7 @@ public class AriaException extends Exception {
         return reason.startsWith("Cannot change option");
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "AriaException #" + code + ": " + getMessage();

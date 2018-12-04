@@ -44,24 +44,21 @@ public class AuthenticationFragment extends FieldErrorFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.fragment_edit_profile_authentication, container, false);
         authMethod = layout.findViewById(R.id.editProfile_authenticationMethod);
-        authMethod.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int id) {
-                switch (id) {
-                    default:
-                    case R.id.editProfile_authMethod_none:
-                        token.setVisibility(View.GONE);
-                        userAndPasswd.setVisibility(View.GONE);
-                        break;
-                    case R.id.editProfile_authMethod_token:
-                        token.setVisibility(View.VISIBLE);
-                        userAndPasswd.setVisibility(View.GONE);
-                        break;
-                    case R.id.editProfile_authMethod_http:
-                        token.setVisibility(View.GONE);
-                        userAndPasswd.setVisibility(View.VISIBLE);
-                        break;
-                }
+        authMethod.setOnCheckedChangeListener((radioGroup, id) -> {
+            switch (id) {
+                default:
+                case R.id.editProfile_authMethod_none:
+                    token.setVisibility(View.GONE);
+                    userAndPasswd.setVisibility(View.GONE);
+                    break;
+                case R.id.editProfile_authMethod_token:
+                    token.setVisibility(View.VISIBLE);
+                    userAndPasswd.setVisibility(View.GONE);
+                    break;
+                case R.id.editProfile_authMethod_http:
+                    token.setVisibility(View.GONE);
+                    userAndPasswd.setVisibility(View.VISIBLE);
+                    break;
             }
         });
         token = layout.findViewById(R.id.editProfile_token);

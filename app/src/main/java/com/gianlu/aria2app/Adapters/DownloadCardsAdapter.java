@@ -123,23 +123,17 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         holder.detailsGid.setHtml(R.string.gid, item.gid);
         holder.detailsTotalLength.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(update.length, false));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (CommonUtils.isExpanded(holder.details)) {
-                    CommonUtils.collapse(holder.details, null);
-                    CommonUtils.collapseTitle(holder.downloadName);
-                } else {
-                    CommonUtils.expand(holder.details, null);
-                    CommonUtils.expandTitle(holder.downloadName);
-                }
+        holder.itemView.setOnClickListener(view -> {
+            if (CommonUtils.isExpanded(holder.details)) {
+                CommonUtils.collapse(holder.details, null);
+                CommonUtils.collapseTitle(holder.downloadName);
+            } else {
+                CommonUtils.expand(holder.details, null);
+                CommonUtils.expandTitle(holder.downloadName);
             }
         });
-        holder.more.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) listener.onMoreClick(item);
-            }
+        holder.more.setOnClickListener(view -> {
+            if (listener != null) listener.onMoreClick(item);
         });
 
         holder.pause.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.PAUSE, this));
@@ -149,33 +143,30 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         holder.remove.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.REMOVE, this));
         holder.moveUp.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_UP, this));
         holder.moveDown.setOnClickListener(new Aria2Helper.DownloadActionClick(item, Aria2Helper.WhatAction.MOVE_DOWN, this));
-        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(PK.A2_CUSTOM_INFO, new HashSet<String>()), update.isTorrent()));
+        holder.customInfo.setDisplayInfo(CustomDownloadInfo.Info.toArray(Prefs.getSet(PK.A2_CUSTOM_INFO, new HashSet<>()), update.isTorrent()));
         holder.update(item);
 
-        holder.toggleNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NotificationService.Mode mode = notificationStates.get(item.gid);
-                if (mode != null) {
-                    NotificationService.Mode setMode;
-                    switch (mode) {
-                        case NOTIFY_EXCLUSIVE:
-                            setMode = NotificationService.Mode.NOT_NOTIFY_STANDARD;
-                            break;
-                        case NOTIFY_STANDARD:
-                            setMode = NotificationService.Mode.NOT_NOTIFY_EXCLUSIVE;
-                            break;
-                        case NOT_NOTIFY_EXCLUSIVE:
-                            setMode = NotificationService.Mode.NOTIFY_STANDARD;
-                            break;
-                        default:
-                        case NOT_NOTIFY_STANDARD:
-                            setMode = NotificationService.Mode.NOTIFY_EXCLUSIVE;
-                            break;
-                    }
-
-                    NotificationService.setMode(context, item.gid, setMode);
+        holder.toggleNotification.setOnClickListener(v -> {
+            NotificationService.Mode mode = notificationStates.get(item.gid);
+            if (mode != null) {
+                NotificationService.Mode setMode;
+                switch (mode) {
+                    case NOTIFY_EXCLUSIVE:
+                        setMode = NotificationService.Mode.NOT_NOTIFY_STANDARD;
+                        break;
+                    case NOTIFY_STANDARD:
+                        setMode = NotificationService.Mode.NOT_NOTIFY_EXCLUSIVE;
+                        break;
+                    case NOT_NOTIFY_EXCLUSIVE:
+                        setMode = NotificationService.Mode.NOTIFY_STANDARD;
+                        break;
+                    default:
+                    case NOT_NOTIFY_STANDARD:
+                        setMode = NotificationService.Mode.NOTIFY_EXCLUSIVE;
+                        break;
                 }
+
+                NotificationService.setMode(context, item.gid, setMode);
             }
         });
 
@@ -288,20 +279,17 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
             RecyclerView list = getList();
             if (list != null) {
-                list.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Objects.equals(intent.getAction(), NotificationService.EVENT_GET_MODE)) {
-                            String gid = intent.getStringExtra("gid");
-                            NotificationService.Mode mode = (NotificationService.Mode) intent.getSerializableExtra("mode");
-                            notificationStates.put(gid, mode);
-                            int index = indexOf(gid);
-                            if (index != -1) notifyItemChanged(index, mode);
-                        } else if (Objects.equals(intent.getAction(), NotificationService.EVENT_STOPPED)) {
-                            for (String gid : notificationStates.keySet())
-                                notificationStates.put(gid, NotificationService.Mode.NOT_NOTIFY_STANDARD);
-                            notifyItemRangeChanged(0, getItemCount(), NotificationService.Mode.NOT_NOTIFY_STANDARD);
-                        }
+                list.post(() -> {
+                    if (Objects.equals(intent.getAction(), NotificationService.EVENT_GET_MODE)) {
+                        String gid = intent.getStringExtra("gid");
+                        NotificationService.Mode mode = (NotificationService.Mode) intent.getSerializableExtra("mode");
+                        notificationStates.put(gid, mode);
+                        int index = indexOf(gid);
+                        if (index != -1) notifyItemChanged(index, mode);
+                    } else if (Objects.equals(intent.getAction(), NotificationService.EVENT_STOPPED)) {
+                        for (String gid : notificationStates.keySet())
+                            notificationStates.put(gid, NotificationService.Mode.NOT_NOTIFY_STANDARD);
+                        notifyItemRangeChanged(0, getItemCount(), NotificationService.Mode.NOT_NOTIFY_STANDARD);
                     }
                 });
             }

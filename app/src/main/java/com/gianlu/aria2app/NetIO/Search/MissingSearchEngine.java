@@ -3,6 +3,8 @@ package com.gianlu.aria2app.NetIO.Search;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.annotation.NonNull;
+
 public class MissingSearchEngine {
     public final SearchEngine engine;
     public final int responseCode;
@@ -12,6 +14,7 @@ public class MissingSearchEngine {
         responseCode = obj.getInt("reason");
     }
 
+    @NonNull
     @Override
     public String toString() {
         if (engine == null) return "";

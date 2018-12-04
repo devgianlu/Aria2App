@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -25,8 +24,10 @@ import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
+@UiThread
 public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_SERVER = 0;
     private static final int ITEM_HEADER = 1;
@@ -83,24 +84,22 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             castHolder.address.setText(server.currentUri);
             castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
 
-            castHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onServerSelected(server);
-                }
-            });
+            castHolder.itemView.setOnClickListener(v -> listener.onServerSelected(server));
 
-            geoIP.getIPDetails(server.uri.getHost(), new GeoIP.OnIpDetails() {
-                @Override
-                public void onDetails(@NonNull IPDetails details) {
-                    notifyItemChanged(holder.getAdapterPosition(), details);
-                }
+            String host = server.uri.getHost();
+            if (host != null) {
+                geoIP.getIPDetails(host, new GeoIP.OnIpDetails() {
+                    @Override
+                    public void onDetails(@NonNull IPDetails details) {
+                        notifyItemChanged(holder.getAdapterPosition(), details);
+                    }
 
-                @Override
-                public void onException(@NonNull Exception ex) {
-                    Logging.log(ex);
-                }
-            });
+                    @Override
+                    public void onException(@NonNull Exception ex) {
+                        Logging.log(ex);
+                    }
+                });
+            }
         } else if (holder instanceof HeaderViewHolder) {
             AriaFile file = (AriaFile) objs.get(position);
             HeaderViewHolder castHolder = (HeaderViewHolder) holder;
