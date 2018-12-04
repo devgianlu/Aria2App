@@ -12,7 +12,6 @@
     <string name="notificationError">下载错误</string>
     <string name="notificationBTComplete">BitTorrent下载完成</string>
     <string name="noPeers">没有同行</string>
-    <string name="version">版本</string>
     <string name="gathering_information">收集信息。请耐心等待…</string>
     <string name="profileName">档案名称</string>
     <string name="profile_help">如果您不知道如何正确设置配置文件，请查看我的网站上的指南：https://gianlu.xyz/Projects/Aria2App/Documents/create-profile/</string>
