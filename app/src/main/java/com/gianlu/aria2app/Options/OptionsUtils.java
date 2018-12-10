@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Options;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -61,12 +60,9 @@ public final class OptionsUtils {
         builder.setView(layout)
                 .setTitle(option.name)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.set, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        option.setNewValue(edit.getText().toString());
-                        if (adapter != null) adapter.optionChanged(option);
-                    }
+                .setPositiveButton(R.string.set, (dialog, which) -> {
+                    option.setNewValue(edit.getText().toString());
+                    if (adapter != null) adapter.optionChanged(option);
                 });
 
         return builder;

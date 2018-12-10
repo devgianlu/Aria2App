@@ -221,12 +221,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             } else {
                 btAnnounceListContainer.setVisibility(View.VISIBLE);
 
-                toggleBtAnnounceList.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CommonUtils.handleCollapseClick(toggleBtAnnounceList, btAnnounceList);
-                    }
-                });
+                toggleBtAnnounceList.setOnClickListener(v -> CommonUtils.handleCollapseClick(toggleBtAnnounceList, btAnnounceList));
 
                 btAnnounceList.removeAllViews();
                 for (String url : update.torrent.announceList) {

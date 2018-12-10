@@ -56,7 +56,7 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
     public static String extractFilename(@NonNull Context context, @NonNull Uri uri) throws CannotReadException {
         String name;
         long size;
-        if (Objects.equals(uri.getScheme(), "file")) {
+        if (Objects.equals(uri.getScheme(), "file") && uri.getPath() != null) {
             File file = new File(uri.getPath());
             name = file.getName();
             size = file.length();

@@ -52,7 +52,7 @@ public class AddMetalinkActivity extends AddDownloadActivity {
             base64Fragment = Base64Fragment.getInstance(this, (AddBase64Bundle) bundle);
             optionsFragment = OptionsFragment.getInstance(this, bundle);
         } else {
-            base64Fragment = Base64Fragment.getInstance(this, false, (Uri) getIntent().getParcelableExtra("uri"));
+            base64Fragment = Base64Fragment.getInstance(this, false, getIntent().getParcelableExtra("uri"));
             optionsFragment = OptionsFragment.getInstance(this, false);
         }
 

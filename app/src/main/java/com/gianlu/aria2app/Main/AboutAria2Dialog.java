@@ -94,13 +94,15 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
     @Override
     public void onResult(@NonNull VersionAndSession result) {
         loading.setVisibility(View.GONE);
-        version.setHtml(R.string.version, result.version.version);
+        version.setHtml(R.string.versionLabel, result.version.version);
         features.setHtml(R.string.features, CommonUtils.join(result.version.enabledFeatures, ", "));
         sessionId.setHtml(R.string.sessionId, result.session.sessionId);
     }
 
     @Override
     public void onException(@NonNull Exception ex) {
+        if (!isAdded()) return;
+
         DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
         dismissAllowingStateLoss();
     }

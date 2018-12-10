@@ -57,11 +57,8 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
             holder.leeches.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) listener.onResultSelected(result);
-            }
+        holder.itemView.setOnClickListener(view -> {
+            if (listener != null) listener.onResultSelected(result);
         });
     }
 
@@ -74,7 +71,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     @Override
     protected void moreContent(int page, @NonNull final ContentProvider<SearchResult> provider) {
         if (token == null) {
-            provider.onMoreContent(new ArrayList<SearchResult>());
+            provider.onMoreContent(new ArrayList<>());
         } else {
             searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.OnSearch() {
                 @Override

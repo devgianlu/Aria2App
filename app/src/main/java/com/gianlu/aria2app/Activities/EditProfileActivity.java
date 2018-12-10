@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -47,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -247,18 +245,15 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 ssid.setErrorEnabled(false);
             }
         });
-        connectivityCondition.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                if (checkedId == R.id.editProfile_connectivityCondition_wifi) {
-                    WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                    if (manager == null) return;
-                    ssidField.setAdapter(new WifisAdapter(EditProfileActivity.this, manager.getConfiguredNetworks()));
-                    ssidField.setThreshold(1);
-                    ssid.setVisibility(View.VISIBLE);
-                } else {
-                    ssid.setVisibility(View.GONE);
-                }
+        connectivityCondition.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.editProfile_connectivityCondition_wifi) {
+                WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                if (manager == null) return;
+                ssidField.setAdapter(new WifisAdapter(EditProfileActivity.this, manager.getConfiguredNetworks()));
+                ssidField.setThreshold(1);
+                ssid.setVisibility(View.VISIBLE);
+            } else {
+                ssid.setVisibility(View.GONE);
             }
         });
 
@@ -268,68 +263,57 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 .setCancelable(!compulsory)
                 .setPositiveButton(R.string.create, null);
 
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (compulsory) onBackPressed();
-            }
+        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+            if (compulsory) onBackPressed();
         });
 
         final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialogInterface) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MultiProfile.ConnectivityCondition condition;
-                        switch (connectivityCondition.getCheckedRadioButtonId()) {
-                            default:
-                            case R.id.editProfile_connectivityCondition_always:
-                                condition = MultiProfile.ConnectivityCondition.newUniqueCondition();
-                                break;
-                            case R.id.editProfile_connectivityCondition_mobile:
-                                condition = MultiProfile.ConnectivityCondition.newMobileCondition(!hasDefault());
-                                break;
-                            case R.id.editProfile_connectivityCondition_wifi:
-                                String[] ssidsArray = MultiProfile.ConnectivityCondition.parseSSIDs(CommonUtils.getText(ssid));
-                                if (ssidsArray.length == 0) {
-                                    ssidField.setText("");
-                                    ssid.setError(getString(R.string.emptySSID));
-                                    return;
-                                }
-
-                                condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssidsArray, !hasDefault());
-                                break;
-                            case R.id.editProfile_connectivityCondition_ethernet:
-                                condition = MultiProfile.ConnectivityCondition.newEthernetCondition(!hasDefault());
-                                break;
-                            case R.id.editProfile_connectivityCondition_bluetooth:
-                                condition = MultiProfile.ConnectivityCondition.newBluetoothCondition(!hasDefault());
-                                break;
-                        }
-
-                        if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
-                            Toaster.with(EditProfileActivity.this).message(R.string.cannotAddAlwaysCondition).show();
-                            return;
-                        }
-
-                        if (conditions.contains(condition)) {
-                            Toaster.with(EditProfileActivity.this).message(R.string.duplicatedCondition).show();
-                            return;
-                        }
-
-                        conditions.add(condition);
-                        connectionFragments.add(ConnectionFragment.getInstance(EditProfileActivity.this, null));
-                        authFragments.add(AuthenticationFragment.getInstance(EditProfileActivity.this, null));
-                        ddFragments.add(DirectDownloadFragment.getInstance(EditProfileActivity.this, null));
-                        refreshSpinner();
-                        conditionsSpinner.setSelection(conditions.size() - 1);
-                        dialog.dismiss();
+        dialog.setOnShowListener(dialogInterface -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            MultiProfile.ConnectivityCondition condition;
+            switch (connectivityCondition.getCheckedRadioButtonId()) {
+                default:
+                case R.id.editProfile_connectivityCondition_always:
+                    condition = MultiProfile.ConnectivityCondition.newUniqueCondition();
+                    break;
+                case R.id.editProfile_connectivityCondition_mobile:
+                    condition = MultiProfile.ConnectivityCondition.newMobileCondition(!hasDefault());
+                    break;
+                case R.id.editProfile_connectivityCondition_wifi:
+                    String[] ssidsArray = MultiProfile.ConnectivityCondition.parseSSIDs(CommonUtils.getText(ssid));
+                    if (ssidsArray.length == 0) {
+                        ssidField.setText("");
+                        ssid.setError(getString(R.string.emptySSID));
+                        return;
                     }
-                });
+
+                    condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssidsArray, !hasDefault());
+                    break;
+                case R.id.editProfile_connectivityCondition_ethernet:
+                    condition = MultiProfile.ConnectivityCondition.newEthernetCondition(!hasDefault());
+                    break;
+                case R.id.editProfile_connectivityCondition_bluetooth:
+                    condition = MultiProfile.ConnectivityCondition.newBluetoothCondition(!hasDefault());
+                    break;
             }
-        });
+
+            if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
+                Toaster.with(EditProfileActivity.this).message(R.string.cannotAddAlwaysCondition).show();
+                return;
+            }
+
+            if (conditions.contains(condition)) {
+                Toaster.with(EditProfileActivity.this).message(R.string.duplicatedCondition).show();
+                return;
+            }
+
+            conditions.add(condition);
+            connectionFragments.add(ConnectionFragment.getInstance(EditProfileActivity.this, null));
+            authFragments.add(AuthenticationFragment.getInstance(EditProfileActivity.this, null));
+            ddFragments.add(DirectDownloadFragment.getInstance(EditProfileActivity.this, null));
+            refreshSpinner();
+            conditionsSpinner.setSelection(conditions.size() - 1);
+            dialog.dismiss();
+        }));
 
         showDialog(dialog);
     }
@@ -441,12 +425,9 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.setDefaultCondition)
-                .setSingleChoiceItems(new RadioConditionsAdapter(this, conditions), def, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        setDefaultCondition(which);
-                        dialog.dismiss();
-                    }
+                .setSingleChoiceItems(new RadioConditionsAdapter(this, conditions), def, (dialog, which) -> {
+                    setDefaultCondition(which);
+                    dialog.dismiss();
                 })
                 .setNegativeButton(android.R.string.cancel, null);
 

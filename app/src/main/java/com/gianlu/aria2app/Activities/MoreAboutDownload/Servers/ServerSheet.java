@@ -95,19 +95,22 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
         Utils.setupChart(chart, true);
         update(server);
 
-        ipApi.getIPDetails(server.uri.getHost(), new GeoIP.OnIpDetails() {
-            @Override
-            public void onDetails(@NonNull IPDetails details) {
-                ipDetails.setup(details);
-                ipDetails.setVisibility(View.VISIBLE);
-            }
+        String host = server.uri.getHost();
+        if (host != null) {
+            ipApi.getIPDetails(host, new GeoIP.OnIpDetails() {
+                @Override
+                public void onDetails(@NonNull IPDetails details) {
+                    ipDetails.setup(details);
+                    ipDetails.setVisibility(View.VISIBLE);
+                }
 
-            @Override
-            public void onException(@NonNull Exception ex) {
-                Logging.log(ex);
-                ipDetails.setVisibility(View.GONE);
-            }
-        });
+                @Override
+                public void onException(@NonNull Exception ex) {
+                    Logging.log(ex);
+                    ipDetails.setVisibility(View.GONE);
+                }
+            });
+        }
 
         isLoading(false);
     }

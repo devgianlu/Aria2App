@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
@@ -113,36 +112,25 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         else
             holder.toggleFavourite.setImageResource(R.drawable.baseline_favorite_border_24);
 
-        holder.edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) listener.onEditOption(option);
-            }
+        holder.edit.setOnClickListener(v -> {
+            if (listener != null) listener.onEditOption(option);
         });
 
-        holder.toggleFavourite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isQuick = !option.isQuick();
-                option.setQuick(isQuick);
+        holder.toggleFavourite.setOnClickListener(v -> {
+            boolean isQuick = !option.isQuick();
+            option.setQuick(isQuick);
 
-                int oldIndex = holder.getAdapterPosition();
-                notifyItemChanged(oldIndex);
+            int oldIndex = holder.getAdapterPosition();
+            notifyItemChanged(oldIndex);
 
-                if (!isQuick) Collections.sort(options);  // Order alphabetically
-                Collections.sort(options, new OptionsManager.IsQuickComparator());
+            if (!isQuick) Collections.sort(options);  // Order alphabetically
+            Collections.sort(options, new OptionsManager.IsQuickComparator());
 
-                int newIndex = options.indexOf(option);
-                if (newIndex != -1) notifyItemMoved(oldIndex, newIndex);
-            }
+            int newIndex = options.indexOf(option);
+            if (newIndex != -1) notifyItemMoved(oldIndex, newIndex);
         });
 
-        holder.info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name)));
-            }
-        });
+        holder.info.setOnClickListener(v -> context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name))));
     }
 
     @Override

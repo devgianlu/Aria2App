@@ -5,7 +5,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -36,7 +35,7 @@ public class OptionsView extends FrameLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_options, this, true);
 
         list = findViewById(R.id.optionsView_list);
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         list.setHasFixedSize(true);
 
@@ -57,11 +56,8 @@ public class OptionsView extends FrameLayout {
         });
 
         ImageButton search = findViewById(R.id.optionsView_search);
-        search.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (adapter != null) adapter.filter(query.getText().toString());
-            }
+        search.setOnClickListener(v -> {
+            if (adapter != null) adapter.filter(query.getText().toString());
         });
     }
 

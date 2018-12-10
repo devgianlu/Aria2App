@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
-import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
@@ -57,7 +55,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
     private FilesAdapter adapter;
@@ -262,12 +259,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             @Override
             public void onSuccess() {
                 Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.show, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startActivity(new Intent(getContext(), DirectDownloadActivity.class));
-                            }
-                        }).show();
+                        .setAction(R.string.show, v -> startActivity(new Intent(getContext(), DirectDownloadActivity.class)))
+                        .show();
             }
 
             @Override
@@ -300,19 +293,11 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                     builder.setTitle(R.string.couldStreamVideo)
                             .setMessage(R.string.couldStreamVideo_message)
                             .setNeutralButton(android.R.string.cancel, null)
-                            .setPositiveButton(R.string.stream, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    startActivity(intent);
-                                    AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
-                                }
+                            .setPositiveButton(R.string.stream, (dialog, which) -> {
+                                startActivity(intent);
+                                AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
                             })
-                            .setNegativeButton(R.string.download, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    shouldDownload(profile, file);
-                                }
-                            });
+                            .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, file));
 
                     showDialog(builder);
                     return;
@@ -367,20 +352,14 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
-        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                canGoBack(CODE_CLOSE_SHEET);
+        recyclerViewLayout.enableSwipeRefresh(() -> {
+            canGoBack(CODE_CLOSE_SHEET);
 
-                refresh(new OnRefresh() {
-                    @Override
-                    public void refreshed() {
-                        adapter = new FilesAdapter(getContext(), FilesFragment.this);
-                        recyclerViewLayout.loadListData(adapter);
-                        recyclerViewLayout.startLoading();
-                    }
-                });
-            }
+            refresh(() -> {
+                adapter = new FilesAdapter(getContext(), FilesFragment.this);
+                recyclerViewLayout.loadListData(adapter);
+                recyclerViewLayout.startLoading();
+            });
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
     }
 

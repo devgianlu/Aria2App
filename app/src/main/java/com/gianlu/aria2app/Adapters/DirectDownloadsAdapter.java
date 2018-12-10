@@ -189,36 +189,11 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
         }
 
-        holder.open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFile(download);
-            }
-        });
-        holder.start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                helper.resume(download);
-            }
-        });
-        holder.pause.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                helper.pause(download);
-            }
-        });
-        holder.restart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                helper.restart(download, restartListener);
-            }
-        });
-        holder.remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                helper.remove(download);
-            }
-        });
+        holder.open.setOnClickListener(v -> openFile(download));
+        holder.start.setOnClickListener(v -> helper.resume(download));
+        holder.pause.setOnClickListener(v -> helper.pause(download));
+        holder.restart.setOnClickListener(v -> helper.restart(download, restartListener));
+        holder.remove.setOnClickListener(v -> helper.remove(download));
     }
 
     private void openFile(FetchDownloadWrapper download) {

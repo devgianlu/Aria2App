@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -28,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
+@UiThread
 public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_DIR = 0;
     private static final int ITEM_FILE = 1;
@@ -36,7 +36,6 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Set<AriaFile> selectedFiles = new HashSet<>();
     private AriaDirectory currentDir;
     private boolean isInActionMode = false;
-    private RecyclerView list;
 
     FilesAdapter(Context context, @NonNull Listener listener) {
         this.inflater = LayoutInflater.from(context);
@@ -47,13 +46,13 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         isInActionMode = true;
         selectedFiles.clear();
         selectedFiles.add(trigger);
-        postNotifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void selectAllInDirectory() {
         if (!isInActionMode || currentDir == null) return;
         selectedFiles.addAll(currentDir.files);
-        postNotifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     @UiThread
@@ -73,7 +72,6 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (currentDir != null && !currentDir.isRoot()) changeDir(currentDir.parent);
     }
 
-    @UiThread
     private void updateDir(@NonNull AriaDirectory dir) {
         currentDir = dir;
         int dirs = currentDir.dirs.size();
@@ -82,23 +80,10 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             notifyItemChanged(i, new WeakReference<>(currentDir.files.get(i - dirs)));
     }
 
-    @UiThread
     public void changeDir(@NonNull AriaDirectory dir) {
         currentDir = dir;
         listener.onDirectoryChanged(dir);
-        postNotifyDataSetChanged();
-    }
-
-    private void postNotifyDataSetChanged() {
-        if (list != null) {
-            list.post(new Runnable() {
-                @Override
-                public void run() {
-                    list.getRecycledViewPool().clear();
-                    notifyDataSetChanged();
-                }
-            });
-        }
+        notifyDataSetChanged();
     }
 
     @Override
@@ -139,7 +124,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void exitedActionMode() {
         isInActionMode = false;
         selectedFiles.clear();
-        postNotifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -159,33 +144,19 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             castHolder.percentage.setText(String.format(Locale.getDefault(), "%.1f%%", file.getProgress()));
             castHolder.updateStatus(file);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onFileSelected(file);
-                }
-            });
-
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return listener.onFileLongClick(file);
-                }
-            });
+            holder.itemView.setOnClickListener(v -> listener.onFileSelected(file));
+            holder.itemView.setOnLongClickListener(v -> listener.onFileLongClick(file));
 
             if (isInActionMode) {
                 castHolder.select.setVisibility(View.VISIBLE);
                 castHolder.select.setChecked(selectedFiles.contains(file));
-                castHolder.select.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) selectedFiles.add(file);
-                        else selectedFiles.remove(file);
+                castHolder.select.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) selectedFiles.add(file);
+                    else selectedFiles.remove(file);
 
-                        if (selectedFiles.isEmpty()) {
-                            listener.exitActionMode();
-                            exitedActionMode();
-                        }
+                    if (selectedFiles.isEmpty()) {
+                        listener.exitActionMode();
+                        exitedActionMode();
                     }
                 });
             } else {
@@ -197,30 +168,9 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             final AriaDirectory dir = currentDir.dirs.get(position);
             castHolder.name.setText(dir.name);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    changeDir(dir);
-                }
-            });
-
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return listener.onDirectoryLongClick(dir);
-                }
-            });
+            holder.itemView.setOnClickListener(v -> changeDir(dir));
+            holder.itemView.setOnLongClickListener(v -> listener.onDirectoryLongClick(dir));
         }
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        list = recyclerView;
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        list = null;
     }
 
     @Override

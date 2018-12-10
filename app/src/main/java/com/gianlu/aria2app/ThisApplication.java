@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.gianlu.aria2app.NetIO.ErrorHandler;
@@ -73,15 +72,12 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         deprecatedBackwardCompatibility();
 
         PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    @Override
-                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                        if (key.equals(PK.A2_ENABLE_NOTIFS.key())) {
-                            if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
-                                NotificationService.start(ThisApplication.this);
-                            else
-                                NotificationService.stop(ThisApplication.this);
-                        }
+                .registerOnSharedPreferenceChangeListener((prefs, key) -> {
+                    if (key.equals(PK.A2_ENABLE_NOTIFS.key())) {
+                        if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
+                            NotificationService.start(ThisApplication.this);
+                        else
+                            NotificationService.stop(ThisApplication.this);
                     }
                 });
     }
@@ -90,8 +86,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     private void deprecatedBackwardCompatibility() {
         if (Prefs.has(PK.A2_QUICK_OPTIONS) || Prefs.has(PK.A2_GLOBAL_QUICK_OPTIONS)) {
             Set<String> set = new HashSet<>();
-            set.addAll(Prefs.getSet(PK.A2_QUICK_OPTIONS, new HashSet<String>()));
-            set.addAll(Prefs.getSet(PK.A2_GLOBAL_QUICK_OPTIONS, new HashSet<String>()));
+            set.addAll(Prefs.getSet(PK.A2_QUICK_OPTIONS, new HashSet<>()));
+            set.addAll(Prefs.getSet(PK.A2_GLOBAL_QUICK_OPTIONS, new HashSet<>()));
             Prefs.putSet(PK.A2_QUICK_OPTIONS_MIXED, set);
             Prefs.remove(PK.A2_QUICK_OPTIONS);
             Prefs.remove(PK.A2_GLOBAL_QUICK_OPTIONS);

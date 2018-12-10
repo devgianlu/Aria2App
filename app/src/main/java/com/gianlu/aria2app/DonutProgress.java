@@ -90,10 +90,10 @@ public class DonutProgress extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawArc(padding, padding, canvas.getWidth() - padding, canvas.getHeight() - padding, 270, sweepAngle, true, arcPaint);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, ((float) getWidth()) / 2 - padding * 2, transparentPaint);
+        canvas.drawArc(padding, padding, getWidth() - padding, getHeight() - padding, 270, sweepAngle, true, arcPaint);
+        canvas.drawCircle(getWidth() / 2f, getHeight() / 2f, ((float) getWidth()) / 2 - padding * 2, transparentPaint);
 
-        canvas.drawText(percentage, (getWidth() - textBound.width()) / 2, (getHeight() + textBound.height()) / 2, textPaint);
+        canvas.drawText(percentage, (getWidth() - textBound.width()) / 2f, (getHeight() + textBound.height()) / 2f, textPaint);
     }
 
     public void setProgress(float progress) {
