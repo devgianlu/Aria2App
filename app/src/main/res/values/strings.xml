@@ -49,7 +49,6 @@
     <string name="announceList">Announce list</string>
     <string name="port">Port</string>
     <string name="endpoint">Endpoint</string>
-    <string name="endpoint_default">/jsonrpc</string>
     <string name="authenticationMethod">Authentication method</string>
     <string name="token">Token</string>
     <string name="authentication">Authentication</string>
@@ -107,8 +106,8 @@
     <string name="fatalExceptionMessage">A fatal exception has been thrown!</string>
     <string name="connection">Connection</string>
     <string name="invalidProfileName">Invalid profile name!</string>
-    <string name="HTTP">HTTP</string>
-    <string name="ws">WebSocket</string>
+    <string name="HTTP" translatable="false">HTTP</string>
+    <string name="ws" translatable="false">WebSocket</string>
     <string name="addressEmpty">The address field is empty!</string>
     <string name="invalidPort">Invalid port number!</string>
     <string name="endpointEmpty">The endpoint field is empty!</string>
@@ -149,7 +148,7 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="wifi">Wifi</string>
     <string name="always">Always</string>
-    <string name="ssid">SSID</string>
+    <string name="ssid" translatable="false">SSID</string>
     <string name="connectivityCondition">Connectivity condition</string>
     <string name="create">Create</string>
     <string name="emptySSID">The SSID field is empty!</string>
