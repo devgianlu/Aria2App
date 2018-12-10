@@ -4,16 +4,22 @@
     <string name="downloadStatus_paused">已暂停</string>
     <string name="downloadStatus_complete">完成</string>
     <string name="downloadStatus_removed">删除</string>
-    <string name="downloadStatus_active">活跃</string>
+    <string name="downloadStatus_active">活动</string>
     <string name="completed_length"><b>完成长度:</b> %s</string>
     <string name="total_length"><b>总长度:</b> %s</string>
-    <string name="uploaded_length"><b>上传长度:</b> %s</string>
+    <string name="uploaded_length"><b>已上传长度:</b> %s</string>
+    <string name="pieces"><b>块数:</b> %d</string>
+    <string name="pieces_length"><b>分块长度:</b> %s</string>
     <string name="connections"><b>连接:</b> %d</string>
+    <string name="verifyIntegrityPending"><b>等待完整性检查:</b> %s</string>
     <string name="verifiedLength"><b>验证时长:</b> %s</string>
-    <string name="directory"><b>目标目录:</b> %s</string>
+    <string name="directory"><b>目标文件夹:</b> %s</string>
+    <string name="seeder"><b>种子源:</b> %s</string>
+    <string name="numSeeder"><b>种子数量:</b> %d</string>
     <string name="creation_date"><b>创建日期:</b> %s</string>
     <string name="mode"><b>模式:</b> %s</string>
     <string name="comment"><b>评论:</b> %s</string>
+    <string name="index"><b>索引:</b> %d</string>
     <string name="path"><b>路径:</b> %s</string>
     <string name="notificationComplete">下载完成</string>
     <string name="notificationStarted">下载开始了</string>
@@ -22,7 +28,8 @@
     <string name="notificationError">下载错误</string>
     <string name="notificationBTComplete">BitTorrent下载完成</string>
     <string name="noPeers">没有同行</string>
-    <string name="features"><b>启用功能:</b> %s</string>
+    <string name="features"><b>启用的功能:</b> %s</string>
+    <string name="sessionId"><b>会话ID:</b> %s</string>
     <string name="versionLabel"><b>版本:</b> %s</string>
     <string name="gathering_information">收集信息。请耐心等待…</string>
     <string name="profileName">配置名称</string>
@@ -31,7 +38,7 @@
     <string name="peers">同行</string>
     <string name="servers">服务器</string>
     <string name="addProfile">添加配置文件</string>
-    <string name="home">家</string>
+    <string name="home">主页面</string>
     <string name="announceList">公布名单</string>
     <string name="port">端口</string>
     <string name="endpoint">终端</string>
@@ -42,6 +49,7 @@
     <string name="filters">过滤器</string>
     <string name="encryption">启用TLS/SSL加密</string>
     <string name="apply">申请</string>
+    <string name="uris">网址</string>
     <string name="save">保存</string>
     <string name="support">支持</string>
     <string name="add">添加</string>
@@ -55,7 +63,7 @@
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="more">更多</string>
-    <string name="globalOptions">全球选择</string>
+    <string name="globalOptions">全局选项</string>
     <string name="downloadOptions">下载选项</string>
     <string name="general">一般</string>
     <string name="notifications">通知</string>
@@ -69,24 +77,25 @@
     <string name="writeExternalStorageRequest_message">为了将文件保存到设备中，Aria2App需要写入外部存储。</string>
     <string name="readExternalStorageRequest_title">需要阅读许可</string>
     <string name="readExternalStorageRequest_certMessage">为了加载证书，Aria2App需要从外部存储读取。</string>
-    <string name="readExternalStorageRequest_base64Message">为了加载Torrent/Metalink文件，Aria2App需要从外部存储读取。</string>
+    <string name="readExternalStorageRequest_base64Message">为了加载种子/Metalink文件，Aria2App需要从外部存储读取。</string>
     <string name="noDownloads">没有要下载的内容。尝试更改过滤器或点击底角的加号图标开始下载。</string>
     <string name="search">搜索</string>
-    <string name="addUri">添加URI</string>
+    <string name="addUri">添加网址</string>
     <string name="directDownload">直接下载</string>
     <string name="quickGlobalOptions">快速全局选项</string>
 
     <string name="connecting">连接中...</string>
     <string name="completed">已完成</string>
-    <string name="searchTorrent">寻找洪流</string>
+    <string name="searchTorrent">寻找种子</string>
     <string name="download">下载</string>
+    <string name="size"><b>大小:</b> %s</string>
     <string name="sorting">排序</string>
     <string name="status">状态</string>
     <string name="totalLengthLabel">总长度</string>
     <string name="progress">进展</string>
     <string name="connectionMethod">连接方法</string>
     <string name="addMetalink">添加Metalink</string>
-    <string name="addTorrent">添加Torrent</string>
+    <string name="addTorrent">添加种子</string>
     <string name="fatalExceptionMessage">抛出致命的异常！</string>
     <string name="connection">连接</string>
     <string name="invalidProfileName">无效的配置名！</string>
@@ -102,26 +111,30 @@
     <string name="invalidAddress">无效地址！</string>
     <string name="pickProfile">选择一个配置文件或创建一个新的配置文件。按下并保持编辑。</string>
     <string name="failedLoading">加载失败！</string>
-    <string name="currentUri"><b>当前URI:</b> %s</string>
+    <string name="currentUri"><b>目前网址:</b> %s</string>
+    <string name="uri"><b>网址:</b> %s</string>
     <string name="selectForDownload">选择下载文件</string>
-    <string name="currentValue"><b>当前值:</b> %s</string>
+    <string name="shareRatio"><b>分享比率:</b> %s</string>
+    <string name="currentValue"><b>目前值:</b> %s</string>
     <string name="newValue">新价值：</string>
     <string name="set">设置</string>
-    <string name="noUris_help">没有uris。请点击下面的按钮添加至少一个。</string>
+    <string name="noUris_help">没有网址。请点击下面的按钮添加至少一个。</string>
     <string name="queuePosition_help">保留空以将下载添加到队列的末尾。</string>
-    <string name="uris_disclaimer">必须只添加指向同一资源的HTTP / FTP / SFTP / BitTorrent uris。如果你把Uris指向不同的资源，那么下载可能会失败或者在没有aria2抱怨的情况下被破坏。</string>
+    <string name="uris_disclaimer">必须只添加指向同一资源的HTTP / FTP / SFTP / BitTorrent uris。如果你把网址指向不同的资源，那么下载可能会失败或者在没有aria2抱怨的情况下被破坏。</string>
     <string name="noUris">没有uris。</string>
-    <string name="torrentUris_disclaimer">Uris用于网络播种。对于单个文件种子，URI可以是指向资源的完整URI;如果URI以/结尾，则添加torrent文件中的名称。对于多文件种子，添加torrent中的名称和路径以形成每个文件的URI。</string>
+    <string name="torrentUris_disclaimer">网址用于网络播种。对于单个文件种子，网址可以是指向资源的完整网址；如果网址以/结尾，会添加种子文件中的名称。对于多个种子，会添加种子中的名字和路径形成每个文件的网址。</string>
     <string name="file">文件</string>
+    <string name="pickTorrent_help">选择一个种子文件。支持的mime类型是 <b>application/x-bittorrent</b>.</string>
     <string name="outdated_aria2">过时的aria2版本</string>
     <string name="outdated_aria2_message">你的aria2版本已经过时了。 Aria2App开发用于运行最新的aria2版本，因此您应该更新它。您可以在首选项中禁用此消息。\n
-                 \n
-                 当前版本:％1$s\n
-                 最新版本:％2$s</string>
-    <string name="selectFile_help">只能在多文件洪流上从下载中选择或取消选择文件。</string>
+                      \n
+                      当前版本:％1$s\n
+                      最新版本:％2$s</string>
+    <string name="selectFile_help">只能在多文件种子上下载文件，才能从下载中选择或取消选择文件。</string>
     <string name="nameLabel">名称</string>
     <string name="searchDownloads">搜索下载</string>
     <string name="failedLoadingDownloads">加载下载失败！</string>
+    <string name="indexes"><b>索引:</b> %s</string>
     <string name="mobile">移动网络</string>
     <string name="ethernet">局域网</string>
     <string name="bluetooth">蓝牙</string>
@@ -184,7 +197,7 @@
     <string name="duplicatedCondition">此条件已存在于此配置文件中。</string>
     <string name="fileDeselected">从下载中取消选择文件。</string>
     <string name="noFilemanager">找不到文件管理器！</string>
-    <string name="onlyOneTorrentUri">当添加激流磁铁时，应同时添加一个链接。</string>
+    <string name="onlyOneTorrentUri">当添加种子磁铁时，应同时添加一个链接。</string>
     <string name="dirFilesDeselected">从下载中取消选择目录中的所有文件。</string>
     <string name="dirFilesSelected">选择目录中的所有文件进行下载。</string>
     <string name="hasAlwaysCondition">如果您已指定每次使用一个条件，则无法添加新条件。</string>
@@ -202,6 +215,8 @@
     <string name="show">节目</string>
     <string name="getTorrent">激流</string>
     <string name="getMagnet">获得磁铁</string>
+    <string name="numSeederShort"><b>种子源:</b> %d</string>
+    <string name="numLeechesShort"><b>连接数:</b> %d</string>
     <string name="searchEngine"><b>搜索引擎:</b> %s</string>
     <string name="missingEngines_message">有些引擎无法完成请求。</string>
     <string name="missingEngines">缺少引擎</string>
@@ -258,14 +273,15 @@
     <string name="readPermissionDenied">你拒绝了阅读许可！</string>
     <string name="isp">互联网服务提供商: %s</string>
     <string name="batchAdd">批量添加</string>
+    <string name="torrents">种子</string>
     <string name="addSingle">添加single</string>
     <string name="noBatchAdd">没有批处理操作。使用下面的按钮添加一些。</string>
     <string name="downloadsAddedBatch">所有下载都增加了。</string>
     <string name="failedAddingDownloads">添加一些下载失败。</string>
-    <string name="torrentFiles">Torrent文件</string>
+    <string name="torrentFiles">种子文件</string>
     <string name="metalinkFiles">Metalink文件</string>
-    <string name="urisFile">Uris 文件</string>
-    <string name="urisFile_help">要了解更多关于URI文件的信息，请访问以下页面:https://gianlu.xyz/projects/Aria2App/documents/uri-file/</string>
+    <string name="urisFile">网址文件</string>
+    <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面:https://gianlu.xyz/projects/Aria2App/documents/uri-file/</string>
 
     <!-- Prefs -->
     <!-- - General -->
