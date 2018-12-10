@@ -1,6 +1,8 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,12 +36,14 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final LayoutInflater inflater;
     private final Listener listener;
     private final Set<AriaFile> selectedFiles = new HashSet<>();
+    private final Handler handler;
     private AriaDirectory currentDir;
     private boolean isInActionMode = false;
 
     FilesAdapter(Context context, @NonNull Listener listener) {
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
+        this.handler = new Handler(Looper.getMainLooper());
     }
 
     public void enteredActionMode(@NonNull AriaFile trigger) {
@@ -124,7 +128,7 @@ public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void exitedActionMode() {
         isInActionMode = false;
         selectedFiles.clear();
-        notifyDataSetChanged();
+        handler.post(this::notifyDataSetChanged);
     }
 
     @NonNull
