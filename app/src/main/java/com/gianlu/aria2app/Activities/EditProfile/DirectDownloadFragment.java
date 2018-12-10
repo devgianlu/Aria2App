@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -58,28 +57,25 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.fragment_edit_profile_dd, parent, false);
         enableDirectDownload = layout.findViewById(R.id.editProfile_enableDirectDownload);
-        enableDirectDownload.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                container.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                if (isChecked && getActivity() != null) {
-                    AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
-                        @Override
-                        public void permissionGranted(@NonNull String permission) {
-                        }
+        enableDirectDownload.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            container.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            if (isChecked && getActivity() != null) {
+                AskPermission.ask(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
+                    @Override
+                    public void permissionGranted(@NonNull String permission) {
+                    }
 
-                        @Override
-                        public void permissionDenied(@NonNull String permission) {
-                            showToast(Toaster.build().message(R.string.writePermissionDenied).error(true));
-                        }
+                    @Override
+                    public void permissionDenied(@NonNull String permission) {
+                        showToast(Toaster.build().message(R.string.writePermissionDenied).error(true));
+                    }
 
-                        @Override
-                        public void askRationale(@NonNull AlertDialog.Builder builder) {
-                            builder.setTitle(R.string.writeExternalStorageRequest_title)
-                                    .setMessage(R.string.writeExternalStorageRequest_message);
-                        }
-                    });
-                }
+                    @Override
+                    public void askRationale(@NonNull AlertDialog.Builder builder) {
+                        builder.setTitle(R.string.writeExternalStorageRequest_title)
+                                .setMessage(R.string.writeExternalStorageRequest_message);
+                    }
+                });
             }
         });
         container = layout.findViewById(R.id.editProfile_dd_container);
@@ -99,12 +95,7 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
             }
         });
         auth = layout.findViewById(R.id.editProfile_dd_auth);
-        auth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                authContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            }
-        });
+        auth.setOnCheckedChangeListener((buttonView, isChecked) -> authContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE));
         authContainer = layout.findViewById(R.id.editProfile_dd_authContainer);
         username = layout.findViewById(R.id.editProfile_dd_username);
         CommonUtils.getEditText(username).addTextChangedListener(new TextWatcher() {
@@ -138,12 +129,7 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
         });
 
         encryption = layout.findViewById(R.id.editProfile_dd_encryption);
-        encryption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            }
-        });
+        encryption.setOnCheckedChangeListener((buttonView, isChecked) -> certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE));
 
         certificate = layout.findViewById(R.id.editProfile_dd_certificate);
         certificate.attachActivity(this);

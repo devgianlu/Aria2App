@@ -3,10 +3,8 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -83,41 +81,36 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
 
         if (download.update().canDeselectFiles()) {
             selected.setEnabled(true);
-            selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            selected.setOnCheckedChangeListener((buttonView, isChecked) -> download.changeSelection(currentDir.indexes.toArray(new Integer[0]), isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    download.changeSelection(currentDir.indexes.toArray(new Integer[0]), isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
-                        @Override
-                        public void onResult(@NonNull Download.ChangeSelectionResult result) {
-                            Toaster toaster = Toaster.build();
-                            toaster.extra(result);
-                            switch (result) {
-                                case EMPTY:
-                                    toaster.message(R.string.cannotDeselectAllFiles);
-                                    break;
-                                case SELECTED:
-                                    toaster.message(R.string.fileSelected);
-                                    break;
-                                case DESELECTED:
-                                    toaster.message(R.string.fileDeselected);
-                                    break;
-                                default:
-                                    toaster.message(R.string.failedAction);
-                                    break;
-                            }
+                public void onResult(@NonNull Download.ChangeSelectionResult result) {
+                    Toaster toaster = Toaster.build();
+                    toaster.extra(result);
+                    switch (result) {
+                        case EMPTY:
+                            toaster.message(R.string.cannotDeselectAllFiles);
+                            break;
+                        case SELECTED:
+                            toaster.message(R.string.fileSelected);
+                            break;
+                        case DESELECTED:
+                            toaster.message(R.string.fileDeselected);
+                            break;
+                        default:
+                            toaster.message(R.string.failedAction);
+                            break;
+                    }
 
-                            dismissAllowingStateLoss();
-                            DialogUtils.showToast(getContext(), toaster);
-                        }
-
-                        @Override
-                        public void onException(@NonNull Exception ex) {
-                            dismissAllowingStateLoss();
-                            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
-                        }
-                    });
+                    dismissAllowingStateLoss();
+                    DialogUtils.showToast(getContext(), toaster);
                 }
-            });
+
+                @Override
+                public void onException(@NonNull Exception ex) {
+                    dismissAllowingStateLoss();
+                    DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
+                }
+            }));
         } else {
             selected.setEnabled(false);
         }
@@ -141,12 +134,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                 action.setImageResource(R.drawable.baseline_download_24);
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
-                action.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        payload.listener.onDownloadDirectory(profile, currentDir);
-                    }
-                });
+                action.setOnClickListener(v -> payload.listener.onDownloadDirectory(profile, currentDir));
 
                 return true;
             }

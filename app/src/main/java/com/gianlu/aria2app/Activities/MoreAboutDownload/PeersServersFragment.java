@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.Discovery;
@@ -22,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends BaseModalBottomSheet<?, ?>, P> extends UpdaterFragment<P> implements TutorialManager.Listener, OnBackPressed {
     protected TopCountriesView topDownloadCountries;
@@ -79,19 +77,11 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
-        recyclerViewLayout.enableSwipeRefresh(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh(new OnRefresh() {
-                    @Override
-                    public void refreshed() {
-                        adapter = getAdapter(getContext());
-                        recyclerViewLayout.loadListData(adapter);
-                        recyclerViewLayout.startLoading();
-                    }
-                });
-            }
-        }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
+        recyclerViewLayout.enableSwipeRefresh(() -> refresh(() -> {
+            adapter = getAdapter(getContext());
+            recyclerViewLayout.loadListData(adapter);
+            recyclerViewLayout.startLoading();
+        }), R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);
 

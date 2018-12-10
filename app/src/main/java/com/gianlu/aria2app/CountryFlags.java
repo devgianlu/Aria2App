@@ -31,6 +31,7 @@ public final class CountryFlags {
         return instance;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     public Drawable loadFlag(@NonNull Context context, @NonNull String countryCode) {
         Drawable cachedDrawable = cache.get(countryCode);

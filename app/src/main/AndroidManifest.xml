@@ -18,6 +18,7 @@
     <application
         android:name=".ThisApplication"
         android:allowBackup="true"
+        android:resizeableActivity="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

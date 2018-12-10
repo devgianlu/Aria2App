@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -38,18 +37,10 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         final String uri = uris.get(position);
         holder.uri.setText(uri);
-        holder.edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) listener.onEditUri(holder.getAdapterPosition(), uri);
-            }
+        holder.edit.setOnClickListener(v -> {
+            if (listener != null) listener.onEditUri(holder.getAdapterPosition(), uri);
         });
-        holder.remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeUri(holder.getAdapterPosition());
-            }
-        });
+        holder.remove.setOnClickListener(v -> removeUri(holder.getAdapterPosition()));
     }
 
     @Override

@@ -31,18 +31,18 @@ public class HttpClient extends AbstractClient {
     private final ExecutorService executorService;
     private final URI url;
 
-    private HttpClient(Context context) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
+    private HttpClient(@NonNull Context context) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
         this(context, ProfilesManager.get(context).getCurrentSpecific());
     }
 
-    private HttpClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
+    private HttpClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         super(context, profile);
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
         this.url = NetUtils.createHttpURL(profile);
     }
 
-    private HttpClient(Context context, final MultiProfile.UserProfile profile, @Nullable final OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
+    private HttpClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         this(context, profile);
 
         executorService.submit(() -> {
@@ -57,7 +57,7 @@ public class HttpClient extends AbstractClient {
                 }
             } catch (final IOException ex) {
                 if (connectionListener != null) {
-                    handler.post(() -> connectionListener.onFailedConnecting(ex));
+                    handler.post(() -> connectionListener.onFailedConnecting(profile, ex));
                 } else {
                     Logging.log(ex);
                 }
@@ -68,7 +68,7 @@ public class HttpClient extends AbstractClient {
     }
 
     @NonNull
-    public static HttpClient instantiate(Context context) throws InitializationException {
+    public static HttpClient instantiate(@NonNull Context context) throws InitializationException {
         if (instance == null) {
             try {
                 instance = new HttpClient(context);
@@ -80,11 +80,11 @@ public class HttpClient extends AbstractClient {
         return instance;
     }
 
-    public static void instantiate(Context context, MultiProfile.UserProfile profile, @NonNull final OnConnect listener) {
+    public static void instantiate(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
             instance = new HttpClient(context, profile, listener);
         } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException ex) {
-            listener.onFailedConnecting(ex);
+            listener.onFailedConnecting(profile, ex);
         }
     }
 

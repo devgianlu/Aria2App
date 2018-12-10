@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
@@ -31,6 +30,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class BatchAddActivity extends ActivityWithDialog implements AddDownloadBundlesAdapter.Listener {
     public static final int REQUEST_URIS_FILE = 5;
@@ -98,52 +98,22 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         setTitle(R.string.batchAdd);
 
         Button singleUri = findViewById(R.id.batchAdd_singleUri);
-        singleUri.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(BatchAddActivity.this, AddUriActivity.class).putExtra("startedForResult", true), REQUEST_URI);
-            }
-        });
+        singleUri.setOnClickListener(v -> startActivityForResult(new Intent(BatchAddActivity.this, AddUriActivity.class).putExtra("startedForResult", true), REQUEST_URI));
         Button urisFile = findViewById(R.id.batchAdd_urisFile);
-        urisFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDocument("*/*", "Select some uris files", REQUEST_URIS_FILE);
-            }
-        });
+        urisFile.setOnClickListener(v -> openDocument("*/*", "Select some uris files", REQUEST_URIS_FILE));
 
         Button singleTorrent = findViewById(R.id.batchAdd_singleTorrent);
-        singleTorrent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(BatchAddActivity.this, AddTorrentActivity.class).putExtra("startedForResult", true), REQUEST_TORRENT);
-            }
-        });
+        singleTorrent.setOnClickListener(v -> startActivityForResult(new Intent(BatchAddActivity.this, AddTorrentActivity.class).putExtra("startedForResult", true), REQUEST_TORRENT));
         Button torrentFiles = findViewById(R.id.batchAdd_torrentFiles);
-        torrentFiles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDocument("application/x-bittorrent", "Select some torrent files", REQUEST_TORRENT_FILES);
-            }
-        });
+        torrentFiles.setOnClickListener(v -> openDocument("application/x-bittorrent", "Select some torrent files", REQUEST_TORRENT_FILES));
 
         Button singleMetalink = findViewById(R.id.batchAdd_singleMetalink);
-        singleMetalink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(BatchAddActivity.this, AddMetalinkActivity.class).putExtra("startedForResult", true), REQUEST_METALINK);
-            }
-        });
+        singleMetalink.setOnClickListener(v -> startActivityForResult(new Intent(BatchAddActivity.this, AddMetalinkActivity.class).putExtra("startedForResult", true), REQUEST_METALINK));
         Button metalinkFiles = findViewById(R.id.batchAdd_metalinkFiles);
-        metalinkFiles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDocument("application/metalink4+xml,application/metalink+xml", "Select some Metalink files", REQUEST_METALINK_FILES);
-            }
-        });
+        metalinkFiles.setOnClickListener(v -> openDocument("application/metalink4+xml,application/metalink+xml", "Select some Metalink files", REQUEST_METALINK_FILES));
 
         layout = findViewById(R.id.batchAdd_list);
-        layout.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        layout.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         adapter = new AddDownloadBundlesAdapter(this, this);
         layout.loadListData(adapter, false);
     }

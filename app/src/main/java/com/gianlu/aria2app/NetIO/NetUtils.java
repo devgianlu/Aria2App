@@ -80,9 +80,8 @@ public final class NetUtils {
         if (profile.certificate != null)
             setSslSocketFactory(builder, profile.certificate);
 
-        if (!profile.hostnameVerifier) {
+        if (!profile.hostnameVerifier)
             builder.hostnameVerifier((s, sslSession) -> true);
-        }
 
         return builder.build();
     }

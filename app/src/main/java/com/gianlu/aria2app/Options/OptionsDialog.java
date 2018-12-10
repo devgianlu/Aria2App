@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Options;
 import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -86,13 +85,10 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         else
             dialog.setTitle(R.string.downloadOptions);
 
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                final Window window = dialog.getWindow();
-                if (window != null)
-                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            }
+        dialog.setOnShowListener(dialogInterface -> {
+            final Window window = dialog.getWindow();
+            if (window != null)
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         });
         return dialog;
     }
@@ -111,26 +107,11 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         loading = layout.findViewById(R.id.optionsDialog_loading);
         optionsView = layout.findViewById(R.id.optionsDialog_options);
         export = layout.findViewById(R.id.optionsDialog_export);
-        export.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                export();
-            }
-        });
+        export.setOnClickListener(v -> export());
         apply = layout.findViewById(R.id.optionsDialog_apply);
-        apply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                apply();
-            }
-        });
+        apply.setOnClickListener(v -> apply());
         Button cancel = layout.findViewById(R.id.optionsDialog_cancel);
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismissAllowingStateLoss();
-            }
-        });
+        cancel.setOnClickListener(v -> dismissAllowingStateLoss());
 
         loading.setVisibility(View.VISIBLE);
         optionsView.setVisibility(View.GONE);

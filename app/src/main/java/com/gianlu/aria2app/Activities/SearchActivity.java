@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Activities;
 
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -78,15 +77,12 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         final Button messageMore = findViewById(R.id.search_messageMore);
-        messageMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
-                } catch (ActivityNotFoundException ex) {
-                    Logging.log(ex);
-                    messageMore.setVisibility(View.GONE);
-                }
+        messageMore.setOnClickListener(view -> {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
+            } catch (ActivityNotFoundException ex) {
+                Logging.log(ex);
+                messageMore.setVisibility(View.GONE);
             }
         });
 
@@ -115,25 +111,17 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.searchEngines)
-                .setMultiChoiceItems(enginesNames, checkedEngines, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        checkedEngines[which] = isChecked;
-                    }
-                })
-                .setPositiveButton(R.string.apply, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Set<String> set = new HashSet<>();
-                        for (int i = 0; i < checkedEngines.length; i++)
-                            if (checkedEngines[i]) set.add(engines.get(i).id);
+                .setMultiChoiceItems(enginesNames, checkedEngines, (dialog, which, isChecked) -> checkedEngines[which] = isChecked)
+                .setPositiveButton(R.string.apply, (dialog, which) -> {
+                    Set<String> set = new HashSet<>();
+                    for (int i = 0; i < checkedEngines.length; i++)
+                        if (checkedEngines[i]) set.add(engines.get(i).id);
 
-                        if (set.isEmpty()) {
-                            Toaster.with(SearchActivity.this).message(R.string.noEnginesSelected).show();
-                        } else {
-                            Prefs.putSet(PK.A2_SEARCH_ENGINES, set);
-                            if (query != null) onQueryTextSubmit(query);
-                        }
+                    if (set.isEmpty()) {
+                        Toaster.with(SearchActivity.this).message(R.string.noEnginesSelected).show();
+                    } else {
+                        Prefs.putSet(PK.A2_SEARCH_ENGINES, set);
+                        if (query != null) onQueryTextSubmit(query);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null);
@@ -249,12 +237,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         if (missingEngines.isEmpty()) return;
 
         Snackbar.make(recyclerViewLayout, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
-                .setAction(R.string.show, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showMissingEnginesDialog(missingEngines);
-                    }
-                }).show();
+                .setAction(R.string.show, view -> showMissingEnginesDialog(missingEngines)).show();
     }
 
     private void showMissingEnginesDialog(List<MissingSearchEngine> missingEngines) {
@@ -283,69 +266,50 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(torrent.title)
                 .setView(layout)
-                .setNegativeButton(R.string.getMagnet, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, torrent.magnet);
-                        sendIntent.setType("text/plain");
-                        startActivity(sendIntent);
+                .setNegativeButton(R.string.getMagnet, (dialogInterface, i) -> {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, torrent.magnet);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
 
-                        AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_MAGNET);
-                    }
+                    AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_MAGNET);
                 })
                 .setPositiveButton(R.string.download, null);
 
         if (torrent.torrentFileUrl != null) {
-            builder.setNeutralButton(R.string.getTorrent, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(torrent.torrentFileUrl)));
+            builder.setNeutralButton(R.string.getTorrent, (dialogInterface, i) -> {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(torrent.torrentFileUrl)));
 
-                    AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_TORRENT);
-                }
+                AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_GET_TORRENT);
             });
         }
 
         final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialogInterface) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        try {
-                            Aria2Helper.instantiate(SearchActivity.this)
-                                    .request(AriaRequests.addUri(Collections.singletonList(torrent.magnet), null, null), new AbstractClient.OnResult<String>() {
-                                        @Override
-                                        public void onResult(@NonNull String result) {
-                                            dialogInterface.dismiss();
+        dialog.setOnShowListener(dialogInterface -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
+            try {
+                Aria2Helper.instantiate(SearchActivity.this)
+                        .request(AriaRequests.addUri(Collections.singletonList(torrent.magnet), null, null), new AbstractClient.OnResult<String>() {
+                            @Override
+                            public void onResult(@NonNull String result) {
+                                dialogInterface.dismiss();
 
-                                            Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
-                                                    .setAction(R.string.show, new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            startActivity(new Intent(SearchActivity.this, MainActivity.class));
-                                                        }
-                                                    }).show();
-                                        }
+                                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
+                                        .setAction(R.string.show, view1 -> startActivity(new Intent(SearchActivity.this, MainActivity.class))).show();
+                            }
 
-                                        @Override
-                                        public void onException(@NonNull Exception ex) {
-                                            Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
-                                        }
-                                    });
-                        } catch (Aria2Helper.InitializingException | JSONException ex) {
-                            Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
-                            return;
-                        }
-
-                        AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_DOWNLOAD);
-                    }
-                });
+                            @Override
+                            public void onException(@NonNull Exception ex) {
+                                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                            }
+                        });
+            } catch (Aria2Helper.InitializingException | JSONException ex) {
+                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                return;
             }
-        });
+
+            AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH_DOWNLOAD);
+        }));
 
         showDialog(dialog);
     }

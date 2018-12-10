@@ -35,12 +35,9 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
 
     @Override
     public void run() {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (listener != null) listener.clearViews();
-                if (listener != null) listener.setButtonEnabled(false);
-            }
+        handler.post(() -> {
+            if (listener != null) listener.clearViews();
+            if (listener != null) listener.setButtonEnabled(false);
         });
 
         startTime = System.currentTimeMillis();
@@ -51,11 +48,8 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
             if (lastResult == null) break;
         }
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (listener != null) listener.setButtonEnabled(true);
-            }
+        handler.post(() -> {
+            if (listener != null) listener.setButtonEnabled(true);
         });
     }
 
@@ -67,12 +61,9 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
     @Override
     public void publishGeneralMessage(@NonNull String message, @NonNull final BaseTester.Color color) {
         final String finalMessage = (System.currentTimeMillis() - startTime) + ": " + message;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (listener != null)
-                    listener.addView(new SuperTextView(context, finalMessage, color.getResource(context)));
-            }
+        handler.post(() -> {
+            if (listener != null)
+                listener.addView(new SuperTextView(context, finalMessage, color.getResource(context)));
         });
     }
 

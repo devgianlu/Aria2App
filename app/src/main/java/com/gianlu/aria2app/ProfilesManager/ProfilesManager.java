@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -140,12 +139,7 @@ public class ProfilesManager {
 
     @NonNull
     private String[] getProfileIds() {
-        String[] profiles = PROFILES_PATH.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".profile");
-            }
-        });
+        String[] profiles = PROFILES_PATH.list((dir, name) -> name.endsWith(".profile"));
 
         if (profiles == null) return new String[0];
 

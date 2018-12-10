@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Activities.AddDownload;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -71,19 +70,16 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
         builder.setTitle(edit == null ? R.string.addUri : R.string.editUri)
                 .setView(uri)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(edit == null ? R.string.add : R.string.save, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (uri.getText().toString().trim().startsWith("magnet:")) {
-                            if (!adapter.getUris().isEmpty()) {
-                                showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
-                                return;
-                            }
+                .setPositiveButton(edit == null ? R.string.add : R.string.save, (dialog, which) -> {
+                    if (uri.getText().toString().trim().startsWith("magnet:")) {
+                        if (!adapter.getUris().isEmpty()) {
+                            showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
+                            return;
                         }
-
-                        if (oldPos != -1) adapter.removeUri(oldPos);
-                        adapter.addUri(uri.getText().toString());
                     }
+
+                    if (oldPos != -1) adapter.removeUri(oldPos);
+                    adapter.addUri(uri.getText().toString());
                 });
 
         showDialog(builder);
@@ -95,15 +91,12 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_uris, container, false);
         message = layout.findViewById(R.id.urisFragment_message);
         list = layout.findViewById(R.id.urisFragment_list);
-        list.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        list.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
         Button addNew = layout.findViewById(R.id.urisFragment_addNew);
-        addNew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (adapter.canAddUri()) showAddUriDialog(-1, null);
-                else showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
-            }
+        addNew.setOnClickListener(v -> {
+            if (adapter.canAddUri()) showAddUriDialog(-1, null);
+            else showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
         });
 
         AddDownloadBundle bundle = null;

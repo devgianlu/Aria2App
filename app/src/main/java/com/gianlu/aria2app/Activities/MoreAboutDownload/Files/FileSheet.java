@@ -4,10 +4,8 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.gianlu.aria2app.FileTypeTextView;
@@ -92,43 +90,38 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
 
         if (download.update().canDeselectFiles()) {
             selected.setEnabled(true);
-            selected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            selected.setOnCheckedChangeListener((buttonView, isChecked) -> download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
-                        @Override
-                        public void onResult(@NonNull Download.ChangeSelectionResult result) {
-                            Toaster toaster = Toaster.build();
-                            toaster.extra(result);
-                            switch (result) {
-                                case EMPTY:
-                                    toaster.message(R.string.cannotDeselectAllFiles);
-                                    break;
-                                case SELECTED:
-                                    file.selected = true;
-                                    toaster.message(R.string.fileSelected);
-                                    break;
-                                case DESELECTED:
-                                    file.selected = false;
-                                    toaster.message(R.string.fileDeselected);
-                                    break;
-                                default:
-                                    toaster.message(R.string.failedAction);
-                                    break;
-                            }
+                public void onResult(@NonNull Download.ChangeSelectionResult result) {
+                    Toaster toaster = Toaster.build();
+                    toaster.extra(result);
+                    switch (result) {
+                        case EMPTY:
+                            toaster.message(R.string.cannotDeselectAllFiles);
+                            break;
+                        case SELECTED:
+                            file.selected = true;
+                            toaster.message(R.string.fileSelected);
+                            break;
+                        case DESELECTED:
+                            file.selected = false;
+                            toaster.message(R.string.fileDeselected);
+                            break;
+                        default:
+                            toaster.message(R.string.failedAction);
+                            break;
+                    }
 
-                            dismissAllowingStateLoss();
-                            DialogUtils.showToast(getContext(), toaster);
-                        }
-
-                        @Override
-                        public void onException(@NonNull Exception ex) {
-                            dismissAllowingStateLoss();
-                            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
-                        }
-                    });
+                    dismissAllowingStateLoss();
+                    DialogUtils.showToast(getContext(), toaster);
                 }
-            });
+
+                @Override
+                public void onException(@NonNull Exception ex) {
+                    dismissAllowingStateLoss();
+                    DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
+                }
+            }));
         } else {
             selected.setEnabled(false);
         }
@@ -152,12 +145,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                 action.setImageResource(R.drawable.baseline_download_24);
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
-                action.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        payload.listener.onDownloadFile(profile, payload.file);
-                    }
-                });
+                action.setOnClickListener(v -> payload.listener.onDownloadFile(profile, payload.file));
 
                 return true;
             }

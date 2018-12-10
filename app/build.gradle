@@ -8,8 +8,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 147
-        versionName "4.0.5"
+        versionCode 149
+        versionName "4.1.1"
     }
 
     buildTypes {
@@ -39,8 +39,8 @@ android {
 dependencies {
     api project(':CommonUtils')
     api project(':CountryFlags')
-    api 'com.tonyodev.fetch2:fetch2:2.3.1'
-    api 'com.tonyodev.fetch2okhttp:fetch2okhttp:2.3.1'
+    api 'com.tonyodev.fetch2:fetch2:2.3.3'
+    api 'com.tonyodev.fetch2okhttp:fetch2okhttp:2.3.3'
     api 'com.squareup.okhttp3:okhttp:3.12.0'
     api 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     api 'com.getbase:floatingactionbutton:1.10.1'

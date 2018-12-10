@@ -2,7 +2,6 @@ package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -69,17 +68,9 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
         if (textColorRes != 0)
             holder.text.setTextColor(ContextCompat.getColor(context, textColorRes));
 
-        holder.remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeItem(holder.getAdapterPosition());
-            }
-        });
-        holder.edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) listener.onEdit(holder.getAdapterPosition(), bundle);
-            }
+        holder.remove.setOnClickListener(v -> removeItem(holder.getAdapterPosition()));
+        holder.edit.setOnClickListener(v -> {
+            if (listener != null) listener.onEdit(holder.getAdapterPosition(), bundle);
         });
     }
 

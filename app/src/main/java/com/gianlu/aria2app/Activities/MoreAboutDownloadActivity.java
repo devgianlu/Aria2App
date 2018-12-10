@@ -97,7 +97,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
                 if (currentStatus == null) currentStatus = payload.status;
                 setTitle(payload.getName());
 
-                adapter = new PagerAdapter<UpdaterFragment<?>>(getSupportFragmentManager(),
+                adapter = new PagerAdapter<>(getSupportFragmentManager(),
                         InfoFragment.getInstance(MoreAboutDownloadActivity.this, gid),
                         payload.isTorrent() ? PeersFragment.getInstance(MoreAboutDownloadActivity.this, gid) : ServersFragment.getInstance(MoreAboutDownloadActivity.this, gid),
                         FilesFragment.getInstance(MoreAboutDownloadActivity.this, gid));

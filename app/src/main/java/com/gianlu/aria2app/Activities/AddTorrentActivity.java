@@ -55,7 +55,7 @@ public class AddTorrentActivity extends AddDownloadActivity {
             urisFragment = UrisFragment.getInstance(this, bundle);
             optionsFragment = OptionsFragment.getInstance(this, bundle);
         } else {
-            base64Fragment = Base64Fragment.getInstance(this, true, (Uri) getIntent().getParcelableExtra("uri"));
+            base64Fragment = Base64Fragment.getInstance(this, true, getIntent().getParcelableExtra("uri"));
             urisFragment = UrisFragment.getInstance(this, false, null);
             optionsFragment = OptionsFragment.getInstance(this, false);
         }
