@@ -122,7 +122,8 @@ public class FetchHelper {
     }
 
     private void updateDownloadCountInternal(final FetchDownloadCountListener listener) {
-        fetch.getDownloads(result -> listener.onFetchDownloadCount(result.size()));
+        if (!fetch.isClosed())
+            fetch.getDownloads(result -> listener.onFetchDownloadCount(result.size()));
     }
 
     private void callFailed(final StartListener listener, final Throwable ex) {
@@ -196,36 +197,37 @@ public class FetchHelper {
     }
 
     private void startInternal(@NonNull Request request, @NonNull final StartListener listener) {
-        fetch.enqueue(request, result -> listener.onSuccess(), result -> listener.onFailed(result.getThrowable()));
+        if (!fetch.isClosed())
+            fetch.enqueue(request, result -> listener.onSuccess(), result -> listener.onFailed(result.getThrowable()));
     }
 
     private void startInternal(@NonNull List<Request> requests, @NonNull final StartListener listener) {
-        fetch.enqueue(requests, result -> listener.onSuccess());
+        if (!fetch.isClosed()) fetch.enqueue(requests, result -> listener.onSuccess());
     }
 
     public void addListener(FetchEventListener listener) {
-        fetch.addListener(listener);
+        if (!fetch.isClosed()) fetch.addListener(listener);
         reloadListener(listener);
     }
 
     public void removeListener(FetchEventListener listener) {
-        fetch.removeListener(listener);
+        if (!fetch.isClosed()) fetch.removeListener(listener);
     }
 
     public void reloadListener(final FetchEventListener listener) {
-        fetch.getDownloads(listener::onDownloads);
+        if (!fetch.isClosed()) fetch.getDownloads(listener::onDownloads);
     }
 
     public void resume(@NotNull FetchDownloadWrapper download) {
-        fetch.resume(download.get().getId());
+        if (!fetch.isClosed()) fetch.resume(download.get().getId());
     }
 
     public void pause(@NotNull FetchDownloadWrapper download) {
-        fetch.pause(download.get().getId());
+        if (!fetch.isClosed()) fetch.pause(download.get().getId());
     }
 
     public void remove(@NotNull FetchDownloadWrapper download) {
-        fetch.remove(download.get().getId());
+        if (!fetch.isClosed()) fetch.remove(download.get().getId());
     }
 
     public void restart(@NotNull FetchDownloadWrapper download, @NonNull StartListener listener) {
