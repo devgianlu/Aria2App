@@ -174,6 +174,7 @@ public class NotificationService extends Service {
         if (profiles != null) profiles.clear();
         clearWebsockets();
         broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
+        stopSelf();
 
         return START_NOT_STICKY; // Process will stop
     }
