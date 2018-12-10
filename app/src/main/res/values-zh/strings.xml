@@ -33,7 +33,7 @@
     <string name="versionLabel"><b>版本:</b> %s</string>
     <string name="gathering_information">收集信息。请耐心等待…</string>
     <string name="profileName">配置名称</string>
-    <string name="profile_help">如果您不知道如何正确设置配置文件，请查看我的网站上的指南:https://gianlu.xyz/projects/Aria2App/documents/create-profile/</string>
+    <string name="profile_help">如果您不知道如何正确设置配置文件，请查看我的网站上的指南: https://gianlu.xyz/projects/Aria2App/documents/create-profile/</string>
     <string name="address">地址</string>
     <string name="peers">同行</string>
     <string name="servers">服务器</string>
@@ -59,7 +59,7 @@
     <string name="uploadSpeed">上传速度</string>
     <string name="none">无</string>
     <string name="enableDirectDownload">启用直接下载</string>
-    <string name="directDownload_help">DirectDownload直接提供的可能性，从服务器下载文件到您的设备aria2轻轻一按！您只需要一个适当的webserver配置：地址必须是指向aria2下载目录的目录列表。这将需要写入外部存储的权限。您可以按照本指南进行设置:https：/gianlu.xyz/documents/Aria2App/Setup-DirectDownload</string>
+    <string name="directDownload_help">DirectDownload直接提供的可能性，从服务器下载文件到您的设备aria2轻轻一按！您只需要一个适当的webserver配置：地址必须是指向aria2下载目录的目录列表。这将需要写入外部存储的权限。您可以按照本指南进行设置: https://gianlu.xyz/documents/Aria2App/Setup-DirectDownload</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="more">更多</string>
@@ -84,7 +84,7 @@
     <string name="directDownload">直接下载</string>
     <string name="quickGlobalOptions">快速全局选项</string>
 
-    <string name="connecting">连接中...</string>
+    <string name="connecting">连接中…</string>
     <string name="completed">已完成</string>
     <string name="searchTorrent">寻找种子</string>
     <string name="download">下载</string>
@@ -126,10 +126,7 @@
     <string name="file">文件</string>
     <string name="pickTorrent_help">选择一个种子文件。支持的mime类型是 <b>application/x-bittorrent</b>.</string>
     <string name="outdated_aria2">过时的aria2版本</string>
-    <string name="outdated_aria2_message">你的aria2版本已经过时了。 Aria2App开发用于运行最新的aria2版本，因此您应该更新它。您可以在首选项中禁用此消息。\n
-                      \n
-                      当前版本:％1$s\n
-                      最新版本:％2$s</string>
+    <string name="outdated_aria2_message">你的aria2版本已经过时了。 Aria2App开发用于运行最新的aria2版本，因此您应该更新它。您可以在首选项中禁用此消息。\n\n当前版本:%1$s\n最新版本:%2$s</string>
     <string name="selectFile_help">只能在多文件种子上下载文件，才能从下载中选择或取消选择文件。</string>
     <string name="nameLabel">名称</string>
     <string name="searchDownloads">搜索下载</string>
@@ -147,7 +144,7 @@
     <string name="deleteProfile">删除配置文件</string>
     <string name="deleteCondition">删除条件</string>
     <string name="setDefaultCondition">设置默认条件</string>
-    <string name="removeMetadataName">删除％s的元数据</string>
+    <string name="removeMetadataName">删除%s的元数据</string>
     <string name="removeDownload_removeMetadata">要删除生成此下载的元数据吗？</string>
     <string name="base64NotSelected">您还没有选择文件！</string>
     <string name="certDisclaimer">如果您的服务器已被此系统信任（通常是您安装了证书或证书由受信任的来源签名），则不需要证书</string>
@@ -231,7 +228,7 @@
     <string name="failedOpeningDownload">打开下载失败！</string>
     <string name="ddNotEnabled">此配置文件上未启用直接下载！</string>
     <string name="profileDoesntExist">此个人资料不再存在！</string>
-    <string name="noDirectDownloads">没有下载。您可以从下载的Files选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https：/gianlu.xyz/documents/Aria2App/Setup-直接下载</string>
+    <string name="noDirectDownloads">没有下载。您可以从下载的Files选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://gianlu.xyz/documents/Aria2App/Setup-直接下载</string>
     <string name="remainingTime">剩余时间</string>
     <string name="connectionsLabel">连接</string>
     <string name="selectCertificate">选择/更改证书</string>
@@ -253,8 +250,8 @@
     <string name="skipThisVersion">跳过这个版本</string>
     <string name="selectDirForDownload">选择目录中的所有文件供下载</string>
     <string name="pickProfile_someAction">选择配置文件以完成操作：</string>
-    <string name="notificationException">无法启动％s的通知服务！</string>
-    <string name="notificationUnsupportedConnMethod">％s的连接方法不受支持！</string>
+    <string name="notificationException">无法启动%s的通知服务！</string>
+    <string name="notificationUnsupportedConnMethod">%s的连接方法不受支持！</string>
     <string name="notificationUnsupportedConnMethod_details">无法启动此配置文件的通知服务。如果要启用通知，请切换到WebSocket。</string>
     <string name="export">出口</string>
     <string name="exportOptionsGrantWrite">要导出选项，必须授予写权限并重试。</string>
