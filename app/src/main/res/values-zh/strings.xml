@@ -33,7 +33,7 @@
     <string name="versionLabel"><b>版本:</b> %s</string>
     <string name="gathering_information">收集信息。请耐心等待…</string>
     <string name="profileName">配置名称</string>
-    <string name="profile_help">如果您不知道如何正确设置配置文件，请查看我的网站上的指南: https://gianlu.xyz/projects/Aria2App/documents/create-profile/</string>
+    <string name="profile_help">如果您不知道如何正确设置配置文件，请查看我的网站上的指南: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">地址</string>
     <string name="peers">同行</string>
     <string name="servers">服务器</string>
@@ -59,7 +59,7 @@
     <string name="uploadSpeed">上传速度</string>
     <string name="none">无</string>
     <string name="enableDirectDownload">启用直接下载</string>
-    <string name="directDownload_help">DirectDownload直接提供的可能性，从服务器下载文件到您的设备aria2轻轻一按！您只需要一个适当的webserver配置：地址必须是指向aria2下载目录的目录列表。这将需要写入外部存储的权限。您可以按照本指南进行设置: https://gianlu.xyz/documents/Aria2App/Setup-DirectDownload</string>
+    <string name="directDownload_help">DirectDownload直接提供的可能性，从服务器下载文件到您的设备aria2轻轻一按！您只需要一个适当的webserver配置：地址必须是指向aria2下载目录的目录列表。这将需要写入外部存储的权限。您可以按照本指南进行设置: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
     <string name="more">更多</string>
@@ -228,7 +228,7 @@
     <string name="failedOpeningDownload">打开下载失败！</string>
     <string name="ddNotEnabled">此配置文件上未启用直接下载！</string>
     <string name="profileDoesntExist">此个人资料不再存在！</string>
-    <string name="noDirectDownloads">没有下载。您可以从下载的Files选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://gianlu.xyz/documents/Aria2App/Setup-直接下载</string>
+    <string name="noDirectDownloads">没有下载。您可以从下载的Files选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">剩余时间</string>
     <string name="connectionsLabel">连接</string>
     <string name="selectCertificate">选择/更改证书</string>
@@ -278,7 +278,7 @@
     <string name="torrentFiles">种子文件</string>
     <string name="metalinkFiles">Metalink文件</string>
     <string name="urisFile">网址文件</string>
-    <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面:https://gianlu.xyz/projects/Aria2App/documents/uri-file/</string>
+    <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
 
     <!-- Prefs -->
     <!-- - General -->
