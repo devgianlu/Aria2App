@@ -1,5 +1,5 @@
 # Aria2App
-[![Build Status](https://travis-ci.org/devgianlu/Aria2App.svg?branch=master)](https://travis-ci.org/devgianlu/Aria2App)
+[![Build Status](https://travis-ci.com/devgianlu/Aria2App.svg?branch=master)](https://travis-ci.com/devgianlu/Aria2App)
 [![Translate - with Stringlate](https://img.shields.io/badge/translate%20with-stringlate-green.svg)](https://lonamiwebs.github.io/stringlate/translate?git=https%3A%2F%2Fgithub.com%2Fdevgianlu%2FAria2App)
 
 Aria2App allows you to handle your downloads on [aria2](https://github.com/aria2/aria2) wherever you are! If you like this project you can donate some money with [PayPal](https://www.paypal.me/devgianlu) or with [Liberapay](https://liberapay.com/devgianlu/donate).
