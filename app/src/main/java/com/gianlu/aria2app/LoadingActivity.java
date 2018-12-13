@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -314,10 +315,14 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         aria2AndroidProfile = profile;
 
-        Intent intent = new Intent("com.gianlu.aria2android.START_SERVICE");
-        intent.setClassName("com.gianlu.aria2android", "com.gianlu.aria2android.MainActivity");
-        intent.putExtra("goBack", true);
-        startActivityForResult(intent, 1);
+        try {
+            Intent intent = new Intent("com.gianlu.aria2android.START_SERVICE");
+            intent.setClassName("com.gianlu.aria2android", "com.gianlu.aria2android.MainActivity");
+            intent.putExtra("goBack", true);
+            startActivityForResult(intent, 1);
+        } catch (ActivityNotFoundException ex) {
+            Toaster.with(this).message(R.string.failedStartingAria2Android).ex(ex).show();
+        }
     }
 
     @Override
