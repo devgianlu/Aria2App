@@ -2,10 +2,9 @@ package com.gianlu.aria2app;
 
 import android.preference.PreferenceManager;
 
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
-import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -102,8 +101,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     @Override
     public void onFatal(@NonNull Throwable ex) {
-        WebSocketClient.clear();
-        HttpClient.clear();
+        AbstractClient.invalidate();
         Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
         LoadingActivity.startActivity(this, ex);
 
@@ -112,8 +110,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     @Override
     public void onSubsequentExceptions() {
-        WebSocketClient.clear();
-        HttpClient.clear();
+        AbstractClient.invalidate();
         LoadingActivity.startActivity(this, null);
     }
 

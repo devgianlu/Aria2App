@@ -107,8 +107,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             if (goTo != null) startActivity(goTo);
         }, 1000);
 
-        WebSocketClient.clear();
-        HttpClient.clear();
+        AbstractClient.invalidate();
 
         manager = ProfilesManager.get(this);
         if (getIntent().getBooleanExtra("external", false)) {
@@ -224,9 +223,9 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
-                WebSocketClient.instantiate(this, single, this);
+                WebSocketClient.checkConnection(this, single, this);
             } else {
-                HttpClient.instantiate(this, single, this);
+                HttpClient.checkConnection(this, single, this);
             }
 
             handler.postDelayed(() -> {
@@ -237,8 +236,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void cancelConnection() {
-        WebSocketClient.clear();
-        HttpClient.clear();
+        AbstractClient.invalidate();
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
     }

@@ -25,7 +25,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
-    private static WebSocketClient instance;
+    static WebSocketClient instance;
     private final Map<Long, OnJson> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
     private final long initializedAt;
@@ -60,18 +60,11 @@ public class WebSocketClient extends AbstractClient {
         return instance;
     }
 
-    public static void instantiate(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    public static void checkConnection(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
-            instance = new WebSocketClient(context, profile, listener);
+            new WebSocketClient(context, profile, listener);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             listener.onFailedConnecting(profile, ex);
-        }
-    }
-
-    public static void clear() {
-        if (instance != null) {
-            instance.close();
-            instance = null;
         }
     }
 
@@ -80,11 +73,14 @@ public class WebSocketClient extends AbstractClient {
         connectionListener = null;
         if (webSocket != null) webSocket.close(1000, null);
         if (requests != null) requests.clear();
+
+        if (instance == this)
+            instance = null;
     }
 
     @Override
     public void send(long id, @NonNull JSONObject request, @NonNull OnJson listener) {
-        if (shouldIgnoreCommunication) {
+        if (closed) {
             listener.onException(new IllegalStateException("Client is closed!"));
             return;
         }
@@ -138,14 +134,14 @@ public class WebSocketClient extends AbstractClient {
 
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        instance = new WebSocketClient(context, profile, null);
+        if (this == instance) instance = new WebSocketClient(context, profile, null);
     }
 
     @WorkerThread
     private class Listener extends WebSocketListener {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            if (shouldIgnoreCommunication) return;
+            if (closed) return;
 
             try {
                 JSONObject response = new JSONObject(text);
@@ -189,7 +185,7 @@ public class WebSocketClient extends AbstractClient {
                     connectionListener = null;
                 }
 
-                clear();
+                close();
             });
         }
     }

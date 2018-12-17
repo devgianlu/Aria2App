@@ -47,13 +47,11 @@ import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.GitHubApi;
-import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Receiver;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterActivity;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
-import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.PreferenceActivity;
@@ -320,8 +318,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             helper = Aria2Helper.instantiate(this);
         } catch (ProfilesManager.NoCurrentProfileException | Aria2Helper.InitializingException ex) {
             Logging.log(ex);
-            WebSocketClient.clear();
-            HttpClient.clear();
+            AbstractClient.invalidate();
             profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
             return;
@@ -540,8 +537,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             if (profilesManager != null) profilesManager.reloadCurrentProfile();
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.log(ex);
-            WebSocketClient.clear();
-            HttpClient.clear();
+            AbstractClient.invalidate();
             profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
             return;

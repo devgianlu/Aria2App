@@ -27,7 +27,7 @@ import okhttp3.ResponseBody;
 
 
 public class HttpClient extends AbstractClient {
-    private static HttpClient instance;
+    static HttpClient instance;
     private final ExecutorService executorService;
     private final URI url;
 
@@ -62,7 +62,7 @@ public class HttpClient extends AbstractClient {
                     Logging.log(ex);
                 }
 
-                clear();
+                close();
             }
         });
     }
@@ -80,24 +80,20 @@ public class HttpClient extends AbstractClient {
         return instance;
     }
 
-    public static void instantiate(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    public static void checkConnection(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
-            instance = new HttpClient(context, profile, listener);
+            new HttpClient(context, profile, listener);
         } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException ex) {
             listener.onFailedConnecting(profile, ex);
-        }
-    }
-
-    public static void clear() {
-        if (instance != null) {
-            instance.close();
-            instance = null;
         }
     }
 
     @Override
     protected void closeClient() {
         executorService.shutdownNow();
+
+        if (instance == this)
+            instance = null;
     }
 
     @Override
@@ -131,13 +127,13 @@ public class HttpClient extends AbstractClient {
     }
 
     private void executeRunnable(Runnable runnable) {
-        if (!shouldIgnoreCommunication && !executorService.isShutdown() && !executorService.isTerminated())
+        if (!closed && !executorService.isShutdown() && !executorService.isTerminated())
             executorService.execute(runnable);
     }
 
     @Override
     public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        instance = new HttpClient(context, profile);
+        if (this == instance) instance = new HttpClient(context, profile);
     }
 
     private class SandboxRunnable<R> implements Runnable {

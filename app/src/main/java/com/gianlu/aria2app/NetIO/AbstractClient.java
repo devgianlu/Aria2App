@@ -41,7 +41,7 @@ public abstract class AbstractClient implements Closeable {
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     private final AtomicLong requestIds = new AtomicLong(Long.MIN_VALUE);
     protected MultiProfile.UserProfile profile;
-    protected volatile boolean shouldIgnoreCommunication = false;
+    protected volatile boolean closed = false;
 
     AbstractClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -55,16 +55,24 @@ public abstract class AbstractClient implements Closeable {
         ThisApplication.setCrashlyticsString("connectionMethod", profile.connectionMethod.name());
     }
 
-    public static void addConnectivityListener(OnConnectivityChanged listener) {
+    public static void addConnectivityListener(@NonNull OnConnectivityChanged listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public static void removeConnectivityListener(OnConnectivityChanged listener) {
+    public static void removeConnectivityListener(@NonNull OnConnectivityChanged listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
+    }
+
+    public static void invalidate() {
+        if (WebSocketClient.instance != null)
+            WebSocketClient.instance.close();
+
+        if (HttpClient.instance != null)
+            HttpClient.instance.close();
     }
 
     @Override
@@ -75,7 +83,7 @@ public abstract class AbstractClient implements Closeable {
 
     private void removeReceiver() {
         try {
-            if (context.get() != null && !shouldIgnoreCommunication)
+            if (context.get() != null && !closed)
                 context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
         } catch (IllegalArgumentException ignored) {
         }
@@ -86,8 +94,7 @@ public abstract class AbstractClient implements Closeable {
     public final void close() {
         removeReceiver();
 
-        shouldIgnoreCommunication = true;
-        System.out.println("CLOSED!! " + profile.serverAddr);
+        closed = true;
 
         closeClient();
         listeners.clear();
@@ -176,12 +183,10 @@ public abstract class AbstractClient implements Closeable {
 
     @WorkerThread
     private void connectivityChangedInternal(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        if (this.profile.connectionMethod == profile.connectionMethod) {
+        if (this.profile.connectionMethod == profile.connectionMethod)
             connectivityChanged(context, profile);
-        } else {
-            WebSocketClient.clear();
-            HttpClient.clear();
-        }
+        else
+            close();
     }
 
     @NonNull
