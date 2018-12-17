@@ -84,7 +84,11 @@ public class WebSocketClient extends AbstractClient {
 
     @Override
     public void send(long id, @NonNull JSONObject request, @NonNull OnJson listener) {
-        if (shouldIgnoreCommunication) return;
+        if (shouldIgnoreCommunication) {
+            listener.onException(new IllegalStateException("Client is closed!"));
+            return;
+        }
+
         if (requests.size() > 10) requests.clear();
 
         try {
@@ -185,7 +189,7 @@ public class WebSocketClient extends AbstractClient {
                     connectionListener = null;
                 }
 
-                close();
+                clear();
             });
         }
     }

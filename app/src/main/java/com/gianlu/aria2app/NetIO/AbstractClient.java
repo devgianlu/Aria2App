@@ -41,7 +41,7 @@ public abstract class AbstractClient implements Closeable {
     private final ConnectivityChangedReceiver connectivityChangedReceiver;
     private final AtomicLong requestIds = new AtomicLong(Long.MIN_VALUE);
     protected MultiProfile.UserProfile profile;
-    protected boolean shouldIgnoreCommunication = false;
+    protected volatile boolean shouldIgnoreCommunication = false;
 
     AbstractClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
         this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -87,6 +87,7 @@ public abstract class AbstractClient implements Closeable {
         removeReceiver();
 
         shouldIgnoreCommunication = true;
+        System.out.println("CLOSED!! " + profile.serverAddr);
 
         closeClient();
         listeners.clear();

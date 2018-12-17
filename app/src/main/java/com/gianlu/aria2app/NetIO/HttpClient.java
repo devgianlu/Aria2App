@@ -62,7 +62,7 @@ public class HttpClient extends AbstractClient {
                     Logging.log(ex);
                 }
 
-                close();
+                clear();
             }
         });
     }
