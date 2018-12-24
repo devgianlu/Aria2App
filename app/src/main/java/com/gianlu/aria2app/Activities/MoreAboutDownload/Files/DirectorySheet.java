@@ -84,6 +84,8 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
             selected.setOnCheckedChangeListener((buttonView, isChecked) -> download.changeSelection(currentDir.indexes.toArray(new Integer[0]), isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                 @Override
                 public void onResult(@NonNull Download.ChangeSelectionResult result) {
+                    if (!isAdded()) return;
+
                     Toaster toaster = Toaster.build();
                     toaster.extra(result);
                     switch (result) {
@@ -107,6 +109,8 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
 
                 @Override
                 public void onException(@NonNull Exception ex) {
+                    if (!isAdded()) return;
+
                     dismissAllowingStateLoss();
                     DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
                 }
