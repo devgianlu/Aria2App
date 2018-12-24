@@ -9,6 +9,7 @@ import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Preferences.Json.JsonStoring;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONArray;
@@ -154,14 +155,15 @@ public final class SearchApi {
         if (Prefs.has(PK.SEARCH_ENGINES_CACHE) && !CommonUtils.isDebug()) {
             long age = Prefs.getLong(PK.SEARCH_ENGINES_CACHE_AGE, 0);
             if (System.currentTimeMillis() - age < TimeUnit.HOURS.toMillis(6)) {
-                JSONArray array = Prefs.getJSONArray(PK.SEARCH_ENGINES_CACHE, new JSONArray());
-                if (array.length() > 0) return cachedEngines = SearchEngine.list(array);
+                JSONArray array = JsonStoring.intoPrefs().getJsonArray(PK.SEARCH_ENGINES_CACHE);
+                if (array != null && array.length() > 0)
+                    return cachedEngines = SearchEngine.list(array);
             }
         }
 
         JSONArray array = new JSONArray(request(new Request.Builder().get().url(BASE_URL.newBuilder().addPathSegment("listEngines").build()).build()));
         Prefs.putLong(PK.SEARCH_ENGINES_CACHE_AGE, System.currentTimeMillis());
-        Prefs.putJSONArray(PK.SEARCH_ENGINES_CACHE, array);
+        JsonStoring.intoPrefs().putJsonArray(PK.SEARCH_ENGINES_CACHE, array);
         return cachedEngines = SearchEngine.list(array);
     }
 
