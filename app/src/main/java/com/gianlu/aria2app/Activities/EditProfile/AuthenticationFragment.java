@@ -2,8 +2,6 @@ package com.gianlu.aria2app.Activities.EditProfile;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,57 +60,12 @@ public class AuthenticationFragment extends FieldErrorFragment {
             }
         });
         token = layout.findViewById(R.id.editProfile_token);
-        CommonUtils.getEditText(token).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                token.setErrorEnabled(false);
-            }
-        });
+        CommonUtils.clearErrorOnEdit(token);
         userAndPasswd = layout.findViewById(R.id.editProfile_userAndPasswd);
         username = layout.findViewById(R.id.editProfile_username);
-        CommonUtils.getEditText(username).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                username.setErrorEnabled(false);
-            }
-        });
+        CommonUtils.clearErrorOnEdit(username);
         password = layout.findViewById(R.id.editProfile_password);
-        CommonUtils.getEditText(password).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                password.setErrorEnabled(false);
-            }
-        });
+        CommonUtils.clearErrorOnEdit(password);
 
         Bundle args = getArguments();
         MultiProfile.UserProfile edit;

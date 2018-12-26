@@ -80,7 +80,6 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                address.setErrorEnabled(false);
             }
 
             @Override
@@ -89,6 +88,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
 
             @Override
             public void afterTextChanged(Editable s) {
+                address.setErrorEnabled(false);
                 updateCompleteAddress();
                 lastAddress = s.toString();
 
@@ -123,7 +123,6 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         CommonUtils.getEditText(port).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                port.setErrorEnabled(false);
             }
 
             @Override
@@ -132,6 +131,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
 
             @Override
             public void afterTextChanged(Editable s) {
+                port.setErrorEnabled(false);
                 updateCompleteAddress();
             }
         });
@@ -139,7 +139,6 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         CommonUtils.getEditText(endpoint).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                endpoint.setErrorEnabled(false);
             }
 
             @Override
@@ -148,6 +147,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
 
             @Override
             public void afterTextChanged(Editable s) {
+                endpoint.setErrorEnabled(false);
                 updateCompleteAddress();
             }
         });
