@@ -1,4 +1,5 @@
-include ':CommonUtils', ':app', ':MaterialPreferences', ':CountryFlags'
+include ':CommonUtils', ':app', ':MaterialPreferences', ':CountryFlags', ':aria2lib'
 project(':CommonUtils').projectDir = new File('./CommonUtils/utils')
 project(':MaterialPreferences').projectDir = new File('./MaterialPreferences/library')
 project(':CountryFlags').projectDir = new File('./Android--Library-Country-Flags/countryflags')
+project(':aria2lib').projectDir = new File('./aria2lib')
