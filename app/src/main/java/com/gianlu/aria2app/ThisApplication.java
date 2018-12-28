@@ -2,11 +2,13 @@ package com.gianlu.aria2app;
 
 import android.preference.PreferenceManager;
 
+import com.gianlu.aria2app.Aria2.Aria2ConfigProvider;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonPK;
 import com.gianlu.commonutils.Logging;
@@ -54,6 +56,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
         SearchApi.get().cacheSearchEngines();
         MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
+        Aria2Ui.provider(Aria2ConfigProvider.class);
 
         ErrorHandler.setup(Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000, this);
 
