@@ -281,7 +281,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void launchMain() {
-        Intent intent = new Intent(LoadingActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(this, MainActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         if (shortcutAction != null) intent.putExtra("shortcutAction", shortcutAction);
         else if (shareData != null) intent.putExtra("shareData", shareData);
         else if (launchGid != null && !launchGid.isEmpty()) intent.putExtra("gid", launchGid);

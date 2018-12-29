@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +49,6 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
         return fragment;
     }
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
@@ -80,53 +77,14 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
         });
         container = layout.findViewById(R.id.editProfile_dd_container);
         address = layout.findViewById(R.id.editProfile_dd_address);
-        CommonUtils.getEditText(address).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                address.setErrorEnabled(false);
-            }
-        });
+        CommonUtils.clearErrorOnEdit(address);
         auth = layout.findViewById(R.id.editProfile_dd_auth);
         auth.setOnCheckedChangeListener((buttonView, isChecked) -> authContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE));
         authContainer = layout.findViewById(R.id.editProfile_dd_authContainer);
         username = layout.findViewById(R.id.editProfile_dd_username);
-        CommonUtils.getEditText(username).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                username.setErrorEnabled(false);
-            }
-        });
+        CommonUtils.clearErrorOnEdit(username);
         password = layout.findViewById(R.id.editProfile_dd_password);
-        CommonUtils.getEditText(password).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                password.setErrorEnabled(false);
-            }
-        });
+        CommonUtils.clearErrorOnEdit(password);
 
         encryption = layout.findViewById(R.id.editProfile_dd_encryption);
         encryption.setOnCheckedChangeListener((buttonView, isChecked) -> certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE));
