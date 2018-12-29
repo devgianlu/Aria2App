@@ -2,6 +2,7 @@
     <string name="downloadStatus_waiting">在队列中等候</string>
     <string name="downloadStatus_error">错误</string>
     <string name="downloadStatus_paused">已暂停</string>
+    <string name="downloadStatus_unknown">未知</string>
     <string name="downloadStatus_complete">完成</string>
     <string name="downloadStatus_removed">删除</string>
     <string name="downloadStatus_active">活动</string>
@@ -21,6 +22,8 @@
     <string name="comment"><b>评论:</b> %s</string>
     <string name="index"><b>索引号:</b> %d</string>
     <string name="path"><b>路径:</b> %s</string>
+    <string name="amChoking"><![CDATA[<b>我方阻塞对方:</b>]]> %s</string>
+    <string name="peerChoking"><![CDATA[<b>对方阻塞我方:</b>]]> %s</string>																		   
     <string name="notificationComplete">下载完成</string>
     <string name="notificationStarted">下载开始</string>
     <string name="notificationStopped">下载已停止</string>
@@ -32,6 +35,8 @@
     <string name="sessionId"><b>会话ID:</b> %s</string>
     <string name="versionLabel"><b>版本:</b> %s</string>
     <string name="gathering_information">正在收集信息。请稍候…</string>
+    <string name="info">任务信息</string>
+    <string name="files">文件列表</string>													
     <string name="profileName">配置名称</string>
     <string name="profile_help">如果您不知道如何正确建立配置文件，请查看我的网站上的指南: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">地址</string>
@@ -197,7 +202,7 @@
     <string name="onlyOneTorrentUri">当添加种子磁链时，每次应只添加一个链接。</string>
     <string name="dirFilesDeselected">从下载列表中取消选择此目录中的所有文件。</string>
     <string name="dirFilesSelected">选择此目录中的所有文件进行下载。</string>
-    <string name="hasAlwaysCondition">如果您已指定一个“每次都生效”的条件，则无法添加新的同类条件。</string>
+    <string name="hasAlwaysCondition">如果您已指定一个“总是”的条件，则无法添加新的同类条件。</string>
     <string name="cannotAddAlwaysCondition">如果您已经设置一些其他条件，则不能添加新的“总是”条件。</string>
     <string name="failedChangingOptions">更改选项失败！</string>
     <string name="seeError">查看错误</string>
@@ -209,7 +214,7 @@
     <string name="enableHostnameVerifier">启用主机名验证器</string>
     <string name="hostnameVerifier_disclaimer">如果证书包含主题替代名称（SAN），则应启用此选项。建议将SAN添加到证书中。</string>
     <string name="searchEngine_offline">该服务暂时不可用，它将在几分钟后恢复在线。</string>
-    <string name="show">节目</string>
+    <string name="show">显示</string>
     <string name="getTorrent">获取种子文件</string>
     <string name="getMagnet">获得磁链接</string>
     <string name="numSeederShort"><b>种子源:</b> %d</string>
@@ -228,7 +233,7 @@
     <string name="failedOpeningDownload">打开下载失败！</string>
     <string name="ddNotEnabled">此配置文件上未启用直接下载！</string>
     <string name="profileDoesntExist">此配置文件不再存在！</string>
-    <string name="noDirectDownloads">现在没有下载任务。您可以从下载任务的文件选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="noDirectDownloads">现在没有下载任务。您可以从下载任务的文件列表选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">剩余时间</string>
     <string name="connectionsLabel">连接</string>
     <string name="selectCertificate">选择/更改证书</string>
