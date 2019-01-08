@@ -17,6 +17,7 @@ import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Option;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
@@ -43,7 +44,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-public class OptionsDialog extends DialogFragment implements AbstractClient.OnResult<Map<String, String>>, OptionsAdapter.Listener {
+public class OptionsDialog extends DialogFragment implements AbstractClient.OnResult<OptionsMap>, OptionsAdapter.Listener {
     private ProgressBar loading;
     private OptionsView optionsView;
     private Button export;
@@ -134,7 +135,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             return null;
         }
 
-        AbstractClient.AriaRequestWithResult<Map<String, String>> req;
+        AbstractClient.AriaRequestWithResult<OptionsMap> req;
         if (global || gid == null) req = AriaRequests.getGlobalOptions();
         else req = AriaRequests.getDownloadOptions(gid);
 
@@ -244,7 +245,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     }
 
     @Override
-    public void onResult(@NonNull Map<String, String> result) {
+    public void onResult(@NonNull OptionsMap result) {
         if (getContext() == null) return;
 
         loading.setVisibility(View.GONE);

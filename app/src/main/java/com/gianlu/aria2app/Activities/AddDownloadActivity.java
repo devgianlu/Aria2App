@@ -9,7 +9,6 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
@@ -50,7 +49,7 @@ public abstract class AddDownloadActivity extends ActivityWithDialog {
             if (bundle == null) return;
 
             try {
-                showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
+                showProgress(R.string.gathering_information);
                 Aria2Helper.instantiate(this).request(AriaRequests.addDownload(bundle), new AbstractClient.OnResult<String>() {
                     @Override
                     public void onResult(@NonNull String result) {

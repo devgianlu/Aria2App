@@ -35,7 +35,7 @@ public class Option implements Comparable<Option> {
     }
 
     @NonNull
-    public static List<Option> fromOptionsMap(@NonNull Map<String, String> map, @NonNull List<String> all, @Nullable Set<String> filter) {
+    public static List<Option> fromOptionsMap(@NonNull OptionsMap map, @NonNull List<String> all, @Nullable Set<String> filter) {
         List<Option> options = new ArrayList<>();
 
         for (String key : all) {

@@ -49,7 +49,7 @@ public class WebSocketClient extends AbstractClient {
 
     @NonNull
     public static WebSocketClient instantiate(@NonNull Context context) throws InitializationException {
-        if (instance == null) {
+        if (instance == null || instance.closed) {
             try {
                 instance = new WebSocketClient(context);
             } catch (NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException | GeneralSecurityException | IOException ex) {

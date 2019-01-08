@@ -76,7 +76,9 @@ public class AriaFile {
     }
 
     @NonNull
-    public String getRelativePath(@NonNull String dir) {
+    public String getRelativePath(@NonNull OptionsMap global) {
+        String dir = global.get("dir");
+        if (dir == null) dir = "";
         return path.substring(dir.length() + 1);
     }
 
@@ -96,9 +98,9 @@ public class AriaFile {
     }
 
     @NonNull
-    public HttpUrl getDownloadUrl(String dir, @NonNull HttpUrl base) {
+    public HttpUrl getDownloadUrl(@NonNull OptionsMap global, @NonNull HttpUrl base) {
         HttpUrl.Builder builder = base.newBuilder();
-        builder.addPathSegments(getRelativePath(dir));
+        builder.addPathSegments(getRelativePath(global));
         return builder.build();
     }
 

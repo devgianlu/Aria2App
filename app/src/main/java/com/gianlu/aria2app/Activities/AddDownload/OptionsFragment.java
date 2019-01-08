@@ -13,6 +13,7 @@ import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.Option;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.Options.OptionsView;
@@ -26,7 +27,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -93,9 +93,9 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         if (isAddUri && bundle != null && bundle.options != null)
             filename.setText(bundle.options.get("out"));
 
-        helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<Map<String, String>>() {
+        helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
             @Override
-            public void onResult(@NonNull Map<String, String> result) {
+            public void onResult(@NonNull OptionsMap result) {
                 if (getContext() == null) return;
 
                 try {

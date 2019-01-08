@@ -7,6 +7,7 @@ import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.GlobalStats;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Aria2.SessionInfo;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
@@ -51,10 +52,12 @@ public final class AriaRequests {
             "numSeeders", "files", "errorCode", "errorMessage"
     });
 
+    @NonNull
     public static AbstractClient.AriaRequest changePosition(String gid, int pos, String mode) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_POSITION, gid, pos, mode);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<SparseServers> getServers(String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SERVERS, new AbstractClient.Processor<SparseServers>() {
             @NonNull
@@ -65,6 +68,7 @@ public final class AriaRequests {
         }, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<Peers> getPeers(String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_PEERS, new AbstractClient.Processor<Peers>() {
             @NonNull
@@ -75,6 +79,7 @@ public final class AriaRequests {
         }, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<AriaFiles> getFiles(String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<AriaFiles>() {
             @NonNull
@@ -85,6 +90,7 @@ public final class AriaRequests {
         }, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<Integer[]> getFileIndexes(final String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_FILES, new AbstractClient.Processor<Integer[]>() {
             @NonNull
@@ -99,6 +105,7 @@ public final class AriaRequests {
         }, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddDownloadBundle bundle) throws JSONException {
         if (bundle instanceof AddUriBundle)
             return addDownload((AddUriBundle) bundle);
@@ -110,18 +117,22 @@ public final class AriaRequests {
             throw new IllegalArgumentException("Unknown bundle: " + bundle);
     }
 
+    @NonNull
     private static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddTorrentBundle bundle) throws JSONException {
         return addTorrent(bundle.base64, bundle.uris, bundle.position, bundle.options);
     }
 
+    @NonNull
     private static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddUriBundle bundle) throws JSONException {
         return addUri(bundle.uris, bundle.position, bundle.options);
     }
 
+    @NonNull
     private static AbstractClient.AriaRequestWithResult<String> addDownload(@NonNull AddMetalinkBundle bundle) throws JSONException {
         return addMetalink(bundle.base64, bundle.position, bundle.options);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
         Object[] params = new Object[3];
         params[0] = CommonUtils.toJSONArray(uris, true);
@@ -132,6 +143,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.ADD_URI, STRING_PROCESSOR, params);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<String> addTorrent(@NonNull String base64, @Nullable Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
         Object[] params = new Object[4];
         params[0] = base64;
@@ -144,6 +156,7 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.ADD_TORRENT, STRING_PROCESSOR, params);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<String> addMetalink(@NonNull String base64, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
         Object[] params = new Object[3];
         params[0] = base64;
@@ -154,34 +167,39 @@ public final class AriaRequests {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.ADD_METALINK, STRING_PROCESSOR, params);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest changeDownloadOptions(String gid, Map<String, String> options) throws JSONException {
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_DOWNLOAD_OPTIONS, gid, OptionsUtils.toJson(options));
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest changeGlobalOptions(Map<String, String> options) throws JSONException {
         return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_GLOBAL_OPTIONS, OptionsUtils.toJson(options));
     }
 
-    public static AbstractClient.AriaRequestWithResult<Map<String, String>> getGlobalOptions() {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_GLOBAL_OPTIONS, new AbstractClient.Processor<Map<String, String>>() {
+    @NonNull
+    public static AbstractClient.AriaRequestWithResult<OptionsMap> getGlobalOptions() {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_GLOBAL_OPTIONS, new AbstractClient.Processor<OptionsMap>() {
             @NonNull
             @Override
-            public Map<String, String> process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
-                return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
+            public OptionsMap process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
+                return new OptionsMap(obj.getJSONObject("result"));
             }
         });
     }
 
-    public static AbstractClient.AriaRequestWithResult<Map<String, String>> getDownloadOptions(@NonNull String gid) {
-        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_DOWNLOAD_OPTIONS, new AbstractClient.Processor<Map<String, String>>() {
+    @NonNull
+    public static AbstractClient.AriaRequestWithResult<OptionsMap> getDownloadOptions(@NonNull String gid) {
+        return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_DOWNLOAD_OPTIONS, new AbstractClient.Processor<OptionsMap>() {
             @NonNull
             @Override
-            public Map<String, String> process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
-                return CommonUtils.toMap(obj.getJSONObject("result"), String.class);
+            public OptionsMap process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException {
+                return new OptionsMap(obj.getJSONObject("result"));
             }
         }, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<GlobalStats> getGlobalStats() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_GLOBAL_STATS, new AbstractClient.Processor<GlobalStats>() {
             @NonNull
@@ -192,6 +210,7 @@ public final class AriaRequests {
         });
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<List<String>> listMethods() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.LIST_METHODS, new AbstractClient.Processor<List<String>>() {
             @NonNull
@@ -202,6 +221,7 @@ public final class AriaRequests {
         });
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<SessionInfo> getSessionInfo() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_SESSION_INFO, new AbstractClient.Processor<SessionInfo>() {
             @NonNull
@@ -212,50 +232,62 @@ public final class AriaRequests {
         });
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest saveSession() {
         return new AbstractClient.AriaRequest(AbstractClient.Method.SAVE_SESSION);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest purgeDownloadResults() {
         return new AbstractClient.AriaRequest(AbstractClient.Method.PURGE_DOWNLOAD_RESULTS);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest pauseAll() {
         return new AbstractClient.AriaRequest(AbstractClient.Method.PAUSE_ALL);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest unpauseAll() {
         return new AbstractClient.AriaRequest(AbstractClient.Method.UNPAUSE_ALL);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest forcePauseAll() {
         return new AbstractClient.AriaRequest(AbstractClient.Method.FORCE_PAUSE_ALL);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest forcePause(String gid) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.FORCE_PAUSE, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest forceRemove(String gid) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.FORCE_REMOVE, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest pause(String gid) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.PAUSE, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest unpause(String gid) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.UNPAUSE, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest remove(String gid) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.REMOVE, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequest removeDownloadResult(String gid) {
         return new AbstractClient.AriaRequest(AbstractClient.Method.REMOVE_RESULT, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<DownloadWithUpdate> tellStatus(String gid) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithUpdate>() {
             @NonNull
@@ -266,6 +298,7 @@ public final class AriaRequests {
         }, gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<DownloadWithUpdate> tellStatus(@NonNull final DownloadWithUpdate download) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STATUS, new AbstractClient.Processor<DownloadWithUpdate>() {
             @NonNull
@@ -276,18 +309,22 @@ public final class AriaRequests {
         }, download.gid);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellActiveSmall() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_ACTIVE, DOWNLOADS_LIST_PROCESSOR, SMALL_KEYS);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellWaitingSmall(int offset, int count) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_WAITING, DOWNLOADS_LIST_PROCESSOR, offset, count, SMALL_KEYS);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<List<DownloadWithUpdate>> tellStoppedSmall(int offset, int count) {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.TELL_STOPPED, DOWNLOADS_LIST_PROCESSOR, offset, count, SMALL_KEYS);
     }
 
+    @NonNull
     public static AbstractClient.AriaRequestWithResult<VersionInfo> getVersion() {
         return new AbstractClient.AriaRequestWithResult<>(AbstractClient.Method.GET_VERSION, new AbstractClient.Processor<VersionInfo>() {
             @NonNull

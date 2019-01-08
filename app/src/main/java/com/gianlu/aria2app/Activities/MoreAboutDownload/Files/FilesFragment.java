@@ -20,6 +20,8 @@ import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
@@ -251,7 +253,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         tutorialManager.tryShowingTutorials(getActivity());
     }
 
-    private void startDownloadInternal(MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
+    private void startDownloadInternal(@NonNull MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
         if (helper == null) return;
 
         final boolean single = file != null;
@@ -272,40 +274,54 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
         };
 
-        if (file != null) helper.start(profile, download, file, listener);
-        else if (dir != null) helper.start(profile, download, dir, listener);
+        if (file != null) helper.start(profile, file, listener);
+        else if (dir != null) helper.start(profile, dir, listener);
     }
 
     @Override
-    public void onDownloadFile(@NonNull final MultiProfile profile, @NonNull final AriaFile file) {
+    public void onDownloadFile(@NonNull MultiProfile profile, @NonNull AriaFile file) {
         if (fileSheet != null) {
             fileSheet.dismiss();
             fileSheet = null;
             dismissDialog();
         }
 
-        String mime = file.getMimeType();
-        if (mime != null) {
-            if (Utils.isStreamable(mime) && getContext() != null) {
-                final Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), download, file);
-                if (intent != null && Utils.canHandleIntent(getContext(), intent)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle(R.string.couldStreamVideo)
-                            .setMessage(R.string.couldStreamVideo_message)
-                            .setNeutralButton(android.R.string.cancel, null)
-                            .setPositiveButton(R.string.stream, (dialog, which) -> {
-                                startActivity(intent);
-                                AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
-                            })
-                            .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, file));
+        showProgress(R.string.gathering_information);
+        getHelper().request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
+            @Override
+            public void onResult(@NonNull OptionsMap result) {
+                dismissDialog();
 
-                    showDialog(builder);
-                    return;
+                String mime = file.getMimeType();
+                if (mime != null) {
+                    if (Utils.isStreamable(mime) && getContext() != null) {
+                        Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), result, file);
+                        if (intent != null && Utils.canHandleIntent(requireContext(), intent)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                            builder.setTitle(R.string.couldStreamVideo)
+                                    .setMessage(R.string.couldStreamVideo_message)
+                                    .setNeutralButton(android.R.string.cancel, null)
+                                    .setPositiveButton(R.string.stream, (dialog, which) -> {
+                                        startActivity(intent);
+                                        AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
+                                    })
+                                    .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, file));
+
+                            showDialog(builder);
+                            return;
+                        }
+                    }
                 }
-            }
-        }
 
-        shouldDownload(profile, file);
+                shouldDownload(profile, file);
+            }
+
+            @Override
+            public void onException(@NonNull Exception ex) {
+                dismissDialog();
+                showToast(Toaster.build().message(R.string.failedDownloadingFile).ex(ex));
+            }
+        });
     }
 
     private void shouldDownload(MultiProfile profile, AriaFile file) {
@@ -348,7 +364,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
         if (getContext() == null) return;
 
-        adapter = new FilesAdapter(getContext(), FilesFragment.this);
+        adapter = new FilesAdapter(getContext(), this);
         recyclerViewLayout.loadListData(adapter);
         recyclerViewLayout.startLoading();
 
@@ -356,7 +372,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             canGoBack(CODE_CLOSE_SHEET);
 
             refresh(() -> {
-                adapter = new FilesAdapter(getContext(), FilesFragment.this);
+                adapter = new FilesAdapter(getContext(), this);
                 recyclerViewLayout.loadListData(adapter);
                 recyclerViewLayout.startLoading();
             });
@@ -387,7 +403,6 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             return ((FilesTutorial) tutorial).canShow(this, adapter);
         else if (tutorial instanceof FoldersTutorial)
             return ((FoldersTutorial) tutorial).canShow(this, adapter);
-
         return false;
     }
 
@@ -397,7 +412,6 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             return ((FilesTutorial) tutorial).buildSequence(recyclerViewLayout.getList(), adapter != null ? adapter.getCurrentDir() : null);
         else if (tutorial instanceof FoldersTutorial)
             return ((FoldersTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
-
         return true;
     }
 }

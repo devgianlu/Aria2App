@@ -21,7 +21,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
@@ -71,7 +70,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_BATCH, analytics);
 
         try {
-            showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
+            showProgress(R.string.gathering_information);
             Aria2Helper.instantiate(this).addDownloads(bundles, new AbstractClient.OnResult<List<String>>() {
                 @Override
                 public void onResult(@NonNull List<String> result) {

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.gianlu.aria2app.NetIO.Aria2.Option;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
@@ -45,7 +45,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     @NonNull
-    public static OptionsAdapter setup(@NonNull Context context, Map<String, String> map, boolean global, boolean quick, boolean quickOnTop, Listener listener) throws IOException, JSONException {
+    public static OptionsAdapter setup(@NonNull Context context, @NonNull OptionsMap map, boolean global, boolean quick, boolean quickOnTop, Listener listener) throws IOException, JSONException {
         List<String> all;
         if (global) all = OptionsManager.get(context).loadGlobalOptions();
         else all = OptionsManager.get(context).loadDownloadOptions();

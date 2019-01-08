@@ -70,7 +70,7 @@ public class Download {
         moveRelative(1, listener);
     }
 
-    public final void options(AbstractClient.OnResult<Map<String, String>> listener) {
+    public final void options(AbstractClient.OnResult<OptionsMap> listener) {
         client.send(AriaRequests.getDownloadOptions(gid), listener);
     }
 
