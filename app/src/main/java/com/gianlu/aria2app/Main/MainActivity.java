@@ -47,6 +47,7 @@ import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.GitHubApi;
+import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.NetIO.OnRefresh;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Receiver;
@@ -102,7 +103,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, AbstractClient.OnConnectivityChanged, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile, DrawerItem> drawerManager;
@@ -318,7 +319,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             helper = Aria2Helper.instantiate(this);
         } catch (ProfilesManager.NoCurrentProfileException | Aria2Helper.InitializingException ex) {
             Logging.log(ex);
-            AbstractClient.invalidate();
+            NetInstanceHolder.close();
             profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
             return;
@@ -345,15 +346,15 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         fabMenu.setOnFloatingActionsMenuUpdateListener(this);
 
         FloatingActionButton fabSearch = findViewById(R.id.mainFab_search);
-        fabSearch.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
+        fabSearch.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
         FloatingActionButton fabAddURI = findViewById(R.id.mainFab_addURI);
-        fabAddURI.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AddUriActivity.class)));
+        fabAddURI.setOnClickListener(view -> startActivity(new Intent(this, AddUriActivity.class)));
         FloatingActionButton fabAddTorrent = findViewById(R.id.mainFab_addTorrent);
-        fabAddTorrent.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AddTorrentActivity.class)));
+        fabAddTorrent.setOnClickListener(view -> startActivity(new Intent(this, AddTorrentActivity.class)));
         FloatingActionButton fabAddMetalink = findViewById(R.id.mainFab_addMetalink);
-        fabAddMetalink.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, AddMetalinkActivity.class)));
+        fabAddMetalink.setOnClickListener(view -> startActivity(new Intent(this, AddMetalinkActivity.class)));
         FloatingActionButton fabBatchAdd = findViewById(R.id.mainFab_batchAdd);
-        fabBatchAdd.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, BatchAddActivity.class)));
+        fabBatchAdd.setOnClickListener(v -> startActivity(new Intent(this, BatchAddActivity.class)));
 
         recyclerViewLayout.startLoading();
 
@@ -469,7 +470,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     protected void onDestroy() {
-        AbstractClient.removeConnectivityListener(this);
         if (adapter != null) adapter.activityDestroying(this);
         super.onDestroy();
     }
@@ -537,7 +537,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             if (profilesManager != null) profilesManager.reloadCurrentProfile();
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
             Logging.log(ex);
-            AbstractClient.invalidate();
+            NetInstanceHolder.close();
             profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
             return;
@@ -806,13 +806,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        AbstractClient.addConnectivityListener(this);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         if (adapter != null) adapter.filterWithQuery(query);
         return true;
@@ -838,16 +831,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     public boolean onMenuItemActionCollapse(MenuItem item) {
         onClose();
         return true;
-    }
-
-    @Override
-    public void connectivityChanged(@NonNull final MultiProfile.UserProfile profile) {
-        if (drawerManager != null) drawerManager.setCurrentProfile(profile.getParent());
-
-        List<MultiProfile.UserProfile> profiles = profile.getParent().profiles;
-        if (!(profiles.size() >= 1 && profiles.get(0).connectivityCondition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)) {
-            Toaster.with(this).message(R.string.connectivityChanged).extra(profile.connectivityCondition).show();
-        }
     }
 
     @Override

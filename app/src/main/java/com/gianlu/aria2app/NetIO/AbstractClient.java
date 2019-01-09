@@ -1,16 +1,9 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
-import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ThisApplication;
 
@@ -20,11 +13,7 @@ import org.json.JSONObject;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import androidx.annotation.NonNull;
@@ -32,93 +21,49 @@ import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import okhttp3.OkHttpClient;
 
-public abstract class AbstractClient implements Closeable {
-    private static final List<OnConnectivityChanged> listeners = new ArrayList<>();
+public abstract class AbstractClient implements Closeable, ClientInterface {
     protected final OkHttpClient client;
     protected final Handler handler;
-    private final WifiManager wifiManager;
-    private final WeakReference<Context> context;
-    private final ConnectivityChangedReceiver connectivityChangedReceiver;
     private final AtomicLong requestIds = new AtomicLong(Long.MIN_VALUE);
     protected MultiProfile.UserProfile profile;
     protected volatile boolean closed = false;
 
-    AbstractClient(Context context, MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
-        this.wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+    AbstractClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
         this.client = NetUtils.buildClient(profile);
         this.profile = profile;
-        this.context = new WeakReference<>(context);
         this.handler = new Handler(Looper.getMainLooper());
-        this.connectivityChangedReceiver = new ConnectivityChangedReceiver();
 
-        context.getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         ThisApplication.setCrashlyticsString("connectionMethod", profile.connectionMethod.name());
-    }
-
-    public static void addConnectivityListener(@NonNull OnConnectivityChanged listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    public static void removeConnectivityListener(@NonNull OnConnectivityChanged listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
-    public static void invalidate() {
-        if (WebSocketClient.instance != null)
-            WebSocketClient.instance.close();
-
-        if (HttpClient.instance != null)
-            HttpClient.instance.close();
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        removeReceiver();
-        super.finalize();
-    }
-
-    private void removeReceiver() {
-        try {
-            if (context.get() != null && !closed)
-                context.get().getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
-        } catch (IllegalArgumentException ignored) {
-        }
     }
 
     @Override
     @WorkerThread
     public final void close() {
-        removeReceiver();
-
         closed = true;
-
         closeClient();
-        listeners.clear();
+        NetInstanceHolder.hasBeenClosed(this);
     }
 
     @WorkerThread
     protected abstract void closeClient();
 
+    @Override
     public final <R> void send(@NonNull final AriaRequestWithResult<R> request, final OnResult<R> listener) {
         try {
             JSONObject obj = request.build(this);
             send(request.id, obj, new OnJson() {
                 @Override
                 public void onResponse(@NonNull JSONObject response) throws JSONException {
-                    final R result = request.processor.process(AbstractClient.this, response);
+                    R result = request.processor.process(AbstractClient.this, response);
                     handler.post(() -> listener.onResult(result));
                 }
 
                 @Override
-                public void onException(@NonNull final Exception ex) {
+                public void onException(@NonNull Exception ex) {
                     handler.post(() -> listener.onException(ex));
                 }
             });
-        } catch (final JSONException ex) {
+        } catch (JSONException ex) {
             handler.post(() -> listener.onException(ex));
         }
     }
@@ -131,10 +76,11 @@ public abstract class AbstractClient implements Closeable {
     @NonNull
     public final <R> R sendSync(@NonNull AriaRequestWithResult<R> request) throws Exception {
         JSONObject obj = request.build(this);
-        return request.processor.process(AbstractClient.this, sendSync(request.id, obj));
+        return request.processor.process(this, sendSync(request.id, obj));
     }
 
-    public final void send(@NonNull AriaRequest request, final OnSuccess listener) {
+    @Override
+    public final void send(@NonNull AriaRequest request, OnSuccess listener) {
         try {
             JSONObject obj = request.build(this);
             send(request.id, obj, new OnJson() {
@@ -144,7 +90,7 @@ public abstract class AbstractClient implements Closeable {
                 }
 
                 @Override
-                public void onException(@NonNull final Exception ex) {
+                public void onException(@NonNull Exception ex) {
                     handler.post(() -> listener.onException(ex));
                 }
             });
@@ -162,32 +108,21 @@ public abstract class AbstractClient implements Closeable {
         if (resp.has("error")) throw new AriaException(resp.getJSONObject("error"));
     }
 
-    public final <R> void batch(BatchSandbox<R> sandbox, final OnResult<R> listener) {
+    public final <R> void batch(BatchSandbox<R> sandbox, OnResult<R> listener) {
         batch(sandbox, new DoBatch<R>() {
             @Override
-            public void onSandboxReturned(@NonNull final R result) {
+            public void onSandboxReturned(@NonNull R result) {
                 handler.post(() -> listener.onResult(result));
             }
 
             @Override
-            public void onException(@NonNull final Exception ex) {
+            public void onException(@NonNull Exception ex) {
                 handler.post(() -> listener.onException(ex));
             }
         });
     }
 
     protected abstract <R> void batch(BatchSandbox<R> sandbox, DoBatch<R> listener);
-
-    @WorkerThread
-    protected abstract void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception;
-
-    @WorkerThread
-    private void connectivityChangedInternal(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        if (this.profile.connectionMethod == profile.connectionMethod)
-            connectivityChanged(context, profile);
-        else
-            close();
-    }
 
     @NonNull
     private JSONArray baseRequestParams() {
@@ -268,11 +203,6 @@ public abstract class AbstractClient implements Closeable {
         void onException(@NonNull Exception ex);
     }
 
-    public interface OnConnectivityChanged {
-        @UiThread
-        void connectivityChanged(@NonNull MultiProfile.UserProfile profile);
-    }
-
     public abstract static class Processor<R> {
 
         @NonNull
@@ -317,46 +247,6 @@ public abstract class AbstractClient implements Closeable {
     public static class InitializationException extends Exception {
         InitializationException(Throwable cause) {
             super(cause);
-        }
-    }
-
-    private class ConnectivityChangedReceiver extends BroadcastReceiver {
-
-        private void switchClients(final Context context, final MultiProfile.UserProfile updated) {
-            FetchHelper.invalidate();
-
-            synchronized (listeners) {
-                for (final OnConnectivityChanged listener : listeners) {
-                    handler.post(() -> listener.connectivityChanged(updated));
-                }
-            }
-
-            new Thread() {
-                @Override
-                @WorkerThread
-                public void run() {
-                    try {
-                        connectivityChangedInternal(context, updated);
-                        profile = updated;
-                    } catch (Exception ex) {
-                        ErrorHandler.get().notifyException(ex, true);
-                    }
-                }
-            }.start();
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION)) {
-                boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-                if (!noConnectivity) {
-                    MultiProfile.UserProfile user = profile.getParent()
-                            .getProfile(intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY), wifiManager);
-
-                    if (!Objects.equals(profile.connectivityCondition, user.connectivityCondition))
-                        switchClients(context, user);
-                }
-            }
         }
     }
 }

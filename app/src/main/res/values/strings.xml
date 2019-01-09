@@ -214,7 +214,6 @@
     <string name="failedChangingOptions">Failed changing options!</string>
     <string name="seeError">See error</string>
     <string name="contactMe">Contact me</string>
-    <string name="connectivityChanged">Connectivity changed, switching profile.</string>
     <string name="failedLoading_reason">Failed loading: %s</string>
     <string name="searchEngine_disclaimer">This search engine is powered by me (the developer). It combines results from various sources.</string>
     <string name="noServers">No servers</string>

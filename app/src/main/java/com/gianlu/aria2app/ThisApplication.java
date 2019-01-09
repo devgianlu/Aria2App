@@ -1,9 +1,12 @@
 package com.gianlu.aria2app;
 
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
+import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
@@ -25,6 +28,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public static final boolean DEBUG_UPDATER = false;
     public static final boolean DEBUG_NOTIFICATION = false;
     private final Set<String> checkedVersionFor = new HashSet<>();
+    private ConnectivityChangedReceiver connectivityChangedReceiver;
 
     public boolean shouldCheckVersion() {
         try {
@@ -79,6 +83,15 @@ public final class ThisApplication extends AnalyticsApplication implements Error
                             NotificationService.stop(ThisApplication.this);
                     }
                 });
+
+        connectivityChangedReceiver = new ConnectivityChangedReceiver(this);
+        getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    public void onTerminate() {
+        getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+        super.onTerminate();
     }
 
     @SuppressWarnings("deprecation")
@@ -101,7 +114,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     @Override
     public void onFatal(@NonNull Throwable ex) {
-        AbstractClient.invalidate();
+        NetInstanceHolder.close();
         Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
         LoadingActivity.startActivity(this, ex);
 
@@ -110,7 +123,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     @Override
     public void onSubsequentExceptions() {
-        AbstractClient.invalidate();
+        NetInstanceHolder.close();
         LoadingActivity.startActivity(this, null);
     }
 

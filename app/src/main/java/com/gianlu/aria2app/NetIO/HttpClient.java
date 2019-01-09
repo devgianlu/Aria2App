@@ -1,15 +1,13 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.content.Context;
-
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.commonutils.Logging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -21,29 +19,27 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 
 public class HttpClient extends AbstractClient {
-    static HttpClient instance;
     private final ExecutorService executorService;
     private final URI url;
 
-    private HttpClient(@NonNull Context context) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException, ProfilesManager.NoCurrentProfileException {
-        this(context, ProfilesManager.get(context).getCurrentSpecific());
-    }
-
-    private HttpClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
-        super(context, profile);
+    @UiThread
+    private HttpClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
+        super(profile);
         ErrorHandler.get().unlock();
         this.executorService = Executors.newCachedThreadPool();
         this.url = NetUtils.createHttpURL(profile);
     }
 
-    private HttpClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
-        this(context, profile);
+    @UiThread
+    private HttpClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
+        this(profile);
 
         executorService.submit(() -> {
             try (Socket socket = new Socket()) {
@@ -55,45 +51,40 @@ public class HttpClient extends AbstractClient {
                             connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
                     });
                 }
-            } catch (final IOException ex) {
+            } catch (IOException ex) {
                 if (connectionListener != null) {
                     handler.post(() -> connectionListener.onFailedConnecting(profile, ex));
                 } else {
                     Logging.log(ex);
                 }
-
-                close();
             }
+
+            close();
         });
     }
 
     @NonNull
-    public static HttpClient instantiate(@NonNull Context context) throws InitializationException {
-        if (instance == null) {
-            try {
-                instance = new HttpClient(context);
-            } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException ex) {
-                throw new InitializationException(ex);
-            }
+    static HttpClient instantiate(@NonNull MultiProfile.UserProfile profile) throws InitializationException {
+        try {
+            return new HttpClient(profile);
+        } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException ex) {
+            throw new InitializationException(ex);
         }
-
-        return instance;
     }
 
-    public static void checkConnection(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    @UiThread
+    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
-            new HttpClient(context, profile, listener);
+            return new HttpClient(profile, listener);
         } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException ex) {
             listener.onFailedConnecting(profile, ex);
+            return null;
         }
     }
 
     @Override
     protected void closeClient() {
         executorService.shutdownNow();
-
-        if (instance == this)
-            instance = null;
     }
 
     @Override
@@ -129,11 +120,6 @@ public class HttpClient extends AbstractClient {
     private void executeRunnable(Runnable runnable) {
         if (!closed && !executorService.isShutdown() && !executorService.isTerminated())
             executorService.execute(runnable);
-    }
-
-    @Override
-    public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        if (this == instance) instance = new HttpClient(context, profile);
     }
 
     private class SandboxRunnable<R> implements Runnable {

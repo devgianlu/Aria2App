@@ -207,7 +207,6 @@
     <string name="failedChangingOptions">更改选项失败！</string>
     <string name="seeError">查看错误</string>
     <string name="contactMe">联系我</string>
-    <string name="connectivityChanged">连接已改变，切换配置文件。</string>
     <string name="failedLoading_reason">加载失败: %s</string>
     <string name="searchEngine_disclaimer">这个搜索引擎由我（作者本人）提供支持。它结合了各种来源的结果。</string>
     <string name="noServers">没有服务器</string>

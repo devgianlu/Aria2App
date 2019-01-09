@@ -1,14 +1,12 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.content.Context;
-
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Map;
@@ -19,52 +17,48 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
-    static WebSocketClient instance;
     private final Map<Long, OnJson> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
     private final long initializedAt;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private OnConnect connectionListener = null;
 
-    private WebSocketClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
-        super(context, profile);
+    @UiThread
+    private WebSocketClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+        super(profile);
         webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
         initializedAt = System.currentTimeMillis();
     }
 
-    private WebSocketClient(@NonNull Context context) throws GeneralSecurityException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException, IOException {
-        this(context, ProfilesManager.get(context).getCurrentSpecific());
-    }
-
-    private WebSocketClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
-        this(context, profile);
+    @UiThread
+    private WebSocketClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+        this(profile);
         connectionListener = listener;
     }
 
     @NonNull
-    public static WebSocketClient instantiate(@NonNull Context context) throws InitializationException {
-        if (instance == null || instance.closed) {
-            try {
-                instance = new WebSocketClient(context);
-            } catch (NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException | GeneralSecurityException | IOException ex) {
-                throw new InitializationException(ex);
-            }
+    static WebSocketClient instantiate(@NonNull MultiProfile.UserProfile profile) throws InitializationException {
+        try {
+            return new WebSocketClient(profile);
+        } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
+            throw new InitializationException(ex);
         }
-
-        return instance;
     }
 
-    public static void checkConnection(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    @UiThread
+    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
         try {
-            new WebSocketClient(context, profile, listener);
+            return new WebSocketClient(profile, listener);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             listener.onFailedConnecting(profile, ex);
+            return null;
         }
     }
 
@@ -72,16 +66,17 @@ public class WebSocketClient extends AbstractClient {
     protected void closeClient() {
         connectionListener = null;
         if (webSocket != null) webSocket.close(1000, null);
-        if (requests != null) requests.clear();
 
-        if (instance == this)
-            instance = null;
+        for (OnJson listener : requests.values())
+            listener.onException(new IOException("Client has been closed."));
+
+        requests.clear();
     }
 
     @Override
     public void send(long id, @NonNull JSONObject request, @NonNull OnJson listener) {
         if (closed) {
-            listener.onException(new IllegalStateException("Client is closed!"));
+            listener.onException(new IllegalStateException("Client is closed: " + this));
             return;
         }
 
@@ -132,11 +127,6 @@ public class WebSocketClient extends AbstractClient {
         executorService.execute(new SandboxRunnable<>(sandbox, listener));
     }
 
-    @Override
-    public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        if (this == instance) instance = new WebSocketClient(context, profile, null);
-    }
-
     @WorkerThread
     private class Listener extends WebSocketListener {
         @Override
@@ -173,6 +163,7 @@ public class WebSocketClient extends AbstractClient {
                     }
 
                     connectionListener = null;
+                    close();
                 }
             });
         }

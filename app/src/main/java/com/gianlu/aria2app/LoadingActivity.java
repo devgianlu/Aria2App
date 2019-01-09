@@ -17,6 +17,7 @@ import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
+import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.NetIO.OnConnect;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
@@ -30,6 +31,7 @@ import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +62,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private String shortcutAction;
     private Handler handler;
     private MultiProfile.UserProfile aria2AndroidProfile = null;
+    private Closeable ongoingTest;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -107,7 +110,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             if (goTo != null) startActivity(goTo);
         }, 1000);
 
-        AbstractClient.invalidate();
+        NetInstanceHolder.close();
 
         manager = ProfilesManager.get(this);
         if (getIntent().getBooleanExtra("external", false)) {
@@ -222,11 +225,10 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         } else {
             manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
-            if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
-                WebSocketClient.checkConnection(this, single, this);
-            } else {
-                HttpClient.checkConnection(this, single, this);
-            }
+            if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
+                ongoingTest = WebSocketClient.checkConnection(single, this);
+            else
+                ongoingTest = HttpClient.checkConnection(single, this);
 
             handler.postDelayed(() -> {
                 cancel.setVisibility(View.VISIBLE);
@@ -236,7 +238,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void cancelConnection() {
-        AbstractClient.invalidate();
+        if (ongoingTest != null) {
+            try {
+                ongoingTest.close();
+            } catch (IOException ignored) {
+            }
+        }
+
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
     }

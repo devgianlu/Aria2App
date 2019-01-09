@@ -75,7 +75,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
         String title = getIntent().getStringExtra("title");
         if (gid == null || theme == 0 || title == null) {
             super.onCreate(savedInstanceState);
-            Toaster.with(MoreAboutDownloadActivity.this).message(R.string.failedLoading).ex(new IllegalArgumentException("gid = " + gid + ", theme = " + theme + ", title = " + title)).show();
+            Toaster.with(this).message(R.string.failedLoading).ex(new IllegalArgumentException("gid = " + gid + ", theme = " + theme + ", title = " + title)).show();
             onBackPressed();
             return;
         }
