@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.util.Base64;
-
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.Logging;
 
@@ -141,7 +139,7 @@ public final class NetUtils {
                 .get().url(baseUrl);
 
         if (dd.auth)
-            builder.header("Authorization", "Basic " + Base64.encodeToString((dd.username + ":" + dd.password).getBytes(), Base64.NO_WRAP));
+            builder.header("Authorization", dd.getAuthorizationHeader());
 
         return builder.build();
     }

@@ -17,6 +17,7 @@ public final class PK extends CommonPK {
     public static final Prefs.Key SEARCH_ENGINES_CACHE_AGE = new Prefs.Key("searchEngineCacheAge");
     public static final Prefs.KeyWithDefault<String> DD_DOWNLOAD_PATH = new Prefs.KeyWithDefault<>("dd_downloadPath", () -> Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
     public static final Prefs.KeyWithDefault<Boolean> DD_RESUME = new Prefs.KeyWithDefault<>("dd_resume", true);
+    public static final Prefs.KeyWithDefault<Boolean> DD_USE_EXTERNAL = new Prefs.KeyWithDefault<>("dd_useExternal", false);
     public static final Prefs.Key LAST_USED_PROFILE = new Prefs.Key("lastUsedProfile");
     public static final Prefs.KeyWithDefault<Integer> DD_MAX_SIMULTANEOUS_DOWNLOADS = new Prefs.KeyWithDefault<>("dd_maxSimultaneousDownloads", 3);
     public static final Prefs.KeyWithDefault<Boolean> A2_NOTIFS_AT_BOOT = new Prefs.KeyWithDefault<>("a2_enableNotificationsAtBoot", true);

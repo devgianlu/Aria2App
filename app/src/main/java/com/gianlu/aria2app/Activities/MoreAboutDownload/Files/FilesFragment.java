@@ -2,7 +2,9 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Files;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Browser;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +28,7 @@ import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.Discovery;
@@ -36,6 +39,7 @@ import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.BreadcrumbsView;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
@@ -57,6 +61,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import okhttp3.HttpUrl;
 
 public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
     private FilesAdapter adapter;
@@ -305,7 +310,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                                         startActivity(intent);
                                         AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
                                     })
-                                    .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, file));
+                                    .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, result, file));
 
                             showDialog(builder);
                             return;
@@ -313,7 +318,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                     }
                 }
 
-                shouldDownload(profile, file);
+                shouldDownload(profile, result, file);
             }
 
             @Override
@@ -324,21 +329,50 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         });
     }
 
-    private void shouldDownload(MultiProfile profile, AriaFile file) {
-        startDownloadInternal(profile, file, null);
+    private void shouldDownload(MultiProfile profile, OptionsMap global, AriaFile file) {
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_FILE);
+
+        if (Prefs.getBoolean(PK.DD_USE_EXTERNAL)) {
+            MultiProfile.DirectDownload dd = profile.getProfile(getContext()).directDownload;
+            HttpUrl base;
+            if (dd == null || (base = dd.getUrl()) == null) return;
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(file.getDownloadUrl(global, base).toString()));
+
+            if (dd.auth) {
+                Bundle headers = new Bundle();
+                headers.putString("Authorization", dd.getAuthorizationHeader());
+                intent.putExtra(Browser.EXTRA_HEADERS, headers);
+            }
+
+            startActivity(intent);
+        } else {
+            startDownloadInternal(profile, file, null);
+        }
     }
 
     @Override
-    public void onDownloadDirectory(@NonNull final MultiProfile profile, @NonNull final AriaDirectory dir) {
+    public void onDownloadDirectory(@NonNull MultiProfile profile, @NonNull AriaDirectory dir) {
         if (dirSheet != null) {
             dirSheet.dismiss();
             dirSheet = null;
             dismissDialog();
         }
 
-        startDownloadInternal(profile, null, dir);
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_DIRECTORY);
+
+        if (Prefs.getBoolean(PK.DD_USE_EXTERNAL)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle(R.string.cannotDownloadDirWithExternal)
+                    .setMessage(R.string.cannotDownloadDirWithExternal_message)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> startDownloadInternal(profile, null, dir))
+                    .setNegativeButton(android.R.string.no, null);
+
+            showDialog(builder);
+        } else {
+            startDownloadInternal(profile, null, dir);
+        }
     }
 
     @Override

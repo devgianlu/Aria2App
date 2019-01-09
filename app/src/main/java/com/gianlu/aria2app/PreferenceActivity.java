@@ -108,6 +108,14 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
         @Override
         protected void buildPreferences(@NonNull Context context) {
+            MaterialCheckboxPreference external = new MaterialCheckboxPreference.Builder(context)
+                    .key(PK.DD_USE_EXTERNAL.key())
+                    .defaultValue(PK.DD_USE_EXTERNAL.fallback())
+                    .build();
+            external.setTitle(R.string.prefs_ddUseExternal);
+            external.setSummary(R.string.prefs_ddUseExternal_summary);
+            addPreference(external);
+
             MaterialEditTextPreference downloadPath = new MaterialEditTextPreference.Builder(context)
                     .showValueMode(AbsMaterialTextValuePreference.SHOW_ON_BOTTOM)
                     .key(PK.DD_DOWNLOAD_PATH.key())
@@ -133,6 +141,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
             resume.setTitle(R.string.prefs_ddResume);
             resume.setSummary(R.string.prefs_ddResume_summary);
             addPreference(resume);
+
+            addController(external, false, downloadPath, concurrentDownloads, resume);
         }
 
         @Override
