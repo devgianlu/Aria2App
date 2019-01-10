@@ -321,5 +321,5 @@
     <string name="prefs_ddUseExternal">使用外部下载管理器</string>
     <string name="prefs_ddUseExternal_summary">把下载任务发送至系统或其它应用</string>
     <string name="cannotDownloadDirWithExternal">不能下载目录</string>
-    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下载管理器下载目录。请问您想用内置下载管理器下载吗？</string>																	   
+    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下载管理器下载目录。请问您想使用内置下载管理器下载吗？</string>																	   
 </resources>
