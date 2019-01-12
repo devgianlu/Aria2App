@@ -276,7 +276,6 @@
     <string name="secondSpace_selectDownload">点击更多的下载，以显示更多的信息。</string>
     <string name="writePermissionDenied">没有写入权限！</string>
     <string name="readPermissionDenied">没有读取权限！</string>
-    <string name="isp">互联网服务提供商: %s</string>
     <string name="batchAdd">批量添加</string>
     <string name="torrents">种子文件</string>
     <string name="addSingle">添加单个任务</string>
