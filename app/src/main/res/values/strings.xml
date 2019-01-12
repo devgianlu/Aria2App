@@ -226,6 +226,7 @@
     <string name="numSeederShort"><![CDATA[<b>Seeders:</b>]]> %d</string>
     <string name="numLeechesShort"><![CDATA[<b>Leeches:</b>]]> %d</string>
     <string name="searchEngine"><![CDATA[<b>Search engine:</b>]]> %s</string>
+    <string name="domain"><![CDATA[<b>Domain:</b>]]> %s</string>
     <string name="missingEngines_message">Some engines couldn\'t complete the request.</string>
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">Search engines</string>
@@ -284,7 +285,6 @@
     <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
-    <string name="isp">Internet service provider: %s</string>
     <string name="batchAdd">Batch add</string>
     <string name="torrents">Torrents</string>
     <string name="metalinks">Metalinks</string>
