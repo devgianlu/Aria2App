@@ -107,8 +107,12 @@ public class NotificationService extends Service {
     private static void startInternal(@NonNull Context context, @NonNull StartedFrom startedFrom) {
         debug("Called start service, startedFrom=" + startedFrom);
         if (ProfilesManager.get(context).hasNotificationProfiles()) {
-            ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
-                    .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
+            try {
+                ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
+                        .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
+            } catch (SecurityException ex) {
+                Logging.log("Cannot start notification service.", ex);
+            }
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
         }
