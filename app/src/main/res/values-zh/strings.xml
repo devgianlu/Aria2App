@@ -73,7 +73,7 @@
     <string name="general">一般</string>
     <string name="notifications">通知</string>
     <string name="about_aria2">关于aria2</string>
-    <string name="saveSession">保存会议</string>
+    <string name="saveSession">保存会话</string>
     <string name="editProfile">编辑或删除配置文件</string>
     <string name="stopNotificationService">停止服务</string>
     <string name="menu_downloadQuickOptions">快速选项</string>
