@@ -54,7 +54,7 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
         int textColorRes = 0;
         if (bundle instanceof AddUriBundle) {
             text = CommonUtils.join(((AddUriBundle) bundle).uris, ", ");
-            textColorRes = R.color.colorURI_pressed;
+            textColorRes = R.color.colorAccent_pressed;
         } else if (bundle instanceof AddTorrentBundle) {
             text = ((AddTorrentBundle) bundle).filename;
             textColorRes = R.color.colorTorrent_pressed;
