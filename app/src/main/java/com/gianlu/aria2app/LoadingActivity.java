@@ -298,9 +298,26 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         else this.goTo = intent;
     }
 
+    private void launchWebView() {
+        Intent intent = new Intent(this, WebViewActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("shareData", shareData);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onConnected(@NonNull AbstractClient client) {
-        launchMain();
+        if (shareData != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.useWebView)
+                    .setMessage(R.string.useWebView_message)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> launchWebView())
+                    .setNeutralButton(android.R.string.no, (dialog, which) -> launchMain());
+            showDialog(builder);
+        } else {
+            launchMain();
+        }
+
         return false;
     }
 

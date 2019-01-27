@@ -331,4 +331,9 @@
     <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
     <string name="cannotDownloadDirWithExternal">Cannot download directory</string>
     <string name="cannotDownloadDirWithExternal_message">You can\'t download a directory using an external downloader. Do you want to start the download with the integrated downloader?</string>
+    <string name="isThisToDownload">Is this what you want to download?</string>
+    <string name="isThisToDownload_message">Do you want to start a download for `%s`?</string>
+    <string name="useWebView">Use WebView?</string>
+    <string name="useWebView_message">If you\'re trying to download something that hasn\'t a permanent URL, you can use this feature to intercept the download as if it was happening on your browser. Do you want to open a WebView?</string>
+    <string name="webView">WebView</string>
 </resources>

@@ -333,7 +333,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         paused = findViewById(R.id.main_paused);
         stopped = findViewById(R.id.main_stopped);
         overallChart = findViewById(R.id.main_overallChart);
-        final FrameLayout overallChartContainer = findViewById(R.id.main_overallChartContainer);
+        FrameLayout overallChartContainer = findViewById(R.id.main_overallChartContainer);
         toggleChart = findViewById(R.id.main_toggleChart);
         toggleChart.setOnClickListener(view -> CommonUtils.handleCollapseClick(toggleChart, overallChartContainer));
 
@@ -430,7 +430,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 public void onTabReselected(TabLayout.Tab tab) {
                 }
             });
-
             hideSecondSpace();
         }
 
