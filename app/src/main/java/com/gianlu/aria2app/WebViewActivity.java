@@ -3,16 +3,13 @@ package com.gianlu.aria2app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 public class WebViewActivity extends ActivityWithDialog {
@@ -28,24 +25,10 @@ public class WebViewActivity extends ActivityWithDialog {
         Uri uri = getIntent().getParcelableExtra("shareData");
         String loadUrl = uri.toString();
 
-        web.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return true;
-            }
+        WebSettings settings = web.getSettings();
+        settings.setJavaScriptEnabled(true);
 
-            @Nullable
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                if (request.hasGesture() && request.isForMainFrame()) {
-                    Uri url = request.getUrl();
-                    if (!loadUrl.equals(url.toString()))
-                        interceptedPage(url);
-                }
-
-                return null;
-            }
-        });
+        web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> interceptedPage(Uri.parse(url)));
 
         web.loadUrl(loadUrl);
     }
