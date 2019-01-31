@@ -7,12 +7,13 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -23,14 +24,14 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
     public final String filename;
     private final String fileUri;
 
-    public AddBase64Bundle(@NonNull String base64, @NonNull String filename, @NonNull Uri fileUri, @Nullable Integer position, @Nullable HashMap<String, String> options) {
+    public AddBase64Bundle(@NonNull String base64, @NonNull String filename, @NonNull Uri fileUri, @Nullable Integer position, @Nullable OptionsMap options) {
         super(position, options);
         this.base64 = base64;
         this.filename = filename;
         this.fileUri = fileUri.toString();
     }
 
-    AddBase64Bundle(@NonNull Context context, @NonNull Uri fileUri, @Nullable Integer position, @Nullable HashMap<String, String> options) throws CannotReadException {
+    AddBase64Bundle(@NonNull Context context, @NonNull Uri fileUri, @Nullable Integer position, @Nullable OptionsMap options) throws CannotReadException {
         super(position, options);
         this.base64 = readBase64(context, fileUri);
         this.filename = extractFilename(context, fileUri);

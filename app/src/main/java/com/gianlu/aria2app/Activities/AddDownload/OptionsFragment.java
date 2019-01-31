@@ -25,7 +25,6 @@ import com.gianlu.commonutils.MessageView;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -90,8 +89,10 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         }
 
         layout.findViewById(R.id.optionsFragment_filenameContainer).setVisibility(isAddUri ? View.VISIBLE : View.GONE);
-        if (isAddUri && bundle != null && bundle.options != null)
-            filename.setText(bundle.options.get("out"));
+        if (isAddUri && bundle != null && bundle.options != null) {
+            OptionsMap.OptionValue val = bundle.options.get("out");
+            if (val != null) filename.setText(val.string());
+        }
 
         helper.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
             @Override
@@ -134,10 +135,10 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
     }
 
     @NonNull
-    public HashMap<String, String> getOptions() {
-        if (adapter == null) return new HashMap<>();
+    public OptionsMap getOptions() {
+        if (adapter == null) return new OptionsMap();
         List<Option> options = adapter.getOptions();
-        HashMap<String, String> map = new HashMap<>();
+        OptionsMap map = new OptionsMap();
 
         for (Option option : options)
             if (option.isValueChanged())

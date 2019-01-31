@@ -3,6 +3,7 @@ package com.gianlu.aria2app;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -10,11 +11,14 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.gianlu.aria2app.Main.MainActivity;
+import com.gianlu.aria2app.WebView.InterceptedRequest;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -25,15 +29,25 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class WebViewActivity extends ActivityWithDialog {
+    private final List<InterceptedRequest> interceptedRequests = new ArrayList<>();
     private OkHttpClient client;
 
-    @NonNull
+    @Nullable
     private static Request buildRequest(@NonNull WebResourceRequest req) {
-        Request.Builder builder = new Request.Builder().url(req.getUrl().toString());
+        String method = req.getMethod();
+        if (method.equals("POST") || method.equals("PUT") || method.equals("PATCH") || method.equals("PROPPATCH") || method.equals("REPORT"))
+            return null;
+
+        String url = req.getUrl().toString();
+
+        Request.Builder builder = new Request.Builder().url(url);
         builder.method(req.getMethod(), null);
 
         for (Map.Entry<String, String> entry : req.getRequestHeaders().entrySet())
             builder.addHeader(entry.getKey(), entry.getValue());
+
+        String cookies = CookieManager.getInstance().getCookie(url);
+        if (cookies != null && !cookies.isEmpty()) builder.addHeader("Cookie", cookies);
 
         return builder.build();
     }
@@ -43,6 +57,10 @@ public class WebViewActivity extends ActivityWithDialog {
         Map<String, String> headers = new HashMap<>();
         for (int i = 0; i < resp.headers().size(); i++)
             headers.put(resp.headers().name(i), resp.headers().value(i));
+
+        String cookies;
+        if ((cookies = resp.header("Set-Cookie")) != null)
+            CookieManager.getInstance().setCookie(resp.request().url().toString(), cookies);
 
         String contentType = resp.header("Content-Type");
         String mimeType = null;
@@ -75,14 +93,30 @@ public class WebViewActivity extends ActivityWithDialog {
         settings.setJavaScriptEnabled(true);
 
         client = new OkHttpClient();
-        web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> interceptedPage(Uri.parse(url)));
+        web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+            synchronized (interceptedRequests) {
+                for (InterceptedRequest req : interceptedRequests) {
+                    if (req.matches(url)) {
+                        interceptedDownload(req);
+                        return;
+                    }
+                }
+            }
+        });
 
         web.setWebViewClient(new WebViewClient() {
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                Request req = buildRequest(request);
+                if (req == null) return null;
+
                 try {
-                    Response resp = client.newCall(buildRequest(request)).execute();
+                    Response resp = client.newCall(req).execute();
+                    synchronized (interceptedRequests) {
+                        interceptedRequests.add(InterceptedRequest.from(resp));
+                    }
+
                     return buildResponse(resp);
                 } catch (IOException ex) {
                     Logging.log(ex);
@@ -94,20 +128,20 @@ public class WebViewActivity extends ActivityWithDialog {
         web.loadUrl(loadUrl);
     }
 
-    private void interceptedPage(@NonNull Uri url) {
+    private void interceptedDownload(@NonNull InterceptedRequest req) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.isThisToDownload)
-                .setMessage(getString(R.string.isThisToDownload_message, url))
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> launchMain(url))
+                .setMessage(getString(R.string.isThisToDownload_message, req.url()))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> launchMain(req))
                 .setNegativeButton(android.R.string.no, null);
 
         showDialog(builder);
     }
 
-    private void launchMain(@NonNull Uri url) {
+    private void launchMain(@NonNull InterceptedRequest req) {
         Intent intent = new Intent(this, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("shareData", url);
+        intent.putExtra("shareReq", req);
         startActivity(intent);
     }
 }

@@ -12,7 +12,6 @@ import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Aria2.SessionInfo;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
-import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONArray;
@@ -22,7 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -133,10 +131,10 @@ public final class AriaRequests {
     }
 
     @NonNull
-    public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
+    public static AbstractClient.AriaRequestWithResult<String> addUri(@NonNull Collection<String> uris, @Nullable Integer pos, @Nullable OptionsMap options) throws JSONException {
         Object[] params = new Object[3];
         params[0] = CommonUtils.toJSONArray(uris, true);
-        if (options != null) params[1] = OptionsUtils.toJson(options);
+        if (options != null) params[1] = options.toJson();
         else params[1] = new JSONObject();
         if (pos != null) params[2] = pos;
         else params[2] = Integer.MAX_VALUE;
@@ -144,12 +142,12 @@ public final class AriaRequests {
     }
 
     @NonNull
-    public static AbstractClient.AriaRequestWithResult<String> addTorrent(@NonNull String base64, @Nullable Collection<String> uris, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
+    public static AbstractClient.AriaRequestWithResult<String> addTorrent(@NonNull String base64, @Nullable Collection<String> uris, @Nullable Integer pos, @Nullable OptionsMap options) throws JSONException {
         Object[] params = new Object[4];
         params[0] = base64;
         if (uris != null) params[1] = CommonUtils.toJSONArray(uris, true);
         else params[1] = new JSONArray();
-        if (options != null) params[2] = OptionsUtils.toJson(options);
+        if (options != null) params[2] = options.toJson();
         else params[2] = new JSONObject();
         if (pos != null) params[3] = pos;
         else params[3] = Integer.MAX_VALUE;
@@ -157,10 +155,10 @@ public final class AriaRequests {
     }
 
     @NonNull
-    public static AbstractClient.AriaRequestWithResult<String> addMetalink(@NonNull String base64, @Nullable Integer pos, @Nullable Map<String, String> options) throws JSONException {
+    public static AbstractClient.AriaRequestWithResult<String> addMetalink(@NonNull String base64, @Nullable Integer pos, @Nullable OptionsMap options) throws JSONException {
         Object[] params = new Object[3];
         params[0] = base64;
-        if (options != null) params[1] = OptionsUtils.toJson(options);
+        if (options != null) params[1] = options.toJson();
         else params[1] = new JSONObject();
         if (pos != null) params[2] = pos;
         else params[2] = Integer.MAX_VALUE;
@@ -168,13 +166,13 @@ public final class AriaRequests {
     }
 
     @NonNull
-    public static AbstractClient.AriaRequest changeDownloadOptions(String gid, Map<String, String> options) throws JSONException {
-        return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_DOWNLOAD_OPTIONS, gid, OptionsUtils.toJson(options));
+    public static AbstractClient.AriaRequest changeDownloadOptions(String gid, OptionsMap options) throws JSONException {
+        return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_DOWNLOAD_OPTIONS, gid, options.toJson());
     }
 
     @NonNull
-    public static AbstractClient.AriaRequest changeGlobalOptions(Map<String, String> options) throws JSONException {
-        return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_GLOBAL_OPTIONS, OptionsUtils.toJson(options));
+    public static AbstractClient.AriaRequest changeGlobalOptions(OptionsMap options) throws JSONException {
+        return new AbstractClient.AriaRequest(AbstractClient.Method.CHANGE_GLOBAL_OPTIONS, options.toJson());
     }
 
     @NonNull

@@ -13,10 +13,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -43,7 +41,9 @@ public class Download {
             if (newIndexes.isEmpty()) return ChangeSelectionResult.EMPTY;
         }
 
-        client.sendSync(AriaRequests.changeDownloadOptions(gid, Collections.singletonMap("select-file", CommonUtils.join(newIndexes, ","))));
+        OptionsMap map = new OptionsMap();
+        map.put("select-file", CommonUtils.join(newIndexes, ","));
+        client.sendSync(AriaRequests.changeDownloadOptions(gid, map));
         if (select) return ChangeSelectionResult.SELECTED;
         else return ChangeSelectionResult.DESELECTED;
     }
@@ -90,7 +90,7 @@ public class Download {
         client.send(AriaRequests.changePosition(gid, pos, mode), listener);
     }
 
-    public final void changeOptions(Map<String, String> options, AbstractClient.OnSuccess listener) throws JSONException {
+    public final void changeOptions(OptionsMap options, AbstractClient.OnSuccess listener) throws JSONException {
         client.send(AriaRequests.changeDownloadOptions(gid, options), listener);
     }
 
@@ -109,7 +109,7 @@ public class Download {
     public final void restart(AbstractClient.OnResult<String> listener) {
         client.batch(client -> {
             DownloadWithUpdate old = client.sendSync(AriaRequests.tellStatus(gid));
-            Map<String, String> oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
+            OptionsMap oldOptions = client.sendSync(AriaRequests.getDownloadOptions(gid));
 
             Set<String> newUrls = new HashSet<>();
             for (AriaFile file : old.update().files)
@@ -141,12 +141,12 @@ public class Download {
 
     public final void changeSelection(final Integer[] selIndexes, final boolean select, AbstractClient.OnResult<ChangeSelectionResult> listener) {
         client.batch(client -> {
-            Map<String, String> options = client.sendSync(AriaRequests.getDownloadOptions(gid));
-            String currIndexes = options.get("select-file");
+            OptionsMap options = client.sendSync(AriaRequests.getDownloadOptions(gid));
+            OptionsMap.OptionValue currIndexes = options.get("select-file");
             if (currIndexes == null)
                 return performSelectIndexesOperation(client, gid, client.sendSync(AriaRequests.getFileIndexes(gid)), selIndexes, select);
             else
-                return performSelectIndexesOperation(client, gid, CommonUtils.toIntsList(currIndexes, ","), selIndexes, select);
+                return performSelectIndexesOperation(client, gid, CommonUtils.toIntsList(currIndexes.string(), ","), selIndexes, select);
         }, listener);
     }
 

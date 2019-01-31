@@ -1,15 +1,16 @@
 package com.gianlu.aria2app.Activities.AddDownload;
 
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
+
 import java.io.Serializable;
-import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 
 public abstract class AddDownloadBundle implements Serializable {
     public final Integer position;
-    public final HashMap<String, String> options;
+    public final OptionsMap options;
 
-    public AddDownloadBundle(@Nullable Integer position, @Nullable HashMap<String, String> options) {
+    public AddDownloadBundle(@Nullable Integer position, @Nullable OptionsMap options) {
         this.position = position;
         this.options = options;
     }

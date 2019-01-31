@@ -77,9 +77,10 @@ public class AriaFile {
 
     @NonNull
     public String getRelativePath(@NonNull OptionsMap global) {
-        String dir = global.get("dir");
-        if (dir == null) dir = "";
-        return path.substring(dir.length() + 1);
+        OptionsMap.OptionValue dir = global.get("dir");
+        String dirStr = dir == null ? null : dir.string();
+        if (dirStr == null) dirStr = "";
+        return path.substring(dirStr.length() + 1);
     }
 
     public boolean completed() {

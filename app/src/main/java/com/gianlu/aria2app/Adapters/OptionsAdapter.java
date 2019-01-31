@@ -100,10 +100,10 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         holder.name.setText(option.name);
 
         if (option.isValueChanged()) {
-            holder.value.setText(option.newValue);
+            holder.value.setText(option.newValue.strings(", ")); // FIXME
             holder.value.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
         } else {
-            holder.value.setText(option.value);
+            holder.value.setText(option.value.strings(", ")); // FIXME
             holder.value.setTextColor(CommonUtils.resolveAttrAsColor(context, android.R.attr.textColorPrimary));
         }
 

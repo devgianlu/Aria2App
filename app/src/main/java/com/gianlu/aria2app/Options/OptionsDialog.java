@@ -35,8 +35,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import androidx.annotation.NonNull;
@@ -156,7 +154,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         OptionsAdapter adapter = optionsView.getAdapter();
         if (adapter == null) return;
 
-        Map<String, String> map = new HashMap<>();
+        OptionsMap map = new OptionsMap();
         for (Option option : adapter.getOptions())
             if (option.isValueChanged())
                 map.put(option.name, option.newValue);

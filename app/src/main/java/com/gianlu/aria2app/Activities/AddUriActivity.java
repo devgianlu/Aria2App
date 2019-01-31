@@ -11,6 +11,7 @@ import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
 import com.gianlu.aria2app.Adapters.StatePagerAdapter;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -19,7 +20,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -33,6 +33,10 @@ public class AddUriActivity extends AddDownloadActivity {
 
     public static void startAndAdd(Context context, URI uri) {
         context.startActivity(new Intent(context, AddUriActivity.class).putExtra("uri", uri));
+    }
+
+    public static void startWithBundle(Context context, AddUriBundle bundle) {
+        context.startActivity(new Intent(context, AddUriActivity.class).putExtra("edit", bundle));
     }
 
     @Override
@@ -95,7 +99,7 @@ public class AddUriActivity extends AddDownloadActivity {
             return null;
         }
 
-        HashMap<String, String> options = optionsFragment.getOptions();
+        OptionsMap options = optionsFragment.getOptions();
         String filename = optionsFragment.getFilename();
         if (filename != null) options.put("out", filename);
         return new AddUriBundle(uris, optionsFragment.getPosition(), options);
