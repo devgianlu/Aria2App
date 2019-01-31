@@ -274,7 +274,7 @@
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">Options exported successfully to %s</string>
     <string name="noActivity">No activity</string>
-    <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to separate the items with a semicolon (;).</string>
+    <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to have them on different lines.</string>
     <string name="couldStreamVideo">Stream video</string>
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
     <string name="stream">Stream</string>

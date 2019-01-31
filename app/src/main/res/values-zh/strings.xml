@@ -265,7 +265,6 @@
     <string name="failedExportingOptions">导出选项失败！</string>
     <string name="exportedOptions">选项已成功导出到 %s</string>
     <string name="noActivity">没有活动</string>
-    <string name="multipleOptions_help">可以在命令行上多次指定此选项。请使用分号(;)分隔项目。</string>
     <string name="couldStreamVideo">播放视频</string>
     <string name="couldStreamVideo_message">您的应用程序中，有可以播放此视频的。你想现在看还是直接下载？</string>
     <string name="stream">播放</string>										 

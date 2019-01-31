@@ -264,7 +264,6 @@
     <string name="failedExportingOptions">匯出選項失敗!</string>
     <string name="exportedOptions">選項已成功匯出到 %s</string>
     <string name="noActivity">沒有活動</string>
-    <string name="multipleOptions_help">可以在命令行上多次指定此選項。請使用分號(;)分隔各項。</string>
     <string name="couldStreamVideo">播放影片</string>
     <string name="couldStreamVideo_message">您的有可以播放此影片的 App，您想現在看還是 DirectDownload?</string>
     <string name="stream">播放</string>										 

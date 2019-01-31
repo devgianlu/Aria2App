@@ -33,7 +33,10 @@ public class OptionsMap extends HashMap<String, OptionsMap.OptionValue> {
 
     @Nullable
     public OptionValue put(String key, String value) {
-        return put(key, new OptionValue(value));
+        if (Objects.equals(key, "header") || Objects.equals(key, "index-out"))
+            return put(key, value.split("\\n"));
+        else
+            return put(key, new OptionValue(value));
     }
 
     @Nullable
