@@ -35,7 +35,8 @@ public final class OptionsUtils {
 
         if (option.isValueChanged())
             edit.setText(option.newValue == null ? null : option.newValue.strings("\n"));
-        else edit.setText(option.value == null ? null : option.value.strings("\n"));
+        else
+            edit.setText(option.value == null ? null : option.value.strings("\n"));
 
         layout.findViewById(R.id.editOptionDialog_multipleHelp)
                 .setVisibility(multiple ? View.VISIBLE : View.GONE);

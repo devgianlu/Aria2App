@@ -53,11 +53,10 @@ public class OptionsMap extends HashMap<String, OptionsMap.OptionValue> {
 
         JSONObject json = new JSONObject();
         for (Map.Entry<String, OptionValue> entry : entrySet()) {
-            if (entry.getValue().size() > 1) {
+            if (entry.getValue().size() > 1)
                 json.put(entry.getKey(), entry.getValue().toJsonArray());
-            } else {
+            else
                 json.put(entry.getKey(), entry.getValue().string());
-            }
         }
 
         return json;
