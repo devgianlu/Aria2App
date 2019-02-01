@@ -17,6 +17,8 @@ import android.widget.EditText;
 import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
 
@@ -28,6 +30,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -92,6 +95,11 @@ public class WebViewActivity extends ActivityWithDialog {
         web = new WebView(this);
         setContentView(web);
         setTitle(getString(R.string.webView) + " - " + getString(R.string.app_name));
+
+        if (getIntent().getBooleanExtra("canGoBack", true)) {
+            ActionBar bar = getSupportActionBar();
+            if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
+        }
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -179,6 +187,7 @@ public class WebViewActivity extends ActivityWithDialog {
                 .setNegativeButton(android.R.string.no, null);
 
         showDialog(builder);
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_INTERCEPTED_WEBVIEW);
     }
 
     private void launchAddUri(@NonNull InterceptedRequest req) {

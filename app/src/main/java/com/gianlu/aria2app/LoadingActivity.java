@@ -302,7 +302,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private void launchWebView() {
         Intent intent = new Intent(this, WebViewActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("shareData", shareData);
+        intent.putExtra("shareData", shareData)
+                .putExtra("canGoBack", false);
         startActivity(intent);
     }
 

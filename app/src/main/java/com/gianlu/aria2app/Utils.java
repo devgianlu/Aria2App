@@ -49,6 +49,7 @@ public final class Utils {
     public static final String ACTION_PLAY_VIDEO = "play_video";
     public static final String ACTION_NEW_BATCH = "new_batch_add";
     public static final String ACTION_START_ARIA2ANDROID = "start_aria2android";
+    public static final String ACTION_INTERCEPTED_WEBVIEW = "intercepted_webview";
     private static final Collection<String> streamableMimeTypes = new HashSet<>();
 
     static {
