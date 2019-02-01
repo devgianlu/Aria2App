@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import okhttp3.Headers;
 import okhttp3.Response;
 
 public class InterceptedRequest implements Serializable {
@@ -29,8 +30,9 @@ public class InterceptedRequest implements Serializable {
     @NonNull
     public static InterceptedRequest from(@NonNull Response resp) {
         HashMap<String, String> headers = new HashMap<>();
-        for (int i = 0; i < resp.headers().size(); i++)
-            headers.put(resp.headers().name(i), resp.headers().value(i));
+        Headers reqHeaders = resp.request().headers();
+        for (int i = 0; i < reqHeaders.size(); i++)
+            headers.put(reqHeaders.name(i), reqHeaders.value(i));
 
         ArrayList<InterceptedRequest> prior = new ArrayList<>();
         handlePriorResponse(resp, prior);

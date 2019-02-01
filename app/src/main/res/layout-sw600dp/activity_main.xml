@@ -157,8 +157,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
-                        android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
                         app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
                         fab:fab_addButtonColorNormal="@color/colorAccent"
                         fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
@@ -204,6 +204,16 @@
                             fab:fab_icon="@drawable/ic_torrent_white_48dp"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addTorrent" />
+
+                        <com.getbase.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/mainFab_webView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            fab:fab_colorNormal="@color/colorWebView"
+                            fab:fab_colorPressed="@color/colorWebView_pressed"
+                            fab:fab_icon="@drawable/baseline_language_24"
+                            fab:fab_size="mini"
+                            fab:fab_title="@string/webView" />
 
                         <com.getbase.floatingactionbutton.FloatingActionButton
                             android:id="@+id/mainFab_addURI"

@@ -22,7 +22,6 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddDownload.AddBase64Bundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
-import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddMetalinkActivity;
 import com.gianlu.aria2app.Activities.AddTorrentActivity;
 import com.gianlu.aria2app.Activities.AddUriActivity;
@@ -66,7 +65,7 @@ import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.DownloadCardsTutorial;
 import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.aria2app.WebView.InterceptedRequest;
+import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
@@ -357,6 +356,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         fabAddMetalink.setOnClickListener(view -> startActivity(new Intent(this, AddMetalinkActivity.class)));
         FloatingActionButton fabBatchAdd = findViewById(R.id.mainFab_batchAdd);
         fabBatchAdd.setOnClickListener(v -> startActivity(new Intent(this, BatchAddActivity.class)));
+        FloatingActionButton fabWebView = findViewById(R.id.mainFab_webView);
+        fabWebView.setOnClickListener(v -> startActivity(new Intent(this, WebViewActivity.class)));
 
         recyclerViewLayout.startLoading();
 
@@ -366,8 +367,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         String shortcutAction = getIntent().getStringExtra("shortcutAction");
-        final Uri shareData = getIntent().getParcelableExtra("shareData");
-        InterceptedRequest shareReq = (InterceptedRequest) getIntent().getSerializableExtra("shareReq");
+        Uri shareData = getIntent().getParcelableExtra("shareData");
         if (shortcutAction != null) {
             switch (shortcutAction) {
                 case LoadingActivity.SHORTCUT_ADD_URI:
@@ -410,8 +410,6 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                     });
                 }
             }
-        } else if (shareReq != null) {
-            AddUriActivity.startWithBundle(this, AddUriBundle.fromIntercepted(shareReq));
         }
 
         secondSpace = findViewById(R.id.main_secondSpace); // Tablet layout stuff (sw600dp)

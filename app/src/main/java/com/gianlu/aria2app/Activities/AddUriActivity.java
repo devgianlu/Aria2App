@@ -35,10 +35,6 @@ public class AddUriActivity extends AddDownloadActivity {
         context.startActivity(new Intent(context, AddUriActivity.class).putExtra("uri", uri));
     }
 
-    public static void startWithBundle(Context context, AddUriBundle bundle) {
-        context.startActivity(new Intent(context, AddUriActivity.class).putExtra("edit", bundle));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState, @Nullable AddDownloadBundle bundle) {
         setContentView(R.layout.activity_add_download);

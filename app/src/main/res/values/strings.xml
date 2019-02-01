@@ -336,4 +336,6 @@
     <string name="useWebView">Use WebView?</string>
     <string name="useWebView_message">If you\'re trying to download something that hasn\'t a permanent URL, you can use this feature to intercept the download as if it was happening on your browser. Do you want to open a WebView?</string>
     <string name="webView">WebView</string>
+    <string name="visit">Visit</string>
+    <string name="goTo">Go to</string>
 </resources>

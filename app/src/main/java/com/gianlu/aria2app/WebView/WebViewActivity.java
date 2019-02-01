@@ -3,14 +3,19 @@ package com.gianlu.aria2app.WebView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 
-import com.gianlu.aria2app.Main.MainActivity;
+import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
+import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
@@ -29,8 +34,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class WebViewActivity extends ActivityWithDialog {
+    private static final int ADD_URI_REQUEST_CODE = 3;
     private final List<InterceptedRequest> interceptedRequests = new ArrayList<>();
     private OkHttpClient client;
+    private WebView web;
 
     @Nullable
     private static Request buildRequest(@NonNull WebResourceRequest req) {
@@ -82,12 +89,9 @@ public class WebViewActivity extends ActivityWithDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        WebView web = new WebView(this);
+        web = new WebView(this);
         setContentView(web);
         setTitle(getString(R.string.webView) + " - " + getString(R.string.app_name));
-
-        Uri uri = getIntent().getParcelableExtra("shareData");
-        String loadUrl = uri.toString();
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -126,23 +130,84 @@ public class WebViewActivity extends ActivityWithDialog {
             }
         });
 
-        web.loadUrl(loadUrl);
+        Uri uri = getIntent().getParcelableExtra("shareData");
+        if (uri != null) web.loadUrl(uri.toString());
+        else showGoToDialog(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.web_view, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.webView_goTo) {
+            showGoToDialog(false);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showGoToDialog(boolean compulsory) {
+        EditText input = new EditText(this);
+        input.setSingleLine(true);
+        input.setHint("https://example.com");
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.goTo)
+                .setView(input)
+                .setCancelable(!compulsory)
+                .setPositiveButton(R.string.visit, (dialog, which) -> web.loadUrl(input.getText().toString()));
+
+        if (compulsory)
+            builder.setNegativeButton(android.R.string.cancel, (d, i) -> onBackPressed());
+        else
+            builder.setNegativeButton(android.R.string.cancel, null);
+
+        showDialog(builder);
     }
 
     private void interceptedDownload(@NonNull InterceptedRequest req) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.isThisToDownload)
                 .setMessage(getString(R.string.isThisToDownload_message, req.url()))
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> launchMain(req))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> launchAddUri(req))
                 .setNegativeButton(android.R.string.no, null);
 
         showDialog(builder);
     }
 
-    private void launchMain(@NonNull InterceptedRequest req) {
-        Intent intent = new Intent(this, MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("shareReq", req);
-        startActivity(intent);
+    private void launchAddUri(@NonNull InterceptedRequest req) {
+        AddUriBundle bundle = AddUriBundle.fromIntercepted(req);
+        if (getIntent().getBooleanExtra("startedForResult", false)) {
+            startActivityForResult(new Intent(this, AddUriActivity.class)
+                    .putExtra("startedForResult", true)
+                    .putExtra("edit", bundle), ADD_URI_REQUEST_CODE);
+        } else {
+            startActivity(new Intent(this, AddUriActivity.class)
+                    .putExtra("edit", bundle));
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == ADD_URI_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null) {
+                setResult(RESULT_OK, new Intent()
+                        .putExtra("pos", data.getIntExtra("pos", -1))
+                        .putExtra("bundle", data.getSerializableExtra("bundle")));
+            } else {
+                setResult(RESULT_CANCELED);
+            }
+
+            finish();
+            return;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
