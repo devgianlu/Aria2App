@@ -129,7 +129,7 @@
         </activity>
 
         <!-- WebView activity -->
-        <activity android:name=".WebViewActivity" />
+        <activity android:name=".WebView.WebViewActivity" />
 
         <!-- Edit profile activity -->
         <activity

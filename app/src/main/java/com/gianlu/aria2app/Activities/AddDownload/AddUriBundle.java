@@ -60,6 +60,9 @@ public class AddUriBundle extends AddDownloadBundle implements Serializable {
         OptionsMap map = new OptionsMap();
         map.put("header", headers.toArray(new String[0]));
 
+        String filename = req.filename();
+        if (filename != null) map.put("out", filename);
+
         return new AddUriBundle(uris, null, map);
     }
 }

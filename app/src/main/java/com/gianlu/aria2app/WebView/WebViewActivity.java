@@ -1,4 +1,4 @@
-package com.gianlu.aria2app;
+package com.gianlu.aria2app.WebView;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.gianlu.aria2app.Main.MainActivity;
-import com.gianlu.aria2app.WebView.InterceptedRequest;
+import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
 
@@ -97,6 +97,7 @@ public class WebViewActivity extends ActivityWithDialog {
             synchronized (interceptedRequests) {
                 for (InterceptedRequest req : interceptedRequests) {
                     if (req.matches(url)) {
+                        req.contentDisposition(contentDisposition);
                         interceptedDownload(req);
                         return;
                     }

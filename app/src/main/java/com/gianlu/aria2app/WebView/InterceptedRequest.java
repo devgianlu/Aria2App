@@ -6,19 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import okhttp3.Response;
 
 public class InterceptedRequest implements Serializable {
+    private static final Pattern FILENAME_PATTERN = Pattern.compile("filename=\"(.*)\"");
     private final String url;
-    private final int code;
     private final HashMap<String, String> headers;
     private final ArrayList<InterceptedRequest> prior;
+    private String filename;
 
-    private InterceptedRequest(String url, int code, HashMap<String, String> headers, ArrayList<InterceptedRequest> prior) {
+    private InterceptedRequest(String url, HashMap<String, String> headers, ArrayList<InterceptedRequest> prior) {
         this.url = url;
-        this.code = code;
         this.headers = headers;
         this.prior = prior;
     }
@@ -32,7 +35,7 @@ public class InterceptedRequest implements Serializable {
         ArrayList<InterceptedRequest> prior = new ArrayList<>();
         handlePriorResponse(resp, prior);
 
-        return new InterceptedRequest(resp.request().url().toString(), resp.code(), headers, prior);
+        return new InterceptedRequest(resp.request().url().toString(), headers, prior);
     }
 
     private static void handlePriorResponse(Response resp, List<InterceptedRequest> list) {
@@ -62,5 +65,17 @@ public class InterceptedRequest implements Serializable {
     @NonNull
     public Map<String, String> headers() {
         return headers;
+    }
+
+    public void contentDisposition(@Nullable String header) {
+        if (header == null || header.isEmpty()) return;
+
+        Matcher matcher = FILENAME_PATTERN.matcher(header);
+        if (matcher.find()) filename = matcher.group(1);
+    }
+
+    @Nullable
+    public String filename() {
+        return filename;
     }
 }
