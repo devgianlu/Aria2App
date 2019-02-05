@@ -145,7 +145,7 @@
     <string name="connectivityCondition">连接条件</string>
     <string name="create">创建</string>
     <string name="emptySSID">SSID字段为空！</string>
-    <string name="newCondition">创造新条件</string>
+    <string name="newCondition">创建新条件</string>
     <string name="deleteProfile">删除配置文件</string>
     <string name="deleteCondition">删除条件</string>
     <string name="setDefaultCondition">设置默认条件</string>
@@ -265,6 +265,7 @@
     <string name="failedExportingOptions">导出选项失败！</string>
     <string name="exportedOptions">选项已成功导出到 %s</string>
     <string name="noActivity">没有活动</string>
+    <string name="multipleOptions_help">可以在命令行中多次指定此选项。在这里，把它们放到不同的行中，起同等作用。</string>
     <string name="couldStreamVideo">播放视频</string>
     <string name="couldStreamVideo_message">您的应用程序中，有可以播放此视频的。你想现在看还是直接下载？</string>
     <string name="stream">播放</string>										 
@@ -319,5 +320,12 @@
     <string name="prefs_ddUseExternal">使用外部下载管理器</string>
     <string name="prefs_ddUseExternal_summary">把下载任务发送至系统或其它应用</string>
     <string name="cannotDownloadDirWithExternal">不能下载目录</string>
-    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下载管理器下载目录。请问您想使用内置下载管理器下载吗？</string>																	   
+    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下载管理器下载目录。请问您想使用内置下载管理器下载吗？</string>
+    <string name="isThisToDownload">这是您想要下载的内容？</string>
+    <string name="isThisToDownload_message">您想要开始一个以`%s`为目标的下载任务？</string>
+    <string name="useWebView">使用WebView？</string>
+    <string name="useWebView_message">如果您试图下载没有永久链接的目标，您可以使用本功能截获下载地址，如同您在网页浏览器中操作一样。请问您想要打开一个WebView窗口吗？</string>
+    <string name="webView">WebView</string>
+    <string name="visit">访问</string>
+    <string name="goTo">转到</string>
 </resources>
