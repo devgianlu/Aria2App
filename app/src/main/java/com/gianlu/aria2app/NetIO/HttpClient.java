@@ -15,6 +15,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -120,8 +121,11 @@ public class HttpClient extends AbstractClient {
     }
 
     private void executeRunnable(Runnable runnable) {
-        if (!closed && !executorService.isShutdown() && !executorService.isTerminated())
-            executorService.execute(runnable);
+        try {
+            if (!closed && !executorService.isShutdown() && !executorService.isTerminated())
+                executorService.execute(runnable);
+        } catch (RejectedExecutionException ignored) {
+        }
     }
 
     private class SandboxRunnable<R> implements Runnable {
