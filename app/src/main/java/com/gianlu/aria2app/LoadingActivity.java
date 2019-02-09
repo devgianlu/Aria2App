@@ -227,9 +227,9 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
-                ongoingTest = WebSocketClient.checkConnection(single, this);
+                ongoingTest = WebSocketClient.checkConnection(single, this, true);
             else
-                ongoingTest = HttpClient.checkConnection(single, this);
+                ongoingTest = HttpClient.checkConnection(single, this, true);
 
             handler.postDelayed(() -> {
                 cancel.setVisibility(View.VISIBLE);

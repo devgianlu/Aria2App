@@ -38,7 +38,7 @@ public class HttpClient extends AbstractClient {
     }
 
     @UiThread
-    private HttpClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
+    private HttpClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener, boolean close) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         this(profile);
 
         executorService.submit(() -> {
@@ -51,15 +51,17 @@ public class HttpClient extends AbstractClient {
                             connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
                     });
                 }
+
+                if (close) close();
             } catch (IOException ex) {
                 if (connectionListener != null) {
                     handler.post(() -> connectionListener.onFailedConnecting(profile, ex));
                 } else {
                     Logging.log(ex);
                 }
-            }
 
-            close();
+                close();
+            }
         });
     }
 
@@ -73,9 +75,9 @@ public class HttpClient extends AbstractClient {
     }
 
     @UiThread
-    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener, boolean close) {
         try {
-            return new HttpClient(profile, listener);
+            return new HttpClient(profile, listener, close);
         } catch (GeneralSecurityException | IOException | NetUtils.InvalidUrlException ex) {
             listener.onFailedConnecting(profile, ex);
             return null;

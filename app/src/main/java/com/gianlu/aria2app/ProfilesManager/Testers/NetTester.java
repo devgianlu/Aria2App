@@ -60,10 +60,10 @@ public class NetTester extends BaseTester<AbstractClient> {
 
         switch (profile.connectionMethod) {
             case HTTP:
-                HttpClient.checkConnection(profile, listener);
+                HttpClient.checkConnection(profile, listener, false);
                 break;
             case WEBSOCKET:
-                WebSocketClient.checkConnection(profile, listener);
+                WebSocketClient.checkConnection(profile, listener, false);
                 break;
             default:
                 return null;

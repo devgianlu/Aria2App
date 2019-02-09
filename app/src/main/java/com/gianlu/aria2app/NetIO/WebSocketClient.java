@@ -28,34 +28,36 @@ public class WebSocketClient extends AbstractClient {
     private final WebSocket webSocket;
     private final long initializedAt;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final boolean closeAfterTest;
     private OnConnect connectionListener = null;
 
     @UiThread
-    private WebSocketClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+    private WebSocketClient(@NonNull MultiProfile.UserProfile profile, boolean close) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
         super(profile);
         webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
         initializedAt = System.currentTimeMillis();
+        closeAfterTest = close;
     }
 
     @UiThread
-    private WebSocketClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
-        this(profile);
+    private WebSocketClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener, boolean close) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+        this(profile, close);
         connectionListener = listener;
     }
 
     @NonNull
     static WebSocketClient instantiate(@NonNull MultiProfile.UserProfile profile) throws InitializationException {
         try {
-            return new WebSocketClient(profile);
+            return new WebSocketClient(profile, true);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             throw new InitializationException(ex);
         }
     }
 
     @UiThread
-    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener, boolean close) {
         try {
-            return new WebSocketClient(profile, listener);
+            return new WebSocketClient(profile, listener, close);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             listener.onFailedConnecting(profile, ex);
             return null;
@@ -163,7 +165,7 @@ public class WebSocketClient extends AbstractClient {
                     }
 
                     connectionListener = null;
-                    close();
+                    if (closeAfterTest) close();
                 }
             });
         }
