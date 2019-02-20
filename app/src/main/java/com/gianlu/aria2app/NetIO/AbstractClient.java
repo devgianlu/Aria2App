@@ -94,7 +94,7 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
                     handler.post(() -> listener.onException(ex));
                 }
             });
-        } catch (final JSONException ex) {
+        } catch (JSONException ex) {
             handler.post(() -> listener.onException(ex));
         }
     }
@@ -247,6 +247,28 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
     public static class InitializationException extends Exception {
         InitializationException(Throwable cause) {
             super(cause);
+        }
+    }
+
+    protected class RequestProcessor implements Runnable {
+        private final long id;
+        private final JSONObject request;
+        private final OnJson listener;
+
+        RequestProcessor(long id, JSONObject request, OnJson listener) {
+            this.id = id;
+            this.request = request;
+            this.listener = listener;
+        }
+
+        @Override
+        @WorkerThread
+        public void run() {
+            try {
+                listener.onResponse(sendSync(id, request));
+            } catch (Exception ex) {
+                listener.onException(ex);
+            }
         }
     }
 }

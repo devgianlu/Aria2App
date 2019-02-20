@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +23,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
-    private final Map<Long, OnJson> requests = new ConcurrentHashMap<>();
+    private final Map<Long, InternalResponse> requests = new ConcurrentHashMap<>();
     private final WebSocket webSocket;
     private final long initializedAt;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -69,8 +68,8 @@ public class WebSocketClient extends AbstractClient {
         connectionListener = null;
         if (webSocket != null) webSocket.close(1000, null);
 
-        for (OnJson listener : requests.values())
-            listener.onException(new IOException("Client has been closed."));
+        for (InternalResponse internal : requests.values())
+            internal.exception(new IOException("Client has been closed."));
 
         requests.clear();
     }
@@ -82,51 +81,61 @@ public class WebSocketClient extends AbstractClient {
             return;
         }
 
-        if (requests.size() > 10) requests.clear();
-
-        try {
-            requests.put(id, listener);
-            webSocket.send(request.toString());
-        } catch (Exception ex) {
-            listener.onException(ex);
-        }
+        executorService.execute(new RequestProcessor(id, request, listener));
     }
 
     @NonNull
     @Override
-    protected JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception {
-        final AtomicReference<Object> lock = new AtomicReference<>(null);
+    @WorkerThread
+    public JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception {
+        if (closed)
+            throw new IllegalStateException("Client is closed: " + this);
 
-        send(id, request, new OnJson() {
-            @Override
-            public void onResponse(@NonNull JSONObject response) {
-                synchronized (lock) {
-                    lock.set(response);
-                    lock.notifyAll();
-                }
-            }
+        if (requests.size() > 10) requests.clear();
 
-            @Override
-            public void onException(@NonNull Exception ex) {
-                synchronized (lock) {
-                    lock.set(ex);
-                    lock.notifyAll();
-                }
-            }
-        });
+        InternalResponse internal = new InternalResponse();
 
-        synchronized (lock) {
-            lock.wait();
+        requests.put(id, internal);
+        webSocket.send(request.toString());
+
+        synchronized (internal) {
+            internal.wait();
         }
 
-        Object result = lock.get();
-        if (result instanceof Exception) throw (Exception) result;
-        else return (JSONObject) result;
+        if (internal.obj != null) return internal.obj;
+        else throw internal.ex;
     }
 
     @Override
     protected <R> void batch(BatchSandbox<R> sandbox, DoBatch<R> listener) {
+        if (closed) {
+            listener.onException(new IllegalStateException("Client is closed: " + this));
+            return;
+        }
+
         executorService.execute(new SandboxRunnable<>(sandbox, listener));
+    }
+
+    private static class InternalResponse {
+        private JSONObject obj;
+        private Exception ex;
+
+        InternalResponse() {
+            this.obj = null;
+            this.ex = null;
+        }
+
+        synchronized void json(@NonNull JSONObject obj) {
+            this.obj = obj;
+            this.ex = null;
+            notifyAll();
+        }
+
+        synchronized void exception(@NonNull Exception ex) {
+            this.ex = ex;
+            this.obj = null;
+            notifyAll();
+        }
     }
 
     @WorkerThread
@@ -141,14 +150,14 @@ public class WebSocketClient extends AbstractClient {
                 String method = response.optString("method", null);
                 if (method != null && method.startsWith("aria2.on")) return;
 
-                OnJson listener = requests.remove(Long.parseLong(response.getString("id")));
-                if (listener == null) return;
+                InternalResponse internal = requests.get(Long.parseLong(response.getString("id")));
+                if (internal == null) return;
 
                 try {
                     validateResponse(response);
-                    listener.onResponse(response);
+                    internal.json(response);
                 } catch (AriaException ex) {
-                    listener.onException(ex);
+                    internal.exception(ex);
                 }
             } catch (JSONException ex) {
                 ErrorHandler.get().notifyException(ex, false);

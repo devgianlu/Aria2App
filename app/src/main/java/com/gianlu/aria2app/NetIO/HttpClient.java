@@ -97,7 +97,7 @@ public class HttpClient extends AbstractClient {
 
     @NonNull
     @Override
-    protected JSONObject sendSync(long id, @NonNull JSONObject request) throws JSONException, NetUtils.InvalidUrlException, IOException, StatusCodeException, AriaException {
+    public JSONObject sendSync(long id, @NonNull JSONObject request) throws JSONException, NetUtils.InvalidUrlException, IOException, StatusCodeException, AriaException {
         try (Response resp = client.newCall(NetUtils.createPostRequest(profile, url, request)).execute()) {
             ResponseBody body = resp.body();
             if (body != null) {
@@ -148,25 +148,5 @@ public class HttpClient extends AbstractClient {
         }
     }
 
-    private class RequestProcessor implements Runnable {
-        private final long id;
-        private final JSONObject request;
-        private final OnJson listener;
 
-        RequestProcessor(long id, JSONObject request, OnJson listener) {
-            this.id = id;
-            this.request = request;
-            this.listener = listener;
-        }
-
-        @Override
-        @WorkerThread
-        public void run() {
-            try {
-                listener.onResponse(sendSync(id, request));
-            } catch (IllegalArgumentException | JSONException | StatusCodeException | AriaException | IOException | NetUtils.InvalidUrlException | IllegalStateException ex) {
-                listener.onException(ex);
-            }
-        }
-    }
 }
