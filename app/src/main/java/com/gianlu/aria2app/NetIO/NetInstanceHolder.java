@@ -56,6 +56,12 @@ public final class NetInstanceHolder {
             instance.current = null;
     }
 
+    @NonNull
+    public static ClientInterface referenceFor(AbstractClient client) {
+        if (instance.current == client) return instance.reference;
+        else return client;
+    }
+
     private void handleInstantiate(@NonNull MultiProfile.UserProfile profile) throws AbstractClient.InitializationException {
         if (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
             if (!(current instanceof WebSocketClient)) {

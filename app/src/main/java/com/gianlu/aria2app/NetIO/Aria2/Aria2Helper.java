@@ -63,7 +63,7 @@ public class Aria2Helper {
         client.batch(VERSION_AND_SESSION_BATCH_SANDBOX, listener);
     }
 
-    public void tellAllAndGlobalStats(final AbstractClient.OnResult<DownloadsAndGlobalStats> listener) {
+    public void tellAllAndGlobalStats(AbstractClient.OnResult<DownloadsAndGlobalStats> listener) {
         client.batch(DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX, listener);
     }
 

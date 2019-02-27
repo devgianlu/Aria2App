@@ -54,7 +54,7 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
             send(request.id, obj, new OnJson() {
                 @Override
                 public void onResponse(@NonNull JSONObject response) throws JSONException {
-                    R result = request.processor.process(AbstractClient.this, response);
+                    R result = request.processor.process(NetInstanceHolder.referenceFor(AbstractClient.this), response);
                     handler.post(() -> listener.onResult(result));
                 }
 
