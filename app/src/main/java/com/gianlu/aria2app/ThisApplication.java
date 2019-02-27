@@ -4,9 +4,8 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 
-import com.gianlu.aria2app.NetIO.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.Aria2.Aria2ConfigProvider;
-import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
