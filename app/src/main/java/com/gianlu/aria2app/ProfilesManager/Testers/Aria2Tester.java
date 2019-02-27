@@ -49,7 +49,7 @@ class Aria2Tester extends BaseTester<Boolean> {
 
         synchronized (lock) {
             try {
-                lock.wait();
+                lock.wait(5000);
             } catch (InterruptedException ex) {
                 Logging.log(ex);
             }
