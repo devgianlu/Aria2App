@@ -16,15 +16,18 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
 public class NetTester extends BaseTester<AbstractClient> {
+    private final boolean close;
     private final ProfileTesterCallback profileListener;
 
     NetTester(Context context, MultiProfile.UserProfile profile, PublishListener<AbstractClient> listener) {
         super(context, profile, listener);
         this.profileListener = null;
+        this.close = false;
     }
 
-    public NetTester(Context context, MultiProfile.UserProfile profile, ProfileTesterCallback profileListener) {
+    public NetTester(Context context, MultiProfile.UserProfile profile, boolean close, ProfileTesterCallback profileListener) {
         super(context, profile, null);
+        this.close = close;
         this.profileListener = profileListener;
     }
 
@@ -76,7 +79,9 @@ public class NetTester extends BaseTester<AbstractClient> {
                 Logging.log(ex);
             }
 
-            return lock.get();
+            AbstractClient client = lock.get();
+            if (close && client != null) client.close();
+            return client;
         }
     }
 

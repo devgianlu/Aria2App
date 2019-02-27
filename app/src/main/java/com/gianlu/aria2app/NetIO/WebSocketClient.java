@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +25,7 @@ import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
     private final Map<Long, InternalResponse> requests = new ConcurrentHashMap<>();
-    private final WebSocket webSocket;
+    private final WeakReference<WebSocket> webSocket;
     private final long initializedAt;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final boolean closeAfterTest;
@@ -33,7 +34,7 @@ public class WebSocketClient extends AbstractClient {
     @UiThread
     private WebSocketClient(@NonNull MultiProfile.UserProfile profile, boolean close) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
         super(profile);
-        webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
+        webSocket = new WeakReference<>(client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener()));
         initializedAt = System.currentTimeMillis();
         closeAfterTest = close;
     }
@@ -47,7 +48,7 @@ public class WebSocketClient extends AbstractClient {
     @NonNull
     static WebSocketClient instantiate(@NonNull MultiProfile.UserProfile profile) throws InitializationException {
         try {
-            return new WebSocketClient(profile, true);
+            return new WebSocketClient(profile, false);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             throw new InitializationException(ex);
         }
@@ -66,7 +67,10 @@ public class WebSocketClient extends AbstractClient {
     @Override
     protected void closeClient() {
         connectionListener = null;
-        if (webSocket != null) webSocket.close(1000, null);
+        if (webSocket.get() != null) {
+            webSocket.get().close(1000, null);
+            webSocket.clear();
+        }
 
         for (InternalResponse internal : requests.values())
             internal.exception(new IOException("Client has been closed."));
@@ -88,13 +92,13 @@ public class WebSocketClient extends AbstractClient {
     @Override
     @WorkerThread
     public JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception {
-        if (closed)
+        if (closed || webSocket.get() == null)
             throw new IllegalStateException("Client is closed: " + this);
 
         InternalResponse internal = new InternalResponse();
 
         requests.put(id, internal);
-        webSocket.send(request.toString());
+        webSocket.get().send(request.toString());
 
         synchronized (internal) {
             internal.wait(5000);

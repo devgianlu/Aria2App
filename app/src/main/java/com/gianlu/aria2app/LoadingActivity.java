@@ -309,6 +309,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onConnected(@NonNull AbstractClient client) {
+        ongoingTest = null;
+
         if (shareData != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.useWebView)
@@ -375,6 +377,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
+        ongoingTest = null;
+
         if (profile.couldBeAria2Android(this)) mayStartAria2Android(profile, ex);
         else failedConnecting(ex);
     }
