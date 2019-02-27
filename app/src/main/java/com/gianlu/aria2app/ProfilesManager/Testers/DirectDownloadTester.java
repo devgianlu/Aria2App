@@ -52,6 +52,9 @@ class DirectDownloadTester extends BaseTester<Boolean> {
         } catch (IOException | NetUtils.InvalidUrlException ex) {
             publishError(ex);
             return null;
+        } finally {
+            client.connectionPool().evictAll();
+            client.dispatcher().executorService().shutdown();
         }
     }
 
