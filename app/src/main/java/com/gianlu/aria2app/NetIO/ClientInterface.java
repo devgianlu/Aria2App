@@ -5,9 +5,9 @@ import androidx.annotation.NonNull;
 public interface ClientInterface {
     void close();
 
-    <R> void send(@NonNull final AbstractClient.AriaRequestWithResult<R> request, final AbstractClient.OnResult<R> listener);
+    <R> void send(@NonNull AbstractClient.AriaRequestWithResult<R> request, AbstractClient.OnResult<R> listener);
 
     void send(@NonNull AbstractClient.AriaRequest request, AbstractClient.OnSuccess listener);
 
-    <R> void batch(AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener);
+    <R> void batch(@NonNull AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener);
 }

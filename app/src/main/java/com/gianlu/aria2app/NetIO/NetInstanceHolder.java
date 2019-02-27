@@ -90,7 +90,7 @@ public final class NetInstanceHolder {
         }
 
         @Override
-        public <R> void batch(AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener) {
+        public <R> void batch(@NonNull AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener) {
             if (current != null) current.batch(sandbox, listener);
         }
     }

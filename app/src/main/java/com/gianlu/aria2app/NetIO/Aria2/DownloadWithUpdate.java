@@ -2,7 +2,7 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.os.Build;
 
-import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.ClientInterface;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Logging;
@@ -23,12 +23,12 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
     private final Object lock = new Object();
     private SmallUpdate update;
 
-    private DownloadWithUpdate(@NonNull String gid, @NonNull AbstractClient client) {
+    private DownloadWithUpdate(@NonNull String gid, @NonNull ClientInterface client) {
         super(gid, client);
     }
 
     @NonNull
-    public static DownloadWithUpdate create(AbstractClient client, JSONObject obj, boolean small) throws JSONException {
+    public static DownloadWithUpdate create(ClientInterface client, JSONObject obj, boolean small) throws JSONException {
         DownloadWithUpdate download = new DownloadWithUpdate(obj.getString("gid"), client);
         download.update(obj, small);
         return download;

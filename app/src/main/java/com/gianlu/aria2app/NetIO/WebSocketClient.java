@@ -91,16 +91,16 @@ public class WebSocketClient extends AbstractClient {
         if (closed)
             throw new IllegalStateException("Client is closed: " + this);
 
-        if (requests.size() > 10) requests.clear();
-
         InternalResponse internal = new InternalResponse();
 
         requests.put(id, internal);
         webSocket.send(request.toString());
 
         synchronized (internal) {
-            internal.wait();
+            internal.wait(5000);
         }
+
+        requests.remove(id);
 
         if (internal.obj != null) return internal.obj;
         else throw internal.ex;

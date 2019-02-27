@@ -108,7 +108,7 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
         if (resp.has("error")) throw new AriaException(resp.getJSONObject("error"));
     }
 
-    public final <R> void batch(BatchSandbox<R> sandbox, OnResult<R> listener) {
+    public final <R> void batch(@NonNull BatchSandbox<R> sandbox, OnResult<R> listener) {
         batch(sandbox, new DoBatch<R>() {
             @Override
             public void onSandboxReturned(@NonNull R result) {
@@ -207,7 +207,7 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
 
         @NonNull
         @WorkerThread
-        public abstract R process(@NonNull AbstractClient client, @NonNull JSONObject obj) throws JSONException;
+        public abstract R process(@NonNull ClientInterface client, @NonNull JSONObject obj) throws JSONException;
     }
 
     public static class AriaRequest {
