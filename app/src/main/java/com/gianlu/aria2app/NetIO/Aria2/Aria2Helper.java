@@ -7,10 +7,9 @@ import android.view.View;
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
-import com.gianlu.aria2app.NetIO.HttpClient;
-import com.gianlu.aria2app.NetIO.WebSocketClient;
+import com.gianlu.aria2app.NetIO.ClientInterface;
+import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -25,7 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 
 public class Aria2Helper {
     private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = client -> new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
-    private final AbstractClient client;
+    private final ClientInterface client;
     private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = client -> {
         List<DownloadWithUpdate> all = new ArrayList<>();
         all.addAll(client.sendSync(AriaRequests.tellActiveSmall()));
@@ -34,17 +33,13 @@ public class Aria2Helper {
         return new DownloadsAndGlobalStats(all, Prefs.getBoolean(PK.A2_HIDE_METADATA), client.sendSync(AriaRequests.getGlobalStats()));
     };
 
-    public Aria2Helper(@NonNull AbstractClient client) {
+    public Aria2Helper(@NonNull ClientInterface client) {
         this.client = client;
     }
 
     @NonNull
-    private static AbstractClient getClient(@NonNull Context context) throws AbstractClient.InitializationException, ProfilesManager.NoCurrentProfileException {
-        MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentSpecific();
-        if (profile.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
-            return WebSocketClient.instantiate(context);
-        else
-            return HttpClient.instantiate(context);
+    private static ClientInterface getClient(@NonNull Context context) throws AbstractClient.InitializationException, ProfilesManager.NoCurrentProfileException {
+        return NetInstanceHolder.instantiate(ProfilesManager.get(context).getCurrentSpecific());
     }
 
     @NonNull
@@ -56,11 +51,11 @@ public class Aria2Helper {
         }
     }
 
-    public final <T> void request(final AbstractClient.AriaRequestWithResult<T> request, final AbstractClient.OnResult<T> listener) {
+    public final <T> void request(AbstractClient.AriaRequestWithResult<T> request, AbstractClient.OnResult<T> listener) {
         client.send(request, listener);
     }
 
-    public final void request(final AbstractClient.AriaRequest request, final AbstractClient.OnSuccess listener) {
+    public final void request(AbstractClient.AriaRequest request, AbstractClient.OnSuccess listener) {
         client.send(request, listener);
     }
 
@@ -68,7 +63,7 @@ public class Aria2Helper {
         client.batch(VERSION_AND_SESSION_BATCH_SANDBOX, listener);
     }
 
-    public void tellAllAndGlobalStats(final AbstractClient.OnResult<DownloadsAndGlobalStats> listener) {
+    public void tellAllAndGlobalStats(AbstractClient.OnResult<DownloadsAndGlobalStats> listener) {
         client.batch(DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX, listener);
     }
 
@@ -87,11 +82,6 @@ public class Aria2Helper {
                 results.add(client.sendSync(AriaRequests.addDownload(bundle)));
             return results;
         }, listener);
-    }
-
-    @NonNull
-    public AbstractClient getClient() {
-        return client;
     }
 
     public enum WhatAction {

@@ -76,6 +76,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
     @Override
     public void onAdded(@NotNull Download download) {
         if (adapter != null) adapter.add(download);
+        countUpdated();
     }
 
     @Override
@@ -120,6 +121,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
     @Override
     public void onRemoved(@NotNull Download download) {
         if (adapter != null) adapter.remove(download);
+        countUpdated();
     }
 
     @Override

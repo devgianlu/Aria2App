@@ -20,13 +20,14 @@ class Aria2Tester extends BaseTester<Boolean> {
         super(context, profile, listener);
     }
 
-    private void publishError(Exception ex, boolean authenticated) {
+    private void publishError(@NonNull Exception ex, boolean authenticated) {
         publishMessage(ex.getClass().getName() + ": " + ex.getMessage(), Level.ERROR);
         if (authenticated)
             publishMessage("Your token or username and password may be wrong", Level.ERROR);
     }
 
-    private <O> Object runRequest(AbstractClient.AriaRequestWithResult<O> request, Aria2Helper helper) {
+    @Nullable
+    private <O> Object runRequest(@NonNull AbstractClient.AriaRequestWithResult<O> request, @NonNull Aria2Helper helper) {
         final AtomicReference<Object> lock = new AtomicReference<>(null);
         helper.request(request, new AbstractClient.OnResult<O>() {
             @Override
@@ -48,7 +49,7 @@ class Aria2Tester extends BaseTester<Boolean> {
 
         synchronized (lock) {
             try {
-                lock.wait();
+                lock.wait(5000);
             } catch (InterruptedException ex) {
                 Logging.log(ex);
             }
@@ -58,13 +59,7 @@ class Aria2Tester extends BaseTester<Boolean> {
     }
 
     @Nullable
-    public Boolean call(@Nullable Object prevResult) {
-        AbstractClient client;
-        if (prevResult instanceof AbstractClient)
-            client = (AbstractClient) prevResult;
-        else
-            throw new IllegalStateException("Previous result should be a client, but was " + prevResult);
-
+    private Boolean call(@NonNull AbstractClient client) {
         Aria2Helper helper = new Aria2Helper(client);
         publishMessage("Started unauthenticated request...", Level.INFO);
 
@@ -92,8 +87,21 @@ class Aria2Tester extends BaseTester<Boolean> {
         }
     }
 
+    @Nullable
+    public Boolean call(@Nullable Object prevResult) {
+        AbstractClient client;
+        if (prevResult instanceof AbstractClient)
+            client = (AbstractClient) prevResult;
+        else
+            throw new IllegalStateException("Previous result should be a client, but was " + prevResult);
+
+        Boolean result = call(client);
+        client.close();
+        return result;
+    }
+
     @NonNull
-    private Object runAuthenticated(Aria2Helper helper) {
+    private Object runAuthenticated(@NonNull Aria2Helper helper) {
         publishMessage("Started authenticated request...", Level.INFO);
         Object result = runRequest(AriaRequests.getVersion(), helper);
         if (result instanceof Exception) publishError((Exception) result, true);

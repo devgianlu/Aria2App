@@ -27,7 +27,7 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
     private final Context context;
 
     public AddDownloadBundlesAdapter(Context context, Listener listener) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
         this.bundles = new ArrayList<>();
@@ -54,7 +54,7 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
         int textColorRes = 0;
         if (bundle instanceof AddUriBundle) {
             text = CommonUtils.join(((AddUriBundle) bundle).uris, ", ");
-            textColorRes = R.color.colorURI_pressed;
+            textColorRes = R.color.colorAccent_pressed;
         } else if (bundle instanceof AddTorrentBundle) {
             text = ((AddTorrentBundle) bundle).filename;
             textColorRes = R.color.colorTorrent_pressed;

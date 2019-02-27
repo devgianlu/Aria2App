@@ -118,7 +118,7 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
 
     @Override
     protected void runTest(int pos) {
-        executorService.execute(new NetTester(context, getItem(pos).getProfile(context), this));
+        executorService.execute(new NetTester(context, getItem(pos).getProfile(context), true, this));
     }
 
     @Override

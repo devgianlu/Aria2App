@@ -139,7 +139,6 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 action.setOnClickListener(v -> payload.listener.onDownloadDirectory(profile, currentDir));
-
                 return true;
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {

@@ -3,18 +3,19 @@ package com.gianlu.aria2app.Activities.AddDownload;
 import android.content.Context;
 import android.net.Uri;
 
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
+
 import java.io.Serializable;
-import java.util.HashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class AddMetalinkBundle extends AddBase64Bundle implements Serializable {
-    public AddMetalinkBundle(@NonNull String base64, @NonNull String filename, @NonNull Uri fileUri, @Nullable Integer position, @Nullable HashMap<String, String> options) {
+    public AddMetalinkBundle(@NonNull String base64, @NonNull String filename, @NonNull Uri fileUri, @Nullable Integer position, @Nullable OptionsMap options) {
         super(base64, filename, fileUri, position, options);
     }
 
-    private AddMetalinkBundle(@NonNull Context context, @NonNull Uri fileUri, @Nullable Integer position, @Nullable HashMap<String, String> options) throws CannotReadException {
+    private AddMetalinkBundle(@NonNull Context context, @NonNull Uri fileUri, @Nullable Integer position, @Nullable OptionsMap options) throws CannotReadException {
         super(context, fileUri, position, options);
     }
 

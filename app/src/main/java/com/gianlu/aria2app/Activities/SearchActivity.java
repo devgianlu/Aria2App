@@ -29,7 +29,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.RecyclerViewLayout;
@@ -194,7 +193,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.search_engines:
-                showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
+                showProgress(R.string.gathering_information);
                 searchApi.listSearchEngines(new SearchApi.OnResult<List<SearchEngine>>() {
                     @Override
                     public void onResult(@NonNull List<SearchEngine> result) {
@@ -216,7 +215,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
     @Override
     public void onResultSelected(@NonNull SearchResult result) {
-        showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
+        showProgress(R.string.gathering_information);
         searchApi.getTorrent(result, new SearchApi.OnResult<Torrent>() {
             @Override
             public void onResult(@NonNull Torrent torrent) {

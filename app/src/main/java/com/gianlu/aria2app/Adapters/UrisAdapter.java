@@ -71,6 +71,8 @@ public class UrisAdapter extends RecyclerView.Adapter<UrisAdapter.ViewHolder> {
     }
 
     public void removeUri(int pos) {
+        if (pos == -1) return;
+
         uris.remove(pos);
         notifyItemRemoved(pos);
 

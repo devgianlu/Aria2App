@@ -39,6 +39,13 @@
             android:text="@string/urisFile"
             android:textColor="@color/colorAccent" />
 
+        <Button
+            android:id="@+id/batchAdd_webView"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/webView"
+            android:textColor="@color/colorAccent" />
     </LinearLayout>
 
     <TextView

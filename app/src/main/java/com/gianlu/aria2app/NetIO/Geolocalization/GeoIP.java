@@ -58,7 +58,7 @@ public final class GeoIP {
     private boolean hitCache(String ip, @NonNull final OnIpDetails listener) {
         if (ip == null) return false;
 
-        final IPDetails cachedDetails = cache.get(ip);
+        IPDetails cachedDetails = cache.get(ip);
         if (cachedDetails != null) {
             handler.post(() -> listener.onDetails(cachedDetails));
             return true;
@@ -67,7 +67,7 @@ public final class GeoIP {
         return false;
     }
 
-    public void getIPDetails(@NonNull final String ip, @NonNull final OnIpDetails listener) {
+    public void getIPDetails(@NonNull String ip, @NonNull OnIpDetails listener) {
         if (hitCache(ip, listener)) return;
 
         executorService.execute(() -> {
@@ -85,19 +85,20 @@ public final class GeoIP {
                     realIP = realIP.substring(1, realIP.length() - 1);
 
                 try (Response resp = client.newCall(new Request.Builder()
-                        .get().url("https://extreme-ip-lookup.com/json/" + realIP).build()).execute()) {
+                        .get().url("https://geoip.gianlu.xyz/Lookup/" + realIP).build()).execute()) {
 
                     ResponseBody body = resp.body();
                     if (body == null) throw new IOException("Empty body!");
 
-                    JSONObject obj = new JSONObject(body.string());
-                    String status = obj.getString("status");
-                    if (status.equals("fail")) throw new ServiceException(realIP, obj);
+                    if (resp.code() == 200) {
+                        JSONObject obj = new JSONObject(body.string());
+                        final IPDetails details = new IPDetails(obj);
+                        cache.put(ip, details);
 
-                    final IPDetails details = new IPDetails(obj);
-                    cache.put(ip, details);
-
-                    handler.post(() -> listener.onDetails(details));
+                        handler.post(() -> listener.onDetails(details));
+                    } else {
+                        throw new ServiceException(realIP, resp.code(), body.string());
+                    }
                 }
             } catch (IOException | JSONException | ServiceException | RuntimeException ex) {
                 handler.post(() -> listener.onException(ex));
@@ -114,8 +115,8 @@ public final class GeoIP {
     }
 
     private static class ServiceException extends Exception {
-        private ServiceException(String ip, JSONObject obj) throws JSONException {
-            super(ip + ": " + obj.getString("message"));
+        private ServiceException(String ip, int code, String msg) {
+            super(ip + ": (" + code + ") " + msg);
         }
     }
 }

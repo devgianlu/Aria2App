@@ -17,7 +17,7 @@ public class IPDetailsView extends LinearLayout {
     private final ImageView flag;
     private final SuperTextView ip;
     private final SuperTextView localization;
-    private final SuperTextView isp;
+    private final SuperTextView domain;
     private final CountryFlags flags = CountryFlags.get();
 
     public IPDetailsView(Context context) {
@@ -36,13 +36,18 @@ public class IPDetailsView extends LinearLayout {
         flag = findViewById(R.id.ipDetailView_flag);
         ip = findViewById(R.id.ipDetailView_ip);
         localization = findViewById(R.id.ipDetailView_localization);
-        isp = findViewById(R.id.ipDetailView_isp);
+        domain = findViewById(R.id.ipDetailView_isp);
     }
 
     public void setup(@NonNull IPDetails details) {
         flag.setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
-        ip.setHtml(R.string.ip, details.getIp());
+        ip.setHtml(R.string.ip, details.ip);
         localization.setHtml(R.string.localization, details.getNiceLocalizationString());
-        isp.setHtml(R.string.isp, details.getIsp());
+        if (details.domain == null || details.domain.isEmpty()) {
+            domain.setVisibility(GONE);
+        } else {
+            domain.setVisibility(VISIBLE);
+            domain.setHtml(R.string.domain, details.domain);
+        }
     }
 }

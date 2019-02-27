@@ -30,7 +30,7 @@ public class OptionsManager {
 
     @NonNull
     public static OptionsManager get(@NonNull Context context) {
-        if (instance == null) instance = new OptionsManager(context);
+        if (instance == null) instance = new OptionsManager(context.getApplicationContext());
         return instance;
     }
 

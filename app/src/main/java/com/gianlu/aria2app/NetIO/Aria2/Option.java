@@ -6,7 +6,6 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,11 +14,11 @@ import androidx.annotation.Nullable;
 
 public class Option implements Comparable<Option> {
     public final String name;
-    public final String value;
-    public String newValue;
+    public final OptionsMap.OptionValue value;
+    public OptionsMap.OptionValue newValue;
     private boolean dummyChanged;
 
-    private Option(String name, String value, boolean dummyChanged) {
+    private Option(String name, OptionsMap.OptionValue value, boolean dummyChanged) {
         this.name = name;
         this.value = value;
         this.dummyChanged = dummyChanged;
@@ -28,14 +27,14 @@ public class Option implements Comparable<Option> {
     }
 
     @NonNull
-    public static List<Option> fromMapSimpleChanged(@NonNull Map<String, String> map) {
+    public static List<Option> fromMapSimpleChanged(@NonNull OptionsMap map) {
         List<Option> list = new ArrayList<>(map.size());
         for (String key : map.keySet()) list.add(new Option(key, map.get(key), true));
         return list;
     }
 
     @NonNull
-    public static List<Option> fromOptionsMap(@NonNull Map<String, String> map, @NonNull List<String> all, @Nullable Set<String> filter) {
+    public static List<Option> fromOptionsMap(@NonNull OptionsMap map, @NonNull List<String> all, @Nullable Set<String> filter) {
         List<Option> options = new ArrayList<>();
 
         for (String key : all) {
@@ -54,7 +53,8 @@ public class Option implements Comparable<Option> {
         return options;
     }
 
-    public void setNewValue(String value) {
+    public void setNewValue(String... str) {
+        OptionsMap.OptionValue value = new OptionsMap.OptionValue(str);
         if (!Objects.equals(newValue, value)) dummyChanged = false;
         newValue = value;
     }

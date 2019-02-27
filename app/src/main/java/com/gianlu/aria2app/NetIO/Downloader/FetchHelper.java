@@ -5,9 +5,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 
+import com.gianlu.aria2app.NetIO.AbstractClient;
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -42,8 +45,9 @@ public class FetchHelper {
     private final ProfilesManager profilesManager;
     private final Fetch fetch;
     private final Handler handler;
+    private final Aria2Helper aria2;
 
-    private FetchHelper(@NonNull Context context) throws GeneralSecurityException, IOException, ProfilesManager.NoCurrentProfileException, InitializationException {
+    private FetchHelper(@NonNull Context context) throws GeneralSecurityException, IOException, ProfilesManager.NoCurrentProfileException, InitializationException, Aria2Helper.InitializingException {
         MultiProfile.UserProfile profile = ProfilesManager.get(context).getCurrentSpecific();
         MultiProfile.DirectDownload dd = profile.directDownload;
         if (dd == null) throw new DirectDownloadNotEnabledException();
@@ -66,6 +70,7 @@ public class FetchHelper {
         fetch = Fetch.Impl.getInstance(fetchConfiguration);
         profilesManager = ProfilesManager.get(context);
         handler = new Handler(Looper.getMainLooper());
+        aria2 = Aria2Helper.instantiate(context);
     }
 
     public static void invalidate() {
@@ -79,8 +84,8 @@ public class FetchHelper {
     public static FetchHelper get(@NonNull Context context) throws InitializationException {
         if (instance == null) {
             try {
-                instance = new FetchHelper(context);
-            } catch (GeneralSecurityException | ProfilesManager.NoCurrentProfileException | IOException ex) {
+                instance = new FetchHelper(context.getApplicationContext());
+            } catch (GeneralSecurityException | ProfilesManager.NoCurrentProfileException | IOException | Aria2Helper.InitializingException ex) {
                 throw new InitializationException(ex);
             }
         }
@@ -101,8 +106,8 @@ public class FetchHelper {
     }
 
     @NonNull
-    private static Request createRequest(HttpUrl base, String dir, File downloadDir, AriaFile file) {
-        return createRequest(file.getDownloadUrl(dir, base), new File(downloadDir, file.getRelativePath(dir)));
+    private static Request createRequest(HttpUrl base, OptionsMap global, File downloadDir, AriaFile file) {
+        return createRequest(file.getDownloadUrl(global, base), new File(downloadDir, file.getRelativePath(global)));
     }
 
     @NonNull
@@ -130,9 +135,7 @@ public class FetchHelper {
         handler.post(() -> listener.onFailed(ex));
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull DownloadWithUpdate download, @NonNull AriaFile file, @NonNull StartListener listener) {
-        String ariaDir = download.update().dir;
-
+    public void start(@NonNull MultiProfile profile, @NonNull AriaFile file, @NonNull StartListener listener) {
         MultiProfile.DirectDownload dd = profile.getProfile(profilesManager).directDownload;
         if (dd == null) {
             callFailed(listener, new PreparationException("DirectDownload not enabled!"));
@@ -153,13 +156,23 @@ public class FetchHelper {
             return;
         }
 
-        startInternal(createRequest(file.getDownloadUrl(ariaDir, base), new File(downloadDir, file.getRelativePath(ariaDir))), listener);
+        aria2.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
+            @Override
+            public void onResult(@NonNull OptionsMap result) {
+                startInternal(createRequest(file.getDownloadUrl(result, base), new File(downloadDir, file.getRelativePath(result))), listener);
+            }
+
+            @Override
+            public void onException(@NonNull Exception ex) {
+                listener.onFailed(ex);
+            }
+        });
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull DownloadWithUpdate download, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
+    public void start(@NonNull MultiProfile profile, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
         List<AriaFile> files = dir.allFiles();
         if (files.size() == 1) {
-            start(profile, download, files.get(0), listener);
+            start(profile, files.get(0), listener);
             return;
         }
 
@@ -183,25 +196,33 @@ public class FetchHelper {
             return;
         }
 
-        int groupId = ThreadLocalRandom.current().nextInt();
-        String ariaDir = download.update().dir;
+        aria2.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
+            @Override
+            public void onResult(@NonNull OptionsMap result) {
+                int groupId = ThreadLocalRandom.current().nextInt();
+                List<Request> requests = new ArrayList<>(files.size());
+                for (AriaFile file : files) {
+                    Request request = createRequest(base, result, downloadDir, file);
+                    request.setGroupId(groupId);
+                    requests.add(request);
+                }
 
-        List<Request> requests = new ArrayList<>(files.size());
-        for (AriaFile file : files) {
-            Request request = createRequest(base, ariaDir, downloadDir, file);
-            request.setGroupId(groupId);
-            requests.add(request);
-        }
+                startInternal(requests, listener);
+            }
 
-        startInternal(requests, listener);
+            @Override
+            public void onException(@NonNull Exception ex) {
+                listener.onFailed(ex);
+            }
+        });
     }
 
-    private void startInternal(@NonNull Request request, @NonNull final StartListener listener) {
+    private void startInternal(@NonNull Request request, @NonNull StartListener listener) {
         if (!fetch.isClosed())
             fetch.enqueue(request, result -> listener.onSuccess(), result -> listener.onFailed(result.getThrowable()));
     }
 
-    private void startInternal(@NonNull List<Request> requests, @NonNull final StartListener listener) {
+    private void startInternal(@NonNull List<Request> requests, @NonNull StartListener listener) {
         if (!fetch.isClosed()) fetch.enqueue(requests, result -> listener.onSuccess());
     }
 

@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
 
     MainProvider(Context context) throws Aria2Helper.InitializingException {
-        super(context, Wants.downloadsAndStats());
+        super(context.getApplicationContext(), Wants.downloadsAndStats());
     }
 
     @NonNull
@@ -25,7 +25,7 @@ class MainProvider extends PayloadProvider<DownloadsAndGlobalStats> {
 
     private class Updater extends PayloadUpdater<DownloadsAndGlobalStats> implements AbstractClient.OnResult<DownloadsAndGlobalStats> {
         Updater(Context context) throws Aria2Helper.InitializingException {
-            super(context, MainProvider.this);
+            super(context.getApplicationContext(), MainProvider.this);
         }
 
         @Override

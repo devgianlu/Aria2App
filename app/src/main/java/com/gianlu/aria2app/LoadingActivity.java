@@ -17,11 +17,13 @@ import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
+import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.NetIO.OnConnect;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Drawer.DrawerManager;
@@ -30,6 +32,7 @@ import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +63,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private String shortcutAction;
     private Handler handler;
     private MultiProfile.UserProfile aria2AndroidProfile = null;
+    private Closeable ongoingTest;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -107,7 +111,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             if (goTo != null) startActivity(goTo);
         }, 1000);
 
-        AbstractClient.invalidate();
+        NetInstanceHolder.close();
 
         manager = ProfilesManager.get(this);
         if (getIntent().getBooleanExtra("external", false)) {
@@ -222,11 +226,10 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         } else {
             manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
-            if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET) {
-                WebSocketClient.checkConnection(this, single, this);
-            } else {
-                HttpClient.checkConnection(this, single, this);
-            }
+            if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
+                ongoingTest = WebSocketClient.checkConnection(single, this, true);
+            else
+                ongoingTest = HttpClient.checkConnection(single, this, true);
 
             handler.postDelayed(() -> {
                 cancel.setVisibility(View.VISIBLE);
@@ -236,7 +239,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void cancelConnection() {
-        AbstractClient.invalidate();
+        if (ongoingTest != null) {
+            try {
+                ongoingTest.close();
+            } catch (IOException ignored) {
+            }
+        }
+
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
     }
@@ -290,9 +299,29 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         else this.goTo = intent;
     }
 
+    private void launchWebView() {
+        Intent intent = new Intent(this, WebViewActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("shareData", shareData)
+                .putExtra("canGoBack", false);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onConnected(@NonNull AbstractClient client) {
-        launchMain();
+        ongoingTest = null;
+
+        if (shareData != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.useWebView)
+                    .setMessage(R.string.useWebView_message)
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> launchWebView())
+                    .setNeutralButton(android.R.string.no, (dialog, which) -> launchMain());
+            showDialog(builder);
+        } else {
+            launchMain();
+        }
+
         return false;
     }
 
@@ -348,6 +377,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
+        ongoingTest = null;
+
         if (profile.couldBeAria2Android(this)) mayStartAria2Android(profile, ex);
         else failedConnecting(ex);
     }

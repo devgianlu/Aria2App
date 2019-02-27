@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
@@ -49,6 +49,7 @@ public final class Utils {
     public static final String ACTION_PLAY_VIDEO = "play_video";
     public static final String ACTION_NEW_BATCH = "new_batch_add";
     public static final String ACTION_START_ARIA2ANDROID = "start_aria2android";
+    public static final String ACTION_INTERCEPTED_WEBVIEW = "intercepted_webview";
     private static final Collection<String> streamableMimeTypes = new HashSet<>();
 
     static {
@@ -97,14 +98,14 @@ public final class Utils {
     }
 
     @Nullable
-    public static Intent getStreamIntent(MultiProfile.UserProfile profile, DownloadWithUpdate download, AriaFile file) {
+    public static Intent getStreamIntent(@NonNull MultiProfile.UserProfile profile, @NonNull OptionsMap global, @NonNull AriaFile file) {
         MultiProfile.DirectDownload dd = profile.directDownload;
         if (dd == null) throw new IllegalStateException("WTF?!");
 
         HttpUrl base = dd.getUrl();
         if (base == null) return null;
 
-        HttpUrl url = file.getDownloadUrl(download.update().dir, base);
+        HttpUrl url = file.getDownloadUrl(global, base);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(url.toString()), file.getMimeType());
         return intent;

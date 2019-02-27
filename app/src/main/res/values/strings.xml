@@ -214,7 +214,6 @@
     <string name="failedChangingOptions">Failed changing options!</string>
     <string name="seeError">See error</string>
     <string name="contactMe">Contact me</string>
-    <string name="connectivityChanged">Connectivity changed, switching profile.</string>
     <string name="failedLoading_reason">Failed loading: %s</string>
     <string name="searchEngine_disclaimer">This search engine is powered by me (the developer). It combines results from various sources.</string>
     <string name="noServers">No servers</string>
@@ -227,6 +226,7 @@
     <string name="numSeederShort"><![CDATA[<b>Seeders:</b>]]> %d</string>
     <string name="numLeechesShort"><![CDATA[<b>Leeches:</b>]]> %d</string>
     <string name="searchEngine"><![CDATA[<b>Search engine:</b>]]> %s</string>
+    <string name="domain"><![CDATA[<b>Domain:</b>]]> %s</string>
     <string name="missingEngines_message">Some engines couldn\'t complete the request.</string>
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">Search engines</string>
@@ -274,7 +274,7 @@
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">Options exported successfully to %s</string>
     <string name="noActivity">No activity</string>
-    <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to separate the items with a semicolon (;).</string>
+    <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to have them on different lines.</string>
     <string name="couldStreamVideo">Stream video</string>
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
     <string name="stream">Stream</string>
@@ -285,7 +285,6 @@
     <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
-    <string name="isp">Internet service provider: %s</string>
     <string name="batchAdd">Batch add</string>
     <string name="torrents">Torrents</string>
     <string name="metalinks">Metalinks</string>
@@ -328,4 +327,15 @@
     <string name="startAria2Android">Start Aria2Android</string>
     <string name="startAria2Android_message">This profile seems related to a local instance of Aria2Android. Do you want to start the service?</string>
     <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
+    <string name="prefs_ddUseExternal">Use external downloader</string>
+    <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
+    <string name="cannotDownloadDirWithExternal">Cannot download directory</string>
+    <string name="cannotDownloadDirWithExternal_message">You can\'t download a directory using an external downloader. Do you want to start the download with the integrated downloader?</string>
+    <string name="isThisToDownload">Is this what you want to download?</string>
+    <string name="isThisToDownload_message">Do you want to start a download for `%s`?</string>
+    <string name="useWebView">Use WebView?</string>
+    <string name="useWebView_message">If you\'re trying to download something that hasn\'t a permanent URL, you can use this feature to intercept the download as if it was happening on your browser. Do you want to open a WebView?</string>
+    <string name="webView">WebView</string>
+    <string name="visit">Visit</string>
+    <string name="goTo">Go to</string>
 </resources>

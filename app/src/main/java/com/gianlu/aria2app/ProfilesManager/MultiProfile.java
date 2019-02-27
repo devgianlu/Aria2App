@@ -414,6 +414,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             this.hostnameVerifier = hostnameVerifier;
         }
 
+        public String getAuthorizationHeader() {
+            if (!auth) return null;
+            return "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+        }
+
+        @NonNull
         JSONObject toJson() throws JSONException {
             JSONObject obj = new JSONObject();
             obj.put("addr", address).put("auth", auth).put("serverSsl", serverSsl)

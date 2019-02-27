@@ -146,7 +146,6 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
                 action.setOnClickListener(v -> payload.listener.onDownloadFile(profile, payload.file));
-
                 return true;
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {

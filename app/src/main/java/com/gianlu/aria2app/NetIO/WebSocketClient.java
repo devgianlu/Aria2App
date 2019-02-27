@@ -1,140 +1,145 @@
 package com.gianlu.aria2app.NetIO;
 
-import android.content.Context;
-
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Closeable;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketClient extends AbstractClient {
-    static WebSocketClient instance;
-    private final Map<Long, OnJson> requests = new ConcurrentHashMap<>();
-    private final WebSocket webSocket;
+    private final Map<Long, InternalResponse> requests = new ConcurrentHashMap<>();
+    private final WeakReference<WebSocket> webSocket;
     private final long initializedAt;
     private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final boolean closeAfterTest;
     private OnConnect connectionListener = null;
 
-    private WebSocketClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
-        super(context, profile);
-        webSocket = client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener());
+    @UiThread
+    private WebSocketClient(@NonNull MultiProfile.UserProfile profile, boolean close) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+        super(profile);
+        webSocket = new WeakReference<>(client.newWebSocket(NetUtils.createWebsocketRequest(profile), new Listener()));
         initializedAt = System.currentTimeMillis();
+        closeAfterTest = close;
     }
 
-    private WebSocketClient(@NonNull Context context) throws GeneralSecurityException, ProfilesManager.NoCurrentProfileException, NetUtils.InvalidUrlException, IOException {
-        this(context, ProfilesManager.get(context).getCurrentSpecific());
-    }
-
-    private WebSocketClient(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
-        this(context, profile);
+    @UiThread
+    private WebSocketClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect listener, boolean close) throws GeneralSecurityException, NetUtils.InvalidUrlException, IOException {
+        this(profile, close);
         connectionListener = listener;
     }
 
     @NonNull
-    public static WebSocketClient instantiate(@NonNull Context context) throws InitializationException {
-        if (instance == null) {
-            try {
-                instance = new WebSocketClient(context);
-            } catch (NetUtils.InvalidUrlException | ProfilesManager.NoCurrentProfileException | GeneralSecurityException | IOException ex) {
-                throw new InitializationException(ex);
-            }
+    static WebSocketClient instantiate(@NonNull MultiProfile.UserProfile profile) throws InitializationException {
+        try {
+            return new WebSocketClient(profile, false);
+        } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
+            throw new InitializationException(ex);
         }
-
-        return instance;
     }
 
-    public static void checkConnection(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener) {
+    @UiThread
+    public static Closeable checkConnection(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect listener, boolean close) {
         try {
-            new WebSocketClient(context, profile, listener);
+            return new WebSocketClient(profile, listener, close);
         } catch (NetUtils.InvalidUrlException | GeneralSecurityException | IOException ex) {
             listener.onFailedConnecting(profile, ex);
+            return null;
         }
     }
 
     @Override
     protected void closeClient() {
         connectionListener = null;
-        if (webSocket != null) webSocket.close(1000, null);
-        if (requests != null) requests.clear();
+        if (webSocket.get() != null) {
+            webSocket.get().close(1000, null);
+            webSocket.clear();
+        }
 
-        if (instance == this)
-            instance = null;
+        for (InternalResponse internal : requests.values())
+            internal.exception(new IOException("Client has been closed."));
+
+        requests.clear();
     }
 
     @Override
     public void send(long id, @NonNull JSONObject request, @NonNull OnJson listener) {
         if (closed) {
-            listener.onException(new IllegalStateException("Client is closed!"));
+            listener.onException(new IllegalStateException("Client is closed: " + this));
             return;
         }
 
-        if (requests.size() > 10) requests.clear();
-
-        try {
-            requests.put(id, listener);
-            webSocket.send(request.toString());
-        } catch (Exception ex) {
-            listener.onException(ex);
-        }
+        executorService.execute(new RequestProcessor(id, request, listener));
     }
 
     @NonNull
     @Override
-    protected JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception {
-        final AtomicReference<Object> lock = new AtomicReference<>(null);
+    @WorkerThread
+    public JSONObject sendSync(long id, @NonNull JSONObject request) throws Exception {
+        if (closed || webSocket.get() == null)
+            throw new IllegalStateException("Client is closed: " + this);
 
-        send(id, request, new OnJson() {
-            @Override
-            public void onResponse(@NonNull JSONObject response) {
-                synchronized (lock) {
-                    lock.set(response);
-                    lock.notifyAll();
-                }
-            }
+        InternalResponse internal = new InternalResponse();
 
-            @Override
-            public void onException(@NonNull Exception ex) {
-                synchronized (lock) {
-                    lock.set(ex);
-                    lock.notifyAll();
-                }
-            }
-        });
+        requests.put(id, internal);
+        webSocket.get().send(request.toString());
 
-        synchronized (lock) {
-            lock.wait();
+        synchronized (internal) {
+            internal.wait(5000);
         }
 
-        Object result = lock.get();
-        if (result instanceof Exception) throw (Exception) result;
-        else return (JSONObject) result;
+        requests.remove(id);
+
+        if (internal.obj != null) return internal.obj;
+        else throw internal.ex;
     }
 
     @Override
     protected <R> void batch(BatchSandbox<R> sandbox, DoBatch<R> listener) {
+        if (closed) {
+            listener.onException(new IllegalStateException("Client is closed: " + this));
+            return;
+        }
+
         executorService.execute(new SandboxRunnable<>(sandbox, listener));
     }
 
-    @Override
-    public void connectivityChanged(@NonNull Context context, @NonNull MultiProfile.UserProfile profile) throws Exception {
-        if (this == instance) instance = new WebSocketClient(context, profile, null);
+    private static class InternalResponse {
+        private JSONObject obj;
+        private Exception ex;
+
+        InternalResponse() {
+            this.obj = null;
+            this.ex = null;
+        }
+
+        synchronized void json(@NonNull JSONObject obj) {
+            this.obj = obj;
+            this.ex = null;
+            notifyAll();
+        }
+
+        synchronized void exception(@NonNull Exception ex) {
+            this.ex = ex;
+            this.obj = null;
+            notifyAll();
+        }
     }
 
     @WorkerThread
@@ -149,14 +154,14 @@ public class WebSocketClient extends AbstractClient {
                 String method = response.optString("method", null);
                 if (method != null && method.startsWith("aria2.on")) return;
 
-                OnJson listener = requests.remove(Long.parseLong(response.getString("id")));
-                if (listener == null) return;
+                InternalResponse internal = requests.get(Long.parseLong(response.getString("id")));
+                if (internal == null) return;
 
                 try {
                     validateResponse(response);
-                    listener.onResponse(response);
+                    internal.json(response);
                 } catch (AriaException ex) {
-                    listener.onException(ex);
+                    internal.exception(ex);
                 }
             } catch (JSONException ex) {
                 ErrorHandler.get().notifyException(ex, false);
@@ -173,6 +178,7 @@ public class WebSocketClient extends AbstractClient {
                     }
 
                     connectionListener = null;
+                    if (closeAfterTest) close();
                 }
             });
         }

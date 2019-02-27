@@ -18,10 +18,10 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
@@ -71,7 +71,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_BATCH, analytics);
 
         try {
-            showDialog(DialogUtils.progressDialog(this, R.string.gathering_information));
+            showProgress(R.string.gathering_information);
             Aria2Helper.instantiate(this).addDownloads(bundles, new AbstractClient.OnResult<List<String>>() {
                 @Override
                 public void onResult(@NonNull List<String> result) {
@@ -98,17 +98,23 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         setTitle(R.string.batchAdd);
 
         Button singleUri = findViewById(R.id.batchAdd_singleUri);
-        singleUri.setOnClickListener(v -> startActivityForResult(new Intent(BatchAddActivity.this, AddUriActivity.class).putExtra("startedForResult", true), REQUEST_URI));
+        singleUri.setOnClickListener(v -> startActivityForResult(new Intent(this, AddUriActivity.class)
+                .putExtra("startedForResult", true), REQUEST_URI));
         Button urisFile = findViewById(R.id.batchAdd_urisFile);
         urisFile.setOnClickListener(v -> openDocument("*/*", "Select some uris files", REQUEST_URIS_FILE));
+        Button webView = findViewById(R.id.batchAdd_webView);
+        webView.setOnClickListener(v -> startActivityForResult(new Intent(this, WebViewActivity.class)
+                .putExtra("startedForResult", true), REQUEST_URI));
 
         Button singleTorrent = findViewById(R.id.batchAdd_singleTorrent);
-        singleTorrent.setOnClickListener(v -> startActivityForResult(new Intent(BatchAddActivity.this, AddTorrentActivity.class).putExtra("startedForResult", true), REQUEST_TORRENT));
+        singleTorrent.setOnClickListener(v -> startActivityForResult(new Intent(this, AddTorrentActivity.class)
+                .putExtra("startedForResult", true), REQUEST_TORRENT));
         Button torrentFiles = findViewById(R.id.batchAdd_torrentFiles);
         torrentFiles.setOnClickListener(v -> openDocument("application/x-bittorrent", "Select some torrent files", REQUEST_TORRENT_FILES));
 
         Button singleMetalink = findViewById(R.id.batchAdd_singleMetalink);
-        singleMetalink.setOnClickListener(v -> startActivityForResult(new Intent(BatchAddActivity.this, AddMetalinkActivity.class).putExtra("startedForResult", true), REQUEST_METALINK));
+        singleMetalink.setOnClickListener(v -> startActivityForResult(new Intent(this, AddMetalinkActivity.class)
+                .putExtra("startedForResult", true), REQUEST_METALINK));
         Button metalinkFiles = findViewById(R.id.batchAdd_metalinkFiles);
         metalinkFiles.setOnClickListener(v -> openDocument("application/metalink4+xml,application/metalink+xml", "Select some Metalink files", REQUEST_METALINK_FILES));
 
@@ -200,15 +206,15 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
     @Override
     public void onEdit(int pos, @NonNull AddDownloadBundle bundle) {
         if (bundle instanceof AddUriBundle) {
-            startActivityForResult(new Intent(BatchAddActivity.this, AddUriActivity.class)
+            startActivityForResult(new Intent(this, AddUriActivity.class)
                     .putExtra("edit", bundle)
                     .putExtra("startedForEdit", pos), REQUEST_URI);
         } else if (bundle instanceof AddTorrentBundle) {
-            startActivityForResult(new Intent(BatchAddActivity.this, AddTorrentActivity.class)
+            startActivityForResult(new Intent(this, AddTorrentActivity.class)
                     .putExtra("edit", bundle)
                     .putExtra("startedForEdit", pos), REQUEST_TORRENT);
         } else if (bundle instanceof AddMetalinkBundle) {
-            startActivityForResult(new Intent(BatchAddActivity.this, AddMetalinkActivity.class)
+            startActivityForResult(new Intent(this, AddMetalinkActivity.class)
                     .putExtra("edit", bundle)
                     .putExtra("startedForEdit", pos), REQUEST_METALINK);
         }
