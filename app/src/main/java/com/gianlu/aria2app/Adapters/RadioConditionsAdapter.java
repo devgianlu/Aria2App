@@ -19,7 +19,7 @@ public class RadioConditionsAdapter extends ArrayAdapter<MultiProfile.Connectivi
 
     public RadioConditionsAdapter(@NonNull Context context, @NonNull List<MultiProfile.ConnectivityCondition> objects) {
         super(context, R.layout.item_radio_condition, objects);
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     @NonNull

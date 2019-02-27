@@ -84,7 +84,7 @@ public class FetchHelper {
     public static FetchHelper get(@NonNull Context context) throws InitializationException {
         if (instance == null) {
             try {
-                instance = new FetchHelper(context);
+                instance = new FetchHelper(context.getApplicationContext());
             } catch (GeneralSecurityException | ProfilesManager.NoCurrentProfileException | IOException | Aria2Helper.InitializingException ex) {
                 throw new InitializationException(ex);
             }

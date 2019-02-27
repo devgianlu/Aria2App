@@ -27,7 +27,7 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
     private final Context context;
 
     public AddDownloadBundlesAdapter(Context context, Listener listener) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
         this.bundles = new ArrayList<>();

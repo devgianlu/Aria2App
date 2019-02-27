@@ -18,7 +18,7 @@ public abstract class BaseTester<T> implements Runnable {
     private final PublishListener<T> listener;
 
     BaseTester(Context context, MultiProfile.UserProfile profile, @Nullable PublishListener<T> listener) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.profile = profile;
         this.listener = listener;
     }

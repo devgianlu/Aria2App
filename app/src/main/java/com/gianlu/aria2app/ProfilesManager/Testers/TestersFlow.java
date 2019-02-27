@@ -23,7 +23,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
 
     @SuppressWarnings("unchecked")
     public TestersFlow(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull ITestFlow listener) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.listener = listener;
         this.testers = new LinkedList<>();
 

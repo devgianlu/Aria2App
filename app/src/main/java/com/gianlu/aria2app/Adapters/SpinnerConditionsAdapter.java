@@ -19,7 +19,7 @@ public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.Connecti
 
     public SpinnerConditionsAdapter(@NonNull Context context, @NonNull List<MultiProfile.ConnectivityCondition> objects) {
         super(context, android.R.layout.simple_spinner_dropdown_item, objects);
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     @Override

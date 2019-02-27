@@ -500,7 +500,7 @@ public class NotificationService extends Service {
         private final MessengerPayload payload;
 
         private ToggleNotificationHelper(@NonNull Context context, @NonNull String gid, @NonNull Mode mode) {
-            this.context = context;
+            this.context = context.getApplicationContext();
             this.payload = new MessengerPayload(gid, mode);
         }
 

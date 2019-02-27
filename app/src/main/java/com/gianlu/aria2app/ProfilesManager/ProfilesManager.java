@@ -42,7 +42,7 @@ public class ProfilesManager {
 
     @NonNull
     public static ProfilesManager get(Context context) {
-        if (instance == null) instance = new ProfilesManager(context);
+        if (instance == null) instance = new ProfilesManager(context.getApplicationContext());
         return instance;
     }
 

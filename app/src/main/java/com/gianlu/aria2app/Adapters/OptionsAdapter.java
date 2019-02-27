@@ -37,7 +37,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final Context context;
 
     private OptionsAdapter(@NonNull Context context, List<Option> options, Listener listener) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);

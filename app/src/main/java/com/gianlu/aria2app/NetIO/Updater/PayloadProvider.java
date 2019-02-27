@@ -27,7 +27,7 @@ public abstract class PayloadProvider<P> implements PayloadUpdater.OnPayload<P> 
     protected P lastPayload;
 
     public PayloadProvider(@NonNull Context context, @NonNull Wants<P> provides) throws Aria2Helper.InitializingException {
-        this.updater = requireUpdater(context);
+        this.updater = requireUpdater(context.getApplicationContext());
         this.provides = provides;
         this.requireListeners = new HashSet<>();
     }

@@ -62,7 +62,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
     public DownloadCardsAdapter(Context context, List<DownloadWithUpdate> objs, Listener listener) {
         super(objs, SortBy.STATUS);
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.listener = listener;
         this.inflater = LayoutInflater.from(context);
         this.broadcastManager = LocalBroadcastManager.getInstance(context);
@@ -239,7 +239,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     public void activityDestroying(@NonNull Context context) {
-        context.unbindService(this);
+        context.getApplicationContext().unbindService(this);
         if (broadcastManager != null) broadcastManager.unregisterReceiver(receiver);
     }
 
