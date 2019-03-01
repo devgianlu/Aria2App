@@ -112,7 +112,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     @Override
-    public void onSetupViewHolder(@NonNull final ViewHolder holder, int position, final @NonNull DownloadWithUpdate item) {
+    public void onSetupViewHolder(@NonNull ViewHolder holder, int position, final @NonNull DownloadWithUpdate item) {
         DownloadWithUpdate.SmallUpdate update = item.update();
 
         int colorAccent = ContextCompat.getColor(context, update.getColorAccent());

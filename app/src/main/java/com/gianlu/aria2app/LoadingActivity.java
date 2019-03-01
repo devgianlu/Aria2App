@@ -285,7 +285,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        EditProfileActivity.start(LoadingActivity.this, profile.id);
+        EditProfileActivity.start(this, profile.id);
         return true;
     }
 

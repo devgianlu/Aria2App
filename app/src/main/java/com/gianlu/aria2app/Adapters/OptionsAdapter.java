@@ -26,7 +26,6 @@ import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder> {
@@ -34,10 +33,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private final List<Option> originalOptions;
     private final LayoutInflater inflater;
     private final Listener listener;
-    private final Context context;
 
     private OptionsAdapter(@NonNull Context context, List<Option> options, Listener listener) {
-        this.context = context.getApplicationContext();
         this.originalOptions = options;
         this.options = new ArrayList<>(options);
         this.inflater = LayoutInflater.from(context);
@@ -94,17 +91,17 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Option option = options.get(position);
 
         holder.name.setText(option.name);
 
         if (option.isValueChanged()) {
             holder.value.setText(option.newValue.strings("; "));
-            holder.value.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            CommonUtils.setTextColor(holder.value, R.color.colorAccent);
         } else {
             holder.value.setText(option.value.strings("; "));
-            holder.value.setTextColor(CommonUtils.resolveAttrAsColor(context, android.R.attr.textColorPrimary));
+            CommonUtils.setTextColorFromAttr(holder.value, android.R.attr.textColorPrimary);
         }
 
         if (option.isQuick())
@@ -130,7 +127,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             if (newIndex != -1) notifyItemMoved(oldIndex, newIndex);
         });
 
-        holder.info.setOnClickListener(v -> context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name))));
+        holder.info.setOnClickListener(v -> v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name))));
     }
 
     @Override
