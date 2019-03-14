@@ -464,7 +464,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
 
             setupActions(download);
 
-            CommonUtils.setRecyclerViewTopMargin(context, this);
+            CommonUtils.setRecyclerViewTopMargin(this);
         }
     }
 }
