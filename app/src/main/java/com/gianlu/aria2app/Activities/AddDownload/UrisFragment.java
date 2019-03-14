@@ -143,7 +143,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
                 if (clip != null) {
                     for (int i = 0; i < clip.getItemCount(); i++) {
                         ClipData.Item item = clip.getItemAt(i);
-                        String clipUri = item.coerceToText(getContext()).toString();
+                        String clipUri = item.getText().toString();
 
                         try {
                             new URL(clipUri);
