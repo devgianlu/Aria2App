@@ -34,6 +34,8 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
@@ -312,6 +314,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         ongoingTest = null;
 
         if (shareData != null) {
+            try {
+                new URL(shareData.toString());
+            } catch (MalformedURLException ex) {
+                launchMain();
+                return false;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.useWebView)
                     .setMessage(R.string.useWebView_message)
