@@ -34,12 +34,10 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final List<Object> objs;
     private final LayoutInflater inflater;
     private final Listener listener;
-    private final Context context;
     private final GeoIP geoIP;
     private final CountryFlags flags = CountryFlags.get();
 
     ServersAdapter(Context context, @NonNull Listener listener) {
-        this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();
         this.geoIP = GeoIP.get();
@@ -121,7 +119,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     castHolder.address.setText(server.currentUri);
                     castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
                 } else if (payload instanceof IPDetails) {
-                    castHolder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
+                    castHolder.flag.setImageDrawable(flags.loadFlag(castHolder.flag.getContext(), ((IPDetails) payload).countryCode));
                 }
             } else if (holder instanceof HeaderViewHolder) {
                 AriaFile file = (AriaFile) payloads.get(0);

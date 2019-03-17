@@ -26,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 @UiThread
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {
-    private final Context context;
     private final Listener listener;
     private final LayoutInflater inflater;
     private final GeoIP geoIP;
@@ -35,7 +34,6 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     PeersAdapter(Context context, @NonNull Listener listener) {
         super(new ArrayList<>(), SortBy.DOWNLOAD_SPEED);
         this.inflater = LayoutInflater.from(context);
-        this.context = context;
         this.listener = listener;
         this.geoIP = GeoIP.get();
     }
@@ -55,7 +53,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
     @Override
     protected void onUpdateViewHolder(@NonNull ViewHolder holder, int position, @NonNull Object payload) {
         if (payload instanceof IPDetails)
-            holder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
+            holder.flag.setImageDrawable(flags.loadFlag(holder.flag.getContext(), ((IPDetails) payload).countryCode));
     }
 
     @Override
