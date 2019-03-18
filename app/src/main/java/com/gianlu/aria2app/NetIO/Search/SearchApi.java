@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.NetIO.Search;
 
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
@@ -8,6 +9,8 @@ import android.util.Base64;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Lifecycle.LifecycleAwareHandler;
+import com.gianlu.commonutils.Lifecycle.LifecycleAwareRunnable;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Json.JsonStoring;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -41,7 +44,7 @@ public final class SearchApi {
     private static SearchApi instance;
     private final OkHttpClient client;
     private final ExecutorService executorService;
-    private final Handler handler;
+    private final LifecycleAwareHandler handler;
     private List<SearchEngine> cachedEngines = null;
 
     private SearchApi() {
@@ -50,7 +53,7 @@ public final class SearchApi {
                 .readTimeout(TIMEOUT, TimeUnit.SECONDS)
                 .build();
         executorService = Executors.newSingleThreadExecutor();
-        handler = new Handler(Looper.getMainLooper());
+        handler = new LifecycleAwareHandler(new Handler(Looper.getMainLooper()));
     }
 
     @NonNull
@@ -71,11 +74,11 @@ public final class SearchApi {
         }
     }
 
-    public void search(final String token, final int maxResults, final OnSearch listener) {
-        search(null, token, maxResults, null, listener);
+    public void search(@NonNull String token, int maxResults, @Nullable Activity activity, @NonNull OnSearch listener) {
+        search(null, token, maxResults, null, activity, listener);
     }
 
-    private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, final OnSearch listener) {
+    private void search(@Nullable String query, @Nullable String token, int maxResults, @Nullable Collection<String> engines, @Nullable Activity activity, @NonNull OnSearch listener) {
         final HttpUrl.Builder builder = BASE_URL.newBuilder().
                 addPathSegment("search")
                 .addQueryParameter("m", String.valueOf(maxResults));
@@ -89,48 +92,54 @@ public final class SearchApi {
                     builder.addQueryParameter("e", engineId);
         }
 
-        executorService.execute(() -> {
-            try {
-                JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
-                final List<SearchResult> results = SearchResult.list(obj.getJSONArray("result"));
+        executorService.execute(new LifecycleAwareRunnable(handler, activity == null ? listener : activity) {
+            @Override
+            public void run() {
+                try {
+                    JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
+                    List<SearchResult> results = SearchResult.list(obj.getJSONArray("result"));
 
-                cacheEnginesBlocking();
-                JSONArray missingEnginesArray = obj.getJSONArray("missing");
-                final List<MissingSearchEngine> missingEngines = new ArrayList<>();
-                for (int i = 0; i < missingEnginesArray.length(); i++)
-                    missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
+                    cacheEnginesBlocking();
+                    JSONArray missingEnginesArray = obj.getJSONArray("missing");
+                    List<MissingSearchEngine> missingEngines = new ArrayList<>();
+                    for (int i = 0; i < missingEnginesArray.length(); i++)
+                        missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
 
-                final String token1 = obj.optString("token", null);
-                handler.post(() -> listener.onResult(results, missingEngines, token1));
-            } catch (IOException | StatusCodeException | JSONException ex) {
-                handler.post(() -> listener.onException(ex));
+                    String newToken = obj.optString("token", null);
+                    post(() -> listener.onResult(results, missingEngines, newToken));
+                } catch (IOException | StatusCodeException | JSONException ex) {
+                    post(() -> listener.onException(ex));
+                }
             }
         });
     }
 
-    public void search(String query, int maxResults, @Nullable Collection<String> engines, OnSearch listener) {
-        search(query, null, maxResults, engines, listener);
+    public void search(@NonNull String query, int maxResults, @Nullable Collection<String> engines, @Nullable Activity activity, @NonNull OnSearch listener) {
+        search(query, null, maxResults, engines, activity, listener);
     }
 
-    public void getTorrent(SearchResult result, final OnResult<Torrent> listener) {
+    public void getTorrent(@NonNull SearchResult result, @Nullable Activity activity, @NonNull OnResult<Torrent> listener) {
         final HttpUrl.Builder builder = BASE_URL.newBuilder();
         builder.addPathSegment("getTorrent")
                 .addQueryParameter("e", result.engineId)
                 .addQueryParameter("url", Base64.encodeToString(result.url.getBytes(), Base64.NO_WRAP | Base64.URL_SAFE));
 
-        executorService.execute(() -> {
-            try {
-                JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
-                final Torrent torrent = new Torrent(obj);
-                handler.post(() -> listener.onResult(torrent));
-            } catch (IOException | StatusCodeException | JSONException ex) {
-                handler.post(() -> listener.onException(ex));
+        executorService.execute(new LifecycleAwareRunnable(handler, activity == null ? listener : activity) {
+            @Override
+            public void run() {
+                try {
+                    JSONObject obj = new JSONObject(request(new Request.Builder().get().url(builder.build()).build()));
+                    Torrent torrent = new Torrent(obj);
+                    post(() -> listener.onResult(torrent));
+                } catch (IOException | StatusCodeException | JSONException ex) {
+                    post(() -> listener.onException(ex));
+                }
             }
         });
     }
 
     @Nullable
-    public SearchEngine findEngine(String id) {
+    public SearchEngine findEngine(@NonNull String id) {
         if (cachedEngines == null) return null;
         for (SearchEngine engine : cachedEngines)
             if (Objects.equals(engine.id, id))
@@ -139,13 +148,16 @@ public final class SearchApi {
         return null;
     }
 
-    public void listSearchEngines(final OnResult<List<SearchEngine>> listener) {
-        executorService.execute(() -> {
-            try {
-                final List<SearchEngine> engines = listSearchEnginesSync();
-                handler.post(() -> listener.onResult(engines));
-            } catch (IOException | StatusCodeException | JSONException ex) {
-                handler.post(() -> listener.onException(ex));
+    public void listSearchEngines(@Nullable Activity activity, @NonNull OnResult<List<SearchEngine>> listener) {
+        executorService.execute(new LifecycleAwareRunnable(handler, activity == null ? listener : activity) {
+            @Override
+            public void run() {
+                try {
+                    final List<SearchEngine> engines = listSearchEnginesSync();
+                    post(() -> listener.onResult(engines));
+                } catch (IOException | StatusCodeException | JSONException ex) {
+                    post(() -> listener.onException(ex));
+                }
             }
         });
     }
