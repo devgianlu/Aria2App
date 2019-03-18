@@ -144,18 +144,20 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return -1;
     }
 
-    private int indexOfServer(Uri uri) {
+    private List<Integer> indexOfServer(Uri uri) {
+        List<Integer> list = new ArrayList<>();
         for (int i = 0; i < objs.size(); i++)
             if (objs.get(i) instanceof Server)
                 if (Objects.equals(((Server) objs.get(i)).uri, uri))
-                    return i;
+                    list.add(i);
 
-        return -1;
+        return list;
     }
 
-    private void notifyServerChanged(Server server) {
-        int pos = indexOfServer(server.uri);
-        if (pos != -1) notifyItemChanged(pos, server);
+    private void notifyServerChanged(int index, @NonNull Server server) {
+        List<Integer> list = indexOfServer(server.uri);
+        if (list.size() == 1) notifyItemChanged(list.get(0), server);
+        else if (!list.isEmpty() && index < list.size()) notifyItemChanged(list.get(index), server);
     }
 
     public void notifyItemsChanged(@NonNull SparseServers servers, @NonNull AriaFiles files) {
@@ -167,7 +169,10 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         int pos = indexOfHeader(file.index);
         if (pos != -1) {
             notifyItemChanged(pos, file);
-            for (Server server : servers) notifyServerChanged(server);
+            for (int i = 0; i < servers.size(); i++) {
+                Server server = servers.get(i);
+                notifyServerChanged(i, server);
+            }
         }
     }
 
