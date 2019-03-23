@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -147,7 +148,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
         }
 
         @Override
-        public void onFailed(Throwable ex) {
+        public void onFailed(@NonNull Throwable ex) {
             Toaster.with(DirectDownloadActivity.this).message(R.string.failedDownloadingFile).ex(ex).show();
         }
     }

@@ -271,7 +271,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
 
             @Override
-            public void onFailed(Throwable ex) {
+            public void onFailed(@NonNull Throwable ex) {
                 DialogUtils.showToast(getContext(),
                         Toaster.build()
                                 .message(single ? R.string.failedAddingDownload : R.string.failedAddingDownloads)
