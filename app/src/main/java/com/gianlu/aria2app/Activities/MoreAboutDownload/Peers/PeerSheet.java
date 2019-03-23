@@ -99,7 +99,7 @@ public class PeerSheet extends ThemedModalBottomSheet<Peer, Peers> {
         Utils.setupChart(chart, true);
         update(payload);
 
-        ipApi.getIPDetails(payload.ip, new GeoIP.OnIpDetails() {
+        ipApi.getIPDetails(payload.ip, getActivity(), new GeoIP.OnIpDetails() {
             @Override
             public void onDetails(@NonNull IPDetails details) {
                 ipDetails.setup(details);

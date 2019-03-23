@@ -1,23 +1,26 @@
 package com.gianlu.aria2app;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Preferences.BasePreferenceActivity;
 import com.gianlu.commonutils.Preferences.BasePreferenceFragment;
 import com.gianlu.commonutils.Preferences.MaterialAboutPreferenceItem;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.yarolegovich.mp.AbsMaterialTextValuePreference;
 import com.yarolegovich.mp.MaterialCheckboxPreference;
-import com.yarolegovich.mp.MaterialEditTextPreference;
 import com.yarolegovich.mp.MaterialMultiChoicePreference;
 import com.yarolegovich.mp.MaterialSeekBarPreference;
+import com.yarolegovich.mp.MaterialStandardPreference;
 
 import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.documentfile.provider.DocumentFile;
 
 public class PreferenceActivity extends BasePreferenceActivity {
     @NonNull
@@ -105,6 +108,19 @@ public class PreferenceActivity extends BasePreferenceActivity {
     }
 
     public static class DirectDownloadFragment extends BasePreferenceFragment {
+        private static final int DOWNLOAD_PATH_CODE = 34;
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (requestCode == DOWNLOAD_PATH_CODE && resultCode == RESULT_OK) {
+                DocumentFile file = DocumentFile.fromTreeUri(getContext(), data.getData());
+                System.out.println("WRITE?? " + file.canWrite());
+                Prefs.putString(PK.DD_DOWNLOAD_PATH, file.getUri().toString());
+                return;
+            }
+
+            super.onActivityResult(requestCode, resultCode, data);
+        }
 
         @Override
         protected void buildPreferences(@NonNull Context context) {
@@ -116,13 +132,17 @@ public class PreferenceActivity extends BasePreferenceActivity {
             external.setSummary(R.string.prefs_ddUseExternal_summary);
             addPreference(external);
 
-            MaterialEditTextPreference downloadPath = new MaterialEditTextPreference.Builder(context)
-                    .showValueMode(AbsMaterialTextValuePreference.SHOW_ON_BOTTOM)
+            MaterialStandardPreference downloadPath = new MaterialStandardPreference.Builder(context)
                     .key(PK.DD_DOWNLOAD_PATH.key())
                     .defaultValue(PK.DD_DOWNLOAD_PATH.fallback())
                     .build();
             downloadPath.setTitle(R.string.prefs_ddDownloadPath);
             downloadPath.setSummary(R.string.prefs_ddDownloadPath_summary);
+            downloadPath.addPreferenceClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                startActivityForResult(intent, DOWNLOAD_PATH_CODE);
+            });
             addPreference(downloadPath);
 
             MaterialSeekBarPreference concurrentDownloads = new MaterialSeekBarPreference.Builder(context)

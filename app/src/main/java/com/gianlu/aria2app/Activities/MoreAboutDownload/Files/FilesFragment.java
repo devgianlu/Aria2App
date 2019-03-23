@@ -261,7 +261,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private void startDownloadInternal(@NonNull MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
         if (helper == null) return;
 
-        final boolean single = file != null;
+        boolean single = file != null;
         FetchHelper.StartListener listener = new FetchHelper.StartListener() {
             @Override
             public void onSuccess() {
@@ -279,8 +279,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
         };
 
-        if (file != null) helper.start(profile, file, listener);
-        else if (dir != null) helper.start(profile, dir, listener);
+        if (file != null) helper.start(requireContext(), profile, file, listener);
+        else if (dir != null) helper.start(requireContext(), profile, dir, listener);
     }
 
     @Override

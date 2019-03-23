@@ -69,11 +69,11 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     }
 
     @Override
-    protected void moreContent(int page, @NonNull final ContentProvider<SearchResult> provider) {
+    protected void moreContent(int page, @NonNull ContentProvider<SearchResult> provider) {
         if (token == null) {
             provider.onMoreContent(new ArrayList<>());
         } else {
-            searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.OnSearch() {
+            searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, null, new SearchApi.OnSearch() {
                 @Override
                 public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;

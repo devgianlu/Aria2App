@@ -97,7 +97,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
 
         String host = server.uri.getHost();
         if (host != null) {
-            ipApi.getIPDetails(host, new GeoIP.OnIpDetails() {
+            ipApi.getIPDetails(host, getActivity(), new GeoIP.OnIpDetails() {
                 @Override
                 public void onDetails(@NonNull IPDetails details) {
                     ipDetails.setup(details);
