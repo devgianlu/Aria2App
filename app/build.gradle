@@ -46,7 +46,7 @@ dependencies {
     api 'com.tonyodev.fetch2:fetch2:3.0.2'
     api 'com.tonyodev.fetch2okhttp:fetch2okhttp:3.0.2'
     api 'com.squareup.okhttp3:okhttp:3.12.1'
-    api 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
+    api 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     api 'com.getbase:floatingactionbutton:1.10.1'
     api 'org.apmem.tools:layouts:1.10@aar'
     api 'com.llew.huawei:verifier:1.0.6'
