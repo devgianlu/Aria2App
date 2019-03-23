@@ -69,7 +69,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     }
 
     @Override
-    protected void moreContent(int page, @NonNull final ContentProvider<SearchResult> provider) {
+    protected void moreContent(int page, @NonNull ContentProvider<SearchResult> provider) {
         if (token == null) {
             provider.onMoreContent(new ArrayList<>());
         } else {

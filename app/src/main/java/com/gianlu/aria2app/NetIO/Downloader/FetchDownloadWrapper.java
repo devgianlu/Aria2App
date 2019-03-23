@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.NetIO.Downloader;
 
+import android.net.Uri;
+
 import com.gianlu.commonutils.Logging;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Status;
@@ -83,6 +85,11 @@ public class FetchDownloadWrapper {
     @NotNull
     public synchronized File getFile() {
         return new File(download.getFile());
+    }
+
+    @NotNull
+    public synchronized Uri getUri() {
+        return download.getFileUri();
     }
 
     public synchronized long getSpeed() {
