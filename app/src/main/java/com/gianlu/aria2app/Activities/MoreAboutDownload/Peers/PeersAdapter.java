@@ -66,7 +66,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
             if (listener != null) listener.onPeerSelected(peer);
         });
 
-        geoIP.getIPDetails(peer.ip, new GeoIP.OnIpDetails() {
+        geoIP.getIPDetails(peer.ip, null, new GeoIP.OnIpDetails() {
             @Override
             public void onDetails(@NonNull IPDetails details) {
                 notifyItemChanged(holder.getAdapterPosition(), details);

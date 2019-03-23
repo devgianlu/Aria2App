@@ -86,7 +86,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             String host = server.uri.getHost();
             if (host != null) {
-                geoIP.getIPDetails(host, new GeoIP.OnIpDetails() {
+                geoIP.getIPDetails(host, null, new GeoIP.OnIpDetails() {
                     @Override
                     public void onDetails(@NonNull IPDetails details) {
                         notifyItemChanged(holder.getAdapterPosition(), details);

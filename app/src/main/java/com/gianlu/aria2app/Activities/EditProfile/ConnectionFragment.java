@@ -97,7 +97,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
                     @Override
                     public void run() {
                         if (lastAddress != null) {
-                            GeoIP.get().getIPDetails(lastAddress, new GeoIP.OnIpDetails() {
+                            GeoIP.get().getIPDetails(lastAddress, getActivity(), new GeoIP.OnIpDetails() {
                                 @Override
                                 public void onDetails(@NonNull IPDetails details) {
                                     if (isAdded()) {

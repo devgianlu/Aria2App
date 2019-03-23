@@ -152,7 +152,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.startLoading();
         this.query = query;
 
-        searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), this);
+        searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), null, this);
 
         AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH);
         return true;
@@ -194,7 +194,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         switch (item.getItemId()) {
             case R.id.search_engines:
                 showProgress(R.string.gathering_information);
-                searchApi.listSearchEngines(new SearchApi.OnResult<List<SearchEngine>>() {
+                searchApi.listSearchEngines(this, new SearchApi.OnResult<List<SearchEngine>>() {
                     @Override
                     public void onResult(@NonNull List<SearchEngine> result) {
                         dismissDialog();
@@ -216,7 +216,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     @Override
     public void onResultSelected(@NonNull SearchResult result) {
         showProgress(R.string.gathering_information);
-        searchApi.getTorrent(result, new SearchApi.OnResult<Torrent>() {
+        searchApi.getTorrent(result, this, new SearchApi.OnResult<Torrent>() {
             @Override
             public void onResult(@NonNull Torrent torrent) {
                 dismissDialog();
