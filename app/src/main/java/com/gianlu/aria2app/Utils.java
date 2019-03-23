@@ -11,12 +11,11 @@ import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -206,9 +205,10 @@ public final class Utils {
         return sb.toString();
     }
 
-    private static class CustomYAxisValueFormatter implements IAxisValueFormatter {
+    private static class CustomYAxisValueFormatter extends ValueFormatter {
+
         @Override
-        public String getFormattedValue(float value, AxisBase axis) {
+        public String getFormattedValue(float value) {
             return CommonUtils.speedFormatter(value, false);
         }
     }
