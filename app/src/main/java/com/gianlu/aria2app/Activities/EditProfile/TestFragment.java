@@ -11,8 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.ProfilesManager.Testers.BaseTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.SuperTextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,9 +44,9 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     }
 
     @Override
-    public void addView(@NonNull View view) {
+    public void addItem(@NonNull String message, @NonNull BaseTester.Color color) {
         if (testResults != null) {
-            testResults.addView(view);
+            testResults.addView(new SuperTextView(getContext(), message, color.getResource(getContext())));
             testResults.postDelayed(() -> ((ScrollView) testResults.getParent()).fullScroll(ScrollView.FOCUS_DOWN), 100);
         }
     }
