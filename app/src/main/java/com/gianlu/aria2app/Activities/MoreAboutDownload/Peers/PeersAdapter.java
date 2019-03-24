@@ -62,6 +62,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
         holder.flag.setImageResource(R.drawable.ic_list_unknown);
+        holder.peerId.setText(CommonUtils.decodeUrl(peer.peerId));
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onPeerSelected(peer);
         });
@@ -116,6 +117,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         final SuperTextView address;
         final SuperTextView downloadSpeed;
         final SuperTextView uploadSpeed;
+        final SuperTextView peerId;
         final ImageView flag;
 
         ViewHolder(ViewGroup parent) {
@@ -124,6 +126,7 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
             downloadSpeed = itemView.findViewById(R.id.peerItem_downloadSpeed);
             uploadSpeed = itemView.findViewById(R.id.peerItem_uploadSpeed);
             flag = itemView.findViewById(R.id.peerItem_flag);
+            peerId = itemView.findViewById(R.id.peerItem_peerId);
         }
     }
 }

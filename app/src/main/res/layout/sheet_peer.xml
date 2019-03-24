@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
-    android:paddingEnd="12dp"
     android:paddingStart="12dp"
-    android:paddingTop="0dp">
+    android:paddingTop="0dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="16dp">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/peerSheet_chart"
@@ -29,9 +29,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <com.gianlu.commonutils.SuperTextView
+        android:id="@+id/peerSheet_peerId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView
         android:id="@+id/peerSheet_ipDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
+    <com.gianlu.aria2app.Adapters.BitfieldVisualizer
+        android:id="@+id/peerSheet_bitfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

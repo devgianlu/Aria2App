@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
@@ -85,11 +87,19 @@ public class BitfieldVisualizer extends View {
         invalidate();
     }
 
-    public void update(DownloadWithUpdate.BigUpdate update) {
-        if (update == null || Objects.equals(bitfield, update.bitfield)) return;
+    public void setColorRes(@ColorRes int color) {
+        setColor(ContextCompat.getColor(getContext(), color));
+    }
 
-        bitfield = update.bitfield;
-        pieces = update.numPieces / 4;
+    public void update(@NonNull DownloadWithUpdate.BigUpdate update) {
+        update(update.bitfield, update.numPieces);
+    }
+
+    public void update(@NonNull String bitfield, int numPieces) {
+        if (Objects.equals(this.bitfield, bitfield)) return;
+
+        this.bitfield = bitfield;
+        pieces = numPieces / 4;
         binary = hexToBinary(bitfield, pieces);
 
         invalidate();
