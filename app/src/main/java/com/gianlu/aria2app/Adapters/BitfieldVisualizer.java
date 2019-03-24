@@ -155,13 +155,15 @@ public class BitfieldVisualizer extends View {
         int i = 0;
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {
-                if (i < pieces && binary[i] != 0) {
+                if (i >= pieces) break;
+
+                if (binary[i] != 0) {
                     paint.setAlpha(255 / 4 * binary[i]);
                     calcSquarePos(row, column, rect);
                     canvas.drawRect(rect, paint);
                 }
 
-                if ((row == 0 && column == 0) || (row == rows - 1 && column == columns - 1)) {
+                if (i == pieces - 1 || i == 0) {
                     calcSquarePos(row, column, rect);
                     canvas.drawRect(rect, border);
                 }
