@@ -3,11 +3,14 @@ package com.gianlu.aria2app.Adapters;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,9 +22,11 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 public class BitfieldVisualizer extends View {
-    private final int padding = 12;
-    private final int square = 48;
+    private final int padding;
+    private final int square;
     private final Paint paint;
+    private final Paint border;
+    private final Rect rect = new Rect();
     private String bitfield = null;
     private int pieces = -1;
     private int[] binary = null;
@@ -40,8 +45,17 @@ public class BitfieldVisualizer extends View {
     public BitfieldVisualizer(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        int dp4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+        padding = dp4;
+        square = dp4 * 4;
+
         paint = new Paint();
         paint.setColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+
+        border = new Paint();
+        border.setColor(CommonUtils.resolveAttrAsColor(getContext(), android.R.attr.colorForeground));
+        border.setStrokeWidth(dp4 / 4f);
+        border.setStyle(Paint.Style.STROKE);
     }
 
     @Nullable
@@ -125,6 +139,15 @@ public class BitfieldVisualizer extends View {
         setMeasuredDimension(width, getDefaultSize(rows * (square + padding) + padding, heightMeasureSpec));
     }
 
+    private void calcSquarePos(int row, int column, Rect rect) {
+        int px = padding + column * (square + padding) + hoff;
+        int py = padding + row * (square + padding);
+        rect.left = px;
+        rect.top = py;
+        rect.right = square + px;
+        rect.bottom = square + py;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (binary == null || pieces == -1) return;
@@ -134,10 +157,15 @@ public class BitfieldVisualizer extends View {
             for (int column = 0; column < columns; column++) {
                 if (i < pieces && binary[i] != 0) {
                     paint.setAlpha(255 / 4 * binary[i]);
-                    int px = padding + column * (square + padding) + hoff;
-                    int py = padding + row * (square + padding);
-                    canvas.drawRect(px, py, square + px, square + py, paint);
+                    calcSquarePos(row, column, rect);
+                    canvas.drawRect(rect, paint);
                 }
+
+                if ((row == 0 && column == 0) || (row == rows - 1 && column == columns - 1)) {
+                    calcSquarePos(row, column, rect);
+                    canvas.drawRect(rect, border);
+                }
+
                 i++;
             }
         }
