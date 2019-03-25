@@ -76,7 +76,7 @@ public abstract class BaseTester<T> implements Runnable {
         }
 
         @ColorInt
-        public int getResource(Context context) {
+        public int getResource(@NonNull Context context) {
             if (resolve) return CommonUtils.resolveAttrAsColor(context, res);
             else return ContextCompat.getColor(context, res);
         }
