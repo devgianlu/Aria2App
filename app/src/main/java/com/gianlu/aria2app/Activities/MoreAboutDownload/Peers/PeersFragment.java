@@ -142,7 +142,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     @Override
     protected void onLoadUi(@NonNull Peers payload) {
         Bundle args = getArguments();
-        if (args == null) return;
+        if (args == null || !isAdded()) return;
 
         try {
             Aria2Helper.instantiate(requireContext()).request(AriaRequests.tellStatus(args.getString("gid")), new AbstractClient.OnResult<DownloadWithUpdate>() {
