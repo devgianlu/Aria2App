@@ -11,6 +11,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView;
+import com.gianlu.aria2app.NetIO.PeerIdParser;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
@@ -63,8 +64,13 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
         amChoking.setHtml(R.string.amChoking, String.valueOf(peer.amChoking));
         downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
-        peerId.setHtml(R.string.peerId, CommonUtils.decodeUrl(peer.peerId), peer.peerId);
         bitfield.update(peer.bitfield, numPieces);
+
+        PeerIdParser.Parsed parsed = peer.peerId();
+        if (parsed == null)
+            peerId.setHtml(R.string.peerId, getString(R.string.unknown).toLowerCase());
+        else
+            peerId.setHtml(R.string.peerId, parsed.toString());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -9,6 +10,7 @@ import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
+import com.gianlu.aria2app.NetIO.PeerIdParser;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Adapters.NotFilterable;
 import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
@@ -62,10 +64,17 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
         holder.downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         holder.uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
         holder.flag.setImageResource(R.drawable.ic_list_unknown);
-        holder.peerId.setText(CommonUtils.decodeUrl(peer.peerId));
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onPeerSelected(peer);
         });
+
+        PeerIdParser.Parsed peerId = peer.peerId();
+        if (peerId == null) {
+            holder.peerId.setVisibility(View.GONE);
+        } else {
+            holder.peerId.setVisibility(View.VISIBLE);
+            holder.peerId.setText(peerId.toString());
+        }
 
         geoIP.getIPDetails(peer.ip, null, new GeoIP.OnIpDetails() {
             @Override
