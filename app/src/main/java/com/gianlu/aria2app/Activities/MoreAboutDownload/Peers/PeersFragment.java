@@ -45,7 +45,9 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.peersFragment_sorting).getSubMenu().setGroupCheckable(0, true, true);
+        MenuItem item = menu.findItem(R.id.peersFragment_sorting);
+        if (item != null)
+            item.getSubMenu().setGroupCheckable(0, true, true);
     }
 
     @Override

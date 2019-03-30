@@ -45,7 +45,7 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
 
     @Override
     public void addItem(@NonNull String message, @NonNull BaseTester.Color color) {
-        if (testResults != null) {
+        if (testResults != null && isAdded()) {
             testResults.addView(new SuperTextView(getContext(), message, color.getResource(testResults.getContext())));
             testResults.postDelayed(() -> ((ScrollView) testResults.getParent()).fullScroll(ScrollView.FOCUS_DOWN), 100);
         }
