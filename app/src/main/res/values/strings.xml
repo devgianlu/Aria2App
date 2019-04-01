@@ -339,4 +339,7 @@
     <string name="webView">WebView</string>
     <string name="visit">Visit</string>
     <string name="goTo">Go to</string>
+    <string name="prefs_addBestTrackers">Add best trackers to new downloads</string>
+    <string name="prefs_addBestTrackers_summary">Add best trackers from ngosang/trackerslist to new downloads automatically</string>
+    <string name="addBestTrackers">Add best trackers</string>
 </resources>

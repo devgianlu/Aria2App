@@ -99,6 +99,14 @@ public class PreferenceActivity extends BasePreferenceActivity {
             versionCheck.setTitle(R.string.prefs_versionCheck);
             versionCheck.setSummary(R.string.prefs_versionCheck_summary);
             addPreference(versionCheck);
+
+            MaterialCheckboxPreference bestTrackers = new MaterialCheckboxPreference.Builder(context)
+                    .key(PK.A2_ADD_BEST_TRACKERS.key())
+                    .defaultValue(PK.A2_ADD_BEST_TRACKERS.fallback())
+                    .build();
+            bestTrackers.setTitle(R.string.prefs_addBestTrackers);
+            bestTrackers.setSummary(R.string.prefs_addBestTrackers_summary);
+            addPreference(bestTrackers);
         }
 
         @Override
@@ -112,10 +120,13 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (requestCode == DOWNLOAD_PATH_CODE && resultCode == RESULT_OK) {
-                DocumentFile file = DocumentFile.fromTreeUri(getContext(), data.getData());
-                System.out.println("WRITE?? " + file.canWrite());
-                Prefs.putString(PK.DD_DOWNLOAD_PATH, file.getUri().toString());
+            if (requestCode == DOWNLOAD_PATH_CODE) {
+                if (resultCode == RESULT_OK && isAdded() && data.getData() != null) {
+                    DocumentFile file = DocumentFile.fromTreeUri(requireContext(), data.getData());
+                    if (file != null)
+                        Prefs.putString(PK.DD_DOWNLOAD_PATH, file.getUri().toString());
+                }
+
                 return;
             }
 
