@@ -1,9 +1,11 @@
 package com.gianlu.aria2app.WebView;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.AndroidRuntimeException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
@@ -92,8 +94,19 @@ public class WebViewActivity extends ActivityWithDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        web = new WebView(this);
-        setContentView(web);
+        try {
+            web = new WebView(this);
+            setContentView(web);
+        } catch (RuntimeException ex) {
+            if (ex.getCause() instanceof AndroidRuntimeException &&
+                    ex.getCause().getCause() instanceof PackageManager.NameNotFoundException) {
+                finish();
+                return;
+            }
+
+            throw ex;
+        }
+
         setTitle(getString(R.string.webView) + " - " + getString(R.string.app_name));
 
         if (getIntent().getBooleanExtra("canGoBack", true)) {
