@@ -328,4 +328,7 @@
     <string name="webView">WebView</string>
     <string name="visit">访问</string>
     <string name="goTo">转到</string>
+    <string name="prefs_addBestTrackers">把最佳Tracker列表添加到新增的下载任务</string>
+    <string name="prefs_addBestTrackers_summary">把从ngosang/trackerslist获取到的最佳tracker列表自动添加到新增的下载任务</string>
+    <string name="addBestTrackers">添加最佳tracker列表</string>
 </resources>
