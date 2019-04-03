@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 
@@ -9,6 +10,7 @@ import com.gianlu.commonutils.Preferences.BasePreferenceActivity;
 import com.gianlu.commonutils.Preferences.BasePreferenceFragment;
 import com.gianlu.commonutils.Preferences.MaterialAboutPreferenceItem;
 import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.Toaster;
 import com.yarolegovich.mp.AbsMaterialTextValuePreference;
 import com.yarolegovich.mp.MaterialCheckboxPreference;
 import com.yarolegovich.mp.MaterialMultiChoicePreference;
@@ -150,9 +152,13 @@ public class PreferenceActivity extends BasePreferenceActivity {
             downloadPath.setTitle(R.string.prefs_ddDownloadPath);
             downloadPath.setSummary(R.string.prefs_ddDownloadPath_summary);
             downloadPath.addPreferenceClickListener(v -> {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                startActivityForResult(intent, DOWNLOAD_PATH_CODE);
+                try {
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    startActivityForResult(intent, DOWNLOAD_PATH_CODE);
+                } catch (ActivityNotFoundException ex) {
+                    showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
+                }
             });
             addPreference(downloadPath);
 
