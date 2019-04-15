@@ -139,10 +139,16 @@ public class FetchHelper {
     @NonNull
     private static Request createRequest(HttpUrl base, OptionsMap global, DocumentFile ddDir, AriaFile file) throws PreparationException {
         String mime = file.getMimeType();
-        if (mime == null) mime = "";
+        String fileName = file.getName();
+        if (mime == null) {
+            mime = "";
+        } else {
+            int index = fileName.lastIndexOf('.');
+            if (index != -1) fileName = fileName.substring(0, index);
+        }
 
         DocumentFile parent = createAllDirs(ddDir, file.getRelativePath(global));
-        DocumentFile dest = parent.createFile(mime, file.getName());
+        DocumentFile dest = parent.createFile(mime, fileName);
         if (dest == null)
             throw new PreparationException("Couldn't create file inside directory: " + parent);
 
