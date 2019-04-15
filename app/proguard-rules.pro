@@ -1,4 +1,6 @@
 -dontwarn okio.**
+-dontwarn okhttp3.internal.huc.StreamedRequestBody
+-dontwarn okhttp3.internal.huc.OkHttpURLConnection
 -keep class okhttp3.internal.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
