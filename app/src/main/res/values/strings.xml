@@ -297,6 +297,25 @@
     <string name="metalinkFiles">Metalink files</string>
     <string name="urisFile">Uris file</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="startAria2Android">Start Aria2Android</string>
+    <string name="startAria2Android_message">This profile seems related to a local instance of Aria2Android. Do you want to start the service?</string>
+    <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
+    <string name="prefs_ddUseExternal">Use external downloader</string>
+    <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
+    <string name="cannotDownloadDirWithExternal">Cannot download directory</string>
+    <string name="cannotDownloadDirWithExternal_message">You can\'t download a directory using an external downloader. Do you want to start the download with the integrated downloader?</string>
+    <string name="isThisToDownload">Is this what you want to download?</string>
+    <string name="isThisToDownload_message">Do you want to start a download for `%s`?</string>
+    <string name="useWebView">Use WebView?</string>
+    <string name="useWebView_message">If you\'re trying to download something that hasn\'t a permanent URL, you can use this feature to intercept the download as if it was happening on your browser. Do you want to open a WebView?</string>
+    <string name="webView">WebView</string>
+    <string name="visit">Visit</string>
+    <string name="goTo">Go to</string>
+    <string name="prefs_addBestTrackers">Add best trackers to new downloads</string>
+    <string name="prefs_addBestTrackers_summary">Add best trackers from ngosang/trackerslist to new downloads automatically</string>
+    <string name="addBestTrackers">Add best trackers</string>
+    <string name="health"><![CDATA[<b>Health:</b>]]> %.2f%% (%d/%d)</string>
 
     <!-- Prefs -->
     <!-- - General -->
@@ -324,22 +343,4 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
-    <string name="cancelled">Cancelled</string>
-    <string name="startAria2Android">Start Aria2Android</string>
-    <string name="startAria2Android_message">This profile seems related to a local instance of Aria2Android. Do you want to start the service?</string>
-    <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
-    <string name="prefs_ddUseExternal">Use external downloader</string>
-    <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
-    <string name="cannotDownloadDirWithExternal">Cannot download directory</string>
-    <string name="cannotDownloadDirWithExternal_message">You can\'t download a directory using an external downloader. Do you want to start the download with the integrated downloader?</string>
-    <string name="isThisToDownload">Is this what you want to download?</string>
-    <string name="isThisToDownload_message">Do you want to start a download for `%s`?</string>
-    <string name="useWebView">Use WebView?</string>
-    <string name="useWebView_message">If you\'re trying to download something that hasn\'t a permanent URL, you can use this feature to intercept the download as if it was happening on your browser. Do you want to open a WebView?</string>
-    <string name="webView">WebView</string>
-    <string name="visit">Visit</string>
-    <string name="goTo">Go to</string>
-    <string name="prefs_addBestTrackers">Add best trackers to new downloads</string>
-    <string name="prefs_addBestTrackers_summary">Add best trackers from ngosang/trackerslist to new downloads automatically</string>
-    <string name="addBestTrackers">Add best trackers</string>
 </resources>

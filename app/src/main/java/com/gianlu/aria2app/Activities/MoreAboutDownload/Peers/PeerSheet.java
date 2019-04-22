@@ -5,6 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
@@ -25,9 +28,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-
 public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
     private final GeoIP ipApi = GeoIP.get();
     private SuperTextView downloadSpeed;
@@ -37,6 +37,7 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
     private SuperTextView peerChoking;
     private SuperTextView amChoking;
     private SuperTextView peerId;
+    private SuperTextView health;
     private IPDetailsView ipDetails;
     private BitfieldVisualizer bitfield;
     private Peer currentPeer;
@@ -65,6 +66,9 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
         downloadSpeed.setText(CommonUtils.speedFormatter(peer.downloadSpeed, false));
         uploadSpeed.setText(CommonUtils.speedFormatter(peer.uploadSpeed, false));
         bitfield.update(peer.bitfield, numPieces);
+
+        int knownPieces = BitfieldVisualizer.knownPieces(peer.bitfield, numPieces);
+        health.setHtml(R.string.health, ((float) knownPieces / (float) numPieces) * 100f, knownPieces, numPieces);
 
         PeerIdParser.Parsed parsed = peer.peerId();
         if (parsed == null)
@@ -108,6 +112,7 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
         bitfield = parent.findViewById(R.id.peerSheet_bitfield);
         bitfield.setColorRes(R.color.colorTorrent_pressed);
         peerId = parent.findViewById(R.id.peerSheet_peerId);
+        health = parent.findViewById(R.id.peerSheet_health);
         amChoking = parent.findViewById(R.id.peerSheet_amChoking);
         ipDetails = parent.findViewById(R.id.peerSheet_ipDetails);
         ipDetails.setVisibility(View.GONE);

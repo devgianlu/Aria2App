@@ -8,18 +8,17 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CommonUtils;
-
-import java.util.Arrays;
-import java.util.Objects;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
+
+import java.util.Objects;
 
 public class BitfieldVisualizer extends View {
     private final int padding;
@@ -28,11 +27,12 @@ public class BitfieldVisualizer extends View {
     private final Paint border;
     private final Rect rect = new Rect();
     private String bitfield = null;
-    private int pieces = -1;
+    private int squares = -1;
     private int[] binary = null;
     private int columns;
     private int rows;
     private int hoff;
+    private int numPieces;
 
     public BitfieldVisualizer(Context context) {
         this(context, null, 0);
@@ -58,11 +58,50 @@ public class BitfieldVisualizer extends View {
         border.setStyle(Paint.Style.STROKE);
     }
 
-    @Nullable
-    private static int[] hexToBinary(@Nullable String hex, int num) {
-        if (hex == null) return null;
-        int[] array = new int[hex.length()];
-        for (int i = 0; i < hex.length(); i++) {
+    public static int knownPieces(@NonNull String hex, int num) {
+        num = (int) Math.ceil(num / 4f);
+
+        int known = 0;
+        for (int i = 0; i < num; i++) {
+            switch (Character.toLowerCase(hex.charAt(i))) {
+                case '0':
+                    known += 0;
+                    break;
+                case '1':
+                case '2':
+                case '4':
+                case '8':
+                    known += 1;
+                    break;
+                case '3':
+                case '5':
+                case '6':
+                case '9':
+                case 'a':
+                case 'c':
+                    known += 2;
+                    break;
+                case '7':
+                case 'b':
+                case 'd':
+                case 'e':
+                    known += 3;
+                    break;
+                case 'f':
+                    known += 4;
+                    break;
+            }
+        }
+
+        return known;
+    }
+
+    @NonNull
+    private static int[] hexToBinary(@NonNull String hex, int num) {
+        num = (int) Math.ceil(num / 4f);
+
+        int[] array = new int[num];
+        for (int i = 0; i < num; i++) {
             switch (Character.toLowerCase(hex.charAt(i))) {
                 case '0':
                     array[i] = 0;
@@ -93,7 +132,7 @@ public class BitfieldVisualizer extends View {
             }
         }
 
-        return Arrays.copyOfRange(array, 0, num);
+        return array;
     }
 
     public void setColor(@ColorInt int color) {
@@ -113,8 +152,10 @@ public class BitfieldVisualizer extends View {
         if (Objects.equals(this.bitfield, bitfield)) return;
 
         this.bitfield = bitfield;
-        pieces = numPieces / 4;
-        binary = hexToBinary(bitfield, pieces);
+        this.numPieces = numPieces;
+
+        squares = (int) Math.ceil(numPieces / 4f);
+        binary = hexToBinary(bitfield, numPieces);
 
         invalidate();
     }
@@ -125,14 +166,14 @@ public class BitfieldVisualizer extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (pieces == -1) {
+        if (squares == -1) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
         }
 
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         columns = columns(width);
-        rows = (int) Math.ceil((double) pieces / (double) columns);
+        rows = (int) Math.ceil((double) squares / (double) columns);
 
         hoff = (width - columns * (square + padding)) / 4;
 
@@ -150,20 +191,22 @@ public class BitfieldVisualizer extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (binary == null || pieces == -1) return;
+        if (binary == null || squares == -1) return;
 
         int i = 0;
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < columns; column++) {
-                if (i >= pieces) break;
+                if (i >= squares) break;
 
                 if (binary[i] != 0) {
-                    paint.setAlpha(255 / 4 * binary[i]);
+                    if (i == squares - 1) paint.setAlpha(255 / (numPieces % 4) * binary[i]);
+                    else paint.setAlpha(255 / 4 * binary[i]);
+
                     calcSquarePos(row, column, rect);
                     canvas.drawRect(rect, paint);
                 }
 
-                if (i == pieces - 1 || i == 0) {
+                if (i == squares - 1 || i == 0) {
                     calcSquarePos(row, column, rect);
                     canvas.drawRect(rect, border);
                 }
