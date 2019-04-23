@@ -286,7 +286,26 @@
     <string name="metalinkFiles">Metalink文件</string>
     <string name="urisFile">网址文件</string>
     <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
-
+    <string name="cancelled">已取消</string>
+    <string name="startAria2Android">启动Aria2Android</string>
+    <string name="startAria2Android_message">此配置文件似乎与Aria2Android的本地实例有关。您要启动该服务吗？</string>
+    <string name="failedStartingAria2Android">启动Aria2Android失败！</string>
+    <string name="prefs_ddUseExternal">使用外部下载管理器</string>
+    <string name="prefs_ddUseExternal_summary">把下载任务发送至系统或其它应用</string>
+    <string name="cannotDownloadDirWithExternal">不能下载目录</string>
+    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下载管理器下载目录。请问您想使用内置下载管理器下载吗？</string>
+    <string name="isThisToDownload">这是您想要下载的内容？</string>
+    <string name="isThisToDownload_message">您想要开始一个以`%s`为目标的下载任务？</string>
+    <string name="useWebView">使用WebView？</string>
+    <string name="useWebView_message">如果您试图下载没有永久链接的目标，您可以使用本功能截获下载地址，如同您在网页浏览器中操作一样。请问您想要打开一个WebView窗口吗？</string>
+    <string name="webView">WebView</string>
+    <string name="visit">访问</string>
+    <string name="goTo">转到</string>
+    <string name="prefs_addBestTrackers">自动添加最佳tracker列表</string>
+    <string name="prefs_addBestTrackers_summary">把从ngosang/trackerslist获取到的最佳tracker列表自动添加到新增的下载任务</string>
+    <string name="addBestTrackers">添加最佳tracker列表</string>
+    <string name="health"><![CDATA[<b>健康度:</b>]]> %.2f%% (%d/%d)</string>
+    
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
@@ -313,22 +332,4 @@
     <string name="prefs_notificationType_summary">选择要接收的通知类型</string>
     <string name="prefs_enableNotificationsAtBoot">手机启动时启动通知服务</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
-    <string name="cancelled">已取消</string>
-    <string name="startAria2Android">启动Aria2Android</string>
-    <string name="startAria2Android_message">此配置文件似乎与Aria2Android的本地实例有关。您要启动该服务吗？</string>
-    <string name="failedStartingAria2Android">启动Aria2Android失败！</string>
-    <string name="prefs_ddUseExternal">使用外部下载管理器</string>
-    <string name="prefs_ddUseExternal_summary">把下载任务发送至系统或其它应用</string>
-    <string name="cannotDownloadDirWithExternal">不能下载目录</string>
-    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下载管理器下载目录。请问您想使用内置下载管理器下载吗？</string>
-    <string name="isThisToDownload">这是您想要下载的内容？</string>
-    <string name="isThisToDownload_message">您想要开始一个以`%s`为目标的下载任务？</string>
-    <string name="useWebView">使用WebView？</string>
-    <string name="useWebView_message">如果您试图下载没有永久链接的目标，您可以使用本功能截获下载地址，如同您在网页浏览器中操作一样。请问您想要打开一个WebView窗口吗？</string>
-    <string name="webView">WebView</string>
-    <string name="visit">访问</string>
-    <string name="goTo">转到</string>
-    <string name="prefs_addBestTrackers">自动添加最佳tracker列表</string>
-    <string name="prefs_addBestTrackers_summary">把从ngosang/trackerslist获取到的最佳tracker列表自动添加到新增的下载任务</string>
-    <string name="addBestTrackers">添加最佳tracker列表</string>
 </resources>
