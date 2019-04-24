@@ -32,6 +32,8 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.BadEnvironmentException;
+import com.gianlu.aria2lib.Interface.DownloadBinActivity;
 import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
@@ -289,9 +291,16 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     @Override
     public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
         if (profile.isInAppDownloader()) {
-            // TODO: Setup environment
-
             ThisApplication app = ((ThisApplication) getApplicationContext());
+
+            try {
+                app.loadAria2ServiceEnv();
+            } catch (BadEnvironmentException ex) {
+                DownloadBinActivity.startActivity(this, "Download aria2 binary - Aria2App" /* FIXME */, LoadingActivity.class,
+                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
+                return;
+            }
+
             app.addAria2UiListener(this);
 
             startAria2ServiceOn = profile;
@@ -310,7 +319,12 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        EditProfileActivity.start(this, profile.id);
+        if (profile.isInAppDownloader()) {
+            // TODO: Should open another activity
+        } else {
+            EditProfileActivity.start(this, profile.id);
+        }
+
         return true;
     }
 
@@ -420,8 +434,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         if (isDestroyed()) return;
 
         if (type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null) {
-            manager.setCurrent(startAria2ServiceOn);
-            launchMain();
+            tryConnecting(startAria2ServiceOn);
 
             startAria2ServiceOn = null;
         }

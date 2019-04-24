@@ -102,6 +102,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         if (CommonUtils.isARM()) {
             try {
                 aria2service = new Aria2UiDispatcher(this);
+                loadAria2ServiceEnv();
             } catch (BadEnvironmentException ex) {
                 Logging.log(ex);
             }
@@ -171,8 +172,16 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     }
 
     public void startAria2ServiceIfNeeded() {
-        if (aria2service != null && !aria2service.lastUiState)
+        if (aria2service != null)
             aria2service.ui.startService();
+    }
+
+    public void loadAria2ServiceEnv() throws BadEnvironmentException {
+        if (aria2service != null && !aria2service.ui.hasEnv()) {
+            aria2service.ui.loadEnv();
+            aria2service.ui.bind();
+            aria2service.ui.askForStatus();
+        }
     }
 
     private static class Aria2UiDispatcher implements Aria2Ui.Listener {
@@ -180,10 +189,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         private final Set<Aria2Ui.Listener> listeners = new HashSet<>();
         private volatile boolean lastUiState = false;
 
-        Aria2UiDispatcher(@NonNull Context context) throws BadEnvironmentException {
+        Aria2UiDispatcher(@NonNull Context context) {
             ui = new Aria2Ui(context, this);
-            ui.loadEnv();
-            ui.bind();
         }
 
         @Override

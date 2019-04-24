@@ -145,7 +145,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        EditProfileActivity.start(this, profile.id);
+        if (profile.isInAppDownloader()) {
+            // TODO: Should open another activity
+        } else {
+            EditProfileActivity.start(this, profile.id);
+        }
+
         return true;
     }
 

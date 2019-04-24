@@ -30,13 +30,13 @@ import java.util.List;
 
 public class ProfilesManager {
     private static ProfilesManager instance;
-    private final File PROFILES_PATH;
+    private final File profilesPath;
     private final WifiManager wifiManager;
     private final ConnectivityManager connectivityManager;
     private MultiProfile currentProfile;
 
     private ProfilesManager(@NonNull Context context) {
-        PROFILES_PATH = context.getFilesDir();
+        profilesPath = context.getFilesDir();
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
@@ -62,7 +62,7 @@ public class ProfilesManager {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void delete(@NonNull MultiProfile profile) {
-        new File(PROFILES_PATH, profile.id + ".profile").delete();
+        new File(profilesPath, profile.id + ".profile").delete();
     }
 
     @NonNull
@@ -107,7 +107,7 @@ public class ProfilesManager {
         if (!profileExists(id))
             throw new FileNotFoundException("Profile " + id + " doesn't exists!");
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(PROFILES_PATH, id + ".profile"))));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(profilesPath, id + ".profile"))));
         StringBuilder builder = new StringBuilder();
 
         String line;
@@ -117,7 +117,7 @@ public class ProfilesManager {
     }
 
     public boolean profileExists(@NonNull String id) {
-        File file = new File(PROFILES_PATH, id + ".profile");
+        File file = new File(profilesPath, id + ".profile");
         return file.exists() && file.canRead();
     }
 
@@ -140,7 +140,7 @@ public class ProfilesManager {
 
     @NonNull
     private String[] getProfileIds() {
-        String[] profiles = PROFILES_PATH.list((dir, name) -> name.endsWith(".profile"));
+        String[] profiles = profilesPath.list((dir, name) -> name.endsWith(".profile"));
 
         if (profiles == null) return new String[0];
 
@@ -164,24 +164,34 @@ public class ProfilesManager {
 
     @NonNull
     private List<MultiProfile> getProfiles(boolean notification) {
+        boolean hasInApp = false;
         List<MultiProfile> profiles = new ArrayList<>();
         for (String id : getProfileIds()) {
             try {
                 MultiProfile profile = retrieveProfile(id);
+                if (profile.isInAppDownloader()) hasInApp = true;
                 if (!notification || profile.notificationsEnabled) profiles.add(profile);
             } catch (IOException | JSONException ex) {
                 Logging.log(ex);
             }
         }
 
-        if (CommonUtils.isARM())
-            profiles.add(MultiProfile.forInAppDownloader());
+        if (CommonUtils.isARM() && !hasInApp) {
+            MultiProfile inApp = MultiProfile.forInAppDownloader();
+            profiles.add(inApp);
+
+            try {
+                save(inApp);
+            } catch (IOException | JSONException ex) {
+                Logging.log("Failed saving in-app downloader profile.", ex);
+            }
+        }
 
         return profiles;
     }
 
     public void save(@NonNull MultiProfile profile) throws IOException, JSONException {
-        File file = new File(PROFILES_PATH, profile.id + ".profile");
+        File file = new File(profilesPath, profile.id + ".profile");
         try (OutputStream out = new FileOutputStream(file)) {
             out.write(profile.toJson().toString().getBytes());
             out.flush();

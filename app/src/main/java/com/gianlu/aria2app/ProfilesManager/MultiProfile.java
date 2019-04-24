@@ -21,9 +21,11 @@ import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2lib.Aria2PK;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 import okhttp3.HttpUrl;
 
@@ -123,10 +126,16 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     @NonNull
     public static MultiProfile forInAppDownloader() {
+        int port = ThreadLocalRandom.current().nextInt(2000, 8000);
+        Prefs.putInt(Aria2PK.RPC_PORT, port);
+
+        String token = CommonUtils.randomString(8, ThreadLocalRandom.current());
+        Prefs.putString(Aria2PK.RPC_TOKEN, token);
+
         MultiProfile profile = new MultiProfile(IN_APP_DOWNLOADER_NAME, true);
         profile.add(ConnectivityCondition.newUniqueCondition(),
-                new ConnectionFragment.Fields(ConnectionMethod.WEBSOCKET, "localhost", 6800, "/jsonrpc", false, null, false),
-                new AuthenticationFragment.Fields(AbstractClient.AuthMethod.NONE, null, null, null),
+                new ConnectionFragment.Fields(ConnectionMethod.WEBSOCKET, "localhost", port, "/jsonrpc", false, null, false),
+                new AuthenticationFragment.Fields(AbstractClient.AuthMethod.TOKEN, token, null, null),
                 new DirectDownloadFragment.Fields(null), false);
 
         return profile;
