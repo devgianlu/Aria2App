@@ -8,6 +8,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
+
 import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
@@ -27,11 +32,6 @@ import com.gianlu.commonutils.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 
 public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, AriaFiles> {
     private TextView percentage;
@@ -93,6 +93,8 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
             selected.setOnCheckedChangeListener((buttonView, isChecked) -> download.changeSelection(new Integer[]{file.index}, isChecked, new AbstractClient.OnResult<Download.ChangeSelectionResult>() {
                 @Override
                 public void onResult(@NonNull Download.ChangeSelectionResult result) {
+                    if (!isAdded()) return;
+
                     Toaster toaster = Toaster.build();
                     toaster.extra(result);
                     switch (result) {
@@ -118,6 +120,8 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
 
                 @Override
                 public void onException(@NonNull Exception ex) {
+                    if (!isAdded()) return;
+
                     dismissAllowingStateLoss();
                     DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
                 }

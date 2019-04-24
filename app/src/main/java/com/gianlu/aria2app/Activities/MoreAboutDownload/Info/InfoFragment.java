@@ -11,6 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
@@ -39,10 +43,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
     private final CountryFlags flags = CountryFlags.get();
@@ -232,11 +232,10 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
                     try {
                         URI uri = new URI(url);
-                        geoIP.getIPDetails(uri.getHost(), new GeoIP.OnIpDetails() {
+                        geoIP.getIPDetails(uri.getHost(), getActivity(), new GeoIP.OnIpDetails() {
                             @Override
                             public void onDetails(@NonNull IPDetails details) {
-                                if (isAdded())
-                                    ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
+                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
                             }
 
                             @Override

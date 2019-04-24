@@ -6,11 +6,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+
 import com.gianlu.aria2app.Activities.MoreAboutDownload.PeersServersFragment;
+import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
+import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
+import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
@@ -18,9 +23,8 @@ import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 
-import androidx.annotation.NonNull;
-
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
+    private int numPieces = -1;
 
     @NonNull
     public static PeersFragment getInstance(Context context, String gid) {
@@ -41,7 +45,9 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.peersFragment_sorting).getSubMenu().setGroupCheckable(0, true, true);
+        MenuItem item = menu.findItem(R.id.peersFragment_sorting);
+        if (item != null)
+            item.getSubMenu().setGroupCheckable(0, true, true);
     }
 
     @Override
@@ -83,8 +89,10 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     public void onPeerSelected(@NonNull Peer peer) {
-        sheet = PeerSheet.get();
-        sheet.show(getActivity(), peer);
+        if (numPieces != -1) {
+            sheet = PeerSheet.get();
+            sheet.show(getActivity(), new PeerWithPieces(peer, numPieces));
+        }
     }
 
     @Override
@@ -118,11 +126,13 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     public void onUpdateUi(@NonNull Peers payload) {
-        recyclerViewLayout.showList();
-        topDownloadCountries.setPeers(payload, true);
-        topUploadCountries.setPeers(payload, false);
-        if (adapter != null) adapter.itemsChanged(payload);
-        if (sheet != null) sheet.update(payload);
+        if (numPieces != -1) {
+            recyclerViewLayout.showList();
+            topDownloadCountries.setPeers(payload, true);
+            topUploadCountries.setPeers(payload, false);
+            if (adapter != null) adapter.itemsChanged(payload);
+            if (sheet != null) sheet.update(payload);
+        }
     }
 
     @Override
@@ -133,6 +143,24 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     protected void onLoadUi(@NonNull Peers payload) {
+        Bundle args = getArguments();
+        if (args == null || !isAdded()) return;
+
+        try {
+            Aria2Helper.instantiate(requireContext()).request(AriaRequests.tellStatus(args.getString("gid")), new AbstractClient.OnResult<DownloadWithUpdate>() {
+                @Override
+                public void onResult(@NonNull DownloadWithUpdate result) {
+                    numPieces = result.bigUpdate().numPieces;
+                }
+
+                @Override
+                public void onException(@NonNull Exception ex) {
+                    onCouldntLoadChecked(ex);
+                }
+            });
+        } catch (Aria2Helper.InitializingException ex) {
+            onCouldntLoadChecked(ex);
+        }
     }
 
     @Override

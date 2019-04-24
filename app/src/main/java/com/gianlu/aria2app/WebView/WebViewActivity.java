@@ -1,9 +1,11 @@
 package com.gianlu.aria2app.WebView;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.AndroidRuntimeException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
@@ -13,6 +15,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddUriActivity;
@@ -28,10 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -92,8 +95,19 @@ public class WebViewActivity extends ActivityWithDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        web = new WebView(this);
-        setContentView(web);
+        try {
+            web = new WebView(this);
+            setContentView(web);
+        } catch (RuntimeException ex) {
+            if (ex.getCause() instanceof AndroidRuntimeException &&
+                    ex.getCause().getCause() instanceof PackageManager.NameNotFoundException) {
+                finish();
+                return;
+            }
+
+            throw ex;
+        }
+
         setTitle(getString(R.string.webView) + " - " + getString(R.string.app_name));
 
         if (getIntent().getBooleanExtra("canGoBack", true)) {

@@ -10,13 +10,15 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
-import com.gianlu.aria2app.R;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.ProfilesManager.Testers.BaseTester;
+import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.SuperTextView;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     private OnGetProfile listener;
@@ -42,9 +44,9 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     }
 
     @Override
-    public void addView(@NonNull View view) {
-        if (testResults != null) {
-            testResults.addView(view);
+    public void addItem(@NonNull String message, @NonNull BaseTester.Color color) {
+        if (testResults != null && isAdded()) {
+            testResults.addView(new SuperTextView(getContext(), message, color.getResource(testResults.getContext())));
             testResults.postDelayed(() -> ((ScrollView) testResults.getParent()).fullScroll(ScrollView.FOCUS_DOWN), 100);
         }
     }

@@ -1,9 +1,14 @@
 package com.gianlu.aria2app.NetIO.Downloader;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -31,10 +36,10 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -94,25 +99,66 @@ public class FetchHelper {
     }
 
     @NonNull
-    private static File getAndValidateDownloadPath() throws PreparationException {
-        File path = new File(Prefs.getString(PK.DD_DOWNLOAD_PATH));
-        if (!path.exists() && !path.mkdirs())
-            throw new PreparationException("Path doesn't exists anc can't be created: " + path);
+    private static DocumentFile getAndValidateDownloadPath(@NonNull Context context) throws PreparationException {
+        String uriStr = Prefs.getString(PK.DD_DOWNLOAD_PATH);
+        Uri uri = Uri.parse(uriStr);
+        if (Objects.equals(uri.getScheme(), "content")) {
+            DocumentFile doc;
+            try {
+                doc = DocumentFile.fromTreeUri(context, uri);
+            } catch (RuntimeException ex) {
+                throw new PreparationException(ex);
+            }
 
-        if (!path.canWrite())
-            throw new PreparationException("Cannot write to path: " + path);
+            if (doc == null)
+                throw new PreparationException("Invalid uri path: " + uriStr);
 
-        return path;
+            if (!doc.exists())
+                throw new PreparationException("Uri path doesn't exists: " + uriStr);
+
+            if (!doc.canWrite())
+                throw new PreparationException("Cannot write to uri path: " + uriStr);
+
+            return doc;
+        } else {
+            if (Objects.equals(uri.getScheme(), "file") && uri.getPath() != null)
+                uriStr = uri.getPath();
+
+            File path = new File(uriStr);
+            if (!path.exists() && !path.mkdirs())
+                throw new PreparationException("Path doesn't exists and can't be created: " + path);
+
+            if (!path.canWrite())
+                throw new PreparationException("Cannot write to path: " + path);
+
+            DocumentFile doc = DocumentFile.fromFile(path);
+            Prefs.putString(PK.DD_DOWNLOAD_PATH, doc.getUri().toString());
+            return doc;
+        }
     }
 
     @NonNull
-    private static Request createRequest(HttpUrl base, OptionsMap global, File downloadDir, AriaFile file) {
-        return createRequest(file.getDownloadUrl(global, base), new File(downloadDir, file.getRelativePath(global)));
+    private static Request createRequest(HttpUrl base, OptionsMap global, DocumentFile ddDir, AriaFile file) throws PreparationException {
+        String mime = file.getMimeType();
+        String fileName = file.getName();
+        if (mime == null) {
+            mime = "";
+        } else {
+            int index = fileName.lastIndexOf('.');
+            if (index != -1) fileName = fileName.substring(0, index);
+        }
+
+        DocumentFile parent = createAllDirs(ddDir, file.getRelativePath(global));
+        DocumentFile dest = parent.createFile(mime, fileName);
+        if (dest == null)
+            throw new PreparationException("Couldn't create file inside directory: " + parent);
+
+        return createRequest(file.getDownloadUrl(global, base), dest.getUri());
     }
 
     @NonNull
-    private static Request createRequest(@NonNull HttpUrl url, @NonNull File dest) {
-        Request request = new Request(url.toString(), dest.getAbsolutePath());
+    private static Request createRequest(@NonNull HttpUrl url, @NonNull Uri dest) {
+        Request request = new Request(url.toString(), dest);
         request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY);
         return request;
     }
@@ -126,16 +172,33 @@ public class FetchHelper {
         }
     }
 
-    private void updateDownloadCountInternal(final FetchDownloadCountListener listener) {
+    @NonNull
+    private static DocumentFile createAllDirs(@NonNull DocumentFile parent, @NonNull String filePath) throws PreparationException {
+        String[] split = filePath.split(Pattern.quote(File.separator));
+        for (int i = 0; i < split.length - 1; i++) { // Skip last segment
+            DocumentFile doc = parent.findFile(split[i]);
+            if (doc == null || !doc.isDirectory()) {
+                parent = parent.createDirectory(split[i]);
+                if (parent == null)
+                    throw new PreparationException("Couldn't create directory: " + split[i]);
+            } else {
+                parent = doc;
+            }
+        }
+
+        return parent;
+    }
+
+    private void updateDownloadCountInternal(FetchDownloadCountListener listener) {
         if (!fetch.isClosed())
             fetch.getDownloads(result -> listener.onFetchDownloadCount(result.size()));
     }
 
-    private void callFailed(final StartListener listener, final Throwable ex) {
+    private void callFailed(StartListener listener, Throwable ex) {
         handler.post(() -> listener.onFailed(ex));
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull AriaFile file, @NonNull StartListener listener) {
+    public void start(@NonNull Context context, @NonNull MultiProfile profile, @NonNull AriaFile file, @NonNull StartListener listener) {
         MultiProfile.DirectDownload dd = profile.getProfile(profilesManager).directDownload;
         if (dd == null) {
             callFailed(listener, new PreparationException("DirectDownload not enabled!"));
@@ -148,9 +211,9 @@ public class FetchHelper {
             return;
         }
 
-        File downloadDir;
+        DocumentFile ddDir;
         try {
-            downloadDir = getAndValidateDownloadPath();
+            ddDir = getAndValidateDownloadPath(context);
         } catch (PreparationException ex) {
             callFailed(listener, ex);
             return;
@@ -159,7 +222,11 @@ public class FetchHelper {
         aria2.request(AriaRequests.getGlobalOptions(), new AbstractClient.OnResult<OptionsMap>() {
             @Override
             public void onResult(@NonNull OptionsMap result) {
-                startInternal(createRequest(file.getDownloadUrl(result, base), new File(downloadDir, file.getRelativePath(result))), listener);
+                try {
+                    startInternal(createRequest(base, result, ddDir, file), listener);
+                } catch (PreparationException ex) {
+                    listener.onFailed(ex);
+                }
             }
 
             @Override
@@ -169,10 +236,10 @@ public class FetchHelper {
         });
     }
 
-    public void start(@NonNull MultiProfile profile, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
+    public void start(@NonNull Context context, @NonNull MultiProfile profile, @NonNull AriaDirectory dir, @NonNull StartListener listener) {
         List<AriaFile> files = dir.allFiles();
         if (files.size() == 1) {
-            start(profile, files.get(0), listener);
+            start(context, profile, files.get(0), listener);
             return;
         }
 
@@ -188,9 +255,9 @@ public class FetchHelper {
             return;
         }
 
-        File downloadDir;
+        DocumentFile downloadDir;
         try {
-            downloadDir = getAndValidateDownloadPath();
+            downloadDir = getAndValidateDownloadPath(context);
         } catch (PreparationException ex) {
             callFailed(listener, ex);
             return;
@@ -200,14 +267,19 @@ public class FetchHelper {
             @Override
             public void onResult(@NonNull OptionsMap result) {
                 int groupId = ThreadLocalRandom.current().nextInt();
-                List<Request> requests = new ArrayList<>(files.size());
-                for (AriaFile file : files) {
-                    Request request = createRequest(base, result, downloadDir, file);
-                    request.setGroupId(groupId);
-                    requests.add(request);
-                }
 
-                startInternal(requests, listener);
+                try {
+                    List<Request> requests = new ArrayList<>(files.size());
+                    for (AriaFile file : files) {
+                        Request request = createRequest(base, result, downloadDir, file);
+                        request.setGroupId(groupId);
+                        requests.add(request);
+                    }
+
+                    startInternal(requests, listener);
+                } catch (PreparationException ex) {
+                    listener.onFailed(ex);
+                }
             }
 
             @Override
@@ -235,7 +307,7 @@ public class FetchHelper {
         if (!fetch.isClosed()) fetch.removeListener(listener);
     }
 
-    public void reloadListener(final FetchEventListener listener) {
+    public void reloadListener(FetchEventListener listener) {
         if (!fetch.isClosed()) fetch.getDownloads(listener::onDownloads);
     }
 
@@ -252,7 +324,7 @@ public class FetchHelper {
     }
 
     public void restart(@NotNull FetchDownloadWrapper download, @NonNull StartListener listener) {
-        startInternal(createRequest(download.getUrl(), download.getFile()), listener);
+        startInternal(createRequest(download.getUrl(), download.getUri()), listener);
     }
 
     @UiThread
@@ -269,7 +341,7 @@ public class FetchHelper {
     public interface StartListener {
         void onSuccess();
 
-        void onFailed(Throwable ex);
+        void onFailed(@NonNull Throwable ex);
     }
 
     public static class DirectDownloadNotEnabledException extends InitializationException {
@@ -305,6 +377,10 @@ public class FetchHelper {
     private static class PreparationException extends Exception {
         private PreparationException(String msg) {
             super(msg);
+        }
+
+        private PreparationException(Throwable ex) {
+            super(ex);
         }
     }
 }

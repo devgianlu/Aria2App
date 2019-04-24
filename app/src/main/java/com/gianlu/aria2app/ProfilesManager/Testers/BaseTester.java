@@ -2,15 +2,15 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CommonUtils;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.core.content.ContextCompat;
+
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 public abstract class BaseTester<T> implements Runnable {
     protected final Context context;
@@ -76,7 +76,7 @@ public abstract class BaseTester<T> implements Runnable {
         }
 
         @ColorInt
-        public int getResource(Context context) {
+        public int getResource(@NonNull Context context) {
             if (resolve) return CommonUtils.resolveAttrAsColor(context, res);
             else return ContextCompat.getColor(context, res);
         }

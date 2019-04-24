@@ -13,6 +13,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.Activities.EditProfileActivity;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -34,15 +41,10 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile> {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
@@ -285,7 +287,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        EditProfileActivity.start(LoadingActivity.this, profile.id);
+        EditProfileActivity.start(this, profile.id);
         return true;
     }
 
@@ -312,6 +314,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         ongoingTest = null;
 
         if (shareData != null) {
+            try {
+                new URL(shareData.toString());
+            } catch (MalformedURLException ex) {
+                launchMain();
+                return false;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.useWebView)
                     .setMessage(R.string.useWebView_message)

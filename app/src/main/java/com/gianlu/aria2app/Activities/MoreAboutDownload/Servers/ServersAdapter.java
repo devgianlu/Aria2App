@@ -6,6 +6,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
@@ -23,10 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
-
 @UiThread
 public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_SERVER = 0;
@@ -34,12 +34,10 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final List<Object> objs;
     private final LayoutInflater inflater;
     private final Listener listener;
-    private final Context context;
     private final GeoIP geoIP;
     private final CountryFlags flags = CountryFlags.get();
 
     ServersAdapter(Context context, @NonNull Listener listener) {
-        this.context = context;
         this.listener = listener;
         this.objs = new ArrayList<>();
         this.geoIP = GeoIP.get();
@@ -88,7 +86,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             String host = server.uri.getHost();
             if (host != null) {
-                geoIP.getIPDetails(host, new GeoIP.OnIpDetails() {
+                geoIP.getIPDetails(host, null, new GeoIP.OnIpDetails() {
                     @Override
                     public void onDetails(@NonNull IPDetails details) {
                         notifyItemChanged(holder.getAdapterPosition(), details);
@@ -121,7 +119,7 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     castHolder.address.setText(server.currentUri);
                     castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
                 } else if (payload instanceof IPDetails) {
-                    castHolder.flag.setImageDrawable(flags.loadFlag(context, ((IPDetails) payload).countryCode));
+                    castHolder.flag.setImageDrawable(flags.loadFlag(castHolder.flag.getContext(), ((IPDetails) payload).countryCode));
                 }
             } else if (holder instanceof HeaderViewHolder) {
                 AriaFile file = (AriaFile) payloads.get(0);
@@ -146,18 +144,20 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return -1;
     }
 
-    private int indexOfServer(Uri uri) {
+    private List<Integer> indexOfServer(Uri uri) {
+        List<Integer> list = new ArrayList<>();
         for (int i = 0; i < objs.size(); i++)
             if (objs.get(i) instanceof Server)
                 if (Objects.equals(((Server) objs.get(i)).uri, uri))
-                    return i;
+                    list.add(i);
 
-        return -1;
+        return list;
     }
 
-    private void notifyServerChanged(Server server) {
-        int pos = indexOfServer(server.uri);
-        if (pos != -1) notifyItemChanged(pos, server);
+    private void notifyServerChanged(int index, @NonNull Server server) {
+        List<Integer> list = indexOfServer(server.uri);
+        if (list.size() == 1) notifyItemChanged(list.get(0), server);
+        else if (!list.isEmpty() && index < list.size()) notifyItemChanged(list.get(index), server);
     }
 
     public void notifyItemsChanged(@NonNull SparseServers servers, @NonNull AriaFiles files) {
@@ -169,7 +169,10 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         int pos = indexOfHeader(file.index);
         if (pos != -1) {
             notifyItemChanged(pos, file);
-            for (Server server : servers) notifyServerChanged(server);
+            for (int i = 0; i < servers.size(); i++) {
+                Server server = servers.get(i);
+                notifyServerChanged(i, server);
+            }
         }
     }
 

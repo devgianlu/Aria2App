@@ -15,6 +15,10 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
@@ -30,10 +34,6 @@ import java.net.URISyntaxException;
 import java.security.cert.X509Certificate;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class ConnectionFragment extends FieldErrorFragment implements CertificateInputView.ActivityProvider {
     private final CountryFlags flags = CountryFlags.get();
@@ -97,7 +97,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
                     @Override
                     public void run() {
                         if (lastAddress != null) {
-                            GeoIP.get().getIPDetails(lastAddress, new GeoIP.OnIpDetails() {
+                            GeoIP.get().getIPDetails(lastAddress, getActivity(), new GeoIP.OnIpDetails() {
                                 @Override
                                 public void onDetails(@NonNull IPDetails details) {
                                     if (isAdded()) {

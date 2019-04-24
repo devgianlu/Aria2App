@@ -5,6 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
@@ -20,9 +23,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 
 public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
     private final GeoIP ipApi = GeoIP.get();
@@ -97,7 +97,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
 
         String host = server.uri.getHost();
         if (host != null) {
-            ipApi.getIPDetails(host, new GeoIP.OnIpDetails() {
+            ipApi.getIPDetails(host, getActivity(), new GeoIP.OnIpDetails() {
                 @Override
                 public void onDetails(@NonNull IPDetails details) {
                     ipDetails.setup(details);

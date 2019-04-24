@@ -6,6 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.NetIO.Search.MissingSearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Search.SearchEngine;
@@ -17,10 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<SearchResultsAdapter.ViewHolder, SearchResult> {
     private final LayoutInflater inflater;
     private final Listener listener;
@@ -28,7 +28,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     private String token;
 
     public SearchResultsAdapter(Context context, List<SearchResult> results, @Nullable String token, Listener listener) {
-        super(new Config<SearchResult>(context).noSeparators().undeterminedPages().items(results));
+        super(context, new Config<SearchResult>().noSeparators().undeterminedPages().items(results));
         this.inflater = LayoutInflater.from(context);
         this.searchApi = SearchApi.get();
         this.token = token;
@@ -69,11 +69,11 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
     }
 
     @Override
-    protected void moreContent(int page, @NonNull final ContentProvider<SearchResult> provider) {
+    protected void moreContent(int page, @NonNull ContentProvider<SearchResult> provider) {
         if (token == null) {
             provider.onMoreContent(new ArrayList<>());
         } else {
-            searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, new SearchApi.OnSearch() {
+            searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, null, new SearchApi.OnSearch() {
                 @Override
                 public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;

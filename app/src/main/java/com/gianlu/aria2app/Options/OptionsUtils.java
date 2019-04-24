@@ -7,15 +7,22 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.Adapters.OptionsAdapter;
-import com.gianlu.aria2app.NetIO.Aria2.Option;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.SuperTextView;
-
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import com.gianlu.aria2app.Adapters.OptionsAdapter;
+import com.gianlu.aria2app.NetIO.Aria2.Option;
+import com.gianlu.aria2app.NetIO.TrackersListFetch;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.SuperTextView;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public final class OptionsUtils {
 
@@ -52,6 +59,30 @@ public final class OptionsUtils {
 
                     if (adapter != null) adapter.optionChanged(option);
                 });
+
+        if (option.name.equals("bt-tracker")) {
+            builder.setNeutralButton(R.string.addBestTrackers, (dialog, which) ->
+                    TrackersListFetch.get().getTrackers(TrackersListFetch.Type.BEST, null, new TrackersListFetch.Listener() {
+                        @Override
+                        public void onDone(@NonNull List<String> trackers) {
+                            Set<String> set = new HashSet<>(trackers);
+                            String oldStr = edit.getText().toString();
+                            if (!oldStr.isEmpty()) {
+                                String[] old = oldStr.split(",");
+                                set.addAll(Arrays.asList(old));
+                            }
+
+                            option.setNewValue(CommonUtils.join(set, ","));
+                            if (adapter != null) adapter.optionChanged(option);
+                        }
+
+                        @Override
+                        public void onFailed(@NonNull Exception ex) {
+                            Logging.log(ex);
+                        }
+                    }));
+        }
+
 
         return builder;
     }

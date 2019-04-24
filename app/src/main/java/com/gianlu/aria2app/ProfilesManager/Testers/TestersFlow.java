@@ -3,27 +3,23 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.commonutils.SuperTextView;
-
-import java.util.LinkedList;
-import java.util.Queue;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class TestersFlow extends Thread implements BaseTester.PublishListener {
     private final Queue<BaseTester<?>> testers;
-    private final Context context;
     private final ITestFlow listener;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private long startTime;
 
     @SuppressWarnings("unchecked")
     public TestersFlow(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull ITestFlow listener) {
-        this.context = context.getApplicationContext();
         this.listener = listener;
         this.testers = new LinkedList<>();
 
@@ -60,10 +56,9 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
 
     @Override
     public void publishGeneralMessage(@NonNull String message, @NonNull final BaseTester.Color color) {
-        final String finalMessage = (System.currentTimeMillis() - startTime) + ": " + message;
         handler.post(() -> {
             if (listener != null)
-                listener.addView(new SuperTextView(context, finalMessage, color.getResource(context)));
+                listener.addItem((System.currentTimeMillis() - startTime) + ": " + message, color);
         });
     }
 
@@ -73,7 +68,7 @@ public class TestersFlow extends Thread implements BaseTester.PublishListener {
     }
 
     public interface ITestFlow {
-        void addView(@NonNull View view);
+        void addItem(@NonNull String message, @NonNull BaseTester.Color color);
 
         void clearViews();
 

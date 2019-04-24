@@ -13,6 +13,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -43,14 +51,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.OnSearch, SearchResultsAdapter.Listener, MenuItem.OnActionExpandListener {
     private RecyclerViewLayout recyclerViewLayout;
@@ -152,7 +152,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         recyclerViewLayout.startLoading();
         this.query = query;
 
-        searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), this);
+        searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), null, this);
 
         AnalyticsApplication.sendAnalytics(Utils.ACTION_SEARCH);
         return true;
@@ -194,7 +194,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         switch (item.getItemId()) {
             case R.id.search_engines:
                 showProgress(R.string.gathering_information);
-                searchApi.listSearchEngines(new SearchApi.OnResult<List<SearchEngine>>() {
+                searchApi.listSearchEngines(this, new SearchApi.OnResult<List<SearchEngine>>() {
                     @Override
                     public void onResult(@NonNull List<SearchEngine> result) {
                         dismissDialog();
@@ -216,7 +216,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     @Override
     public void onResultSelected(@NonNull SearchResult result) {
         showProgress(R.string.gathering_information);
-        searchApi.getTorrent(result, new SearchApi.OnResult<Torrent>() {
+        searchApi.getTorrent(result, this, new SearchApi.OnResult<Torrent>() {
             @Override
             public void onResult(@NonNull Torrent torrent) {
                 dismissDialog();

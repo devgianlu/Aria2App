@@ -2,6 +2,10 @@ package com.gianlu.aria2app.Activities;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.gianlu.aria2app.Adapters.DirectDownloadsAdapter;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.R;
@@ -18,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class DirectDownloadActivity extends ActivityWithDialog implements FetchHelper.FetchEventListener {
     private RecyclerViewLayout layout;
@@ -147,7 +148,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
         }
 
         @Override
-        public void onFailed(Throwable ex) {
+        public void onFailed(@NonNull Throwable ex) {
             Toaster.with(DirectDownloadActivity.this).message(R.string.failedDownloadingFile).ex(ex).show();
         }
     }

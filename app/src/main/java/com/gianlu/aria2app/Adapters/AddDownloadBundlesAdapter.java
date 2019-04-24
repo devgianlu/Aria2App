@@ -6,6 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
@@ -16,18 +19,12 @@ import com.gianlu.commonutils.CommonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadBundlesAdapter.ViewHolder> {
     private final LayoutInflater inflater;
     private final Listener listener;
     private final List<AddDownloadBundle> bundles;
-    private final Context context;
 
     public AddDownloadBundlesAdapter(Context context, Listener listener) {
-        this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         this.listener = listener;
         this.bundles = new ArrayList<>();
@@ -66,7 +63,7 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
         if (text != null)
             holder.text.setText(text);
         if (textColorRes != 0)
-            holder.text.setTextColor(ContextCompat.getColor(context, textColorRes));
+            CommonUtils.setTextColor(holder.text, textColorRes);
 
         holder.remove.setOnClickListener(v -> removeItem(holder.getAdapterPosition()));
         holder.edit.setOnClickListener(v -> {

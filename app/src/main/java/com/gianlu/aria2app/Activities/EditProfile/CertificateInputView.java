@@ -11,6 +11,12 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -29,11 +35,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentActivity;
 
 public class CertificateInputView extends LinearLayout {
     public static final int CODE_PICK_CERT = 13;
@@ -98,12 +99,14 @@ public class CertificateInputView extends LinearLayout {
         AskPermission.ask(activity, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
             @Override
             public void permissionGranted(@NonNull String permission) {
-                try {
-                    activity.startActivityForResult(Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT)
-                            .setType("*/*")
-                            .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
-                } catch (ActivityNotFoundException ex) {
-                    Logging.log(ex);
+                if (activityProvider instanceof Fragment) {
+                    try {
+                        ((Fragment) activityProvider).startActivityForResult(
+                                Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*")
+                                        .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
+                    } catch (ActivityNotFoundException ex) {
+                        Logging.log(ex);
+                    }
                 }
             }
 

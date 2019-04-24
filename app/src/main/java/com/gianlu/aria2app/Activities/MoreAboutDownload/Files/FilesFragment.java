@@ -12,6 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.OnBackPressed;
@@ -54,13 +62,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import okhttp3.HttpUrl;
 
 public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
@@ -261,7 +262,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private void startDownloadInternal(@NonNull MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
         if (helper == null) return;
 
-        final boolean single = file != null;
+        boolean single = file != null;
         FetchHelper.StartListener listener = new FetchHelper.StartListener() {
             @Override
             public void onSuccess() {
@@ -271,7 +272,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
 
             @Override
-            public void onFailed(Throwable ex) {
+            public void onFailed(@NonNull Throwable ex) {
                 DialogUtils.showToast(getContext(),
                         Toaster.build()
                                 .message(single ? R.string.failedAddingDownload : R.string.failedAddingDownloads)
@@ -279,8 +280,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
         };
 
-        if (file != null) helper.start(profile, file, listener);
-        else if (dir != null) helper.start(profile, dir, listener);
+        if (file != null) helper.start(requireContext(), profile, file, listener);
+        else if (dir != null) helper.start(requireContext(), profile, dir, listener);
     }
 
     @Override

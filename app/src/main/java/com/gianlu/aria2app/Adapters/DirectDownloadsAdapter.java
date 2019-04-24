@@ -11,6 +11,12 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.NetIO.Downloader.FetchDownloadWrapper;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.R;
@@ -24,22 +30,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloadsAdapter.ViewHolder> {
     private final LayoutInflater inflater;
     private final List<FetchDownloadWrapper> downloads;
-    private final Context context;
     private final FetchHelper helper;
     private final FetchHelper.StartListener restartListener;
 
     public DirectDownloadsAdapter(Context context, FetchHelper helper, List<Download> downloads, FetchHelper.StartListener restartListener) {
-        this.context = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         this.downloads = FetchDownloadWrapper.wrap(downloads);
         this.helper = helper;
@@ -102,7 +99,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
         switch (download.getStatus()) {
             case QUEUED:
                 holder.status.setText(R.string.pending);
-                holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadPending));
+                CommonUtils.setTextColor(holder.status, R.color.downloadPending);
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
@@ -115,7 +112,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
             case DOWNLOADING:
                 holder.status.setText(R.string.running);
-                holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadRunning));
+                CommonUtils.setTextColor(holder.status, R.color.downloadRunning);
 
                 holder.remainingTime.setVisibility(View.VISIBLE);
                 holder.speed.setVisibility(View.VISIBLE);
@@ -128,7 +125,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
             case PAUSED:
                 holder.status.setText(R.string.paused);
-                holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadPaused));
+                CommonUtils.setTextColor(holder.status, R.color.downloadPaused);
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
@@ -141,7 +138,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
             case COMPLETED:
                 holder.status.setText(R.string.completed);
-                holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadCompleted));
+                CommonUtils.setTextColor(holder.status, R.color.downloadCompleted);
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
@@ -154,7 +151,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
             case FAILED:
                 holder.status.setText(R.string.failed);
-                holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadFailed));
+                CommonUtils.setTextColor(holder.status, R.color.downloadFailed);
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
@@ -169,7 +166,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
             case CANCELLED:
                 holder.status.setText(R.string.cancelled);
-                holder.status.setTextColor(ContextCompat.getColor(context, R.color.downloadCancelled));
+                CommonUtils.setTextColor(holder.status, R.color.downloadCancelled);
 
                 holder.remainingTime.setVisibility(View.GONE);
                 holder.speed.setVisibility(View.GONE);
@@ -189,18 +186,18 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
                 break;
         }
 
-        holder.open.setOnClickListener(v -> openFile(download));
+        holder.open.setOnClickListener(v -> openFile(v.getContext(), download));
         holder.start.setOnClickListener(v -> helper.resume(download));
         holder.pause.setOnClickListener(v -> helper.pause(download));
         holder.restart.setOnClickListener(v -> helper.restart(download, restartListener));
         holder.remove.setOnClickListener(v -> helper.remove(download));
     }
 
-    private void openFile(FetchDownloadWrapper download) {
+    private void openFile(Context context, FetchDownloadWrapper download) {
         try {
             context.startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(context, "com.gianlu.aria2app", download.getFile()))
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
-        } catch (ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException | IllegalArgumentException ex) {
             Toaster.with(context).message(R.string.failedOpeningDownload).ex(ex).show();
         }
     }

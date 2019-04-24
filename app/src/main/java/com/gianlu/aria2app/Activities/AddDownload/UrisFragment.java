@@ -13,6 +13,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
@@ -23,13 +30,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 public class UrisFragment extends FragmentWithDialog implements UrisAdapter.Listener {
@@ -143,7 +143,8 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
                 if (clip != null) {
                     for (int i = 0; i < clip.getItemCount(); i++) {
                         ClipData.Item item = clip.getItemAt(i);
-                        String clipUri = item.coerceToText(getContext()).toString();
+                        if (item.getText() == null) continue;
+                        String clipUri = item.getText().toString();
 
                         try {
                             new URL(clipUri);

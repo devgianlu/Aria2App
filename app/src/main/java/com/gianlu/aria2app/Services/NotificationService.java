@@ -24,6 +24,14 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.collection.ArraySet;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.PK;
@@ -49,13 +57,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.collection.ArraySet;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -81,6 +82,8 @@ public class NotificationService extends Service {
     private LocalBroadcastManager broadcastManager;
     private StartedFrom startedFrom = StartedFrom.NOT;
     private ConnectivityChangedReceiver connectivityChangedReceiver;
+    private volatile boolean calledStartForeground = false;
+    private volatile boolean stopping = false;
 
     private static void debug(String msg) {
         if (CommonUtils.isDebug() && ThisApplication.DEBUG_NOTIFICATION)
@@ -141,6 +144,13 @@ public class NotificationService extends Service {
         }
     }
 
+    private void stopSelfCustom() {
+        stopping = true;
+
+        if (calledStartForeground)
+            stopSelf();
+    }
+
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         broadcastManager = LocalBroadcastManager.getInstance(this);
@@ -149,7 +159,7 @@ public class NotificationService extends Service {
             if (Objects.equals(intent.getAction(), ACTION_STOP)) {
                 startedFrom = StartedFrom.NOT;
                 stopForeground(true);
-                stopSelf();
+                stopSelfCustom();
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
                     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -164,7 +174,13 @@ public class NotificationService extends Service {
                     recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                     connectivityChangedReceiver = new ConnectivityChangedReceiver();
                     registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+
+                    if (stopping) {
+                        stopSelf();
+                    } else {
+                        startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                        calledStartForeground = false;
+                    }
                 }
 
                 if (startedFrom == StartedFrom.NOT || startedFrom == StartedFrom.DOWNLOAD)
@@ -178,7 +194,7 @@ public class NotificationService extends Service {
         if (profiles != null) profiles.clear();
         clearWebsockets();
         broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
-        stopSelf();
+        stopSelfCustom();
 
         return START_NOT_STICKY; // Process will stop
     }
@@ -556,7 +572,7 @@ public class NotificationService extends Service {
                             if (isEmptyByMode(Mode.NOTIFY_EXCLUSIVE)) {
                                 broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
                                 stopForeground(true);
-                                stopSelf();
+                                stopSelfCustom();
                                 startedFrom = StartedFrom.NOT;
                             }
                             break;
