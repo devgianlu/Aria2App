@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.util.Base64;
@@ -50,14 +49,6 @@ public class ProfilesManager {
     @NonNull
     public static String getId(@NonNull String name) {
         return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
-    }
-
-    @Nullable
-    public static MultiProfile createExternalProfile(@NonNull Intent intent) {
-        String token = intent.getStringExtra("token");
-        int port = intent.getIntExtra("port", -1);
-        if (token == null || port == -1) return null;
-        return MultiProfile.forLocal(token, port);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

@@ -338,7 +338,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             DirectDownloadFragment.Fields ddFields = ddFragments.get(i).getFields(this);
 
             if (connFields == null || authFields == null || ddFields == null) return null;
-            profile.add(conditions.get(i), connFields, authFields, ddFields, false);
+            profile.add(conditions.get(i), connFields, authFields, ddFields);
         }
 
         return profile;

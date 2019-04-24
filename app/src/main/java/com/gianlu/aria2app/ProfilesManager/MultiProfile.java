@@ -1,12 +1,9 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 
@@ -114,17 +111,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
     }
 
     @NonNull
-    public static MultiProfile forLocal(@NonNull String token, int port) {
-        MultiProfile profile = new MultiProfile("Local device", true);
-        profile.add(ConnectivityCondition.newUniqueCondition(),
-                new ConnectionFragment.Fields(ConnectionMethod.WEBSOCKET, "localhost", port, "/jsonrpc", false, null, false),
-                new AuthenticationFragment.Fields(AbstractClient.AuthMethod.TOKEN, token, null, null),
-                new DirectDownloadFragment.Fields(null), true);
-
-        return profile;
-    }
-
-    @NonNull
     public static MultiProfile forInAppDownloader() {
         int port = ThreadLocalRandom.current().nextInt(2000, 8000);
         Prefs.putInt(Aria2PK.RPC_PORT, port);
@@ -136,7 +122,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         profile.add(ConnectivityCondition.newUniqueCondition(),
                 new ConnectionFragment.Fields(ConnectionMethod.WEBSOCKET, "localhost", port, "/jsonrpc", false, null, false),
                 new AuthenticationFragment.Fields(AbstractClient.AuthMethod.TOKEN, token, null, null),
-                new DirectDownloadFragment.Fields(null), false);
+                new DirectDownloadFragment.Fields(null));
 
         return profile;
     }
@@ -254,8 +240,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return name;
     }
 
-    public void add(@NonNull ConnectivityCondition cond, @NonNull ConnectionFragment.Fields connFields, @NonNull AuthenticationFragment.Fields authFields, @NonNull DirectDownloadFragment.Fields ddFields, boolean aria2AndroidInitiated) {
-        profiles.add(new UserProfile(cond, connFields, authFields, ddFields, aria2AndroidInitiated));
+    public void add(@NonNull ConnectivityCondition cond, @NonNull ConnectionFragment.Fields connFields, @NonNull AuthenticationFragment.Fields authFields, @NonNull DirectDownloadFragment.Fields ddFields) {
+        profiles.add(new UserProfile(cond, connFields, authFields, ddFields));
     }
 
     public void setStatus(TestStatus status) {
@@ -500,7 +486,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public final DirectDownload directDownload;
         public final ConnectionMethod connectionMethod;
         public final ConnectivityCondition connectivityCondition;
-        private final boolean aria2AndroidInitiated;
         private transient String encodedCredentials;
         private transient String fullServerAddress;
 
@@ -508,8 +493,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             this(obj, null);
         }
 
-        public UserProfile(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields, boolean aria2AndroidInitiated) {
-            this.aria2AndroidInitiated = aria2AndroidInitiated;
+        public UserProfile(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
             connectivityCondition = cond;
             authMethod = authFields.authMethod;
             serverUsername = authFields.username;
@@ -566,23 +550,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             status = new TestStatus(Status.UNKNOWN, null);
-            aria2AndroidInitiated = obj.optBoolean("aria2Android", false);
-        }
-
-        public boolean couldBeAria2Android(@NonNull Context context) {
-            boolean installed;
-            try {
-                PackageInfo info = context.getPackageManager().getPackageInfo("com.gianlu.aria2android", 0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                    installed = info.getLongVersionCode() >= 40;
-                else
-                    installed = info.versionCode >= 40;
-            } catch (PackageManager.NameNotFoundException ex) {
-                installed = false;
-            }
-
-            boolean isLocal = Objects.equals(serverAddr, "localhost") || Objects.equals(serverAddr, "127.0.0.1");
-            return installed && (isLocal || aria2AndroidInitiated);
         }
 
         @Nullable
@@ -646,20 +613,15 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             if (o == null || getClass() != o.getClass()) return false;
 
             UserProfile profile = (UserProfile) o;
-
             if (serverPort != profile.serverPort) return false;
             if (serverSsl != profile.serverSsl) return false;
             if (!serverAddr.equals(profile.serverAddr)) return false;
             if (!serverEndpoint.equals(profile.serverEndpoint)) return false;
             if (authMethod != profile.authMethod) return false;
-            if (certificate != null ? !certificate.equals(profile.certificate) : profile.certificate != null)
-                return false;
-            if (serverUsername != null ? !serverUsername.equals(profile.serverUsername) : profile.serverUsername != null)
-                return false;
-            if (serverPassword != null ? !serverPassword.equals(profile.serverPassword) : profile.serverPassword != null)
-                return false;
-            if (serverToken != null ? !serverToken.equals(profile.serverToken) : profile.serverToken != null)
-                return false;
+            if (!Objects.equals(certificate, profile.certificate)) return false;
+            if (!Objects.equals(serverUsername, profile.serverUsername)) return false;
+            if (!Objects.equals(serverPassword, profile.serverPassword)) return false;
+            if (!Objects.equals(serverToken, profile.serverToken)) return false;
             if (connectionMethod != profile.connectionMethod) return false;
             return connectivityCondition.equals(profile.connectivityCondition);
         }
@@ -674,10 +636,15 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         @Override
         public String getSecondaryText(@NonNull Context context) {
             if (isInAppDownloader()) {
-                if (((ThisApplication) context.getApplicationContext()).getLastAria2UiState())  // TODO
-                    return "ENABLED!";
-                else
-                    return "DISABLED!";
+                ThisApplication app = ((ThisApplication) context.getApplicationContext());
+                if (app.hasAria2ServiceEnv()) {
+                    if (app.getLastAria2UiState())
+                        return context.getString(R.string.inAppDownloader_serviceStarted);
+                    else
+                        return context.getString(R.string.inAppDownloader_serviceNotStarted);
+                } else {
+                    return context.getString(R.string.inAppDownloader_serviceNotConfigured);
+                }
             }
 
             try {

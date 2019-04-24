@@ -68,7 +68,6 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         LoadedApkHuaWei.hookHuaWeiVerifier(this);
         SearchApi.get().cacheSearchEngines();
         MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
-        Aria2Ui.provider(Aria2ConfigProvider.class);
 
         ErrorHandler.setup(Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000, this);
 
@@ -99,6 +98,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         // Aria2Android integration
+        Aria2Ui.provider(Aria2ConfigProvider.class);
         if (CommonUtils.isARM()) {
             try {
                 aria2service = new Aria2UiDispatcher(this);
@@ -182,6 +182,10 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             aria2service.ui.bind();
             aria2service.ui.askForStatus();
         }
+    }
+
+    public boolean hasAria2ServiceEnv() {
+        return aria2service != null && aria2service.ui.hasEnv();
     }
 
     private static class Aria2UiDispatcher implements Aria2Ui.Listener {

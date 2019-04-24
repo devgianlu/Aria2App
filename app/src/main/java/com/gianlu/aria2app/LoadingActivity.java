@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -73,12 +72,12 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private Closeable ongoingTest;
     private volatile MultiProfile startAria2ServiceOn = null;
 
-    public static void startActivity(Context context) {
+    public static void startActivity(@NonNull Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
-    public static void startActivity(Context context, @Nullable Throwable ex) {
+    public static void startActivity(@NonNull Context context, @Nullable Throwable ex) {
         context.startActivity(new Intent(context, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("showPicker", true)
@@ -123,17 +122,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         manager = ProfilesManager.get(this);
         if (getIntent().getBooleanExtra("external", false)) {
-            MultiProfile profile = ProfilesManager.createExternalProfile(getIntent());
-            if (profile != null) {
-                try {
-                    manager.save(profile);
-                    tryConnecting(profile);
-                    return;
-                } catch (IOException | JSONException ex) {
-                    Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
-                    return;
-                }
-            }
+            // TODO: Should probably update Aria2App
         }
 
         if (!manager.hasProfiles()) {
@@ -296,7 +285,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             try {
                 app.loadAria2ServiceEnv();
             } catch (BadEnvironmentException ex) {
-                DownloadBinActivity.startActivity(this, "Download aria2 binary - Aria2App" /* FIXME */, LoadingActivity.class,
+                DownloadBinActivity.startActivity(this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name), LoadingActivity.class,
                         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
                 return;
             }
@@ -375,30 +364,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public void onPingTested(@NonNull AbstractClient client, long latency) {
     }
 
-    private void mayStartAria2Android(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.startAria2Android)
-                .setMessage(R.string.startAria2Android_message)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> startAria2Android(profile))
-                .setNegativeButton(android.R.string.no, (dialog, which) -> failedConnecting(ex));
-        showDialog(builder);
-    }
-
-    private void startAria2Android(@NonNull MultiProfile.UserProfile profile) {
-        AnalyticsApplication.sendAnalytics(Utils.ACTION_START_ARIA2ANDROID);
-
-        aria2AndroidProfile = profile;
-
-        try {
-            Intent intent = new Intent("com.gianlu.aria2android.START_SERVICE");
-            intent.setClassName("com.gianlu.aria2android", "com.gianlu.aria2android.MainActivity");
-            intent.putExtra("goBack", true);
-            startActivityForResult(intent, 1);
-        } catch (ActivityNotFoundException ex) {
-            Toaster.with(this).message(R.string.failedStartingAria2Android).ex(ex).show();
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 1 && aria2AndroidProfile != null) {
@@ -424,9 +389,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     @Override
     public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
         ongoingTest = null;
-
-        if (profile.couldBeAria2Android(this)) mayStartAria2Android(profile, ex);
-        else failedConnecting(ex);
+        failedConnecting(ex);
     }
 
     @Override

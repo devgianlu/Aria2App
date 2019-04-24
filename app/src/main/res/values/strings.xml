@@ -298,8 +298,6 @@
     <string name="urisFile">Uris file</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">Cancelled</string>
-    <string name="startAria2Android">Start Aria2Android</string>
-    <string name="startAria2Android_message">This profile seems related to a local instance of Aria2Android. Do you want to start the service?</string>
     <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
     <string name="prefs_ddUseExternal">Use external downloader</string>
     <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
@@ -343,4 +341,7 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
+    <string name="inAppDownloader_serviceStarted">Service is up and running.</string>
+    <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
+    <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
 </resources>
