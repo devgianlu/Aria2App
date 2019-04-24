@@ -9,15 +9,15 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.material.textfield.TextInputLayout;
-
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class AuthenticationFragment extends FieldErrorFragment {
     private ScrollView layout;
@@ -148,13 +148,13 @@ public class AuthenticationFragment extends FieldErrorFragment {
         return new Fields(authMethod, token, username, password);
     }
 
-    public class Fields {
+    public static class Fields {
         public final AbstractClient.AuthMethod authMethod;
         public final String token;
         public final String username;
         public final String password;
 
-        Fields(AbstractClient.AuthMethod authMethod, @Nullable String token, @Nullable String username, @Nullable String password) {
+        public Fields(AbstractClient.AuthMethod authMethod, @Nullable String token, @Nullable String username, @Nullable String password) {
             this.authMethod = authMethod;
             this.token = token;
             this.username = username;

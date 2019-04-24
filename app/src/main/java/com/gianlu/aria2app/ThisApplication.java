@@ -1,8 +1,12 @@
 package com.gianlu.aria2app;
 
+import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.Aria2.Aria2ConfigProvider;
 import com.gianlu.aria2app.NetIO.ConnectivityChangedReceiver;
@@ -12,8 +16,11 @@ import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.BadEnvironmentException;
+import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonPK;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Preferences.PrefsStorageModule;
@@ -21,16 +28,17 @@ import com.gianlu.commonutils.Toaster;
 import com.llew.huawei.verifier.LoadedApkHuaWei;
 import com.yarolegovich.mp.io.MaterialPreferences;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
 
 public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.Listener {
     public static final boolean DEBUG_UPDATER = false;
     public static final boolean DEBUG_NOTIFICATION = false;
     private final Set<String> checkedVersionFor = new HashSet<>();
     private ConnectivityChangedReceiver connectivityChangedReceiver;
+    private Aria2UiDispatcher aria2service;
 
     public boolean shouldCheckVersion() {
         try {
@@ -89,11 +97,24 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         connectivityChangedReceiver = new ConnectivityChangedReceiver(this);
         getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        // Aria2Android integration
+        if (CommonUtils.isARM()) {
+            try {
+                aria2service = new Aria2UiDispatcher(this);
+            } catch (BadEnvironmentException ex) {
+                Logging.log(ex);
+            }
+        } else {
+            aria2service = null;
+        }
     }
 
     @Override
     public void onTerminate() {
         getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
+        if (aria2service != null) aria2service.ui.unbind();
+
         super.onTerminate();
     }
 
@@ -133,5 +154,50 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     @Override
     public void onException(@NonNull Throwable ex) {
         Logging.log(ex);
+    }
+
+    public void addAria2UiListener(@NonNull Aria2Ui.Listener listener) {
+        if (aria2service == null) return;
+        aria2service.listeners.add(listener);
+    }
+
+    public void removeAria2UiListener(@NonNull Aria2Ui.Listener listener) {
+        if (aria2service == null) return;
+        aria2service.listeners.remove(listener);
+    }
+
+    public boolean getLastAria2UiState() {
+        return aria2service != null && aria2service.lastUiState;
+    }
+
+    public void startAria2ServiceIfNeeded() {
+        if (aria2service != null && !aria2service.lastUiState)
+            aria2service.ui.startService();
+    }
+
+    private static class Aria2UiDispatcher implements Aria2Ui.Listener {
+        private final Aria2Ui ui;
+        private final Set<Aria2Ui.Listener> listeners = new HashSet<>();
+        private volatile boolean lastUiState = false;
+
+        Aria2UiDispatcher(@NonNull Context context) throws BadEnvironmentException {
+            ui = new Aria2Ui(context, this);
+            ui.loadEnv();
+            ui.bind();
+        }
+
+        @Override
+        public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+            for (Aria2Ui.Listener listener : new ArrayList<>(listeners))
+                listener.onMessage(type, i, o);
+        }
+
+        @Override
+        public void updateUi(boolean on) {
+            lastUiState = on;
+
+            for (Aria2Ui.Listener listener : new ArrayList<>(listeners))
+                listener.updateUi(on);
+        }
     }
 }

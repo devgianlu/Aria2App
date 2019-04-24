@@ -6,7 +6,11 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.PK;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 
@@ -24,9 +28,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 public class ProfilesManager {
     private static ProfilesManager instance;
     private final File PROFILES_PATH;
@@ -34,33 +35,33 @@ public class ProfilesManager {
     private final ConnectivityManager connectivityManager;
     private MultiProfile currentProfile;
 
-    private ProfilesManager(Context context) {
+    private ProfilesManager(@NonNull Context context) {
         PROFILES_PATH = context.getFilesDir();
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     @NonNull
-    public static ProfilesManager get(Context context) {
+    public static ProfilesManager get(@NonNull Context context) {
         if (instance == null) instance = new ProfilesManager(context.getApplicationContext());
         return instance;
     }
 
     @NonNull
-    public static String getId(String name) {
+    public static String getId(@NonNull String name) {
         return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
     }
 
     @Nullable
-    public static MultiProfile createExternalProfile(Intent intent) {
+    public static MultiProfile createExternalProfile(@NonNull Intent intent) {
         String token = intent.getStringExtra("token");
         int port = intent.getIntExtra("port", -1);
         if (token == null || port == -1) return null;
-        return new MultiProfile(token, port);
+        return MultiProfile.forLocal(token, port);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void delete(MultiProfile profile) {
+    public void delete(@NonNull MultiProfile profile) {
         new File(PROFILES_PATH, profile.id + ".profile").delete();
     }
 
@@ -76,7 +77,7 @@ public class ProfilesManager {
         return currentProfile;
     }
 
-    public void setCurrent(MultiProfile profile) {
+    public void setCurrent(@NonNull MultiProfile profile) {
         currentProfile = profile;
         setLastProfile(profile);
     }
@@ -93,7 +94,7 @@ public class ProfilesManager {
         }
     }
 
-    public void setLastProfile(MultiProfile profile) {
+    public void setLastProfile(@NonNull MultiProfile profile) {
         Prefs.putString(PK.LAST_USED_PROFILE, profile.id);
     }
 
@@ -173,10 +174,13 @@ public class ProfilesManager {
             }
         }
 
+        if (CommonUtils.isARM())
+            profiles.add(MultiProfile.forInAppDownloader());
+
         return profiles;
     }
 
-    public void save(MultiProfile profile) throws IOException, JSONException {
+    public void save(@NonNull MultiProfile profile) throws IOException, JSONException {
         File file = new File(PROFILES_PATH, profile.id + ".profile");
         try (OutputStream out = new FileOutputStream(file)) {
             out.write(profile.toJson().toString().getBytes());
@@ -188,10 +192,12 @@ public class ProfilesManager {
         setCurrent(retrieveProfile(getCurrent().id));
     }
 
+    @NonNull
     public WifiManager getWifiManager() {
         return wifiManager;
     }
 
+    @NonNull
     public ConnectivityManager getConnectivityManager() {
         return connectivityManager;
     }

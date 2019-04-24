@@ -10,6 +10,9 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
@@ -17,6 +20,7 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
 import com.gianlu.commonutils.Logging;
@@ -33,11 +37,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import okhttp3.HttpUrl;
 
 public class MultiProfile implements BaseDrawerProfile, Serializable {
+    public static final String IN_APP_DOWNLOADER_NAME = "In-App downloader";
     private static final long serialVersionUID = 1L;
     public final ArrayList<UserProfile> profiles;
     public final String id;
@@ -53,7 +56,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         this.status = new TestStatus(Status.UNKNOWN, null);
     }
 
-    MultiProfile(JSONObject obj) throws JSONException {
+    MultiProfile(@NonNull JSONObject obj) throws JSONException {
         this.name = obj.getString("name");
         this.notificationsEnabled = obj.optBoolean("notificationsEnabled", true);
         this.id = ProfilesManager.getId(name);
@@ -107,14 +110,26 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
     }
 
-    public MultiProfile(@NonNull String token, int port) {
-        this.name = "Local device";
-        this.id = ProfilesManager.getId(name);
-        this.status = new TestStatus(Status.UNKNOWN, null);
-        this.notificationsEnabled = true;
+    @NonNull
+    public static MultiProfile forLocal(@NonNull String token, int port) {
+        MultiProfile profile = new MultiProfile("Local device", true);
+        profile.add(ConnectivityCondition.newUniqueCondition(),
+                new ConnectionFragment.Fields(ConnectionMethod.WEBSOCKET, "localhost", port, "/jsonrpc", false, null, false),
+                new AuthenticationFragment.Fields(AbstractClient.AuthMethod.TOKEN, token, null, null),
+                new DirectDownloadFragment.Fields(null), true);
 
-        this.profiles = new ArrayList<>();
-        this.profiles.add(new UserProfile(token, port));
+        return profile;
+    }
+
+    @NonNull
+    public static MultiProfile forInAppDownloader() {
+        MultiProfile profile = new MultiProfile(IN_APP_DOWNLOADER_NAME, true);
+        profile.add(ConnectivityCondition.newUniqueCondition(),
+                new ConnectionFragment.Fields(ConnectionMethod.WEBSOCKET, "localhost", 6800, "/jsonrpc", false, null, false),
+                new AuthenticationFragment.Fields(AbstractClient.AuthMethod.NONE, null, null, null),
+                new DirectDownloadFragment.Fields(null), false);
+
+        return profile;
     }
 
     @Nullable
@@ -230,8 +245,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return name;
     }
 
-    public void add(@NonNull ConnectivityCondition cond, @NonNull ConnectionFragment.Fields connFields, @NonNull AuthenticationFragment.Fields authFields, @NonNull DirectDownloadFragment.Fields ddFields) {
-        profiles.add(new UserProfile(cond, connFields, authFields, ddFields));
+    public void add(@NonNull ConnectivityCondition cond, @NonNull ConnectionFragment.Fields connFields, @NonNull AuthenticationFragment.Fields authFields, @NonNull DirectDownloadFragment.Fields ddFields, boolean aria2AndroidInitiated) {
+        profiles.add(new UserProfile(cond, connFields, authFields, ddFields, aria2AndroidInitiated));
     }
 
     public void setStatus(TestStatus status) {
@@ -240,6 +255,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
 
     void updateStatusPing(long ping) {
         if (status != null) this.status = new TestStatus(status.status, ping);
+    }
+
+    public boolean isInAppDownloader() {
+        return name.equals(IN_APP_DOWNLOADER_NAME);
     }
 
     public enum ConnectionMethod {
@@ -476,11 +495,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         private transient String encodedCredentials;
         private transient String fullServerAddress;
 
-        public UserProfile(JSONObject obj) throws JSONException {
+        public UserProfile(@NonNull JSONObject obj) throws JSONException {
             this(obj, null);
         }
 
-        public UserProfile(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
+        public UserProfile(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields, boolean aria2AndroidInitiated) {
+            this.aria2AndroidInitiated = aria2AndroidInitiated;
             connectivityCondition = cond;
             authMethod = authFields.authMethod;
             serverUsername = authFields.username;
@@ -494,28 +514,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             serverEndpoint = connFields.endpoint;
             directDownload = ddFields.dd;
             hostnameVerifier = connFields.hostnameVerifier;
-            aria2AndroidInitiated = false;
         }
 
-        private UserProfile(String token, int port) {
-            serverAddr = "localhost";
-            authMethod = AbstractClient.AuthMethod.TOKEN;
-            serverUsername = null;
-            serverPassword = null;
-            serverToken = token;
-            connectionMethod = ConnectionMethod.WEBSOCKET;
-            serverPort = port;
-            serverEndpoint = "/jsonrpc";
-            serverSsl = false;
-            certificate = null;
-            directDownload = null;
-            connectivityCondition = ConnectivityCondition.newUniqueCondition();
-            hostnameVerifier = false;
-            status = new TestStatus(Status.UNKNOWN, null);
-            aria2AndroidInitiated = true;
-        }
-
-        public UserProfile(JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
+        public UserProfile(@NonNull JSONObject obj, @Nullable ConnectivityCondition condition) throws JSONException {
             if (obj.has("serverAuth"))
                 authMethod = AbstractClient.AuthMethod.TOKEN;
             else
@@ -663,12 +664,23 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         @NonNull
         @Override
         public String getSecondaryText(@NonNull Context context) {
+            if (isInAppDownloader()) {
+                if (((ThisApplication) context.getApplicationContext()).getLastAria2UiState())  // TODO
+                    return "ENABLED!";
+                else
+                    return "DISABLED!";
+            }
+
             try {
                 return getFullServerAddress();
             } catch (NetUtils.InvalidUrlException ex) {
                 Logging.log(ex);
                 return "";
             }
+        }
+
+        public boolean isInAppDownloader() {
+            return name.equals(IN_APP_DOWNLOADER_NAME);
         }
     }
 }

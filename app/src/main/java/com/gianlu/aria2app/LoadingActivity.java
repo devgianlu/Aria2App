@@ -31,6 +31,8 @@ import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.WebView.WebViewActivity;
+import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Drawer.DrawerManager;
@@ -41,12 +43,13 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile> {
+public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile>, Aria2Ui.Listener {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
     public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
     public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
@@ -66,6 +69,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private Handler handler;
     private MultiProfile.UserProfile aria2AndroidProfile = null;
     private Closeable ongoingTest;
+    private volatile MultiProfile startAria2ServiceOn = null;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -226,6 +230,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         if (profile == null) {
             displayPicker(hasShareData());
         } else {
+            startAria2ServiceOn = null;
+
             manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
@@ -282,7 +288,24 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
-        tryConnecting(profile);
+        if (profile.isInAppDownloader()) {
+            // TODO: Setup environment
+
+            ThisApplication app = ((ThisApplication) getApplicationContext());
+            app.addAria2UiListener(this);
+
+            startAria2ServiceOn = profile;
+            app.startAria2ServiceIfNeeded();
+        } else {
+            tryConnecting(profile);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ((ThisApplication) getApplicationContext()).removeAria2UiListener(this);
     }
 
     @Override
@@ -390,5 +413,21 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         if (profile.couldBeAria2Android(this)) mayStartAria2Android(profile, ex);
         else failedConnecting(ex);
+    }
+
+    @Override
+    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+        if (isDestroyed()) return;
+
+        if (type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null) {
+            manager.setCurrent(startAria2ServiceOn);
+            launchMain();
+
+            startAria2ServiceOn = null;
+        }
+    }
+
+    @Override
+    public void updateUi(boolean on) {
     }
 }
