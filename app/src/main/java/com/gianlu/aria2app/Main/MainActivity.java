@@ -887,7 +887,14 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void updateUi(boolean on) {
-        if (!on) {
+        MultiProfile current;
+        try {
+            current = profilesManager.getCurrent();
+        } catch (ProfilesManager.NoCurrentProfileException ex) {
+            return;
+        }
+
+        if (!on && current.isInAppDownloader()) {
             ((ThisApplication) getApplication()).removeAria2UiListener(this);
             NetInstanceHolder.close();
             profilesManager.unsetLastProfile();

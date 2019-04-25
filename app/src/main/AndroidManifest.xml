@@ -38,8 +38,8 @@
         <!-- Loading activity -->
         <activity
             android:name=".LoadingActivity"
-            android:noHistory="true"
             android:theme="@style/FullscreenTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

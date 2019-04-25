@@ -9,6 +9,23 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:id="@+id/inAppAria2conf_binVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ToggleButton
+            android:id="@+id/inAppAria2conf_toggleServer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
+            android:textSize="16sp" />
+
         <com.gianlu.aria2lib.Interface.Aria2ConfigurationScreen
             android:id="@+id/inAppAria2conf_screen"
             android:layout_width="match_parent"

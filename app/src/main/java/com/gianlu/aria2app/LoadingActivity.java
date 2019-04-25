@@ -116,7 +116,10 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             finished = true;
-            if (goTo != null) startActivity(goTo);
+            if (goTo != null) {
+                startActivity(goTo);
+                finishAndRemoveTask();
+            }
         }, 1000);
 
         NetInstanceHolder.close();
@@ -172,8 +175,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             displayPicker(false);
         } else {
             MultiProfile last = manager.getLastProfile();
-            System.out.println("LAST: " + last);
-
             if (last != null && last.isInAppDownloader()) connectToInAppDownloader(last);
             else tryConnecting(last);
         }
@@ -336,8 +337,12 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         if (shortcutAction != null) intent.putExtra("shortcutAction", shortcutAction);
         else if (shareData != null) intent.putExtra("shareData", shareData);
         else if (launchGid != null && !launchGid.isEmpty()) intent.putExtra("gid", launchGid);
-        if (finished) startActivity(intent);
-        else this.goTo = intent;
+        if (finished) {
+            startActivity(intent);
+            finishAndRemoveTask();
+        } else {
+            this.goTo = intent;
+        }
     }
 
     private void launchWebView() {
@@ -346,6 +351,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         intent.putExtra("shareData", shareData)
                 .putExtra("canGoBack", false);
         startActivity(intent);
+        finishAndRemoveTask();
     }
 
     @Override

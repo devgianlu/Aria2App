@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +26,7 @@ import java.io.Serializable;
 public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui.Listener {
     private static final int STORAGE_ACCESS_CODE = 3;
     private Aria2ConfigurationScreen screen;
+    private ToggleButton toggle;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -60,11 +63,25 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
         ActionBar bar = getSupportActionBar();
         if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
+        ThisApplication app = ((ThisApplication) getApplication());
+
+        TextView version = findViewById(R.id.inAppAria2conf_binVersion);
+        version.setText(app.getInAppAria2Version());
+
+        boolean lastState = app.getLastAria2UiState();
+
+        toggle = findViewById(R.id.inAppAria2conf_toggleServer);
+        toggle.setChecked(lastState);
+        toggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) app.startAria2Service();
+            else app.stopAria2Service();
+        });
+
         screen = findViewById(R.id.inAppAria2conf_screen);
         screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE),
                 null, null, false);
 
-        screen.lockPreferences(((ThisApplication) getApplication()).getLastAria2UiState());
+        screen.lockPreferences(lastState);
     }
 
     @Override
@@ -116,6 +133,7 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
 
     @Override
     public void updateUi(boolean on) {
+        toggle.setChecked(on);
         screen.lockPreferences(on);
     }
 }

@@ -28,6 +28,7 @@ import com.gianlu.commonutils.Toaster;
 import com.llew.huawei.verifier.LoadedApkHuaWei;
 import com.yarolegovich.mp.io.MaterialPreferences;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -187,6 +188,23 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     public boolean hasAria2ServiceEnv() {
         return aria2service != null && aria2service.ui.hasEnv();
+    }
+
+    @Nullable
+    public String getInAppAria2Version() {
+        if (aria2service == null) return null;
+
+        try {
+            return aria2service.ui.version();
+        } catch (IOException | BadEnvironmentException ex) {
+            Logging.log("Failed retrieving version!", ex);
+            return null;
+        }
+    }
+
+    public void stopAria2Service() {
+        if (aria2service != null)
+            aria2service.ui.stopService();
     }
 
     private static class Aria2UiDispatcher implements Aria2Ui.Listener {
