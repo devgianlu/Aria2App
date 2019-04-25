@@ -172,15 +172,15 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             displayPicker(false);
         } else {
             MultiProfile last = manager.getLastProfile();
-            if (last != null && last.isInAppDownloader())
-                connectToInAppDownloader(last);
-            else
-                tryConnecting(last);
+            System.out.println("LAST: " + last);
+
+            if (last != null && last.isInAppDownloader()) connectToInAppDownloader(last);
+            else tryConnecting(last);
         }
     }
 
     private void connectToInAppDownloader(@NonNull MultiProfile profile) {
-        ThisApplication app = ((ThisApplication) getApplicationContext());
+        ThisApplication app = ((ThisApplication) getApplication());
 
         try {
             app.loadAria2ServiceEnv();
@@ -191,14 +191,14 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         }
 
         startAria2ServiceOn = profile;
-        app.startAria2ServiceIfNeeded();
+        app.startAria2Service();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        ((ThisApplication) getApplicationContext()).addAria2UiListener(this);
+        ((ThisApplication) getApplication()).addAria2UiListener(this);
     }
 
     private boolean hasShortcutAction() {
@@ -317,7 +317,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     protected void onDestroy() {
         super.onDestroy();
 
-        ((ThisApplication) getApplicationContext()).removeAria2UiListener(this);
+        ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
     @Override

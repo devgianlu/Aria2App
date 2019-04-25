@@ -75,6 +75,8 @@ import com.gianlu.aria2app.Tutorial.DownloadCardsTutorial;
 import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
+import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
@@ -95,6 +97,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -105,7 +108,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener, Aria2Ui.Listener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile, DrawerItem> drawerManager;
@@ -479,9 +482,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     protected void onDestroy() {
         if (adapter != null) adapter.activityDestroying(this);
         super.onDestroy();
+
+        ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
-    private void processUrl(Uri shareData) {
+    private void processUrl(@NonNull Uri shareData) {
         URI uri;
         try {
             uri = new URI(shareData.toString());
@@ -501,7 +506,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void showOutdatedDialog(final String latest, String current) {
+    private void showOutdatedDialog(@NonNull String latest, @NonNull String current) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.outdated_aria2)
                 .setMessage(getString(R.string.outdated_aria2_message, current, latest))
@@ -551,6 +556,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         FetchHelper.updateDownloadCount(this, this);
+
+        ((ThisApplication) getApplication()).addAria2UiListener(this);
     }
 
     @Override
@@ -569,6 +576,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             searchView.setOnCloseListener(this);
             searchView.setOnQueryTextListener(this);
         }
+
         return true;
     }
 
@@ -871,5 +879,19 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     @Override
     public void onFetchDownloadCount(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerItem.DIRECT_DOWNLOAD, count);
+    }
+
+    @Override
+    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+    }
+
+    @Override
+    public void updateUi(boolean on) {
+        if (!on) {
+            ((ThisApplication) getApplication()).removeAria2UiListener(this);
+            NetInstanceHolder.close();
+            profilesManager.unsetLastProfile();
+            LoadingActivity.startActivity(this);
+        }
     }
 }

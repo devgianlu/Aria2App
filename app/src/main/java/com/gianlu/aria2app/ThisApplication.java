@@ -172,7 +172,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         return aria2service != null && aria2service.lastUiState;
     }
 
-    public void startAria2ServiceIfNeeded() {
+    public void startAria2Service() {
         if (aria2service != null)
             aria2service.ui.startService();
     }

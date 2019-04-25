@@ -64,21 +64,21 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
         screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE),
                 null, null, false);
 
-        screen.lockPreferences(((ThisApplication) getApplicationContext()).getLastAria2UiState());
+        screen.lockPreferences(((ThisApplication) getApplication()).getLastAria2UiState());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        ((ThisApplication) getApplicationContext()).addAria2UiListener(this);
+        ((ThisApplication) getApplication()).addAria2UiListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        ((ThisApplication) getApplicationContext()).removeAria2UiListener(this);
+        ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
     private void addLog(@NonNull Logging.LogLine line) {
