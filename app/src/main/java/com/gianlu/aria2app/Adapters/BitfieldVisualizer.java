@@ -199,7 +199,8 @@ public class BitfieldVisualizer extends View {
                 if (i >= squares) break;
 
                 if (binary[i] != 0) {
-                    if (i == squares - 1) paint.setAlpha(255 / (numPieces % 4) * binary[i]);
+                    if (i == squares - 1 && numPieces % 4 != 0)
+                        paint.setAlpha(255 / (numPieces % 4) * binary[i]);
                     else paint.setAlpha(255 / 4 * binary[i]);
 
                     calcSquarePos(row, column, rect);
