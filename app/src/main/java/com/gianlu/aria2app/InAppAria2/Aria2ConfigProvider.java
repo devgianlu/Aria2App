@@ -1,13 +1,13 @@
-package com.gianlu.aria2app.Aria2;
+package com.gianlu.aria2app.InAppAria2;
 
 import android.app.Activity;
+
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2lib.BareConfigProvider;
-
-import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
 
 @Keep
 public final class Aria2ConfigProvider implements BareConfigProvider {

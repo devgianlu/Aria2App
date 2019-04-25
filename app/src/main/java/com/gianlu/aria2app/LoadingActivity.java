@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.Activities.EditProfileActivity;
+import com.gianlu.aria2app.InAppAria2.InAppAria2ConfActivity;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
@@ -158,19 +159,46 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             }
         }
 
-        final Throwable ex = (Throwable) getIntent().getSerializableExtra("ex");
-        if (ex != null) {
+        Throwable givenEx = (Throwable) getIntent().getSerializableExtra("ex");
+        if (givenEx != null) {
             seeError.setVisibility(View.VISIBLE);
-            seeError.setOnClickListener(v -> showErrorDialog(ex));
+            seeError.setOnClickListener(v -> showErrorDialog(givenEx));
             getIntent().removeExtra("ex");
         } else {
             seeError.setVisibility(View.GONE);
         }
 
-        if (getIntent().getBooleanExtra("showPicker", false))
+        if (getIntent().getBooleanExtra("showPicker", false)) {
             displayPicker(false);
-        else
-            tryConnecting(manager.getLastProfile());
+        } else {
+            MultiProfile last = manager.getLastProfile();
+            if (last != null && last.isInAppDownloader())
+                connectToInAppDownloader(last);
+            else
+                tryConnecting(last);
+        }
+    }
+
+    private void connectToInAppDownloader(@NonNull MultiProfile profile) {
+        ThisApplication app = ((ThisApplication) getApplicationContext());
+
+        try {
+            app.loadAria2ServiceEnv();
+        } catch (BadEnvironmentException ex) {
+            DownloadBinActivity.startActivity(this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name), LoadingActivity.class,
+                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
+            return;
+        }
+
+        startAria2ServiceOn = profile;
+        app.startAria2ServiceIfNeeded();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((ThisApplication) getApplicationContext()).addAria2UiListener(this);
     }
 
     private boolean hasShortcutAction() {
@@ -245,6 +273,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             }
         }
 
+        aria2AndroidProfile = null;
+
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
     }
@@ -279,24 +309,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
-        if (profile.isInAppDownloader()) {
-            ThisApplication app = ((ThisApplication) getApplicationContext());
-
-            try {
-                app.loadAria2ServiceEnv();
-            } catch (BadEnvironmentException ex) {
-                DownloadBinActivity.startActivity(this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name), LoadingActivity.class,
-                        Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
-                return;
-            }
-
-            app.addAria2UiListener(this);
-
-            startAria2ServiceOn = profile;
-            app.startAria2ServiceIfNeeded();
-        } else {
-            tryConnecting(profile);
-        }
+        if (profile.isInAppDownloader()) connectToInAppDownloader(profile);
+        else tryConnecting(profile);
     }
 
     @Override
@@ -308,11 +322,10 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        if (profile.isInAppDownloader()) {
-            // TODO: Should open another activity
-        } else {
+        if (profile.isInAppDownloader())
+            startActivity(new Intent(this, InAppAria2ConfActivity.class));
+        else
             EditProfileActivity.start(this, profile.id);
-        }
 
         return true;
     }

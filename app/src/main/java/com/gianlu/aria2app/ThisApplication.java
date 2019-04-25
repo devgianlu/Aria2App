@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.Aria2.Aria2ConfigProvider;
+import com.gianlu.aria2app.InAppAria2.Aria2ConfigProvider;
 import com.gianlu.aria2app.NetIO.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.NetInstanceHolder;
@@ -160,6 +160,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void addAria2UiListener(@NonNull Aria2Ui.Listener listener) {
         if (aria2service == null) return;
         aria2service.listeners.add(listener);
+        aria2service.ui.askForStatus();
     }
 
     public void removeAria2UiListener(@NonNull Aria2Ui.Listener listener) {

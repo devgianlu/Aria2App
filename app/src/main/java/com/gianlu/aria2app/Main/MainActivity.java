@@ -45,6 +45,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.InAppAria2.InAppAria2ConfActivity;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -145,11 +146,10 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        if (profile.isInAppDownloader()) {
-            // TODO: Should open another activity
-        } else {
+        if (profile.isInAppDownloader())
+            startActivity(new Intent(this, InAppAria2ConfActivity.class));
+        else
             EditProfileActivity.start(this, profile.id);
-        }
 
         return true;
     }

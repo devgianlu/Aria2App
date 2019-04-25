@@ -344,4 +344,5 @@
     <string name="inAppDownloader_serviceStarted">Service is up and running.</string>
     <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
     <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
+    <string name="inAppDownloader_configurtion">In-App downloader configuration</string>
 </resources>
