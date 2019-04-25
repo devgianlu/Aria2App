@@ -162,6 +162,15 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             }
         }
 
+        if (getIntent().getBooleanExtra("openFromNotification", false)) {
+            for (MultiProfile profile : manager.getProfiles()) {
+                if (profile.isInAppDownloader()) {
+                    connectToInAppDownloader(profile);
+                    break;
+                }
+            }
+        }
+
         Throwable givenEx = (Throwable) getIntent().getSerializableExtra("ex");
         if (givenEx != null) {
             seeError.setVisibility(View.VISIBLE);
@@ -181,6 +190,12 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void connectToInAppDownloader(@NonNull MultiProfile profile) {
+        cancel.setVisibility(View.GONE);
+        handler.postDelayed(() -> {
+            cancel.setVisibility(View.VISIBLE);
+            cancel.setOnClickListener(view -> cancelConnection());
+        }, 2000);
+
         ThisApplication app = ((ThisApplication) getApplication());
 
         try {
@@ -246,6 +261,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
         seeError.setVisibility(View.GONE);
+        cancel.setVisibility(View.GONE);
 
         if (profile == null) {
             displayPicker(hasShareData());
