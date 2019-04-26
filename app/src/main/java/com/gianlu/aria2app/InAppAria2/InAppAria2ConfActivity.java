@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2Ui;
@@ -78,7 +79,7 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
         });
 
         screen = findViewById(R.id.inAppAria2conf_screen);
-        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), null /* TODO */, false);
+        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, false);
 
         screen.lockPreferences(lastState);
     }

@@ -124,11 +124,14 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         NetInstanceHolder.close();
 
-        manager = ProfilesManager.get(this);
         if (getIntent().getBooleanExtra("external", false)) {
-            // TODO: Should probably update Aria2App
+            showDialog(new AlertDialog.Builder(this)
+                    .setTitle(R.string.oldAria2AppNoInApp)
+                    .setMessage(R.string.oldAria2AppNoInApp_message)
+                    .setNeutralButton(android.R.string.ok, null));
         }
 
+        manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {
             EditProfileActivity.start(this, true);
             return;

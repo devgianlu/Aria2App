@@ -21,6 +21,7 @@ public final class PK extends CommonPK {
     public static final Prefs.Key LAST_USED_PROFILE = new Prefs.Key("lastUsedProfile");
     public static final Prefs.KeyWithDefault<Integer> DD_MAX_SIMULTANEOUS_DOWNLOADS = new Prefs.KeyWithDefault<>("dd_maxSimultaneousDownloads", 3);
     public static final Prefs.KeyWithDefault<Boolean> A2_NOTIFS_AT_BOOT = new Prefs.KeyWithDefault<>("a2_enableNotificationsAtBoot", true);
+    public static final Prefs.KeyWithDefault<Boolean> IN_APP_DOWNLOADER_AT_BOOT = new Prefs.KeyWithDefault<>("startInAppDownloaderAtBoot", false);
     public static final Prefs.KeyWithDefault<Set<String>> A2_MAIN_FILTERS = new Prefs.KeyWithDefault<>("a2_mainFilters", new HashSet<>(Download.Status.stringValues()));
     public static final Prefs.KeyWithDefault<Boolean> A2_ENABLE_NOTIFS = new Prefs.KeyWithDefault<>("a2_enableNotifications", true);
     public static final Prefs.KeyWithDefault<Integer> A2_UPDATE_INTERVAL = new Prefs.KeyWithDefault<>("a2_updateRate", 1);

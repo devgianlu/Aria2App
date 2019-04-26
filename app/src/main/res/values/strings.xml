@@ -345,4 +345,6 @@
     <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
     <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
     <string name="inAppDownloader_configurtion">In-App downloader configuration</string>
+    <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
+    <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
 </resources>

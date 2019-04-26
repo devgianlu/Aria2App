@@ -178,6 +178,11 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             aria2service.ui.startService();
     }
 
+    public void startAria2ServiceFromReceiver() {
+        if (aria2service != null)
+            aria2service.ui.startServiceFromReceiver();
+    }
+
     public void loadAria2ServiceEnv() throws BadEnvironmentException {
         if (aria2service != null && !aria2service.ui.hasEnv()) {
             aria2service.ui.loadEnv();
