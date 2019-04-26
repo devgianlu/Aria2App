@@ -78,8 +78,7 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
         });
 
         screen = findViewById(R.id.inAppAria2conf_screen);
-        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE),
-                null, null, false);
+        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), null /* TODO */, false);
 
         screen.lockPreferences(lastState);
     }
