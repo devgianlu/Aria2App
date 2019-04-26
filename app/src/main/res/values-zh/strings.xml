@@ -75,7 +75,7 @@
     <string name="about_aria2">关于aria2</string>
     <string name="saveSession">保存会话</string>
     <string name="editProfile">编辑或删除配置文件</string>
-    <string name="stopNotificationService">停止服务</string>
+    <string name="stopService">停止服务</string>
     <string name="menu_downloadQuickOptions">快速选项</string>
     <string name="notificationService">通知服务</string>
     <string name="writeExternalStorageRequest_title">需要写入权限</string>

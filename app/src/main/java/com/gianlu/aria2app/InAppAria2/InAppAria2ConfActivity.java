@@ -59,7 +59,7 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_app_aria2_conf);
-        setTitle(getString(R.string.inAppDownloader_configurtion) + " - " + getString(R.string.app_name));
+        setTitle(getString(R.string.inAppDownloader_configuration) + " - " + getString(R.string.app_name));
 
         ActionBar bar = getSupportActionBar();
         if (bar != null) bar.setDisplayHomeAsUpEnabled(true);

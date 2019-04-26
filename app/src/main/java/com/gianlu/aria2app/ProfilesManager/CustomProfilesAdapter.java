@@ -28,11 +28,14 @@ import java.util.concurrent.Executors;
 public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomProfilesAdapter.ViewHolder> implements NetTester.ProfileTesterCallback {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final LayoutInflater inflater;
+    private final boolean forceWhite;
 
     public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, @StyleRes int overrideStyle, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
         super(context, profiles, listener);
         if (overrideStyle == 0) this.inflater = LayoutInflater.from(context);
         else this.inflater = LayoutInflater.from(new ContextThemeWrapper(context, overrideStyle));
+
+        forceWhite = overrideStyle == R.style.ForceWhite;
     }
 
     @Override
@@ -56,7 +59,8 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
         if (profile.isInAppDownloader()) {
             holder.loading.setVisibility(View.GONE);
             holder.status.setVisibility(View.VISIBLE);
-            holder.status.setImageResource(R.drawable.ic_aria2android);
+            if (forceWhite) holder.status.setImageResource(R.drawable.ic_aria2_notification);
+            else holder.status.setImageResource(R.drawable.ic_aria2android);
         } else {
             if (multi.status.status == MultiProfile.Status.UNKNOWN) {
                 holder.loading.setVisibility(View.VISIBLE);

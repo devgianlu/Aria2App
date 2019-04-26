@@ -75,7 +75,7 @@
     <string name="saveSession">保存 session</string>
 
     <string name="editProfile">編輯或刪除設定檔</string>
-    <string name="stopNotificationService">停止服務</string>
+    <string name="stopService">停止服務</string>
     <string name="menu_downloadQuickOptions">快速選項</string>
     <string name="notificationService">通知服務</string>
     <string name="writeExternalStorageRequest_title">需要寫入權限</string>

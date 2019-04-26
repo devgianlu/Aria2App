@@ -77,7 +77,7 @@
     <string name="about_aria2">About aria2</string>
     <string name="saveSession">Save session</string>
     <string name="editProfile">Edit or delete profile</string>
-    <string name="stopNotificationService">Stop service</string>
+    <string name="stopService">Stop service</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
     <string name="notificationService">Notification service</string>
     <string name="writeExternalStorageRequest_title">Write permission required</string>
@@ -314,6 +314,12 @@
     <string name="prefs_addBestTrackers_summary">Add best trackers from ngosang/trackerslist to new downloads automatically</string>
     <string name="addBestTrackers">Add best trackers</string>
     <string name="health"><![CDATA[<b>Health:</b>]]> %.2f%% (%d/%d)</string>
+    <string name="inAppDownloader_serviceStarted">Service is up and running.</string>
+    <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
+    <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
+    <string name="inAppDownloader_configuration">In-App downloader configuration</string>
+    <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
+    <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
 
     <!-- Prefs -->
     <!-- - General -->
@@ -341,10 +347,4 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
-    <string name="inAppDownloader_serviceStarted">Service is up and running.</string>
-    <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
-    <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
-    <string name="inAppDownloader_configurtion">In-App downloader configuration</string>
-    <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
-    <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
 </resources>
