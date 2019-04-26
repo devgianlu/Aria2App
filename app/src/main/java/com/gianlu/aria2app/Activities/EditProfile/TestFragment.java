@@ -10,15 +10,15 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.Testers.BaseTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.SuperTextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     private OnGetProfile listener;

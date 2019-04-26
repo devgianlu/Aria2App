@@ -2,15 +2,15 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
 
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CommonUtils;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.core.content.ContextCompat;
+
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
 
 public abstract class BaseTester<T> implements Runnable {
     protected final Context context;

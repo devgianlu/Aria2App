@@ -38,8 +38,8 @@
         <!-- Loading activity -->
         <activity
             android:name=".LoadingActivity"
-            android:noHistory="true"
             android:theme="@style/FullscreenTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -138,6 +138,12 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
+        <!-- In-App downloader configuration activity -->
+        <activity
+            android:name=".InAppAria2.InAppAria2ConfActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
         <!-- DirectDownload activity -->
         <activity
             android:name=".Activities.DirectDownloadActivity"
@@ -218,4 +224,5 @@
                 android:resource="@xml/logs_paths" />
         </provider>
     </application>
+
 </manifest>

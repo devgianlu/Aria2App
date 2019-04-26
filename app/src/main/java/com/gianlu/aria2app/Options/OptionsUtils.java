@@ -7,6 +7,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.NetIO.TrackersListFetch;
@@ -20,9 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
 public final class OptionsUtils {
 

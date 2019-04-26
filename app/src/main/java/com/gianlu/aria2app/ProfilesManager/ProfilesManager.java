@@ -1,12 +1,15 @@
 package com.gianlu.aria2app.ProfilesManager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.PK;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 
@@ -24,44 +27,33 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 public class ProfilesManager {
     private static ProfilesManager instance;
-    private final File PROFILES_PATH;
+    private final File profilesPath;
     private final WifiManager wifiManager;
     private final ConnectivityManager connectivityManager;
     private MultiProfile currentProfile;
 
-    private ProfilesManager(Context context) {
-        PROFILES_PATH = context.getFilesDir();
+    private ProfilesManager(@NonNull Context context) {
+        profilesPath = context.getFilesDir();
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     @NonNull
-    public static ProfilesManager get(Context context) {
+    public static ProfilesManager get(@NonNull Context context) {
         if (instance == null) instance = new ProfilesManager(context.getApplicationContext());
         return instance;
     }
 
     @NonNull
-    public static String getId(String name) {
+    public static String getId(@NonNull String name) {
         return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
     }
 
-    @Nullable
-    public static MultiProfile createExternalProfile(Intent intent) {
-        String token = intent.getStringExtra("token");
-        int port = intent.getIntExtra("port", -1);
-        if (token == null || port == -1) return null;
-        return new MultiProfile(token, port);
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void delete(MultiProfile profile) {
-        new File(PROFILES_PATH, profile.id + ".profile").delete();
+    public void delete(@NonNull MultiProfile profile) {
+        new File(profilesPath, profile.id + ".profile").delete();
     }
 
     @NonNull
@@ -76,7 +68,7 @@ public class ProfilesManager {
         return currentProfile;
     }
 
-    public void setCurrent(MultiProfile profile) {
+    public void setCurrent(@NonNull MultiProfile profile) {
         currentProfile = profile;
         setLastProfile(profile);
     }
@@ -93,7 +85,7 @@ public class ProfilesManager {
         }
     }
 
-    public void setLastProfile(MultiProfile profile) {
+    public void setLastProfile(@NonNull MultiProfile profile) {
         Prefs.putString(PK.LAST_USED_PROFILE, profile.id);
     }
 
@@ -106,7 +98,7 @@ public class ProfilesManager {
         if (!profileExists(id))
             throw new FileNotFoundException("Profile " + id + " doesn't exists!");
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(PROFILES_PATH, id + ".profile"))));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(profilesPath, id + ".profile"))));
         StringBuilder builder = new StringBuilder();
 
         String line;
@@ -116,7 +108,7 @@ public class ProfilesManager {
     }
 
     public boolean profileExists(@NonNull String id) {
-        File file = new File(PROFILES_PATH, id + ".profile");
+        File file = new File(profilesPath, id + ".profile");
         return file.exists() && file.canRead();
     }
 
@@ -139,7 +131,7 @@ public class ProfilesManager {
 
     @NonNull
     private String[] getProfileIds() {
-        String[] profiles = PROFILES_PATH.list((dir, name) -> name.endsWith(".profile"));
+        String[] profiles = profilesPath.list((dir, name) -> name.endsWith(".profile"));
 
         if (profiles == null) return new String[0];
 
@@ -163,21 +155,34 @@ public class ProfilesManager {
 
     @NonNull
     private List<MultiProfile> getProfiles(boolean notification) {
+        boolean hasInApp = false;
         List<MultiProfile> profiles = new ArrayList<>();
         for (String id : getProfileIds()) {
             try {
                 MultiProfile profile = retrieveProfile(id);
+                if (profile.isInAppDownloader()) hasInApp = true;
                 if (!notification || profile.notificationsEnabled) profiles.add(profile);
             } catch (IOException | JSONException ex) {
                 Logging.log(ex);
             }
         }
 
+        if (CommonUtils.isARM() && !hasInApp) {
+            MultiProfile inApp = MultiProfile.forInAppDownloader();
+            profiles.add(inApp);
+
+            try {
+                save(inApp);
+            } catch (IOException | JSONException ex) {
+                Logging.log("Failed saving in-app downloader profile.", ex);
+            }
+        }
+
         return profiles;
     }
 
-    public void save(MultiProfile profile) throws IOException, JSONException {
-        File file = new File(PROFILES_PATH, profile.id + ".profile");
+    public void save(@NonNull MultiProfile profile) throws IOException, JSONException {
+        File file = new File(profilesPath, profile.id + ".profile");
         try (OutputStream out = new FileOutputStream(file)) {
             out.write(profile.toJson().toString().getBytes());
             out.flush();
@@ -188,10 +193,12 @@ public class ProfilesManager {
         setCurrent(retrieveProfile(getCurrent().id));
     }
 
+    @NonNull
     public WifiManager getWifiManager() {
         return wifiManager;
     }
 
+    @NonNull
     public ConnectivityManager getConnectivityManager() {
         return connectivityManager;
     }

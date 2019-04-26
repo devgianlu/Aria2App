@@ -4,13 +4,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
 import java.util.LinkedList;
 import java.util.Queue;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class TestersFlow extends Thread implements BaseTester.PublishListener {
     private final Queue<BaseTester<?>> testers;

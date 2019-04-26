@@ -75,7 +75,7 @@
     <string name="saveSession">保存 session</string>
 
     <string name="editProfile">編輯或刪除設定檔</string>
-    <string name="stopNotificationService">停止服務</string>
+    <string name="stopService">停止服務</string>
     <string name="menu_downloadQuickOptions">快速選項</string>
     <string name="notificationService">通知服務</string>
     <string name="writeExternalStorageRequest_title">需要寫入權限</string>
@@ -234,17 +234,17 @@
     <string name="noDirectDownloads">現在沒有下載任務。您可以從下載任務的檔案列表選單開始下載檔案。在這裡閱讀更多關於 DirectDownload 的訊息:https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">剩餘時間</string>
     <string name="connectionsLabel">連接</string>
-    <string name="numSeederLabel">種子數量</string>												  
+    <string name="numSeederLabel">種子數量</string>
     <string name="selectCertificate">選擇/更改證書</string>
     <string name="certificateDetails">證書詳情</string>
     <string name="subject">主題</string>
-    <string name="issuer">簽發機構</string>										 
+    <string name="issuer">簽發機構</string>
     <string name="signatureAlgorithm">簽名演算法</string>
     <string name="name">名稱: %s</string>
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">替代名稱: %s</string>
     <string name="ip">IP 網址: %s</string>
-    <string name="localization">地理位置: %s</string>														 
+    <string name="localization">地理位置: %s</string>
     <string name="ipDetails">IP 細節</string>
     <string name="ssids_help">您可以提供以逗號分隔的 SSID 列表。</string>
     <string name="pauseAll">暫停所有</string>
@@ -266,7 +266,7 @@
     <string name="noActivity">沒有活動</string>
     <string name="couldStreamVideo">播放影片</string>
     <string name="couldStreamVideo_message">您的有可以播放此影片的 App，您想現在看還是 DirectDownload?</string>
-    <string name="stream">播放</string>										 
+    <string name="stream">播放</string>
     <string name="failedStreamVideo">無法播放影片!</string>
     <string name="select">選擇</string>
     <string name="deselect">取消</string>
@@ -284,6 +284,12 @@
     <string name="metalinkFiles">Metalink 檔案</string>
     <string name="urisFile">網址檔案</string>
     <string name="urisFile_help">要了解更多關於網址檔案的訊息，請訪問以下頁面: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
+    <string name="cancelled">已取消</string>
+    <string name="failedStartingAria2Android">啟動 Aria2Android 失敗!</string>
+    <string name="prefs_ddUseExternal">使用外部下載管理器</string>
+    <string name="prefs_ddUseExternal_summary">把下載任務發送至系統或其它 App</string>
+    <string name="cannotDownloadDirWithExternal">不能下載資料夾</string>
+    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下載管理器下載資料夾。請問您想使用內建下載管理器下載嗎?</string>
 
     <!-- Prefs -->
     <!-- - General -->
@@ -311,12 +317,4 @@
     <string name="prefs_notificationType_summary">選擇要接收的通知類型</string>
     <string name="prefs_enableNotificationsAtBoot">手機啟動時啟動通知服務</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手機啟動時將啟動通知服務</string>
-    <string name="cancelled">已取消</string>
-    <string name="startAria2Android">啟動 Aria2Android</string>
-    <string name="startAria2Android_message">此設定檔似乎與 Aria2Android 的本地實例有關。您要啟動該服務嗎?</string>
-    <string name="failedStartingAria2Android">啟動 Aria2Android 失敗!</string>
-    <string name="prefs_ddUseExternal">使用外部下載管理器</string>
-    <string name="prefs_ddUseExternal_summary">把下載任務發送至系統或其它 App</string>
-    <string name="cannotDownloadDirWithExternal">不能下載資料夾</string>
-    <string name="cannotDownloadDirWithExternal_message">您不可以使用外部下載管理器下載資料夾。請問您想使用內建下載管理器下載嗎?</string>																	   
 </resources>

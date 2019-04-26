@@ -4,6 +4,10 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.documentfile.provider.DocumentFile;
+
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.commonutils.Preferences.BasePreferenceActivity;
@@ -19,10 +23,6 @@ import com.yarolegovich.mp.MaterialStandardPreference;
 
 import java.util.Arrays;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.documentfile.provider.DocumentFile;
 
 public class PreferenceActivity extends BasePreferenceActivity {
     @NonNull

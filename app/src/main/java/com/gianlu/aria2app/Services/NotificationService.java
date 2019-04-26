@@ -24,6 +24,14 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.collection.ArraySet;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.PK;
@@ -49,13 +57,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.collection.ArraySet;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -248,10 +249,10 @@ public class NotificationService extends Service {
                 .setContentText(describeServiceStatus())
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
-                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                .addAction(new NotificationCompat.Action(R.drawable.baseline_clear_24, getString(R.string.stopNotificationService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
+                .addAction(new NotificationCompat.Action(R.drawable.baseline_clear_24, getString(R.string.stopService), PendingIntent.getService(this, 1, new Intent(this, NotificationService.class).setAction(ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT)))
                 .setContentIntent(PendingIntent.getActivity(this, 1, new Intent(this, LoadingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
 
         return builder.build();
@@ -297,7 +298,7 @@ public class NotificationService extends Service {
                 .setCategory(Notification.CATEGORY_EVENT)
                 .setGroup(gid)
                 .setAutoCancel(true)
-                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_new_releases_grey_48dp))
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent));
 
@@ -320,7 +321,7 @@ public class NotificationService extends Service {
                 .setContentText(message)
                 .setCategory(Notification.CATEGORY_ERROR)
                 .setGroup(CHANNEL_FOREGROUND_SERVICE)
-                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(this, R.color.colorAccent))
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_error_outline_grey_48dp));
 

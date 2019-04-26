@@ -18,6 +18,14 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.gianlu.aria2app.Activities.AddDownload.AddBase64Bundle;
@@ -37,6 +45,7 @@ import com.gianlu.aria2app.Activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.Activities.SearchActivity;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.Adapters.PagerAdapter;
+import com.gianlu.aria2app.InAppAria2.InAppAria2ConfActivity;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -66,6 +75,8 @@ import com.gianlu.aria2app.Tutorial.DownloadCardsTutorial;
 import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
+import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
@@ -86,6 +97,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -96,15 +108,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener, Aria2Ui.Listener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private DrawerManager<MultiProfile, DrawerItem> drawerManager;
@@ -145,7 +149,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        EditProfileActivity.start(this, profile.id);
+        if (profile.isInAppDownloader())
+            startActivity(new Intent(this, InAppAria2ConfActivity.class));
+        else
+            EditProfileActivity.start(this, profile.id);
+
         return true;
     }
 
@@ -474,9 +482,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     protected void onDestroy() {
         if (adapter != null) adapter.activityDestroying(this);
         super.onDestroy();
+
+        ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
-    private void processUrl(Uri shareData) {
+    private void processUrl(@NonNull Uri shareData) {
         URI uri;
         try {
             uri = new URI(shareData.toString());
@@ -496,7 +506,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void showOutdatedDialog(final String latest, String current) {
+    private void showOutdatedDialog(@NonNull String latest, @NonNull String current) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.outdated_aria2)
                 .setMessage(getString(R.string.outdated_aria2_message, current, latest))
@@ -546,6 +556,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         }
 
         FetchHelper.updateDownloadCount(this, this);
+
+        ((ThisApplication) getApplication()).addAria2UiListener(this);
     }
 
     @Override
@@ -564,6 +576,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             searchView.setOnCloseListener(this);
             searchView.setOnQueryTextListener(this);
         }
+
         return true;
     }
 
@@ -866,5 +879,26 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     @Override
     public void onFetchDownloadCount(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerItem.DIRECT_DOWNLOAD, count);
+    }
+
+    @Override
+    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+    }
+
+    @Override
+    public void updateUi(boolean on) {
+        MultiProfile current;
+        try {
+            current = profilesManager.getCurrent();
+        } catch (ProfilesManager.NoCurrentProfileException ex) {
+            return;
+        }
+
+        if (!on && current.isInAppDownloader()) {
+            ((ThisApplication) getApplication()).removeAria2UiListener(this);
+            NetInstanceHolder.close();
+            profilesManager.unsetLastProfile();
+            LoadingActivity.startActivity(this);
+        }
     }
 }

@@ -23,7 +23,7 @@
     <string name="index"><b>索引号:</b> %d</string>
     <string name="path"><b>路径:</b> %s</string>
     <string name="amChoking"><![CDATA[<b>我方阻塞对方:</b>]]> %s</string>
-    <string name="peerChoking"><![CDATA[<b>对方阻塞我方:</b>]]> %s</string>																		   
+    <string name="peerChoking"><![CDATA[<b>对方阻塞我方:</b>]]> %s</string>
     <string name="notificationComplete">下载完成</string>
     <string name="notificationStarted">下载开始</string>
     <string name="notificationStopped">下载已停止</string>
@@ -36,7 +36,7 @@
     <string name="versionLabel"><b>版本:</b> %s</string>
     <string name="gathering_information">正在收集信息。请稍候…</string>
     <string name="info">任务信息</string>
-    <string name="files">文件列表</string>													
+    <string name="files">文件列表</string>
     <string name="profileName">配置名称</string>
     <string name="profile_help">如果您不知道如何正确建立配置文件，请查看我的网站上的指南: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">地址</string>
@@ -75,7 +75,7 @@
     <string name="about_aria2">关于aria2</string>
     <string name="saveSession">保存会话</string>
     <string name="editProfile">编辑或删除配置文件</string>
-    <string name="stopNotificationService">停止服务</string>
+    <string name="stopService">停止服务</string>
     <string name="menu_downloadQuickOptions">快速选项</string>
     <string name="notificationService">通知服务</string>
     <string name="writeExternalStorageRequest_title">需要写入权限</string>
@@ -235,17 +235,17 @@
     <string name="noDirectDownloads">现在没有下载任务。您可以从下载任务的文件列表选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">剩余时间</string>
     <string name="connectionsLabel">连接</string>
-    <string name="numSeederLabel">种子数量</string>												  
+    <string name="numSeederLabel">种子数量</string>
     <string name="selectCertificate">选择/更改证书</string>
     <string name="certificateDetails">证书详情</string>
     <string name="subject">主题</string>
-    <string name="issuer">签发机构</string>										 
+    <string name="issuer">签发机构</string>
     <string name="signatureAlgorithm">签名算法</string>
     <string name="name">名称: %s</string>
     <string name="oid">OID: %s</string>
     <string name="alternativeNames">替代名称: %s</string>
     <string name="ip">IP地址: %s</string>
-    <string name="localization">地理位置: %s</string>														 
+    <string name="localization">地理位置: %s</string>
     <string name="ipDetails">IP细节</string>
     <string name="ssids_help">您可以提供以逗号分隔的SSID列表。</string>
     <string name="pauseAll">暂停所有</string>
@@ -268,7 +268,7 @@
     <string name="multipleOptions_help">可以在命令行中多次指定此选项。在这里，把它们放到不同的行中，起同等作用。</string>
     <string name="couldStreamVideo">播放视频</string>
     <string name="couldStreamVideo_message">您的应用程序中，有可以播放此视频的。你想现在看还是直接下载？</string>
-    <string name="stream">播放</string>										 
+    <string name="stream">播放</string>
     <string name="failedStreamVideo">无法播放视频！</string>
     <string name="select">选择</string>
     <string name="deselect">取消</string>
@@ -287,8 +287,6 @@
     <string name="urisFile">网址文件</string>
     <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">已取消</string>
-    <string name="startAria2Android">启动Aria2Android</string>
-    <string name="startAria2Android_message">此配置文件似乎与Aria2Android的本地实例有关。您要启动该服务吗？</string>
     <string name="failedStartingAria2Android">启动Aria2Android失败！</string>
     <string name="prefs_ddUseExternal">使用外部下载管理器</string>
     <string name="prefs_ddUseExternal_summary">把下载任务发送至系统或其它应用</string>
@@ -305,7 +303,7 @@
     <string name="prefs_addBestTrackers_summary">把从ngosang/trackerslist获取到的最佳tracker列表自动添加到新增的下载任务</string>
     <string name="addBestTrackers">添加最佳tracker列表</string>
     <string name="health"><![CDATA[<b>健康度:</b>]]> %.2f%% (%d/%d)</string>
-    
+
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>

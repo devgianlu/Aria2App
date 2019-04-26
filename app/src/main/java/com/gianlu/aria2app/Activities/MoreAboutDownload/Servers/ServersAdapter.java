@@ -6,6 +6,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
@@ -22,10 +26,6 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
 
 @UiThread
 public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

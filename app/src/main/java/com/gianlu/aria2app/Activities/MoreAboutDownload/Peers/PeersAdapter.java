@@ -6,6 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
@@ -21,10 +25,6 @@ import com.gianlu.commonutils.SuperTextView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
 
 @UiThread
 public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHolder, Peer, PeersAdapter.SortBy, NotFilterable> {

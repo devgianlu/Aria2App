@@ -77,7 +77,7 @@
     <string name="about_aria2">About aria2</string>
     <string name="saveSession">Save session</string>
     <string name="editProfile">Edit or delete profile</string>
-    <string name="stopNotificationService">Stop service</string>
+    <string name="stopService">Stop service</string>
     <string name="menu_downloadQuickOptions">Quick options</string>
     <string name="notificationService">Notification service</string>
     <string name="writeExternalStorageRequest_title">Write permission required</string>
@@ -298,8 +298,6 @@
     <string name="urisFile">Uris file</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">Cancelled</string>
-    <string name="startAria2Android">Start Aria2Android</string>
-    <string name="startAria2Android_message">This profile seems related to a local instance of Aria2Android. Do you want to start the service?</string>
     <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
     <string name="prefs_ddUseExternal">Use external downloader</string>
     <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
@@ -316,6 +314,12 @@
     <string name="prefs_addBestTrackers_summary">Add best trackers from ngosang/trackerslist to new downloads automatically</string>
     <string name="addBestTrackers">Add best trackers</string>
     <string name="health"><![CDATA[<b>Health:</b>]]> %.2f%% (%d/%d)</string>
+    <string name="inAppDownloader_serviceStarted">Service is up and running.</string>
+    <string name="inAppDownloader_serviceNotStarted">Service hasn\'t been started.</string>
+    <string name="inAppDownloader_serviceNotConfigured">Service hasn\'t been configured.</string>
+    <string name="inAppDownloader_configuration">In-App downloader configuration</string>
+    <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
+    <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
 
     <!-- Prefs -->
     <!-- - General -->

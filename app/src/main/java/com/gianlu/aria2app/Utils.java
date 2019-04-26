@@ -6,6 +6,11 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
@@ -20,10 +25,6 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import java.util.Collection;
 import java.util.HashSet;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import okhttp3.HttpUrl;
 
 public final class Utils {

@@ -1,5 +1,8 @@
 package com.gianlu.aria2app.NetIO;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -7,9 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public final class PeerIdParser {
     // Az style two byte code identifiers to real client name

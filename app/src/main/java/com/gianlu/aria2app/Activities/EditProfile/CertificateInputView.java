@@ -11,6 +11,12 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -29,12 +35,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.security.auth.x500.X500Principal;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 public class CertificateInputView extends LinearLayout {
     public static final int CODE_PICK_CERT = 13;

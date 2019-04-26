@@ -1,6 +1,5 @@
 package com.gianlu.aria2app;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +12,15 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.Activities.EditProfileActivity;
+import com.gianlu.aria2app.InAppAria2.InAppAria2ConfActivity;
 import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
@@ -24,6 +31,10 @@ import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.WebView.WebViewActivity;
+import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.BadEnvironmentException;
+import com.gianlu.aria2lib.Interface.DownloadBinActivity;
+import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Drawer.DrawerManager;
@@ -34,19 +45,13 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile> {
+public class LoadingActivity extends ActivityWithDialog implements OnConnect, DrawerManager.ProfilesDrawerListener<MultiProfile>, Aria2Ui.Listener {
     public static final String SHORTCUT_ADD_URI = "com.gianlu.aria2app.ADD_URI";
     public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
     public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
@@ -66,13 +71,14 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private Handler handler;
     private MultiProfile.UserProfile aria2AndroidProfile = null;
     private Closeable ongoingTest;
+    private volatile MultiProfile startAria2ServiceOn = null;
 
-    public static void startActivity(Context context) {
+    public static void startActivity(@NonNull Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
-    public static void startActivity(Context context, @Nullable Throwable ex) {
+    public static void startActivity(@NonNull Context context, @Nullable Throwable ex) {
         context.startActivity(new Intent(context, LoadingActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("showPicker", true)
@@ -110,26 +116,22 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             finished = true;
-            if (goTo != null) startActivity(goTo);
+            if (goTo != null) {
+                startActivity(goTo);
+                finishAndRemoveTask();
+            }
         }, 1000);
 
         NetInstanceHolder.close();
 
-        manager = ProfilesManager.get(this);
         if (getIntent().getBooleanExtra("external", false)) {
-            MultiProfile profile = ProfilesManager.createExternalProfile(getIntent());
-            if (profile != null) {
-                try {
-                    manager.save(profile);
-                    tryConnecting(profile);
-                    return;
-                } catch (IOException | JSONException ex) {
-                    Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
-                    return;
-                }
-            }
+            showDialog(new AlertDialog.Builder(this)
+                    .setTitle(R.string.oldAria2AppNoInApp)
+                    .setMessage(R.string.oldAria2AppNoInApp_message)
+                    .setNeutralButton(android.R.string.ok, null));
         }
 
+        manager = ProfilesManager.get(this);
         if (!manager.hasProfiles()) {
             EditProfileActivity.start(this, true);
             return;
@@ -163,19 +165,59 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             }
         }
 
-        final Throwable ex = (Throwable) getIntent().getSerializableExtra("ex");
-        if (ex != null) {
+        if (getIntent().getBooleanExtra("openFromNotification", false)) {
+            for (MultiProfile profile : manager.getProfiles()) {
+                if (profile.isInAppDownloader()) {
+                    connectToInAppDownloader(profile);
+                    break;
+                }
+            }
+        }
+
+        Throwable givenEx = (Throwable) getIntent().getSerializableExtra("ex");
+        if (givenEx != null) {
             seeError.setVisibility(View.VISIBLE);
-            seeError.setOnClickListener(v -> showErrorDialog(ex));
+            seeError.setOnClickListener(v -> showErrorDialog(givenEx));
             getIntent().removeExtra("ex");
         } else {
             seeError.setVisibility(View.GONE);
         }
 
-        if (getIntent().getBooleanExtra("showPicker", false))
+        if (getIntent().getBooleanExtra("showPicker", false)) {
             displayPicker(false);
-        else
-            tryConnecting(manager.getLastProfile());
+        } else {
+            MultiProfile last = manager.getLastProfile();
+            if (last != null && last.isInAppDownloader()) connectToInAppDownloader(last);
+            else tryConnecting(last);
+        }
+    }
+
+    private void connectToInAppDownloader(@NonNull MultiProfile profile) {
+        cancel.setVisibility(View.GONE);
+        handler.postDelayed(() -> {
+            cancel.setVisibility(View.VISIBLE);
+            cancel.setOnClickListener(view -> cancelConnection());
+        }, 2000);
+
+        ThisApplication app = ((ThisApplication) getApplication());
+
+        try {
+            app.loadAria2ServiceEnv();
+        } catch (BadEnvironmentException ex) {
+            DownloadBinActivity.startActivity(this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name), LoadingActivity.class,
+                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
+            return;
+        }
+
+        startAria2ServiceOn = profile;
+        app.startAria2Service();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((ThisApplication) getApplication()).addAria2UiListener(this);
     }
 
     private boolean hasShortcutAction() {
@@ -222,10 +264,13 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
         seeError.setVisibility(View.GONE);
+        cancel.setVisibility(View.GONE);
 
         if (profile == null) {
             displayPicker(hasShareData());
         } else {
+            startAria2ServiceOn = null;
+
             manager.setCurrent(profile);
             MultiProfile.UserProfile single = profile.getProfile(this);
             if (single.connectionMethod == MultiProfile.ConnectionMethod.WEBSOCKET)
@@ -247,6 +292,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             } catch (IOException ignored) {
             }
         }
+
+        aria2AndroidProfile = null;
 
         displayPicker(hasShareData());
         seeError.setVisibility(View.GONE);
@@ -282,12 +329,24 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
-        tryConnecting(profile);
+        if (profile.isInAppDownloader()) connectToInAppDownloader(profile);
+        else tryConnecting(profile);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        EditProfileActivity.start(this, profile.id);
+        if (profile.isInAppDownloader())
+            startActivity(new Intent(this, InAppAria2ConfActivity.class));
+        else
+            EditProfileActivity.start(this, profile.id);
+
         return true;
     }
 
@@ -297,8 +356,12 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         if (shortcutAction != null) intent.putExtra("shortcutAction", shortcutAction);
         else if (shareData != null) intent.putExtra("shareData", shareData);
         else if (launchGid != null && !launchGid.isEmpty()) intent.putExtra("gid", launchGid);
-        if (finished) startActivity(intent);
-        else this.goTo = intent;
+        if (finished) {
+            startActivity(intent);
+            finishAndRemoveTask();
+        } else {
+            this.goTo = intent;
+        }
     }
 
     private void launchWebView() {
@@ -307,6 +370,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         intent.putExtra("shareData", shareData)
                 .putExtra("canGoBack", false);
         startActivity(intent);
+        finishAndRemoveTask();
     }
 
     @Override
@@ -338,30 +402,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public void onPingTested(@NonNull AbstractClient client, long latency) {
     }
 
-    private void mayStartAria2Android(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.startAria2Android)
-                .setMessage(R.string.startAria2Android_message)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> startAria2Android(profile))
-                .setNegativeButton(android.R.string.no, (dialog, which) -> failedConnecting(ex));
-        showDialog(builder);
-    }
-
-    private void startAria2Android(@NonNull MultiProfile.UserProfile profile) {
-        AnalyticsApplication.sendAnalytics(Utils.ACTION_START_ARIA2ANDROID);
-
-        aria2AndroidProfile = profile;
-
-        try {
-            Intent intent = new Intent("com.gianlu.aria2android.START_SERVICE");
-            intent.setClassName("com.gianlu.aria2android", "com.gianlu.aria2android.MainActivity");
-            intent.putExtra("goBack", true);
-            startActivityForResult(intent, 1);
-        } catch (ActivityNotFoundException ex) {
-            Toaster.with(this).message(R.string.failedStartingAria2Android).ex(ex).show();
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == 1 && aria2AndroidProfile != null) {
@@ -387,8 +427,21 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     @Override
     public void onFailedConnecting(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
         ongoingTest = null;
+        failedConnecting(ex);
+    }
 
-        if (profile.couldBeAria2Android(this)) mayStartAria2Android(profile, ex);
-        else failedConnecting(ex);
+    @Override
+    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+        if (isDestroyed()) return;
+
+        if (type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null) {
+            tryConnecting(startAria2ServiceOn);
+
+            startAria2ServiceOn = null;
+        }
+    }
+
+    @Override
+    public void updateUi(boolean on) {
     }
 }

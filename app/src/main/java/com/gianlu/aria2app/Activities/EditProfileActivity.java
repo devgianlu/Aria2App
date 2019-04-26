@@ -16,6 +16,13 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
@@ -45,13 +52,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
 public class EditProfileActivity extends ActivityWithDialog implements TestFragment.OnGetProfile {
     private MultiProfile editProfile;
@@ -325,9 +325,9 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     @Nullable
     private MultiProfile buildProfile() throws InvalidFieldException { // FIXME: Returns null when messing up with conditions
         String profileName = CommonUtils.getText(this.profileName).trim();
-        if (profileName.isEmpty() ||
-                (ProfilesManager.get(this).profileExists(ProfilesManager.getId(profileName))
-                        && editProfile == null)) {
+        if (profileName.isEmpty()
+                || (ProfilesManager.get(this).profileExists(ProfilesManager.getId(profileName)) && editProfile == null)
+                || profileName.equals(MultiProfile.IN_APP_DOWNLOADER_NAME)) {
             throw new InvalidFieldException(MainActivity.class, R.id.editProfile_profileName, getString(R.string.invalidProfileName));
         }
 

@@ -12,6 +12,11 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.AskPermission;
@@ -20,11 +25,6 @@ import com.gianlu.commonutils.Toaster;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.URL;
-
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 
 public class DirectDownloadFragment extends FieldErrorFragment implements CertificateInputView.ActivityProvider {
     private ScrollView layout;
@@ -171,10 +171,10 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
         }
     }
 
-    public class Fields {
+    public static class Fields {
         public final MultiProfile.DirectDownload dd;
 
-        Fields(@Nullable MultiProfile.DirectDownload dd) {
+        public Fields(@Nullable MultiProfile.DirectDownload dd) {
             this.dd = dd;
         }
     }

@@ -43,6 +43,7 @@ android {
 dependencies {
     api project(':CommonUtils')
     api project(':CountryFlags')
+    api project(':aria2lib')
     api 'com.tonyodev.fetch2:fetch2:3.0.4'
     api 'com.tonyodev.fetch2okhttp:fetch2okhttp:3.0.4'
     api 'com.squareup.okhttp3:okhttp:3.14.0'

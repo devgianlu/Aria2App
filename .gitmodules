@@ -10,3 +10,7 @@
 	path = Android--Library-Country-Flags
 	url = https://github.com/devgianlu/Android--Library-Country-Flags
 	branch = master
+[submodule "aria2lib"]
+	path = aria2lib
+	url = https://github.com/devgianlu/aria2lib
+	branch = master

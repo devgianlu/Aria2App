@@ -9,12 +9,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.NetIO.NetUtils;
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.ProfilesManager.Testers.NetTester;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Drawer.ProfilesAdapter;
-import com.gianlu.commonutils.Logging;
 
 import java.util.List;
 import java.util.Locale;
@@ -22,19 +24,18 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
-import androidx.recyclerview.widget.RecyclerView;
-
 
 public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomProfilesAdapter.ViewHolder> implements NetTester.ProfileTesterCallback {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final LayoutInflater inflater;
+    private final boolean forceWhite;
 
     public CustomProfilesAdapter(Context context, List<MultiProfile> profiles, @StyleRes int overrideStyle, DrawerManager.ProfilesDrawerListener<MultiProfile> listener) {
         super(context, profiles, listener);
         if (overrideStyle == 0) this.inflater = LayoutInflater.from(context);
         else this.inflater = LayoutInflater.from(new ContextThemeWrapper(context, overrideStyle));
+
+        forceWhite = overrideStyle == R.style.ForceWhite;
     }
 
     @Override
@@ -55,30 +56,30 @@ public class CustomProfilesAdapter extends ProfilesAdapter<MultiProfile, CustomP
         holder.name.setText(profile.getPrimaryText(context));
         holder.secondary.setText(profile.getSecondaryText(context));
 
-        try {
-            holder.secondary.setText(profile.getFullServerAddress());
-        } catch (NetUtils.InvalidUrlException ex) {
-            Logging.log(ex);
-            holder.secondary.setText(null);
-        }
-
-        if (multi.status.status == MultiProfile.Status.UNKNOWN) {
-            holder.loading.setVisibility(View.VISIBLE);
-            holder.status.setVisibility(View.GONE);
-        } else {
+        if (profile.isInAppDownloader()) {
             holder.loading.setVisibility(View.GONE);
             holder.status.setVisibility(View.VISIBLE);
+            if (forceWhite) holder.status.setImageResource(R.drawable.ic_aria2_notification);
+            else holder.status.setImageResource(R.drawable.ic_aria2android);
+        } else {
+            if (multi.status.status == MultiProfile.Status.UNKNOWN) {
+                holder.loading.setVisibility(View.VISIBLE);
+                holder.status.setVisibility(View.GONE);
+            } else {
+                holder.loading.setVisibility(View.GONE);
+                holder.status.setVisibility(View.VISIBLE);
 
-            switch (multi.status.status) {
-                case ONLINE:
-                    holder.status.setImageResource(R.drawable.baseline_done_24);
-                    break;
-                case OFFLINE:
-                    holder.status.setImageResource(R.drawable.baseline_clear_24);
-                    break;
-                case ERROR:
-                    holder.status.setImageResource(R.drawable.baseline_error_24);
-                    break;
+                switch (multi.status.status) {
+                    case ONLINE:
+                        holder.status.setImageResource(R.drawable.baseline_done_24);
+                        break;
+                    case OFFLINE:
+                        holder.status.setImageResource(R.drawable.baseline_clear_24);
+                        break;
+                    case ERROR:
+                        holder.status.setImageResource(R.drawable.baseline_error_24);
+                        break;
+                }
             }
         }
 

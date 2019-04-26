@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.PeerIdParser;
 import com.gianlu.commonutils.Adapters.Filterable;
 import com.gianlu.commonutils.Adapters.NotFilterable;
@@ -9,8 +11,6 @@ import org.json.JSONObject;
 
 import java.util.Comparator;
 import java.util.Objects;
-
-import androidx.annotation.Nullable;
 
 public class Peer implements Filterable<NotFilterable> {
     public final boolean amChoking;

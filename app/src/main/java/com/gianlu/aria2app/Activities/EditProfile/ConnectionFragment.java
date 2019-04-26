@@ -15,6 +15,10 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
@@ -30,10 +34,6 @@ import java.net.URISyntaxException;
 import java.security.cert.X509Certificate;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class ConnectionFragment extends FieldErrorFragment implements CertificateInputView.ActivityProvider {
     private final CountryFlags flags = CountryFlags.get();
@@ -275,7 +275,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         }
     }
 
-    public class Fields {
+    public static class Fields {
         public final MultiProfile.ConnectionMethod connectionMethod;
         public final String address;
         public final int port;
@@ -284,7 +284,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         public final X509Certificate certificate;
         public final boolean hostnameVerifier;
 
-        Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
+        public Fields(MultiProfile.ConnectionMethod connectionMethod, String address, int port, String endpoint, boolean encryption, @Nullable X509Certificate certificate, boolean hostnameVerifier) {
             this.connectionMethod = connectionMethod;
             this.address = address;
             this.port = port;

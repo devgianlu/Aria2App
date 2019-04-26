@@ -8,6 +8,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
+
 import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
@@ -27,11 +32,6 @@ import com.gianlu.commonutils.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 
 public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, AriaFiles> {
     private TextView percentage;

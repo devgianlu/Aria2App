@@ -6,6 +6,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.documentfile.provider.DocumentFile;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
@@ -36,9 +40,6 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.documentfile.provider.DocumentFile;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
