@@ -211,6 +211,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         startAria2ServiceOn = profile;
         app.startAria2Service();
+
+        ThisApplication.sendAnalytics(Utils.ACTION_USE_IN_APP_DOWNLOADER);
     }
 
     @Override
