@@ -101,7 +101,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
             recyclerViewLayout.showInfo(R.string.noPeers);
             topDownloadCountries.clear();
             topUploadCountries.clear();
-            if (sheet != null) {
+            if (sheet != null && !isDetached()) {
                 sheet.dismiss();
                 sheet = null;
                 dismissDialog();
