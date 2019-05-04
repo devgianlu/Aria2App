@@ -22,17 +22,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.gianlu.commonutils.SuperTextView
+            <com.gianlu.commonutils.CasualViews.SuperTextView
                 android:id="@+id/aboutAria2Dialog_version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.SuperTextView
+            <com.gianlu.commonutils.CasualViews.SuperTextView
                 android:id="@+id/aboutAria2Dialog_features"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.SuperTextView
+            <com.gianlu.commonutils.CasualViews.SuperTextView
                 android:id="@+id/aboutAria2Dialog_sessionId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

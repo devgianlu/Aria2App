@@ -5,22 +5,22 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/fileSheet_index"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/fileSheet_path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/fileSheet_length"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/fileSheet_completedLength"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

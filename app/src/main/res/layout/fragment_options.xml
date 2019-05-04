@@ -79,7 +79,7 @@
         android:layout_gravity="center"
         android:paddingTop="48dp" />
 
-    <com.gianlu.commonutils.MessageView
+    <com.gianlu.commonutils.CasualViews.MessageView
         android:id="@+id/optionsFragment_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

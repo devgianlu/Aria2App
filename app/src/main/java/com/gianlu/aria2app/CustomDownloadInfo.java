@@ -8,16 +8,16 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.SuperTextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.Collection;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class CustomDownloadInfo extends FlowLayout {
     private final int dp16;

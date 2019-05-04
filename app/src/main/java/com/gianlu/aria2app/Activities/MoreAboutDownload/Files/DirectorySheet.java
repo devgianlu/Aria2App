@@ -7,6 +7,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
@@ -16,19 +20,15 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.FontsManager;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 
 public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupPayload, DirectorySheet.UpdatePayload> {
     private SuperTextView length;

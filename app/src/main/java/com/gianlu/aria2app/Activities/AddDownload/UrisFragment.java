@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CasualViews.MessageView;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
-import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.Toaster;
 
 import java.net.URI;

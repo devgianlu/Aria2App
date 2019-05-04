@@ -5,22 +5,22 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/torrentDialog_engine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/torrentDialog_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/torrentDialog_seeders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/torrentDialog_leeches"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

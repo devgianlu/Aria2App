@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
@@ -18,8 +21,8 @@ import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.SuperTextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -28,9 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public final class TopCountriesView extends FlowLayout {
     private final static int DISPLAYED_COUNTRIES = 3;

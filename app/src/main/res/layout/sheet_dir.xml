@@ -5,22 +5,22 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/dirSheet_indexes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/dirSheet_path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/dirSheet_length"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/dirSheet_completedLength"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

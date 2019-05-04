@@ -140,7 +140,7 @@
                     android:layout_height="match_parent"
                     android:fitsSystemWindows="false">
 
-                    <com.gianlu.commonutils.RecyclerViewLayout
+                    <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
                         android:id="@+id/main_recyclerViewLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
@@ -240,7 +240,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.gianlu.commonutils.MessageView
+                <com.gianlu.commonutils.CasualViews.MessageView
                     android:id="@+id/mainSecondSpace_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

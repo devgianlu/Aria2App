@@ -128,7 +128,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="false">
 
-            <com.gianlu.commonutils.RecyclerViewLayout
+            <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
                 android:id="@+id/main_recyclerViewLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />

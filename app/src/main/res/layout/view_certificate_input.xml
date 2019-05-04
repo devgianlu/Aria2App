@@ -58,12 +58,12 @@
             android:layout_height="wrap_content"
             android:text="@string/certificateDetails" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_version"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_serialNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -74,12 +74,12 @@
             android:text="@string/signatureAlgorithm"
             android:textStyle="bold" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_sigAlgName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_sigAlgOid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -90,12 +90,12 @@
             android:text="@string/issuer"
             android:textStyle="bold" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_issuerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_issuerAns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -106,12 +106,12 @@
             android:text="@string/subject"
             android:textStyle="bold" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_subjectName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/certificateInputView_certificateDetails_subjectAns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -18,9 +18,9 @@ import com.gianlu.aria2app.NetIO.PeerIdParser;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Adapters.NotFilterable;
 import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
 import java.util.Comparator;

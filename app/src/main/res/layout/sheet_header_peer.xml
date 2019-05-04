@@ -19,7 +19,7 @@
             android:src="@drawable/baseline_download_24"
             android:tint="@color/bright_foreground_dark" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/peerSheet_downloadSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             android:src="@drawable/baseline_upload_24"
             android:tint="@color/bright_foreground_dark" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/peerSheet_uploadSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

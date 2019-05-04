@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.gianlu.commonutils.SuperTextView
+    <com.gianlu.commonutils.CasualViews.SuperTextView
         android:id="@+id/base64Fragment_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -19,9 +19,9 @@ import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
 import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.SuperTextView;
 
 import java.util.ArrayList;
 import java.util.List;

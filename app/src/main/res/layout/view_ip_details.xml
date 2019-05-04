@@ -18,17 +18,17 @@
             android:text="@string/ipDetails"
             android:textStyle="bold" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/ipDetailView_ip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/ipDetailView_localization"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/ipDetailView_isp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

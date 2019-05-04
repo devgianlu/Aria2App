@@ -19,7 +19,7 @@
             android:tint="@color/bright_foreground_dark"
             android:src="@drawable/baseline_download_24" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/serverSheet_downloadSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

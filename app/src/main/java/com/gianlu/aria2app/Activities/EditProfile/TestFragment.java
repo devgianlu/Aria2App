@@ -18,7 +18,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.Testers.BaseTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
     private OnGetProfile listener;

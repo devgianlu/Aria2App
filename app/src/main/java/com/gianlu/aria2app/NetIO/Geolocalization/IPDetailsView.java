@@ -6,12 +6,12 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.gianlu.aria2app.CountryFlags;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.SuperTextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 
 public class IPDetailsView extends LinearLayout {
     private final ImageView flag;

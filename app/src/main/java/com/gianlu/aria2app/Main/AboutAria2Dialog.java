@@ -9,19 +9,19 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.VersionAndSession;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
-import com.gianlu.commonutils.SuperTextView;
 import com.gianlu.commonutils.Toaster;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 public class AboutAria2Dialog extends DialogFragment implements AbstractClient.OnResult<VersionAndSession> {
     private Aria2Helper helper;

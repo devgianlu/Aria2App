@@ -9,6 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddMetalinkBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
@@ -21,16 +26,11 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.AskPermission;
+import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.RecyclerViewLayout;
 import com.gianlu.commonutils.Toaster;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class BatchAddActivity extends ActivityWithDialog implements AddDownloadBundlesAdapter.Listener {
     public static final int REQUEST_URIS_FILE = 5;

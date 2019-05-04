@@ -10,7 +10,7 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/optionItem_name"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
@@ -20,7 +20,7 @@
             android:paddingEnd="4dp"
             android:paddingTop="6dp" />
 
-        <com.gianlu.commonutils.SuperTextView
+        <com.gianlu.commonutils.CasualViews.SuperTextView
             android:id="@+id/optionItem_value"
             android:layout_width="match_parent"
             android:layout_height="32dp"

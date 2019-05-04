@@ -7,20 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.BottomSheet.BaseModalBottomSheet;
-import com.gianlu.commonutils.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends BaseModalBottomSheet<?, ?>, P> extends UpdaterFragment<P> implements TutorialManager.Listener, OnBackPressed {
     protected TopCountriesView topDownloadCountries;

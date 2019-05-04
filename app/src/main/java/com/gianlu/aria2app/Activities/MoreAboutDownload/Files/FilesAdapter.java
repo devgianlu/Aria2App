@@ -10,24 +10,24 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.gianlu.aria2app.FileTypeTextView;
 import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
 import com.gianlu.aria2app.NetIO.Aria2.AriaFiles;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.SuperTextView;
+import com.gianlu.commonutils.CasualViews.SuperTextView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.recyclerview.widget.RecyclerView;
 
 @UiThread
 public class FilesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

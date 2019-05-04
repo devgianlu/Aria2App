@@ -23,10 +23,10 @@ import com.gianlu.aria2app.Options.OptionsUtils;
 import com.gianlu.aria2app.Options.OptionsView;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CasualViews.MessageView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.MessageView;
 import com.gianlu.commonutils.Preferences.Prefs;
 
 import org.json.JSONException;
