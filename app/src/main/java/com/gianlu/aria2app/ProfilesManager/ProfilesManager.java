@@ -113,7 +113,7 @@ public class ProfilesManager {
     }
 
     public boolean hasProfiles() {
-        return getProfileIds().length > 0;
+        return getProfileIds().length > 0 || CommonUtils.isARM();
     }
 
     public boolean hasNotificationProfiles() {
