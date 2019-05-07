@@ -35,7 +35,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
     @Override
     protected int getAppIconRes() {
-        return R.mipmap.ic_launcher;
+        return R.drawable.ic_launcher;
     }
 
     @Override
