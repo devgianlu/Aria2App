@@ -17,7 +17,7 @@ public final class Aria2ConfigProvider implements BareConfigProvider {
 
     @Override
     public int launcherIcon() {
-        return R.mipmap.ic_launcher;
+        return R.mipmap.ic_launcher_round;
     }
 
     @Override
