@@ -1,5 +1,6 @@
 package com.gianlu.aria2app;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -36,6 +37,7 @@ import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.aria2lib.Interface.DownloadBinActivity;
 import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Logging;
@@ -193,26 +195,43 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void connectToInAppDownloader(@NonNull MultiProfile profile) {
-        cancel.setVisibility(View.GONE);
-        handler.postDelayed(() -> {
-            cancel.setVisibility(View.VISIBLE);
-            cancel.setOnClickListener(view -> cancelConnection());
-        }, 2000);
+        AskPermission.ask(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
+            @Override
+            public void permissionGranted(@NonNull String permission) {
+                cancel.setVisibility(View.GONE);
+                handler.postDelayed(() -> {
+                    cancel.setVisibility(View.VISIBLE);
+                    cancel.setOnClickListener(view -> cancelConnection());
+                }, 2000);
 
-        ThisApplication app = ((ThisApplication) getApplication());
+                ThisApplication app = ((ThisApplication) getApplication());
 
-        try {
-            app.loadAria2ServiceEnv();
-        } catch (BadEnvironmentException ex) {
-            DownloadBinActivity.startActivity(this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name), LoadingActivity.class,
-                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
-            return;
-        }
+                try {
+                    app.loadAria2ServiceEnv();
+                } catch (BadEnvironmentException ex) {
+                    DownloadBinActivity.startActivity(LoadingActivity.this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name),
+                            LoadingActivity.class, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
+                    return;
+                }
 
-        startAria2ServiceOn = profile;
-        app.startAria2Service();
+                startAria2ServiceOn = profile;
+                app.startAria2Service();
 
-        ThisApplication.sendAnalytics(Utils.ACTION_USE_IN_APP_DOWNLOADER);
+                ThisApplication.sendAnalytics(Utils.ACTION_USE_IN_APP_DOWNLOADER);
+            }
+
+            @Override
+            public void permissionDenied(@NonNull String permission) {
+                Toaster.with(LoadingActivity.this).message(R.string.cannotStartInAppWithoutWritePermission).show();
+                displayPicker(hasShareData());
+            }
+
+            @Override
+            public void askRationale(@NonNull AlertDialog.Builder builder) {
+                builder.setTitle(R.string.writeExternalStorageRequest_title)
+                        .setMessage(R.string.writeExternalStorageRequest_message);
+            }
+        });
     }
 
     @Override

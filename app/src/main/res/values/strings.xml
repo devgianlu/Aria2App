@@ -320,6 +320,7 @@
     <string name="inAppDownloader_configuration">In-App downloader configuration</string>
     <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
     <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
+    <string name="cannotStartInAppWithoutWritePermission">The Aria2App in-app downloader needs to access the device storage to save files.</string>
 
     <!-- Prefs -->
     <!-- - General -->
