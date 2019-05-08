@@ -407,6 +407,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             canGoBack(CODE_CLOSE_SHEET);
 
             refresh(() -> {
+                if (!isAdded() || isDetached()) return;
+
                 adapter = new FilesAdapter(getContext(), this);
                 recyclerViewLayout.loadListData(adapter);
                 recyclerViewLayout.startLoading();

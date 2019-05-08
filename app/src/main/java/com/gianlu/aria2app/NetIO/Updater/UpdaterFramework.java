@@ -1,5 +1,8 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.ErrorHandler;
 import com.gianlu.aria2app.NetIO.OnRefresh;
@@ -11,9 +14,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public final class UpdaterFramework {
     private static UpdaterFramework instance;
@@ -99,7 +99,7 @@ public final class UpdaterFramework {
         return (PayloadProvider<P>) providers.get(wants);
     }
 
-    protected <P> void refresh(@NonNull Wants<P> wants, final OnRefresh listener) {
+    protected <P> void refresh(@NonNull Wants<P> wants, OnRefresh listener) {
         PayloadProvider<P> provider = getProvider(wants);
         if (provider != null) provider.refresh(executorService, listener);
         else listener.refreshed();
