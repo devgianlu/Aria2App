@@ -309,7 +309,8 @@
     <string name="inAppDownloader_configuration">内置下载管理器配置</string>
     <string name="oldAria2AppNoInApp">不再支持此功能</string>
     <string name="oldAria2AppNoInApp_message">最近更新的Aria2app已包含Aria2Android的所有功能，请更新Aria2app到最新版本以访问所有这些功能。</string>
-
+    <string name="cannotStartInAppWithoutWritePermission">为了可以保存文件，Aria2app的内置下载管理器需要写入设备存储的权限</string>
+    
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
