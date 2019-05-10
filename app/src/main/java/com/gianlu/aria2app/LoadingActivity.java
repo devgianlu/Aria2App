@@ -31,6 +31,7 @@ import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
+import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
@@ -41,6 +42,7 @@ import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Drawer.DrawerManager;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
@@ -397,6 +399,9 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     @Override
     public boolean onConnected(@NonNull AbstractClient client) {
         ongoingTest = null;
+
+        if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
+            NotificationService.start(this);
 
         if (shareData != null) {
             try {

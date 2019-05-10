@@ -72,9 +72,6 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         ErrorHandler.setup(Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000, this);
 
-        if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
-            NotificationService.start(this);
-
         // Backward compatibility
         if (!Prefs.has(PK.A2_CUSTOM_INFO)) {
             Set<String> defaultValues = new HashSet<>();

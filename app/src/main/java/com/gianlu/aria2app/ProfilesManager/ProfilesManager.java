@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -116,7 +117,11 @@ public class ProfilesManager {
         return getProfileIds().length > 0 || CommonUtils.isARM();
     }
 
-    public boolean hasNotificationProfiles() {
+    public boolean hasNotificationProfiles(@NonNull Context context) {
+        context = context.getApplicationContext();
+        if (CommonUtils.isARM() && context instanceof ThisApplication && ((ThisApplication) context).getLastAria2UiState())
+            return true;
+
         for (String id : getProfileIds()) {
             try {
                 if (retrieveProfile(id).notificationsEnabled)
@@ -144,24 +149,35 @@ public class ProfilesManager {
     }
 
     @NonNull
-    public List<MultiProfile> getNotificationProfiles() {
-        return getProfiles(true);
+    public List<MultiProfile> getNotificationProfiles(@NonNull Context context) {
+        return getProfiles(true, context);
     }
 
     @NonNull
     public List<MultiProfile> getProfiles() {
-        return getProfiles(false);
+        return getProfiles(false, null);
     }
 
     @NonNull
-    private List<MultiProfile> getProfiles(boolean notification) {
+    private List<MultiProfile> getProfiles(boolean notification, @Nullable Context context) {
+        context = context == null ? null : context.getApplicationContext();
+
         boolean hasInApp = false;
         List<MultiProfile> profiles = new ArrayList<>();
         for (String id : getProfileIds()) {
             try {
                 MultiProfile profile = retrieveProfile(id);
                 if (profile.isInAppDownloader()) hasInApp = true;
-                if (!notification || profile.notificationsEnabled) profiles.add(profile);
+                if (notification) {
+                    if (profile.isInAppDownloader()) {
+                        if ((context instanceof ThisApplication) && ((ThisApplication) context).getLastAria2UiState())
+                            profiles.add(profile);
+                    } else if (profile.notificationsEnabled) {
+                        profiles.add(profile);
+                    }
+                } else {
+                    profiles.add(profile);
+                }
             } catch (IOException | JSONException ex) {
                 Logging.log(ex);
             }

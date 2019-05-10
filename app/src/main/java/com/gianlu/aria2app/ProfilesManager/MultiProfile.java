@@ -127,6 +127,19 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return profile;
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MultiProfile profile = (MultiProfile) o;
+        return id.equals(profile.id);
+    }
+
     @Nullable
     public String shouldSkipVersionCheck(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString("a2_skipVersionCheck_" + id, null);

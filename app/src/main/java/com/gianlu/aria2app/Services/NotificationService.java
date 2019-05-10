@@ -82,8 +82,6 @@ public class NotificationService extends Service {
     private LocalBroadcastManager broadcastManager;
     private StartedFrom startedFrom = StartedFrom.NOT;
     private ConnectivityChangedReceiver connectivityChangedReceiver;
-    private volatile boolean calledStartForeground = false;
-    private volatile boolean stopping = false;
 
     private static void debug(String msg) {
         if (CommonUtils.isDebug() && ThisApplication.DEBUG_NOTIFICATION)
@@ -109,7 +107,7 @@ public class NotificationService extends Service {
 
     private static void startInternal(@NonNull Context context, @NonNull StartedFrom startedFrom) {
         debug("Called start service, startedFrom=" + startedFrom);
-        if (ProfilesManager.get(context).hasNotificationProfiles()) {
+        if (ProfilesManager.get(context).hasNotificationProfiles(context)) {
             try {
                 ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
                         .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
@@ -127,7 +125,7 @@ public class NotificationService extends Service {
 
     @NonNull
     private static List<MultiProfile> loadProfiles(@NonNull Context context) {
-        return ProfilesManager.get(context).getNotificationProfiles();
+        return ProfilesManager.get(context).getNotificationProfiles(context);
     }
 
     public static void stop(@NonNull Context context) {
@@ -144,13 +142,6 @@ public class NotificationService extends Service {
         }
     }
 
-    private void stopSelfCustom() {
-        stopping = true;
-
-        if (calledStartForeground)
-            stopSelf();
-    }
-
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
         broadcastManager = LocalBroadcastManager.getInstance(this);
@@ -159,7 +150,7 @@ public class NotificationService extends Service {
             if (Objects.equals(intent.getAction(), ACTION_STOP)) {
                 startedFrom = StartedFrom.NOT;
                 stopForeground(true);
-                stopSelfCustom();
+                stopSelf();
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
                     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -174,12 +165,17 @@ public class NotificationService extends Service {
                     recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                     connectivityChangedReceiver = new ConnectivityChangedReceiver();
                     registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+                } else {
+                    List<MultiProfile> newProfiles = loadProfiles(this);
+                    if (newProfiles.isEmpty()) {
+                        stopCompletely();
+                        return START_NOT_STICKY;
+                    }
 
-                    if (stopping) {
-                        stopSelf();
-                    } else {
-                        startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
-                        calledStartForeground = false;
+                    if (!newProfiles.equals(profiles)) {
+                        profiles = newProfiles;
+                        recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                     }
                 }
 
@@ -190,13 +186,16 @@ public class NotificationService extends Service {
             }
         }
 
+        stopCompletely();
+        return START_NOT_STICKY;
+    }
+
+    private void stopCompletely() {
         gidToMode.clear();
         if (profiles != null) profiles.clear();
         clearWebsockets();
         broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
-        stopSelfCustom();
-
-        return START_NOT_STICKY; // Process will stop
+        stopSelf();
     }
 
     @NonNull
@@ -572,7 +571,7 @@ public class NotificationService extends Service {
                             if (isEmptyByMode(Mode.NOTIFY_EXCLUSIVE)) {
                                 broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
                                 stopForeground(true);
-                                stopSelfCustom();
+                                stopSelf();
                                 startedFrom = StartedFrom.NOT;
                             }
                             break;
