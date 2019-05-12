@@ -209,7 +209,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             aria2service.ui.stopService();
     }
 
-    private static class Aria2UiDispatcher implements Aria2Ui.Listener {
+    private class Aria2UiDispatcher implements Aria2Ui.Listener {
         private final Aria2Ui ui;
         private final Set<Aria2Ui.Listener> listeners = new HashSet<>();
         private volatile boolean lastUiState = false;
@@ -230,6 +230,9 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         @Override
         public void updateUi(boolean on) {
+            if (!lastUiState && on && Prefs.getBoolean(PK.A2_ENABLE_NOTIFS))
+                NotificationService.start(ThisApplication.this);
+
             lastUiState = on;
 
             for (Aria2Ui.Listener listener : new ArrayList<>(listeners))

@@ -172,7 +172,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             for (MultiProfile profile : manager.getProfiles()) {
                 if (profile.isInAppDownloader()) {
                     connectToInAppDownloader(profile);
-                    break;
+                    return;
                 }
             }
         }
