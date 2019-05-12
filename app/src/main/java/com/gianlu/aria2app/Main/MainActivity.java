@@ -76,7 +76,6 @@ import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
-import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CasualViews.MessageView;
 import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
@@ -97,7 +96,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -882,7 +880,11 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+    public void onUpdateLogs(@NonNull List<Aria2Ui.LogMessage> msg) {
+    }
+
+    @Override
+    public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
     }
 
     @Override

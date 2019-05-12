@@ -74,7 +74,7 @@ public class NotificationService extends Service {
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
     private final Map<String, Mode> gidToMode = new HashMap<>();
-    private Set<WebSocket> webSockets;
+    private final Set<WebSocket> webSockets = new ArraySet<>(5);
     private List<MultiProfile> profiles;
     private WifiManager wifiManager;
     private NotificationManager notificationManager;
@@ -134,11 +134,9 @@ public class NotificationService extends Service {
     }
 
     private void clearWebsockets() {
-        if (webSockets != null) {
+        synchronized (webSockets) {
             for (WebSocket webSocket : webSockets) webSocket.close(1000, null);
             webSockets.clear();
-        } else {
-            webSockets = new ArraySet<>(4);
         }
     }
 
@@ -176,6 +174,7 @@ public class NotificationService extends Service {
                     if (!newProfiles.equals(profiles)) {
                         profiles = newProfiles;
                         recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                        updateForegroundNotification();
                     }
                 }
 
@@ -357,10 +356,12 @@ public class NotificationService extends Service {
                 continue;
             }
 
-            try {
-                webSockets.add(NetUtils.buildClient(profile).newWebSocket(NetUtils.createWebsocketRequest(profile), new NotificationsHandler(profile)));
-            } catch (IOException | NetUtils.InvalidUrlException | GeneralSecurityException ex) {
-                notifyException(profile, ex);
+            synchronized (webSockets) {
+                try {
+                    webSockets.add(NetUtils.buildClient(profile).newWebSocket(NetUtils.createWebsocketRequest(profile), new NotificationsHandler(profile)));
+                } catch (IOException | NetUtils.InvalidUrlException | GeneralSecurityException ex) {
+                    notifyException(profile, ex);
+                }
             }
         }
     }
@@ -385,6 +386,15 @@ public class NotificationService extends Service {
         startedFrom = StartedFrom.NOT;
         if (connectivityChangedReceiver != null)
             unregisterReceiver(connectivityChangedReceiver);
+    }
+
+    private void removeWebsocket(@NonNull WebSocket ws, @NonNull MultiProfile.UserProfile profile) {
+        synchronized (webSockets) {
+            webSockets.remove(ws);
+            profiles.remove(profile.getParent());
+        }
+
+        updateForegroundNotification();
     }
 
     private enum StartedFrom {
@@ -620,7 +630,7 @@ public class NotificationService extends Service {
         }
 
         @Override
-        public void onMessage(WebSocket webSocket, String text) {
+        public void onMessage(WebSocket ws, String text) {
             try {
                 JSONObject json = new JSONObject(text);
                 EventType type = EventType.parse(json.getString("method"));
@@ -637,8 +647,11 @@ public class NotificationService extends Service {
         }
 
         @Override
-        public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
-            notifyException(profile, throwable);
+        public void onFailure(WebSocket ws, Throwable throwable, Response response) {
+            removeWebsocket(ws, profile);
+
+            if (!profile.isInAppDownloader())
+                notifyException(profile, throwable);
         }
     }
 }

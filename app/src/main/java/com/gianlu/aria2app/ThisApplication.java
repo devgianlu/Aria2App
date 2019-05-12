@@ -17,7 +17,6 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
-import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonPK;
 import com.gianlu.commonutils.CommonUtils;
@@ -29,9 +28,9 @@ import com.llew.huawei.verifier.LoadedApkHuaWei;
 import com.yarolegovich.mp.io.MaterialPreferences;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.Listener {
@@ -158,6 +157,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void addAria2UiListener(@NonNull Aria2Ui.Listener listener) {
         if (aria2service == null) return;
         aria2service.listeners.add(listener);
+        aria2service.ui.updateLogs(listener);
         aria2service.ui.askForStatus();
     }
 
@@ -219,9 +219,13 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         }
 
         @Override
-        public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+        public void onUpdateLogs(@NonNull List<Aria2Ui.LogMessage> msg) {
+        }
+
+        @Override
+        public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
             for (Aria2Ui.Listener listener : new ArrayList<>(listeners))
-                listener.onMessage(type, i, o);
+                listener.onMessage(msg);
         }
 
         @Override

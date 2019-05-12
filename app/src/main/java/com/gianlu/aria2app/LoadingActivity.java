@@ -49,7 +49,6 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -457,10 +456,14 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     @Override
-    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
+    public void onUpdateLogs(@NonNull List<Aria2Ui.LogMessage> msg) {
+    }
+
+    @Override
+    public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
         if (isDestroyed()) return;
 
-        if (type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null) {
+        if (msg.type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null) {
             tryConnecting(startAria2ServiceOn);
 
             startAria2ServiceOn = null;

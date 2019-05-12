@@ -22,7 +22,7 @@ import com.gianlu.aria2lib.Internal.Message;
 import com.gianlu.commonutils.FileUtil;
 import com.gianlu.commonutils.Logging;
 
-import java.io.Serializable;
+import java.util.List;
 
 public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui.Listener {
     private static final int STORAGE_ACCESS_CODE = 3;
@@ -103,32 +103,49 @@ public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui
     }
 
     @Override
-    public void onMessage(@NonNull Message.Type type, int i, @Nullable Serializable o) {
-        switch (type) {
-            case PROCESS_TERMINATED:
-                addLog(new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logTerminated, i)));
-                break;
-            case PROCESS_STARTED:
-                addLog(new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logStarted, o)));
-                break;
-            case MONITOR_FAILED:
-                Logging.log("Monitor failed!", (Throwable) o);
-                break;
-            case MONITOR_UPDATE:
-                break;
-            case PROCESS_WARN:
-                if (o != null)
-                    addLog(new Logging.LogLine(Logging.LogLine.Type.WARNING, (String) o));
-                break;
-            case PROCESS_ERROR:
-                if (o != null)
-                    addLog(new Logging.LogLine(Logging.LogLine.Type.ERROR, (String) o));
-                break;
-            case PROCESS_INFO:
-                if (o != null)
-                    addLog(new Logging.LogLine(Logging.LogLine.Type.INFO, (String) o));
-                break;
+    public void onUpdateLogs(@NonNull List<Aria2Ui.LogMessage> list) {
+        for (Aria2Ui.LogMessage msg : list) {
+            Logging.LogLine line = createLogLine(msg);
+            if (line != null) addLog(line);
         }
+    }
+
+    @Nullable
+    private Logging.LogLine createLogLine(@NonNull Aria2Ui.LogMessage msg) {
+        switch (msg.type) {
+            case PROCESS_TERMINATED:
+                return new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logTerminated, msg.i));
+            case PROCESS_STARTED:
+                return new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logStarted, msg.o));
+            case MONITOR_FAILED:
+                return null;
+            case MONITOR_UPDATE:
+                return null;
+            case PROCESS_WARN:
+                if (msg.o != null)
+                    return new Logging.LogLine(Logging.LogLine.Type.WARNING, (String) msg.o);
+            case PROCESS_ERROR:
+                if (msg.o != null)
+                    return new Logging.LogLine(Logging.LogLine.Type.ERROR, (String) msg.o);
+            case PROCESS_INFO:
+                if (msg.o != null)
+                    return new Logging.LogLine(Logging.LogLine.Type.INFO, (String) msg.o);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
+        if (msg.type == Message.Type.MONITOR_FAILED) {
+            Logging.log("Monitor failed!", (Throwable) msg.o);
+            return;
+        }
+
+        if (msg.type == Message.Type.MONITOR_UPDATE) return;
+
+        Logging.LogLine line = createLogLine(msg);
+        if (line != null) addLog(line);
     }
 
     @Override

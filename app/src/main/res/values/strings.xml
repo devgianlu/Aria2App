@@ -267,7 +267,7 @@
     <string name="skipThisVersion">Skip this version</string>
     <string name="selectDirForDownload">Select all files in directory for download</string>
     <string name="pickProfile_someAction">Choose a profile to complete the action:</string>
-    <string name="notificationException">Failed starting notification service for %s!</string>
+    <string name="notificationException">Notification service for %s failed!</string>
     <string name="notificationUnsupportedConnMethod">Unsupported connection method for %s!</string>
     <string name="notificationUnsupportedConnMethod_details">Cannot start notification service for this profile. Please switch to WebSockets if you want to enable notifications.</string>
     <string name="export">Export</string>
