@@ -344,7 +344,7 @@ public class NotificationService extends Service {
     private void recreateWebsockets(int networkType) {
         clearWebsockets();
 
-        for (MultiProfile multi : profiles) {
+        for (MultiProfile multi : new ArrayList<>(profiles)) {
             MultiProfile.UserProfile profile;
             if (networkType == ConnectivityManager.TYPE_DUMMY)
                 profile = multi.getProfile(this);
