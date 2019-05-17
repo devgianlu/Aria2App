@@ -2,6 +2,7 @@ package com.gianlu.aria2app;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 
@@ -37,6 +38,14 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public static final boolean DEBUG_UPDATER = false;
     public static final boolean DEBUG_NOTIFICATION = false;
     private final Set<String> checkedVersionFor = new HashSet<>();
+    private final SharedPreferences.OnSharedPreferenceChangeListener toggleNotificationServiceListener = (sharedPreferences, key) -> {
+        if (key.equals(PK.A2_ENABLE_NOTIFS.key())) {
+            if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
+                NotificationService.start(ThisApplication.this);
+            else
+                NotificationService.stop(ThisApplication.this);
+        }
+    };
     private ConnectivityChangedReceiver connectivityChangedReceiver;
     private Aria2UiDispatcher aria2service;
 
@@ -81,15 +90,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         deprecatedBackwardCompatibility();
 
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener((prefs, key) -> {
-                    if (key.equals(PK.A2_ENABLE_NOTIFS.key())) {
-                        if (Prefs.getBoolean(PK.A2_ENABLE_NOTIFS, true))
-                            NotificationService.start(ThisApplication.this);
-                        else
-                            NotificationService.stop(ThisApplication.this);
-                    }
-                });
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(toggleNotificationServiceListener);
 
         connectivityChangedReceiver = new ConnectivityChangedReceiver(this);
         getApplicationContext().registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -112,6 +113,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onTerminate() {
         getApplicationContext().unregisterReceiver(connectivityChangedReceiver);
         if (aria2service != null) aria2service.ui.unbind();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(toggleNotificationServiceListener);
 
         super.onTerminate();
     }
