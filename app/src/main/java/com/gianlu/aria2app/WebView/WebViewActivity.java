@@ -158,6 +158,12 @@ public class WebViewActivity extends ActivityWithDialog {
     }
 
     @Override
+    public void onBackPressed() {
+        if (web != null && web.canGoBack()) web.goBack();
+        else super.onBackPressed();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.web_view, menu);
         return true;
