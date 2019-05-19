@@ -19,6 +19,20 @@
 
     <shortcut
         android:enabled="true"
+        android:icon="@drawable/baseline_language_colored_24"
+        android:shortcutId="webView"
+        android:shortcutShortLabel="@string/webView">
+
+        <intent
+            android:action="com.gianlu.aria2app.WEB_VIEW"
+            android:targetClass="com.gianlu.aria2app.LoadingActivity"
+            android:targetPackage="com.gianlu.aria2app" />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
         android:icon="@drawable/ic_torrent_colored_48dp"
         android:shortcutId="addTorrent"
         android:shortcutShortLabel="@string/addTorrent">
@@ -40,6 +54,20 @@
 
         <intent
             android:action="com.gianlu.aria2app.ADD_METALINK"
+            android:targetClass="com.gianlu.aria2app.LoadingActivity"
+            android:targetPackage="com.gianlu.aria2app" />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/baseline_all_inbox_colored_24"
+        android:shortcutId="batchAdd"
+        android:shortcutShortLabel="@string/batchAdd">
+
+        <intent
+            android:action="com.gianlu.aria2app.BATCH_ADD"
             android:targetClass="com.gianlu.aria2app.LoadingActivity"
             android:targetPackage="com.gianlu.aria2app" />
 

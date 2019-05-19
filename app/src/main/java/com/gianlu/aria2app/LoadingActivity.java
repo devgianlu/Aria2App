@@ -59,6 +59,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public static final String SHORTCUT_ADD_METALINK = "com.gianlu.aria2app.ADD_METALINK";
     public static final String SHORTCUT_ADD_TORRENT = "com.gianlu.aria2app.ADD_TORRENT";
     public static final String SHORTCUT_SEARCH = "com.gianlu.aria2app.SEARCH";
+    public static final String SHORTCUT_WEB_VIEW = "com.gianlu.aria2app.WEB_VIEW";
+    public static final String SHORTCUT_BATCH_ADD = "com.gianlu.aria2app.BATCH_ADD";
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
@@ -247,7 +249,9 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         return Objects.equals(action, SHORTCUT_ADD_METALINK)
                 || Objects.equals(action, SHORTCUT_ADD_URI)
                 || Objects.equals(action, SHORTCUT_ADD_TORRENT)
-                || Objects.equals(action, SHORTCUT_SEARCH);
+                || Objects.equals(action, SHORTCUT_SEARCH)
+                || Objects.equals(action, SHORTCUT_BATCH_ADD)
+                || Objects.equals(action, SHORTCUT_WEB_VIEW);
     }
 
     private boolean hasShareData() {

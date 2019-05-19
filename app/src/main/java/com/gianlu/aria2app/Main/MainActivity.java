@@ -388,6 +388,12 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 case LoadingActivity.SHORTCUT_SEARCH:
                     startActivity(new Intent(this, SearchActivity.class));
                     break;
+                case LoadingActivity.SHORTCUT_WEB_VIEW:
+                    startActivity(new Intent(this, WebViewActivity.class));
+                    break;
+                case LoadingActivity.SHORTCUT_BATCH_ADD:
+                    startActivity(new Intent(this, BatchAddActivity.class));
+                    break;
             }
         } else if (shareData != null) {
             String scheme = shareData.getScheme();
