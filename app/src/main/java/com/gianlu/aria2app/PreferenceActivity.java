@@ -6,6 +6,9 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
@@ -109,6 +112,24 @@ public class PreferenceActivity extends BasePreferenceActivity {
             bestTrackers.setTitle(R.string.prefs_addBestTrackers);
             bestTrackers.setSummary(R.string.prefs_addBestTrackers_summary);
             addPreference(bestTrackers);
+
+            if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
+                MaterialStandardPreference webviewShortcut = new MaterialStandardPreference(context);
+                webviewShortcut.setTitle(R.string.addWebViewShortcutToHomePage);
+                webviewShortcut.setSummary(R.string.addWebViewShortcutToHomePage_summary);
+                webviewShortcut.setIcon(R.drawable.baseline_language_24);
+                addPreference(webviewShortcut);
+
+                webviewShortcut.setOnClickListener(v -> {
+                    ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(context, "#1")
+                            .setIntent(new Intent(context, LoadingActivity.class)
+                                    .setAction(LoadingActivity.SHORTCUT_WEB_VIEW))
+                            .setShortLabel(getString(R.string.webView) + " - " + getString(R.string.app_name))
+                            .setIcon(IconCompat.createWithResource(context, R.drawable.baseline_language_colored_24))
+                            .build();
+                    ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null);
+                });
+            }
         }
 
         @Override

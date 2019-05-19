@@ -348,4 +348,6 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
+    <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
+    <string name="addWebViewShortcutToHomePage_summary">Add a shortuct to the WebView on your homepage</string>
 </resources>

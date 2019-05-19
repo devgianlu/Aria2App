@@ -3,12 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gianlu.aria2app">
     <!-- List networks -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- You known... -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Download files -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Load certificate or files -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Foreground service on Android P+ -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- You known... -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Download files -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Load certificate or files -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Foreground service on Android P+ -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Add shortcuts to homepage -->
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
     <application
         android:name=".ThisApplication"
@@ -22,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:supportsRtl">
+        tools:replace="android:supportsRtl"
+        tools:targetApi="n">
 
         <!-- General files provider -->
         <provider
