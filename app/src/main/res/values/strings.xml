@@ -321,6 +321,8 @@
     <string name="oldAria2AppNoInApp">This feature is not supported anymore</string>
     <string name="oldAria2AppNoInApp_message">A recent update made possible to have all the functionalities of Aria2Android from Aria2App itself. Update the latter to access all those features.</string>
     <string name="cannotStartInAppWithoutWritePermission">The Aria2App in-app downloader needs to access the device storage to save files.</string>
+    <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
+    <string name="addWebViewShortcutToHomePage_summary">Add a shortcut to the WebView on your homepage.</string>
 
     <!-- Prefs -->
     <!-- - General -->
@@ -348,6 +350,4 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
-    <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
-    <string name="addWebViewShortcutToHomePage_summary">Add a shortuct to the WebView on your homepage</string>
 </resources>
