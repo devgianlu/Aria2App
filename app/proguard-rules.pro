@@ -1,3 +1,5 @@
+-dontobfuscate
+
 -dontwarn okio.**
 -dontwarn okhttp3.internal.huc.StreamedRequestBody
 -dontwarn okhttp3.internal.huc.OkHttpURLConnection
