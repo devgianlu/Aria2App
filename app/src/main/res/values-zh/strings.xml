@@ -154,7 +154,7 @@
     <string name="base64NotSelected">您还没有选择文件！</string>
     <string name="certDisclaimer">如果您的服务器已被此系统信任（通常是您安装了证书或证书由受信任的来源签名），则不需要证书</string>
     <string name="test">测试</string>
-    <string name="test_help">按下测试按钮Aria2App将检查您的配置并帮助您诊断网络问题。要获得进一步的帮助，请通过altomanigianluca@gmail.com与我联系。</string>
+    <string name="test_help">按下测试按钮，Aria2App将检查您的配置并帮助您诊断网络问题。要获得进一步的帮助，请通过altomanigianluca@gmail.com与我联系。</string>
     <string name="peerDetails">Peer详情</string>
     <string name="peerDetails_desc">点击该项目以显示有关Peer的详细信息。</string>
     <string name="serverDetails">服务器详情</string>
@@ -310,6 +310,8 @@
     <string name="oldAria2AppNoInApp">不再支持此功能</string>
     <string name="oldAria2AppNoInApp_message">最近更新的Aria2app已包含Aria2Android的所有功能，请更新Aria2app到最新版本以访问所有这些功能。</string>
     <string name="cannotStartInAppWithoutWritePermission">为了可以保存文件，Aria2app的内置下载管理器需要写入设备存储的权限</string>
+    <string name="addWebViewShortcutToHomePage">在主屏幕上添加WebView快捷方式</string>
+    <string name="addWebViewShortcutToHomePage_summary">在您的主屏幕上添加一个指向WebView的快捷方式。</string>
     
     <!-- Prefs -->
     <!-- - General -->
