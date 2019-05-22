@@ -25,7 +25,6 @@ import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Preferences.PrefsStorageModule;
 import com.gianlu.commonutils.Toaster;
-import com.llew.huawei.verifier.LoadedApkHuaWei;
 import com.yarolegovich.mp.io.MaterialPreferences;
 
 import java.io.IOException;
@@ -74,7 +73,6 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     @Override
     public void onCreate() {
         super.onCreate();
-        LoadedApkHuaWei.hookHuaWeiVerifier(this);
         SearchApi.get().cacheSearchEngines();
         MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
 
