@@ -140,16 +140,20 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     }
 
     @Override
-    protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull final SetupPayload payload) {
+    protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull SetupPayload payload) {
         try {
-            final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent();
+            MultiProfile profile = ProfilesManager.get(requireContext()).getCurrent();
             if (payload.download.update().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
                 return false;
             } else {
                 action.setImageResource(R.drawable.baseline_download_24);
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
-                action.setOnClickListener(v -> payload.listener.onDownloadFile(profile, payload.file));
+                action.setOnClickListener(v -> payload.listener.onDownloadFile(profile, payload.file, false));
+                action.setOnLongClickListener(v -> {
+                    payload.listener.onDownloadFile(profile, payload.file, true);
+                    return true;
+                });
                 return true;
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {
@@ -176,7 +180,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     }
 
     public interface Listener {
-        void onDownloadFile(@NonNull MultiProfile profile, @NonNull AriaFile file);
+        void onDownloadFile(@NonNull MultiProfile profile, @NonNull AriaFile file, boolean share);
     }
 
     protected static class SetupPayload {

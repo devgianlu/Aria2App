@@ -285,7 +285,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     }
 
     @Override
-    public void onDownloadFile(@NonNull MultiProfile profile, @NonNull AriaFile file) {
+    public void onDownloadFile(@NonNull MultiProfile profile, @NonNull AriaFile file, boolean share) {
         if (fileSheet != null) {
             fileSheet.dismiss();
             fileSheet = null;
@@ -311,7 +311,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                                         startActivity(intent);
                                         AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
                                     })
-                                    .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, result, file));
+                                    .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, result, file, share));
 
                             showDialog(builder);
                             return;
@@ -319,7 +319,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                     }
                 }
 
-                shouldDownload(profile, result, file);
+                shouldDownload(profile, result, file, share);
             }
 
             @Override
@@ -330,10 +330,10 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         });
     }
 
-    private void shouldDownload(MultiProfile profile, OptionsMap global, AriaFile file) {
+    private void shouldDownload(@NonNull MultiProfile profile, @NonNull OptionsMap global, @NonNull AriaFile file, boolean share) {
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_FILE);
 
-        if (Prefs.getBoolean(PK.DD_USE_EXTERNAL)) {
+        if (Prefs.getBoolean(PK.DD_USE_EXTERNAL) || share) {
             MultiProfile.DirectDownload dd = profile.getProfile(getContext()).directDownload;
             HttpUrl base;
             if (dd == null || (base = dd.getUrl()) == null) return;
