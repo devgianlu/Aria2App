@@ -67,6 +67,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             nightMode.setTitle(R.string.prefs_nightMode);
             nightMode.setSummary(R.string.prefs_nightMode_summary);
+            nightMode.setIcon(R.drawable.baseline_opacity_24);
             addPreference(nightMode);
 
             MaterialCheckboxPreference hideMetadata = new MaterialCheckboxPreference.Builder(context)
@@ -75,6 +76,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             hideMetadata.setTitle(R.string.prefs_hideMetadata);
             hideMetadata.setSummary(R.string.prefs_hideMetadata_summary);
+            hideMetadata.setIcon(R.drawable.baseline_link_24);
             addPreference(hideMetadata);
 
             MaterialSeekBarPreference updateRate = new MaterialSeekBarPreference.Builder(context)
@@ -84,6 +86,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             updateRate.setTitle(R.string.prefs_updateRate);
             updateRate.setSummary(R.string.prefs_updateRate_summary);
+            updateRate.setIcon(R.drawable.baseline_update_24);
             addPreference(updateRate);
 
             MaterialMultiChoicePreference customDownloadInfo = new MaterialMultiChoicePreference.Builder(context)
@@ -95,6 +98,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             customDownloadInfo.setTitle(R.string.prefs_downloadDisplayInfo);
             customDownloadInfo.setSummary(R.string.prefs_downloadDisplayInfo_summary);
+            customDownloadInfo.setIcon(R.drawable.baseline_info_outline_24);
             addPreference(customDownloadInfo);
 
             MaterialCheckboxPreference versionCheck = new MaterialCheckboxPreference.Builder(context)
@@ -103,6 +107,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             versionCheck.setTitle(R.string.prefs_versionCheck);
             versionCheck.setSummary(R.string.prefs_versionCheck_summary);
+            versionCheck.setIcon(R.drawable.baseline_verified_user_24);
             addPreference(versionCheck);
 
             MaterialCheckboxPreference bestTrackers = new MaterialCheckboxPreference.Builder(context)
@@ -111,6 +116,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             bestTrackers.setTitle(R.string.prefs_addBestTrackers);
             bestTrackers.setSummary(R.string.prefs_addBestTrackers_summary);
+            bestTrackers.setIcon(R.drawable.baseline_track_changes_24);
             addPreference(bestTrackers);
 
             if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
@@ -164,6 +170,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             external.setTitle(R.string.prefs_ddUseExternal);
             external.setSummary(R.string.prefs_ddUseExternal_summary);
+            external.setIcon(R.drawable.baseline_share_24);
             addPreference(external);
 
             MaterialStandardPreference downloadPath = new MaterialStandardPreference.Builder(context)
@@ -172,6 +179,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             downloadPath.setTitle(R.string.prefs_ddDownloadPath);
             downloadPath.setSummary(R.string.prefs_ddDownloadPath_summary);
+            downloadPath.setIcon(R.drawable.baseline_folder_24);
             downloadPath.addPreferenceClickListener(v -> {
                 try {
                     Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -190,6 +198,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             concurrentDownloads.setTitle(R.string.prefs_ddMaxSimultaneousDownloads);
             concurrentDownloads.setSummary(R.string.prefs_ddMaxSimultaneousDownloads_summary);
+            concurrentDownloads.setIcon(R.drawable.baseline_download_24);
             addPreference(concurrentDownloads);
 
             MaterialCheckboxPreference resume = new MaterialCheckboxPreference.Builder(context)
@@ -198,6 +207,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             resume.setTitle(R.string.prefs_ddResume);
             resume.setSummary(R.string.prefs_ddResume_summary);
+            resume.setIcon(R.drawable.baseline_pause_24);
             addPreference(resume);
 
             addController(external, false, downloadPath, concurrentDownloads, resume);
@@ -226,6 +236,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             enable.setTitle(R.string.prefs_enableNotifications);
             enable.setSummary(R.string.prefs_enableNotifications_summary);
+            enable.setIcon(R.drawable.baseline_notifications_24);
             addPreference(enable);
 
             MaterialMultiChoicePreference types = new MaterialMultiChoicePreference.Builder(context)
@@ -237,6 +248,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             types.setTitle(R.string.prefs_notificationType);
             types.setSummary(R.string.prefs_notificationType_summary);
+            types.setIcon(R.drawable.baseline_more_24);
             addPreference(types);
 
             MaterialCheckboxPreference startAtBoot = new MaterialCheckboxPreference.Builder(context)
@@ -245,6 +257,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     .build();
             startAtBoot.setTitle(R.string.prefs_enableNotificationsAtBoot);
             startAtBoot.setSummary(R.string.prefs_enableNotificationsAtBoot_summary);
+            startAtBoot.setIcon(R.drawable.baseline_android_24);
             addPreference(startAtBoot);
 
             addController(enable, true, startAtBoot, types);
