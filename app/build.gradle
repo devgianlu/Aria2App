@@ -44,8 +44,8 @@ dependencies {
     api project(':CommonUtils')
     api project(':CountryFlags')
     api project(':aria2lib')
-    api 'com.tonyodev.fetch2:fetch2:3.0.6'
-    api 'com.tonyodev.fetch2okhttp:fetch2okhttp:3.0.6'
+    api 'androidx.tonyodev.fetch2:xfetch2:3.1.1'
+    api 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.1'
     api 'com.squareup.okhttp3:okhttp:3.14.0'
     api 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     api 'com.getbase:floatingactionbutton:1.10.1'

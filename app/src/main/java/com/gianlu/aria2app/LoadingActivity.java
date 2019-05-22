@@ -134,6 +134,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                     .setTitle(R.string.oldAria2AppNoInApp)
                     .setMessage(R.string.oldAria2AppNoInApp_message)
                     .setNeutralButton(android.R.string.ok, null));
+            displayPicker(hasShareData());
+            return;
         }
 
         manager = ProfilesManager.get(this);
@@ -188,20 +190,21 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             seeError.setVisibility(View.GONE);
         }
 
-        if (getIntent().getBooleanExtra("showPicker", false)) {
+        if (getIntent().getBooleanExtra("showPicker", false))
             displayPicker(false);
-        } else {
-            MultiProfile last = manager.getLastProfile();
-            if (last != null && last.isInAppDownloader()) connectToInAppDownloader(last);
-            else tryConnecting(last);
-        }
+        else
+            tryConnecting(manager.getLastProfile());
     }
 
     private void connectToInAppDownloader(@NonNull MultiProfile profile) {
         AskPermission.ask(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, new AskPermission.Listener() {
             @Override
             public void permissionGranted(@NonNull String permission) {
+                connecting.setVisibility(View.VISIBLE);
+                picker.setVisibility(View.GONE);
+                seeError.setVisibility(View.GONE);
                 cancel.setVisibility(View.GONE);
+
                 handler.postDelayed(() -> {
                     cancel.setVisibility(View.VISIBLE);
                     cancel.setOnClickListener(view -> cancelConnection());
@@ -287,6 +290,11 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void tryConnecting(@Nullable MultiProfile profile) {
+        if (profile != null && profile.isInAppDownloader() && profile != startAria2ServiceOn) {
+            connectToInAppDownloader(profile);
+            return;
+        }
+
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
         seeError.setVisibility(View.GONE);
@@ -355,8 +363,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public void onDrawerProfileSelected(@NonNull MultiProfile profile) {
-        if (profile.isInAppDownloader()) connectToInAppDownloader(profile);
-        else tryConnecting(profile);
+        tryConnecting(profile);
     }
 
     @Override
@@ -467,11 +474,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
         if (isDestroyed()) return;
 
-        if (msg.type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null) {
+        if (msg.type == Message.Type.PROCESS_STARTED && startAria2ServiceOn != null)
             tryConnecting(startAria2ServiceOn);
-
-            startAria2ServiceOn = null;
-        }
     }
 
     @Override
