@@ -218,15 +218,15 @@ public class NotificationService extends Service {
             case GLOBAL:
                 List<String> notNotify = getByMode(Mode.NOT_NOTIFY_EXCLUSIVE);
                 if (notNotify.isEmpty())
-                    return CommonUtils.join(profiles, ", ");
+                    return CommonUtils.join(profiles, ", ", true);
                 else
-                    return CommonUtils.join(profiles, ", ") + " except " + CommonUtils.join(notNotify, ", ");
+                    return CommonUtils.join(profiles, ", ", true) + " except " + CommonUtils.join(notNotify, ", ", true);
             case DOWNLOAD:
                 List<String> notify = getByMode(Mode.NOTIFY_EXCLUSIVE);
                 if (notify.isEmpty())
                     return "Should stop, not notifying anything.";
                 else
-                    return CommonUtils.join(profiles, ", ") + " for " + CommonUtils.join(notify, ", ");
+                    return CommonUtils.join(profiles, ", ", true) + " for " + CommonUtils.join(notify, ", ", true);
             default:
             case NOT:
                 return "Not started";
