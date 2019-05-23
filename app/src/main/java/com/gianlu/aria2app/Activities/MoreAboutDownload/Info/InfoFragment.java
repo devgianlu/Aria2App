@@ -235,7 +235,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                         geoIP.getIPDetails(uri.getHost(), getActivity(), new GeoIP.OnIpDetails() {
                             @Override
                             public void onDetails(@NonNull IPDetails details) {
-                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(getContext(), details.countryCode));
+                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(layout.getContext(), details.countryCode));
                             }
 
                             @Override
