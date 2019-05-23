@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddUriActivity;
+import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -95,6 +96,8 @@ public class WebViewActivity extends ActivityWithDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        CookieManager.getInstance().removeAllCookies(null);
+
         try {
             web = new WebView(this);
             setContentView(web);
@@ -117,6 +120,7 @@ public class WebViewActivity extends ActivityWithDialog {
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
+        settings.setUserAgentString(settings.getUserAgentString() + " " + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR);
 
         client = new OkHttpClient();
         web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
@@ -173,6 +177,9 @@ public class WebViewActivity extends ActivityWithDialog {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.webView_goTo) {
             showGoToDialog(false);
+            return true;
+        } else if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
             return true;
         }
 
