@@ -364,6 +364,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         fabBatchAdd.setOnClickListener(v -> startActivity(new Intent(this, BatchAddActivity.class)));
         FloatingActionButton fabWebView = findViewById(R.id.mainFab_webView);
         fabWebView.setOnClickListener(v -> startActivity(new Intent(this, WebViewActivity.class)));
+        if (!Utils.hasWebView(this)) fabWebView.setVisibility(View.GONE);
 
         recyclerViewLayout.startLoading();
 

@@ -80,6 +80,10 @@ public final class Utils {
         streamableMimeTypes.add("misc/ultravox");
     }
 
+    public static boolean hasWebView(@NonNull Context context) {
+        return context.getPackageManager().hasSystemFeature("android.software.webview");
+    }
+
     public static boolean isStreamable(String mime) {
         for (String supported : streamableMimeTypes) {
             if (supported.charAt(0) == '*') {

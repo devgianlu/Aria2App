@@ -421,16 +421,18 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 return false;
             }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.useWebView)
-                    .setMessage(R.string.useWebView_message)
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> launchWebView())
-                    .setNeutralButton(android.R.string.no, (dialog, which) -> launchMain());
-            showDialog(builder);
-        } else {
-            launchMain();
+            if (Utils.hasWebView(this)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.useWebView)
+                        .setMessage(R.string.useWebView_message)
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> launchWebView())
+                        .setNeutralButton(android.R.string.no, (dialog, which) -> launchMain());
+                showDialog(builder);
+                return false;
+            }
         }
 
+        launchMain();
         return false;
     }
 
