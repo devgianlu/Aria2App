@@ -135,7 +135,9 @@
         </activity>
 
         <!-- WebView activity -->
-        <activity android:name=".WebView.WebViewActivity" />
+        <activity
+            android:name=".WebView.WebViewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Edit profile activity -->
         <activity

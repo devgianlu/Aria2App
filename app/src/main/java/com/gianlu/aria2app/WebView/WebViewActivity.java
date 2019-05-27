@@ -1,20 +1,21 @@
 package com.gianlu.aria2app.WebView;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.AndroidRuntimeException;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +47,7 @@ public class WebViewActivity extends ActivityWithDialog {
     private final List<InterceptedRequest> interceptedRequests = new ArrayList<>();
     private OkHttpClient client;
     private WebView web;
+    private ProgressBar progress;
 
     @Nullable
     private static Request buildRequest(@NonNull WebResourceRequest req) {
@@ -96,21 +98,13 @@ public class WebViewActivity extends ActivityWithDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_webview);
+        setSupportActionBar(findViewById(R.id.webView_toolbar));
 
         CookieManager.getInstance().removeAllCookies(null);
 
-        try {
-            web = new WebView(this);
-            setContentView(web);
-        } catch (RuntimeException ex) {
-            if (ex.getCause() instanceof AndroidRuntimeException &&
-                    ex.getCause().getCause() instanceof PackageManager.NameNotFoundException) {
-                finish();
-                return;
-            }
-
-            throw ex;
-        }
+        web = findViewById(R.id.webView_webView);
+        progress = findViewById(R.id.webView_progress);
 
         setTitle(getString(R.string.webView) + " - " + getString(R.string.app_name));
 
@@ -152,6 +146,17 @@ public class WebViewActivity extends ActivityWithDialog {
                     Logging.log(ex);
                     return null;
                 }
+            }
+        });
+
+        web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+
+                progress.setProgress(newProgress);
+                if (newProgress == 100) progress.setVisibility(View.GONE);
+                else progress.setVisibility(View.VISIBLE);
             }
         });
 
