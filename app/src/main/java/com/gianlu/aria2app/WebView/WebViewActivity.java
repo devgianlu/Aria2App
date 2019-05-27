@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.BuildConfig;
+import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
@@ -113,10 +114,8 @@ public class WebViewActivity extends ActivityWithDialog {
 
         setTitle(getString(R.string.webView) + " - " + getString(R.string.app_name));
 
-        if (getIntent().getBooleanExtra("canGoBack", true)) {
-            ActionBar bar = getSupportActionBar();
-            if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
-        }
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) bar.setDisplayHomeAsUpEnabled(true);
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -164,7 +163,12 @@ public class WebViewActivity extends ActivityWithDialog {
     @Override
     public void onBackPressed() {
         if (web != null && web.canGoBack()) web.goBack();
-        else super.onBackPressed();
+        else customBackPressed();
+    }
+
+    private void customBackPressed() {
+        if (getIntent().getBooleanExtra("canGoBack", true)) super.onBackPressed();
+        else LoadingActivity.startActivity(this);
     }
 
     @Override
@@ -179,7 +183,7 @@ public class WebViewActivity extends ActivityWithDialog {
             showGoToDialog(false);
             return true;
         } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            customBackPressed();
             return true;
         }
 
