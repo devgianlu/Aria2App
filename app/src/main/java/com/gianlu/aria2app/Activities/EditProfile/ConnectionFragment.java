@@ -100,10 +100,10 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
                             GeoIP.get().getIPDetails(lastAddress, getActivity(), new GeoIP.OnIpDetails() {
                                 @Override
                                 public void onDetails(@NonNull IPDetails details) {
-                                    if (isAdded()) {
+                                    if (!isAdded()) return;
+
                                         addressFlag.setVisibility(View.VISIBLE);
-                                        addressFlag.setImageDrawable(flags.loadFlag(address.getContext(), details.countryCode));
-                                    }
+                                    addressFlag.setImageDrawable(flags.loadFlag(requireContext(), details.countryCode));
                                 }
 
                                 @Override
