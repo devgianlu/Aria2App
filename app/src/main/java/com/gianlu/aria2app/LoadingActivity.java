@@ -350,6 +350,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         if (share) pickerHint.setText(R.string.pickProfile_someAction);
         else pickerHint.setText(R.string.pickProfile);
 
+        if (manager == null) manager = ProfilesManager.get(this);
         List<MultiProfile> profiles = manager.getProfiles();
         if (share && profiles.size() == 1) {
             tryConnecting(profiles.get(0));
