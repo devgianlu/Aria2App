@@ -49,11 +49,7 @@ public class Base64Fragment extends FragmentWithDialog {
     private void showFilePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        if (getArguments() == null || getArguments().getBoolean("torrent", true))
-            intent.setType("application/x-bittorrent");
-        else
-            intent.setType("application/metalink4+xml,application/metalink+xml");
+        intent.setType("*/*");
 
         try {
             startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);

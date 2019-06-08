@@ -7,6 +7,9 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
 
 import java.io.ByteArrayOutputStream;
@@ -15,9 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public abstract class AddBase64Bundle extends AddDownloadBundle implements Serializable {
     public final String base64;
@@ -80,22 +80,61 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
         return name;
     }
 
+    @Nullable
+    private static String getFilename(@NonNull Context context, @NonNull Uri uri) {
+        try (Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Files.FileColumns.DISPLAY_NAME}, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
+                return cursor.getString(0);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    @Nullable
+    private static String parseExtension(@NonNull String ext) {
+        switch (ext) {
+            case "meta4":
+                return "application/metalink4+xml";
+            case "meta":
+                return "application/metalink+xml";
+            case "torrent":
+                return "application/x-bittorrent";
+            default:
+                return MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+        }
+    }
+
     @NonNull
     public static String extractMimeType(@NonNull Context context, @NonNull Uri uri) throws CannotReadException {
+        String mime;
         if (Objects.equals(uri.getScheme(), "file")) {
-            String ext = MimeTypeMap.getFileExtensionFromUrl(uri.getPath());
-            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+            mime = parseExtension(MimeTypeMap.getFileExtensionFromUrl(uri.getPath()));
             if (mime != null) return mime;
         }
+
+        String filename = getFilename(context, uri);
+        if (filename != null) {
+            int index = filename.lastIndexOf('.');
+            if (index != -1) {
+                mime = parseExtension(filename.substring(index + 1).toLowerCase());
+                if (mime != null) return mime;
+            }
+        }
+
+        mime = context.getContentResolver().getType(uri);
+        if (mime != null && !mime.isEmpty()) return mime;
 
         try (Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.MediaColumns.MIME_TYPE}, null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                 return cursor.getString(0);
             } else {
+
+
                 String name = extractFilename(context, uri);
                 String[] split = name.split("\\.");
                 String ext = split[split.length - 1];
-                String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
                 if (mime != null) return mime;
             }
         } catch (Exception ex) {
