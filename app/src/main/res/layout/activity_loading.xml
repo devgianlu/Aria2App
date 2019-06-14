@@ -9,7 +9,8 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="64dp">
 
         <View
             android:layout_width="match_parent"
@@ -69,8 +70,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="@string/pickProfile"
                 android:textAlignment="center"
                 android:textColor=" @color/bright_foreground_dark" />
@@ -80,9 +81,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:paddingBottom="8dp"
-                android:paddingEnd="48dp"
                 android:paddingStart="48dp"
+                android:paddingEnd="48dp"
+                android:paddingBottom="8dp"
                 android:scrollbars="vertical"
                 tools:ignore="NestedWeights" />
 
@@ -96,11 +97,6 @@
                 android:src="@drawable/baseline_add_circle_24"
                 android:tint="@color/bright_foreground_dark" />
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.6" />
     </LinearLayout>
 
     <LinearLayout
