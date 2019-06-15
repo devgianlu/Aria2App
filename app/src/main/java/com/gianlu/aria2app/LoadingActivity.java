@@ -77,6 +77,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private MultiProfile.UserProfile aria2AndroidProfile = null;
     private Closeable ongoingTest;
     private volatile MultiProfile startAria2ServiceOn = null;
+    private View pickerSpacing;
 
     public static void startActivity(@NonNull Context context) {
         context.startActivity(new Intent(context, LoadingActivity.class)
@@ -100,6 +101,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         connecting = findViewById(R.id.loading_connecting);
         picker = findViewById(R.id.loading_picker);
+        pickerSpacing = findViewById(R.id.loading_pickerSpacing);
         pickerHint = findViewById(R.id.loading_pickerHint);
         pickerList = findViewById(R.id.loading_pickerList);
         seeError = findViewById(R.id.loading_seeError);
@@ -202,6 +204,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             public void permissionGranted(@NonNull String permission) {
                 connecting.setVisibility(View.VISIBLE);
                 picker.setVisibility(View.GONE);
+                pickerSpacing.setVisibility(View.VISIBLE);
                 seeError.setVisibility(View.GONE);
                 cancel.setVisibility(View.GONE);
 
@@ -297,6 +300,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
         connecting.setVisibility(View.VISIBLE);
         picker.setVisibility(View.GONE);
+        pickerSpacing.setVisibility(View.VISIBLE);
         seeError.setVisibility(View.GONE);
         cancel.setVisibility(View.GONE);
 
@@ -346,6 +350,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private void displayPicker(boolean share) {
         connecting.setVisibility(View.GONE);
         picker.setVisibility(View.VISIBLE);
+        pickerSpacing.setVisibility(View.GONE);
 
         if (share) pickerHint.setText(R.string.pickProfile_someAction);
         else pickerHint.setText(R.string.pickProfile);

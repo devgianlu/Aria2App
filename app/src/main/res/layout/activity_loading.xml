@@ -97,6 +97,12 @@
                 android:src="@drawable/baseline_add_circle_24"
                 android:tint="@color/bright_foreground_dark" />
         </LinearLayout>
+
+        <View
+            android:id="@+id/loading_pickerSpacing"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.4" />
     </LinearLayout>
 
     <LinearLayout
