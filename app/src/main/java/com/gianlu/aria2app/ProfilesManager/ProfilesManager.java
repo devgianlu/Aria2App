@@ -49,7 +49,7 @@ public class ProfilesManager {
 
     @NonNull
     public static String getId(@NonNull String name) {
-        return Base64.encodeToString(name.getBytes(), Base64.URL_SAFE);
+        return Base64.encodeToString(name.getBytes(), Base64.URL_SAFE | Base64.NO_WRAP);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
