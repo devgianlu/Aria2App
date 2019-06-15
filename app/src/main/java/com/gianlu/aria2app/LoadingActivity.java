@@ -75,7 +75,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     private String shortcutAction;
     private Handler handler;
     private MultiProfile.UserProfile aria2AndroidProfile = null;
-    private Closeable ongoingTest;
+    private volatile Closeable ongoingTest;
     private volatile MultiProfile startAria2ServiceOn = null;
     private View pickerSpacing;
 
@@ -293,6 +293,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void tryConnecting(@Nullable MultiProfile profile) {
+        if (ongoingTest != null) return;
+
         if (profile != null && profile.isInAppDownloader() && profile != startAria2ServiceOn) {
             connectToInAppDownloader(profile);
             return;
