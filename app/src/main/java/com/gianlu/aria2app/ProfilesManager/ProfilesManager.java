@@ -49,7 +49,7 @@ public class ProfilesManager {
 
     @NonNull
     public static String getId(@NonNull String name) {
-        return Base64.encodeToString(name.getBytes(), Base64.NO_WRAP);
+        return Base64.encodeToString(name.getBytes(), Base64.URL_SAFE);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -136,16 +136,24 @@ public class ProfilesManager {
 
     @NonNull
     private String[] getProfileIds() {
-        String[] profiles = profilesPath.list((dir, name) -> name.endsWith(".profile"));
+        File[] profiles = profilesPath.listFiles((dir, name) -> name.endsWith(".profile"));
 
         if (profiles == null) return new String[0];
 
+        String[] ids = new String[profiles.length];
         for (int i = 0; i < profiles.length; i++) {
-            String id = profiles[i];
-            profiles[i] = id.substring(0, id.length() - 8);
+            File file = profiles[i];
+            String id = file.getName().substring(0, file.getName().length() - 8);
+            if (id.contains("+")) {
+                id = id.replace('+', '-');
+                if (!file.renameTo(new File(file.getParentFile(), id + ".profile")))
+                    Logging.log("Failed renaming profile: " + id, true);
+            }
+
+            ids[i] = id;
         }
 
-        return profiles;
+        return ids;
     }
 
     @NonNull
