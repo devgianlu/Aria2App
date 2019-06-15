@@ -26,11 +26,13 @@ import com.gianlu.aria2app.Activities.AddDownload.AddUriBundle;
 import com.gianlu.aria2app.Activities.AddUriActivity;
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.LoadingActivity;
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.Preferences.Prefs;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,6 +95,14 @@ public class WebViewActivity extends ActivityWithDialog {
 
         return new WebResourceResponse(mimeType, resp.header("Content-Encoding"),
                 code, message, headers, resp.body() == null ? null : resp.body().byteStream());
+    }
+
+    @NonNull
+    private static String guessUrl(@NonNull String url) {
+        if (!url.contains("://") && !url.startsWith("http"))
+            url = "http://" + url;
+
+        return url;
     }
 
     @Override
@@ -168,8 +178,12 @@ public class WebViewActivity extends ActivityWithDialog {
         });
 
         Uri uri = getIntent().getParcelableExtra("shareData");
-        if (uri != null) web.loadUrl(uri.toString());
-        else showGoToDialog(true);
+        if (uri != null)
+            web.loadUrl(uri.toString());
+        else if (Prefs.has(PK.WEBVIEW_HOMEPAGE))
+            web.loadUrl(Prefs.getString(PK.WEBVIEW_HOMEPAGE, null));
+        else
+            showGoToDialog(true);
     }
 
     @Override
@@ -205,14 +219,18 @@ public class WebViewActivity extends ActivityWithDialog {
     private void showGoToDialog(boolean compulsory) {
         EditText input = new EditText(this);
         input.setSingleLine(true);
-        input.setHint("https://example.com");
+        input.setHint(R.string.webViewUrlHint);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.goTo)
                 .setView(input)
                 .setCancelable(!compulsory)
-                .setPositiveButton(R.string.visit, (dialog, which) -> web.loadUrl(input.getText().toString()));
+                .setNeutralButton(R.string.setAsDefault, (dialog, which) -> {
+                    Prefs.putString(PK.WEBVIEW_HOMEPAGE, guessUrl(input.getText().toString()));
+                    web.loadUrl(guessUrl(input.getText().toString()));
+                })
+                .setPositiveButton(R.string.visit, (dialog, which) -> web.loadUrl(guessUrl(input.getText().toString())));
 
         if (compulsory)
             builder.setNegativeButton(android.R.string.cancel, (d, i) -> onBackPressed());
