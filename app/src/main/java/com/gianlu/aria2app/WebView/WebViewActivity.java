@@ -98,7 +98,14 @@ public class WebViewActivity extends ActivityWithDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_webview);
+
+        try {
+            setContentView(R.layout.activity_webview);
+        } catch (RuntimeException ex) {
+            onBackPressed();
+            return;
+        }
+
         setSupportActionBar(findViewById(R.id.webView_toolbar));
 
         CookieManager.getInstance().removeAllCookies(null);
