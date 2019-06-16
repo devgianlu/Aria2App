@@ -339,4 +339,6 @@
     <string name="prefs_notificationType_summary">选择要接收的通知类型</string>
     <string name="prefs_enableNotificationsAtBoot">手机启动时启动通知服务</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
+    <string name="setAsDefault">设置为默认</string>
+    <string name="webViewUrlHint">请输入要访问的网址...</string>
 </resources>
