@@ -28,6 +28,7 @@ import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
@@ -229,6 +230,7 @@ public class WebViewActivity extends ActivityWithDialog {
                 .setNeutralButton(R.string.setAsDefault, (dialog, which) -> {
                     Prefs.putString(PK.WEBVIEW_HOMEPAGE, guessUrl(input.getText().toString()));
                     web.loadUrl(guessUrl(input.getText().toString()));
+                    ThisApplication.sendAnalytics(Utils.ACTION_WEBVIEW_SET_HOMEPAGE);
                 })
                 .setPositiveButton(R.string.visit, (dialog, which) -> web.loadUrl(guessUrl(input.getText().toString())));
 

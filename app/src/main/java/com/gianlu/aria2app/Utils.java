@@ -50,6 +50,7 @@ public final class Utils {
     public static final String ACTION_NEW_BATCH = "new_batch_add";
     public static final String ACTION_INTERCEPTED_WEBVIEW = "intercepted_webview";
     public static final String ACTION_USE_IN_APP_DOWNLOADER = "use_in_app_downloader";
+    public static final String ACTION_WEBVIEW_SET_HOMEPAGE = "set_webview_homepage";
     private static final Collection<String> streamableMimeTypes = new HashSet<>();
 
     static {
