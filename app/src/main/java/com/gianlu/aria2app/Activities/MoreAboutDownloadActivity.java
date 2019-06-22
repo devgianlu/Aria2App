@@ -6,6 +6,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesFragment;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.Info.InfoFragment;
@@ -27,12 +33,6 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Toaster;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
 
 public class MoreAboutDownloadActivity extends UpdaterActivity {
     private PagerAdapter<UpdaterFragment<?>> adapter;
@@ -221,7 +221,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
         try {
             super.onBackPressed();
-        } catch (NullPointerException ex) {
+        } catch (NullPointerException | IllegalStateException ex) {
             Logging.log(ex);
         }
     }
