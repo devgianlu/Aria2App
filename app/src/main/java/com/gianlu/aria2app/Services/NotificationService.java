@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -108,12 +109,14 @@ public class NotificationService extends Service {
     private static void startInternal(@NonNull Context context, @NonNull StartedFrom startedFrom) {
         debug("Called start service, startedFrom=" + startedFrom);
         if (ProfilesManager.get(context).hasNotificationProfiles(context)) {
-            try {
-                ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
-                        .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
-            } catch (SecurityException ex) {
-                Logging.log("Cannot start notification service.", ex);
-            }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                try {
+                    ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
+                            .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
+                } catch (SecurityException ex) {
+                    Logging.log("Cannot start notification service.", ex);
+                }
+            });
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
         }
