@@ -359,7 +359,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             onBackPressed();
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
-        } catch (JSONException | IOException ex) {
+        } catch (JSONException | IOException | IllegalStateException ex) {
             Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
         }
 

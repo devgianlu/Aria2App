@@ -136,8 +136,6 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                     .setTitle(R.string.oldAria2AppNoInApp)
                     .setMessage(R.string.oldAria2AppNoInApp_message)
                     .setNeutralButton(android.R.string.ok, null));
-            displayPicker(hasShareData());
-            return;
         }
 
         manager = ProfilesManager.get(this);

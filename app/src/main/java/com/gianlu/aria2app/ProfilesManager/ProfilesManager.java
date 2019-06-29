@@ -197,7 +197,7 @@ public class ProfilesManager {
 
             try {
                 save(inApp);
-            } catch (IOException | JSONException ex) {
+            } catch (IOException | JSONException | IllegalStateException ex) {
                 Logging.log("Failed saving in-app downloader profile.", ex);
             }
         }

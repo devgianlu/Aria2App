@@ -120,7 +120,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
 
                 @Override
                 public void onException(@NonNull Exception ex) {
-                    if (!isAdded()) return;
+                    if (!isAdded() || getContext() == null) return;
 
                     dismissAllowingStateLoss();
                     DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
