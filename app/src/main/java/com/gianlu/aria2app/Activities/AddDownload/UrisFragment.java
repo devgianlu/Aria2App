@@ -164,7 +164,8 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
 
         AddDownloadBundle bundle = (AddDownloadBundle) getArguments().getSerializable("edit");
         boolean hasUri = false;
-        if (bundle instanceof AddUriBundle) hasUri = !((AddUriBundle) bundle).uris.isEmpty();
+        if (bundle instanceof AddUriBundle)
+            hasUri = !((AddUriBundle) bundle).uris.isEmpty();
         else if (bundle instanceof AddTorrentBundle)
             hasUri = !((AddTorrentBundle) bundle).uris.isEmpty();
 
@@ -173,7 +174,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
 
     @Nullable
     public ArrayList<String> getUris() {
-        return adapter != null ? adapter.getUris() : null;
+        return adapter != null || (adapter = (UrisAdapter) list.getAdapter()) != null ? adapter.getUris() : null;
     }
 
     @Override
