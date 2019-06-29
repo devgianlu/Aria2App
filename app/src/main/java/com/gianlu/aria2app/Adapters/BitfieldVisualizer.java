@@ -98,6 +98,8 @@ public class BitfieldVisualizer extends View {
 
     @NonNull
     private static int[] hexToBinary(@NonNull String hex, int num) {
+        if (hex.isEmpty()) return new int[0];
+
         num = (int) Math.ceil(num / 4f);
 
         int[] array = new int[num];
@@ -191,7 +193,7 @@ public class BitfieldVisualizer extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (binary == null || squares == -1) return;
+        if (binary == null || squares == -1 || binary.length == 0) return;
 
         int i = 0;
         for (int row = 0; row < rows; row++) {
@@ -201,7 +203,8 @@ public class BitfieldVisualizer extends View {
                 if (binary[i] != 0) {
                     if (i == squares - 1 && numPieces % 4 != 0)
                         paint.setAlpha(255 / (numPieces % 4) * binary[i]);
-                    else paint.setAlpha(255 / 4 * binary[i]);
+                    else
+                        paint.setAlpha(255 / 4 * binary[i]);
 
                     calcSquarePos(row, column, rect);
                     canvas.drawRect(rect, paint);
