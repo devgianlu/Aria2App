@@ -341,4 +341,5 @@
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
     <string name="setAsDefault">设置为默认</string>
     <string name="webViewUrlHint">请输入要访问的网址...</string>
+    <string name="startPaused">添加后暂停任务</string>
 </resources>
