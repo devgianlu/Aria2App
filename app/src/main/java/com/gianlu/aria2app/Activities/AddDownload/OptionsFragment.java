@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,7 @@ import java.util.Set;
 public class OptionsFragment extends FragmentWithDialog implements OptionsAdapter.Listener {
     private EditText position;
     private EditText filename;
+    private Switch pause;
     private OptionsAdapter adapter;
     private OptionsView optionsView;
     private MessageView message;
@@ -72,6 +74,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         final ProgressBar loading = layout.findViewById(R.id.optionsFragment_loading);
         message = layout.findViewById(R.id.optionsFragment_message);
         position = layout.findViewById(R.id.optionsFragment_position);
+        pause = layout.findViewById(R.id.optionsFragment_pause);
         filename = layout.findViewById(R.id.optionsFragment_filename);
         optionsView = layout.findViewById(R.id.optionsFragment_options);
 
@@ -186,6 +189,8 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         for (Option option : options)
             if (option.isValueChanged())
                 map.put(option.name, option.newValue);
+
+        if (pause.isChecked()) map.put("pause", "true");
 
         return map;
     }

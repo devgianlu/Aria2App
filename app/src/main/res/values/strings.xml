@@ -352,4 +352,5 @@
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
     <string name="setAsDefault">Set as default</string>
     <string name="webViewUrlHint">Enter an URL to visit...</string>
+    <string name="startPaused">Pause download when added</string>
 </resources>
