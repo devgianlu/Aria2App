@@ -12,13 +12,13 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import java.util.Locale;
-import java.util.Random;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import java.util.Locale;
+import java.util.Random;
 
 public class DonutProgress extends View {
     private final Rect textBound = new Rect();
@@ -97,12 +97,13 @@ public class DonutProgress extends View {
     }
 
     public void setProgress(float progress) {
+        if (Float.isNaN(progress)) progress = 0;
+
         sweepAngle = (int) ((progress / 100) * 360);
         if (progress == 100) percentage = "100";
         else percentage = String.format(Locale.getDefault(), "%.1f", progress);
+
         textPaint.getTextBounds(percentage, 0, percentage.length(), textBound);
         invalidate();
     }
-
-
 }
