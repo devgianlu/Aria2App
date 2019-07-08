@@ -323,7 +323,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     @Nullable
-    private MultiProfile buildProfile() throws InvalidFieldException { // FIXME: Returns null when messing up with conditions
+    private MultiProfile buildProfile() throws InvalidFieldException {
         String profileName = CommonUtils.getText(this.profileName).trim();
         if (profileName.isEmpty()
                 || (ProfilesManager.get(this).profileExists(ProfilesManager.getId(profileName)) && editProfile == null)

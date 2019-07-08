@@ -33,6 +33,7 @@ public class Base64Fragment extends FragmentWithDialog {
     @NonNull
     public static Base64Fragment getInstance(Context context, boolean torrent, @Nullable Uri uri) {
         Base64Fragment fragment = new Base64Fragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putBoolean("torrent", torrent);
         args.putString("title", context.getString(R.string.file));

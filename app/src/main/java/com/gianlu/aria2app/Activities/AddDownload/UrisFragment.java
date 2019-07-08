@@ -40,6 +40,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
     @NonNull
     public static UrisFragment getInstance(Context context, boolean compulsory, @Nullable URI uri) {
         UrisFragment fragment = new UrisFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putBoolean("compulsory", compulsory);
         args.putString("title", context.getString(R.string.uris));
@@ -51,6 +52,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
     @NonNull
     public static UrisFragment getInstance(Context context, @NonNull AddDownloadBundle bundle) {
         UrisFragment fragment = new UrisFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putBoolean("compulsory", bundle instanceof AddUriBundle);
         args.putString("title", context.getString(R.string.uris));
@@ -174,7 +176,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
 
     @Nullable
     public ArrayList<String> getUris() {
-        return adapter != null || (adapter = (UrisAdapter) list.getAdapter()) != null ? adapter.getUris() : null;
+        return adapter != null || (list != null && (adapter = (UrisAdapter) list.getAdapter()) != null) ? adapter.getUris() : null;
     }
 
     @Override

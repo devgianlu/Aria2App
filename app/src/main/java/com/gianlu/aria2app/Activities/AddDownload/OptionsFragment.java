@@ -49,6 +49,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
     @NonNull
     public static OptionsFragment getInstance(Context context, boolean isUri) {
         OptionsFragment fragment = new OptionsFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.options));
         args.putBoolean("isUri", isUri);
@@ -59,6 +60,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
     @NonNull
     public static OptionsFragment getInstance(Context context, @NonNull AddDownloadBundle bundle) {
         OptionsFragment fragment = new OptionsFragment();
+        fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.options));
         args.putBoolean("isUri", bundle instanceof AddUriBundle);
