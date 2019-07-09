@@ -272,9 +272,11 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 String text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
                 if (text != null) return Uri.parse(text);
             } else {
+                grantUriPermission("com.gianlu.aria2app", data, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 return data;
             }
         } else {
+            grantUriPermission("com.gianlu.aria2app", stream, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             return stream;
         }
 
