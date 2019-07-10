@@ -97,8 +97,8 @@ public class BitfieldVisualizer extends View {
     }
 
     @NonNull
-    private static int[] hexToBinary(@NonNull String hex, int num) {
-        if (hex.isEmpty()) return new int[0];
+    private static int[] hexToBinary(String hex, int num) {
+        if (hex == null || hex.isEmpty()) return new int[0];
 
         num = (int) Math.ceil(num / 4f);
 
