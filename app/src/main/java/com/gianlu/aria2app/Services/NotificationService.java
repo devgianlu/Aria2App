@@ -40,6 +40,7 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
@@ -116,6 +117,8 @@ public class NotificationService extends Service {
                 } catch (SecurityException ex) {
                     Logging.log("Cannot start notification service.", ex);
                 }
+
+                AnalyticsApplication.setCrashlyticsLong("notificationService_intentTime", System.currentTimeMillis());
             });
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
@@ -154,6 +157,8 @@ public class NotificationService extends Service {
                 stopSelf();
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
+                    AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime", System.currentTimeMillis());
+
                     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                     profiles = loadProfiles(this);
