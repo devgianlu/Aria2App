@@ -167,22 +167,22 @@
         <!-- Add download activities -->
         <activity
             android:name=".Activities.AddUriActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.URI" />
         <activity
             android:name=".Activities.AddTorrentActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Torrent" />
         <activity
             android:name=".Activities.AddMetalinkActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Metalink" />
         <activity
             android:name=".Activities.BatchAddActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.Batch" />
 

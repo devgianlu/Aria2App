@@ -3,13 +3,13 @@ package com.gianlu.aria2app.NetIO.Updater;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
-import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
-
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
+import com.gianlu.aria2app.NetIO.OnRefresh;
+import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 
 public abstract class UpdaterFragment<P> extends FragmentWithDialog implements Receiver<P>, ReceiverOwner {
     private boolean calledLoad = false;
@@ -77,7 +77,7 @@ public abstract class UpdaterFragment<P> extends FragmentWithDialog implements R
 
     @Override
     @CallSuper
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         if (context instanceof UpdaterActivity) {
             UpdaterActivity activity = (UpdaterActivity) context;
             this.framework = activity.getFramework();
