@@ -11,7 +11,6 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
@@ -19,12 +18,13 @@ import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.Interface.Aria2ConfigurationScreen;
 import com.gianlu.aria2lib.Internal.Message;
+import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.FileUtil;
 import com.gianlu.commonutils.Logging;
 
 import java.util.List;
 
-public class InAppAria2ConfActivity extends AppCompatActivity implements Aria2Ui.Listener {
+public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2Ui.Listener {
     private static final int STORAGE_ACCESS_CODE = 3;
     private Aria2ConfigurationScreen screen;
     private ToggleButton toggle;

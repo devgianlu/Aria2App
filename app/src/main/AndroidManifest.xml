@@ -134,6 +134,7 @@
         <!-- Main activity -->
         <activity
             android:name=".Main.MainActivity"
+            android:configChanges="uiMode"
             android:theme="@style/AppTheme.NoActionBar.Drawer">
             <meta-data
                 android:name="android.app.searchable"
@@ -143,6 +144,7 @@
         <!-- WebView activity -->
         <activity
             android:name=".WebView.WebViewActivity"
+            android:configChanges="uiMode"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Edit profile activity -->
@@ -157,6 +159,7 @@
         <activity
             android:name=".InAppAria2.InAppAria2ConfActivity"
             android:screenOrientation="portrait"
+            android:configChanges="uiMode"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- DirectDownload activity -->
@@ -190,18 +193,23 @@
         <activity
             android:name=".Activities.MoreAboutDownloadActivity"
             android:parentActivityName=".Main.MainActivity"
+            android:configChanges="uiMode"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
-        <activity android:name=".PreferenceActivity" />
+        <activity
+            android:name=".PreferenceActivity"
+            android:configChanges="uiMode" />
 
         <!-- Logs activity -->
-        <activity android:name="com.gianlu.commonutils.LogsActivity" />
+        <activity
+            android:name="com.gianlu.commonutils.LogsActivity"
+            android:configChanges="uiMode" />
 
         <!-- Search Torrent activity -->
         <activity
             android:name=".Activities.SearchActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:windowSoftInputMode="stateHidden">
             <meta-data
