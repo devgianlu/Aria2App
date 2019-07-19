@@ -268,7 +268,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             super(inflater.inflate(R.layout.item_direct_download, parent, false));
 
             status = itemView.findViewById(R.id.directDownloadItem_status);
-            FontsManager.set(status, FontsManager.ROBOTO_BOLD);
+            FontsManager.set(FontsManager.ROBOTO_BOLD, status);
             title = itemView.findViewById(R.id.directDownloadItem_title);
             uri = itemView.findViewById(R.id.directDownloadItem_uri);
             progress = itemView.findViewById(R.id.directDownloadItem_progress);

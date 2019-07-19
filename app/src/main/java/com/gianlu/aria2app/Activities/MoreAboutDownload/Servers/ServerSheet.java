@@ -15,6 +15,7 @@ import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.BottomSheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
@@ -69,9 +70,9 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull Server server) {
+    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull Server server) {
         inflater.inflate(R.layout.sheet_header_server, parent, true);
-        parent.setBackgroundResource(R.color.colorAccent_light);
+        parent.setBackgroundColorRes(R.color.colorAccent_light);
 
         downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
 

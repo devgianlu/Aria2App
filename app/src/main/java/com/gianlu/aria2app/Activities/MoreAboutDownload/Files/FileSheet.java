@@ -22,6 +22,7 @@ import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.BottomSheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
@@ -51,17 +52,17 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull SetupPayload payload) {
+    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
         inflater.inflate(R.layout.sheet_header_file, parent, true);
         fileIndex = payload.file.index;
 
-        parent.setBackgroundResource(payload.download.update().getBackgroundColor());
+        parent.setBackgroundColorRes(payload.download.update().getBackgroundColor());
 
         FileTypeTextView fileType = parent.findViewById(R.id.fileSheet_fileType);
         fileType.setFilename(payload.file.getName());
 
         percentage = parent.findViewById(R.id.fileSheet_percentage);
-        FontsManager.set(percentage, FontsManager.ROBOTO_MEDIUM);
+        FontsManager.set(FontsManager.ROBOTO_MEDIUM, percentage);
 
         TextView title = parent.findViewById(R.id.fileSheet_title);
         title.setText(payload.file.getName());

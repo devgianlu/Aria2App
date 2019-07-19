@@ -203,10 +203,10 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             int colorAccent = ContextCompat.getColor(getContext(), update.getColorAccent());
             chart.setNoDataTextColor(colorAccent);
             bitfield.setColor(colorAccent);
-            FontsManager.set(progress, FontsManager.ROBOTO_LIGHT);
-            FontsManager.set(downloadSpeed, FontsManager.ROBOTO_LIGHT);
-            FontsManager.set(uploadSpeed, FontsManager.ROBOTO_LIGHT);
-            FontsManager.set(remainingTime, FontsManager.ROBOTO_LIGHT);
+            FontsManager.set(FontsManager.ROBOTO_LIGHT, progress);
+            FontsManager.set(FontsManager.ROBOTO_LIGHT, downloadSpeed);
+            FontsManager.set(FontsManager.ROBOTO_LIGHT, uploadSpeed);
+            FontsManager.set(FontsManager.ROBOTO_LIGHT, remainingTime);
 
             pause.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.PAUSE, InfoFragment.this));
             start.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.RESUME, InfoFragment.this));

@@ -17,6 +17,7 @@ import com.gianlu.aria2app.NetIO.Geolocalization.IPDetailsView;
 import com.gianlu.aria2app.NetIO.PeerIdParser;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.BottomSheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
@@ -87,9 +88,9 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ViewGroup parent, @NonNull PeerWithPieces payload) {
+    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull PeerWithPieces payload) {
         inflater.inflate(R.layout.sheet_header_peer, parent, true);
-        parent.setBackgroundResource(R.color.colorTorrent);
+        parent.setBackgroundColorRes(R.color.colorTorrent);
         currentPeer = payload.peer;
         numPieces = payload.numPieces;
 
