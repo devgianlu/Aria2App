@@ -13,6 +13,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
 import com.gianlu.aria2app.Adapters.OptionsAdapter;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
@@ -30,17 +35,10 @@ import com.gianlu.commonutils.Toaster;
 
 import org.json.JSONException;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.concurrent.ThreadLocalRandom;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 
 public class OptionsDialog extends DialogFragment implements AbstractClient.OnResult<OptionsMap>, OptionsAdapter.Listener {
     private ProgressBar loading;
@@ -198,19 +196,20 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             if ((option.value == null || option.value.isEmpty()) && !option.isValueChanged())
                 continue;
 
-            builder.append(option.name).append('=');
-            if (option.newValue != null) builder.append(option.newValue);
-            else builder.append(option.value);
-            builder.append('\n');
+            OptionsMap.OptionValue optionVal = option.newValue != null ? option.newValue : option.value;
+            if (optionVal == null) continue;
+
+            for (String val : optionVal.values())
+                builder.append(option.name).append('=').append(val).append('\n');
         }
 
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "aria2app-exported-" + (global ? "global" : "download") + ".conf");
         if (file.exists())
             file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), ThreadLocalRandom.current().nextInt(1000) + "-aria2app-exported-" + (global ? "global" : "download") + ".conf");
 
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)))) {
-            writer.append(builder.toString());
-            writer.flush();
+        try (FileOutputStream out = new FileOutputStream(file, false)) {
+            out.write(builder.toString().getBytes());
+            out.flush();
         } catch (IOException ex) {
             DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedExportingOptions).ex(ex));
             return;

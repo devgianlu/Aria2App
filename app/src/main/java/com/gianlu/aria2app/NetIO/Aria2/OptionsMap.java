@@ -1,5 +1,8 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONArray;
@@ -12,9 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class OptionsMap extends HashMap<String, OptionsMap.OptionValue> {
 
@@ -67,6 +67,11 @@ public class OptionsMap extends HashMap<String, OptionsMap.OptionValue> {
 
         OptionValue(String... values) {
             this.values = values;
+        }
+
+        @NonNull
+        public String[] values() {
+            return values;
         }
 
         @NonNull
