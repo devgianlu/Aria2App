@@ -419,6 +419,8 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
         public void update(@NonNull DownloadWithUpdate download) {
             DownloadWithUpdate.SmallUpdate last = download.update();
             if (last.status == Download.Status.ACTIVE) {
+                detailsChart.setVisibility(View.VISIBLE);
+
                 LineData data = detailsChart.getData();
                 if (data == null) {
                     Utils.setupChart(detailsChart, true);
@@ -437,7 +439,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
                 }
             } else {
                 detailsChart.clear();
-                detailsChart.setNoDataText(last.status.getFormal(context, true));
+                detailsChart.setVisibility(View.GONE);
             }
 
             if (last.status == Download.Status.ERROR || last.status == Download.Status.REMOVED || last.status == Download.Status.COMPLETE)
@@ -448,11 +450,10 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             donutProgress.setProgress(last.getProgress());
             downloadName.setText(last.getName());
             if (last.status == Download.Status.ERROR) {
-                if (last.errorMessage == null) {
+                if (last.errorMessage == null)
                     downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d", last.status.getFormal(context, true), last.errorCode));
-                } else {
+                else
                     downloadStatus.setText(String.format(Locale.getDefault(), "%s #%d: %s", last.status.getFormal(context, true), last.errorCode, last.errorMessage));
-                }
             } else {
                 downloadStatus.setText(last.status.getFormal(context, true));
             }
@@ -460,7 +461,13 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
             customInfo.update(last);
 
             detailsCompletedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(last.completedLength, false));
-            detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(last.uploadLength, false));
+
+            if (last.isTorrent()) {
+                detailsUploadLength.setHtml(R.string.uploaded_length, CommonUtils.dimensionFormatter(last.uploadLength, false));
+                detailsUploadLength.setVisibility(View.VISIBLE);
+            } else {
+                detailsUploadLength.setVisibility(View.GONE);
+            }
 
             setupActions(download);
 

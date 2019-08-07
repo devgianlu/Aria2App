@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:layout_marginEnd="8dp"
     android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -61,20 +61,20 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:paddingEnd="16dp"
             android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:visibility="gone">
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/downloadCard_detailsChart"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="100dp" />
 
             <com.gianlu.commonutils.CasualViews.SuperTextView
                 android:id="@+id/downloadCard_detailsGid"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
 
             <com.gianlu.commonutils.CasualViews.SuperTextView
                 android:id="@+id/downloadCard_detailsTotalLength"
