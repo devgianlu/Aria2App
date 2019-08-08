@@ -130,6 +130,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private MessageView secondSpaceMessage;
     private ProfilesManager profilesManager;
     private TutorialManager tutorialManager;
+    private TextView filtersVerbose;
 
     @Override
     protected void onRestart() {
@@ -163,6 +164,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         for (String filter : checkedFiltersSet) filters.remove(Download.Status.valueOf(filter));
         adapter.setFilters(filters);
         adapter.sort(DownloadCardsAdapter.SortBy.valueOf(Prefs.getString(PK.A2_MAIN_SORTING)));
+
+        updateFiltersVerbose();
     }
 
     private void processFileUri(@NonNull Uri uri) {
@@ -336,6 +339,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         setTitle(currentProfile.getPrimaryText(this) + " - " + getString(R.string.app_name));
         drawerManager.setActiveItem(DrawerItem.HOME);
 
+        filtersVerbose = findViewById(R.id.main_filtersVerbose);
         active = findViewById(R.id.main_active);
         paused = findViewById(R.id.main_paused);
         stopped = findViewById(R.id.main_stopped);
@@ -668,10 +672,24 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                         if (checkedFilters[i]) set.add(filters[i].name());
 
                     Prefs.putSet(PK.A2_MAIN_FILTERS, set);
+
+                    updateFiltersVerbose();
                 })
                 .setNegativeButton(android.R.string.cancel, null);
 
         showDialog(builder);
+    }
+
+    private void updateFiltersVerbose() {
+        Set<String> filters = Prefs.getSet(PK.A2_MAIN_FILTERS);
+        if (filters.size() == Download.Status.values().length) {
+            filtersVerbose.setVisibility(View.GONE);
+        } else {
+            filtersVerbose.setVisibility(View.VISIBLE);
+            filtersVerbose.setText(getString(R.string.filtersShowingOnly, CommonUtils.join(filters, ", ",
+                    obj -> Download.Status.valueOf(obj).getFormal(MainActivity.this, true)),
+                    adapter == null ? 0 : adapter.getItemCount()));
+        }
     }
 
     @Override
@@ -817,10 +835,14 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     public void onItemCountUpdated(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerItem.HOME, count);
 
-        if (count == 0)
-            recyclerViewLayout.showInfo(R.string.noDownloads);
-        else
+        if (count == 0) {
+            if (Prefs.getSet(PK.A2_MAIN_FILTERS).size() == Download.Status.values().length)
+                recyclerViewLayout.showInfo(R.string.noDownloads_addOne);
+            else
+                recyclerViewLayout.showInfo(R.string.noDownloads_changeFilters);
+        } else {
             recyclerViewLayout.showList();
+        }
 
         tutorialManager.tryShowingTutorials(this);
     }

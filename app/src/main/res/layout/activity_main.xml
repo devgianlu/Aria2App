@@ -121,6 +121,16 @@
                     android:tint="@color/bright_foreground_dark" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/main_filtersVerbose"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout

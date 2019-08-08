@@ -83,12 +83,10 @@
     <string name="readExternalStorageRequest_title">需要读取权限</string>
     <string name="readExternalStorageRequest_certMessage">为了加载证书，Aria2App需要读取您的设备外部存储的权限。</string>
     <string name="readExternalStorageRequest_base64Message">为了加载种子/磁链接文件，Aria2App需要读取您的设备外部存储权限。</string>
-    <string name="noDownloads">没有可显示的下载任务。请尝试更改筛选条件或点击屏幕右下角的加号图标添加下载任务。</string>
     <string name="search">搜索</string>
     <string name="addUri">添加网址</string>
     <string name="directDownload">直接下载</string>
     <string name="quickGlobalOptions">快速全局选项</string>
-
     <string name="connecting">连接中…</string>
     <string name="completed">已完成</string>
     <string name="searchTorrent">寻找种子文件</string>
@@ -340,6 +338,6 @@
     <string name="prefs_enableNotificationsAtBoot">手机启动时启动通知服务</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
     <string name="setAsDefault">设置为默认</string>
-    <string name="webViewUrlHint">请输入要访问的网址...</string>
+    <string name="webViewUrlHint">请输入要访问的网址…</string>
     <string name="startPaused">添加后暂停任务</string>
 </resources>

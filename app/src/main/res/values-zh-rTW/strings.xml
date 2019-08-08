@@ -83,7 +83,6 @@
     <string name="readExternalStorageRequest_title">需要讀取權限</string>
     <string name="readExternalStorageRequest_certMessage">為了載入證書，Aria2App 需要讀取您的裝置外部儲存空間的權限。</string>
     <string name="readExternalStorageRequest_base64Message">為了載入種子/磁連結檔案，Aria2App 需要讀取您的裝置外部儲存空間權限。</string>
-    <string name="noDownloads">沒有可顯示的下載任務。請嘗試更改篩選條件或點擊螢幕右下角的加號按鈕新增下載任務。</string>
     <string name="search">搜尋</string>
     <string name="addUri">新增網址</string>
     <string name="directDownload">DirectDownload</string>

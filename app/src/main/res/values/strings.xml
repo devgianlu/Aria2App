@@ -85,12 +85,10 @@
     <string name="readExternalStorageRequest_title">Read permission required</string>
     <string name="readExternalStorageRequest_certMessage">In order to load the certificate Aria2App needs to read from your external storage.</string>
     <string name="readExternalStorageRequest_base64Message">In order to load the torrent/metalink file Aria2App needs to read from your external storage.</string>
-    <string name="noDownloads">There are no downloads to display. Try changing the filters or start a download by tapping on the plus icon in the bottom corner.</string>
     <string name="search">Search</string>
     <string name="addUri">Add URI</string>
     <string name="directDownload">DirectDownload</string>
     <string name="quickGlobalOptions">Quick global options</string>
-
     <string name="connecting">Connecting…</string>
     <string name="completed">Completed</string>
     <string name="searchTorrent">Search for torrents</string>
@@ -323,6 +321,12 @@
     <string name="cannotStartInAppWithoutWritePermission">The Aria2App in-app downloader needs to access the device storage to save files.</string>
     <string name="addWebViewShortcutToHomePage">Add WebView shortcut to homepage</string>
     <string name="addWebViewShortcutToHomePage_summary">Add a shortcut to the WebView on your homepage.</string>
+    <string name="setAsDefault">Set as default</string>
+    <string name="webViewUrlHint">Enter an URL to visit…</string>
+    <string name="startPaused">Pause download when added</string>
+    <string name="noDownloads_addOne">There are no downloads! You can add one by tapping the plus icon in the bottom right corner.</string>
+    <string name="noDownloads_changeFilters">There are no downloads to display! Try changing your filters.</string>
+    <string name="filtersShowingOnly">Showing only %s (%d)</string>
 
     <!-- Prefs -->
     <!-- - General -->
@@ -350,7 +354,4 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
-    <string name="setAsDefault">Set as default</string>
-    <string name="webViewUrlHint">Enter an URL to visit...</string>
-    <string name="startPaused">Pause download when added</string>
 </resources>
