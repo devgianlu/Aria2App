@@ -310,6 +310,12 @@
     <string name="cannotStartInAppWithoutWritePermission">为了可以保存文件，Aria2app的内置下载管理器需要写入设备存储的权限</string>
     <string name="addWebViewShortcutToHomePage">在主屏幕上添加WebView快捷方式</string>
     <string name="addWebViewShortcutToHomePage_summary">在您的主屏幕上添加一个指向WebView的快捷方式。</string>
+    <string name="setAsDefault">设置为默认</string>
+    <string name="webViewUrlHint">请输入要访问的网址…</string>
+    <string name="startPaused">添加后暂停任务</string>
+    <string name="noDownloads_addOne">没有下载任务。请点击屏幕右下角的加号图标添加下载任务。</string>
+    <string name="noDownloads_changeFilters">没有可显示的下载任务。请尝试更改筛选条件。</string>
+    <string name="filtersShowingOnly">仅显示%s (%d)</string>
     
     <!-- Prefs -->
     <!-- - General -->
@@ -337,7 +343,4 @@
     <string name="prefs_notificationType_summary">选择要接收的通知类型</string>
     <string name="prefs_enableNotificationsAtBoot">手机启动时启动通知服务</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
-    <string name="setAsDefault">设置为默认</string>
-    <string name="webViewUrlHint">请输入要访问的网址…</string>
-    <string name="startPaused">添加后暂停任务</string>
 </resources>
