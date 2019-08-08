@@ -3,6 +3,7 @@ package com.gianlu.aria2app;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -272,11 +274,15 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 String text = getIntent().getStringExtra(Intent.EXTRA_TEXT);
                 if (text != null) return Uri.parse(text);
             } else {
-                grantUriPermission("com.gianlu.aria2app", data, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    grantUriPermission("com.gianlu.aria2app", data, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                 return data;
             }
         } else {
-            grantUriPermission("com.gianlu.aria2app", stream, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                grantUriPermission("com.gianlu.aria2app", stream, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
             return stream;
         }
 

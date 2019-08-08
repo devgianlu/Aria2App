@@ -88,6 +88,8 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
             } else {
                 return null;
             }
+        } catch (RuntimeException ex) {
+            return null;
         }
     }
 
@@ -129,8 +131,6 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
             if (cursor != null && cursor.moveToFirst() && cursor.getColumnCount() > 0) {
                 return cursor.getString(0);
             } else {
-
-
                 String name = extractFilename(context, uri);
                 String[] split = name.split("\\.");
                 String ext = split[split.length - 1];
