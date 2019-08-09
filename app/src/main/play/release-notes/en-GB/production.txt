@@ -1,0 +1,4 @@
+Release 5.1.8:
+- Fixed "There are no uris!" error message
+- Fixed glitching when changing page
+- Minor bug fixes

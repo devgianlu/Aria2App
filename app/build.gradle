@@ -1,6 +1,11 @@
+plugins {
+    id 'com.github.triplet.play' version '2.2.1'
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
+def isTravis = System.getenv("CI") == "true"
 android {
     compileSdkVersion 28
 
@@ -12,11 +17,23 @@ android {
         versionName "5.1.8"
     }
 
+    if (isTravis) {
+        signingConfigs {
+            release {
+                storeFile file("../.travis/keystore.jks")
+                storePassword System.getenv("keystore_storePsswd")
+                keyAlias = System.getenv("keystore_keyAlias")
+                keyPassword System.getenv("keystore_keyPsswd")
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (isTravis) signingConfig signingConfigs.release
         }
     }
 
@@ -38,6 +55,20 @@ android {
     lintOptions {
         warning 'MissingTranslation'
     }
+
+    playConfigs {
+        foss {
+            commit = false
+            enabled = false
+        }
+    }
+}
+
+play {
+    enabled = isTravis
+    serviceAccountCredentials = file("../.travis/secrets.json")
+    track = "production"
+    releaseStatus = "draft"
 }
 
 dependencies {
@@ -50,4 +81,10 @@ dependencies {
     api 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     api 'com.getbase:floatingactionbutton:1.10.1'
     api 'org.apmem.tools:layouts:1.10@aar'
+}
+
+task printVersionName {
+    doLast {
+        println android.defaultConfig.versionName
+    }
 }

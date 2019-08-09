@@ -1,22 +1,41 @@
 language: android
 android:
   components:
-  - tools
-  - tools
-  - platform-tools
-  - build-tools-28.0.3
-  - android-28
-  - extra
+    - tools
+    - platform-tools
+    - build-tools-28.0.3
+    - android-28
+    - extra-google-google_play_services
 
 before_install:
-- chmod +x gradlew
+  - openssl aes-256-cbc -K $encrypted_ec73a101b94f_key -iv $encrypted_ec73a101b94f_iv
+    -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf .travis/secrets.tar -C .travis
+  - chmod +x gradlew .travis/*.sh
+
+script:
+  - .travis/build.sh
+
+before_deploy:
+  - export RELEASE_NOTES=$(cat app/src/main/play/release-notes/en-GB/production.txt)
+  - export RELEASE_NAME="Release $(./gradlew -q :app:printVersionName)"
+  - export APK_FILE=app/build/outputs/apk/foss/release/app-foss-release.apk
+
+deploy:
+  - provider: script
+    script: ./.travis/github-release.sh
+    skip_cleanup: true
+    on:
+      repo: devgianlu/Aria2App
+      branch: master
+      tags: true
 
 before_cache:
-- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
-  - $HOME/.gradle/caches/
-  - $HOME/.gradle/wrapper/
-  - $HOME/.android/build-cache
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+    - "$HOME/.android/build-cache"
