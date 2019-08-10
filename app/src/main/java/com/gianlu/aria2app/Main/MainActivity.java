@@ -836,7 +836,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (drawerManager != null) drawerManager.updateBadge(DrawerItem.HOME, count);
 
         if (count == 0) {
-            if (Prefs.getSet(PK.A2_MAIN_FILTERS).size() == Download.Status.values().length)
+            if (Prefs.getSet(PK.A2_MAIN_FILTERS).size() == Download.Status.values().length
+                    && (searchView.getQuery() == null || searchView.getQuery().length() == 0))
                 recyclerViewLayout.showInfo(R.string.noDownloads_addOne);
             else
                 recyclerViewLayout.showInfo(R.string.noDownloads_changeFilters);
@@ -850,6 +851,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     @Override
     public boolean onQueryTextSubmit(String query) {
         if (adapter != null) adapter.filterWithQuery(query);
+        updateFiltersVerbose();
         return true;
     }
 

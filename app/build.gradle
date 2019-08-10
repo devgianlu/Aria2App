@@ -81,6 +81,7 @@ dependencies {
     api 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     api 'com.getbase:floatingactionbutton:1.10.1'
     api 'org.apmem.tools:layouts:1.10@aar'
+    api 'androidx.documentfile:documentfile:1.0.1'
 }
 
 task printVersionName {
