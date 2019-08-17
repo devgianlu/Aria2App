@@ -152,9 +152,12 @@ public class NotificationService extends Service {
 
         if (intent != null) {
             if (Objects.equals(intent.getAction(), ACTION_STOP)) {
-                startedFrom = StartedFrom.NOT;
-                stopForeground(true);
-                stopSelf();
+                try {
+                    startedFrom = StartedFrom.NOT;
+                    stopForeground(true);
+                    stopSelf();
+                } catch (RuntimeException ignored) {
+                }
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
                     AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime", System.currentTimeMillis());
