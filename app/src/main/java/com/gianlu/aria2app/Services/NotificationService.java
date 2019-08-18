@@ -1,6 +1,5 @@
 package com.gianlu.aria2app.Services;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -68,7 +67,8 @@ public class NotificationService extends Service {
     public static final String EVENT_GET_MODE = NotificationService.class.getName() + ".GET_MODE";
     private static final int MESSENGER_GET_MODE = 0;
     private static final int MESSENGER_SET_MODE = 1;
-    private static final int FOREGROUND_SERVICE_NOTIF_ID = 1;
+    private static final int MESSENGER_RECREATE_WEBSOCKETS = 2;
+    private static final int FOREGROUND_SERVICE_NOTIF_ID = 42;
     private static final String CHANNEL_FOREGROUND_SERVICE = "foreground";
     private static final String ACTION_START = NotificationService.class.getName() + ".START";
     private static final String ACTION_STOP = NotificationService.class.getName() + ".STOP";
@@ -111,14 +111,14 @@ public class NotificationService extends Service {
         debug("Called start service, startedFrom=" + startedFrom);
         if (ProfilesManager.get(context).hasNotificationProfiles(context)) {
             new Handler(Looper.getMainLooper()).post(() -> {
+                AnalyticsApplication.setCrashlyticsLong("notificationService_intentTime", System.currentTimeMillis());
+
                 try {
                     ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
                             .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
                 } catch (SecurityException ex) {
                     Logging.log("Cannot start notification service.", ex);
                 }
-
-                AnalyticsApplication.setCrashlyticsLong("notificationService_intentTime", System.currentTimeMillis());
             });
         } else {
             Logging.log("Tried to start notification service, but there are no candidates.", false);
@@ -161,6 +161,7 @@ public class NotificationService extends Service {
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
                     AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime", System.currentTimeMillis());
+                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
@@ -171,10 +172,17 @@ public class NotificationService extends Service {
                         createEventsChannels();
                     }
 
-                    recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                    try {
+                        messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS));
+                    } catch (RemoteException ex) {
+                        Logging.log("Failed recreating websockets on service thread!", ex);
+                        recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                    }
+
                     connectivityChangedReceiver = new ConnectivityChangedReceiver();
                     registerReceiver(connectivityChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
+
+                    AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime_return", System.currentTimeMillis());
                 } else {
                     List<MultiProfile> newProfiles = loadProfiles(this);
                     if (newProfiles.isEmpty()) {
@@ -184,8 +192,14 @@ public class NotificationService extends Service {
 
                     if (!newProfiles.equals(profiles)) {
                         profiles = newProfiles;
-                        recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                         updateForegroundNotification();
+
+                        try {
+                            messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS));
+                        } catch (RemoteException ex) {
+                            Logging.log("Failed recreating websockets on service thread!", ex);
+                            recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                        }
                     }
                 }
 
@@ -235,12 +249,12 @@ public class NotificationService extends Service {
             case DOWNLOAD:
                 List<String> notify = getByMode(Mode.NOTIFY_EXCLUSIVE);
                 if (notify.isEmpty())
-                    return "Should stop, not notifying anything.";
+                    return "Should stop, not notifying anything."; // Should never appear on notification
                 else
                     return CommonUtils.join(profiles, ", ", true) + " for " + CommonUtils.join(notify, ", ", true);
             default:
             case NOT:
-                return "Not started";
+                return "Not started"; // Should never appear on notification
         }
     }
 
@@ -273,7 +287,7 @@ public class NotificationService extends Service {
         if (messenger == null) {
             serviceThread.start();
             broadcastManager = LocalBroadcastManager.getInstance(this);
-            messenger = new Messenger(new ServiceHandler());
+            messenger = new Messenger(new ServiceHandler(this));
         }
 
         return messenger.getBinder();
@@ -568,11 +582,12 @@ public class NotificationService extends Service {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private class ServiceHandler extends Handler {
+    private static class ServiceHandler extends Handler {
+        private final NotificationService service;
 
-        ServiceHandler() {
-            super(serviceThread.getLooper());
+        ServiceHandler(@NonNull NotificationService service) {
+            super(service.serviceThread.getLooper());
+            this.service = service;
         }
 
         @Override
@@ -580,33 +595,36 @@ public class NotificationService extends Service {
             MessengerPayload payload = (MessengerPayload) msg.obj;
 
             switch (msg.what) {
+                case MESSENGER_RECREATE_WEBSOCKETS:
+                    service.recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                    break;
                 case MESSENGER_SET_MODE:
-                    switch (startedFrom) {
+                    switch (service.startedFrom) {
                         case GLOBAL:
                             if (payload.mode == Mode.NOTIFY_EXCLUSIVE) break;
-                            gidToMode.put(payload.gid, payload.mode);
+                            service.gidToMode.put(payload.gid, payload.mode);
                             break;
                         case DOWNLOAD:
                             if (payload.mode == Mode.NOT_NOTIFY_EXCLUSIVE) break;
-                            gidToMode.put(payload.gid, payload.mode);
-                            if (isEmptyByMode(Mode.NOTIFY_EXCLUSIVE)) {
-                                broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
-                                stopForeground(true);
-                                stopSelf();
-                                startedFrom = StartedFrom.NOT;
+                            service.gidToMode.put(payload.gid, payload.mode);
+                            if (service.isEmptyByMode(Mode.NOTIFY_EXCLUSIVE)) {
+                                service.broadcastManager.sendBroadcast(new Intent(EVENT_STOPPED));
+                                service.stopForeground(true);
+                                service.stopSelf();
+                                service.startedFrom = StartedFrom.NOT;
                             }
                             break;
                         case NOT:
                             break;
                     }
 
-                    updateForegroundNotification();
+                    service.updateForegroundNotification();
 
                     // Purposely missing break
                 case MESSENGER_GET_MODE:
-                    broadcastManager.sendBroadcast(new Intent(EVENT_GET_MODE)
+                    service.broadcastManager.sendBroadcast(new Intent(EVENT_GET_MODE)
                             .putExtra("gid", payload.gid)
-                            .putExtra("mode", getMode(payload.gid)));
+                            .putExtra("mode", service.getMode(payload.gid)));
                     break;
                 default:
                     super.handleMessage(msg);
@@ -641,7 +659,7 @@ public class NotificationService extends Service {
         }
 
         @Override
-        public void onMessage(WebSocket ws, String text) {
+        public void onMessage(@NonNull WebSocket ws, @NonNull String text) {
             try {
                 JSONObject json = new JSONObject(text);
                 EventType type = EventType.parse(json.getString("method"));
@@ -658,7 +676,7 @@ public class NotificationService extends Service {
         }
 
         @Override
-        public void onFailure(WebSocket ws, Throwable throwable, Response response) {
+        public void onFailure(@NonNull WebSocket ws, @NonNull Throwable throwable, Response response) {
             removeWebsocket(ws, profile);
 
             if (!profile.isInAppDownloader())
