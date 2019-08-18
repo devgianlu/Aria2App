@@ -837,7 +837,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
         if (count == 0) {
             if (Prefs.getSet(PK.A2_MAIN_FILTERS).size() == Download.Status.values().length
-                    && (searchView.getQuery() == null || searchView.getQuery().length() == 0))
+                    && (searchView == null || searchView.getQuery() == null || searchView.getQuery().length() == 0))
                 recyclerViewLayout.showInfo(R.string.noDownloads_addOne);
             else
                 recyclerViewLayout.showInfo(R.string.noDownloads_changeFilters);

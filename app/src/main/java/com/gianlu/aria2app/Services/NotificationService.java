@@ -173,6 +173,7 @@ public class NotificationService extends Service {
                     }
 
                     try {
+                        createMessengerIfNeeded();
                         messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS));
                     } catch (RemoteException ex) {
                         Logging.log("Failed recreating websockets on service thread!", ex);
@@ -195,6 +196,7 @@ public class NotificationService extends Service {
                         updateForegroundNotification();
 
                         try {
+                            createMessengerIfNeeded();
                             messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS));
                         } catch (RemoteException ex) {
                             Logging.log("Failed recreating websockets on service thread!", ex);
@@ -281,15 +283,18 @@ public class NotificationService extends Service {
         return builder.build();
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
+    private void createMessengerIfNeeded() {
         if (messenger == null) {
             serviceThread.start();
             broadcastManager = LocalBroadcastManager.getInstance(this);
             messenger = new Messenger(new ServiceHandler(this));
         }
+    }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        createMessengerIfNeeded();
         return messenger.getBinder();
     }
 
