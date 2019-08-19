@@ -1,2 +1,2 @@
 ### Changed
-- Fixed crash on first startup due to missing notification channel
+- Fixed startup crash due to aria2 service

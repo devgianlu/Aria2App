@@ -13,8 +13,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 185
-        versionName "5.2.2"
+        versionCode 186
+        versionName "5.2.3"
     }
 
     if (isTravis) {

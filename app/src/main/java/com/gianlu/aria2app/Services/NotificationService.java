@@ -396,14 +396,14 @@ public class NotificationService extends Service {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.O)
     private void createMainChannel() {
         NotificationChannel channel = new NotificationChannel(CHANNEL_FOREGROUND_SERVICE, "Foreground service", NotificationManager.IMPORTANCE_LOW);
         channel.setShowBadge(false);
         notificationManager.createNotificationChannel(channel);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.O)
     private void createEventsChannels() {
         for (EventType type : EventType.values()) {
             NotificationChannel channel = new NotificationChannel(type.channelName(), type.getFormal(this), NotificationManager.IMPORTANCE_DEFAULT);
