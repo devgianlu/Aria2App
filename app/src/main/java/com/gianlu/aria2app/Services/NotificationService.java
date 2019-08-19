@@ -160,9 +160,6 @@ public class NotificationService extends Service {
                 }
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
-                    AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime", System.currentTimeMillis());
-                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
-
                     notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                     profiles = loadProfiles(this);
@@ -171,6 +168,9 @@ public class NotificationService extends Service {
                         createMainChannel();
                         createEventsChannels();
                     }
+
+                    AnalyticsApplication.setCrashlyticsLong("notificationService_intentReceivedTime", System.currentTimeMillis());
+                    startForeground(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
 
                     try {
                         createMessengerIfNeeded();
