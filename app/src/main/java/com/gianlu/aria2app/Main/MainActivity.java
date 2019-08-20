@@ -579,7 +579,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         searchItem.setOnActionExpandListener(this);
         searchView = (SearchView) searchItem.getActionView();
 
-        if (searchManager != null) {
+        if (searchManager != null && searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setIconifiedByDefault(false);
             searchView.setOnCloseListener(this);
