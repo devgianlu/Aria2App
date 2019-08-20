@@ -235,14 +235,11 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                         geoIP.getIPDetails(uri.getHost(), getActivity(), new GeoIP.OnIpDetails() {
                             @Override
                             public void onDetails(@NonNull IPDetails details) {
-                                if (!isAdded()) return;
-
                                 ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(requireContext(), details.countryCode));
                             }
 
                             @Override
                             public void onException(@NonNull Exception ex) {
-                                Logging.log(ex);
                             }
                         });
                     } catch (URISyntaxException ex) {

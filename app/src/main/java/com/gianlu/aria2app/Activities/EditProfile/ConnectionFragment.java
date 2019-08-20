@@ -26,7 +26,6 @@ import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.URI;
@@ -100,16 +99,13 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
                             GeoIP.get().getIPDetails(lastAddress, getActivity(), new GeoIP.OnIpDetails() {
                                 @Override
                                 public void onDetails(@NonNull IPDetails details) {
-                                    if (!isAdded()) return;
-
-                                        addressFlag.setVisibility(View.VISIBLE);
+                                    addressFlag.setVisibility(View.VISIBLE);
                                     addressFlag.setImageDrawable(flags.loadFlag(requireContext(), details.countryCode));
                                 }
 
                                 @Override
                                 public void onException(@NonNull Exception ex) {
                                     addressFlag.setVisibility(View.GONE);
-                                    Logging.log(ex);
                                 }
                             });
                         }

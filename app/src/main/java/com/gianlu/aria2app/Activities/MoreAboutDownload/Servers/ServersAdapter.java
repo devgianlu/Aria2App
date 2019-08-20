@@ -21,7 +21,6 @@ import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,6 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                     @Override
                     public void onException(@NonNull Exception ex) {
-                        Logging.log(ex);
                     }
                 });
             }

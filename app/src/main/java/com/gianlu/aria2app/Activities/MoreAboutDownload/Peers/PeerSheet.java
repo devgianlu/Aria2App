@@ -21,7 +21,6 @@ import com.gianlu.commonutils.BottomSheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.BottomSheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -130,7 +129,6 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
 
             @Override
             public void onException(@NonNull Exception ex) {
-                Logging.log(ex);
                 ipDetails.setVisibility(View.GONE);
             }
         });

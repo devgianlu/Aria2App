@@ -20,7 +20,6 @@ import com.gianlu.commonutils.Adapters.NotFilterable;
 import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -84,7 +83,6 @@ public class PeersAdapter extends OrderedRecyclerViewAdapter<PeersAdapter.ViewHo
 
             @Override
             public void onException(@NonNull Exception ex) {
-                Logging.log(ex);
             }
         });
     }
