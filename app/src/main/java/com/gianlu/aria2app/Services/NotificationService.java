@@ -156,7 +156,8 @@ public class NotificationService extends Service {
                     startedFrom = StartedFrom.NOT;
                     stopForeground(true);
                     stopSelf();
-                } catch (RuntimeException ignored) {
+                } catch (RuntimeException ex) {
+                    notificationManager.cancel(FOREGROUND_SERVICE_NOTIF_ID);
                 }
             } else if (Objects.equals(intent.getAction(), ACTION_START)) {
                 if (startedFrom == StartedFrom.NOT) {
@@ -174,7 +175,7 @@ public class NotificationService extends Service {
 
                     try {
                         createMessengerIfNeeded();
-                        messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS));
+                        messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS, ConnectivityManager.TYPE_DUMMY, 0));
                     } catch (RemoteException ex) {
                         Logging.log("Failed recreating websockets on service thread!", ex);
                         recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
@@ -193,11 +194,10 @@ public class NotificationService extends Service {
 
                     if (!newProfiles.equals(profiles)) {
                         profiles = newProfiles;
-                        updateForegroundNotification();
 
                         try {
                             createMessengerIfNeeded();
-                            messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS));
+                            messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS, ConnectivityManager.TYPE_DUMMY, 0));
                         } catch (RemoteException ex) {
                             Logging.log("Failed recreating websockets on service thread!", ex);
                             recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
@@ -208,7 +208,9 @@ public class NotificationService extends Service {
                 if (startedFrom == StartedFrom.NOT || startedFrom == StartedFrom.DOWNLOAD)
                     startedFrom = (StartedFrom) intent.getSerializableExtra("startedFrom");
 
-                return super.onStartCommand(intent, flags, startId);
+                updateForegroundNotification();
+
+                return flags == 1 ? START_STICKY : START_REDELIVER_INTENT;
             }
         }
 
@@ -261,7 +263,9 @@ public class NotificationService extends Service {
     }
 
     private void updateForegroundNotification() {
-        if (startedFrom != StartedFrom.NOT)
+        if (startedFrom == StartedFrom.NOT)
+            notificationManager.cancel(FOREGROUND_SERVICE_NOTIF_ID);
+        else
             notificationManager.notify(FOREGROUND_SERVICE_NOTIF_ID, createForegroundServiceNotification());
     }
 
@@ -394,6 +398,8 @@ public class NotificationService extends Service {
                 }
             }
         }
+
+        updateForegroundNotification();
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -601,7 +607,7 @@ public class NotificationService extends Service {
 
             switch (msg.what) {
                 case MESSENGER_RECREATE_WEBSOCKETS:
-                    service.recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
+                    service.recreateWebsockets(msg.arg1);
                     break;
                 case MESSENGER_SET_MODE:
                     switch (service.startedFrom) {
@@ -647,8 +653,15 @@ public class NotificationService extends Service {
                     int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
                     if (networkType == ConnectivityManager.TYPE_DUMMY) return;
 
+                    if (messenger != null) {
+                        try {
+                            messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS, networkType, 0));
+                            return;
+                        } catch (RemoteException ignored) {
+                        }
+                    }
+
                     recreateWebsockets(networkType);
-                    updateForegroundNotification();
                 }
             }
         }
