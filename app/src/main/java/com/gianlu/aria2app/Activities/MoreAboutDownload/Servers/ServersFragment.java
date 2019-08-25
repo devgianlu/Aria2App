@@ -58,7 +58,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     @Override
     public void onItemCountUpdated(int count) {
         if (count == 0) {
-            recyclerViewLayout.showInfo(R.string.noServers);
+            rmv.showInfo(R.string.noServers);
             topDownloadCountries.clear();
             if (sheet != null && !isDetached()) {
                 sheet.dismiss();
@@ -66,14 +66,14 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
                 dismissDialog();
             }
         } else {
-            recyclerViewLayout.showList();
+            rmv.showList();
             tutorialManager.tryShowingTutorials(getActivity());
         }
     }
 
     @Override
     public void onUpdateUi(@NonNull final SparseServersWithFiles payload) {
-        recyclerViewLayout.showList();
+        rmv.showList();
 
         if (payload.files != null)
             topDownloadCountries.setServers(payload.servers, payload.files);
@@ -86,7 +86,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
     @Override
     public void onCouldntLoadChecked(@NonNull Exception ex) {
-        recyclerViewLayout.showError(R.string.failedLoading_reason, ex.getMessage());
+        rmv.showError(R.string.failedLoading_reason, ex.getMessage());
         Logging.log(ex);
     }
 
@@ -108,7 +108,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
 
     @Override
     public boolean buildSequence(@NonNull BaseTutorial tutorial) {
-        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForServers(recyclerViewLayout.getList());
+        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForServers(rmv.list());
     }
 }
 

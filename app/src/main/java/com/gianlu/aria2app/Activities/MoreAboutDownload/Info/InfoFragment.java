@@ -93,7 +93,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     @Override
     public boolean onCouldntLoad(@NonNull Exception ex) {
         holder.loading.setVisibility(View.GONE);
-        message.setError(R.string.failedLoading);
+        message.error(R.string.failedLoading);
         Logging.log(ex);
         return false;
     }

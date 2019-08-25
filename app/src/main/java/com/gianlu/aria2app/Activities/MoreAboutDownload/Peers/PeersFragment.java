@@ -98,7 +98,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     @Override
     public void onItemCountUpdated(int count) {
         if (count == 0) {
-            recyclerViewLayout.showInfo(R.string.noPeers);
+            rmv.showInfo(R.string.noPeers);
             topDownloadCountries.clear();
             topUploadCountries.clear();
             if (sheet != null && getContext() != null) {
@@ -107,7 +107,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
                 dismissDialog();
             }
         } else {
-            recyclerViewLayout.showList();
+            rmv.showList();
             tutorialManager.tryShowingTutorials(getActivity());
         }
     }
@@ -127,7 +127,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     @Override
     public void onUpdateUi(@NonNull Peers payload) {
         if (numPieces != -1) {
-            recyclerViewLayout.showList();
+            rmv.showList();
             topDownloadCountries.setPeers(payload, true);
             topUploadCountries.setPeers(payload, false);
             if (adapter != null) adapter.itemsChanged(payload);
@@ -137,7 +137,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     public void onCouldntLoadChecked(@NonNull Exception ex) {
-        recyclerViewLayout.showError(R.string.failedLoading_reason, ex.getMessage());
+        rmv.showError(R.string.failedLoading_reason, ex.getMessage());
         Logging.log(ex);
     }
 
@@ -165,6 +165,6 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
 
     @Override
     public boolean buildSequence(@NonNull BaseTutorial tutorial) {
-        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForPeers(recyclerViewLayout.getList());
+        return tutorial instanceof PeersServersTutorial && ((PeersServersTutorial) tutorial).buildForPeers(rmv.list());
     }
 }

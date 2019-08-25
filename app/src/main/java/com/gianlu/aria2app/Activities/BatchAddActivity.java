@@ -26,7 +26,7 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.AskPermission;
-import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Toaster;
 
@@ -40,7 +40,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
     private final static int REQUEST_METALINK = 3;
     private static final int REQUEST_METALINK_FILES = 4;
     private AddDownloadBundlesAdapter adapter;
-    private RecyclerViewLayout layout;
+    private RecyclerMessageView rmv;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,10 +118,10 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         Button metalinkFiles = findViewById(R.id.batchAdd_metalinkFiles);
         metalinkFiles.setOnClickListener(v -> openDocument("application/metalink4+xml,application/metalink+xml", "Select some Metalink files", REQUEST_METALINK_FILES));
 
-        layout = findViewById(R.id.batchAdd_list);
-        layout.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        rmv = findViewById(R.id.batchAdd_list);
+        rmv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         adapter = new AddDownloadBundlesAdapter(this, this);
-        layout.loadListData(adapter, false);
+        rmv.loadListData(adapter, false);
     }
 
     private void openDocument(@NonNull final String mime, @NonNull final String text, final int requestCode) {
@@ -199,8 +199,8 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
 
     @Override
     public void onItemCountUpdated(int count) {
-        if (count == 0) layout.showInfo(R.string.noBatchAdd);
-        else layout.showList();
+        if (count == 0) rmv.showInfo(R.string.noBatchAdd);
+        else rmv.showList();
     }
 
     @Override

@@ -84,7 +84,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         try {
             helper = Aria2Helper.instantiate(requireContext());
         } catch (Aria2Helper.InitializingException ex) {
-            message.setError(R.string.failedLoading);
+            message.error(R.string.failedLoading);
             optionsView.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             return layout;
@@ -133,7 +133,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
 
             @Override
             public void onException(@NonNull Exception ex) {
-                message.setError(R.string.failedLoading);
+                message.error(R.string.failedLoading);
                 optionsView.setVisibility(View.GONE);
                 loading.setVisibility(View.GONE);
             }

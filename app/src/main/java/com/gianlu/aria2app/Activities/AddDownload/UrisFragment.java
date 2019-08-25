@@ -184,9 +184,9 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
         if (count == 0) {
             list.setVisibility(View.GONE);
             if (getArguments() != null && getArguments().getBoolean("compulsory", false))
-                message.setInfo(R.string.noUris_help);
+                message.info(R.string.noUris_help);
             else
-                message.setInfo(R.string.noUris);
+                message.info(R.string.noUris);
         } else {
             list.setVisibility(View.VISIBLE);
             message.hide();

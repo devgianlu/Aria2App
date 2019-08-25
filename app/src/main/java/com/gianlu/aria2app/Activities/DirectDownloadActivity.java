@@ -3,16 +3,14 @@ package com.gianlu.aria2app.Activities;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.Adapters.DirectDownloadsAdapter;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Error;
@@ -24,33 +22,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DirectDownloadActivity extends ActivityWithDialog implements FetchHelper.FetchEventListener {
-    private RecyclerViewLayout layout;
+    private RecyclerMessageView rmv;
     private FetchHelper helper;
     private DirectDownloadsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        layout = new RecyclerViewLayout(this);
-        setContentView(layout);
+        rmv = new RecyclerMessageView(this);
+        setContentView(rmv);
         setTitle(R.string.directDownload);
 
-        layout.setLayoutManager(new SuppressingLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        layout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        layout.enableSwipeRefresh(() -> {
+        rmv.linearLayoutManager(RecyclerView.VERTICAL, false);
+        rmv.dividerDecoration(RecyclerView.VERTICAL);
+        rmv.enableSwipeRefresh(() -> {
             if (helper != null) helper.reloadListener(DirectDownloadActivity.this);
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
-        layout.startLoading();
+        rmv.startLoading();
 
         try {
             helper = FetchHelper.get(this);
             helper.addListener(this);
         } catch (FetchHelper.DirectDownloadNotEnabledException ex) {
-            layout.showInfo(R.string.noDirectDownloads);
+            rmv.showInfo(R.string.noDirectDownloads);
         } catch (FetchHelper.InitializationException ex) {
             Logging.log(ex);
-            layout.showError(R.string.failedLoading_reason, ex.getMessage());
+            rmv.showError(R.string.failedLoading_reason, ex.getMessage());
         }
     }
 
@@ -63,14 +61,14 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
     @Override
     public void onDownloads(List<Download> downloads) {
         adapter = new DirectDownloadsAdapter(this, helper, downloads, new RestartListener());
-        layout.loadListData(adapter);
+        rmv.loadListData(adapter);
         countUpdated();
     }
 
     private void countUpdated() {
         if (adapter != null) {
-            if (adapter.getItemCount() == 0) layout.showInfo(R.string.noDirectDownloads);
-            else layout.showList();
+            if (adapter.getItemCount() == 0) rmv.showInfo(R.string.noDirectDownloads);
+            else rmv.showList();
         }
     }
 

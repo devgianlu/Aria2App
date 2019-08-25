@@ -17,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.Adapters.SearchResultsAdapter;
@@ -35,7 +33,7 @@ import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
@@ -53,7 +51,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.OnSearch, SearchResultsAdapter.Listener, MenuItem.OnActionExpandListener {
-    private RecyclerViewLayout recyclerViewLayout;
+    private RecyclerMessageView rmv;
     private LinearLayout message;
     private String query = null;
     private SearchView searchView;
@@ -69,11 +67,11 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         message = findViewById(R.id.search_message);
-        recyclerViewLayout = findViewById(R.id.search_recyclerViewLayout);
-        recyclerViewLayout.stopLoading();
-        recyclerViewLayout.disableSwipeRefresh();
-        recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rmv = findViewById(R.id.search_recyclerViewLayout);
+        rmv.stopLoading();
+        rmv.disableSwipeRefresh();
+        rmv.linearLayoutManager(RecyclerView.VERTICAL, false);
+        rmv.dividerDecoration(RecyclerView.VERTICAL);
 
         final Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(view -> {
@@ -149,7 +147,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     @Override
     public boolean onQueryTextSubmit(final String query) {
         message.setVisibility(View.GONE);
-        recyclerViewLayout.startLoading();
+        rmv.startLoading();
         this.query = query;
 
         searchApi.search(query.trim(), SearchApi.RESULTS_PER_REQUEST, Prefs.getSet(PK.A2_SEARCH_ENGINES, null), null, this);
@@ -166,9 +164,9 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     @Override
     public boolean onClose() {
         message.setVisibility(View.VISIBLE);
-        recyclerViewLayout.stopLoading();
-        recyclerViewLayout.hideList();
-        recyclerViewLayout.hideMessage();
+        rmv.stopLoading();
+        rmv.hideList();
+        rmv.hideMessage();
         searchView.setQuery(null, false);
         this.query = null;
         return false;
@@ -178,14 +176,14 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
         message.setVisibility(View.GONE);
 
-        recyclerViewLayout.loadListData(new SearchResultsAdapter(this, results, nextPageToken, this));
+        rmv.loadListData(new SearchResultsAdapter(this, results, nextPageToken, this));
         notifyMissingEngines(missingEngines);
     }
 
     @Override
     public void onException(@NonNull Exception ex) {
         message.setVisibility(View.GONE);
-        recyclerViewLayout.showError(R.string.searchEngine_offline);
+        rmv.showError(R.string.searchEngine_offline);
         Logging.log(ex);
     }
 
@@ -235,7 +233,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     public void notifyMissingEngines(@NonNull final List<MissingSearchEngine> missingEngines) {
         if (missingEngines.isEmpty()) return;
 
-        Snackbar.make(recyclerViewLayout, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
+        Snackbar.make(rmv, R.string.missingEngines_message, Snackbar.LENGTH_LONG)
                 .setAction(R.string.show, view -> showMissingEnginesDialog(missingEngines)).show();
     }
 
@@ -293,7 +291,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                             public void onResult(@NonNull String result) {
                                 dialogInterface.dismiss();
 
-                                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
+                                Snackbar.make(rmv, R.string.downloadAdded, Snackbar.LENGTH_SHORT)
                                         .setAction(R.string.show, view1 -> startActivity(new Intent(SearchActivity.this, MainActivity.class))).show();
                             }
 

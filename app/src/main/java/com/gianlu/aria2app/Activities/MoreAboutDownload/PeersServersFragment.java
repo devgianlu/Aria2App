@@ -17,7 +17,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.BottomSheet.BaseModalBottomSheet;
-import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
@@ -25,7 +25,7 @@ import com.gianlu.commonutils.Tutorial.TutorialManager;
 public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends BaseModalBottomSheet<?, ?>, P> extends UpdaterFragment<P> implements TutorialManager.Listener, OnBackPressed {
     protected TopCountriesView topDownloadCountries;
     protected TopCountriesView topUploadCountries;
-    protected RecyclerViewLayout recyclerViewLayout;
+    protected RecyclerMessageView rmv;
     protected TutorialManager tutorialManager;
     protected S sheet;
     protected A adapter;
@@ -71,16 +71,16 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_peers_and_servers, container, false);
         topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries);
         topUploadCountries = layout.findViewById(R.id.peersServersFragment_topUploadCountries);
-        recyclerViewLayout = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
-        recyclerViewLayout.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        rmv = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
+        rmv.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = getAdapter(getContext());
-        recyclerViewLayout.loadListData(adapter);
-        recyclerViewLayout.startLoading();
+        rmv.loadListData(adapter);
+        rmv.startLoading();
 
-        recyclerViewLayout.enableSwipeRefresh(() -> refresh(() -> {
+        rmv.enableSwipeRefresh(() -> refresh(() -> {
             adapter = getAdapter(getContext());
-            recyclerViewLayout.loadListData(adapter);
-            recyclerViewLayout.startLoading();
+            rmv.loadListData(adapter);
+            rmv.startLoading();
         }), R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
 
         layout.findViewById(R.id.peersServersFragment_topUploadCountriesContainer).setVisibility(showUpload() ? View.VISIBLE : View.GONE);

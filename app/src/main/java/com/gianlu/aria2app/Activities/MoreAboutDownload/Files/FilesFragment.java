@@ -17,8 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.Activities.DirectDownloadActivity;
 import com.gianlu.aria2app.Activities.MoreAboutDownload.BigUpdateProvider;
@@ -45,11 +45,10 @@ import com.gianlu.aria2app.Tutorial.FoldersTutorial;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.BreadcrumbsView;
-import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
-import com.gianlu.commonutils.SuppressingLinearLayoutManager;
 import com.gianlu.commonutils.Toaster;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
@@ -69,7 +68,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private FileSheet fileSheet;
     private DirectorySheet dirSheet;
     private BreadcrumbsView breadcrumbs;
-    private RecyclerViewLayout recyclerViewLayout;
+    private RecyclerMessageView rmv;
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
     private TutorialManager tutorialManager;
@@ -138,13 +137,13 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_files, parent, false);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
         breadcrumbs.setListener(this);
-        recyclerViewLayout = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
-        recyclerViewLayout.setLayoutManager(new SuppressingLinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerViewLayout.getList().addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
+        rmv = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
+        rmv.linearLayoutManager(LinearLayoutManager.VERTICAL, false);
+        rmv.dividerDecoration(RecyclerView.VERTICAL);
 
         tutorialManager = new TutorialManager(this, Discovery.FILES, Discovery.FOLDERS);
 
-        recyclerViewLayout.startLoading();
+        rmv.startLoading();
 
         return layout;
     }
@@ -266,7 +265,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         FetchHelper.StartListener listener = new FetchHelper.StartListener() {
             @Override
             public void onSuccess() {
-                Snackbar.make(recyclerViewLayout, R.string.downloadAdded, Snackbar.LENGTH_LONG)
+                Snackbar.make(rmv, R.string.downloadAdded, Snackbar.LENGTH_LONG)
                         .setAction(R.string.show, v -> startActivity(new Intent(getContext(), DirectDownloadActivity.class)))
                         .show();
             }
@@ -380,10 +379,10 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     public void onUpdateUi(@NonNull DownloadWithUpdate.BigUpdate payload) {
         AriaFiles files = payload.files;
         if (files.isEmpty() || files.get(0).path.isEmpty()) {
-            recyclerViewLayout.showInfo(R.string.noFiles);
+            rmv.showInfo(R.string.noFiles);
             breadcrumbs.setVisibility(View.GONE);
         } else {
-            recyclerViewLayout.showList();
+            rmv.showList();
             breadcrumbs.setVisibility(View.VISIBLE);
             if (adapter != null) adapter.update(payload.download(), files);
             if (fileSheet != null) fileSheet.update(files);
@@ -400,25 +399,25 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         if (getContext() == null) return;
 
         adapter = new FilesAdapter(getContext(), this);
-        recyclerViewLayout.loadListData(adapter);
-        recyclerViewLayout.startLoading();
+        rmv.loadListData(adapter);
+        rmv.startLoading();
 
-        recyclerViewLayout.enableSwipeRefresh(() -> {
+        rmv.enableSwipeRefresh(() -> {
             canGoBack(CODE_CLOSE_SHEET);
 
             refresh(() -> {
                 if (!isAdded() || isDetached()) return;
 
                 adapter = new FilesAdapter(getContext(), this);
-                recyclerViewLayout.loadListData(adapter);
-                recyclerViewLayout.startLoading();
+                rmv.loadListData(adapter);
+                rmv.startLoading();
             });
         }, R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);
     }
 
     @Override
     public boolean onCouldntLoad(@NonNull Exception ex) {
-        recyclerViewLayout.showError(R.string.failedLoading);
+        rmv.showError(R.string.failedLoading);
         Logging.log(ex);
         return false;
     }
@@ -446,9 +445,9 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public boolean buildSequence(@NonNull BaseTutorial tutorial) {
         if (tutorial instanceof FilesTutorial)
-            return ((FilesTutorial) tutorial).buildSequence(recyclerViewLayout.getList(), adapter != null ? adapter.getCurrentDir() : null);
+            return ((FilesTutorial) tutorial).buildSequence(rmv.list(), adapter != null ? adapter.getCurrentDir() : null);
         else if (tutorial instanceof FoldersTutorial)
-            return ((FoldersTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
+            return ((FoldersTutorial) tutorial).buildSequence(rmv.list());
         return true;
     }
 }

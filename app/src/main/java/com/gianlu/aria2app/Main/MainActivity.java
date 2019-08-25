@@ -78,7 +78,7 @@ import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CasualViews.MessageView;
-import com.gianlu.commonutils.CasualViews.RecyclerViewLayout;
+import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
@@ -120,7 +120,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     private ImageButton toggleChart;
     private LineChart overallChart;
     private TextView stopped;
-    private RecyclerViewLayout recyclerViewLayout;
+    private RecyclerMessageView recyclerViewLayout;
     private Aria2Helper helper;
     private FrameLayout secondSpace = null;
     private ViewPager secondSpacePager = null;
@@ -820,7 +820,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public void hideSecondSpace() {
-        secondSpaceMessage.setInfo(R.string.secondSpace_selectDownload);
+        secondSpaceMessage.info(R.string.secondSpace_selectDownload);
         secondSpaceContainer.setVisibility(View.GONE);
         secondSpaceAdapter = null;
     }
@@ -900,7 +900,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         if (tutorial instanceof DownloadsToolbarTutorial)
             ((DownloadsToolbarTutorial) tutorial).buildSequence(toolbar);
         else if (tutorial instanceof DownloadCardsTutorial)
-            return ((DownloadCardsTutorial) tutorial).buildSequence(recyclerViewLayout.getList());
+            return ((DownloadCardsTutorial) tutorial).buildSequence(recyclerViewLayout.list());
 
         return true;
     }
