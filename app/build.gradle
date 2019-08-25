@@ -73,16 +73,20 @@ play {
 }
 
 dependencies {
-    api project(':CommonUtils')
-    api project(':CountryFlags')
-    api project(':aria2lib')
-    api 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
-    api 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
-    api 'com.squareup.okhttp3:okhttp:4.0.1'
-    api 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-    api 'com.getbase:floatingactionbutton:1.10.1'
-    api 'org.apmem.tools:layouts:1.10@aar'
-    api 'androidx.documentfile:documentfile:1.0.1'
+    implementation project(':CommonUtils')
+    implementation project(':aria2lib')
+
+    implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
+    implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.1.0'
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
+    implementation 'org.apmem.tools:layouts:1.10@aar'
+    implementation 'com.github.devgianlu:Android--Library-Country-Flags:6fc6059f91'
+
+    implementation 'androidx.documentfile:documentfile:1.0.1'
 }
 
 task printVersionName {

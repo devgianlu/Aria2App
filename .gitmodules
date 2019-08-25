@@ -2,10 +2,6 @@
 	path = CommonUtils
 	url = https://github.com/devgianlu/CommonUtils
 	branch = master
-[submodule "Android--Library-Country-Flags"]
-	path = Android--Library-Country-Flags
-	url = https://github.com/devgianlu/Android--Library-Country-Flags
-	branch = master
 [submodule "aria2lib"]
 	path = aria2lib
 	url = https://github.com/devgianlu/aria2lib
