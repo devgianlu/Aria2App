@@ -354,4 +354,7 @@
     <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
     <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
     <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
+    <string name="locationAccessDenied">You denied the location access permission.</string>
+    <string name="locationAccess_title">Location access needed</string>
+    <string name="locationAccess_message">The application needs to have the location permission in order to read the WiFi SSID, no other operations will be performed.</string>
 </resources>

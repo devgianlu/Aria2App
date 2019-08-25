@@ -1,7 +1,9 @@
 package com.gianlu.aria2app.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,10 +18,12 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -39,6 +43,7 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.Logging;
@@ -306,16 +311,42 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 return;
             }
 
-            conditions.add(condition);
-            connectionFragments.add(ConnectionFragment.getInstance(EditProfileActivity.this, null));
-            authFragments.add(AuthenticationFragment.getInstance(EditProfileActivity.this, null));
-            ddFragments.add(DirectDownloadFragment.getInstance(EditProfileActivity.this, null));
-            refreshSpinner();
-            conditionsSpinner.setSelection(conditions.size() - 1);
-            dialog.dismiss();
+            if (condition.type == MultiProfile.ConnectivityCondition.Type.WIFI
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                AskPermission.ask(this, Manifest.permission.ACCESS_FINE_LOCATION, new AskPermission.Listener() {
+                    @Override
+                    public void permissionGranted(@NonNull String permission) {
+                        addCondition(dialog, condition);
+                    }
+
+                    @Override
+                    public void permissionDenied(@NonNull String permission) {
+                        Toaster.with(EditProfileActivity.this).message(R.string.locationAccessDenied).show();
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void askRationale(@NonNull AlertDialog.Builder builder) {
+                        builder.setTitle(R.string.locationAccess_title).setMessage(R.string.locationAccess_message);
+                    }
+                });
+                return;
+            }
+
+            addCondition(dialog, condition);
         }));
 
         showDialog(dialog);
+    }
+
+    private void addCondition(@NonNull AlertDialog dialog, @NonNull MultiProfile.ConnectivityCondition condition) {
+        conditions.add(condition);
+        connectionFragments.add(ConnectionFragment.getInstance(EditProfileActivity.this, null));
+        authFragments.add(AuthenticationFragment.getInstance(EditProfileActivity.this, null));
+        ddFragments.add(DirectDownloadFragment.getInstance(EditProfileActivity.this, null));
+        refreshSpinner();
+        conditionsSpinner.setSelection(conditions.size() - 1);
+        dialog.dismiss();
     }
 
     private void refreshSpinner() {

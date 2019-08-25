@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gianlu.aria2app">
+
     <!-- List networks -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:targetApi="o"/>
     <!-- You known... -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Download files -->
