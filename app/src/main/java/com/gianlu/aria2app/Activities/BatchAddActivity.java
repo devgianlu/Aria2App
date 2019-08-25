@@ -118,7 +118,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         Button metalinkFiles = findViewById(R.id.batchAdd_metalinkFiles);
         metalinkFiles.setOnClickListener(v -> openDocument("application/metalink4+xml,application/metalink+xml", "Select some Metalink files", REQUEST_METALINK_FILES));
 
-        rmv = findViewById(R.id.batchAdd_list);
+        rmv = findViewById(R.id.batchAdd_rmv);
         rmv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         adapter = new AddDownloadBundlesAdapter(this, this);
         rmv.loadListData(adapter, false);

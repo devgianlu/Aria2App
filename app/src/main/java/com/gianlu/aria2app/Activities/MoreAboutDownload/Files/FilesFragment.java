@@ -137,7 +137,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_files, parent, false);
         breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
         breadcrumbs.setListener(this);
-        rmv = layout.findViewById(R.id.filesFragment_recyclerViewLayout);
+        rmv = layout.findViewById(R.id.filesFragment_rmv);
         rmv.linearLayoutManager(LinearLayoutManager.VERTICAL, false);
         rmv.dividerDecoration(RecyclerView.VERTICAL);
 

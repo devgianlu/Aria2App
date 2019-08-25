@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
-        android:id="@+id/search_recyclerViewLayout"
+    <com.gianlu.commonutils.CasualViews.RecyclerMessageView
+        android:id="@+id/search_rmv"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

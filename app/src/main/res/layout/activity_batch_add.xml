@@ -5,8 +5,8 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
-        android:id="@+id/batchAdd_list"
+    <com.gianlu.commonutils.CasualViews.RecyclerMessageView
+        android:id="@+id/batchAdd_rmv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

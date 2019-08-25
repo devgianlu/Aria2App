@@ -29,8 +29,8 @@
             android:layout_gravity="top"
             android:background="@drawable/shadow_bottom" />
 
-        <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
-            android:id="@+id/filesFragment_recyclerViewLayout"
+        <com.gianlu.commonutils.CasualViews.RecyclerMessageView
+            android:id="@+id/filesFragment_rmv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />

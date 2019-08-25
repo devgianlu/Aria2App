@@ -67,7 +67,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         message = findViewById(R.id.search_message);
-        rmv = findViewById(R.id.search_recyclerViewLayout);
+        rmv = findViewById(R.id.search_rmv);
         rmv.stopLoading();
         rmv.disableSwipeRefresh();
         rmv.linearLayoutManager(RecyclerView.VERTICAL, false);

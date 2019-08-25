@@ -348,7 +348,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         toggleChart = findViewById(R.id.main_toggleChart);
         toggleChart.setOnClickListener(view -> CommonUtils.handleCollapseClick(toggleChart, overallChartContainer));
 
-        recyclerViewLayout = findViewById(R.id.main_recyclerViewLayout);
+        recyclerViewLayout = findViewById(R.id.main_rmv);
         recyclerViewLayout.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         recyclerViewLayout.enableSwipeRefresh(() -> refresh(MAIN_WANTS, MainActivity.this), R.color.colorAccent, R.color.colorMetalink, R.color.colorTorrent);

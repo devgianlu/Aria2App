@@ -82,8 +82,8 @@
             android:layout_gravity="top"
             android:background="@drawable/shadow_bottom" />
 
-        <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
-            android:id="@+id/peersServersFragment_recyclerViewLayout"
+        <com.gianlu.commonutils.CasualViews.RecyclerMessageView
+            android:id="@+id/peersServersFragment_rmv"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>

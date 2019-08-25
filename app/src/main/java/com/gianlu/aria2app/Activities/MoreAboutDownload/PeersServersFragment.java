@@ -71,7 +71,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_peers_and_servers, container, false);
         topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries);
         topUploadCountries = layout.findViewById(R.id.peersServersFragment_topUploadCountries);
-        rmv = layout.findViewById(R.id.peersServersFragment_recyclerViewLayout);
+        rmv = layout.findViewById(R.id.peersServersFragment_rmv);
         rmv.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         adapter = getAdapter(getContext());
         rmv.loadListData(adapter);

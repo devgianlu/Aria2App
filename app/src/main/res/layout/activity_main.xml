@@ -138,8 +138,8 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="false">
 
-            <com.gianlu.commonutils.CasualViews.RecyclerViewLayout
-                android:id="@+id/main_recyclerViewLayout"
+            <com.gianlu.commonutils.CasualViews.RecyclerMessageView
+                android:id="@+id/main_rmv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
