@@ -252,11 +252,15 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         });
         connectivityCondition.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.editProfile_connectivityCondition_wifi) {
-                WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                if (manager == null) return;
-                ssidField.setAdapter(new WifisAdapter(EditProfileActivity.this, manager.getConfiguredNetworks()));
-                ssidField.setThreshold(1);
                 ssid.setVisibility(View.VISIBLE);
+
+                WifiManager manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                if (manager == null || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)
+                    return;
+
+                ssidField.setAdapter(new WifisAdapter(this, manager.getConfiguredNetworks()));
+                ssidField.setThreshold(1);
             } else {
                 ssid.setVisibility(View.GONE);
             }
