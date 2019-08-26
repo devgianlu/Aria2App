@@ -343,4 +343,7 @@
     <string name="prefs_notificationType_summary">选择要接收的通知类型</string>
     <string name="prefs_enableNotificationsAtBoot">手机启动时启动通知服务</string>
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
+    <string name="locationAccessDenied">没有位置信息访问权限。</string>
+    <string name="locationAccess_title">需要位置信息访问权限</string>
+    <string name="locationAccess_message">本应用需要位置信息访问权限，仅为了读取WiFi SSID信息，不会进行其它操作。</string>    
 </resources>
