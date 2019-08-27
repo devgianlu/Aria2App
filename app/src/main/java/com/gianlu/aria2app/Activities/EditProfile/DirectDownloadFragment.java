@@ -25,8 +25,11 @@ import com.gianlu.commonutils.Toaster;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.URL;
+import java.security.cert.X509Certificate;
 
-public class DirectDownloadFragment extends FieldErrorFragment implements CertificateInputView.ActivityProvider {
+import static com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException.Where;
+
+public class DirectDownloadFragment extends FieldErrorFragmentWithState implements CertificateInputView.ActivityProvider {
     private ScrollView layout;
     private CheckBox enableDirectDownload;
     private LinearLayout container;
@@ -39,14 +42,98 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
     private CertificateInputView certificate;
 
     @NonNull
-    public static DirectDownloadFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
+    public static DirectDownloadFragment getInstance(@NonNull Context context) {
         DirectDownloadFragment fragment = new DirectDownloadFragment();
         fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.directDownload));
-        if (edit != null) args.putSerializable("edit", edit);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @NonNull
+    public static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
+        MultiProfile.DirectDownload dd = profile.directDownload;
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("enabled", dd != null);
+        if (dd != null) {
+            bundle.putString("address", dd.address);
+            bundle.putBoolean("auth", dd.auth);
+            bundle.putString("username", dd.username);
+            bundle.putString("password", dd.password);
+            bundle.putBoolean("encryption", dd.serverSsl);
+            if (dd.serverSsl)
+                bundle.putBundle("certificate", CertificateInputView.stateFromDirectDownload(dd));
+        }
+
+        return bundle;
+    }
+
+    @NonNull
+    public static Fields validateStateAndCreateFields(@NonNull Bundle bundle) throws InvalidFieldException {
+        MultiProfile.DirectDownload dd = null;
+        if (bundle.getBoolean("enabled", false)) {
+            String address = bundle.getString("address", null);
+            try {
+                new URL(address);
+            } catch (Exception ex) {
+                throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_dd_address, R.string.invalidAddress);
+            }
+
+            String username = null;
+            String password = null;
+            boolean auth = bundle.getBoolean("auth", false);
+            if (auth) {
+                username = bundle.getString("username", null);
+                if (username == null || (username = username.trim()).isEmpty())
+                    throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_dd_username, R.string.emptyUsername);
+
+                password = bundle.getString("password", null);
+                if (password == null || (password = password.trim()).isEmpty())
+                    throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_dd_password, R.string.emptyPassword);
+            }
+
+            boolean encryption = bundle.getBoolean("encryption", false);
+
+            boolean hostnameVerifier = false;
+            X509Certificate certificate = null;
+            Bundle certBundle = bundle.getBundle("certificate");
+            if (certBundle != null) {
+                hostnameVerifier = certBundle.getBoolean("hostnameVerifier", false);
+                certificate = (X509Certificate) certBundle.getSerializable("certificate");
+            }
+
+            dd = new MultiProfile.DirectDownload(address, auth, username, password, encryption, certificate, hostnameVerifier);
+        }
+
+        return new Fields(dd);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean("enabled", enableDirectDownload.isChecked());
+        outState.putString("address", CommonUtils.getText(address));
+        outState.putBoolean("auth", auth.isChecked());
+        outState.putString("username", CommonUtils.getText(username));
+        outState.putString("password", CommonUtils.getText(password));
+        outState.putBoolean("encryption", encryption.isChecked());
+
+        if (encryption.isChecked()) outState.putBundle("certificate", certificate.saveState());
+        else outState.remove("certificate");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle bundle) {
+        enableDirectDownload.setChecked(bundle.getBoolean("enabled", false));
+
+        CommonUtils.setText(address, CommonUtils.getText(address));
+        auth.setChecked(bundle.getBoolean("auth", false));
+        CommonUtils.setText(username, bundle.getString("username"));
+        CommonUtils.setText(password, bundle.getString("password"));
+
+        encryption.setChecked(bundle.getBoolean("encryption", false));
+        certificate.restore(bundle.getBundle("certificate"), encryption.isChecked());
     }
 
     @Nullable
@@ -92,28 +179,6 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
         certificate = layout.findViewById(R.id.editProfile_dd_certificate);
         certificate.attachActivity(this);
 
-        Bundle args = getArguments();
-        MultiProfile.UserProfile edit;
-        if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
-            enableDirectDownload.setChecked(edit.directDownload != null);
-            if (edit.directDownload != null) {
-                CommonUtils.setText(address, edit.directDownload.address);
-                auth.setChecked(edit.directDownload.auth);
-                encryption.setChecked(edit.directDownload.serverSsl);
-                if (edit.directDownload.certificate != null && edit.directDownload.serverSsl) {
-                    certificate.showCertificateDetails(edit.directDownload.certificate);
-                    certificate.hostnameVerifier(edit.directDownload.hostnameVerifier);
-                }
-
-                if (edit.directDownload.auth) {
-                    CommonUtils.setText(username, edit.directDownload.username);
-                    CommonUtils.setText(password, edit.directDownload.password);
-                }
-            }
-        }
-
-        created = true;
-
         return layout;
     }
 
@@ -121,45 +186,6 @@ public class DirectDownloadFragment extends FieldErrorFragment implements Certif
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CertificateInputView.CODE_PICK_CERT && resultCode == Activity.RESULT_OK && isAdded())
             certificate.loadCertificateUri(data.getData());
-    }
-
-    @Nullable
-    public Fields getFields(@NonNull Context context) throws InvalidFieldException {
-        if (!created) {
-            Bundle args = getArguments();
-            MultiProfile.UserProfile edit;
-            if (args == null || (edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit")) == null)
-                return null;
-            else
-                return new Fields(edit.directDownload);
-        }
-
-        MultiProfile.DirectDownload dd = null;
-        if (this.enableDirectDownload.isChecked()) {
-            String address = CommonUtils.getText(this.address).trim();
-            try {
-                new URL(address);
-            } catch (Exception ex) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_dd_address, context.getString(R.string.invalidAddress));
-            }
-
-            String username = null;
-            String password = null;
-            boolean auth = this.auth.isChecked();
-            if (auth) {
-                username = CommonUtils.getText(this.username).trim();
-                if (username.isEmpty())
-                    throw new InvalidFieldException(getClass(), R.id.editProfile_dd_username, context.getString(R.string.emptyUsername));
-
-                password = CommonUtils.getText(this.password).trim();
-                if (password.isEmpty())
-                    throw new InvalidFieldException(getClass(), R.id.editProfile_dd_password, context.getString(R.string.emptyPassword));
-            }
-
-            dd = new MultiProfile.DirectDownload(address, auth, username, password, encryption.isChecked(), certificate.lastLoadedCertificate(), certificate.hostnameVerifier());
-        }
-
-        return new Fields(dd);
     }
 
     @Override

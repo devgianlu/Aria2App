@@ -34,7 +34,9 @@ import java.security.cert.X509Certificate;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ConnectionFragment extends FieldErrorFragment implements CertificateInputView.ActivityProvider {
+import static com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException.Where;
+
+public class ConnectionFragment extends FieldErrorFragmentWithState implements CertificateInputView.ActivityProvider {
     private final CountryFlags flags = CountryFlags.get();
     private ScrollView layout;
     private TextView completeAddress;
@@ -47,20 +49,117 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
     private ImageView addressFlag;
 
     @NonNull
-    public static ConnectionFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
+    public static ConnectionFragment getInstance(@NonNull Context context) {
         ConnectionFragment fragment = new ConnectionFragment();
         fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.connection));
-        if (edit != null) args.putSerializable("edit", edit);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private static int radioIdFromConnMethod(@NonNull MultiProfile.ConnectionMethod method) {
+        switch (method) {
+            default:
+            case HTTP:
+                return R.id.editProfile_connectionMethod_http;
+            case WEBSOCKET:
+                return R.id.editProfile_connectionMethod_ws;
+        }
+    }
+
+    @NonNull
+    public static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("connectionMethod", radioIdFromConnMethod(profile.connectionMethod));
+        bundle.putString("address", profile.serverAddr);
+        bundle.putString("port", String.valueOf(profile.serverPort));
+        bundle.putString("endpoint", profile.serverEndpoint);
+        bundle.putBoolean("encryption", profile.serverSsl);
+        if (profile.serverSsl)
+            bundle.putBundle("certificate", CertificateInputView.stateFromProfile(profile));
+        return bundle;
+    }
+
+    @NonNull
+    public static Fields validateStateAndCreateFields(@NonNull Bundle bundle, boolean partial) throws InvalidFieldException {
+        MultiProfile.ConnectionMethod connectionMethod;
+        switch (bundle.getInt("connectionMethod", R.id.editProfile_connectionMethod_http)) {
+            case R.id.editProfile_connectionMethod_ws:
+                connectionMethod = MultiProfile.ConnectionMethod.WEBSOCKET;
+                break;
+            default:
+            case R.id.editProfile_connectionMethod_http:
+                connectionMethod = MultiProfile.ConnectionMethod.HTTP;
+                break;
+        }
+
+        String address = bundle.getString("address", null);
+        if (address == null || (address = address.trim()).isEmpty())
+            throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_address, R.string.addressEmpty);
+
+        int port;
+        try {
+            String portStr = bundle.getString("port");
+            if (portStr == null || (portStr = portStr.trim()).isEmpty())
+                throw new Exception();
+
+            port = Integer.parseInt(portStr);
+            if (port <= 0 || port > 65535) throw new Exception();
+        } catch (Exception ex) {
+            throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_port, R.string.invalidPort);
+        }
+
+        String endpoint = bundle.getString("endpoint", null);
+        if (endpoint == null || (endpoint = endpoint.trim()).isEmpty())
+            throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_endpoint, R.string.endpointEmpty);
+
+        boolean encryption = bundle.getBoolean("encryption", false);
+
+        if (!NetUtils.isUrlValid(address, port, endpoint, encryption))
+            throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_address, R.string.invalidCompleteAddress);
+
+        if (partial)
+            return new Fields(connectionMethod, address, port, endpoint, encryption, null, false);
+
+        boolean hostnameVerifier = false;
+        X509Certificate certificate = null;
+        Bundle certBundle = bundle.getBundle("certificate");
+        if (certBundle != null) {
+            hostnameVerifier = certBundle.getBoolean("hostnameVerifier", false);
+            certificate = (X509Certificate) certBundle.getSerializable("certificate");
+        }
+
+        return new Fields(connectionMethod, address, port, endpoint, encryption, certificate, hostnameVerifier);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         certificate.detachActivity();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("connectionMethod", connectionMethod.getCheckedRadioButtonId());
+        outState.putString("address", CommonUtils.getText(address));
+        outState.putString("port", CommonUtils.getText(port));
+        outState.putString("endpoint", CommonUtils.getText(endpoint));
+        outState.putBoolean("encryption", encryption.isChecked());
+
+        if (encryption.isChecked()) outState.putBundle("certificate", certificate.saveState());
+        else outState.remove("certificate");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle bundle) {
+        connectionMethod.check(bundle.getInt("connectionMethod", R.id.editProfile_connectionMethod_http));
+
+        CommonUtils.setText(address, bundle.getString("address"));
+        CommonUtils.setText(port, bundle.getString("port"));
+        CommonUtils.setText(endpoint, bundle.getString("endpoint", "/jsonrpc"));
+        encryption.setChecked(bundle.getBoolean("encryption", false));
+        certificate.restore(bundle.getBundle("certificate"), encryption.isChecked());
     }
 
     @Nullable
@@ -156,30 +255,6 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         certificate = layout.findViewById(R.id.editProfile_certificate);
         certificate.attachActivity(this);
 
-        Bundle args = getArguments();
-        MultiProfile.UserProfile edit;
-        if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
-            switch (edit.connectionMethod) {
-                default:
-                case HTTP:
-                    connectionMethod.check(R.id.editProfile_connectionMethod_http);
-                    break;
-                case WEBSOCKET:
-                    connectionMethod.check(R.id.editProfile_connectionMethod_ws);
-                    break;
-            }
-
-            CommonUtils.setText(address, edit.serverAddr);
-            CommonUtils.setText(port, String.valueOf(edit.serverPort));
-            CommonUtils.setText(endpoint, edit.serverEndpoint);
-            encryption.setChecked(edit.serverSsl);
-            certificate.hostnameVerifier(edit.hostnameVerifier);
-            if (edit.serverSsl && edit.certificate != null)
-                certificate.showCertificateDetails(edit.certificate);
-        }
-
-        created = true;
-
         return layout;
     }
 
@@ -193,7 +268,7 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         if (!isAdded()) return;
 
         try {
-            Fields fields = getFields(getContext(), true);
+            Fields fields = validateStateAndCreateFields(save(), true);
 
             String protocol;
             switch (fields.connectionMethod) {
@@ -212,54 +287,6 @@ public class ConnectionFragment extends FieldErrorFragment implements Certificat
         } catch (InvalidFieldException | URISyntaxException | NullPointerException ex) {
             completeAddress.setVisibility(View.GONE);
         }
-    }
-
-    public Fields getFields(Context context, boolean partial) throws InvalidFieldException {
-        if (!created || !isAdded()) {
-            Bundle args = getArguments();
-            MultiProfile.UserProfile edit;
-            if (args == null || (edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit")) == null)
-                return null;
-            else
-                return new Fields(edit.connectionMethod, edit.serverAddr, edit.serverPort, edit.serverEndpoint, edit.serverSsl, edit.certificate, edit.hostnameVerifier);
-        }
-
-        MultiProfile.ConnectionMethod connectionMethod;
-        switch (this.connectionMethod.getCheckedRadioButtonId()) {
-            case R.id.editProfile_connectionMethod_ws:
-                connectionMethod = MultiProfile.ConnectionMethod.WEBSOCKET;
-                break;
-            default:
-            case R.id.editProfile_connectionMethod_http:
-                connectionMethod = MultiProfile.ConnectionMethod.HTTP;
-                break;
-        }
-
-        String address = CommonUtils.getText(this.address).trim();
-        if (address.isEmpty())
-            throw new InvalidFieldException(getClass(), R.id.editProfile_address, context.getString(R.string.addressEmpty));
-
-        int port;
-        try {
-            port = Integer.parseInt(CommonUtils.getText(this.port).trim());
-            if (port <= 0 || port > 65535) throw new Exception();
-        } catch (Exception ex) {
-            throw new InvalidFieldException(getClass(), R.id.editProfile_port, context.getString(R.string.invalidPort));
-        }
-
-        String endpoint = CommonUtils.getText(this.endpoint).trim();
-        if (endpoint.isEmpty())
-            throw new InvalidFieldException(getClass(), R.id.editProfile_endpoint, context.getString(R.string.endpointEmpty));
-
-        boolean encryption = this.encryption.isChecked();
-
-        if (!NetUtils.isUrlValid(address, port, endpoint, encryption))
-            throw new InvalidFieldException(getClass(), R.id.editProfile_address, getString(R.string.invalidCompleteAddress));
-
-        if (partial)
-            return new Fields(connectionMethod, address, port, endpoint, encryption, null, false);
-
-        return new Fields(connectionMethod, address, port, endpoint, encryption, certificate.lastLoadedCertificate(), certificate.hostnameVerifier());
     }
 
     @Override

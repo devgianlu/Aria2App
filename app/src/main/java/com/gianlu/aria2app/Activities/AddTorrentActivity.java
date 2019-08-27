@@ -7,24 +7,23 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import com.gianlu.aria2app.Activities.AddDownload.AddBase64Bundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.Activities.AddDownload.AddTorrentBundle;
 import com.gianlu.aria2app.Activities.AddDownload.Base64Fragment;
 import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Activities.AddDownload.UrisFragment;
-import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Adapters.StatePagerAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.google.android.material.tabs.TabLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
 
 public class AddTorrentActivity extends AddDownloadActivity {
     private ViewPager pager;
@@ -91,15 +90,12 @@ public class AddTorrentActivity extends AddDownloadActivity {
     public AddDownloadBundle createBundle() {
         AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_TORRENT);
 
-
-        String base64 = null;
+        String base64;
         try {
             base64 = base64Fragment.getBase64();
-        } catch (InvalidFieldException ex) {
-            if (ex.fragmentClass == Base64Fragment.class) {
-                pager.setCurrentItem(0, true);
-                return null;
-            }
+        } catch (Base64Fragment.NoFileException ex) {
+            pager.setCurrentItem(0, true);
+            return null;
         }
 
         String filename = base64Fragment.getFilenameOnDevice();

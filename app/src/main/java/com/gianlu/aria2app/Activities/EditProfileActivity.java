@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,19 +23,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.gianlu.aria2app.Activities.EditProfile.AuthenticationFragment;
 import com.gianlu.aria2app.Activities.EditProfile.ConnectionFragment;
 import com.gianlu.aria2app.Activities.EditProfile.DirectDownloadFragment;
-import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragment;
+import com.gianlu.aria2app.Activities.EditProfile.FieldErrorFragmentWithState;
 import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.Activities.EditProfile.TestFragment;
 import com.gianlu.aria2app.Activities.EditProfile.WifisAdapter;
 import com.gianlu.aria2app.Adapters.RadioConditionsAdapter;
 import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
 import com.gianlu.aria2app.Adapters.StatePagerAdapter;
-import com.gianlu.aria2app.Main.MainActivity;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
@@ -58,19 +56,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException.Where;
+
 public class EditProfileActivity extends ActivityWithDialog implements TestFragment.OnGetProfile {
+    private final List<MultiProfile.ConnectivityCondition> conditions = new ArrayList<>();
+    private final List<Bundle> states = new ArrayList<>();
+    private ProfileFragmentsAdapter pagerAdapter;
     private MultiProfile editProfile;
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
-    private List<MultiProfile.ConnectivityCondition> conditions;
-    private List<ConnectionFragment> connectionFragments;
-    private List<AuthenticationFragment> authFragments;
-    private List<DirectDownloadFragment> ddFragments;
-    private TestFragment testFragment;
     private ViewPager pager;
-    private StatePagerAdapter<Fragment> pagerAdapter;
     private Spinner conditionsSpinner;
-    private TabLayout tabLayout;
 
     public static void start(Context context, boolean firstProfile) {
         context.startActivity(new Intent(context, EditProfileActivity.class)
@@ -81,6 +77,15 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         context.startActivity(new Intent(context, EditProfileActivity.class)
                 .putExtra("firstProfile", false)
                 .putExtra("edit", edit));
+    }
+
+    @NonNull
+    private static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
+        Bundle result = new Bundle();
+        result.putBundle("connection", ConnectionFragment.stateFromProfile(profile));
+        result.putBundle("authentication", AuthenticationFragment.stateFromProfile(profile));
+        result.putBundle("directDownload", DirectDownloadFragment.stateFromProfile(profile));
+        return result;
     }
 
     private boolean hasAlwaysCondition() {
@@ -105,31 +110,24 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             bar.setDisplayShowTitleEnabled(false);
         }
 
-        try {
-            editProfile = ProfilesManager.get(this).retrieveProfile(getIntent().getStringExtra("edit"));
-        } catch (IOException | JSONException ex) {
-            Logging.log(ex);
+        String editId = getIntent().getStringExtra("edit");
+        if (editId == null) {
             editProfile = null;
+        } else {
+            try {
+                editProfile = ProfilesManager.get(this).retrieveProfile(editId);
+            } catch (IOException | JSONException ex) {
+                Logging.log(ex);
+                editProfile = null;
+            }
         }
 
         if (editProfile == null) setTitle(R.string.addProfile);
         else setTitle(R.string.editProfile);
 
         profileName = findViewById(R.id.editProfile_profileName);
-        CommonUtils.getEditText(profileName).addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+        CommonUtils.clearErrorOnEdit(profileName);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                profileName.setErrorEnabled(false);
-            }
-        });
         enableNotifs = findViewById(R.id.editProfile_enableNotifs);
 
         if (editProfile != null) {
@@ -141,7 +139,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         conditionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                showFragmentsAt(position);
+                showConditionAt(position);
             }
 
             @Override
@@ -149,10 +147,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             }
         });
 
-        pager = findViewById(R.id.editProfile_pager);
-        pager.setOffscreenPageLimit(4);
-
-        tabLayout = findViewById(R.id.editProfile_tabs);
+        TabLayout tabLayout = findViewById(R.id.editProfile_tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -168,9 +163,12 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             }
         });
 
-        connectionFragments = new ArrayList<>();
-        authFragments = new ArrayList<>();
-        ddFragments = new ArrayList<>();
+        pager = findViewById(R.id.editProfile_pager);
+        pager.setOffscreenPageLimit(4);
+
+        pagerAdapter = new ProfileFragmentsAdapter(this, getSupportFragmentManager());
+        pager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(pager);
 
         createAllFragments();
         if (editProfile == null) createNewCondition(true);
@@ -178,18 +176,10 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private void createAllFragments() {
-        conditions = new ArrayList<>();
-
         if (editProfile != null) {
-            connectionFragments.clear();
-            authFragments.clear();
-            ddFragments.clear();
-
             for (MultiProfile.UserProfile profile : editProfile.profiles) {
                 conditions.add(profile.connectivityCondition);
-                connectionFragments.add(ConnectionFragment.getInstance(this, profile));
-                authFragments.add(AuthenticationFragment.getInstance(this, profile));
-                ddFragments.add(DirectDownloadFragment.getInstance(this, profile));
+                states.add(stateFromProfile(profile));
             }
         }
     }
@@ -200,14 +190,17 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         return true;
     }
 
-    private void showFragmentsAt(int pos) {
-        int tabPos = pager.getCurrentItem();
+    private void saveCurrent() {
+        if (pagerAdapter.pos() != -1) {
+            Bundle saved = pagerAdapter.save();
+            states.set(pagerAdapter.pos(), saved);
+        }
+    }
+
+    private void showConditionAt(int pos) {
         if (pos != -1) {
-            if (testFragment == null) testFragment = TestFragment.getInstance(this);
-            pagerAdapter = new StatePagerAdapter<>(getSupportFragmentManager(), connectionFragments.get(pos), authFragments.get(pos), ddFragments.get(pos), testFragment);
-            pager.setAdapter(pagerAdapter);
-            tabLayout.setupWithViewPager(pager);
-            pager.setCurrentItem(tabPos, false);
+            saveCurrent();
+            pagerAdapter.restore(pos, states.get(pos));
         }
     }
 
@@ -232,24 +225,14 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         }
 
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_new_condition, null, false);
-        final RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
-        final TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
-        final MultiAutoCompleteTextView ssidField = (MultiAutoCompleteTextView) CommonUtils.getEditText(ssid);
+
+        TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
+        CommonUtils.clearErrorOnEdit(ssid);
+
+        MultiAutoCompleteTextView ssidField = (MultiAutoCompleteTextView) CommonUtils.getEditText(ssid);
         ssidField.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-        ssidField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                ssid.setErrorEnabled(false);
-            }
-        });
+        RadioGroup connectivityCondition = layout.findViewById(R.id.editProfile_connectivityCondition);
         connectivityCondition.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.editProfile_connectivityCondition_wifi) {
                 ssid.setVisibility(View.VISIBLE);
@@ -306,12 +289,12 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             }
 
             if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
-                Toaster.with(EditProfileActivity.this).message(R.string.cannotAddAlwaysCondition).show();
+                Toaster.with(this).message(R.string.cannotAddAlwaysCondition).show();
                 return;
             }
 
             if (conditions.contains(condition)) {
-                Toaster.with(EditProfileActivity.this).message(R.string.duplicatedCondition).show();
+                Toaster.with(this).message(R.string.duplicatedCondition).show();
                 return;
             }
 
@@ -345,11 +328,11 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
     private void addCondition(@NonNull AlertDialog dialog, @NonNull MultiProfile.ConnectivityCondition condition) {
         conditions.add(condition);
-        connectionFragments.add(ConnectionFragment.getInstance(EditProfileActivity.this, null));
-        authFragments.add(AuthenticationFragment.getInstance(EditProfileActivity.this, null));
-        ddFragments.add(DirectDownloadFragment.getInstance(EditProfileActivity.this, null));
+        states.add(new Bundle());
+
         refreshSpinner();
         conditionsSpinner.setSelection(conditions.size() - 1);
+        pager.setCurrentItem(0, false);
         dialog.dismiss();
     }
 
@@ -357,23 +340,41 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         conditionsSpinner.setAdapter(new SpinnerConditionsAdapter(this, conditions));
     }
 
-    @Nullable
+    @NonNull
     private MultiProfile buildProfile() throws InvalidFieldException {
         String profileName = CommonUtils.getText(this.profileName).trim();
-        if (profileName.isEmpty()
-                || (ProfilesManager.get(this).profileExists(ProfilesManager.getId(profileName)) && editProfile == null)
+        if (profileName.isEmpty() || (ProfilesManager.get(this).profileExists(ProfilesManager.getId(profileName)) && editProfile == null)
                 || profileName.equals(MultiProfile.IN_APP_DOWNLOADER_NAME)) {
-            throw new InvalidFieldException(MainActivity.class, R.id.editProfile_profileName, getString(R.string.invalidProfileName));
+            throw new InvalidFieldException(Where.ACTIVITY, R.id.editProfile_profileName, R.string.invalidProfileName);
         }
+
+        saveCurrent();
+
+        if (states.size() != conditions.size())
+            throw new IllegalStateException();
 
         MultiProfile profile = new MultiProfile(profileName, enableNotifs.isChecked());
         for (int i = 0; i < conditions.size(); i++) {
-            ConnectionFragment.Fields connFields = connectionFragments.get(i).getFields(this, false);
-            AuthenticationFragment.Fields authFields = authFragments.get(i).getFields(this);
-            DirectDownloadFragment.Fields ddFields = ddFragments.get(i).getFields(this);
+            Bundle state = states.get(i);
 
-            if (connFields == null || authFields == null || ddFields == null) return null;
-            profile.add(conditions.get(i), connFields, authFields, ddFields);
+            try {
+                Bundle connState = state.getBundle("connection");
+                if (connState == null) throw new IllegalStateException();
+                ConnectionFragment.Fields conn = ConnectionFragment.validateStateAndCreateFields(connState, false);
+
+                Bundle authState = state.getBundle("authentication");
+                if (authState == null) throw new IllegalStateException();
+                AuthenticationFragment.Fields auth = AuthenticationFragment.validateStateAndCreateFields(authState);
+
+                Bundle ddState = state.getBundle("directDownload");
+                if (ddState == null) throw new IllegalStateException();
+                DirectDownloadFragment.Fields dd = DirectDownloadFragment.validateStateAndCreateFields(ddState);
+
+                profile.add(conditions.get(i), conn, auth, dd);
+            } catch (InvalidFieldException ex) {
+                ex.pos = i;
+                throw ex;
+            }
         }
 
         return profile;
@@ -381,16 +382,13 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
     private void doneAll() {
         try {
-            MultiProfile profile = buildProfile();
-            if (profile == null) {
-                Toaster.with(this).message(R.string.cannotSaveProfile).ex(new NullPointerException("profile is null!")).show();
-                return;
-            }
-
             ProfilesManager manager = ProfilesManager.get(this);
+            MultiProfile profile = buildProfile();
             manager.save(profile);
+
             if (editProfile != null && !Objects.equals(editProfile.id, profile.id))
                 manager.delete(editProfile);
+
             onBackPressed();
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
@@ -401,22 +399,21 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_PROFILE);
     }
 
-    private void handleInvalidFieldException(InvalidFieldException ex) {
-        if (ex.fragmentClass == MainActivity.class) {
+    private void handleInvalidFieldException(@NonNull InvalidFieldException ex) {
+        if (ex.where == Where.ACTIVITY) {
             TextInputLayout field = findViewById(ex.fieldId);
             field.clearFocus();
             field.setErrorEnabled(true);
-            field.setError(ex.reason);
+            field.setError(getString(ex.reasonRes));
             return;
         }
 
-        int pos = pagerAdapter.indexOf(ex.fragmentClass);
-        if (pos != -1) {
-            pager.setCurrentItem(pos, true);
-            Fragment fragment = pagerAdapter.getItem(pos);
-            if (fragment instanceof FieldErrorFragment)
-                ((FieldErrorFragment) fragment).onFieldError(ex.fieldId, ex.reason);
-        }
+        if (ex.pos == -1) return;
+        showConditionAt(ex.pos);
+
+        FieldErrorFragmentWithState fragment = (FieldErrorFragmentWithState) pagerAdapter.get(ex.where);
+        pager.setCurrentItem(ex.where.pagerPos(), true);
+        fragment.onFieldError(ex.fieldId, getString(ex.reasonRes));
     }
 
     private void deleteProfile() {
@@ -502,11 +499,68 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         AnalyticsApplication.sendAnalytics(Utils.ACTION_STARTED_TEST);
 
         try {
-            MultiProfile profile = buildProfile();
-            return profile == null ? null : profile.getProfile(this);
+            return buildProfile().getProfile(this);
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
             return null;
+        }
+    }
+
+    private static final class ProfileFragmentsAdapter extends StatePagerAdapter<Fragment> {
+        private final ConnectionFragment connection;
+        private final AuthenticationFragment authentication;
+        private final DirectDownloadFragment directDownload;
+        private final TestFragment test;
+        private int currentPos = -1;
+
+        ProfileFragmentsAdapter(@NonNull Context context, @NonNull FragmentManager fm) {
+            super(fm, ConnectionFragment.getInstance(context), AuthenticationFragment.getInstance(context),
+                    DirectDownloadFragment.getInstance(context), TestFragment.getInstance(context));
+
+            connection = (ConnectionFragment) getItem(0);
+            authentication = (AuthenticationFragment) getItem(1);
+            directDownload = (DirectDownloadFragment) getItem(2);
+            test = (TestFragment) getItem(3);
+        }
+
+        void restore(int pos, @NonNull Bundle bundle) {
+            currentPos = pos;
+
+            connection.restore(bundle.getBundle("connection"));
+            authentication.restore(bundle.getBundle("authentication"));
+            directDownload.restore(bundle.getBundle("directDownload"));
+            test.clearViews();
+        }
+
+        /**
+         * @return The current condition position in the {@link EditProfileActivity#conditions} list
+         */
+        int pos() {
+            return currentPos;
+        }
+
+        @NonNull
+        Bundle save() {
+            Bundle result = new Bundle();
+            result.putBundle("connection", connection.save());
+            result.putBundle("authentication", authentication.save());
+            result.putBundle("directDownload", directDownload.save());
+            return result;
+        }
+
+        @NonNull
+        public Fragment get(@NonNull Where where) {
+            switch (where) {
+                default:
+                case ACTIVITY:
+                    throw new IllegalStateException();
+                case CONNECTION:
+                    return connection;
+                case AUTHENTICATION:
+                    return authentication;
+                case DIRECT_DOWNLOAD:
+                    return directDownload;
+            }
         }
     }
 }

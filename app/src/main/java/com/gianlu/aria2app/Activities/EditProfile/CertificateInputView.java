@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.gianlu.aria2app.NetIO.CertUtils;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.AskPermission;
@@ -82,6 +84,26 @@ public class CertificateInputView extends LinearLayout {
         pickCertificateFile.setOnClickListener(v -> showPicker());
     }
 
+    @NonNull
+    public static Bundle stateFromDirectDownload(@NonNull MultiProfile.DirectDownload dd) {
+        if (!dd.serverSsl) throw new IllegalArgumentException();
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("hostnameVerifier", dd.hostnameVerifier);
+        bundle.putSerializable("certificate", dd.certificate);
+        return bundle;
+    }
+
+    @NonNull
+    public static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
+        if (!profile.serverSsl) throw new IllegalArgumentException();
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("hostnameVerifier", profile.hostnameVerifier);
+        bundle.putSerializable("certificate", profile.certificate);
+        return bundle;
+    }
+
     void attachActivity(@NonNull ActivityProvider activityProvider) {
         this.activityProvider = activityProvider;
     }
@@ -124,7 +146,7 @@ public class CertificateInputView extends LinearLayout {
     }
 
     void showCertificateDetails(@NonNull X509Certificate certificate) {
-        this.lastLoadedCertificate = certificate;
+        lastLoadedCertificate = certificate;
 
         detailsContainer.setVisibility(View.VISIBLE);
 
@@ -194,17 +216,24 @@ public class CertificateInputView extends LinearLayout {
         showCertificateDetails(certificate);
     }
 
-    public void hostnameVerifier(boolean set) {
-        hostnameVerifier.setChecked(set);
+    @NonNull
+    public Bundle saveState() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("hostnameVerifier", hostnameVerifier.isChecked());
+        bundle.putSerializable("certificate", lastLoadedCertificate);
+        return bundle;
     }
 
-    public boolean hostnameVerifier() {
-        return hostnameVerifier.isChecked();
-    }
-
-    @Nullable
-    public X509Certificate lastLoadedCertificate() {
-        return lastLoadedCertificate;
+    public void restore(@Nullable Bundle bundle, boolean show) {
+        if (bundle == null) {
+            hostnameVerifier.setChecked(false);
+            loadCertificateUri(null);
+        } else {
+            hostnameVerifier.setChecked(bundle.getBoolean("hostnameVerifier", false));
+            lastLoadedCertificate = (X509Certificate) bundle.getSerializable("certificate");
+            if (lastLoadedCertificate != null && show)
+                showCertificateDetails(lastLoadedCertificate);
+        }
     }
 
     public interface ActivityProvider {

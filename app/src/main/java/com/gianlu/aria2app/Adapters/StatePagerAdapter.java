@@ -2,24 +2,25 @@ package com.gianlu.aria2app.Adapters;
 
 import android.os.Bundle;
 
-import java.util.Arrays;
-import java.util.List;
-
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class StatePagerAdapter<F extends Fragment> extends FragmentStatePagerAdapter {
     private final List<F> fragments;
 
-    public StatePagerAdapter(FragmentManager fm, List<F> fragments) {
-        super(fm);
+    public StatePagerAdapter(@NonNull FragmentManager fm, List<F> fragments) {
+        super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fragments = fragments;
     }
 
     @SafeVarargs
-    public StatePagerAdapter(FragmentManager fm, F... fragments) {
-        super(fm);
+    public StatePagerAdapter(@NonNull FragmentManager fm, F... fragments) {
+        super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fragments = Arrays.asList(fragments);
     }
 
@@ -31,6 +32,7 @@ public class StatePagerAdapter<F extends Fragment> extends FragmentStatePagerAda
         return -1;
     }
 
+    @NonNull
     @Override
     public F getItem(int position) {
         return fragments.get(position);

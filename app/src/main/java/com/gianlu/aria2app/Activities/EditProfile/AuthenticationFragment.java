@@ -19,7 +19,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class AuthenticationFragment extends FieldErrorFragment {
+import static com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException.Where;
+
+public class AuthenticationFragment extends FieldErrorFragmentWithState {
     private ScrollView layout;
     private RadioGroup authMethod;
     private TextInputLayout token;
@@ -27,14 +29,90 @@ public class AuthenticationFragment extends FieldErrorFragment {
     private TextInputLayout username;
     private TextInputLayout password;
 
-    public static AuthenticationFragment getInstance(Context context, @Nullable MultiProfile.UserProfile edit) {
+    @NonNull
+    public static AuthenticationFragment getInstance(@NonNull Context context) {
         AuthenticationFragment fragment = new AuthenticationFragment();
         fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("title", context.getString(R.string.authentication));
-        if (edit != null) args.putSerializable("edit", edit);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private static int radioIdFromAuthMethod(@NonNull AbstractClient.AuthMethod method) {
+        switch (method) {
+            default:
+            case NONE:
+                return R.id.editProfile_authMethod_none;
+            case HTTP:
+                return R.id.editProfile_authMethod_http;
+            case TOKEN:
+                return R.id.editProfile_authMethod_token;
+        }
+    }
+
+    @NonNull
+    public static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("authMethod", radioIdFromAuthMethod(profile.authMethod));
+        bundle.putString("token", profile.serverToken);
+        bundle.putString("username", profile.serverUsername);
+        bundle.putString("password", profile.serverPassword);
+        return bundle;
+    }
+
+    @NonNull
+    public static Fields validateStateAndCreateFields(@NonNull Bundle bundle) throws InvalidFieldException {
+        AbstractClient.AuthMethod authMethod;
+        switch (bundle.getInt("authMethod", R.id.editProfile_authMethod_none)) {
+            default:
+            case R.id.editProfile_authMethod_none:
+                authMethod = AbstractClient.AuthMethod.NONE;
+                break;
+            case R.id.editProfile_authMethod_token:
+                authMethod = AbstractClient.AuthMethod.TOKEN;
+                break;
+            case R.id.editProfile_authMethod_http:
+                authMethod = AbstractClient.AuthMethod.HTTP;
+                break;
+        }
+
+        String token = null;
+        if (authMethod == AbstractClient.AuthMethod.TOKEN) {
+            token = bundle.getString("token", null);
+            if (token == null || (token = token.trim()).isEmpty())
+                throw new InvalidFieldException(Where.AUTHENTICATION, R.id.editProfile_token, R.string.emptyToken);
+        }
+
+        String username = null;
+        String password = null;
+        if (authMethod == AbstractClient.AuthMethod.HTTP) {
+            username = bundle.getString("username", null);
+            if (username == null || (username = username.trim()).isEmpty())
+                throw new InvalidFieldException(Where.AUTHENTICATION, R.id.editProfile_username, R.string.emptyUsername);
+
+            password = bundle.getString("password", null);
+            if (password == null || (password = password.trim()).isEmpty())
+                throw new InvalidFieldException(Where.AUTHENTICATION, R.id.editProfile_password, R.string.emptyPassword);
+        }
+
+        return new Fields(authMethod, token, username, password);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("authMethod", authMethod.getCheckedRadioButtonId());
+        outState.putString("token", CommonUtils.getText(token));
+        outState.putString("username", CommonUtils.getText(username));
+        outState.putString("password", CommonUtils.getText(password));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle bundle) {
+        authMethod.check(bundle.getInt("authMethod", R.id.editProfile_authMethod_none));
+        CommonUtils.setText(token, bundle.getString("token"));
+        CommonUtils.setText(username, bundle.getString("username"));
+        CommonUtils.setText(password, bundle.getString("password"));
     }
 
     @Nullable
@@ -67,28 +145,6 @@ public class AuthenticationFragment extends FieldErrorFragment {
         password = layout.findViewById(R.id.editProfile_password);
         CommonUtils.clearErrorOnEdit(password);
 
-        Bundle args = getArguments();
-        MultiProfile.UserProfile edit;
-        if (args != null && (edit = (MultiProfile.UserProfile) args.getSerializable("edit")) != null) {
-            switch (edit.authMethod) {
-                default:
-                case NONE:
-                    authMethod.check(R.id.editProfile_authMethod_none);
-                    break;
-                case HTTP:
-                    authMethod.check(R.id.editProfile_authMethod_http);
-                    CommonUtils.setText(username, edit.serverUsername);
-                    CommonUtils.setText(password, edit.serverPassword);
-                    break;
-                case TOKEN:
-                    authMethod.check(R.id.editProfile_authMethod_token);
-                    CommonUtils.setText(token, edit.serverToken);
-                    break;
-            }
-        }
-
-        created = true;
-
         return layout;
     }
 
@@ -99,53 +155,6 @@ public class AuthenticationFragment extends FieldErrorFragment {
             inputLayout.setErrorEnabled(true);
             inputLayout.setError(reason);
         }
-    }
-
-    public Fields getFields(Context context) throws InvalidFieldException {
-        if (!created) {
-            Bundle args = getArguments();
-            MultiProfile.UserProfile edit;
-            if (args == null || (edit = (MultiProfile.UserProfile) getArguments().getSerializable("edit")) == null)
-                return null;
-            else
-                return new Fields(edit.authMethod, edit.serverToken, edit.serverUsername, edit.serverPassword);
-        }
-
-        AbstractClient.AuthMethod authMethod;
-        switch (this.authMethod.getCheckedRadioButtonId()) {
-            default:
-            case R.id.editProfile_authMethod_none:
-                authMethod = AbstractClient.AuthMethod.NONE;
-                break;
-            case R.id.editProfile_authMethod_token:
-                authMethod = AbstractClient.AuthMethod.TOKEN;
-                break;
-            case R.id.editProfile_authMethod_http:
-                authMethod = AbstractClient.AuthMethod.HTTP;
-                break;
-        }
-
-        String token = null;
-        if (authMethod == AbstractClient.AuthMethod.TOKEN) {
-            token = CommonUtils.getText(this.token).trim();
-            if (token.isEmpty()) {
-                throw new InvalidFieldException(getClass(), R.id.editProfile_token, context.getString(R.string.emptyToken));
-            }
-        }
-
-        String username = null;
-        String password = null;
-        if (authMethod == AbstractClient.AuthMethod.HTTP) {
-            username = CommonUtils.getText(this.username).trim();
-            if (username.isEmpty())
-                throw new InvalidFieldException(getClass(), R.id.editProfile_username, context.getString(R.string.emptyUsername));
-
-            password = CommonUtils.getText(this.password).trim();
-            if (password.isEmpty())
-                throw new InvalidFieldException(getClass(), R.id.editProfile_password, context.getString(R.string.emptyPassword));
-        }
-
-        return new Fields(authMethod, token, username, password);
     }
 
     public static class Fields {

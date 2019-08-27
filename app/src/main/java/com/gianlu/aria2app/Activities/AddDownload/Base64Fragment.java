@@ -13,11 +13,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 
-import com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
@@ -65,12 +66,13 @@ public class Base64Fragment extends FragmentWithDialog {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case FILE_SELECT_CODE:
-                if (resultCode == Activity.RESULT_OK && intent.getData() != null) {
-                    if (intent.getData() != null) setFilename(intent.getData());
-                }
-                break;
+        if (requestCode == FILE_SELECT_CODE) {
+            if (resultCode == Activity.RESULT_OK && intent.getData() != null) {
+                if (intent.getData() != null)
+                    setFilename(intent.getData());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, intent);
         }
     }
 
@@ -139,17 +141,27 @@ public class Base64Fragment extends FragmentWithDialog {
     }
 
     @Nullable
-    public String getBase64() throws InvalidFieldException {
+    public String getBase64() throws NoFileException {
         if (getContext() == null) return null;
 
         if (fileUri == null)
-            throw new InvalidFieldException(Base64Fragment.class, R.id.base64Fragment_pick, getString(R.string.base64NotSelected));
+            throw new NoFileException(R.id.base64Fragment_pick, R.string.base64NotSelected);
 
         try {
             return AddBase64Bundle.readBase64(getContext(), fileUri);
         } catch (AddBase64Bundle.CannotReadException ex) {
             showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
             return null;
+        }
+    }
+
+    public static class NoFileException extends Exception {
+        public final int fieldId;
+        public final int reasonRes;
+
+        public NoFileException(@IdRes int fieldId, @StringRes int reasonRes) {
+            this.fieldId = fieldId;
+            this.reasonRes = reasonRes;
         }
     }
 
