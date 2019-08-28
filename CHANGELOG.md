@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.4] - 28-08-2019
+### Changed
+- Fixed WiFi condition not working on Android 8.1+ due to missing permission
+- Refactored profile creation
+- Fixed notification service restarting as "Not started"
+- Improved In-App Downloader configuration page
+
+### Removed
+- Do not log GeoIP exceptions
+
 ## [5.2.3] - 19-08-2019
 ### Changed
 - Fixed startup crash due to aria2 service (In-App downloader)

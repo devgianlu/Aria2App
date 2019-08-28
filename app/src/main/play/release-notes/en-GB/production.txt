@@ -1,2 +1,8 @@
 ### Changed
-- Fixed startup crash due to aria2 service
+- Fixed WiFi condition not working on Android 8.1+ due to missing permission
+- Refactored profile creation
+- Fixed notification service restarting as "Not started"
+- Improved In-App Downloader configuration page
+
+### Removed
+- Do not log GeoIP exceptions
