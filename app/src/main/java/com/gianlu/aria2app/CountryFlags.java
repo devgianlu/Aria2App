@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 public final class CountryFlags {
+    public static final String UNKNONW = "??";
     private static final int MAX_CACHE_SIZE = 8 * 1024; // 8 MiB
     private static CountryFlags instance;
     private final LruCache<String, Drawable> cache;
@@ -34,6 +35,9 @@ public final class CountryFlags {
     @SuppressWarnings("ConstantConditions")
     @NonNull
     public Drawable loadFlag(@NonNull Context context, @NonNull String countryCode) {
+        if (countryCode.equals(UNKNONW))
+            return ContextCompat.getDrawable(context, R.drawable.ic_list_unknown);
+
         Drawable cachedDrawable = cache.get(countryCode);
         if (cachedDrawable == null) {
             int id = context.getResources().getIdentifier("ic_list_" + countryCode.toLowerCase(), "drawable", context.getPackageName());

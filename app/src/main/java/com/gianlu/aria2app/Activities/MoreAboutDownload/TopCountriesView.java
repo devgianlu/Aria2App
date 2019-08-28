@@ -89,6 +89,8 @@ public final class TopCountriesView extends FlowLayout {
             IPDetails details = freeGeoIp.getCached(peer.ip);
             if (details != null)
                 add(details.countryCode, download ? peer.downloadSpeed : peer.uploadSpeed);
+            else
+                add(CountryFlags.UNKNONW, download ? peer.downloadSpeed : peer.uploadSpeed);
         }
 
         buildLayout();
@@ -105,8 +107,8 @@ public final class TopCountriesView extends FlowLayout {
                 if (host == null) continue;
 
                 IPDetails details = freeGeoIp.getCached(host);
-                if (details != null)
-                    add(details.countryCode, server.downloadSpeed);
+                if (details != null) add(details.countryCode, server.downloadSpeed);
+                else add(CountryFlags.UNKNONW, server.downloadSpeed);
             }
         }
 
