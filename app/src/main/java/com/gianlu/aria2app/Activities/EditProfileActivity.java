@@ -192,8 +192,12 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
     private void saveCurrent() {
         if (pagerAdapter.pos() != -1) {
-            Bundle saved = pagerAdapter.save();
-            states.set(pagerAdapter.pos(), saved);
+            try {
+                Bundle saved = pagerAdapter.save();
+                states.set(pagerAdapter.pos(), saved);
+            } catch (IllegalStateException ex) {
+                Logging.log("Failed saving state.", ex);
+            }
         }
     }
 
