@@ -127,7 +127,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     protected void onRestoreInstanceState(@NonNull Bundle bundle) {
         enableDirectDownload.setChecked(bundle.getBoolean("enabled", false));
 
-        CommonUtils.setText(address, CommonUtils.getText(address));
+        CommonUtils.setText(address, bundle.getString("address"));
         auth.setChecked(bundle.getBoolean("auth", false));
         CommonUtils.setText(username, bundle.getString("username"));
         CommonUtils.setText(password, bundle.getString("password"));
