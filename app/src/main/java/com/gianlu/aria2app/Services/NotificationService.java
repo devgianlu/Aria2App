@@ -263,6 +263,8 @@ public class NotificationService extends Service {
     }
 
     private void updateForegroundNotification() {
+        if (notificationManager == null) return;
+
         if (startedFrom == StartedFrom.NOT)
             notificationManager.cancel(FOREGROUND_SERVICE_NOTIF_ID);
         else
