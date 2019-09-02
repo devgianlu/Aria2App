@@ -430,7 +430,11 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private void deleteCondition(int position) {
-        if (position != -1) conditions.remove(position);
+        if (position != -1) {
+            conditions.remove(position);
+            states.remove(position);
+        }
+
         refreshSpinner();
         conditionsSpinner.setSelection(conditions.size() - 1);
     }
