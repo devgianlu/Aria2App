@@ -435,8 +435,12 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             states.remove(position);
         }
 
-        refreshSpinner();
-        conditionsSpinner.setSelection(conditions.size() - 1);
+        if (conditions.size() == 0) {
+            onBackPressed();
+        } else {
+            refreshSpinner();
+            conditionsSpinner.setSelection(conditions.size() - 1);
+        }
     }
 
     private int findDefaultCondition() {
@@ -484,8 +488,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 deleteProfile();
                 break;
             case R.id.editProfile_deleteCondition:
-                if (conditions.size() == 1) deleteProfile();
-                else deleteCondition(conditionsSpinner.getSelectedItemPosition());
+                deleteCondition(conditionsSpinner.getSelectedItemPosition());
                 break;
             case R.id.editProfile_setDefault:
                 setDefaultCondition();
@@ -504,10 +507,14 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     @Nullable
     @Override
     public MultiProfile.UserProfile getProfile() {
-        AnalyticsApplication.sendAnalytics(Utils.ACTION_STARTED_TEST);
-
         try {
-            return buildProfile().getProfile(this);
+            MultiProfile profile = buildProfile();
+            if (profile.isEmpty()) {
+                onBackPressed();
+                return null;
+            }
+
+            return profile.getProfile(this);
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
             return null;

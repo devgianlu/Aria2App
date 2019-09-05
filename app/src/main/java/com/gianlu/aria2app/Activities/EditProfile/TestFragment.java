@@ -18,6 +18,8 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.Testers.BaseTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
+import com.gianlu.commonutils.Analytics.AnalyticsApplication;
 import com.gianlu.commonutils.CasualViews.SuperTextView;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
@@ -75,6 +77,8 @@ public class TestFragment extends Fragment implements TestersFlow.ITestFlow {
         test = layout.findViewById(R.id.editProfile_test);
         test.setOnClickListener(v -> {
             if (listener != null) {
+                AnalyticsApplication.sendAnalytics(Utils.ACTION_STARTED_TEST);
+
                 MultiProfile.UserProfile profile = listener.getProfile();
                 if (profile != null) startTest(profile);
             }

@@ -269,6 +269,10 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         return name.equals(IN_APP_DOWNLOADER_NAME);
     }
 
+    public boolean isEmpty() {
+        return profiles.isEmpty();
+    }
+
     public enum ConnectionMethod {
         HTTP,
         WEBSOCKET
