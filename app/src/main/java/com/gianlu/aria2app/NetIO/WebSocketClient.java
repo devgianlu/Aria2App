@@ -1,5 +1,10 @@
 package com.gianlu.aria2app.NetIO;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
+
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 
@@ -15,10 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
@@ -67,7 +68,7 @@ public class WebSocketClient extends AbstractClient {
     @Override
     protected void closeClient() {
         connectionListener = null;
-        if (webSocket.get() != null) {
+        if (webSocket != null && webSocket.get() != null) {
             webSocket.get().close(1000, null);
             webSocket.clear();
         }

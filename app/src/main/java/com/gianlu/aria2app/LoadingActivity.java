@@ -337,6 +337,8 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 ongoingTest.close();
             } catch (IOException ignored) {
             }
+
+            ongoingTest = null;
         }
 
         aria2AndroidProfile = null;
