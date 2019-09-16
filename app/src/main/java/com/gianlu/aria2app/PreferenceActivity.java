@@ -3,6 +3,8 @@ package com.gianlu.aria2app;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,7 +14,9 @@ import androidx.core.graphics.drawable.IconCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
+import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Preferences.BasePreferenceActivity;
 import com.gianlu.commonutils.Preferences.BasePreferenceFragment;
 import com.gianlu.commonutils.Preferences.MaterialAboutPreferenceItem;
@@ -24,6 +28,14 @@ import com.yarolegovich.mp.MaterialMultiChoicePreference;
 import com.yarolegovich.mp.MaterialSeekBarPreference;
 import com.yarolegovich.mp.MaterialStandardPreference;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +44,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
     @Override
     protected List<MaterialAboutPreferenceItem> getPreferencesItems() {
         return Arrays.asList(new MaterialAboutPreferenceItem(R.string.general, R.drawable.baseline_settings_24, GeneralFragment.class),
+                new MaterialAboutPreferenceItem(R.string.profiles, R.drawable.baseline_supervisor_account_24, ProfilesFragment.class),
                 new MaterialAboutPreferenceItem(R.string.directDownload, R.drawable.baseline_cloud_download_24, DirectDownloadFragment.class),
                 new MaterialAboutPreferenceItem(R.string.notifications, R.drawable.baseline_sms_24, NotificationsFragment.class));
     }
@@ -141,6 +154,91 @@ public class PreferenceActivity extends BasePreferenceActivity {
         @Override
         public int getTitleRes() {
             return R.string.general;
+        }
+    }
+
+    public static class ProfilesFragment extends BasePreferenceFragment {
+        private static final int IMPORT_PROFILES_CODE = 7;
+
+        @Override
+        protected void buildPreferences(@NonNull Context context) {
+            MaterialStandardPreference importProfiles = new MaterialStandardPreference(context);
+            importProfiles.setTitle(R.string.importProfiles);
+            importProfiles.setSummary(R.string.importProfiles_summary);
+            addPreference(importProfiles);
+
+            importProfiles.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("*/*");
+
+                try {
+                    startActivityForResult(Intent.createChooser(intent, "Select a file"), IMPORT_PROFILES_CODE);
+                } catch (ActivityNotFoundException ex) {
+                    showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
+                }
+            });
+
+            MaterialStandardPreference exportProfiles = new MaterialStandardPreference(context);
+            exportProfiles.setTitle(R.string.exportProfiles);
+            exportProfiles.setSummary(R.string.exportProfiles_summary);
+            addPreference(exportProfiles);
+
+            exportProfiles.setOnClickListener(v -> doExport());
+        }
+
+        private void doExport() {
+            try {
+                JSONArray json = ProfilesManager.get(requireContext()).exportAllProfiles();
+
+                File file = new File(requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "aria2app-profiles-" + CommonUtils.randomString(5) + ".json");
+                try (FileOutputStream out = new FileOutputStream(file)) {
+                    out.write(json.toString().getBytes());
+                }
+
+                showToast(Toaster.build().message(R.string.profilesExportedSuccessfully, file.getAbsolutePath()));
+            } catch (JSONException | IOException ex) {
+                showToast(Toaster.build().message(R.string.failedExportingProfiles).ex(ex));
+            }
+        }
+
+        private void doImport(@NonNull Uri uri) {
+            try {
+                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                try (InputStream in = requireContext().getContentResolver().openInputStream(uri)) {
+                    if (in == null) return;
+
+                    byte[] buffer = new byte[1024];
+                    int count;
+                    while ((count = in.read(buffer)) != -1)
+                        bout.write(buffer, 0, count);
+                }
+
+                ProfilesManager.get(requireContext()).importProfiles(new JSONArray(new String(bout.toByteArray())));
+
+                showToast(Toaster.build().message(R.string.profilesImportedSuccessfully));
+            } catch (JSONException | IOException ex) {
+                showToast(Toaster.build().message(R.string.failedImportingProfiles).ex(ex));
+            }
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+            if (requestCode == IMPORT_PROFILES_CODE) {
+                if (resultCode == RESULT_OK) {
+                    if (getContext() == null || data == null || data.getData() == null)
+                        return;
+
+                    doImport(data.getData());
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+
+        @Override
+        public int getTitleRes() {
+            return R.string.profiles;
         }
     }
 

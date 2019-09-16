@@ -14,6 +14,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Logging;
 import com.gianlu.commonutils.Preferences.Prefs;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,6 +56,26 @@ public class ProfilesManager {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void delete(@NonNull MultiProfile profile) {
         new File(profilesPath, profile.id + ".profile").delete();
+    }
+
+    @NonNull
+    public JSONArray exportAllProfiles() throws JSONException {
+        JSONArray array = new JSONArray();
+        for (MultiProfile profile : getProfiles()) array.put(profile.toJson());
+        return array;
+    }
+
+    /**
+     * Import all profiles serialized with {@link ProfilesManager#exportAllProfiles()}. Duplicates will be discarded.
+     *
+     * @param array Serialized profiles
+     */
+    public void importProfiles(@NonNull JSONArray array) throws JSONException, IOException {
+        for (int i = 0; i < array.length(); i++) {
+            MultiProfile profile = new MultiProfile(array.getJSONObject(i));
+            if (profileExists(profile.id)) continue;
+            save(profile);
+        }
     }
 
     @NonNull

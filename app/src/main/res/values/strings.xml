@@ -357,4 +357,15 @@
     <string name="locationAccessDenied">You denied the location access permission.</string>
     <string name="locationAccess_title">Location access needed</string>
     <string name="locationAccess_message">The application needs to have the location permission in order to read the WiFi SSID, no other operations will be performed.</string>
+
+    <!-- - Profiles -->
+    <string name="profiles">Profiles</string>
+    <string name="importProfiles">Import profiles</string>
+    <string name="importProfiles_summary">Import profiles from a previously exported file.</string>
+    <string name="exportProfiles">Export profiles</string>
+    <string name="exportProfiles_summary">Export all your profiles to a single file.</string>
+    <string name="failedImportingProfiles">Failed importing profiles file!</string>
+    <string name="failedExportingProfiles">Failed exporting profiles file!</string>
+    <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
+    <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
 </resources>

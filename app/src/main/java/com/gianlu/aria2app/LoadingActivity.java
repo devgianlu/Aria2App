@@ -219,7 +219,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                     app.loadAria2ServiceEnv();
                 } catch (BadEnvironmentException ex) {
                     DownloadBinActivity.startActivity(LoadingActivity.this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name),
-                            LoadingActivity.class, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
+                            LoadingActivity.class, 0, null);
                     return;
                 }
 
@@ -391,10 +391,18 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        if (profile.isInAppDownloader())
+        if (profile.isInAppDownloader()) {
+            try {
+                ThisApplication app = (ThisApplication) getApplicationContext();
+                app.loadAria2ServiceEnv();
+            } catch (BadEnvironmentException ex) {
+                return false;
+            }
+
             startActivity(new Intent(this, InAppAria2ConfActivity.class));
-        else
+        } else {
             EditProfileActivity.start(this, profile.id);
+        }
 
         return true;
     }
