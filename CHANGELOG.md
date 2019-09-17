@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.3.0] - 17-09-2019
+### Added
+- Import/export profiles feature
+
+### Changed
+- List unknown IPs in top download/upload countries
+- Fixed issue with DirectDownload address in setup
+- Fixed issue with In-App Downloader navigation
+- Fixed issue where the user wasn't able to pick a profile
+
+
 ## [5.2.4] - 28-08-2019
 ### Changed
 - Fixed WiFi condition not working on Android 8.1+ due to missing permission

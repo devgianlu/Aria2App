@@ -1,8 +1,8 @@
-### Changed
-- Fixed WiFi condition not working on Android 8.1+ due to missing permission
-- Refactored profile creation
-- Fixed notification service restarting as "Not started"
-- Improved In-App Downloader configuration page
+### Added
+- Import/export profiles feature
 
-### Removed
-- Do not log GeoIP exceptions
+### Changed
+- List unknown IPs in top download/upload countries
+- Fixed issue with DirectDownload address in setup
+- Fixed issue with In-App Downloader navigation
+- Fixed issue where the user wasn't able to pick a profile
