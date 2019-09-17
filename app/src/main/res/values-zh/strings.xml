@@ -345,5 +345,16 @@
     <string name="prefs_enableNotificationsAtBoot_summary">手机启动时将启动通知服务</string>
     <string name="locationAccessDenied">没有位置信息访问权限。</string>
     <string name="locationAccess_title">需要位置信息访问权限</string>
-    <string name="locationAccess_message">本应用需要位置信息访问权限，仅为了读取WiFi SSID信息，不会进行其它操作。</string>    
+    <string name="locationAccess_message">本应用需要位置信息访问权限，仅为了读取WiFi SSID信息，不会进行其它操作。</string>
+
+    <!-- - Profiles -->
+    <string name="profiles">配置文件</string>
+    <string name="importProfiles">导入配置文件</string>
+    <string name="importProfiles_summary">从此前导出的文件中导入配置文件。</string>
+    <string name="exportProfiles">导出配置文件</string>
+    <string name="exportProfiles_summary">把您的所有配置文件导出到单个文件。</string>
+    <string name="failedImportingProfiles">导入配置文件失败！</string>
+    <string name="failedExportingProfiles">导出配置文件失败！</string>
+    <string name="profilesImportedSuccessfully">成功导入配置文件。</string>
+    <string name="profilesExportedSuccessfully">配置文件已成功导出到%s。</string>
 </resources>
