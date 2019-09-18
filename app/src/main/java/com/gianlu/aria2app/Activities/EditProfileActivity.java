@@ -355,7 +355,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         saveCurrent();
 
         if (states.size() != conditions.size())
-            throw new IllegalStateException();
+            throw new IllegalStateException(String.format("states: %d, conditions: %d", states.size(), conditions.size()));
 
         MultiProfile profile = new MultiProfile(profileName, enableNotifs.isChecked());
         for (int i = 0; i < conditions.size(); i++) {
