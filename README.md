@@ -1,5 +1,6 @@
 # Aria2App
 [![Build Status](https://travis-ci.com/devgianlu/Aria2App.svg?branch=master)](https://travis-ci.com/devgianlu/Aria2App)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/114416a87cef4df8b99565f029711869)](https://www.codacy.com/manual/devgianlu/Aria2App?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=devgianlu/Aria2App&amp;utm_campaign=Badge_Grade)
 [![Translate - with Stringlate](https://img.shields.io/badge/translate%20with-stringlate-green.svg)](https://lonamiwebs.github.io/stringlate/translate?git=https%3A%2F%2Fgithub.com%2Fdevgianlu%2FAria2App)
 [![Donate Bitcoin](https://img.shields.io/badge/donate-bitcoin-orange.svg)](https://gianlu.xyz/donate/)
 
