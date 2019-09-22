@@ -37,6 +37,7 @@ import com.gianlu.aria2app.Adapters.RadioConditionsAdapter;
 import com.gianlu.aria2app.Adapters.SpinnerConditionsAdapter;
 import com.gianlu.aria2app.Adapters.StatePagerAdapter;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.ProfilesManager.MultiProfile.ConnectivityCondition;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
@@ -59,8 +60,7 @@ import java.util.Objects;
 import static com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException.Where;
 
 public class EditProfileActivity extends ActivityWithDialog implements TestFragment.OnGetProfile {
-    private final List<MultiProfile.ConnectivityCondition> conditions = new ArrayList<>();
-    private final List<Bundle> states = new ArrayList<>();
+    private final List<ConditionWithState> conditions = new ArrayList<>();
     private ProfileFragmentsAdapter pagerAdapter;
     private MultiProfile editProfile;
     private TextInputLayout profileName;
@@ -89,8 +89,8 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private boolean hasAlwaysCondition() {
-        for (MultiProfile.ConnectivityCondition cond : conditions)
-            if (cond.type == MultiProfile.ConnectivityCondition.Type.ALWAYS)
+        for (ConditionWithState cs : conditions)
+            if (cs.condition.type == ConnectivityCondition.Type.ALWAYS)
                 return true;
 
         return false;
@@ -177,10 +177,9 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
     private void createAllFragments() {
         if (editProfile != null) {
-            for (MultiProfile.UserProfile profile : editProfile.profiles) {
-                conditions.add(profile.connectivityCondition);
-                states.add(stateFromProfile(profile));
-            }
+            for (MultiProfile.UserProfile profile : editProfile.profiles)
+                conditions.add(new ConditionWithState(profile.connectivityCondition,
+                        stateFromProfile(profile)));
         }
     }
 
@@ -194,7 +193,9 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         if (pagerAdapter.pos() != -1) {
             try {
                 Bundle saved = pagerAdapter.save();
-                states.set(pagerAdapter.pos(), saved);
+                ConditionWithState cs = conditions.get(pagerAdapter.pos());
+                if (cs == null) throw new IllegalStateException();
+                cs.setState(saved);
             } catch (IllegalStateException ex) {
                 Logging.log("Failed saving state.", ex);
             }
@@ -204,7 +205,10 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     private void showConditionAt(int pos) {
         if (pos != -1) {
             saveCurrent();
-            pagerAdapter.restore(pos, states.get(pos));
+
+            ConditionWithState cs = conditions.get(pos);
+            if (cs == null) throw new IllegalStateException();
+            pagerAdapter.restore(pos, cs.state);
         }
     }
 
@@ -215,8 +219,16 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private boolean hasDefault() {
-        for (MultiProfile.ConnectivityCondition cond : conditions)
-            if (cond.isDefault)
+        for (ConditionWithState cs : conditions)
+            if (cs.condition.isDefault)
+                return true;
+
+        return false;
+    }
+
+    private boolean hasCondition(@NonNull ConnectivityCondition cond) {
+        for (ConditionWithState cs : conditions)
+            if (cs.condition.equals(cond))
                 return true;
 
         return false;
@@ -265,44 +277,44 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
         final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            MultiProfile.ConnectivityCondition condition;
+            ConnectivityCondition condition;
             switch (connectivityCondition.getCheckedRadioButtonId()) {
                 default:
                 case R.id.editProfile_connectivityCondition_always:
-                    condition = MultiProfile.ConnectivityCondition.newUniqueCondition();
+                    condition = ConnectivityCondition.newUniqueCondition();
                     break;
                 case R.id.editProfile_connectivityCondition_mobile:
-                    condition = MultiProfile.ConnectivityCondition.newMobileCondition(!hasDefault());
+                    condition = ConnectivityCondition.newMobileCondition(!hasDefault());
                     break;
                 case R.id.editProfile_connectivityCondition_wifi:
-                    String[] ssidsArray = MultiProfile.ConnectivityCondition.parseSSIDs(CommonUtils.getText(ssid));
+                    String[] ssidsArray = ConnectivityCondition.parseSSIDs(CommonUtils.getText(ssid));
                     if (ssidsArray.length == 0) {
                         ssidField.setText("");
                         ssid.setError(getString(R.string.emptySSID));
                         return;
                     }
 
-                    condition = MultiProfile.ConnectivityCondition.newWiFiCondition(ssidsArray, !hasDefault());
+                    condition = ConnectivityCondition.newWiFiCondition(ssidsArray, !hasDefault());
                     break;
                 case R.id.editProfile_connectivityCondition_ethernet:
-                    condition = MultiProfile.ConnectivityCondition.newEthernetCondition(!hasDefault());
+                    condition = ConnectivityCondition.newEthernetCondition(!hasDefault());
                     break;
                 case R.id.editProfile_connectivityCondition_bluetooth:
-                    condition = MultiProfile.ConnectivityCondition.newBluetoothCondition(!hasDefault());
+                    condition = ConnectivityCondition.newBluetoothCondition(!hasDefault());
                     break;
             }
 
-            if (condition.type == MultiProfile.ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
+            if (condition.type == ConnectivityCondition.Type.ALWAYS && !conditions.isEmpty()) {
                 Toaster.with(this).message(R.string.cannotAddAlwaysCondition).show();
                 return;
             }
 
-            if (conditions.contains(condition)) {
+            if (hasCondition(condition)) {
                 Toaster.with(this).message(R.string.duplicatedCondition).show();
                 return;
             }
 
-            if (condition.type == MultiProfile.ConnectivityCondition.Type.WIFI
+            if (condition.type == ConnectivityCondition.Type.WIFI
                     && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 AskPermission.ask(this, Manifest.permission.ACCESS_FINE_LOCATION, new AskPermission.Listener() {
                     @Override
@@ -330,9 +342,8 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         showDialog(dialog);
     }
 
-    private void addCondition(@NonNull AlertDialog dialog, @NonNull MultiProfile.ConnectivityCondition condition) {
-        conditions.add(condition);
-        states.add(new Bundle());
+    private void addCondition(@NonNull AlertDialog dialog, @NonNull ConnectivityCondition condition) {
+        conditions.add(new ConditionWithState(condition, new Bundle()));
 
         refreshSpinner();
         conditionsSpinner.setSelection(conditions.size() - 1);
@@ -341,7 +352,14 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private void refreshSpinner() {
-        conditionsSpinner.setAdapter(new SpinnerConditionsAdapter(this, conditions));
+        conditionsSpinner.setAdapter(new SpinnerConditionsAdapter(this, conditionsList()));
+    }
+
+    @NonNull
+    private List<ConnectivityCondition> conditionsList() {
+        List<ConnectivityCondition> list = new ArrayList<>(conditions.size());
+        for (ConditionWithState cs : conditions) list.add(cs.condition);
+        return list;
     }
 
     @NonNull
@@ -354,12 +372,9 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
         saveCurrent();
 
-        if (states.size() != conditions.size())
-            throw new IllegalStateException(String.format("states: %d, conditions: %d", states.size(), conditions.size()));
-
         MultiProfile profile = new MultiProfile(profileName, enableNotifs.isChecked());
         for (int i = 0; i < conditions.size(); i++) {
-            Bundle state = states.get(i);
+            Bundle state = conditions.get(i).state;
 
             try {
                 Bundle connState = state.getBundle("connection");
@@ -374,7 +389,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 if (ddState == null) throw new IllegalStateException();
                 DirectDownloadFragment.Fields dd = DirectDownloadFragment.validateStateAndCreateFields(ddState);
 
-                profile.add(conditions.get(i), conn, auth, dd);
+                profile.add(conditions.get(i).condition, conn, auth, dd);
             } catch (InvalidFieldException ex) {
                 ex.pos = i;
                 throw ex;
@@ -430,10 +445,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private void deleteCondition(int position) {
-        if (position != -1) {
-            conditions.remove(position);
-            states.remove(position);
-        }
+        if (position != -1) conditions.remove(position);
 
         if (conditions.size() == 0) {
             onBackPressed();
@@ -445,19 +457,15 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
     private int findDefaultCondition() {
         for (int i = 0; i < conditions.size(); i++)
-            if (conditions.get(i).isDefault)
+            if (conditions.get(i).condition.isDefault)
                 return i;
 
         return 0;
     }
 
     private void setDefaultCondition(int pos) {
-        int oldDefPos = findDefaultCondition();
-        MultiProfile.ConnectivityCondition oldDefault = conditions.get(oldDefPos);
-        conditions.set(oldDefPos, new MultiProfile.ConnectivityCondition(oldDefault.type, oldDefault.ssids, false));
-
-        MultiProfile.ConnectivityCondition newDefault = conditions.get(pos);
-        conditions.set(pos, new MultiProfile.ConnectivityCondition(newDefault.type, newDefault.ssids, true));
+        conditions.get(findDefaultCondition()).setDefault(false);
+        conditions.get(pos).setDefault(true);
     }
 
     private void setDefaultCondition() {
@@ -469,7 +477,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.setDefaultCondition)
-                .setSingleChoiceItems(new RadioConditionsAdapter(this, conditions), def, (dialog, which) -> {
+                .setSingleChoiceItems(new RadioConditionsAdapter(this, conditionsList()), def, (dialog, which) -> {
                     setDefaultCondition(which);
                     dialog.dismiss();
                 })
@@ -518,6 +526,24 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
             return null;
+        }
+    }
+
+    private static class ConditionWithState {
+        private ConnectivityCondition condition;
+        private Bundle state;
+
+        ConditionWithState(@NonNull ConnectivityCondition condition, @NonNull Bundle state) {
+            this.condition = condition;
+            this.state = state;
+        }
+
+        void setState(Bundle state) {
+            this.state = state;
+        }
+
+        void setDefault(boolean val) {
+            condition = condition.changeDefaultValue(val);
         }
     }
 

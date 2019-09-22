@@ -386,6 +386,11 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return type.getFormal(context) + (type == Type.WIFI ? ": " + CommonUtils.join(ssids, ", ") : "");
         }
 
+        @NonNull
+        public ConnectivityCondition changeDefaultValue(boolean val) {
+            return new ConnectivityCondition(type, ssids, val);
+        }
+
         public enum Type {
             ALWAYS,
             WIFI,
@@ -510,7 +515,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             this(obj, null);
         }
 
-        public UserProfile(ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
+        public UserProfile(@NonNull ConnectivityCondition cond, ConnectionFragment.Fields connFields, AuthenticationFragment.Fields authFields, DirectDownloadFragment.Fields ddFields) {
             connectivityCondition = cond;
             authMethod = authFields.authMethod;
             serverUsername = authFields.username;

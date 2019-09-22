@@ -14,6 +14,8 @@ public abstract class FieldErrorFragmentWithState extends FragmentWithDialog imp
     public final Bundle save() throws IllegalStateException {
         if (!isAdded()) throw new IllegalStateException();
 
+        if (stateToRestore != null) return stateToRestore;
+
         Bundle bundle = new Bundle();
         onSaveInstanceState(bundle);
         return bundle;
