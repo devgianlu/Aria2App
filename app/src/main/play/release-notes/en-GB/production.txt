@@ -1,8 +1,6 @@
 ### Added
-- Import/export profiles feature
+- Better support for sharing links
 
-### Changed
-- List unknown IPs in top download/upload countries
-- Fixed issue with DirectDownload address in setup
-- Fixed issue with In-App Downloader navigation
-- Fixed issue where the user wasn't able to pick a profile
+## Changed
+- Fixed issues with creating/editing profiles
+- Fixed In-App downloader configuration layout
