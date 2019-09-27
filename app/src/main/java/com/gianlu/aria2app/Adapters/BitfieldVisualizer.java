@@ -59,6 +59,8 @@ public class BitfieldVisualizer extends View {
     }
 
     public static int knownPieces(@NonNull String hex, int num) {
+        if (hex.length() == 0) return 0;
+
         num = (int) Math.ceil(num / 4f);
 
         int known = 0;
