@@ -342,8 +342,17 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         showDialog(dialog);
     }
 
+    @NonNull
+    private static Bundle emptyConditionBundle() {
+        Bundle result = new Bundle();
+        result.putBundle("connection", new Bundle());
+        result.putBundle("authentication", new Bundle());
+        result.putBundle("directDownload", new Bundle());
+        return result;
+    }
+
     private void addCondition(@NonNull AlertDialog dialog, @NonNull ConnectivityCondition condition) {
-        conditions.add(new ConditionWithState(condition, new Bundle()));
+        conditions.add(new ConditionWithState(condition, emptyConditionBundle()));
 
         refreshSpinner();
         conditionsSpinner.setSelection(conditions.size() - 1);
