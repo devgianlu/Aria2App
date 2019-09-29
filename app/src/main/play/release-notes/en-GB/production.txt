@@ -1,6 +1,8 @@
 ### Added
-- Better support for sharing links
+- Change In-App Downloader aria2 version
 
 ## Changed
-- Fixed issues with creating/editing profiles
-- Fixed In-App downloader configuration layout
+- Fixed app crashing when downloading aria2 executable
+- Stability issues due to aria2 executable not existing
+- Fixed occasional BitfieldVisualizer crash
+- Fixed crash when editing profile
