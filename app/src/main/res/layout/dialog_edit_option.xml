@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <com.gianlu.commonutils.CasualViews.SuperTextView
+    <com.gianlu.commonutils.misc.SuperTextView
         android:id="@+id/editOptionDialog_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -31,7 +31,7 @@
         android:layout_gravity="center_vertical"
         android:orientation="vertical">
 
-        <com.gianlu.commonutils.CasualViews.SuperTextView
+        <com.gianlu.commonutils.misc.SuperTextView
             android:id="@+id/fileItem_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/fileItem_percentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -15,7 +15,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <com.gianlu.commonutils.CasualViews.SuperTextView
+        <com.gianlu.commonutils.misc.SuperTextView
             android:id="@+id/peerItem_address"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:scaleType="fitCenter" />
     </LinearLayout>
 
-    <com.gianlu.commonutils.CasualViews.SuperTextView
+    <com.gianlu.commonutils.misc.SuperTextView
         android:id="@+id/peerItem_peerId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             android:layout_height="16dp"
             android:src="@drawable/baseline_download_24" />
 
-        <com.gianlu.commonutils.CasualViews.SuperTextView
+        <com.gianlu.commonutils.misc.SuperTextView
             android:id="@+id/peerItem_downloadSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             android:layout_height="16dp"
             android:src="@drawable/baseline_upload_24" />
 
-        <com.gianlu.commonutils.CasualViews.SuperTextView
+        <com.gianlu.commonutils.misc.SuperTextView
             android:id="@+id/peerItem_uploadSpeed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

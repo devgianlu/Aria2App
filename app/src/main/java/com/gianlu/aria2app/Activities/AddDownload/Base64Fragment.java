@@ -21,9 +21,9 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.AskPermission;
-import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.misc.SuperTextView;
 
 public class Base64Fragment extends FragmentWithDialog {
     private final int FILE_SELECT_CODE = 7;

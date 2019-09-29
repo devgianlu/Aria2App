@@ -14,7 +14,7 @@
         android:layout_marginEnd="8dp"
         android:src="@drawable/baseline_folder_24" />
 
-    <com.gianlu.commonutils.CasualViews.SuperTextView
+    <com.gianlu.commonutils.misc.SuperTextView
         android:id="@+id/directoryItem_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

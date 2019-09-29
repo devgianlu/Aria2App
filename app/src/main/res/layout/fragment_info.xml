@@ -22,7 +22,7 @@
             android:padding="16dp"
             android:visibility="gone">
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                     android:layout_height="18dp"
                     android:src="@drawable/baseline_download_24" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_downloadSpeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                     android:layout_height="18dp"
                     android:src="@drawable/baseline_upload_24" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_uploadSpeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                     android:layout_height="18dp"
                     android:src="@drawable/baseline_access_time_24" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_remainingTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -147,52 +147,52 @@
                 android:layout_height="150dp"
                 android:layout_marginBottom="16dp" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_gid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_totalLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_completedLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_uploadLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_pieceLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_numPieces"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_connections"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_directory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_verifyIntegrityPending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/infoFragment_verifiedLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -204,32 +204,32 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_btMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_btSeeders"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_btSeeder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_shareRatio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_btComment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/infoFragment_btCreationDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -280,7 +280,7 @@
                 android:layout_marginTop="16dp" />
         </LinearLayout>
 
-        <com.gianlu.commonutils.CasualViews.MessageView
+        <com.gianlu.commonutils.misc.MessageView
             android:id="@+id/infoFragment_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

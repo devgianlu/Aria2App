@@ -76,9 +76,8 @@ import com.gianlu.aria2app.Tutorial.DownloadsToolbarTutorial;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
+import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.commonutils.AskPermission;
-import com.gianlu.commonutils.CasualViews.MessageView;
-import com.gianlu.commonutils.CasualViews.RecyclerMessageView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Drawer.BaseDrawerItem;
 import com.gianlu.commonutils.Drawer.DrawerManager;
@@ -87,6 +86,8 @@ import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.Toaster;
 import com.gianlu.commonutils.Tutorial.BaseTutorial;
 import com.gianlu.commonutils.Tutorial.TutorialManager;
+import com.gianlu.commonutils.misc.MessageView;
+import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -148,10 +149,17 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
     @Override
     public boolean onDrawerProfileLongClick(@NonNull MultiProfile profile) {
-        if (profile.isInAppDownloader())
+        if (profile.isInAppDownloader()) {
+            try {
+                ((ThisApplication) getApplicationContext()).loadAria2ServiceEnv();
+            } catch (BadEnvironmentException ex) {
+                return false;
+            }
+
             startActivity(new Intent(this, InAppAria2ConfActivity.class));
-        else
+        } else {
             EditProfileActivity.start(this, profile.id);
+        }
 
         return true;
     }

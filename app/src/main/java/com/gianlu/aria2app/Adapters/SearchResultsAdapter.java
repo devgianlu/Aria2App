@@ -15,7 +15,7 @@ import com.gianlu.aria2app.NetIO.Search.SearchApi;
 import com.gianlu.aria2app.NetIO.Search.SearchEngine;
 import com.gianlu.aria2app.NetIO.Search.SearchResult;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CasualViews.InfiniteRecyclerView;
+import com.gianlu.commonutils.misc.InfiniteRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Date;

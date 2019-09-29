@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.CountryFlags;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CasualViews.SuperTextView;
+import com.gianlu.commonutils.misc.SuperTextView;
 
 public class IPDetailsView extends LinearLayout {
     private final ImageView flag;

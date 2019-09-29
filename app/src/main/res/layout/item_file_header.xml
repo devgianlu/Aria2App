@@ -8,7 +8,7 @@
     android:paddingStart="16dp"
     android:paddingTop="4dp">
 
-    <com.gianlu.commonutils.CasualViews.SuperTextView
+    <com.gianlu.commonutils.misc.SuperTextView
         android:id="@+id/fileHeaderItem_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

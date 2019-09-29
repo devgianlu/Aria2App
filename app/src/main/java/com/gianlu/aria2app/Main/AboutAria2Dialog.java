@@ -18,10 +18,10 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.VersionAndSession;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CasualViews.SuperTextView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.Dialogs.DialogUtils;
 import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.misc.SuperTextView;
 
 public class AboutAria2Dialog extends DialogFragment implements AbstractClient.OnResult<VersionAndSession> {
     private Aria2Helper helper;

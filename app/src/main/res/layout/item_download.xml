@@ -32,7 +32,7 @@
                 android:orientation="vertical"
                 android:paddingBottom="4dp">
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/downloadCard_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                     android:textColor="@color/dim_foreground_dark"
                     android:textSize="13sp" />
 
-                <com.gianlu.commonutils.CasualViews.SuperTextView
+                <com.gianlu.commonutils.misc.SuperTextView
                     android:id="@+id/downloadCard_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -70,23 +70,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/downloadCard_detailsGid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/downloadCard_detailsTotalLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/downloadCard_detailsCompletedLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <com.gianlu.commonutils.CasualViews.SuperTextView
+            <com.gianlu.commonutils.misc.SuperTextView
                 android:id="@+id/downloadCard_detailsUploadLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

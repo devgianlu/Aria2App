@@ -209,6 +209,11 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             aria2service.ui.stopService();
     }
 
+    public boolean deleteInAppBin() {
+        if (aria2service != null) return aria2service.ui.delete();
+        else return false;
+    }
+
     private class Aria2UiDispatcher implements Aria2Ui.Listener {
         private final Aria2Ui ui;
         private final Set<Aria2Ui.Listener> listeners = new HashSet<>();
