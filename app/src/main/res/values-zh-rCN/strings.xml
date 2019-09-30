@@ -327,6 +327,7 @@
     <string name="filtersShowingOnly">仅显示%s (%d)</string>
     <string name="cannotDeleteBin">Can\'t delete the bin file! Please clear application data.</string>
     <string name="changeBinVersion_message">Are you sure you want to change the bin version?</string>
+
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
@@ -337,6 +338,7 @@
     <string name="prefs_downloadDisplayInfo_summary">自定义下载卡中显示的信息。</string>
     <string name="prefs_versionCheck">在启动时检查aria2版本</string>
     <string name="prefs_versionCheck_summary">检查最新版本的aria2是否正在运行。</string>
+
     <!-- - DirectDownload -->
     <string name="prefs_ddDownloadPath">下载路径</string>
     <string name="prefs_ddDownloadPath_summary">所有文件都将在下载到这里。</string>
@@ -344,6 +346,7 @@
     <string name="prefs_ddMaxSimultaneousDownloads_summary">同时运行的最大下载次数。</string>
     <string name="prefs_ddResume">继续下载</string>
     <string name="prefs_ddResume_summary">启动后自动恢复此前暂停的下载</string>
+
     <!-- - Notifications -->
     <string name="prefs_enableNotifications">启用通知服务</string>
     <string name="prefs_enableNotifications_summary">您将收到所选配置文件的通知</string>
@@ -354,6 +357,7 @@
     <string name="locationAccessDenied">没有位置信息访问权限。</string>
     <string name="locationAccess_title">需要位置信息访问权限</string>
     <string name="locationAccess_message">本应用需要位置信息访问权限，仅为了读取WiFi SSID信息，不会进行其它操作。</string>
+
     <!-- - Profiles -->
     <string name="profiles">配置文件</string>
     <string name="importProfiles">导入配置文件</string>
