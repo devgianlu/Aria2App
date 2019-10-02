@@ -291,6 +291,8 @@ public class ConnectionFragment extends FieldErrorFragmentWithState implements C
 
     @Override
     public void onFieldError(@IdRes int fieldId, String reason) {
+        if (layout == null) return;
+
         TextInputLayout inputLayout = layout.findViewById(fieldId);
         if (inputLayout != null) {
             inputLayout.setErrorEnabled(true);
