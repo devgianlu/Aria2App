@@ -1,7 +1,10 @@
 package com.gianlu.aria2app.NetIO;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 
 import org.json.JSONObject;
 
@@ -20,8 +23,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;

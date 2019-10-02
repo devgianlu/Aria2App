@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.Tutorial;
 
-import com.gianlu.commonutils.Tutorial.BaseTutorial;
-import com.gianlu.commonutils.Tutorial.TutorialManager;
-
 import androidx.annotation.NonNull;
+
+import com.gianlu.commonutils.tutorial.BaseTutorial;
+import com.gianlu.commonutils.tutorial.TutorialManager;
 
 public enum Discovery implements TutorialManager.Discovery {
     DOWNLOADS_TOOLBAR(DownloadsToolbarTutorial.class),

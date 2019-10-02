@@ -16,11 +16,10 @@ import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.Discovery;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
-import com.gianlu.commonutils.BottomSheet.BaseModalBottomSheet;
-import com.gianlu.commonutils.SuppressingLinearLayoutManager;
-import com.gianlu.commonutils.Tutorial.BaseTutorial;
-import com.gianlu.commonutils.Tutorial.TutorialManager;
+import com.gianlu.commonutils.bottomsheet.BaseModalBottomSheet;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
+import com.gianlu.commonutils.tutorial.BaseTutorial;
+import com.gianlu.commonutils.tutorial.TutorialManager;
 
 public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S extends BaseModalBottomSheet<?, ?>, P> extends UpdaterFragment<P> implements TutorialManager.Listener, OnBackPressed {
     protected TopCountriesView topDownloadCountries;
@@ -72,7 +71,7 @@ public abstract class PeersServersFragment<A extends RecyclerView.Adapter<?>, S 
         topDownloadCountries = layout.findViewById(R.id.peersServersFragment_topDownloadCountries);
         topUploadCountries = layout.findViewById(R.id.peersServersFragment_topUploadCountries);
         rmv = layout.findViewById(R.id.peersServersFragment_rmv);
-        rmv.setLayoutManager(new SuppressingLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        rmv.linearLayoutManager(LinearLayoutManager.VERTICAL, false);
         adapter = getAdapter(getContext());
         rmv.loadListData(adapter);
         rmv.startLoading();

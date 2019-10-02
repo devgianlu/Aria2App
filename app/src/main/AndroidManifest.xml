@@ -890,7 +890,7 @@
 
         <!-- Logs activity -->
         <activity
-            android:name="com.gianlu.commonutils.LogsActivity"
+            android:name="com.gianlu.commonutils.logging.LogsActivity"
             android:configChanges="uiMode" />
 
         <!-- Search Torrent activity -->
@@ -930,7 +930,7 @@
 
         <!-- Logs provider -->
         <provider
-            android:name="com.gianlu.commonutils.LogsProvider"
+            android:name="com.gianlu.commonutils.logging.LogsProvider"
             android:authorities="com.gianlu.aria2app.logs"
             android:exported="false"
             android:grantUriPermissions="true">

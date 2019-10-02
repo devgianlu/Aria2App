@@ -17,8 +17,8 @@ import com.gianlu.aria2app.Options.OptionsManager;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Preferences.Prefs;
 import com.gianlu.commonutils.misc.SuperTextView;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONException;
 

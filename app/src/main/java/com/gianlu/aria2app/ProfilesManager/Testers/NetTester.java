@@ -2,18 +2,18 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.HttpClient;
 import com.gianlu.aria2app.NetIO.OnConnect;
 import com.gianlu.aria2app.NetIO.WebSocketClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 
 import java.util.concurrent.atomic.AtomicReference;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 
 public class NetTester extends BaseTester<AbstractClient> {
     private final boolean close;

@@ -20,7 +20,7 @@ import com.gianlu.aria2app.Activities.AddDownload.OptionsFragment;
 import com.gianlu.aria2app.Adapters.StatePagerAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.google.android.material.tabs.TabLayout;
 
 public class AddMetalinkActivity extends AddDownloadActivity {

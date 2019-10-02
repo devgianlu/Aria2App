@@ -11,8 +11,8 @@ import androidx.annotation.Nullable;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;

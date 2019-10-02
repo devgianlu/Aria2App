@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.gianlu.commonutils.Drawer.StatusBarPadding
+        <com.gianlu.commonutils.drawer.StatusBarPadding
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

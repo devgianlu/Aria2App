@@ -30,10 +30,10 @@ import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.analytics.AnalyticsApplication;
+import com.gianlu.commonutils.dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -3,9 +3,9 @@ package com.gianlu.aria2app.NetIO.Aria2;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.PeerIdParser;
-import com.gianlu.commonutils.Adapters.Filterable;
-import com.gianlu.commonutils.Adapters.NotFilterable;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.adapters.Filterable;
+import com.gianlu.commonutils.adapters.NotFilterable;
+import com.gianlu.commonutils.logging.Logging;
 
 import org.json.JSONObject;
 

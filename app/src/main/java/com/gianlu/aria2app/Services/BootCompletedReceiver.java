@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ThisApplication;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import java.util.Objects;
 

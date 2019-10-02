@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.Adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.misc.MessageView;
+import com.gianlu.commonutils.ui.Toaster;
 
 import java.net.URI;
 import java.net.URL;

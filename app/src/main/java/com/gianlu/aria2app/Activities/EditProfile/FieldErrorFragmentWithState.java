@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
+import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 
 public abstract class FieldErrorFragmentWithState extends FragmentWithDialog implements OnFieldError {
     private Bundle stateToRestore;

@@ -19,7 +19,7 @@ import com.gianlu.aria2app.ProfilesManager.Testers.BaseTester;
 import com.gianlu.aria2app.ProfilesManager.Testers.TestersFlow;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
+import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.misc.SuperTextView;
 
 public class TestFragment extends Fragment implements TestersFlow.ITestFlow {

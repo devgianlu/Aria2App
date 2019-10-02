@@ -27,11 +27,11 @@ import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.AskPermission;
-import com.gianlu.commonutils.Dialogs.DialogUtils;
-import com.gianlu.commonutils.Preferences.Prefs;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.analytics.AnalyticsApplication;
+import com.gianlu.commonutils.dialogs.DialogUtils;
+import com.gianlu.commonutils.permissions.AskPermission;
+import com.gianlu.commonutils.preferences.Prefs;
+import com.gianlu.commonutils.ui.Toaster;
 
 import org.json.JSONException;
 

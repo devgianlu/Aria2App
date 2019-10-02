@@ -30,8 +30,8 @@ import com.gianlu.aria2app.NetIO.Updater.UpdaterFragment;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.Options.OptionsDialog;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.tabs.TabLayout;
 
 public class MoreAboutDownloadActivity extends UpdaterActivity {

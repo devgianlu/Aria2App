@@ -41,12 +41,12 @@ import com.gianlu.aria2app.ProfilesManager.MultiProfile.ConnectivityCondition;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.analytics.AnalyticsApplication;
+import com.gianlu.commonutils.dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.permissions.AskPermission;
+import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 

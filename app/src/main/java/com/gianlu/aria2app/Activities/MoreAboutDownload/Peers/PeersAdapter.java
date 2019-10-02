@@ -16,9 +16,9 @@ import com.gianlu.aria2app.NetIO.Geolocalization.GeoIP;
 import com.gianlu.aria2app.NetIO.Geolocalization.IPDetails;
 import com.gianlu.aria2app.NetIO.PeerIdParser;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Adapters.NotFilterable;
-import com.gianlu.commonutils.Adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.adapters.NotFilterable;
+import com.gianlu.commonutils.adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.misc.SuperTextView;
 
 import java.util.ArrayList;

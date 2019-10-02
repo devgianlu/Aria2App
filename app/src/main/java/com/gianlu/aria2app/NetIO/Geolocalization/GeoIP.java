@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
-import com.gianlu.commonutils.Lifecycle.LifecycleAwareHandler;
-import com.gianlu.commonutils.Lifecycle.LifecycleAwareRunnable;
+import com.gianlu.commonutils.lifecycle.LifecycleAwareHandler;
+import com.gianlu.commonutils.lifecycle.LifecycleAwareRunnable;
 
 import org.json.JSONException;
 import org.json.JSONObject;

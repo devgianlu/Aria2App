@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.service.chooser.ChooserTarget;
 import android.util.LruCache;
 
-import com.gianlu.commonutils.LettersIcons.DrawingHelper;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
+import com.gianlu.commonutils.lettersicon.DrawingHelper;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class ChooserTargetsCache {

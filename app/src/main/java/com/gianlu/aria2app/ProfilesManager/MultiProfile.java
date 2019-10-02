@@ -20,9 +20,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2PK;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Drawer.BaseDrawerProfile;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.drawer.BaseDrawerProfile;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;

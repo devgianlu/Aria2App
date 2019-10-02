@@ -1,16 +1,16 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.PK;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class Option implements Comparable<Option> {
     public final String name;
