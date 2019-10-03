@@ -132,7 +132,7 @@
     <string name="torrentUris_disclaimer">网址用于网络播种。对于单个文件种子，网址可以是一个指向资源的完整网址；如果网址以/结尾，则会添加种子文件中的名称。对于含有多个文件的种子，会添加种子中的名字和路径形成每个文件的网址。</string>
     <string name="file">文件</string>
     <string name="pickTorrent_help">选择一个种子文件。支持的mime类型是 <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
-    <string name="pickMetalink_help">请选择一个元数据链接文件。支持的媒体类型为<![CDATA[<b>application/metalink4+xml</b>]]> 和<![CDATA[<b>application/metalink+xml</b>]]>。</string>
+    <string name="pickMetalink_help">请选择一个元链接文件。支持的媒体类型为<![CDATA[<b>application/metalink4+xml</b>]]> 和<![CDATA[<b>application/metalink+xml</b>]]>。</string>
     <string name="outdated_aria2">过时的aria2版本</string>
     <string name="outdated_aria2_message">你的aria2版本已经过时了。 Aria2App开发用于运行最新的aria2版本，因此您应该更新它。您可以在首选项中禁用此消息。\n\n当前版本:%1$s\n最新版本:%2$s</string>
     <string name="selectFile_help">只能在多文件种子上下载文件，才能从下载中选择或取消选择文件。</string>
@@ -284,7 +284,7 @@
     <string name="readPermissionDenied">没有读取权限！</string>
     <string name="batchAdd">批量添加</string>
     <string name="torrents">种子文件</string>
-    <string name="metalinks">元数据链接</string>
+    <string name="metalinks">元链接</string>
     <string name="addSingle">添加单个任务</string>
     <string name="noBatchAdd">现在没有批量下载的操作。请使用下方的按钮添加。</string>
     <string name="downloadsAddedBatch">已添加所有下载任务。</string>
