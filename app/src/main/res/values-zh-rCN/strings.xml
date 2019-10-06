@@ -6,7 +6,7 @@
     <string name="downloadStatus_paused">已暂停</string>
     <string name="downloadStatus_unknown">未知</string>
     <string name="downloadStatus_complete">完成</string>
-    <string name="downloadStatus_removed">删除</string>
+    <string name="downloadStatus_removed">已被删除</string>
     <string name="downloadStatus_active">活动</string>
     <string name="completed_length"><![CDATA[<b>完成长度:</b>]]> %s</string>
     <string name="total_length"><![CDATA[<b>总长度:</b>]]> %s</string>
@@ -100,7 +100,7 @@
     <string name="totalLengthLabel">总长度</string>
     <string name="progress">进度</string>
     <string name="connectionMethod">连接方法</string>
-    <string name="addMetalink">添加Metalink</string>
+    <string name="addMetalink">添加元链接</string>
     <string name="addTorrent">添加种子文件</string>
     <string name="fatalExceptionMessage">出现致命异常！</string>
     <string name="connection">连接</string>
@@ -128,7 +128,7 @@
     <string name="editUri">编辑网址</string>
     <string name="queuePosition_help">如不填，将会把本次下载添加到队列的末尾。</string>
     <string name="uris_disclaimer">必须只添加指向同一资源的HTTP / FTP / SFTP / BitTorrent网址。如果您把指向不同的资源的网址添加在一起，有可能虽然aria2不会给出任何错误提示，但下载会失败，或者产生数据损坏。</string>
-    <string name="noUris">没有uris。</string>
+    <string name="noUris">没有网址。</string>
     <string name="torrentUris_disclaimer">网址用于网络播种。对于单个文件种子，网址可以是一个指向资源的完整网址；如果网址以/结尾，则会添加种子文件中的名称。对于含有多个文件的种子，会添加种子中的名字和路径形成每个文件的网址。</string>
     <string name="file">文件</string>
     <string name="pickTorrent_help">选择一个种子文件。支持的mime类型是 <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
