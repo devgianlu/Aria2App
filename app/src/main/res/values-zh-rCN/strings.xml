@@ -290,7 +290,7 @@
     <string name="downloadsAddedBatch">已添加所有下载任务。</string>
     <string name="failedAddingDownloads">某些下载任务添加失败。</string>
     <string name="torrentFiles">种子文件</string>
-    <string name="metalinkFiles">Metalink文件</string>
+    <string name="metalinkFiles">元链接文件</string>
     <string name="urisFile">网址文件</string>
     <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">已取消</string>
