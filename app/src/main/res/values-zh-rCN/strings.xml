@@ -15,7 +15,7 @@
     <string name="pieces_length"><![CDATA[<b>分块长度:</b>]]> %s</string>
     <string name="connections"><![CDATA[<b>连接:</b>]]> %d</string>
     <string name="verifyIntegrityPending"><![CDATA[<b>等待完整性检查:</b>]]> %s</string>
-    <string name="verifiedLength"><![CDATA[<b>验证时长:</b>]]> %s</string>
+    <string name="verifiedLength"><![CDATA[<b>已验证长度：</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID:</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>目标文件夹:</b>]]> %s</string>
     <string name="seeder"><![CDATA[<b>种子源:</b>]]> %s</string>
