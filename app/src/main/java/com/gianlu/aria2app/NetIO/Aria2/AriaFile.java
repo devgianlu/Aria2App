@@ -2,6 +2,9 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,8 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import okhttp3.HttpUrl;
 
 public class AriaFile {
@@ -110,15 +111,8 @@ public class AriaFile {
         WAITING;
 
         public static Status parse(@Nullable String val) {
-            if (val == null) return Status.WAITING;
-            switch (val.toLowerCase()) {
-                case "used":
-                    return Status.USED;
-                case "waiting":
-                    return Status.WAITING;
-                default:
-                    return Status.WAITING;
-            }
+            if (val != null && "used".equals(val.toLowerCase())) return Status.USED;
+            else return Status.WAITING;
         }
     }
 

@@ -187,24 +187,19 @@
     <string name="downloadMoved">下載已移入序列中。</string>
     <string name="downloadResultRemoved">刪除下載結果。</string>
     <string name="invalidFile">無效的檔案!</string>
-    <string name="invalidDownloadPath">無效的下載路徑。</string>
     <string name="failedSavingSession">保存目前 session 失敗!</string>
     <string name="failedDownloadingFile">下載檔案失敗!</string>
     <string name="globalOptionsChanged">已成功更改全局選項。</string>
     <string name="fileSelected">選擇下載檔案。</string>
     <string name="noQuickOptions">沒有可用的快速選項。</string>
     <string name="failedAddingDownload">新增新下載失敗!</string>
-    <string name="atLeastOneUri">新增至少一個網址!</string>
     <string name="downloadOptionsChanged">已成功更改下載選項。</string>
     <string name="failedFileChangeSelection">選擇/取消選擇檔案失敗!</string>
     <string name="cannotDeselectAllFiles">您無法取消選擇所有檔案!</string>
-    <string name="failedDownloadingDir">下載資料夾失敗!</string>
     <string name="duplicatedCondition">此條件已存在於此設定檔中。</string>
     <string name="fileDeselected">檔案已從下載列表中取消。</string>
     <string name="noFilemanager">找不到檔案管理器!</string>
     <string name="onlyOneTorrentUri">當新增種子磁鏈時，每次應只新增一個連結。</string>
-    <string name="dirFilesDeselected">從下載列表中取消選擇此資料夾中的所有檔案。</string>
-    <string name="dirFilesSelected">選擇此資料夾中的所有檔案進行下載。</string>
     <string name="hasAlwaysCondition">如果您已指定一個“總是”的條件，則無法新增新的同類條件。</string>
     <string name="cannotAddAlwaysCondition">如果您已經設定一些其他條件，則不能新增新的“總是”條件。</string>
     <string name="failedChangingOptions">更改選項失敗!</string>
@@ -229,14 +224,11 @@
     <string name="searchEngines">搜尋引擎</string>
     <string name="noEnginesSelected">選擇至少一個搜尋引擎!</string>
     <string name="pending">等待開始</string>
-    <string name="started">開始</string>
     <string name="noFiles">沒有要顯示的檔案。使用 \"pause = true\" 新增下載任務時可能會發生這種情況</string>
     <string name="failed">失敗</string>
     <string name="running">正在執行</string>
     <string name="paused">已暫停</string>
     <string name="failedOpeningDownload">打開下載失敗!</string>
-    <string name="ddNotEnabled">此設定檔上未啟用 DirectDownload!</string>
-    <string name="profileDoesntExist">此設定檔不再存在!</string>
     <string name="noDirectDownloads">現在沒有下載任務。您可以從下載任務的檔案列表選單開始下載檔案。在這裡閱讀更多關於 DirectDownload 的訊息:https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">剩餘時間</string>
     <string name="connectionsLabel">連接</string>
@@ -275,7 +267,6 @@
     <string name="couldStreamVideo">播放影片</string>
     <string name="couldStreamVideo_message">您的有可以播放此影片的 App，您想現在看還是 DirectDownload?</string>
     <string name="stream">播放</string>
-    <string name="failedStreamVideo">無法播放影片!</string>
     <string name="select">選擇</string>
     <string name="deselect">取消</string>
     <string name="selectAll">全選</string>

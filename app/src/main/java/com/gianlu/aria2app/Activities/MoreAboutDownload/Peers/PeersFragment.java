@@ -38,7 +38,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.peers_fragment, menu);
         inflater.inflate(R.menu.peers_fragment_sorting, menu.findItem(R.id.peersFragment_sorting).getSubMenu());
     }
@@ -51,7 +51,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (adapter == null) return false;
 
         item.setChecked(true);

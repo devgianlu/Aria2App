@@ -187,24 +187,19 @@
     <string name="downloadMoved">下载已移入队列中。</string>
     <string name="downloadResultRemoved">删除下载结果。</string>
     <string name="invalidFile">无效的文件！</string>
-    <string name="invalidDownloadPath">无效的下载路径。</string>
     <string name="failedSavingSession">保存当前会话失败！</string>
     <string name="failedDownloadingFile">下载文件失败！</string>
     <string name="globalOptionsChanged">已成功更改全局选项。</string>
     <string name="fileSelected">选择下载文件。</string>
     <string name="noQuickOptions">没有可用的快速选项。</string>
     <string name="failedAddingDownload">添加新下载失败！</string>
-    <string name="atLeastOneUri">添加至少一个网址！</string>
     <string name="downloadOptionsChanged">已成功更改下载选项。</string>
     <string name="failedFileChangeSelection">选择/取消选择文件失败！</string>
     <string name="cannotDeselectAllFiles">您无法取消选择所有文件！</string>
-    <string name="failedDownloadingDir">下载目录失败！</string>
     <string name="duplicatedCondition">此条件已存在于此配置文件中。</string>
     <string name="fileDeselected">文件已从下载列表中取消。</string>
     <string name="noFilemanager">找不到文件管理器！</string>
     <string name="onlyOneTorrentUri">当添加种子磁链时，每次应只添加一个链接。</string>
-    <string name="dirFilesDeselected">从下载列表中取消选择此目录中的所有文件。</string>
-    <string name="dirFilesSelected">选择此目录中的所有文件进行下载。</string>
     <string name="hasAlwaysCondition">如果您已指定一个“总是”的条件，则无法添加新的同类条件。</string>
     <string name="cannotAddAlwaysCondition">如果您已经设置一些其他条件，则不能添加新的“总是”条件。</string>
     <string name="failedChangingOptions">更改选项失败！</string>
@@ -229,14 +224,11 @@
     <string name="searchEngines">搜索引擎</string>
     <string name="noEnginesSelected">选择至少一个搜索引擎！</string>
     <string name="pending">等待开始</string>
-    <string name="started">开始</string>
     <string name="noFiles">没有要显示的文件。使用\"pause = true\"添加下载任务时可能会发生这种情况</string>
     <string name="failed">失败</string>
     <string name="running">正在运行</string>
     <string name="paused">已暂停</string>
     <string name="failedOpeningDownload">打开下载失败！</string>
-    <string name="ddNotEnabled">此配置文件上未启用直接下载！</string>
-    <string name="profileDoesntExist">此配置文件不再存在！</string>
     <string name="noDirectDownloads">现在没有下载任务。您可以从下载任务的文件列表选项卡开始下载文件。在这里阅读更多关于DirectDownload的信息：https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">剩余时间</string>
     <string name="connectionsLabel">连接</string>
@@ -275,7 +267,6 @@
     <string name="couldStreamVideo">播放视频</string>
     <string name="couldStreamVideo_message">您的应用程序中，有可以播放此视频的。你想现在看还是直接下载？</string>
     <string name="stream">播放</string>
-    <string name="failedStreamVideo">无法播放视频！</string>
     <string name="select">选择</string>
     <string name="deselect">取消</string>
     <string name="selectAll">全选</string>

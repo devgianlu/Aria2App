@@ -189,23 +189,22 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.search_engines:
-                showProgress(R.string.gathering_information);
-                searchApi.listSearchEngines(this, new SearchApi.OnResult<List<SearchEngine>>() {
-                    @Override
-                    public void onResult(@NonNull List<SearchEngine> result) {
-                        dismissDialog();
-                        showEnginesDialog(result);
-                    }
+        if (item.getItemId() == R.id.search_engines) {
+            showProgress(R.string.gathering_information);
+            searchApi.listSearchEngines(this, new SearchApi.OnResult<List<SearchEngine>>() {
+                @Override
+                public void onResult(@NonNull List<SearchEngine> result) {
+                    dismissDialog();
+                    showEnginesDialog(result);
+                }
 
-                    @Override
-                    public void onException(@NonNull Exception ex) {
-                        dismissDialog();
-                        Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
-                    }
-                });
-                return true;
+                @Override
+                public void onException(@NonNull Exception ex) {
+                    dismissDialog();
+                    Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
+                }
+            });
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

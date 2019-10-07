@@ -356,6 +356,7 @@ public class FetchHelper {
             this.password = password;
         }
 
+        @NonNull
         @Override
         public Response intercept(Chain chain) throws IOException {
             okhttp3.Request request = chain.request();
