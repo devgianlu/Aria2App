@@ -1,8 +1,3 @@
 ### Added
-- Change In-App Downloader aria2 version
-
-## Changed
-- Fixed app crashing when downloading aria2 executable
-- Stability issues due to aria2 executable not existing
-- Fixed occasional BitfieldVisualizer crash
-- Fixed crash when editing profile
+- In-App Downloader now supports x86 devices and has expanded support for ARM devices
+- Changing global options when using the In-App Downloader profile will make them persist across restarts
