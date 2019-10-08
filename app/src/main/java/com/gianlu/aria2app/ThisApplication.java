@@ -18,7 +18,6 @@ import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.Services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.CommonPK;
@@ -95,15 +94,11 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
         // Aria2Android integration
         Aria2Ui.provider(Aria2ConfigProvider.class);
-        if (CommonUtils.isARM()) {
-            try {
-                aria2service = new Aria2UiDispatcher(this);
-                loadAria2ServiceEnv();
-            } catch (BadEnvironmentException ex) {
-                Logging.log(ex);
-            }
-        } else {
-            aria2service = null;
+        try {
+            aria2service = new Aria2UiDispatcher(this);
+            loadAria2ServiceEnv();
+        } catch (BadEnvironmentException ex) {
+            Logging.log(ex);
         }
     }
 

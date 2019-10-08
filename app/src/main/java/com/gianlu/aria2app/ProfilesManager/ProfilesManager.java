@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ThisApplication;
-import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 
@@ -135,12 +134,12 @@ public class ProfilesManager {
     }
 
     public boolean hasProfiles() {
-        return getProfileIds().length > 0 || CommonUtils.isARM();
+        return getProfileIds().length > 0 || true; // In-App Downloader is always available
     }
 
     public boolean hasNotificationProfiles(@NonNull Context context) {
         context = context.getApplicationContext();
-        if (CommonUtils.isARM() && context instanceof ThisApplication && ((ThisApplication) context).getLastAria2UiState())
+        if (context instanceof ThisApplication && ((ThisApplication) context).getLastAria2UiState())
             return true;
 
         for (String id : getProfileIds()) {
@@ -212,7 +211,7 @@ public class ProfilesManager {
             }
         }
 
-        if (CommonUtils.isARM() && !hasInApp) {
+        if (!hasInApp) {
             MultiProfile inApp = MultiProfile.forInAppDownloader();
             profiles.add(inApp);
 
