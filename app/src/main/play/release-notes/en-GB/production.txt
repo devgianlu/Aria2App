@@ -1,3 +1,2 @@
-### Added
-- In-App Downloader now supports x86 devices and has expanded support for ARM devices
-- Changing global options when using the In-App Downloader profile will make them persist across restarts
+### Changed
+- Removed restriction for In-App Downloader on non-ARM devices
