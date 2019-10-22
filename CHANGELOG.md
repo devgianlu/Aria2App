@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.4.2] - 22-10-2019
+### Changed
+- Fixed random crash when viewing servers in download info
+- Updated 3rd part libraries
+
+
 ## [5.4.1] - 08-10-2019
 ### Changed
 - Removed restriction for In-App Downloader on non-ARM devices

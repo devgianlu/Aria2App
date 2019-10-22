@@ -1,2 +1,3 @@
 ### Changed
-- Removed restriction for In-App Downloader on non-ARM devices
+- Fixed random crash when viewing servers in download info
+- Updated 3rd part libraries
