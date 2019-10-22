@@ -15,7 +15,7 @@ import com.gianlu.aria2app.NetIO.Aria2.Option;
 import com.gianlu.aria2app.NetIO.TrackersListFetch;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
 
 import java.util.Arrays;

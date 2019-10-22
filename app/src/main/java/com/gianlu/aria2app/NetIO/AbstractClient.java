@@ -3,6 +3,10 @@ package com.gianlu.aria2app.NetIO;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
+
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ThisApplication;
@@ -16,9 +20,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractClient implements Closeable, ClientInterface {
@@ -34,6 +35,11 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
         this.handler = new Handler(Looper.getMainLooper());
 
         ThisApplication.setCrashlyticsString("connectionMethod", profile.connectionMethod.name());
+    }
+
+    @Override
+    public boolean isInAppDownloader() {
+        return profile.isInAppDownloader();
     }
 
     @Override
@@ -211,8 +217,8 @@ public abstract class AbstractClient implements Closeable, ClientInterface {
     }
 
     public static class AriaRequest {
-        private final Method method;
-        private final Object[] params;
+        public final Method method;
+        public final Object[] params;
         public long id;
 
         AriaRequest(Method method, Object... params) {

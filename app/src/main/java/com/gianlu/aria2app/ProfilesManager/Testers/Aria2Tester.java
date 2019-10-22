@@ -2,18 +2,18 @@ package com.gianlu.aria2app.ProfilesManager.Testers;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.Aria2.AriaException;
 import com.gianlu.aria2app.NetIO.Aria2.VersionInfo;
 import com.gianlu.aria2app.NetIO.AriaRequests;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 
 import java.util.concurrent.atomic.AtomicReference;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 class Aria2Tester extends BaseTester<Boolean> {
     Aria2Tester(Context context, MultiProfile.UserProfile profile, PublishListener<Boolean> listener) {

@@ -13,10 +13,10 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.gianlu.commonutils.FontsManager;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.gianlu.commonutils.typhography.FontsManager;
 
 public class FileTypeTextView extends View {
     private final TextPaint textPaint;

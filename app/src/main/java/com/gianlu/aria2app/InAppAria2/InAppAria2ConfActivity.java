@@ -21,10 +21,10 @@ import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.internal.Message;
 import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen;
 import com.gianlu.aria2lib.ui.DownloadBinActivity;
-import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.FileUtil;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.FileUtils;
+import com.gianlu.commonutils.dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
             if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
                 if (uri != null) {
-                    screen.setOutputPathValue(FileUtil.getFullPathFromTreeUri(uri, this));
+                    screen.setOutputPathValue(FileUtils.getFullPathFromTreeUri(uri, this));
                     getContentResolver().takePersistableUriPermission(uri,
                             data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
                 }

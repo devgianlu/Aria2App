@@ -20,10 +20,10 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.AskPermission;
-import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.misc.SuperTextView;
+import com.gianlu.commonutils.permissions.AskPermission;
+import com.gianlu.commonutils.ui.Toaster;
 
 public class Base64Fragment extends FragmentWithDialog {
     private final int FILE_SELECT_CODE = 7;

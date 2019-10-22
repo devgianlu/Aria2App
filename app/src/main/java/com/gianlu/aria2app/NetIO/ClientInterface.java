@@ -10,4 +10,6 @@ public interface ClientInterface {
     void send(@NonNull AbstractClient.AriaRequest request, AbstractClient.OnSuccess listener);
 
     <R> void batch(@NonNull AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener);
+
+    boolean isInAppDownloader();
 }

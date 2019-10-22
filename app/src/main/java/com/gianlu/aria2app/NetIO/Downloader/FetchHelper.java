@@ -20,7 +20,7 @@ import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.preferences.Prefs;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.EnqueueAction;
 import com.tonyodev.fetch2.Fetch;
@@ -356,6 +356,7 @@ public class FetchHelper {
             this.password = password;
         }
 
+        @NonNull
         @Override
         public Response intercept(Chain chain) throws IOException {
             okhttp3.Request request = chain.request();

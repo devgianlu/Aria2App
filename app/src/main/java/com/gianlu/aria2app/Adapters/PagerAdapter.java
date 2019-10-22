@@ -2,12 +2,13 @@ package com.gianlu.aria2app.Adapters;
 
 import android.os.Bundle;
 
-import java.util.Arrays;
-import java.util.List;
-
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class PagerAdapter<F extends Fragment> extends FragmentPagerAdapter {
     private final List<F> fragments;
@@ -31,6 +32,7 @@ public class PagerAdapter<F extends Fragment> extends FragmentPagerAdapter {
         return -1;
     }
 
+    @NonNull
     @Override
     public F getItem(int position) {
         return fragments.get(position);

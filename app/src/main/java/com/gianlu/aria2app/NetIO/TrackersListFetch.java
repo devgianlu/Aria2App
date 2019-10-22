@@ -9,9 +9,9 @@ import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Lifecycle.LifecycleAwareHandler;
-import com.gianlu.commonutils.Lifecycle.LifecycleAwareRunnable;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.lifecycle.LifecycleAwareHandler;
+import com.gianlu.commonutils.lifecycle.LifecycleAwareRunnable;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import java.io.BufferedReader;
 import java.io.IOException;

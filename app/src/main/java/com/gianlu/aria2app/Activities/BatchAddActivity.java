@@ -24,11 +24,11 @@ import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.WebView.WebViewActivity;
-import com.gianlu.commonutils.Analytics.AnalyticsApplication;
-import com.gianlu.commonutils.AskPermission;
-import com.gianlu.commonutils.Dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.analytics.AnalyticsApplication;
+import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
+import com.gianlu.commonutils.permissions.AskPermission;
+import com.gianlu.commonutils.ui.Toaster;
 
 import java.util.List;
 

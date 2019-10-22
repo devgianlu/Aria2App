@@ -1,13 +1,13 @@
 package com.gianlu.aria2app.NetIO.Aria2;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class BitTorrent {
     public final ArrayList<String> announceList;
@@ -43,16 +43,8 @@ public class BitTorrent {
         SINGLE;
 
         public static Mode parse(@Nullable String val) {
-            if (val == null) return Mode.SINGLE;
-
-            switch (val.toLowerCase()) {
-                case "multi":
-                    return Mode.MULTI;
-                case "single":
-                    return Mode.SINGLE;
-                default:
-                    return Mode.SINGLE;
-            }
+            if (val != null && "multi".equals(val.toLowerCase())) return Mode.MULTI;
+            else return Mode.SINGLE;
         }
 
         @Override

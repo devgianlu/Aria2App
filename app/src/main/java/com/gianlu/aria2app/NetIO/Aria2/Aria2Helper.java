@@ -4,6 +4,9 @@ package com.gianlu.aria2app.NetIO.Aria2;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
 import com.gianlu.aria2app.Activities.AddDownload.AddDownloadBundle;
 import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.NetIO.AriaRequests;
@@ -12,15 +15,19 @@ import com.gianlu.aria2app.NetIO.NetInstanceHolder;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Preferences.Prefs;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.aria2lib.Aria2PK;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.preferences.Prefs;
+import com.gianlu.commonutils.preferences.json.JsonStoring;
+import com.gianlu.commonutils.ui.Toaster;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
 public class Aria2Helper {
     private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = client -> new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
@@ -51,12 +58,37 @@ public class Aria2Helper {
         }
     }
 
+    private void processGlobalOptionsUpdate(@NonNull JSONObject newOptions) {
+        if (!client.isInAppDownloader()) return;
+
+        try {
+            JSONObject options = JsonStoring.intoPrefs().getJsonObject(Aria2PK.CUSTOM_OPTIONS);
+            if (options == null) options = new JSONObject();
+
+            Iterator<String> iter = newOptions.keys();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                options.put(key, newOptions.get(key));
+            }
+
+            JsonStoring.intoPrefs().putJsonObject(Aria2PK.CUSTOM_OPTIONS, options);
+        } catch (JSONException ex) {
+            Logging.log("Failed saving In-App downloader options.", ex);
+        }
+    }
+
     public final <T> void request(AbstractClient.AriaRequestWithResult<T> request, AbstractClient.OnResult<T> listener) {
         client.send(request, listener);
+
+        if (request.method == AbstractClient.Method.CHANGE_GLOBAL_OPTIONS)
+            processGlobalOptionsUpdate((JSONObject) request.params[0]);
     }
 
     public final void request(AbstractClient.AriaRequest request, AbstractClient.OnSuccess listener) {
         client.send(request, listener);
+
+        if (request.method == AbstractClient.Method.CHANGE_GLOBAL_OPTIONS)
+            processGlobalOptionsUpdate((JSONObject) request.params[0]);
     }
 
     public void getVersionAndSession(AbstractClient.OnResult<VersionAndSession> listener) {

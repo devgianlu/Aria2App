@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.ProfilesManager.Testers.NetTester;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Drawer.DrawerManager;
-import com.gianlu.commonutils.Drawer.ProfilesAdapter;
+import com.gianlu.commonutils.drawer.DrawerManager;
+import com.gianlu.commonutils.drawer.ProfilesAdapter;
 
 import java.util.List;
 import java.util.Locale;

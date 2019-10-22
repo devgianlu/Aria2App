@@ -2,17 +2,17 @@ package com.gianlu.aria2app.Tutorial;
 
 import android.graphics.Rect;
 
-import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesAdapter;
-import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Tutorial.BaseTutorial;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.gianlu.aria2app.Activities.MoreAboutDownload.Files.FilesAdapter;
+import com.gianlu.aria2app.NetIO.Aria2.AriaDirectory;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.tutorial.BaseTutorial;
 
 public class FilesTutorial extends BaseTutorial {
 

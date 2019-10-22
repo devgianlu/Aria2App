@@ -31,10 +31,10 @@ import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.FontsManager;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
+import com.gianlu.commonutils.typhography.FontsManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -235,7 +235,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                         geoIP.getIPDetails(uri.getHost(), getActivity(), new GeoIP.OnIpDetails() {
                             @Override
                             public void onDetails(@NonNull IPDetails details) {
-                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(requireContext(), details.countryCode));
+                                ((ImageView) layout.getChildAt(1)).setImageDrawable(flags.loadFlag(layout.getContext(), details.countryCode));
                             }
 
                             @Override

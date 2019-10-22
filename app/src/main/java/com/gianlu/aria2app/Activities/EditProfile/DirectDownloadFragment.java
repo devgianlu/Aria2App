@@ -19,9 +19,9 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.permissions.AskPermission;
+import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.URL;

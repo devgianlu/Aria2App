@@ -146,7 +146,7 @@ public class WebSocketClient extends AbstractClient {
     @WorkerThread
     private class Listener extends WebSocketListener {
         @Override
-        public void onMessage(WebSocket webSocket, String text) {
+        public void onMessage(@NonNull WebSocket webSocket, @NonNull String text) {
             if (closed) return;
 
             try {
@@ -170,7 +170,7 @@ public class WebSocketClient extends AbstractClient {
         }
 
         @Override
-        public void onOpen(WebSocket webSocket, Response response) {
+        public void onOpen(@NonNull WebSocket webSocket, @NonNull Response response) {
             long ping = System.currentTimeMillis() - initializedAt;
             handler.post(() -> {
                 if (connectionListener != null) {
@@ -185,7 +185,7 @@ public class WebSocketClient extends AbstractClient {
         }
 
         @Override
-        public void onFailure(WebSocket webSocket, Throwable throwable, Response response) {
+        public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable throwable, Response response) {
             handler.post(() -> {
                 if (connectionListener != null) {
                     connectionListener.onFailedConnecting(profile, throwable);

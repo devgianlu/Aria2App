@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.NetIO.Aria2.Aria2Helper;
 import com.gianlu.aria2app.NetIO.OnRefresh;
-import com.gianlu.commonutils.Dialogs.FragmentWithDialog;
+import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 
 public abstract class UpdaterFragment<P> extends FragmentWithDialog implements Receiver<P>, ReceiverOwner {
     private boolean calledLoad = false;

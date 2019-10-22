@@ -4,7 +4,7 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Status;
 

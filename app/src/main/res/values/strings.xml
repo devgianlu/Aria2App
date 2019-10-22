@@ -189,24 +189,19 @@
     <string name="downloadMoved">Download moved in queue.</string>
     <string name="downloadResultRemoved">Download result removed.</string>
     <string name="invalidFile">Invalid file!</string>
-    <string name="invalidDownloadPath">Invalid download path.</string>
     <string name="failedSavingSession">Failed saving current session!</string>
     <string name="failedDownloadingFile">Failed downloading file!</string>
     <string name="globalOptionsChanged">Global options has been successfully changed.</string>
     <string name="fileSelected">File(s) selected for download.</string>
     <string name="noQuickOptions">You have no quick options.</string>
     <string name="failedAddingDownload">Failed adding the new download!</string>
-    <string name="atLeastOneUri">Add at least one URI!</string>
     <string name="downloadOptionsChanged">Download options has been successfully changed.</string>
     <string name="failedFileChangeSelection">Failed selecting/deselecting file(s)!</string>
     <string name="cannotDeselectAllFiles">You cannot deselect all files!</string>
-    <string name="failedDownloadingDir">Failed downloading directory!</string>
     <string name="duplicatedCondition">This condition is already present in this profile.</string>
     <string name="fileDeselected">File(s) deselected from download.</string>
     <string name="noFilemanager">A file manager has not been found!</string>
     <string name="onlyOneTorrentUri">When adding torrent magnets only one link should be added at once.</string>
-    <string name="dirFilesDeselected">All files in directory are deselected from download.</string>
-    <string name="dirFilesSelected">All files in directory are selected for download.</string>
     <string name="hasAlwaysCondition">You cannot add a new condition if you already specified one to use every time.</string>
     <string name="cannotAddAlwaysCondition">You cannot add an \"always\" condition if you already have others.</string>
     <string name="failedChangingOptions">Failed changing options!</string>
@@ -231,14 +226,11 @@
     <string name="searchEngines">Search engines</string>
     <string name="noEnginesSelected">Select at least one search engine!</string>
     <string name="pending">Pending</string>
-    <string name="started">Started</string>
     <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
     <string name="failed">Failed</string>
     <string name="running">Running</string>
     <string name="paused">Paused</string>
     <string name="failedOpeningDownload">Failed opening the download!</string>
-    <string name="ddNotEnabled">DirectDownload isn\'t enabled on this profile!</string>
-    <string name="profileDoesntExist">This profile doesn\'t exists anymore!</string>
     <string name="noDirectDownloads">There are no downloads. You can start downloading a file from the Files tab of a download. Read more about DirectDownload here: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="remainingTime">Remaining time</string>
     <string name="connectionsLabel">Connections</string>
@@ -277,7 +269,6 @@
     <string name="couldStreamVideo">Stream video</string>
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
     <string name="stream">Stream</string>
-    <string name="failedStreamVideo">Failed to stream the video!</string>
     <string name="select">Select</string>
     <string name="deselect">Deselect</string>
     <string name="selectAll">Select all</string>

@@ -5,8 +5,8 @@ import android.os.Environment;
 import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.NetIO.Aria2.Download;
 import com.gianlu.aria2app.Services.NotificationService;
-import com.gianlu.commonutils.CommonPK;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.preferences.CommonPK;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import java.util.Arrays;
 import java.util.HashSet;

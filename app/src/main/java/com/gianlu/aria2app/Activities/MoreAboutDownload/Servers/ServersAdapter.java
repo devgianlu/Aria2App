@@ -1,7 +1,6 @@
 package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,7 +23,6 @@ import com.gianlu.commonutils.misc.SuperTextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @UiThread
 public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -41,20 +39,6 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.objs = new ArrayList<>();
         this.geoIP = GeoIP.get();
         this.inflater = LayoutInflater.from(context);
-        listener.onItemCountUpdated(objs.size());
-    }
-
-    private void createObjs(SparseServers servers, AriaFiles files) {
-        objs.clear();
-
-        for (AriaFile file : files) {
-            List<Server> fileServers = servers.get(file.index, Servers.empty());
-            if (!fileServers.isEmpty()) {
-                objs.add(file);
-                objs.addAll(fileServers);
-            }
-        }
-
         listener.onItemCountUpdated(objs.size());
     }
 
@@ -113,17 +97,12 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 ItemViewHolder castHolder = (ItemViewHolder) holder;
                 Object payload = payloads.get(0);
                 if (payload instanceof Server) {
-                    final Server server = (Server) payloads.get(0);
+                    Server server = (Server) payloads.get(0);
                     castHolder.address.setText(server.currentUri);
                     castHolder.downloadSpeed.setText(CommonUtils.speedFormatter(server.downloadSpeed, false));
                 } else if (payload instanceof IPDetails) {
                     castHolder.flag.setImageDrawable(flags.loadFlag(castHolder.flag.getContext(), ((IPDetails) payload).countryCode));
                 }
-            } else if (holder instanceof HeaderViewHolder) {
-                AriaFile file = (AriaFile) payloads.get(0);
-                HeaderViewHolder castHolder = (HeaderViewHolder) holder;
-
-                castHolder.name.setText(file.getName());
             }
         }
     }
@@ -133,45 +112,53 @@ public class ServersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return objs.size();
     }
 
-    private int indexOfHeader(int index) {
-        for (int i = 0; i < objs.size(); i++)
+    private int nextHeaderIndex(int start) {
+        for (int i = start + 1; i < objs.size(); i++)
             if (objs.get(i) instanceof AriaFile)
-                if (((AriaFile) objs.get(i)).index == index)
-                    return i;
+                return i;
 
         return -1;
     }
 
-    private List<Integer> indexOfServer(Uri uri) {
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < objs.size(); i++)
-            if (objs.get(i) instanceof Server)
-                if (Objects.equals(((Server) objs.get(i)).uri, uri))
-                    list.add(i);
+    private void updateHeaderIfNeeded(@NonNull AriaFile file, @NonNull Servers servers) {
+        int index = objs.indexOf(file);
+        if (index == -1) {
+            objs.add(file);
+            objs.addAll(servers);
+            notifyItemRangeInserted(objs.size() - 1 - servers.size(), 1 + servers.size());
+            return;
+        }
 
-        return list;
-    }
+        int serversToUpdate;
+        int nextHeader = nextHeaderIndex(index);
+        if (nextHeader == -1) serversToUpdate = objs.size() - index - 1;
+        else serversToUpdate = nextHeader - index;
 
-    private void notifyServerChanged(int index, @NonNull Server server) {
-        List<Integer> list = indexOfServer(server.uri);
-        if (list.size() == 1) notifyItemChanged(list.get(0), server);
-        else if (!list.isEmpty() && index < list.size()) notifyItemChanged(list.get(index), server);
+        List<Server> toUpdate = new ArrayList<>(servers);
+
+        loopObjs:
+        for (int i = index + 1 + serversToUpdate - 1; i >= index + 1; i--) {
+            for (Server server : servers) {
+                if (server.equals(objs.get(i))) {
+                    objs.set(i, server);
+                    notifyItemChanged(i, server);
+                    toUpdate.remove(server);
+                    continue loopObjs;
+                }
+            }
+
+            objs.remove(i);
+            notifyItemRemoved(i);
+        }
+
+        if (!toUpdate.isEmpty()) {
+            objs.addAll(index, toUpdate);
+            notifyItemRangeInserted(index, toUpdate.size());
+        }
     }
 
     public void notifyItemsChanged(@NonNull SparseServers servers, @NonNull AriaFiles files) {
-        createObjs(servers, files);
-        for (AriaFile file : files) notifyHeaderChanged(file, servers.get(file.index));
-    }
-
-    private void notifyHeaderChanged(AriaFile file, List<Server> servers) {
-        int pos = indexOfHeader(file.index);
-        if (pos != -1) {
-            notifyItemChanged(pos, file);
-            for (int i = 0; i < servers.size(); i++) {
-                Server server = servers.get(i);
-                notifyServerChanged(i, server);
-            }
-        }
+        for (AriaFile file : files) updateHeaderIfNeeded(file, servers.get(file.index));
     }
 
     public interface Listener {

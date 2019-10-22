@@ -2,15 +2,15 @@ package com.gianlu.aria2app.Tutorial;
 
 import android.graphics.Rect;
 
-import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Tutorial.BaseTutorial;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.tutorial.BaseTutorial;
 
 public class DownloadCardsTutorial extends BaseTutorial {
 

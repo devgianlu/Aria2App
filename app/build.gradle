@@ -14,8 +14,8 @@ android {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 190
-        versionName "5.3.2"
+        versionCode 192
+        versionName "5.4.1"
     }
 
     if (isTravis) {
@@ -79,7 +79,7 @@ dependencies {
     implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
     implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'

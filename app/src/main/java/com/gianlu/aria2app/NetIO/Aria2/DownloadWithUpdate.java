@@ -2,10 +2,14 @@ package com.gianlu.aria2app.NetIO.Aria2;
 
 import android.os.Build;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+
 import com.gianlu.aria2app.NetIO.ClientInterface;
 import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Adapters.Filterable;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.adapters.Filterable;
+import com.gianlu.commonutils.logging.Logging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,10 +18,6 @@ import java.text.ParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-
-import androidx.annotation.ColorRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
 
 public class DownloadWithUpdate extends Download implements Filterable<Download.Status> {
     private final Object lock = new Object();

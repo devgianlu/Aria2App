@@ -20,8 +20,8 @@ import com.gianlu.aria2app.NetIO.Updater.PayloadProvider;
 import com.gianlu.aria2app.NetIO.Updater.Wants;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Tutorial.PeersServersTutorial;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Tutorial.BaseTutorial;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.tutorial.BaseTutorial;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
     private int numPieces = -1;
@@ -38,7 +38,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.peers_fragment, menu);
         inflater.inflate(R.menu.peers_fragment_sorting, menu.findItem(R.id.peersFragment_sorting).getSubMenu());
     }
@@ -51,7 +51,7 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (adapter == null) return false;
 
         item.setChecked(true);

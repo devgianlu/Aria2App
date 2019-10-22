@@ -22,11 +22,11 @@ import com.gianlu.aria2app.NetIO.CertUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.AskPermission;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Toaster;
+import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
+import com.gianlu.commonutils.permissions.AskPermission;
+import com.gianlu.commonutils.ui.Toaster;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

@@ -13,11 +13,11 @@ import androidx.annotation.UiThread;
 import com.gianlu.aria2app.NetIO.StatusCodeException;
 import com.gianlu.aria2app.PK;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.Lifecycle.LifecycleAwareHandler;
-import com.gianlu.commonutils.Lifecycle.LifecycleAwareRunnable;
-import com.gianlu.commonutils.Logging;
-import com.gianlu.commonutils.Preferences.Json.JsonStoring;
-import com.gianlu.commonutils.Preferences.Prefs;
+import com.gianlu.commonutils.lifecycle.LifecycleAwareHandler;
+import com.gianlu.commonutils.lifecycle.LifecycleAwareRunnable;
+import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.preferences.Prefs;
+import com.gianlu.commonutils.preferences.json.JsonStoring;
 
 import org.json.JSONArray;
 import org.json.JSONException;

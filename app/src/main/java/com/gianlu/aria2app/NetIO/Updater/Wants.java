@@ -1,12 +1,14 @@
 package com.gianlu.aria2app.NetIO.Updater;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.NetIO.Aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.NetIO.Aria2.Peers;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServersWithFiles;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import java.util.Objects;
 
 public final class Wants<P> {
     private final Class<P> klass;
@@ -45,7 +47,7 @@ public final class Wants<P> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Wants<?> wants = (Wants<?>) o;
-        return klass.equals(wants.klass) && (data != null ? data.equals(wants.data) : wants.data == null);
+        return klass.equals(wants.klass) && Objects.equals(data, wants.data);
     }
 
     @Override

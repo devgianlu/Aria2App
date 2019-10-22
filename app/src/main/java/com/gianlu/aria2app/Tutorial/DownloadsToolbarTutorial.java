@@ -1,12 +1,12 @@
 package com.gianlu.aria2app.Tutorial;
 
-import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
-import com.gianlu.aria2app.R;
-import com.gianlu.commonutils.Tutorial.BaseTutorial;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+
+import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.tutorial.BaseTutorial;
 
 public class DownloadsToolbarTutorial extends BaseTutorial {
 

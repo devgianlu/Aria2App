@@ -3,15 +3,15 @@ package com.gianlu.aria2app.NetIO;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 
+import androidx.annotation.NonNull;
+
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.commonutils.Logging;
+import com.gianlu.commonutils.logging.Logging;
 
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
 
 public final class NetInstanceHolder {
     private static NetInstanceHolder instance = new NetInstanceHolder();
@@ -98,6 +98,11 @@ public final class NetInstanceHolder {
         @Override
         public <R> void batch(@NonNull AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener) {
             if (current != null) current.batch(sandbox, listener);
+        }
+
+        @Override
+        public boolean isInAppDownloader() {
+            return current != null && current.isInAppDownloader();
         }
     }
 }
