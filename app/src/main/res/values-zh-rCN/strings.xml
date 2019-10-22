@@ -6,25 +6,25 @@
     <string name="downloadStatus_paused">已暂停</string>
     <string name="downloadStatus_unknown">未知</string>
     <string name="downloadStatus_complete">完成</string>
-    <string name="downloadStatus_removed">删除</string>
+    <string name="downloadStatus_removed">已被删除</string>
     <string name="downloadStatus_active">活动</string>
-    <string name="completed_length"><b>完成长度:</b> %s</string>
-    <string name="total_length"><b>总长度:</b> %s</string>
-    <string name="uploaded_length"><b>已上传长度:</b> %s</string>
-    <string name="pieces"><b>块数:</b> %d</string>
-    <string name="pieces_length"><b>分块长度:</b> %s</string>
-    <string name="connections"><b>连接:</b> %d</string>
-    <string name="verifyIntegrityPending"><b>等待完整性检查:</b> %s</string>
-    <string name="verifiedLength"><b>验证时长:</b> %s</string>
+    <string name="completed_length"><![CDATA[<b>完成长度:</b>]]> %s</string>
+    <string name="total_length"><![CDATA[<b>总长度:</b>]]> %s</string>
+    <string name="uploaded_length"><![CDATA[<b>已上传长度:</b>]]> %s</string>
+    <string name="pieces"><![CDATA[<b>块数:</b>]]> %d</string>
+    <string name="pieces_length"><![CDATA[<b>分块长度:</b>]]> %s</string>
+    <string name="connections"><![CDATA[<b>连接:</b>]]> %d</string>
+    <string name="verifyIntegrityPending"><![CDATA[<b>等待完整性检查:</b>]]> %s</string>
+    <string name="verifiedLength"><![CDATA[<b>已验证长度：</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID:</b>]]> %s</string>
-    <string name="directory"><b>目标文件夹:</b> %s</string>
-    <string name="seeder"><b>种子源:</b> %s</string>
-    <string name="numSeeder"><b>种子数量:</b> %d</string>
-    <string name="creation_date"><b>创建日期:</b> %s</string>
-    <string name="mode"><b>模式:</b> %s</string>
-    <string name="comment"><b>评论:</b> %s</string>
-    <string name="index"><b>索引号:</b> %d</string>
-    <string name="path"><b>路径:</b> %s</string>
+    <string name="directory"><![CDATA[<b>目标文件夹:</b>]]> %s</string>
+    <string name="seeder"><![CDATA[<b>种子源:</b>]]> %s</string>
+    <string name="numSeeder"><![CDATA[<b>种子数量:</b>]]> %d</string>
+    <string name="creation_date"><![CDATA[<b>创建日期:</b>]]> %s</string>
+    <string name="mode"><![CDATA[<b>模式:</b>]]> %s</string>
+    <string name="comment"><![CDATA[<b>评论:</b>]]> %s</string>
+    <string name="index"><![CDATA[<b>索引号:</b>]]> %d</string>
+    <string name="path"><![CDATA[<b>路径:</b>]]> %s</string>
     <string name="amChoking"><![CDATA[<b>我方阻塞对方:</b>]]> %s</string>
     <string name="peerChoking"><![CDATA[<b>对方阻塞我方:</b>]]> %s</string>
     <string name="notificationComplete">下载完成</string>
@@ -34,9 +34,9 @@
     <string name="notificationError">下载错误</string>
     <string name="notificationBTComplete">BitTorrent下载完成</string>
     <string name="noPeers">没有Peer</string>
-    <string name="features"><b>启用的功能:</b> %s</string>
-    <string name="sessionId"><b>会话ID:</b> %s</string>
-    <string name="versionLabel"><b>版本:</b> %s</string>
+    <string name="features"><![CDATA[<b>启用的功能:</b>]]> %s</string>
+    <string name="sessionId"><![CDATA[<b>会话ID:</b>]]> %s</string>
+    <string name="versionLabel"><![CDATA[<b>版本:</b>]]> %s</string>
     <string name="gathering_information">正在收集信息。请稍候…</string>
     <string name="info">任务信息</string>
     <string name="files">文件列表</string>
@@ -94,13 +94,13 @@
     <string name="completed">已完成</string>
     <string name="searchTorrent">寻找种子文件</string>
     <string name="download">下载</string>
-    <string name="size"><b>大小:</b> %s</string>
+    <string name="size"><![CDATA[<b>大小:</b>]]> %s</string>
     <string name="sorting">排序</string>
     <string name="status">状态</string>
     <string name="totalLengthLabel">总长度</string>
     <string name="progress">进度</string>
     <string name="connectionMethod">连接方法</string>
-    <string name="addMetalink">添加Metalink</string>
+    <string name="addMetalink">添加元链接</string>
     <string name="addTorrent">添加种子文件</string>
     <string name="fatalExceptionMessage">出现致命异常！</string>
     <string name="connection">连接</string>
@@ -117,29 +117,29 @@
     <string name="invalidAddress">无效地址！</string>
     <string name="pickProfile">选择一个配置文件或创建一个新的配置文件。在配置文件名上长按进行编辑。</string>
     <string name="failedLoading">加载失败！</string>
-    <string name="currentUri"><b>目前网址:</b> %s</string>
-    <string name="uri"><b>网址:</b> %s</string>
+    <string name="currentUri"><![CDATA[<b>目前网址:</b>]]> %s</string>
+    <string name="uri"><![CDATA[<b>网址:</b>]]> %s</string>
     <string name="selectForDownload">选择下载文件</string>
-    <string name="shareRatio"><b>分享比率:</b> %s</string>
-    <string name="currentValue"><b>当前设置值:</b> %s</string>
+    <string name="shareRatio"><![CDATA[<b>分享比率:</b>]]> %s</string>
+    <string name="currentValue"><![CDATA[<b>当前设置值:</b>]]> %s</string>
     <string name="newValue">新的设置值：</string>
     <string name="set">设置</string>
     <string name="noUris_help">没有网址。请点击下面的按钮添加。</string>
-    <string name="editUri">Edit uri</string>
+    <string name="editUri">编辑网址</string>
     <string name="queuePosition_help">如不填，将会把本次下载添加到队列的末尾。</string>
     <string name="uris_disclaimer">必须只添加指向同一资源的HTTP / FTP / SFTP / BitTorrent网址。如果您把指向不同的资源的网址添加在一起，有可能虽然aria2不会给出任何错误提示，但下载会失败，或者产生数据损坏。</string>
-    <string name="noUris">没有uris。</string>
+    <string name="noUris">没有网址。</string>
     <string name="torrentUris_disclaimer">网址用于网络播种。对于单个文件种子，网址可以是一个指向资源的完整网址；如果网址以/结尾，则会添加种子文件中的名称。对于含有多个文件的种子，会添加种子中的名字和路径形成每个文件的网址。</string>
     <string name="file">文件</string>
-    <string name="pickTorrent_help">选择一个种子文件。支持的mime类型是 <b>application/x-bittorrent</b>.</string>
-    <string name="pickMetalink_help">Select a metalink file. The supported mime types are <![CDATA[<b>application/metalink4+xml</b>]]> and <![CDATA[<b>application/metalink+xml</b>]]>.</string>
+    <string name="pickTorrent_help">选择一个种子文件。支持的mime类型是 <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
+    <string name="pickMetalink_help">请选择一个元链接文件。支持的媒体类型为<![CDATA[<b>application/metalink4+xml</b>]]> 和<![CDATA[<b>application/metalink+xml</b>]]>。</string>
     <string name="outdated_aria2">过时的aria2版本</string>
     <string name="outdated_aria2_message">你的aria2版本已经过时了。 Aria2App开发用于运行最新的aria2版本，因此您应该更新它。您可以在首选项中禁用此消息。\n\n当前版本:%1$s\n最新版本:%2$s</string>
     <string name="selectFile_help">只能在多文件种子上下载文件，才能从下载中选择或取消选择文件。</string>
     <string name="nameLabel">名称</string>
     <string name="searchDownloads">搜索下载</string>
     <string name="failedLoadingDownloads">加载下载失败！</string>
-    <string name="indexes"><b>索引:</b> %s</string>
+    <string name="indexes"><![CDATA[<b>索引:</b>]]> %s</string>
     <string name="mobile">移动网络</string>
     <string name="ethernet">以太网络</string>
     <string name="bluetooth">蓝牙</string>
@@ -206,18 +206,18 @@
     <string name="seeError">查看错误</string>
     <string name="contactMe">联系我</string>
     <string name="failedLoading_reason">加载失败: %s</string>
-    <string name="searchEngine_disclaimer">这个搜索引擎由我（作者本人）提供支持。它结合了各种来源的结果。</string>
+    <string name="searchEngine_disclaimer">这个搜索引擎由我 (作者本人) 提供支持。它结合了各种来源的结果。</string>
     <string name="noServers">没有服务器</string>
     <string name="enableHostnameVerifier">启用主机名验证器</string>
-    <string name="hostnameVerifier_disclaimer">如果证书包含主题替代名称（SAN），则应启用此选项。建议将SAN添加到证书中。</string>
+    <string name="hostnameVerifier_disclaimer">如果证书包含主题替代名称(SAN)，则应启用此选项。建议将SAN添加到证书中。</string>
     <string name="searchEngine_offline">该服务暂时不可用，它将在几分钟后恢复在线。</string>
     <string name="show">显示</string>
     <string name="getTorrent">获取种子文件</string>
     <string name="getMagnet">获得磁链接</string>
-    <string name="numSeederShort"><b>种子源:</b> %d</string>
-    <string name="numLeechesShort"><b>连接数:</b> %d</string>
-    <string name="searchEngine"><b>搜索引擎:</b> %s</string>
-    <string name="domain"><![CDATA[<b>Domain:</b>]]> %s</string>
+    <string name="numSeederShort"><![CDATA[<b>种子源:</b>]]> %d</string>
+    <string name="numLeechesShort"><![CDATA[<b>连接数:</b>]]> %d</string>
+    <string name="searchEngine"><![CDATA[<b>搜索引擎:</b>]]> %s</string>
+    <string name="domain"><![CDATA[<b>域:</b>]]> %s</string>
     <string name="peerId"><![CDATA[<b>Peer ID:</b>]]> %s</string>
     <string name="missingEngines_message">有些引擎无法完成请求。</string>
     <string name="missingEngines">缺少引擎</string>
@@ -235,7 +235,7 @@
     <string name="numSeederLabel">种子数量</string>
     <string name="selectCertificate">选择/更改证书</string>
     <string name="certificateDetails">证书详情</string>
-    <string name="serialNumber"><![CDATA[<b>Serial number:</b>]]> %s</string>
+    <string name="serialNumber"><![CDATA[<b>序列号:</b>]]> %s</string>
     <string name="subject">主题</string>
     <string name="issuer">签发机构</string>
     <string name="signatureAlgorithm">签名算法</string>
@@ -275,13 +275,13 @@
     <string name="readPermissionDenied">没有读取权限！</string>
     <string name="batchAdd">批量添加</string>
     <string name="torrents">种子文件</string>
-    <string name="metalinks">Metalinks</string>
+    <string name="metalinks">元链接</string>
     <string name="addSingle">添加单个任务</string>
     <string name="noBatchAdd">现在没有批量下载的操作。请使用下方的按钮添加。</string>
     <string name="downloadsAddedBatch">已添加所有下载任务。</string>
     <string name="failedAddingDownloads">某些下载任务添加失败。</string>
     <string name="torrentFiles">种子文件</string>
-    <string name="metalinkFiles">Metalink文件</string>
+    <string name="metalinkFiles">元链接文件</string>
     <string name="urisFile">网址文件</string>
     <string name="urisFile_help">要了解更多关于网址文件的信息，请访问以下页面: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">已取消</string>
@@ -316,9 +316,8 @@
     <string name="noDownloads_addOne">没有下载任务。请点击屏幕右下角的加号图标添加下载任务。</string>
     <string name="noDownloads_changeFilters">没有可显示的下载任务。请尝试更改筛选条件。</string>
     <string name="filtersShowingOnly">仅显示%s (%d)</string>
-    <string name="cannotDeleteBin">Can\'t delete the bin file! Please clear application data.</string>
-    <string name="changeBinVersion_message">Are you sure you want to change the bin version?</string>
-
+    <string name="cannotDeleteBin">无法删除二进制文件！请清除本应用的数据。</string>
+    <string name="changeBinVersion_message">您确定您要更改二进制文件版本？</string>
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
@@ -329,7 +328,6 @@
     <string name="prefs_downloadDisplayInfo_summary">自定义下载卡中显示的信息。</string>
     <string name="prefs_versionCheck">在启动时检查aria2版本</string>
     <string name="prefs_versionCheck_summary">检查最新版本的aria2是否正在运行。</string>
-
     <!-- - DirectDownload -->
     <string name="prefs_ddDownloadPath">下载路径</string>
     <string name="prefs_ddDownloadPath_summary">所有文件都将在下载到这里。</string>
@@ -337,7 +335,6 @@
     <string name="prefs_ddMaxSimultaneousDownloads_summary">同时运行的最大下载次数。</string>
     <string name="prefs_ddResume">继续下载</string>
     <string name="prefs_ddResume_summary">启动后自动恢复此前暂停的下载</string>
-
     <!-- - Notifications -->
     <string name="prefs_enableNotifications">启用通知服务</string>
     <string name="prefs_enableNotifications_summary">您将收到所选配置文件的通知</string>
@@ -348,7 +345,6 @@
     <string name="locationAccessDenied">没有位置信息访问权限。</string>
     <string name="locationAccess_title">需要位置信息访问权限</string>
     <string name="locationAccess_message">本应用需要位置信息访问权限，仅为了读取WiFi SSID信息，不会进行其它操作。</string>
-
     <!-- - Profiles -->
     <string name="profiles">配置文件</string>
     <string name="importProfiles">导入配置文件</string>
@@ -359,5 +355,5 @@
     <string name="failedExportingProfiles">导出配置文件失败！</string>
     <string name="profilesImportedSuccessfully">成功导入配置文件。</string>
     <string name="profilesExportedSuccessfully">配置文件已成功导出到%s。</string>
-    <string name="changeBinVersion">Change bin version</string>
+    <string name="changeBinVersion">更改二进制文件版本</string>
 </resources>
