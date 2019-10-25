@@ -190,10 +190,11 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     }
 
     private void saveCurrent() {
-        if (pagerAdapter.pos() != -1) {
+        int adapterPos = pagerAdapter.pos();
+        if (adapterPos != -1 && adapterPos < conditions.size()) {
             try {
                 Bundle saved = pagerAdapter.save();
-                ConditionWithState cs = conditions.get(pagerAdapter.pos());
+                ConditionWithState cs = conditions.get(adapterPos);
                 if (cs == null) throw new IllegalStateException();
                 cs.setState(saved);
             } catch (IllegalStateException ex) {
