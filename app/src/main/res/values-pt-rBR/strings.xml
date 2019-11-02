@@ -96,7 +96,7 @@
     <string name="download">Baixar</string>
     <string name="size">&lt;b&gt; Tamanho: &lt;/b&gt; %s</string>
     <string name="sorting">Ordenar por</string>
-    <string name="status">Status</string>
+    <string name="status">Estado</string>
     <string name="totalLengthLabel">Tamanho total</string>
     <string name="progress">Progresso</string>
     <string name="connectionMethod">Método de conexão</string>
@@ -141,9 +141,9 @@
     <string name="failedLoadingDownloads">Falha ao carregar downloads!</string>
     <string name="indexes">&lt;b&gt; Índices: &lt;/b&gt; %s</string>
     <string name="mobile">Móvel</string>
-    <string name="ethernet">Ethernet</string>
+    <string name="ethernet">Internet</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="wifi">Wifi</string>
+    <string name="wifi">Wi-Fi</string>
     <string name="always">Sempre</string>
     <string name="connectivityCondition">Condição de conectividade</string>
     <string name="create">Crio</string>
@@ -240,7 +240,7 @@
     <string name="issuer">Emissor</string>
     <string name="signatureAlgorithm">Algoritmo de assinatura</string>
     <string name="name">Nome: %s</string>
-    <string name="oid">OID: %s</string>
+    <string name="oid">OIDO: %s</string>
     <string name="alternativeNames">Nomes alternativos: %s</string>
     <string name="ip">Endereço IP: %s</string>
     <string name="localization">Localização: %s</string>
@@ -294,7 +294,7 @@
     <string name="isThisToDownload_message">Deseja iniciar um download para ` %s s`?</string>
     <string name="useWebView">Usar o WebView?</string>
     <string name="useWebView_message">Se você estiver tentando fazer o download de algo que não possui um URL permanente, use esse recurso para interceptar o download como se estivesse acontecendo no seu navegador. Deseja abrir um WebView?</string>
-    <string name="webView">WebView</string>
+    <string name="webView">Webview</string>
     <string name="visit">Visita</string>
     <string name="goTo">Vamos para</string>
     <string name="prefs_addBestTrackers">Adicione os melhores rastreadores a novos downloads</string>
