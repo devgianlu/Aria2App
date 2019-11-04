@@ -1,3 +1,7 @@
+### Added
+- Translators list
+- Brazilian Portuguese translation
+
 ### Changed
-- Fixed random crash when viewing servers in download info
-- Updated 3rd part libraries
+- Fixed issue with saving profiles
+- Fixed drawer highlighting issue
