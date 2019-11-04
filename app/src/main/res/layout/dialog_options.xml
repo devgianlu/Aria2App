@@ -13,8 +13,8 @@
             android:id="@+id/optionsDialog_options"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp" />
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
 
         <ProgressBar
             android:id="@+id/optionsDialog_loading"
@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="48dp" />
-
     </FrameLayout>
 
     <LinearLayout
@@ -33,7 +32,7 @@
 
         <Button
             android:id="@+id/optionsDialog_cancel"
-            style="?android:borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@android:string/cancel" />
@@ -45,14 +44,14 @@
 
         <Button
             android:id="@+id/optionsDialog_export"
-            style="?android:borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/export" />
 
         <Button
             android:id="@+id/optionsDialog_apply"
-            style="?android:borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/apply" />

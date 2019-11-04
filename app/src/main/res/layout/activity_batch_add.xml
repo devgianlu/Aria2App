@@ -25,23 +25,25 @@
 
         <Button
             android:id="@+id/batchAdd_singleUri"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/addSingle"
             android:textColor="@color/colorSecondary" />
 
         <Button
             android:id="@+id/batchAdd_urisFile"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/urisFile"
             android:textColor="@color/colorSecondary" />
 
         <Button
             android:id="@+id/batchAdd_webView"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/webView"
@@ -68,20 +70,20 @@
 
         <Button
             android:id="@+id/batchAdd_singleTorrent"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/addSingle"
             android:textColor="@color/colorTorrent" />
 
         <Button
             android:id="@+id/batchAdd_torrentFiles"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/torrentFiles"
             android:textColor="@color/colorTorrent" />
-
     </LinearLayout>
 
     <TextView
@@ -98,20 +100,19 @@
 
         <Button
             android:id="@+id/batchAdd_singleMetalink"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/addSingle"
             android:textColor="@color/colorMetalink" />
 
         <Button
             android:id="@+id/batchAdd_metalinkFiles"
-            style="?android:attr/borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/metalinkFiles"
             android:textColor="@color/colorMetalink" />
-
     </LinearLayout>
-
 </LinearLayout>

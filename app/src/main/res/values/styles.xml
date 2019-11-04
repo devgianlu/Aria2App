@@ -27,7 +27,7 @@
     <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
     </style>
@@ -35,7 +35,7 @@
     <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorTorrent_pressed</item>
+        <item name="colorSecondary">@color/colorTorrent_pressed</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
         <item name="windowActionModeOverlay">true</item>
@@ -44,13 +44,13 @@
     <style name="AppTheme.NoActionBar.Metalink" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorMetalink_pressed</item>
+        <item name="colorSecondary">@color/colorMetalink_pressed</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
     </style>
 
     <style name="AppTheme.Batch" parent="AppTheme">
-        <item name="colorAccent">@color/colorBatch_pressed</item>
+        <item name="colorSecondary">@color/colorBatch_pressed</item>
     </style>
 
     <!-- Fab label style -->

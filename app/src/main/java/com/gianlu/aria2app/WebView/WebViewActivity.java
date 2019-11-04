@@ -90,7 +90,7 @@ public class WebViewActivity extends ActivityWithDialog {
 
         int code = resp.code();
         String message = resp.message();
-        if (message == null || message.isEmpty()) {
+        if (message.isEmpty()) {
             if (code == 200) message = "OK";
             else message = "UNKNOWN";
         }
@@ -229,8 +229,14 @@ public class WebViewActivity extends ActivityWithDialog {
                 .setView(input)
                 .setCancelable(!compulsory)
                 .setNeutralButton(R.string.setAsDefault, (dialog, which) -> {
-                    Prefs.putString(PK.WEBVIEW_HOMEPAGE, guessUrl(input.getText().toString()));
-                    web.loadUrl(guessUrl(input.getText().toString()));
+                    String text = input.getText().toString();
+                    if (text.isEmpty()) {
+                        Prefs.remove(PK.WEBVIEW_HOMEPAGE);
+                        return;
+                    }
+
+                    Prefs.putString(PK.WEBVIEW_HOMEPAGE, guessUrl(text));
+                    web.loadUrl(guessUrl(text));
                     ThisApplication.sendAnalytics(Utils.ACTION_WEBVIEW_SET_HOMEPAGE);
                 })
                 .setPositiveButton(R.string.visit, (dialog, which) -> web.loadUrl(guessUrl(input.getText().toString())));

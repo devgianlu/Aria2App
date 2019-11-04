@@ -854,6 +854,7 @@
         <!-- DirectDownload activity -->
         <activity
             android:name=".Activities.DirectDownloadActivity"
+            android:configChanges="uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.FullBlackNight" />
 

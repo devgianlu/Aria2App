@@ -98,7 +98,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
         if (option.isValueChanged()) {
             holder.value.setText(option.newValue.strings("; "));
-            CommonUtils.setTextColor(holder.value, R.color.colorAccent);
+            CommonUtils.setTextColorFromAttr(holder.value, R.attr.colorSecondary);
         } else {
             holder.value.setText(option.value.strings("; "));
             CommonUtils.setTextColorFromAttr(holder.value, android.R.attr.textColorPrimary);
