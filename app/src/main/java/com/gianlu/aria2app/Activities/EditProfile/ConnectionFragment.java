@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -26,6 +25,7 @@ import com.gianlu.aria2app.NetIO.NetUtils;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.URI;
@@ -40,7 +40,7 @@ public class ConnectionFragment extends FieldErrorFragmentWithState implements C
     private final CountryFlags flags = CountryFlags.get();
     private ScrollView layout;
     private TextView completeAddress;
-    private RadioGroup connectionMethod;
+    private MaterialButtonToggleGroup connectionMethod;
     private TextInputLayout address;
     private TextInputLayout port;
     private TextInputLayout endpoint;
@@ -141,7 +141,7 @@ public class ConnectionFragment extends FieldErrorFragmentWithState implements C
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt("connectionMethod", connectionMethod.getCheckedRadioButtonId());
+        outState.putInt("connectionMethod", connectionMethod.getCheckedButtonId());
         outState.putString("address", CommonUtils.getText(address));
         outState.putString("port", CommonUtils.getText(port));
         outState.putString("endpoint", CommonUtils.getText(endpoint));
@@ -169,7 +169,7 @@ public class ConnectionFragment extends FieldErrorFragmentWithState implements C
         completeAddress = layout.findViewById(R.id.editProfile_completeAddress);
         addressFlag = layout.findViewById(R.id.editProfile_addressFlag);
         connectionMethod = layout.findViewById(R.id.editProfile_connectionMethod);
-        connectionMethod.setOnCheckedChangeListener((group, checkedId) -> updateCompleteAddress());
+        connectionMethod.addOnButtonCheckedListener((group, checkedId, isChecked) -> updateCompleteAddress());
         address = layout.findViewById(R.id.editProfile_address);
         CommonUtils.getEditText(address).addTextChangedListener(new TextWatcher() {
             private final Timer timer = new Timer();

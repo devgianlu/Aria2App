@@ -1,18 +1,19 @@
 package com.gianlu.aria2app.Adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.R;
+import com.gianlu.commonutils.CommonUtils;
+
+import java.util.List;
 
 public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.ConnectivityCondition> {
     private final Context context;
@@ -26,7 +27,7 @@ public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.Connecti
     @SuppressWarnings("ConstantConditions")
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView text = (TextView) super.getDropDownView(position, convertView, parent);
-        text.setTextColor(Color.WHITE);
+        CommonUtils.setTextColorFromAttr(text, R.attr.colorOnSurface);
         text.setText(getItem(position).getFormal(context));
         return text;
     }
@@ -36,7 +37,7 @@ public class SpinnerConditionsAdapter extends ArrayAdapter<MultiProfile.Connecti
     @SuppressWarnings("ConstantConditions")
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView text = (TextView) super.getView(position, convertView, parent);
-        text.setTextColor(Color.WHITE);
+        CommonUtils.setTextColor(text, R.color.white);
         text.setText(getItem(position).getFormal(context));
         return text;
     }

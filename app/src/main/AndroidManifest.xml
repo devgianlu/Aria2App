@@ -839,7 +839,7 @@
         <!-- Edit profile activity -->
         <activity
             android:name=".Activities.EditProfileActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />

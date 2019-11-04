@@ -362,4 +362,5 @@
     <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
     <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
     <string name="changeBinVersion">Change bin version</string>
+    <string name="userPasswd">User - passwd</string>
 </resources>

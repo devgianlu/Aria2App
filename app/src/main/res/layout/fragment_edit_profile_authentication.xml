@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,39 +10,40 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/authenticationMethod" />
-
-        <RadioGroup
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/editProfile_authenticationMethod"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            app:checkedButton="@id/editProfile_authMethod_none"
+            app:singleSelection="true">
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/editProfile_authMethod_none"
-                android:layout_width="match_parent"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
                 android:text="@string/none" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/editProfile_authMethod_token"
-                android:layout_width="match_parent"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/token" />
 
-            <RadioButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/editProfile_authMethod_http"
-                android:layout_width="match_parent"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/usernameAndPassword" />
-        </RadioGroup>
+                android:text="@string/userPasswd" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/editProfile_token"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/token"
@@ -63,8 +65,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editProfile_username"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
                 android:layout_weight="1"
                 android:hint="@string/username">
 
@@ -75,8 +79,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/editProfile_password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
                 android:layout_weight="1"
                 android:hint="@string/password">
 

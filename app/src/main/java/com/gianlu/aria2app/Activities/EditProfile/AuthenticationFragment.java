@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
 import androidx.annotation.IdRes;
@@ -17,13 +16,14 @@ import com.gianlu.aria2app.NetIO.AbstractClient;
 import com.gianlu.aria2app.ProfilesManager.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
 
 import static com.gianlu.aria2app.Activities.EditProfile.InvalidFieldException.Where;
 
 public class AuthenticationFragment extends FieldErrorFragmentWithState {
     private ScrollView layout;
-    private RadioGroup authMethod;
+    private MaterialButtonToggleGroup authMethod;
     private TextInputLayout token;
     private LinearLayout userAndPasswd;
     private TextInputLayout username;
@@ -101,7 +101,7 @@ public class AuthenticationFragment extends FieldErrorFragmentWithState {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt("authMethod", authMethod.getCheckedRadioButtonId());
+        outState.putInt("authMethod", authMethod.getCheckedButtonId());
         outState.putString("token", CommonUtils.getText(token));
         outState.putString("username", CommonUtils.getText(username));
         outState.putString("password", CommonUtils.getText(password));
@@ -120,8 +120,9 @@ public class AuthenticationFragment extends FieldErrorFragmentWithState {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         layout = (ScrollView) inflater.inflate(R.layout.fragment_edit_profile_authentication, container, false);
         authMethod = layout.findViewById(R.id.editProfile_authenticationMethod);
-        authMethod.setOnCheckedChangeListener((radioGroup, id) -> {
-            switch (id) {
+        authMethod.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) return;
+            switch (checkedId) {
                 default:
                 case R.id.editProfile_authMethod_none:
                     token.setVisibility(View.GONE);
