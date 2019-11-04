@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3d3c3b</color>
-    <color name="colorPrimaryDark">#282726</color>
+    <color name="colorPrimaryVariant">#282726</color>
+    <color name="colorOnPrimary">#ffffff</color>
 
-    <color name="colorAccent_pressed">#cc451b</color>
-    <color name="colorAccent">#ff5722</color>
-    <color name="colorAccent_light">#ff784e</color>
-    <color name="colorAccent_translucent">#40ff5722</color>
+    <color name="colorSecondary">#ff5722</color>
+    <color name="colorSecondaryVariant">#cc451b</color>
+    <color name="colorOnSecondary">#ffffff</color>
+
+    <color name="colorSecondary_light">#ff784e</color>
+    <color name="colorSecondary_translucent">#40ff5722</color>
 
     <color name="colorSearch">#795548</color>
     <color name="colorSearch_pressed">#4e342e</color>

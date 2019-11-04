@@ -52,6 +52,7 @@ import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 import com.gianlu.commonutils.tutorial.TutorialManager;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
@@ -302,7 +303,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                     if (Utils.isStreamable(mime) && getContext() != null) {
                         Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), result, file);
                         if (intent != null && Utils.canHandleIntent(requireContext(), intent)) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                            AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());
                             builder.setTitle(R.string.couldStreamVideo)
                                     .setMessage(R.string.couldStreamVideo_message)
                                     .setNeutralButton(android.R.string.cancel, null)
@@ -363,7 +364,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_DIRECTORY);
 
         if (Prefs.getBoolean(PK.DD_USE_EXTERNAL)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());
             builder.setTitle(R.string.cannotDownloadDirWithExternal)
                     .setMessage(R.string.cannotDownloadDirWithExternal_message)
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> startDownloadInternal(profile, null, dir))

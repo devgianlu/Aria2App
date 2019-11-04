@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 
 import com.gianlu.aria2app.FileTypeTextView;
@@ -28,7 +27,7 @@ import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typhography.FontsManager;
+import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -52,7 +51,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
+    protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
         inflater.inflate(R.layout.sheet_header_file, parent, true);
         fileIndex = payload.file.index;
 
@@ -66,8 +65,6 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
 
         TextView title = parent.findViewById(R.id.fileSheet_title);
         title.setText(payload.file.getName());
-
-        return true;
     }
 
     @Override
@@ -135,12 +132,6 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     }
 
     @Override
-    protected void onCustomizeToolbar(@NonNull Toolbar toolbar, @NonNull SetupPayload payload) {
-        toolbar.setBackgroundResource(payload.download.update().getBackgroundColor());
-        toolbar.setTitle(payload.file.getName());
-    }
-
-    @Override
     protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull SetupPayload payload) {
         try {
             MultiProfile profile = ProfilesManager.get(requireContext()).getCurrent();
@@ -171,7 +162,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     }
 
     @Override
-    protected void onRequestedUpdate(@NonNull AriaFiles payload) {
+    protected void onReceivedUpdate(@NonNull AriaFiles payload) {
         AriaFile file = payload.findFileByIndex(fileIndex);
         if (file != null) update(file);
     }

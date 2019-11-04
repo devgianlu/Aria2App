@@ -180,7 +180,7 @@ public class CustomDownloadInfo extends FlowLayout {
         public void setText(String text) {
             SuperTextView textView = (SuperTextView) getChildAt(1);
             if (textView == null) {
-                textView = new SuperTextView(getContext(), text);
+                textView = SuperTextView.text(getContext(), text);
                 textView.setPaddingRelative(0, 0, dp16 / 2, 0);
                 addView(textView);
                 return;

@@ -16,8 +16,9 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:tint="@color/bright_foreground_dark"
-            android:src="@drawable/baseline_download_24" />
+            android:contentDescription="@string/downloadSpeed"
+            android:src="@drawable/baseline_download_24"
+            android:tint="@color/white" />
 
         <com.gianlu.commonutils.misc.SuperTextView
             android:id="@+id/serverSheet_downloadSpeed"

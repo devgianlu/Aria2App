@@ -8,7 +8,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 
 import com.gianlu.aria2app.NetIO.AbstractClient;
@@ -25,7 +24,7 @@ import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typhography.FontsManager;
+import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -44,7 +43,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
+    protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
         inflater.inflate(R.layout.sheet_header_dir, parent, true);
         parent.setBackgroundColorRes(payload.download.update().getBackgroundColor());
 
@@ -53,8 +52,6 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
 
         TextView title = parent.findViewById(R.id.dirSheet_title);
         title.setText(payload.dir.name);
-
-        return true;
     }
 
     public void update(@NonNull DownloadWithUpdate download, @NonNull AriaFiles files) {
@@ -124,12 +121,6 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     }
 
     @Override
-    protected void onCustomizeToolbar(@NonNull Toolbar toolbar, @NonNull SetupPayload payload) {
-        toolbar.setBackgroundResource(payload.download.update().getBackgroundColor());
-        toolbar.setTitle(payload.dir.name);
-    }
-
-    @Override
     protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull final SetupPayload payload) {
         try {
             final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent();
@@ -156,7 +147,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     }
 
     @Override
-    protected void onRequestedUpdate(@NonNull UpdatePayload payload) {
+    protected void onReceivedUpdate(@NonNull UpdatePayload payload) {
         AriaDirectory dir = AriaDirectory.createRoot(payload.download, payload.files);
         AriaDirectory currentDirUpdated = dir.findDirectory(currentDir.path);
 

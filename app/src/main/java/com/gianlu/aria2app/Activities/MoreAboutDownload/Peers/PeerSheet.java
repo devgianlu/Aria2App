@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 
 import com.gianlu.aria2app.Adapters.BitfieldVisualizer;
 import com.gianlu.aria2app.NetIO.Aria2.Peer;
@@ -78,7 +77,7 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
     }
 
     @Override
-    protected void onRequestedUpdate(@NonNull Peers payload) {
+    protected void onReceivedUpdate(@NonNull Peers payload) {
         Peer updatedPeer = payload.find(currentPeer);
         if (updatedPeer != null) {
             currentPeer = updatedPeer;
@@ -87,7 +86,7 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull PeerWithPieces payload) {
+    protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull PeerWithPieces payload) {
         inflater.inflate(R.layout.sheet_header_peer, parent, true);
         parent.setBackgroundColorRes(R.color.colorTorrent);
         currentPeer = payload.peer;
@@ -98,8 +97,6 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
 
         downloadSpeed = parent.findViewById(R.id.peerSheet_downloadSpeed);
         uploadSpeed = parent.findViewById(R.id.peerSheet_uploadSpeed);
-
-        return true;
     }
 
     @Override
@@ -134,12 +131,6 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
         });
 
         isLoading(false);
-    }
-
-    @Override
-    protected void onCustomizeToolbar(@NonNull Toolbar toolbar, @NonNull PeerWithPieces payload) {
-        toolbar.setBackgroundResource(R.color.colorTorrent);
-        toolbar.setTitle(payload.peer.ip + ":" + payload.peer.port);
     }
 
     @Override

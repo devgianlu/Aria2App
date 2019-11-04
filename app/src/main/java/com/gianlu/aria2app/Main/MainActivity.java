@@ -91,6 +91,7 @@ import com.gianlu.commonutils.ui.Toaster;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -524,7 +525,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     private void showOutdatedDialog(@NonNull String latest, @NonNull String current) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.outdated_aria2)
                 .setMessage(getString(R.string.outdated_aria2_message, current, latest))
                 .setNeutralButton(R.string.skipThisVersion, (dialogInterface, i) -> {
@@ -666,7 +667,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             if (pos != -1) checkedFilters[pos] = true;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.filters)
                 .setMultiChoiceItems(stringFilters, checkedFilters, (dialog, which, isChecked) -> checkedFilters[which] = isChecked)
                 .setPositiveButton(R.string.apply, (dialog, which) -> {

@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +24,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.net.URI;
 import java.net.URL;
@@ -68,7 +68,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
         uri.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
         uri.setText(edit);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setTitle(edit == null ? R.string.addUri : R.string.editUri)
                 .setView(uri)
                 .setNegativeButton(android.R.string.cancel, null)

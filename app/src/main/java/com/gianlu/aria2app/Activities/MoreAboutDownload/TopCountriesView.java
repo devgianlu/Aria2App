@@ -118,7 +118,7 @@ public final class TopCountriesView extends FlowLayout {
     public void clear() {
         topCountries.clear();
         removeAllViews();
-        addView(new SuperTextView(getContext(), R.string.noActivity));
+        addView(SuperTextView.text(getContext(), R.string.noActivity));
     }
 
     private class ItemView extends LinearLayout {

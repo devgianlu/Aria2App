@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 
 import com.gianlu.aria2app.NetIO.Aria2.Server;
 import com.gianlu.aria2app.NetIO.Aria2.SparseServers;
@@ -44,7 +43,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
     }
 
     @Override
-    protected void onRequestedUpdate(@NonNull SparseServers payload) {
+    protected void onReceivedUpdate(@NonNull SparseServers payload) {
         Server updatedServer = payload.find(currentServer);
         if (updatedServer != null) {
             currentServer = updatedServer;
@@ -69,16 +68,14 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
     }
 
     @Override
-    protected boolean onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull Server server) {
+    protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull Server server) {
         inflater.inflate(R.layout.sheet_header_server, parent, true);
-        parent.setBackgroundColorRes(R.color.colorAccent_light);
+        parent.setBackgroundColorRes(R.color.colorSecondary_light);
 
         downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
 
         TextView title = parent.findViewById(R.id.serverSheet_title);
         title.setText(server.getShortUri());
-
-        return true;
     }
 
     @Override
@@ -112,12 +109,6 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
         }
 
         isLoading(false);
-    }
-
-    @Override
-    protected void onCustomizeToolbar(@NonNull Toolbar toolbar, @NonNull Server payload) {
-        toolbar.setBackgroundResource(R.color.colorAccent_light);
-        toolbar.setTitle(payload.getShortUri());
     }
 
     @Override

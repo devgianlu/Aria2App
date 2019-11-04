@@ -46,6 +46,7 @@ import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.json.JSONException;
 
@@ -134,7 +135,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         NetInstanceHolder.close();
 
         if (getIntent().getBooleanExtra("external", false)) {
-            showDialog(new AlertDialog.Builder(this)
+            showDialog(new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.oldAria2AppNoInApp)
                     .setMessage(R.string.oldAria2AppNoInApp_message)
                     .setNeutralButton(android.R.string.ok, null));
@@ -348,7 +349,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void showErrorDialog(@NonNull final Throwable ex) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
                 .setNeutralButton(R.string.contactMe, (dialog, which) -> Logging.sendEmail(LoadingActivity.this, ex))
@@ -446,7 +447,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             }
 
             if (Utils.hasWebView(this)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
                 builder.setTitle(R.string.useWebView)
                         .setMessage(R.string.useWebView_message)
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> launchWebView())

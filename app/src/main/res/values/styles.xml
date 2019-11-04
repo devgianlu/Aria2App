@@ -2,30 +2,30 @@
 
     <style name="AppTheme" parent="BaseAppTheme" />
 
+    <style name="AppTheme.FullBlackNight" parent="BaseAppTheme" />
+
     <!-- Force white -->
     <style name="ForceWhite">
-        <item name="android:tint">@color/bright_foreground_dark</item>
-        <item name="android:textColorPrimary">@color/bright_foreground_dark</item>
-        <item name="android:textColorSecondary">@color/dim_foreground_dark</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item><!-- FIXME -->
     </style>
 
     <!-- App theme variants -->
     <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorAccentRef">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorSecondary</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
     </style>
 
     <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorTorrent_pressed</item>
-        <item name="colorAccentRef">@color/colorTorrent_pressed</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
         <item name="windowActionModeOverlay">true</item>
     </style>
 
@@ -33,14 +33,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/colorMetalink_pressed</item>
-        <item name="colorAccentRef">@color/colorMetalink_pressed</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
     </style>
 
     <style name="AppTheme.Batch" parent="AppTheme">
         <item name="colorAccent">@color/colorBatch_pressed</item>
-        <item name="colorAccentRef">@color/colorBatch_pressed</item>
     </style>
 
     <!-- Fab label style -->

@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addSingle"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorSecondary" />
 
         <Button
             android:id="@+id/batchAdd_urisFile"
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/urisFile"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorSecondary" />
 
         <Button
             android:id="@+id/batchAdd_webView"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/webView"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorSecondary" />
     </LinearLayout>
 
     <TextView

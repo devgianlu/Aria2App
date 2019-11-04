@@ -21,7 +21,7 @@ import com.gianlu.aria2app.NetIO.Downloader.FetchDownloadWrapper;
 import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.typhography.FontsManager;
+import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.tonyodev.fetch2.Download;
 

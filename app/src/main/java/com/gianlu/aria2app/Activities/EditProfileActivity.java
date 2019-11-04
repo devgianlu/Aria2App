@@ -47,6 +47,7 @@ import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -266,7 +267,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             }
         });
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.newCondition)
                 .setView(layout)
                 .setCancelable(!compulsory)
@@ -485,7 +486,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             def = 0;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.setDefaultCondition)
                 .setSingleChoiceItems(new RadioConditionsAdapter(this, conditionsList()), def, (dialog, which) -> {
                     setDefaultCondition(which);

@@ -16,122 +16,121 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/main_toolbar"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?android:attr/actionBarSize"
+            android:elevation="0dp" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/main_toolbar"
+        <FrameLayout
+            android:id="@+id/main_overallChartContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?attr/colorPrimary"
+            android:minHeight="144dp"
+            android:visibility="gone">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/main_overallChart"
                 android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                android:background="@color/colorPrimary"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                android:layout_height="144dp" />
 
-            <FrameLayout
-                android:id="@+id/main_overallChartContainer"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:minHeight="144dp"
-                android:visibility="gone">
+        </FrameLayout>
 
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/main_overallChart"
-                    android:layout_width="match_parent"
-                    android:layout_height="144dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="36dp">
 
-            </FrameLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="36dp">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/baseline_play_circle_outline_24"
-                    android:tint="@color/bright_foreground_dark" />
-
-                <TextView
-                    android:id="@+id/main_active"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/baseline_pause_circle_outline_24"
-                    android:tint="@color/bright_foreground_dark" />
-
-                <TextView
-                    android:id="@+id/main_paused"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText" />
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/baseline_clear_outline_24"
-                    android:tint="@color/bright_foreground_dark" />
-
-                <TextView
-                    android:id="@+id/main_stopped"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="0 (0)"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <ImageButton
-                    android:id="@+id/main_toggleChart"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/baseline_keyboard_arrow_down_24"
-                    android:tint="@color/bright_foreground_dark" />
-            </LinearLayout>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/running"
+                android:src="@drawable/baseline_play_circle_outline_24"
+                android:tint="@color/white" />
 
             <TextView
-                android:id="@+id/main_filtersVerbose"
-                android:layout_width="match_parent"
+                android:id="@+id/main_active"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:textAlignment="center"
+                android:layout_marginEnd="8dp"
+                android:text="0"
                 android:textColor="@color/white"
-                android:textSize="12sp"
-                android:visibility="gone" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/paused"
+                android:src="@drawable/baseline_pause_circle_outline_24"
+                android:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/main_paused"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/cancelled"
+                android:src="@drawable/baseline_clear_outline_24"
+                android:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/main_stopped"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="0 (0)"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/main_toggleChart"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/baseline_keyboard_arrow_down_24"
+                android:tint="@color/white"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/main_filtersVerbose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -158,8 +157,8 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
-                fab:fab_addButtonColorNormal="@color/colorAccent"
-                fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
+                fab:fab_addButtonColorNormal="@color/colorSecondary"
+                fab:fab_addButtonColorPressed="@color/colorSecondaryVariant"
                 fab:fab_addButtonPlusIconColor="@android:color/white"
                 fab:fab_labelStyle="@style/FabLabel">
 

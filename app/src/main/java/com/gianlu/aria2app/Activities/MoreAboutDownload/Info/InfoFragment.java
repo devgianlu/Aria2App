@@ -34,7 +34,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typhography.FontsManager;
+import com.gianlu.commonutils.typography.FontsManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;

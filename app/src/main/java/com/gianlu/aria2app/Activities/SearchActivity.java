@@ -40,6 +40,7 @@ import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
@@ -106,7 +107,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                         checkedEngines[i] = true;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.searchEngines)
                 .setMultiChoiceItems(enginesNames, checkedEngines, (dialog, which, isChecked) -> checkedEngines[which] = isChecked)
                 .setPositiveButton(R.string.apply, (dialog, which) -> {
@@ -237,7 +238,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     }
 
     private void showMissingEnginesDialog(List<MissingSearchEngine> missingEngines) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.missingEngines)
                 .setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, missingEngines), null)
                 .setPositiveButton(android.R.string.ok, null);
@@ -259,7 +260,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         seeders.setHtml(R.string.numSeederShort, torrent.seeders);
         leeches.setHtml(R.string.numLeechesShort, torrent.leeches);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(torrent.title)
                 .setView(layout)
                 .setNegativeButton(R.string.getMagnet, (dialogInterface, i) -> {

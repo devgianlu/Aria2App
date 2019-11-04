@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/dim_foreground_dark"
+                    android:textColor="@color/white"
                     android:textSize="13sp" />
 
                 <com.gianlu.commonutils.misc.SuperTextView
@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:textColor="@color/bright_foreground_dark"
+                    android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 

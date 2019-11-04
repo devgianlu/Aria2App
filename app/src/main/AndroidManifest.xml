@@ -5,7 +5,9 @@
 
     <!-- List networks -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:targetApi="o"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:targetApi="o" />
     <!-- You known... -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Download files -->
@@ -845,14 +847,15 @@
         <!-- In-App downloader configuration activity -->
         <activity
             android:name=".InAppAria2.InAppAria2ConfActivity"
-            android:screenOrientation="portrait"
             android:configChanges="uiMode"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- DirectDownload activity -->
         <activity
             android:name=".Activities.DirectDownloadActivity"
-            android:parentActivityName=".Main.MainActivity" />
+            android:parentActivityName=".Main.MainActivity"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- Add download activities -->
         <activity
@@ -879,19 +882,21 @@
         <!-- More about download activity -->
         <activity
             android:name=".Activities.MoreAboutDownloadActivity"
-            android:parentActivityName=".Main.MainActivity"
             android:configChanges="uiMode"
+            android:parentActivityName=".Main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
         <activity
             android:name=".PreferenceActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- Logs activity -->
         <activity
             android:name="com.gianlu.commonutils.logging.LogsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- Search Torrent activity -->
         <activity

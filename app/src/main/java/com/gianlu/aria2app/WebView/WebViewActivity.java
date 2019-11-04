@@ -34,6 +34,7 @@ import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -223,7 +224,7 @@ public class WebViewActivity extends ActivityWithDialog {
         input.setHint(R.string.webViewUrlHint);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.goTo)
                 .setView(input)
                 .setCancelable(!compulsory)
@@ -243,7 +244,7 @@ public class WebViewActivity extends ActivityWithDialog {
     }
 
     private void interceptedDownload(@NonNull InterceptedRequest req) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.isThisToDownload)
                 .setMessage(getString(R.string.isThisToDownload_message, req.url()))
                 .setPositiveButton(android.R.string.yes, (dialog, which) -> launchAddUri(req))

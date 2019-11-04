@@ -17,6 +17,7 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,7 +49,7 @@ public final class OptionsUtils {
         layout.findViewById(R.id.editOptionDialog_multipleHelp)
                 .setVisibility(multiple ? View.VISIBLE : View.GONE);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
         builder.setView(layout)
                 .setTitle(option.name)
                 .setNegativeButton(android.R.string.cancel, null)

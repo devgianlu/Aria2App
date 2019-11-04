@@ -20,6 +20,7 @@ import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.preferences.json.JsonStoring;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -134,7 +135,7 @@ public class Aria2Helper {
         private void remove(Context context) {
             DownloadWithUpdate.SmallUpdate update = download.update();
             if (update.following != null) {
-                listener.showDialog(new AlertDialog.Builder(context)
+                listener.showDialog(new MaterialAlertDialogBuilder(context)
                         .setTitle(context.getString(R.string.removeMetadataName, update.getName()))
                         .setMessage(R.string.removeDownload_removeMetadata)
                         .setNegativeButton(android.R.string.no, (dialog, which) -> download.remove(false, DownloadActionClick.this))
