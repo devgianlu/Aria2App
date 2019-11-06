@@ -304,7 +304,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
 
         @ColorRes
         public int getBackgroundColor() {
-            return isTorrent() ? R.color.colorTorrent : R.color.colorSecondary_light;
+            return isTorrent() ? R.color.colorTorrent : R.color.colorSecondary;
         }
 
         @ColorRes

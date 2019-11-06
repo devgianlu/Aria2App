@@ -70,7 +70,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
     @Override
     protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull Server server) {
         inflater.inflate(R.layout.sheet_header_server, parent, true);
-        parent.setBackgroundColorRes(R.color.colorSecondary_light);
+        parent.setBackgroundColorRes(R.color.colorSecondary);
 
         downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
 
