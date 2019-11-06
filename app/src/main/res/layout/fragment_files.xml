@@ -14,9 +14,8 @@
             android:id="@+id/filesFragment_breadcrumbs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginTop="4dp"
-            app:arrowRes="@drawable/baseline_keyboard_arrow_right_24" />
+            app:arrowRes="@drawable/baseline_keyboard_arrow_right_24"
+            app:color="?colorOnSurface" />
     </HorizontalScrollView>
 
     <FrameLayout

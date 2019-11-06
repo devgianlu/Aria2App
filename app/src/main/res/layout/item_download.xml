@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorAppDark"
             android:orientation="horizontal"
             android:padding="8dp">
 
@@ -178,7 +178,7 @@
 
             <Button
                 android:id="@+id/downloadCard_actionMore"
-                style="?android:attr/buttonBarButtonStyle"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/more" />
