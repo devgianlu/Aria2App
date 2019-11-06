@@ -28,7 +28,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/editProfile_profileName"
-            style="@style/TextInputLayout.OutlinedBox.OnDark.Dense"
+            style="@style/DarkTextInputLayout.OutlinedBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/profileName">
@@ -41,6 +41,7 @@
 
         <CheckBox
             android:id="@+id/editProfile_enableNotifs"
+            style="@style/DarkCheckBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"

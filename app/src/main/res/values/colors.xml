@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorAppDark">#3d3c3b</color>
+
+    <!-- Theme colors -->
     <color name="colorPrimary">#3d3c3b</color>
     <color name="colorPrimaryVariant">#282726</color>
     <color name="colorOnPrimary">#ffffff</color>
@@ -8,6 +11,7 @@
     <color name="colorSecondaryVariant">#cc451b</color>
     <color name="colorOnSecondary">#ffffff</color>
 
+    <!-- Variant colors -->
     <color name="colorSearch">#795548</color>
     <color name="colorSearch_pressed">#4e342e</color>
     <color name="colorTorrent">#66bb6a</color>

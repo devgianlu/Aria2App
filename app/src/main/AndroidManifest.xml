@@ -904,6 +904,7 @@
             android:name=".Activities.SearchActivity"
             android:configChanges="orientation|uiMode"
             android:parentActivityName=".Main.MainActivity"
+            android:theme="@style/AppTheme.FullBlackNight"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.app.searchable"

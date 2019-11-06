@@ -8,11 +8,11 @@
     <style name="ForceWhite">
         <item name="android:tint">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/white</item><!-- FIXME -->
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
-    <!-- Dense outlined input text on dark -->
-    <style name="TextInputLayout.OutlinedBox.OnDark.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+    <!-- Edit profile TextInputField -->
+    <style name="DarkTextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="boxStrokeColor">@color/text_field_stroke_on_dark</item>
         <item name="endIconTint">@color/white</item>
         <item name="errorTextColor">@color/red</item>
@@ -22,6 +22,9 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textCursorDrawable">@null</item>
     </style>
+
+    <!-- Edit profile CheckBox -->
+    <style name="DarkCheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox" />
 
     <!-- App theme variants -->
     <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
@@ -51,6 +54,7 @@
 
     <style name="AppTheme.Batch" parent="AppTheme">
         <item name="colorSecondary">@color/colorBatch_pressed</item>
+        <item name="android:statusBarColor">?android:colorBackground</item>
     </style>
 
     <!-- Fab label style -->

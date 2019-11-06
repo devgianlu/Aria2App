@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Preferences and logs -->
     <style name="AppTheme.FullBlackNight" parent="BaseAppTheme">
         <item name="android:statusBarColor">?android:colorBackground</item>
+    </style>
+
+    <!-- Edit profile TextInputField -->
+    <style name="DarkTextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/text_field_stroke_on_dark</item>
+        <item name="endIconTint">@color/white</item>
+        <item name="errorTextColor">@color/red</item>
+        <item name="helperTextTextColor">@color/white</item>
+        <item name="hintTextColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <!-- Edit profile CheckBox -->
+    <style name="DarkCheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:buttonTint">@color/white</item>
     </style>
 </resources>
