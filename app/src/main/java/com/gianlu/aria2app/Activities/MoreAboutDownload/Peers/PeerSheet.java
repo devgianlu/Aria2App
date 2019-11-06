@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Peers;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -92,8 +91,7 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
         currentPeer = payload.peer;
         numPieces = payload.numPieces;
 
-        TextView title = parent.findViewById(R.id.peerSheet_title);
-        title.setText(String.format(Locale.getDefault(), "%s:%d", payload.peer.ip, payload.peer.port));
+        parent.setTitle(String.format(Locale.getDefault(), "%s:%d", payload.peer.ip, payload.peer.port));
 
         downloadSpeed = parent.findViewById(R.id.peerSheet_downloadSpeed);
         uploadSpeed = parent.findViewById(R.id.peerSheet_uploadSpeed);

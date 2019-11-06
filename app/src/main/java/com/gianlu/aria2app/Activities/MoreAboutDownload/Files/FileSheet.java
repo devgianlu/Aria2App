@@ -56,15 +56,13 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
         fileIndex = payload.file.index;
 
         parent.setBackgroundColorRes(payload.download.update().getBackgroundColor());
+        parent.setTitle(payload.file.getName());
 
         FileTypeTextView fileType = parent.findViewById(R.id.fileSheet_fileType);
         fileType.setFilename(payload.file.getName());
 
         percentage = parent.findViewById(R.id.fileSheet_percentage);
         FontsManager.set(FontsManager.ROBOTO_MEDIUM, percentage);
-
-        TextView title = parent.findViewById(R.id.fileSheet_title);
-        title.setText(payload.file.getName());
     }
 
     @Override

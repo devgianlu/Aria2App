@@ -3,7 +3,6 @@ package com.gianlu.aria2app.Activities.MoreAboutDownload.Servers;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -71,11 +70,9 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
     protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull Server server) {
         inflater.inflate(R.layout.sheet_header_server, parent, true);
         parent.setBackgroundColorRes(R.color.colorSecondary);
+        parent.setTitle(server.getShortUri());
 
         downloadSpeed = parent.findViewById(R.id.serverSheet_downloadSpeed);
-
-        TextView title = parent.findViewById(R.id.serverSheet_title);
-        title.setText(server.getShortUri());
     }
 
     @Override

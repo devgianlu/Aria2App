@@ -46,12 +46,10 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
         inflater.inflate(R.layout.sheet_header_dir, parent, true);
         parent.setBackgroundColorRes(payload.download.update().getBackgroundColor());
+        parent.setTitle(payload.dir.name);
 
         percentage = parent.findViewById(R.id.dirSheet_percentage);
         FontsManager.set(FontsManager.ROBOTO_MEDIUM, percentage);
-
-        TextView title = parent.findViewById(R.id.dirSheet_title);
-        title.setText(payload.dir.name);
     }
 
     public void update(@NonNull DownloadWithUpdate download, @NonNull AriaFiles files) {
