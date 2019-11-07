@@ -115,7 +115,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     public void onSetupViewHolder(@NonNull ViewHolder holder, int position, final @NonNull DownloadWithUpdate item) {
         DownloadWithUpdate.SmallUpdate update = item.update();
 
-        int colorAccent = ContextCompat.getColor(context, update.getColorAccent());
+        int colorAccent = ContextCompat.getColor(context, update.getColor());
         Utils.setupChart(holder.detailsChart, true);
         holder.detailsChart.setNoDataTextColor(colorAccent);
         holder.donutProgress.setFinishedStrokeColor(colorAccent);

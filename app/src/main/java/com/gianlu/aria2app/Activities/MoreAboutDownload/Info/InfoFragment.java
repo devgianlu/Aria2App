@@ -200,7 +200,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             DownloadWithUpdate.BigUpdate update = download.bigUpdate();
 
             Utils.setupChart(chart, false);
-            int colorAccent = ContextCompat.getColor(getContext(), update.getColorAccent());
+            int colorAccent = ContextCompat.getColor(getContext(), update.getColor());
             chart.setNoDataTextColor(colorAccent);
             bitfield.setColor(colorAccent);
             FontsManager.set(FontsManager.ROBOTO_LIGHT, progress);

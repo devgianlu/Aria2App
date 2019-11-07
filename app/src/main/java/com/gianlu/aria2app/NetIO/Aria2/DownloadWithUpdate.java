@@ -303,13 +303,8 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
         }
 
         @ColorRes
-        public int getBackgroundColor() {
-            return isTorrent() ? R.color.colorTorrent : R.color.colorSecondary;
-        }
-
-        @ColorRes
-        public int getColorAccent() {
-            return isTorrent() ? R.color.colorTorrent_pressed : R.color.colorAccent;
+        public int getColor() {
+            return isTorrent() ? R.color.colorTorrent_pressed : R.color.colorAppBright;
         }
     }
 }

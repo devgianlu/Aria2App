@@ -55,7 +55,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
         inflater.inflate(R.layout.sheet_header_file, parent, true);
         fileIndex = payload.file.index;
 
-        parent.setBackgroundColorRes(payload.download.update().getBackgroundColor());
+        parent.setBackgroundColorRes(payload.download.update().getColor());
         parent.setTitle(payload.file.getName());
 
         FileTypeTextView fileType = parent.findViewById(R.id.fileSheet_fileType);
@@ -138,7 +138,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
             } else {
                 action.setImageResource(R.drawable.baseline_download_24);
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
-                CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
+                CommonUtils.setBackgroundColor(action, payload.download.update().getColor());
                 action.setOnClickListener(v -> payload.listener.onDownloadFile(profile, payload.file, false));
                 action.setOnLongClickListener(v -> {
                     payload.listener.onDownloadFile(profile, payload.file, true);

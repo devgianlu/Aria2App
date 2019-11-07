@@ -45,7 +45,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     @Override
     protected void onCreateHeader(@NonNull LayoutInflater inflater, @NonNull ModalBottomSheetHeaderView parent, @NonNull SetupPayload payload) {
         inflater.inflate(R.layout.sheet_header_dir, parent, true);
-        parent.setBackgroundColorRes(payload.download.update().getBackgroundColor());
+        parent.setBackgroundColorRes(payload.download.update().getColor());
         parent.setTitle(payload.dir.name);
 
         percentage = parent.findViewById(R.id.dirSheet_percentage);
@@ -126,7 +126,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                 return false;
             } else {
                 action.setImageResource(R.drawable.baseline_download_24);
-                CommonUtils.setBackgroundColor(action, payload.download.update().getColorAccent());
+                CommonUtils.setBackgroundColor(action, payload.download.update().getColor());
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 action.setOnClickListener(v -> payload.listener.onDownloadDirectory(profile, currentDir));
                 return true;
