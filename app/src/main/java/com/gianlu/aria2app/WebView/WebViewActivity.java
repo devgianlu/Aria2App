@@ -59,6 +59,8 @@ public class WebViewActivity extends ActivityWithDialog {
             return null;
 
         String url = req.getUrl().toString();
+        if (!url.startsWith("http://") || !url.startsWith("https://"))
+            return null;
 
         Request.Builder builder = new Request.Builder().url(url);
         builder.method(req.getMethod(), null);
