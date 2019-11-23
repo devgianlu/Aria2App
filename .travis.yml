@@ -16,7 +16,7 @@ script:
 
 before_deploy:
   - export RELEASE_NOTES=$(cat app/src/main/play/release-notes/en-GB/production.txt)
-  - export RELEASE_NAME="Release $(./gradlew -q :app:printVersionName)"
+  - export RELEASE_NAME=$(./gradlew -q :app:printVersionName)
   - export APK_FILE=app/build/outputs/apk/foss/release/app-foss-release.apk
 
 deploy:
