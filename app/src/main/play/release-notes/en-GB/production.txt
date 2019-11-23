@@ -1,7 +1,3 @@
-### Added
-- Translators list
-- Brazilian Portuguese translation
-
 ### Changed
-- Fixed issue with saving profiles
-- Fixed drawer highlighting issue
+- Fixed minor issue in WebView
+- Disable non-Google payments on Google Play
