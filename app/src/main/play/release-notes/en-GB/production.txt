@@ -1,3 +1,6 @@
+### Added
+- Additional logging for aria2 service issues
+
 ### Changed
 - Fixed minor issue in WebView
 - Disable non-Google payments on Google Play
