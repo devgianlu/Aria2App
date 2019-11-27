@@ -42,9 +42,24 @@ android {
     productFlavors {
         standard {
             dimension 'main'
+
+            buildTypes {
+                release {
+                    minifyEnabled true
+                    shrinkResources true
+                }
+            }
         }
+
         foss {
             dimension 'main'
+
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    shrinkResources false
+                }
+            }
         }
     }
 
