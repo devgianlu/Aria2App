@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -13,19 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 
-import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.internal.Message;
 import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen;
-import com.gianlu.aria2lib.ui.DownloadBinActivity;
 import com.gianlu.commonutils.FileUtils;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.logging.Logging;
-import com.gianlu.commonutils.ui.Toaster;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -51,35 +46,13 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.in_app_aria2_conf, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.inAppAria2conf_changeBin:
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-                builder.setTitle(R.string.changeBinVersion)
-                        .setMessage(R.string.changeBinVersion_message)
-                        .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
-                            if (((ThisApplication) getApplicationContext()).deleteInAppBin()) {
-                                DownloadBinActivity.startActivity(this, getString(R.string.downloadBin),
-                                        LoadingActivity.class, Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK, null);
-                            } else {
-                                Toaster.with(this).message(R.string.cannotDeleteBin).error(true).show();
-                            }
-                        }).setNegativeButton(android.R.string.no, null);
-
-                showDialog(builder);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
