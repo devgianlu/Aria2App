@@ -1,6 +1,3 @@
-### Added
-- Additional logging for aria2 service issues
-
 ### Changed
-- Fixed minor issue in WebView
-- Disable non-Google payments on Google Play
+- aria2 binaries are now bundled inside the APK for compatibility reasons
+- Fixed crash in WebView

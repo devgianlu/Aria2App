@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.5.0] - 27-11-2019
+### Changed
+- aria2 binaries are now bundled inside the APK for compatibility reasons
+- Fixed crash in WebView
+
+
 ## [5.4.5] - 27-11-2019
 ### Added
 - Additional logging for aria2 service issues
