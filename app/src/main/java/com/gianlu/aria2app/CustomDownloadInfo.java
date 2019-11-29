@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
 

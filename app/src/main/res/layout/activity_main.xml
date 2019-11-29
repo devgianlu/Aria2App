@@ -156,7 +156,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
+                app:layout_behavior="com.gianlu.aria2app.main.FloatingActionsMenuBehavior"
                 fab:fab_addButtonColorNormal="@color/colorSecondary"
                 fab:fab_addButtonColorPressed="@color/colorSecondaryVariant"
                 fab:fab_addButtonPlusIconColor="@android:color/white"

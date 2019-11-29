@@ -273,7 +273,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.gianlu.aria2app.Adapters.BitfieldVisualizer
+            <com.gianlu.aria2app.adapters.BitfieldVisualizer
                 android:id="@+id/infoFragment_bitfield"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.gianlu.aria2app.NetIO.Aria2.AriaFile;
-import com.gianlu.aria2app.NetIO.Aria2.OptionsMap;
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
+import com.gianlu.aria2app.api.aria2.AriaFile;
+import com.gianlu.aria2app.api.aria2.OptionsMap;
+import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;

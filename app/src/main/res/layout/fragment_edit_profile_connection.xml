@@ -122,7 +122,7 @@
             android:checked="false"
             android:text="@string/encryption" />
 
-        <com.gianlu.aria2app.Activities.EditProfile.CertificateInputView
+        <com.gianlu.aria2app.activities.editprofile.CertificateInputView
             android:id="@+id/editProfile_certificate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

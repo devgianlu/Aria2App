@@ -9,7 +9,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <com.gianlu.aria2app.Options.OptionsView
+        <com.gianlu.aria2app.options.OptionsView
             android:id="@+id/optionsDialog_options"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
