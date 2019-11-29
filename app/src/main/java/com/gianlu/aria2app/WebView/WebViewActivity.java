@@ -45,6 +45,7 @@ import java.util.Map;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class WebViewActivity extends ActivityWithDialog {
     private static final int ADD_URI_REQUEST_CODE = 3;
@@ -75,7 +76,7 @@ public class WebViewActivity extends ActivityWithDialog {
         return builder.build();
     }
 
-    @NonNull
+    @Nullable
     private static WebResourceResponse buildResponse(@NonNull Response resp) {
         Map<String, String> headers = new HashMap<>();
         for (int i = 0; i < resp.headers().size(); i++)
@@ -97,8 +98,12 @@ public class WebViewActivity extends ActivityWithDialog {
             else message = "UNKNOWN";
         }
 
+        if (code > 299 && code < 400)
+            return null;
+
+        ResponseBody body = resp.body();
         return new WebResourceResponse(mimeType, resp.header("Content-Encoding"),
-                code, message, headers, resp.body() == null ? null : resp.body().byteStream());
+                code, message, headers, body == null ? null : body.byteStream());
     }
 
     @NonNull
@@ -136,7 +141,7 @@ public class WebViewActivity extends ActivityWithDialog {
         settings.setJavaScriptEnabled(true);
         settings.setUserAgentString(settings.getUserAgentString() + " " + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR);
 
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build();
         web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             synchronized (interceptedRequests) {
                 for (InterceptedRequest req : interceptedRequests) {

@@ -38,7 +38,6 @@ import com.gianlu.aria2app.WebView.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.aria2lib.internal.Message;
-import com.gianlu.aria2lib.ui.DownloadBinActivity;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.drawer.DrawerManager;
@@ -219,8 +218,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 try {
                     app.loadAria2ServiceEnv();
                 } catch (BadEnvironmentException ex) {
-                    DownloadBinActivity.startActivity(LoadingActivity.this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name),
-                            LoadingActivity.class, 0, null);
+                    Logging.log("Failed loading aria2 environment.", ex);
                     return;
                 }
 

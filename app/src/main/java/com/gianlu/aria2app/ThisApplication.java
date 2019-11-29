@@ -177,7 +177,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     public void loadAria2ServiceEnv() throws BadEnvironmentException {
         if (aria2service != null && !aria2service.ui.hasEnv()) {
-            aria2service.ui.loadEnv();
+            aria2service.ui.loadEnv(this);
             aria2service.ui.bind();
             aria2service.ui.askForStatus();
         }
