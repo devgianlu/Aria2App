@@ -862,7 +862,7 @@
             android:name=".activities.AddUriActivity"
             android:configChanges="orientation|uiMode"
             android:parentActivityName=".main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar.URI" />
+            android:theme="@style/AppTheme.NoActionBar.Uri" />
         <activity
             android:name=".activities.AddTorrentActivity"
             android:configChanges="orientation|uiMode"

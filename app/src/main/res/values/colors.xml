@@ -2,6 +2,7 @@
 <resources>
     <color name="colorAppDark">#3d3c3b</color>
     <color name="colorAppBright">#ff5722</color>
+    <color name="colorAppBrightVariant">#cc451b</color>
 
     <!-- Theme colors -->
     <color name="colorPrimary">#3d3c3b</color>

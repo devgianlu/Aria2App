@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.gianlu.aria2app.FileTypeTextView;
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.api.aria2.AriaFiles;
@@ -20,7 +21,6 @@ import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
@@ -138,7 +138,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
             } else {
                 action.setImageResource(R.drawable.baseline_download_24);
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
-                CommonUtils.setBackgroundColor(action, payload.download.update().getColor());
+                CommonUtils.setBackgroundColor(action, payload.download.update().getColorVariant());
                 action.setOnClickListener(v -> payload.listener.onDownloadFile(profile, payload.file, false));
                 action.setOnLongClickListener(v -> {
                     payload.listener.onDownloadFile(profile, payload.file, true);

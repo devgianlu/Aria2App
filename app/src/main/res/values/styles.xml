@@ -27,7 +27,7 @@
     <style name="DarkCheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox" />
 
     <!-- App theme variants -->
-    <style name="AppTheme.NoActionBar.URI" parent="AppTheme.NoActionBar" />
+    <style name="AppTheme.NoActionBar.Uri" parent="AppTheme.NoActionBar" />
 
     <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/colorTorrent</item>

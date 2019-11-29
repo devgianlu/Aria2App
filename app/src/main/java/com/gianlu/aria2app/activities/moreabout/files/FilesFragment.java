@@ -20,10 +20,14 @@ import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.activities.DirectDownloadActivity;
 import com.gianlu.aria2app.activities.moreabout.BigUpdateProvider;
 import com.gianlu.aria2app.activities.moreabout.OnBackPressed;
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaDirectory;
 import com.gianlu.aria2app.api.aria2.AriaFile;
@@ -31,18 +35,14 @@ import com.gianlu.aria2app.api.aria2.AriaFiles;
 import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
-import com.gianlu.aria2app.api.AriaRequests;
-import com.gianlu.aria2app.downloader.FetchHelper;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.UpdaterFragment;
 import com.gianlu.aria2app.api.updater.Wants;
-import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.downloader.FetchHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.tutorial.Discovery;
 import com.gianlu.aria2app.tutorial.FilesTutorial;
 import com.gianlu.aria2app.tutorial.FoldersTutorial;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.logging.Logging;
@@ -136,7 +136,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_files, parent, false);
-        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
+        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs); // TODO: Reduce min button width
         breadcrumbs.setListener(this);
         rmv = layout.findViewById(R.id.filesFragment_rmv);
         rmv.linearLayoutManager(LinearLayoutManager.VERTICAL, false);

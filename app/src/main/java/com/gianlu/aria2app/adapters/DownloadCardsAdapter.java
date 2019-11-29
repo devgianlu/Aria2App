@@ -24,13 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.CustomDownloadInfo;
 import com.gianlu.aria2app.DonutProgress;
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.services.NotificationService;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.OrderedRecyclerViewAdapter;
 import com.gianlu.commonutils.misc.SuperTextView;
@@ -115,7 +115,7 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     public void onSetupViewHolder(@NonNull ViewHolder holder, int position, final @NonNull DownloadWithUpdate item) {
         DownloadWithUpdate.SmallUpdate update = item.update();
 
-        int colorAccent = ContextCompat.getColor(context, update.getColor());
+        int colorAccent = ContextCompat.getColor(context, update.getColorVariant());
         Utils.setupChart(holder.detailsChart, true);
         holder.detailsChart.setNoDataTextColor(colorAccent);
         holder.donutProgress.setFinishedStrokeColor(colorAccent);

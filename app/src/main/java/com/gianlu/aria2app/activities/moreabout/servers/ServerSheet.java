@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.api.aria2.Server;
 import com.gianlu.aria2app.api.aria2.SparseServers;
 import com.gianlu.aria2app.api.geolocalization.GeoIP;
 import com.gianlu.aria2app.api.geolocalization.IPDetails;
 import com.gianlu.aria2app.api.geolocalization.IPDetailsView;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
@@ -38,7 +38,7 @@ public class ServerSheet extends ThemedModalBottomSheet<Server, SparseServers> {
 
     @Override
     protected int getCustomTheme(@NonNull Server payload) {
-        return R.style.AppTheme_NoActionBar_URI;
+        return R.style.AppTheme_NoActionBar_Uri;
     }
 
     @Override

@@ -15,11 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.activities.moreabout.BigUpdateProvider;
 import com.gianlu.aria2app.activities.moreabout.OnBackPressed;
 import com.gianlu.aria2app.adapters.BitfieldVisualizer;
-import com.gianlu.aria2app.CountryFlags;
-import com.gianlu.aria2app.main.HideSecondSpace;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
@@ -28,8 +29,7 @@ import com.gianlu.aria2app.api.geolocalization.IPDetails;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.UpdaterFragment;
 import com.gianlu.aria2app.api.updater.Wants;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.main.HideSecondSpace;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.MessageView;
@@ -200,13 +200,10 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             DownloadWithUpdate.BigUpdate update = download.bigUpdate();
 
             Utils.setupChart(chart, false);
-            int colorAccent = ContextCompat.getColor(getContext(), update.getColor());
+            int colorAccent = ContextCompat.getColor(getContext(), update.getColorVariant());
             chart.setNoDataTextColor(colorAccent);
             bitfield.setColor(colorAccent);
-            FontsManager.set(FontsManager.ROBOTO_LIGHT, progress);
-            FontsManager.set(FontsManager.ROBOTO_LIGHT, downloadSpeed);
-            FontsManager.set(FontsManager.ROBOTO_LIGHT, uploadSpeed);
-            FontsManager.set(FontsManager.ROBOTO_LIGHT, remainingTime);
+            FontsManager.set(FontsManager.ROBOTO_LIGHT, progress, downloadSpeed, uploadLength, remainingTime);
 
             pause.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.PAUSE, InfoFragment.this));
             start.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.RESUME, InfoFragment.this));

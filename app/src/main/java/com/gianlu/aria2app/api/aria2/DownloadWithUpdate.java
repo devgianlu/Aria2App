@@ -299,12 +299,17 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
 
         @StyleRes
         public int getThemeResource() {
-            return isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar_URI;
+            return isTorrent() ? R.style.AppTheme_NoActionBar_Torrent : R.style.AppTheme_NoActionBar_Uri;
         }
 
         @ColorRes
         public int getColor() {
-            return isTorrent() ? R.color.colorTorrentVariant : R.color.colorAppBright;
+            return isTorrent() ? R.color.colorTorrent : R.color.colorAppBright;
+        }
+
+        @ColorRes
+        public int getColorVariant() {
+            return isTorrent() ? R.color.colorTorrentVariant : R.color.colorAppBrightVariant;
         }
     }
 }

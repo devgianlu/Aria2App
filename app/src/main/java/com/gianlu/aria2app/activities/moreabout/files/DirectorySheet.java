@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.aria2.AriaDirectory;
 import com.gianlu.aria2app.api.aria2.AriaFiles;
@@ -17,7 +18,6 @@ import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
@@ -121,12 +121,12 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     @Override
     protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull final SetupPayload payload) {
         try {
-            final MultiProfile profile = ProfilesManager.get(getContext()).getCurrent();
+            final MultiProfile profile = ProfilesManager.get(requireContext()).getCurrent();
             if (payload.download.update().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
                 return false;
             } else {
                 action.setImageResource(R.drawable.baseline_download_24);
-                CommonUtils.setBackgroundColor(action, payload.download.update().getColor());
+                CommonUtils.setBackgroundColor(action, payload.download.update().getColorVariant());
                 action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
                 action.setOnClickListener(v -> payload.listener.onDownloadDirectory(profile, currentDir));
                 return true;
