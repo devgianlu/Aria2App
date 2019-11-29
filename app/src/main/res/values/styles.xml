@@ -27,40 +27,52 @@
     <style name="DarkCheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox" />
 
     <!-- App theme variants -->
-    <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
+    <style name="AppTheme.NoActionBar.URI" parent="AppTheme.NoActionBar" />
+
+    <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorTorrent</item>
+        <item name="colorPrimaryVariant">@color/colorTorrentVariant</item>
+        <item name="colorSecondary">@color/colorTorrent</item>
+        <item name="colorSecondaryVariant">@color/colorTorrentVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorTorrentVariant</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorSecondary">@color/colorTorrent_pressed</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Metalink" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorSecondary">@color/colorMetalink_pressed</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryVariant</item>
+    <style name="AppTheme.NoActionBar.Metalink" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorMetalink</item>
+        <item name="colorPrimaryVariant">@color/colorMetalinkVariant</item>
+        <item name="colorSecondary">@color/colorMetalink</item>
+        <item name="colorSecondaryVariant">@color/colorMetalinkVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorMetalinkVariant</item>
     </style>
 
     <style name="AppTheme.Batch" parent="AppTheme">
-        <item name="colorSecondary">@color/colorBatch_pressed</item>
+        <item name="colorPrimary">@color/colorBatch</item>
+        <item name="colorPrimaryVariant">@color/colorBatchVariant</item>
+        <item name="colorSecondary">@color/colorBatch</item>
+        <item name="colorSecondaryVariant">@color/colorBatchVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
         <item name="android:statusBarColor">?android:colorBackground</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.WebView" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorWebView</item>
+        <item name="colorPrimaryVariant">@color/colorWebViewPressed</item>
+        <item name="colorSecondary">@color/colorWebView</item>
+        <item name="colorSecondaryVariant">@color/colorWebViewPressed</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorWebViewPressed</item>
     </style>
 
     <!-- Fab label style -->
     <style name="FabLabel">
         <item name="android:background">@drawable/fab_label_layout</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">?colorSurface</item>
     </style>
 
     <!-- Big layout tabbing -->

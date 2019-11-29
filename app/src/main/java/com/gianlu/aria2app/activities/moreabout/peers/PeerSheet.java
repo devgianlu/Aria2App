@@ -6,15 +6,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.adapters.BitfieldVisualizer;
+import com.gianlu.aria2app.api.PeerIdParser;
 import com.gianlu.aria2app.api.aria2.Peer;
 import com.gianlu.aria2app.api.aria2.Peers;
 import com.gianlu.aria2app.api.geolocalization.GeoIP;
 import com.gianlu.aria2app.api.geolocalization.IPDetails;
 import com.gianlu.aria2app.api.geolocalization.IPDetailsView;
-import com.gianlu.aria2app.api.PeerIdParser;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
@@ -105,7 +105,7 @@ public class PeerSheet extends ThemedModalBottomSheet<PeerWithPieces, Peers> {
         seeder = parent.findViewById(R.id.peerSheet_seeder);
         peerChoking = parent.findViewById(R.id.peerSheet_peerChoking);
         bitfield = parent.findViewById(R.id.peerSheet_bitfield);
-        bitfield.setColorRes(R.color.colorTorrent_pressed);
+        bitfield.setColorRes(R.color.colorTorrentVariant);
         peerId = parent.findViewById(R.id.peerSheet_peerId);
         health = parent.findViewById(R.id.peerSheet_health);
         amChoking = parent.findViewById(R.id.peerSheet_amChoking);

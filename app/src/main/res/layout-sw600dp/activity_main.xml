@@ -184,7 +184,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorSearch"
-                            fab:fab_colorPressed="@color/colorSearch_pressed"
+                            fab:fab_colorPressed="@color/colorSearchVariant"
                             fab:fab_icon="@drawable/baseline_search_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/search" />
@@ -194,7 +194,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorBatch"
-                            fab:fab_colorPressed="@color/colorBatch_pressed"
+                            fab:fab_colorPressed="@color/colorBatchVariant"
                             fab:fab_icon="@drawable/baseline_all_inbox_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/batchAdd" />
@@ -204,7 +204,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorMetalink"
-                            fab:fab_colorPressed="@color/colorMetalink_pressed"
+                            fab:fab_colorPressed="@color/colorMetalinkVariant"
                             fab:fab_icon="@drawable/baseline_link_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addMetalink" />
@@ -214,7 +214,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorTorrent"
-                            fab:fab_colorPressed="@color/colorTorrent_pressed"
+                            fab:fab_colorPressed="@color/colorTorrentVariant"
                             fab:fab_icon="@drawable/ic_torrent_white_48dp"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addTorrent" />
@@ -224,7 +224,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorWebView"
-                            fab:fab_colorPressed="@color/colorWebView_pressed"
+                            fab:fab_colorPressed="@color/colorWebViewPressed"
                             fab:fab_icon="@drawable/baseline_language_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/webView" />
@@ -233,8 +233,8 @@
                             android:id="@+id/mainFab_addURI"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            fab:fab_colorNormal="@color/colorURI"
-                            fab:fab_colorPressed="@color/colorURI_pressed"
+                            fab:fab_colorNormal="@color/colorUri"
+                            fab:fab_colorPressed="@color/colorUriVariant"
                             fab:fab_icon="@drawable/baseline_playlist_add_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addUri" />

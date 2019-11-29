@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#cc451b</color>
-    <color name="colorPrimaryVariant">#892100</color>
+    <color name="colorPrimary">#ff6f43</color>
+    <color name="colorPrimaryVariant">#f4501e</color>
     <color name="colorOnPrimary">#ffffff</color>
 
-    <color name="colorSecondary">#676767</color>
-    <color name="colorSecondaryVariant">#4e4e4e</color>
+    <color name="colorSecondary">#ff6f43</color>
+    <color name="colorSecondaryVariant">#f4501e</color>
     <color name="colorOnSecondary">#ffffff</color>
 </resources>

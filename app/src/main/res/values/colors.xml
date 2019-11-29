@@ -14,17 +14,17 @@
 
     <!-- Variant colors -->
     <color name="colorSearch">#795548</color>
-    <color name="colorSearch_pressed">#4e342e</color>
+    <color name="colorSearchVariant">#4e342e</color>
     <color name="colorTorrent">#66bb6a</color>
-    <color name="colorTorrent_pressed">#2e7d32</color>
+    <color name="colorTorrentVariant">#2e7d32</color>
     <color name="colorMetalink">#5e35b1</color>
-    <color name="colorMetalink_pressed">#311b92</color>
-    <color name="colorURI">#666666</color>
-    <color name="colorURI_pressed">#323232</color>
+    <color name="colorMetalinkVariant">#311b92</color>
+    <color name="colorUri">#666666</color>
+    <color name="colorUriVariant">#323232</color>
     <color name="colorBatch">#FDD835</color>
-    <color name="colorBatch_pressed">#F9A825</color>
+    <color name="colorBatchVariant">#F9A825</color>
     <color name="colorWebView">#2196f3</color>
-    <color name="colorWebView_pressed">#0c7cd5</color>
+    <color name="colorWebViewPressed">#0c7cd5</color>
 
     <color name="downloadColor">#ffc107</color>
     <color name="uploadColor">#009688</color>

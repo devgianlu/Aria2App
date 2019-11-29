@@ -6,8 +6,8 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
 
-import com.gianlu.aria2app.api.ClientInterface;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.api.ClientInterface;
 import com.gianlu.commonutils.adapters.Filterable;
 import com.gianlu.commonutils.logging.Logging;
 
@@ -304,7 +304,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
 
         @ColorRes
         public int getColor() {
-            return isTorrent() ? R.color.colorTorrent_pressed : R.color.colorAppBright;
+            return isTorrent() ? R.color.colorTorrentVariant : R.color.colorAppBright;
         }
     }
 }

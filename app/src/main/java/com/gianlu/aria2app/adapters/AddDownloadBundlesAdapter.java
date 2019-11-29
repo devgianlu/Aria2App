@@ -9,11 +9,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
 import com.gianlu.aria2app.activities.adddownload.AddMetalinkBundle;
 import com.gianlu.aria2app.activities.adddownload.AddTorrentBundle;
 import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.util.ArrayList;
@@ -54,10 +54,10 @@ public class AddDownloadBundlesAdapter extends RecyclerView.Adapter<AddDownloadB
             textColorRes = R.color.colorSecondaryVariant;
         } else if (bundle instanceof AddTorrentBundle) {
             text = ((AddTorrentBundle) bundle).filename;
-            textColorRes = R.color.colorTorrent_pressed;
+            textColorRes = R.color.colorTorrentVariant;
         } else if (bundle instanceof AddMetalinkBundle) {
             text = ((AddMetalinkBundle) bundle).filename;
-            textColorRes = R.color.colorMetalink_pressed;
+            textColorRes = R.color.colorMetalinkVariant;
         }
 
         if (text != null)
