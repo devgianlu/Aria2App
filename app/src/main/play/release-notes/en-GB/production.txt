@@ -1,7 +1,6 @@
 ### Added
-- Translators list
-- Brazilian Portuguese translation
+- Additional logging for aria2 service issues
 
 ### Changed
-- Fixed issue with saving profiles
-- Fixed drawer highlighting issue
+- Fixed minor issue in WebView
+- Disable non-Google payments on Google Play

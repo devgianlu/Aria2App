@@ -235,7 +235,7 @@
     <string name="numSeederLabel">Semeadores</string>
     <string name="selectCertificate">Selecionar / alterar certificado</string>
     <string name="certificateDetails">Detalhes do certificado</string>
-    <string name="serialNumber">&lt;b&gt; Número de série: &lt;/b&gt; %s</string>
+    <string name="serialNumber"><![CDATA[<b>Número de série:</b>]]> %s</string>
     <string name="subject">Sujeito</string>
     <string name="issuer">Emissor</string>
     <string name="signatureAlgorithm">Algoritmo de assinatura</string>
