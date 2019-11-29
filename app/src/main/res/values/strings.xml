@@ -1,4 +1,51 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tutorial -->
+    <string name="tutorial_moreDetails">Tap on the card to reveal more details</string>
+    <string name="tutorial_evenMoreDetails">Tap on the more button to show all the details</string>
+    <string name="tutorial_search">Filter downloads by name or by GID</string>
+    <string name="tutorial_filters">Filter downloads by status</string>
+    <string name="tutorial_fileDetails">Tap on a file to reveal details or to download it</string>
+    <string name="tutorial_folderDetails">Tap and hold on a folder to reveal details or to download it</string>
+    <string name="tutorial_serverDetails">Tap a server to reveal details about it</string>
+    <string name="tutorial_peerDetails">Tap a peer to reveal details about it</string>
+
+    <!-- Prefs -->
+    <string name="prefs_hideMetadata">Hide linked metadata</string>
+    <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
+    <string name="prefs_updateRate">Update rate</string>
+    <string name="prefs_updateRate_summary">UI update rate in seconds.</string>
+    <string name="prefs_downloadDisplayInfo">Download display info</string>
+    <string name="prefs_downloadDisplayInfo_summary">Customize the info shown in the download card.</string>
+    <string name="prefs_versionCheck">Check aria2 version at startup</string>
+    <string name="prefs_versionCheck_summary">Check that the latest version of aria2 is running.</string>
+    <string name="prefs_ddDownloadPath">Download path</string>
+    <string name="prefs_ddDownloadPath_summary">All files are going to be downloaded here.</string>
+    <string name="prefs_ddMaxSimultaneousDownloads">Max simultaneous downloads</string>
+    <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximum number of downloads running at the same time.</string>
+    <string name="prefs_ddResume">Resume downloads</string>
+    <string name="prefs_ddResume_summary">Resume paused downloads at startup</string>
+    <string name="prefs_enableNotifications">Enable notification service</string>
+    <string name="prefs_enableNotifications_summary">You\'ll receive notifications for your selected profiles</string>
+    <string name="prefs_notificationType">Notification types</string>
+    <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
+    <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
+    <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
+    <string name="locationAccessDenied">You denied the location access permission.</string>
+    <string name="locationAccess_title">Location access needed</string>
+    <string name="locationAccess_message">The application needs to have the location permission in order to read the WiFi SSID, no other operations will be performed.</string>
+    <string name="profiles">Profiles</string>
+    <string name="importProfiles">Import profiles</string>
+    <string name="importProfiles_summary">Import profiles from a previously exported file.</string>
+    <string name="exportProfiles">Export profiles</string>
+    <string name="exportProfiles_summary">Export all your profiles to a single file.</string>
+    <string name="failedImportingProfiles">Failed importing profiles file!</string>
+    <string name="failedExportingProfiles">Failed exporting profiles file!</string>
+    <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
+    <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
+    <string name="changeBinVersion">Change bin version</string>
+    <string name="userPasswd">User - passwd</string>
+
+    <!-- General -->
     <string name="app_name" translatable="false">Aria2App</string>
     <string name="downloadStatus_waiting">Waiting in queue</string>
     <string name="downloadStatus_error">Error</string>
@@ -160,21 +207,7 @@
     <string name="certDisclaimer">A certificate isn\'t required if your server is already trusted by this system (usually if you installed the certificate or if your certificate is signed by a trusted source)</string>
     <string name="test">Test</string>
     <string name="test_help">Pressing the test button Aria2App will check your configuration and help you diagnose network problems. To get further help contact me at altomanigianluca@gmail.com.</string>
-    <string name="peerDetails">Peer details</string>
-    <string name="peerDetails_desc">Tap on the item to reveal details about the peer</string>
-    <string name="serverDetails">Server details</string>
-    <string name="serverDetails_desc">Tap on the item to reveal details about the server</string>
-    <string name="search_desc">Filter downloads by name or by GID</string>
-    <string name="filters_desc">Filter downloads by their status</string>
-    <string name="moreDetails">More details</string>
     <string name="completedLengthLabel">Completed length</string>
-    <string name="evenMoreDetails">Even more details</string>
-    <string name="evenMoreDetails_desc">Tap on the more button to show all the details</string>
-    <string name="moreDetails_desc">Tap on the card to reveal more details</string>
-    <string name="fileDetails">File details</string>
-    <string name="fileDetails_desc">Tap on a file to reveal details or to download it</string>
-    <string name="folderDetails">Folder details</string>
-    <string name="folderDetails_desc">Tap and hold on a folder to reveal details or to download it</string>
     <string name="filename">Filename:</string>
     <string name="filename_help" tools:ignore="TypographyDashes">File name of the downloaded file. Leave empty to let aria2 generate one. This will override the --out option.</string>
     <string name="sessionSaved">Session saved correctly.</string>
@@ -320,47 +353,4 @@
     <string name="filtersShowingOnly">Showing only %s (%d)</string>
     <string name="cannotDeleteBin">Can\'t delete the bin file! Please clear application data.</string>
     <string name="changeBinVersion_message">Are you sure you want to change the bin version?</string>
-
-    <!-- Prefs -->
-    <!-- - General -->
-    <string name="prefs_hideMetadata">Hide linked metadata</string>
-    <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
-    <string name="prefs_updateRate">Update rate</string>
-    <string name="prefs_updateRate_summary">UI update rate in seconds.</string>
-    <string name="prefs_downloadDisplayInfo">Download display info</string>
-    <string name="prefs_downloadDisplayInfo_summary">Customize the info shown in the download card.</string>
-    <string name="prefs_versionCheck">Check aria2 version at startup</string>
-    <string name="prefs_versionCheck_summary">Check that the latest version of aria2 is running.</string>
-
-    <!-- - DirectDownload -->
-    <string name="prefs_ddDownloadPath">Download path</string>
-    <string name="prefs_ddDownloadPath_summary">All files are going to be downloaded here.</string>
-    <string name="prefs_ddMaxSimultaneousDownloads">Max simultaneous downloads</string>
-    <string name="prefs_ddMaxSimultaneousDownloads_summary">Maximum number of downloads running at the same time.</string>
-    <string name="prefs_ddResume">Resume downloads</string>
-    <string name="prefs_ddResume_summary">Resume paused downloads at startup</string>
-
-    <!-- - Notifications -->
-    <string name="prefs_enableNotifications">Enable notification service</string>
-    <string name="prefs_enableNotifications_summary">You\'ll receive notifications for your selected profiles</string>
-    <string name="prefs_notificationType">Notification types</string>
-    <string name="prefs_notificationType_summary">Select which type of notifications to receive</string>
-    <string name="prefs_enableNotificationsAtBoot">Start notification service at boot</string>
-    <string name="prefs_enableNotificationsAtBoot_summary">Notification service will be started when the phone boots</string>
-    <string name="locationAccessDenied">You denied the location access permission.</string>
-    <string name="locationAccess_title">Location access needed</string>
-    <string name="locationAccess_message">The application needs to have the location permission in order to read the WiFi SSID, no other operations will be performed.</string>
-
-    <!-- - Profiles -->
-    <string name="profiles">Profiles</string>
-    <string name="importProfiles">Import profiles</string>
-    <string name="importProfiles_summary">Import profiles from a previously exported file.</string>
-    <string name="exportProfiles">Export profiles</string>
-    <string name="exportProfiles_summary">Export all your profiles to a single file.</string>
-    <string name="failedImportingProfiles">Failed importing profiles file!</string>
-    <string name="failedExportingProfiles">Failed exporting profiles file!</string>
-    <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
-    <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
-    <string name="changeBinVersion">Change bin version</string>
-    <string name="userPasswd">User - passwd</string>
 </resources>

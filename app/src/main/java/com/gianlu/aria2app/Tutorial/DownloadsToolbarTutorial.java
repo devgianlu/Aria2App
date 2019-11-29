@@ -8,7 +8,9 @@ import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 
-public class DownloadsToolbarTutorial extends BaseTutorial {
+import me.toptas.fancyshowcase.FocusShape;
+
+public final class DownloadsToolbarTutorial extends BaseTutorial {
 
     @Keep
     public DownloadsToolbarTutorial() {
@@ -21,9 +23,15 @@ public class DownloadsToolbarTutorial extends BaseTutorial {
 
     public final void buildSequence(@NonNull Toolbar toolbar) {
         if (toolbar.findViewById(R.id.main_search) != null)
-            forToolbarMenuItem(toolbar, R.id.main_search, R.string.search, R.string.search_desc);
+            add(forToolbarMenuItem(toolbar, R.id.main_search, R.string.tutorial_search)
+                    .fitSystemWindows(true)
+                    .enableAutoTextPosition()
+                    .focusShape(FocusShape.CIRCLE));
 
         if (toolbar.findViewById(R.id.main_filter) != null)
-            forToolbarMenuItem(toolbar, R.id.main_filter, R.string.filters, R.string.filters_desc);
+            add(forToolbarMenuItem(toolbar, R.id.main_filter, R.string.tutorial_filters)
+                    .fitSystemWindows(true)
+                    .enableAutoTextPosition()
+                    .focusShape(FocusShape.CIRCLE));
     }
 }

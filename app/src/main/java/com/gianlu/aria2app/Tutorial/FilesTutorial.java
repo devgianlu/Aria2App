@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.Tutorial;
 
-import android.graphics.Rect;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +12,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 
-public class FilesTutorial extends BaseTutorial {
+import me.toptas.fancyshowcase.FocusShape;
+
+public final class FilesTutorial extends BaseTutorial {
 
     @Keep
     public FilesTutorial() {
@@ -27,14 +27,10 @@ public class FilesTutorial extends BaseTutorial {
         if (holder != null) {
             list.scrollToPosition(firstFile);
 
-            Rect rect = new Rect();
-            holder.itemView.getGlobalVisibleRect(rect);
-            rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
-
-            forBounds(rect, R.string.fileDetails, R.string.fileDetails_desc)
-                    .tintTarget(false)
-                    .transparentTarget(true);
-
+            add(forView(holder.itemView, R.string.tutorial_fileDetails)
+                    .enableAutoTextPosition()
+                    .roundRectRadius(8)
+                    .focusShape(FocusShape.ROUNDED_RECTANGLE));
             return true;
         }
 

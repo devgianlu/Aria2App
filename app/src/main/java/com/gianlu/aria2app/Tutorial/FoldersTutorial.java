@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.Tutorial;
 
-import android.graphics.Rect;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,7 +10,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 
-public class FoldersTutorial extends BaseTutorial {
+import me.toptas.fancyshowcase.FocusShape;
+
+public final class FoldersTutorial extends BaseTutorial {
 
     @Keep
     public FoldersTutorial() {
@@ -24,14 +24,10 @@ public class FoldersTutorial extends BaseTutorial {
         if (holder != null) {
             list.scrollToPosition(0);
 
-            Rect rect = new Rect();
-            holder.itemView.getGlobalVisibleRect(rect);
-            rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
-
-            forBounds(rect, R.string.folderDetails, R.string.folderDetails_desc)
-                    .tintTarget(false)
-                    .transparentTarget(true);
-
+            add(forView(holder.itemView, R.string.tutorial_folderDetails)
+                    .enableAutoTextPosition()
+                    .roundRectRadius(8)
+                    .focusShape(FocusShape.ROUNDED_RECTANGLE));
             return true;
         }
 

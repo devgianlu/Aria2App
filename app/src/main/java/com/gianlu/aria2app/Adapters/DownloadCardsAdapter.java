@@ -297,9 +297,9 @@ public class DownloadCardsAdapter extends OrderedRecyclerViewAdapter<DownloadCar
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final LinearLayout details;
         public final Button more;
-        final DonutProgress donutProgress;
+        public final DonutProgress donutProgress;
+        final LinearLayout details;
         final SuperTextView downloadName;
         final SuperTextView downloadStatus;
         final CustomDownloadInfo customInfo;

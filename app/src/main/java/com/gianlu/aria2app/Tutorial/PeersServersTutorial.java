@@ -1,7 +1,5 @@
 package com.gianlu.aria2app.Tutorial;
 
-import android.graphics.Rect;
-
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -11,7 +9,9 @@ import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 
-public class PeersServersTutorial extends BaseTutorial {
+import me.toptas.fancyshowcase.FocusShape;
+
+public final class PeersServersTutorial extends BaseTutorial {
     @Keep
     public PeersServersTutorial() {
         super(Discovery.PEERS_SERVERS);
@@ -26,14 +26,10 @@ public class PeersServersTutorial extends BaseTutorial {
         if (holder != null) {
             list.scrollToPosition(0);
 
-            Rect rect = new Rect();
-            holder.itemView.getGlobalVisibleRect(rect);
-            rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
-
-            forBounds(rect, R.string.serverDetails, R.string.serverDetails_desc)
-                    .tintTarget(false)
-                    .transparentTarget(true);
-
+            add(forView(holder.itemView, R.string.tutorial_serverDetails)
+                    .enableAutoTextPosition()
+                    .roundRectRadius(8)
+                    .focusShape(FocusShape.ROUNDED_RECTANGLE));
             return true;
         }
 
@@ -45,14 +41,10 @@ public class PeersServersTutorial extends BaseTutorial {
         if (holder != null) {
             list.scrollToPosition(0);
 
-            Rect rect = new Rect();
-            holder.itemView.getGlobalVisibleRect(rect);
-            rect.offset((int) -(holder.itemView.getWidth() * 0.3), 0);
-
-            forBounds(rect, R.string.peerDetails, R.string.peerDetails_desc)
-                    .tintTarget(false)
-                    .transparentTarget(true);
-
+            add(forView(holder.itemView, R.string.tutorial_peerDetails)
+                    .enableAutoTextPosition()
+                    .roundRectRadius(8)
+                    .focusShape(FocusShape.ROUNDED_RECTANGLE));
             return true;
         }
 
