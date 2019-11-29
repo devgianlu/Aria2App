@@ -1,3 +1,2 @@
 ### Changed
-- aria2 binaries are now bundled inside the APK for compatibility reasons
-- Fixed crash in WebView
+- Fixed In-App Downloader not working on some devices
