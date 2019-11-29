@@ -136,7 +136,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.fragment_files, parent, false);
-        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs); // TODO: Reduce min button width
+        breadcrumbs = layout.findViewById(R.id.filesFragment_breadcrumbs);
         breadcrumbs.setListener(this);
         rmv = layout.findViewById(R.id.filesFragment_rmv);
         rmv.linearLayoutManager(LinearLayoutManager.VERTICAL, false);

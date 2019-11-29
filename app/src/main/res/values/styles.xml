@@ -49,16 +49,6 @@
         <item name="android:statusBarColor">@color/colorMetalinkVariant</item>
     </style>
 
-    <style name="AppTheme.Batch" parent="AppTheme">
-        <item name="colorPrimary">@color/colorBatch</item>
-        <item name="colorPrimaryVariant">@color/colorBatchVariant</item>
-        <item name="colorSecondary">@color/colorBatch</item>
-        <item name="colorSecondaryVariant">@color/colorBatchVariant</item>
-        <item name="colorOnPrimary">#fff</item>
-        <item name="colorOnSecondary">#fff</item>
-        <item name="android:statusBarColor">?android:colorBackground</item>
-    </style>
-
     <style name="AppTheme.NoActionBar.WebView" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/colorWebView</item>
         <item name="colorPrimaryVariant">@color/colorWebViewPressed</item>
@@ -67,6 +57,30 @@
         <item name="colorOnPrimary">#fff</item>
         <item name="colorOnSecondary">#fff</item>
         <item name="android:statusBarColor">@color/colorWebViewPressed</item>
+    </style>
+
+    <style name="AppTheme.Batch" parent="AppTheme.Batch.Default" />
+
+    <style name="AppTheme.Batch.Default" parent="AppTheme">
+        <item name="colorPrimary">@color/colorBatch</item>
+        <item name="colorPrimaryVariant">@color/colorBatchVariant</item>
+        <item name="colorSecondary">@color/colorBatch</item>
+        <item name="colorSecondaryVariant">@color/colorBatchVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorBatchVariant</item>
+    </style>
+
+    <style name="AppTheme.Search" parent="AppTheme.Search.Default" />
+
+    <style name="AppTheme.Search.Default" parent="AppTheme">
+        <item name="colorPrimary">@color/colorSearch</item>
+        <item name="colorPrimaryVariant">@color/colorSearchVariant</item>
+        <item name="colorSecondary">@color/colorSearch</item>
+        <item name="colorSecondaryVariant">@color/colorSearchVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorSearchVariant</item>
     </style>
 
     <!-- Fab label style -->

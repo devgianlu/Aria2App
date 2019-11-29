@@ -2,7 +2,6 @@ package com.gianlu.aria2app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 
@@ -121,53 +120,49 @@ public final class Utils {
     }
 
     public static void setupChart(@NonNull LineChart chart, boolean small) {
-        setupChart(chart, small, 0);
+        setupChart(chart, small, null);
     }
 
-    public static void setupChart(@NonNull LineChart chart, boolean small, @ColorRes int textColor) {
+    public static void setupChart(@NonNull LineChart chart, boolean small, @ColorRes @Nullable Integer fgColorRes) {
         chart.clear();
 
-        int textInt;
+        int fgColor;
         Context context = chart.getContext();
-        if (textColor == 0) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{R.attr.colorControlNormal});
-            try {
-                textInt = a.getColor(0, Color.BLACK);
-            } finally {
-                a.recycle();
-            }
-        } else {
-            textInt = ContextCompat.getColor(chart.getContext(), textColor);
-        }
+        if (fgColorRes == null)
+            fgColor = CommonUtils.resolveAttrAsColor(context, R.attr.colorOnSurface);
+        else
+            fgColor = ContextCompat.getColor(context, fgColorRes);
 
         chart.setDescription(null);
         chart.setDrawGridBackground(false);
         chart.setBackgroundColor(Color.alpha(0));
         chart.setTouchEnabled(false);
+
         Legend legend = chart.getLegend();
-        legend.setTextColor(textInt);
+        legend.setTextColor(fgColor);
         legend.setEnabled(true);
 
         LineData data = new LineData();
-        data.setValueTextColor(textInt);
+        data.setValueTextColor(fgColor);
         chart.setData(data);
 
         YAxis ya = chart.getAxisLeft();
-        ya.setAxisLineColor(textInt);
-        ya.setTextColor(textInt);
+        ya.setAxisLineColor(fgColor);
+        ya.setTextColor(fgColor);
         ya.setTextSize(small ? 8 : 9);
         ya.setAxisMinimum(0);
         ya.setDrawAxisLine(false);
         ya.setLabelCount(small ? 4 : 8, true);
         ya.setEnabled(true);
         ya.setDrawGridLines(true);
+        ya.setGridColor(fgColor);
         ya.setValueFormatter(new CustomYAxisValueFormatter());
 
         chart.getAxisRight().setEnabled(false);
         chart.getXAxis().setEnabled(false);
 
-        data.addDataSet(initUploadSet(chart.getContext()));
-        data.addDataSet(initDownloadSet(chart.getContext()));
+        data.addDataSet(initUploadSet(context));
+        data.addDataSet(initDownloadSet(context));
 
         chart.invalidate();
     }

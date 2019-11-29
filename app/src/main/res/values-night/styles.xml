@@ -22,4 +22,13 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:buttonTint">@color/white</item>
     </style>
+
+    <!-- App theme variants -->
+    <style name="AppTheme.Batch" parent="AppTheme.Batch.Default">
+        <item name="android:statusBarColor">?android:colorBackground</item>
+    </style>
+
+    <style name="AppTheme.Search" parent="AppTheme.Search.Default">
+        <item name="android:statusBarColor">?android:colorBackground</item>
+    </style>
 </resources>
