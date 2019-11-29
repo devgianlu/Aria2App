@@ -848,6 +848,7 @@
             android:name=".inappdownloader.InAppAria2ConfActivity"
             android:configChanges="uiMode"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.FullBlackNight"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- DirectDownload activity -->

@@ -63,7 +63,14 @@ public class FetchDownloadWrapper {
 
     @NotNull
     public synchronized String getName() {
-        return new File(download.getFile()).getName();
+        String name = new File(download.getFile()).getName();
+
+        try {
+            return URLDecoder.decode(name, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            Logging.log(ex);
+            return name;
+        }
     }
 
     public synchronized boolean is(@NotNull Download download) {
