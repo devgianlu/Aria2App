@@ -38,14 +38,13 @@ public class Option implements Comparable<Option> {
         List<Option> options = new ArrayList<>();
 
         for (String key : all) {
-            if (map.get(key) == null) map.put(key, "");
+            if (map.get(key) == null)
+                map.put(key, "");
         }
 
         for (String key : map.keySet()) {
-            if (all.contains(key)) {
-                if (filter == null || filter.contains(key))
-                    options.add(new Option(key, map.get(key), false));
-            }
+            if (all.contains(key) && (filter == null || filter.contains(key)))
+                options.add(new Option(key, map.get(key), false));
         }
 
         Collections.sort(options);

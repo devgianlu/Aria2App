@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.api.aria2.VersionInfo;
-import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.logging.Logging;
 
@@ -66,7 +66,8 @@ class Aria2Tester extends BaseTester<Boolean> {
         Object unauthenticatedResult = runRequest(AriaRequests.listMethods(), helper);
         if (unauthenticatedResult instanceof Exception) {
             if (unauthenticatedResult instanceof AriaException) {
-                if (((AriaException) unauthenticatedResult).getMessage().contains("No such method")) {
+                String msg = ((AriaException) unauthenticatedResult).getMessage();
+                if (msg != null && msg.contains("No such method")) {
                     Object authenticatedResult = runAuthenticated(helper);
                     if (authenticatedResult instanceof VersionInfo) {
                         publishMessage("Skipped unauthenticated request due to outdated version ("

@@ -299,23 +299,21 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                 dismissDialog();
 
                 String mime = file.getMimeType();
-                if (mime != null) {
-                    if (Utils.isStreamable(mime) && getContext() != null) {
-                        Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), result, file);
-                        if (intent != null && Utils.canHandleIntent(requireContext(), intent)) {
-                            AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());
-                            builder.setTitle(R.string.couldStreamVideo)
-                                    .setMessage(R.string.couldStreamVideo_message)
-                                    .setNeutralButton(android.R.string.cancel, null)
-                                    .setPositiveButton(R.string.stream, (dialog, which) -> {
-                                        startActivity(intent);
-                                        AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
-                                    })
-                                    .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, result, file, share));
+                if (mime != null && Utils.isStreamable(mime) && getContext() != null) {
+                    Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), result, file);
+                    if (intent != null && Utils.canHandleIntent(requireContext(), intent)) {
+                        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());
+                        builder.setTitle(R.string.couldStreamVideo)
+                                .setMessage(R.string.couldStreamVideo_message)
+                                .setNeutralButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.stream, (dialog, which) -> {
+                                    startActivity(intent);
+                                    AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
+                                })
+                                .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, result, file, share));
 
-                            showDialog(builder);
-                            return;
-                        }
+                        showDialog(builder);
+                        return;
                     }
                 }
 

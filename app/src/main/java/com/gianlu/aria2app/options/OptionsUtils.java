@@ -10,10 +10,10 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.gianlu.aria2app.adapters.OptionsAdapter;
-import com.gianlu.aria2app.api.aria2.Option;
-import com.gianlu.aria2app.api.TrackersListFetch;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.adapters.OptionsAdapter;
+import com.gianlu.aria2app.api.TrackersListFetch;
+import com.gianlu.aria2app.api.aria2.Option;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
@@ -61,7 +61,7 @@ public final class OptionsUtils {
                     if (adapter != null) adapter.optionChanged(option);
                 });
 
-        if (option.name.equals("bt-tracker")) {
+        if (Objects.equals(option.name, "bt-tracker")) {
             builder.setNeutralButton(R.string.addBestTrackers, (dialog, which) ->
                     TrackersListFetch.get().getTrackers(TrackersListFetch.Type.BEST, null, new TrackersListFetch.Listener() {
                         @Override

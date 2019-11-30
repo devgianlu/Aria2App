@@ -3,10 +3,10 @@ package com.gianlu.aria2app.api.updater;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.api.ErrorHandler;
 import com.gianlu.aria2app.api.OnRefresh;
-import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public final class UpdaterFramework {
             try {
                 provider = receiver.requireProvider();
                 if (!provider.provides().equals(wants))
-                    throw new RuntimeException("What?! Required " + wants + " but got " + provider.provides());
+                    throw new IllegalStateException("What?! Required " + wants + " but got " + provider.provides());
 
                 providers.put(wants, provider);
                 provider.start(executorService);

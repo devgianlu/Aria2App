@@ -12,10 +12,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.activities.moreabout.BigUpdateProvider;
+import com.gianlu.aria2app.activities.moreabout.OnBackPressed;
 import com.gianlu.aria2app.activities.moreabout.files.FilesFragment;
 import com.gianlu.aria2app.activities.moreabout.info.InfoFragment;
-import com.gianlu.aria2app.activities.moreabout.OnBackPressed;
 import com.gianlu.aria2app.activities.moreabout.peers.PeersFragment;
 import com.gianlu.aria2app.activities.moreabout.servers.ServersFragment;
 import com.gianlu.aria2app.adapters.PagerAdapter;
@@ -29,7 +30,6 @@ import com.gianlu.aria2app.api.updater.UpdaterActivity;
 import com.gianlu.aria2app.api.updater.UpdaterFragment;
 import com.gianlu.aria2app.api.updater.Wants;
 import com.gianlu.aria2app.options.OptionsDialog;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.tabs.TabLayout;
@@ -200,9 +200,9 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
             case R.id.moreAboutDownload_quickOptions:
                 showDialog(OptionsDialog.getDownload(gid, true));
                 return true;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     private boolean canGoBack(int code) {

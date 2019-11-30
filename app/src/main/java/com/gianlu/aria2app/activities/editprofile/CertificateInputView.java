@@ -18,10 +18,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
-import com.gianlu.aria2app.api.CertUtils;
-import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.api.CertUtils;
+import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
@@ -205,7 +205,7 @@ public class CertificateInputView extends LinearLayout {
             if (in != null) {
                 certificate = CertUtils.loadCertificateFromStream(in);
             } else {
-                Toaster.with(context).message(R.string.invalidCertificate).ex(new NullPointerException("InputStream is null!")).show();
+                Toaster.with(context).message(R.string.invalidCertificate).error(true).show();
                 return;
             }
         } catch (FileNotFoundException | CertificateException ex) {

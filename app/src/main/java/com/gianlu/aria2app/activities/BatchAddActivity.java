@@ -14,6 +14,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
 import com.gianlu.aria2app.activities.adddownload.AddMetalinkBundle;
 import com.gianlu.aria2app.activities.adddownload.AddTorrentBundle;
@@ -21,8 +23,6 @@ import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
 import com.gianlu.aria2app.adapters.AddDownloadBundlesAdapter;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.webview.WebViewActivity;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
@@ -57,9 +57,9 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
             case R.id.addDownload_done:
                 done();
                 return true;
+            default:
+                return false;
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void done() {
@@ -188,13 +188,13 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                         if (pos == -1) adapter.addItem(bundle);
                         else adapter.itemChanged(pos, bundle);
                         return;
+                    default:
+                        super.onActivityResult(requestCode, resultCode, data);
                 }
             } catch (AddDownloadBundle.CannotReadException ex) {
                 Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
             }
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

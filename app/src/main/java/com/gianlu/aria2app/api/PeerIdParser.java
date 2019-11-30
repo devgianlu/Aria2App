@@ -50,6 +50,7 @@ public final class PeerIdParser {
                 break;
             default:
                 mnemonic = "";
+                break;
         }
 
         return v.charAt(0) + "." + v.charAt(1) + "." + v.charAt(2) + " " + mnemonic;
@@ -357,7 +358,7 @@ public final class PeerIdParser {
         try {
             peerId = URLDecoder.decode(id, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex);
+            return null;
         }
 
         byte[] buffer = peerId.getBytes();
@@ -381,7 +382,7 @@ public final class PeerIdParser {
                     return new Parsed("Unknown [Fake: ZipTorrent]", version);
 
                 // BitTorrent 6.0 Beta currently misidentifies itself
-                if (client.equals("\u00B5Torrent") && Objects.equals(version, "6.0 Beta"))
+                if (Objects.equals(client, "\u00B5Torrent") && Objects.equals(version, "6.0 Beta"))
                     return new Parsed("Mainline", "6.0 Beta");
 
                 // If it's the rakshasa libtorrent, then it's probably rTorrent

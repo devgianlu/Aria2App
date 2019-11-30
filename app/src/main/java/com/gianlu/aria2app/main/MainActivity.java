@@ -28,52 +28,52 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.gianlu.aria2app.activities.adddownload.AddBase64Bundle;
-import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
+import com.gianlu.aria2app.LoadingActivity;
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.PreferenceActivity;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.activities.AddMetalinkActivity;
 import com.gianlu.aria2app.activities.AddTorrentActivity;
 import com.gianlu.aria2app.activities.AddUriActivity;
 import com.gianlu.aria2app.activities.BatchAddActivity;
 import com.gianlu.aria2app.activities.DirectDownloadActivity;
 import com.gianlu.aria2app.activities.EditProfileActivity;
-import com.gianlu.aria2app.activities.moreabout.files.FilesFragment;
-import com.gianlu.aria2app.activities.moreabout.info.InfoFragment;
-import com.gianlu.aria2app.activities.moreabout.OnBackPressed;
-import com.gianlu.aria2app.activities.moreabout.peers.PeersFragment;
-import com.gianlu.aria2app.activities.moreabout.servers.ServersFragment;
 import com.gianlu.aria2app.activities.MoreAboutDownloadActivity;
 import com.gianlu.aria2app.activities.SearchActivity;
+import com.gianlu.aria2app.activities.adddownload.AddBase64Bundle;
+import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
+import com.gianlu.aria2app.activities.moreabout.OnBackPressed;
+import com.gianlu.aria2app.activities.moreabout.files.FilesFragment;
+import com.gianlu.aria2app.activities.moreabout.info.InfoFragment;
+import com.gianlu.aria2app.activities.moreabout.peers.PeersFragment;
+import com.gianlu.aria2app.activities.moreabout.servers.ServersFragment;
 import com.gianlu.aria2app.adapters.DownloadCardsAdapter;
 import com.gianlu.aria2app.adapters.PagerAdapter;
-import com.gianlu.aria2app.inappdownloader.InAppAria2ConfActivity;
-import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
+import com.gianlu.aria2app.api.GitHubApi;
+import com.gianlu.aria2app.api.NetInstanceHolder;
+import com.gianlu.aria2app.api.OnRefresh;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.api.aria2.DownloadsAndGlobalStats;
 import com.gianlu.aria2app.api.aria2.VersionInfo;
-import com.gianlu.aria2app.api.AriaRequests;
-import com.gianlu.aria2app.downloader.FetchHelper;
-import com.gianlu.aria2app.api.GitHubApi;
-import com.gianlu.aria2app.api.NetInstanceHolder;
-import com.gianlu.aria2app.api.OnRefresh;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.Receiver;
 import com.gianlu.aria2app.api.updater.UpdaterActivity;
 import com.gianlu.aria2app.api.updater.Wants;
+import com.gianlu.aria2app.downloader.FetchHelper;
+import com.gianlu.aria2app.inappdownloader.InAppAria2ConfActivity;
 import com.gianlu.aria2app.options.OptionsDialog;
-import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.PreferenceActivity;
 import com.gianlu.aria2app.profiles.CustomProfilesAdapter;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.tutorial.Discovery;
 import com.gianlu.aria2app.tutorial.DownloadCardsTutorial;
 import com.gianlu.aria2app.tutorial.DownloadsToolbarTutorial;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.webview.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
@@ -412,7 +412,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         } else if (shareData != null) {
             String scheme = shareData.getScheme();
             if (scheme != null) {
-                if (scheme.equals("magnet") || scheme.equals("http") || scheme.equals("https") || scheme.equals("ftp") || scheme.equals("sftp")) {
+                if ("magnet".equals(scheme) || "http".equals(scheme) || "https".equals(scheme) || "ftp".equals(scheme) || "sftp".equals(scheme)) {
                     processUrl(shareData);
                 } else {
                     AskPermission.ask(this, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
@@ -789,9 +789,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             case R.id.mainSort_completedLength:
                 handleSortingReal(DownloadCardsAdapter.SortBy.COMPLETED_LENGTH);
                 return true;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     private void handleSortingReal(DownloadCardsAdapter.SortBy sorting) {

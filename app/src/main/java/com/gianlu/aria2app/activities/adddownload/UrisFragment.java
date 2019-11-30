@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gianlu.aria2app.adapters.UrisAdapter;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.adapters.UrisAdapter;
 import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.ui.Toaster;
@@ -73,11 +73,9 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
                 .setView(uri)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(edit == null ? R.string.add : R.string.save, (dialog, which) -> {
-                    if (uri.getText().toString().trim().startsWith("magnet:")) {
-                        if (!adapter.getUris().isEmpty()) {
-                            showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
-                            return;
-                        }
+                    if (uri.getText().toString().trim().startsWith("magnet:") && !adapter.getUris().isEmpty()) {
+                        showToast(Toaster.build().message(R.string.onlyOneTorrentUri));
+                        return;
                     }
 
                     if (oldPos != -1) adapter.removeUri(oldPos);

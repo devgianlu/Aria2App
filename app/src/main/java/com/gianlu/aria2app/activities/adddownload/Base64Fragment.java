@@ -67,10 +67,8 @@ public class Base64Fragment extends FragmentWithDialog {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == FILE_SELECT_CODE) {
-            if (resultCode == Activity.RESULT_OK && intent.getData() != null) {
-                if (intent.getData() != null)
-                    setFilename(intent.getData());
-            }
+            if (resultCode == Activity.RESULT_OK && intent.getData() != null)
+                setFilename(intent.getData());
         } else {
             super.onActivityResult(requestCode, resultCode, intent);
         }
@@ -155,6 +153,11 @@ public class Base64Fragment extends FragmentWithDialog {
         }
     }
 
+    @Nullable
+    public Uri getFileUri() {
+        return fileUri;
+    }
+
     public static class NoFileException extends Exception {
         public final int fieldId;
         public final int reasonRes;
@@ -163,10 +166,5 @@ public class Base64Fragment extends FragmentWithDialog {
             this.fieldId = fieldId;
             this.reasonRes = reasonRes;
         }
-    }
-
-    @Nullable
-    public Uri getFileUri() {
-        return fileUri;
     }
 }

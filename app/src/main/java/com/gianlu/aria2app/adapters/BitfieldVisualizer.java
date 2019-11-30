@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.commonutils.CommonUtils;
 
 import java.util.Objects;
@@ -92,6 +92,8 @@ public class BitfieldVisualizer extends View {
                 case 'f':
                     known += 4;
                     break;
+                default:
+                    // skip
             }
         }
 

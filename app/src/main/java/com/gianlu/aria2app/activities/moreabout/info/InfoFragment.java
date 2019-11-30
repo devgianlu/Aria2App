@@ -70,11 +70,10 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
 
     @Override
     public boolean onUpdateException(@NonNull Exception ex) {
-        if (ex instanceof AriaException && ((AriaException) ex).isNotFound()) {
-            if (getActivity() instanceof HideSecondSpace) {
-                ((HideSecondSpace) getActivity()).hideSecondSpace();
-                return true;
-            }
+        if (ex instanceof AriaException && ((AriaException) ex).isNotFound()
+                && getActivity() instanceof HideSecondSpace) {
+            ((HideSecondSpace) getActivity()).hideSecondSpace();
+            return true;
         }
 
         return super.onUpdateException(ex);

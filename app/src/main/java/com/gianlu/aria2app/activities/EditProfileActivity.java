@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.activities.editprofile.AuthenticationFragment;
 import com.gianlu.aria2app.activities.editprofile.ConnectionFragment;
 import com.gianlu.aria2app.activities.editprofile.DirectDownloadFragment;
@@ -39,8 +41,6 @@ import com.gianlu.aria2app.adapters.StatePagerAdapter;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.MultiProfile.ConnectivityCondition;
 import com.gianlu.aria2app.profiles.ProfilesManager;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
@@ -86,6 +86,15 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         result.putBundle("connection", ConnectionFragment.stateFromProfile(profile));
         result.putBundle("authentication", AuthenticationFragment.stateFromProfile(profile));
         result.putBundle("directDownload", DirectDownloadFragment.stateFromProfile(profile));
+        return result;
+    }
+
+    @NonNull
+    private static Bundle emptyConditionBundle() {
+        Bundle result = new Bundle();
+        result.putBundle("connection", new Bundle());
+        result.putBundle("authentication", new Bundle());
+        result.putBundle("directDownload", new Bundle());
         return result;
     }
 
@@ -344,15 +353,6 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         showDialog(dialog);
     }
 
-    @NonNull
-    private static Bundle emptyConditionBundle() {
-        Bundle result = new Bundle();
-        result.putBundle("connection", new Bundle());
-        result.putBundle("authentication", new Bundle());
-        result.putBundle("directDownload", new Bundle());
-        return result;
-    }
-
     private void addCondition(@NonNull AlertDialog dialog, @NonNull ConnectivityCondition condition) {
         conditions.add(new ConditionWithState(condition, emptyConditionBundle()));
 
@@ -502,25 +502,25 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
+                return true;
             case R.id.editProfile_deleteProfile:
                 deleteProfile();
-                break;
+                return true;
             case R.id.editProfile_deleteCondition:
                 deleteCondition(conditionsSpinner.getSelectedItemPosition());
-                break;
+                return true;
             case R.id.editProfile_setDefault:
                 setDefaultCondition();
-                break;
+                return true;
             case R.id.editProfile_createNew:
                 createNewCondition(false);
-                break;
+                return true;
             case R.id.editProfile_doneAll:
                 doneAll();
-                break;
+                return true;
+            default:
+                return false;
         }
-
-        return true;
     }
 
     @Nullable

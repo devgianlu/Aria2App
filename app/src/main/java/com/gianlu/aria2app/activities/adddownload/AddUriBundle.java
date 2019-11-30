@@ -3,6 +3,9 @@ package com.gianlu.aria2app.activities.adddownload;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.webview.InterceptedRequest;
 
@@ -16,9 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 public class AddUriBundle extends AddDownloadBundle implements Serializable {
     public final ArrayList<String> uris;
 
@@ -30,7 +30,7 @@ public class AddUriBundle extends AddDownloadBundle implements Serializable {
     @NonNull
     public static List<AddUriBundle> fromUri(@NonNull Context context, @NonNull Uri uri) throws CannotReadException {
         try (InputStream in = context.getContentResolver().openInputStream(uri)) {
-            if (in == null) throw new CannotReadException(new NullPointerException("in is null!"));
+            if (in == null) throw new CannotReadException("in is null!");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
             List<AddUriBundle> bundles = new ArrayList<>();

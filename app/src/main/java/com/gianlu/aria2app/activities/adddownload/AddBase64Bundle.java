@@ -41,7 +41,7 @@ public abstract class AddBase64Bundle extends AddDownloadBundle implements Seria
     @NonNull
     public static String readBase64(@NonNull Context context, @NonNull Uri uri) throws CannotReadException {
         try (InputStream in = context.getContentResolver().openInputStream(uri); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            if (in == null) throw new CannotReadException(new NullPointerException("in is null!"));
+            if (in == null) throw new CannotReadException("in is null!");
 
             byte[] buffer = new byte[4096];
             int read;

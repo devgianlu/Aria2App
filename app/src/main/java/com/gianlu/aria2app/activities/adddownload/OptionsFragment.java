@@ -13,17 +13,17 @@ import android.widget.Switch;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.adapters.OptionsAdapter;
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
+import com.gianlu.aria2app.api.TrackersListFetch;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.Option;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
-import com.gianlu.aria2app.api.AriaRequests;
-import com.gianlu.aria2app.api.TrackersListFetch;
 import com.gianlu.aria2app.options.OptionsUtils;
 import com.gianlu.aria2app.options.OptionsView;
-import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 import com.gianlu.commonutils.logging.Logging;
@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class OptionsFragment extends FragmentWithDialog implements OptionsAdapter.Listener {
@@ -148,7 +149,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
             public void onDone(@NonNull List<String> trackers) {
                 Option btTracker = null;
                 for (Option option : adapter.getOptions()) {
-                    if (option.name.equals("bt-tracker")) {
+                    if (Objects.equals(option.name, "bt-tracker")) {
                         btTracker = option;
                         break;
                     }

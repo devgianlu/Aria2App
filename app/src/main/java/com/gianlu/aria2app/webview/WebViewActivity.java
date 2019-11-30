@@ -22,14 +22,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 
-import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
-import com.gianlu.aria2app.activities.AddUriActivity;
 import com.gianlu.aria2app.BuildConfig;
 import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.activities.AddUriActivity;
+import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.logging.Logging;
@@ -57,7 +57,7 @@ public class WebViewActivity extends ActivityWithDialog {
     @Nullable
     private static Request buildRequest(@NonNull WebResourceRequest req) {
         String method = req.getMethod();
-        if (method.equals("POST") || method.equals("PUT") || method.equals("PATCH") || method.equals("PROPPATCH") || method.equals("REPORT"))
+        if ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "PROPPATCH".equals(method) || "REPORT".equals(method))
             return null;
 
         String url = req.getUrl().toString();

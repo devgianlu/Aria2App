@@ -19,11 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.CountryFlags;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.geolocalization.GeoIP;
 import com.gianlu.aria2app.api.geolocalization.IPDetails;
-import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
@@ -102,10 +102,11 @@ public class ConnectionFragment extends FieldErrorFragmentWithState implements C
         try {
             String portStr = bundle.getString("port");
             if (portStr == null || (portStr = portStr.trim()).isEmpty())
-                throw new Exception();
+                throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_port, R.string.invalidPort);
 
             port = Integer.parseInt(portStr);
-            if (port <= 0 || port > 65535) throw new Exception();
+            if (port <= 0 || port > 65535)
+                throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_port, R.string.invalidPort);
         } catch (Exception ex) {
             throw new InvalidFieldException(Where.CONNECTION, R.id.editProfile_port, R.string.invalidPort);
         }

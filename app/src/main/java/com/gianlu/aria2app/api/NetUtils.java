@@ -111,9 +111,9 @@ public final class NetUtils {
 
         RequestBody body;
         if (request != null)
-            body = RequestBody.create(MediaType.parse("application/json"), request.toString());
+            body = RequestBody.create(request.toString(), MediaType.parse("application/json"));
         else
-            body = RequestBody.create(null, new byte[0]);
+            body = RequestBody.create(new byte[0], null);
 
         builder.post(body);
 
@@ -134,7 +134,7 @@ public final class NetUtils {
     public static Request createDirectDownloadRequest(@NonNull MultiProfile.DirectDownload dd) throws InvalidUrlException {
         HttpUrl baseUrl = dd.getUrl();
         if (baseUrl == null)
-            throw new InvalidUrlException(new NullPointerException("DirectDownload url is invalid."));
+            throw new InvalidUrlException("DirectDownload url is invalid.");
 
         Request.Builder builder = new Request.Builder()
                 .get().url(baseUrl);
@@ -146,6 +146,10 @@ public final class NetUtils {
     }
 
     public static class InvalidUrlException extends Exception {
+        InvalidUrlException(String message) {
+            super(message);
+        }
+
         InvalidUrlException(Throwable cause) {
             super(cause);
         }

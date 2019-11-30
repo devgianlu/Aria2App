@@ -8,17 +8,17 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.activities.moreabout.PeersServersFragment;
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.aria2app.api.aria2.Peer;
 import com.gianlu.aria2app.api.aria2.Peers;
-import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.Wants;
-import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.tutorial.PeersServersTutorial;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
@@ -58,13 +58,13 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
         switch (item.getItemId()) {
             case R.id.peersFragmentSort_downloadSpeed:
                 adapter.sort(PeersAdapter.SortBy.DOWNLOAD_SPEED);
-                break;
+                return true;
             case R.id.peersFragmentSort_uploadSpeed:
                 adapter.sort(PeersAdapter.SortBy.UPLOAD_SPEED);
-                break;
+                return true;
+            default:
+                return false;
         }
-
-        return true;
     }
 
     @Override

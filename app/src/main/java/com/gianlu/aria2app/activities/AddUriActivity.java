@@ -11,14 +11,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
 import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
 import com.gianlu.aria2app.activities.adddownload.OptionsFragment;
 import com.gianlu.aria2app.activities.adddownload.UrisFragment;
 import com.gianlu.aria2app.adapters.StatePagerAdapter;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.tabs.TabLayout;
@@ -106,12 +106,12 @@ public class AddUriActivity extends AddDownloadActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                break;
+                return true;
             case R.id.addDownload_done:
                 done();
-                break;
+                return true;
+            default:
+                return false;
         }
-
-        return true;
     }
 }
