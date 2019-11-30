@@ -5,7 +5,9 @@
 
     <!-- List networks -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:targetApi="o"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:targetApi="o" />
     <!-- You known... -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Download files -->
@@ -29,8 +31,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:supportsRtl"
-        tools:targetApi="n">
+        tools:replace="android:supportsRtl">
 
         <!-- General files provider -->
         <provider
@@ -820,7 +821,7 @@
 
         <!-- Main activity -->
         <activity
-            android:name=".Main.MainActivity"
+            android:name=".main.MainActivity"
             android:configChanges="uiMode"
             android:theme="@style/AppTheme.NoActionBar.Drawer">
             <meta-data
@@ -830,74 +831,85 @@
 
         <!-- WebView activity -->
         <activity
-            android:name=".WebView.WebViewActivity"
+            android:name=".webview.WebViewActivity"
             android:configChanges="uiMode"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar.WebView" />
 
         <!-- Edit profile activity -->
         <activity
-            android:name=".Activities.EditProfileActivity"
-            android:configChanges="orientation"
-            android:parentActivityName=".Main.MainActivity"
+            android:name=".activities.EditProfileActivity"
+            android:configChanges="orientation|uiMode"
+            android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
         <!-- In-App downloader configuration activity -->
         <activity
-            android:name=".InAppAria2.InAppAria2ConfActivity"
-            android:screenOrientation="portrait"
+            android:name=".inappdownloader.InAppAria2ConfActivity"
             android:configChanges="uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.FullBlackNight"
             android:windowSoftInputMode="stateHidden" />
+
+        <!-- In-App downloader custom options activity -->
+        <activity
+            android:name="com.gianlu.aria2lib.ui.ConfigEditorActivity"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- DirectDownload activity -->
         <activity
-            android:name=".Activities.DirectDownloadActivity"
-            android:parentActivityName=".Main.MainActivity" />
+            android:name=".activities.DirectDownloadActivity"
+            android:configChanges="uiMode"
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- Add download activities -->
         <activity
-            android:name=".Activities.AddUriActivity"
+            android:name=".activities.AddUriActivity"
             android:configChanges="orientation|uiMode"
-            android:parentActivityName=".Main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar.URI" />
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar.Uri" />
         <activity
-            android:name=".Activities.AddTorrentActivity"
+            android:name=".activities.AddTorrentActivity"
             android:configChanges="orientation|uiMode"
-            android:parentActivityName=".Main.MainActivity"
+            android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Torrent" />
         <activity
-            android:name=".Activities.AddMetalinkActivity"
+            android:name=".activities.AddMetalinkActivity"
             android:configChanges="orientation|uiMode"
-            android:parentActivityName=".Main.MainActivity"
+            android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar.Metalink" />
         <activity
-            android:name=".Activities.BatchAddActivity"
+            android:name=".activities.BatchAddActivity"
             android:configChanges="orientation|uiMode"
-            android:parentActivityName=".Main.MainActivity"
+            android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.Batch" />
 
         <!-- More about download activity -->
         <activity
-            android:name=".Activities.MoreAboutDownloadActivity"
-            android:parentActivityName=".Main.MainActivity"
+            android:name=".activities.MoreAboutDownloadActivity"
             android:configChanges="uiMode"
+            android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Preferences activity -->
         <activity
             android:name=".PreferenceActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- Logs activity -->
         <activity
             android:name="com.gianlu.commonutils.logging.LogsActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="uiMode"
+            android:theme="@style/AppTheme.FullBlackNight" />
 
         <!-- Search Torrent activity -->
         <activity
-            android:name=".Activities.SearchActivity"
+            android:name=".activities.SearchActivity"
             android:configChanges="orientation|uiMode"
-            android:parentActivityName=".Main.MainActivity"
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/AppTheme.Search"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.app.searchable"
@@ -906,12 +918,12 @@
 
         <!-- Notification service -->
         <service
-            android:name=".Services.NotificationService"
+            android:name=".services.NotificationService"
             android:exported="false" />
 
         <!-- Boot completed receiver -->
         <receiver
-            android:name=".Services.BootCompletedReceiver"
+            android:name=".services.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -921,7 +933,7 @@
 
         <!-- Chooser service -->
         <service
-            android:name=".Services.ProfileChooserService"
+            android:name=".services.ProfileChooserService"
             android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
             <intent-filter>
                 <action android:name="android.service.chooser.ChooserTargetService" />

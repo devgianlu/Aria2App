@@ -2,9 +2,9 @@ package com.gianlu.aria2app;
 
 import android.os.Environment;
 
-import com.gianlu.aria2app.Adapters.DownloadCardsAdapter;
-import com.gianlu.aria2app.NetIO.Aria2.Download;
-import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.aria2app.adapters.DownloadCardsAdapter;
+import com.gianlu.aria2app.api.aria2.Download;
+import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.commonutils.preferences.CommonPK;
 import com.gianlu.commonutils.preferences.Prefs;
 

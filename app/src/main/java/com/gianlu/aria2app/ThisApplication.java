@@ -9,13 +9,13 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.InAppAria2.Aria2ConfigProvider;
-import com.gianlu.aria2app.NetIO.ConnectivityChangedReceiver;
-import com.gianlu.aria2app.NetIO.ErrorHandler;
-import com.gianlu.aria2app.NetIO.NetInstanceHolder;
-import com.gianlu.aria2app.NetIO.Search.SearchApi;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.aria2app.inappdownloader.Aria2ConfigProvider;
+import com.gianlu.aria2app.api.ConnectivityChangedReceiver;
+import com.gianlu.aria2app.api.ErrorHandler;
+import com.gianlu.aria2app.api.NetInstanceHolder;
+import com.gianlu.aria2app.api.search.SearchApi;
+import com.gianlu.aria2app.profiles.ProfilesManager;
+import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
@@ -177,7 +177,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     public void loadAria2ServiceEnv() throws BadEnvironmentException {
         if (aria2service != null && !aria2service.ui.hasEnv()) {
-            aria2service.ui.loadEnv();
+            aria2service.ui.loadEnv(this);
             aria2service.ui.bind();
             aria2service.ui.askForStatus();
         }

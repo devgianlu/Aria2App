@@ -15,7 +15,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="24dp"
-            android:background="@color/colorPrimaryDark" />
+            android:background="@color/colorPrimaryVariant" />
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -58,8 +58,9 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/running"
                     android:src="@drawable/baseline_play_circle_outline_24"
-                    android:tint="@color/bright_foreground_dark" />
+                    android:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/main_active"
@@ -75,8 +76,9 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/paused"
                     android:src="@drawable/baseline_pause_circle_outline_24"
-                    android:tint="@color/bright_foreground_dark" />
+                    android:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/main_paused"
@@ -92,8 +94,9 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/cancelled"
                     android:src="@drawable/baseline_clear_outline_24"
-                    android:tint="@color/bright_foreground_dark" />
+                    android:tint="@color/white" />
 
                 <TextView
                     android:id="@+id/main_stopped"
@@ -119,7 +122,8 @@
                     android:padding="4dp"
                     android:scaleType="fitCenter"
                     android:src="@drawable/baseline_keyboard_arrow_down_24"
-                    android:tint="@color/bright_foreground_dark" />
+                    android:tint="@color/white"
+                    tools:ignore="ContentDescription" />
             </LinearLayout>
 
             <TextView
@@ -169,9 +173,9 @@
                         android:layout_gravity="bottom|end"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        app:layout_behavior="com.gianlu.aria2app.Main.FloatingActionsMenuBehavior"
-                        fab:fab_addButtonColorNormal="@color/colorAccent"
-                        fab:fab_addButtonColorPressed="@color/colorAccent_pressed"
+                        app:layout_behavior="com.gianlu.aria2app.main.FloatingActionsMenuBehavior"
+                        fab:fab_addButtonColorNormal="@color/colorSecondary"
+                        fab:fab_addButtonColorPressed="@color/colorSecondaryVariant"
                         fab:fab_addButtonPlusIconColor="@android:color/white"
                         fab:fab_labelStyle="@style/FabLabel">
 
@@ -180,7 +184,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorSearch"
-                            fab:fab_colorPressed="@color/colorSearch_pressed"
+                            fab:fab_colorPressed="@color/colorSearchVariant"
                             fab:fab_icon="@drawable/baseline_search_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/search" />
@@ -190,7 +194,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorBatch"
-                            fab:fab_colorPressed="@color/colorBatch_pressed"
+                            fab:fab_colorPressed="@color/colorBatchVariant"
                             fab:fab_icon="@drawable/baseline_all_inbox_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/batchAdd" />
@@ -200,7 +204,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorMetalink"
-                            fab:fab_colorPressed="@color/colorMetalink_pressed"
+                            fab:fab_colorPressed="@color/colorMetalinkVariant"
                             fab:fab_icon="@drawable/baseline_link_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addMetalink" />
@@ -210,7 +214,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorTorrent"
-                            fab:fab_colorPressed="@color/colorTorrent_pressed"
+                            fab:fab_colorPressed="@color/colorTorrentVariant"
                             fab:fab_icon="@drawable/ic_torrent_white_48dp"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addTorrent" />
@@ -220,7 +224,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             fab:fab_colorNormal="@color/colorWebView"
-                            fab:fab_colorPressed="@color/colorWebView_pressed"
+                            fab:fab_colorPressed="@color/colorWebViewPressed"
                             fab:fab_icon="@drawable/baseline_language_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/webView" />
@@ -229,8 +233,8 @@
                             android:id="@+id/mainFab_addURI"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            fab:fab_colorNormal="@color/colorURI"
-                            fab:fab_colorPressed="@color/colorURI_pressed"
+                            fab:fab_colorNormal="@color/colorUri"
+                            fab:fab_colorPressed="@color/colorUriVariant"
                             fab:fab_icon="@drawable/baseline_playlist_add_24"
                             fab:fab_size="mini"
                             fab:fab_title="@string/addUri" />

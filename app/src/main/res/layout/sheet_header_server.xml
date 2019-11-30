@@ -6,6 +6,14 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
+    <ImageButton
+        android:id="@+id/sheetToolbar_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/baseline_clear_24"
+        android:tint="@color/white"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,8 +24,9 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:tint="@color/bright_foreground_dark"
-            android:src="@drawable/baseline_download_24" />
+            android:contentDescription="@string/downloadSpeed"
+            android:src="@drawable/baseline_download_24"
+            android:tint="@color/white" />
 
         <com.gianlu.commonutils.misc.SuperTextView
             android:id="@+id/serverSheet_downloadSpeed"
@@ -29,7 +38,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/serverSheet_title"
+        android:id="@+id/sheetToolbar_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"

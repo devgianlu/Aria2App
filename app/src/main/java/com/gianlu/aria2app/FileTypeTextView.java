@@ -16,7 +16,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.commonutils.typhography.FontsManager;
+import com.gianlu.commonutils.typography.FontsManager;
 
 public class FileTypeTextView extends View {
     private final TextPaint textPaint;

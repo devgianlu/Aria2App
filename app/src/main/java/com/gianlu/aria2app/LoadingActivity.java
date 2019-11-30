@@ -22,23 +22,22 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gianlu.aria2app.Activities.EditProfileActivity;
-import com.gianlu.aria2app.InAppAria2.InAppAria2ConfActivity;
-import com.gianlu.aria2app.Main.MainActivity;
-import com.gianlu.aria2app.NetIO.AbstractClient;
-import com.gianlu.aria2app.NetIO.HttpClient;
-import com.gianlu.aria2app.NetIO.NetInstanceHolder;
-import com.gianlu.aria2app.NetIO.OnConnect;
-import com.gianlu.aria2app.NetIO.WebSocketClient;
-import com.gianlu.aria2app.ProfilesManager.CustomProfilesAdapter;
-import com.gianlu.aria2app.ProfilesManager.MultiProfile;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.Services.NotificationService;
-import com.gianlu.aria2app.WebView.WebViewActivity;
+import com.gianlu.aria2app.activities.EditProfileActivity;
+import com.gianlu.aria2app.inappdownloader.InAppAria2ConfActivity;
+import com.gianlu.aria2app.main.MainActivity;
+import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.HttpClient;
+import com.gianlu.aria2app.api.NetInstanceHolder;
+import com.gianlu.aria2app.api.OnConnect;
+import com.gianlu.aria2app.api.WebSocketClient;
+import com.gianlu.aria2app.profiles.CustomProfilesAdapter;
+import com.gianlu.aria2app.profiles.MultiProfile;
+import com.gianlu.aria2app.profiles.ProfilesManager;
+import com.gianlu.aria2app.services.NotificationService;
+import com.gianlu.aria2app.webview.WebViewActivity;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.aria2lib.internal.Message;
-import com.gianlu.aria2lib.ui.DownloadBinActivity;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.drawer.DrawerManager;
@@ -46,6 +45,7 @@ import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.json.JSONException;
 
@@ -134,7 +134,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         NetInstanceHolder.close();
 
         if (getIntent().getBooleanExtra("external", false)) {
-            showDialog(new AlertDialog.Builder(this)
+            showDialog(new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.oldAria2AppNoInApp)
                     .setMessage(R.string.oldAria2AppNoInApp_message)
                     .setNeutralButton(android.R.string.ok, null));
@@ -218,8 +218,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 try {
                     app.loadAria2ServiceEnv();
                 } catch (BadEnvironmentException ex) {
-                    DownloadBinActivity.startActivity(LoadingActivity.this, getString(R.string.downloadBin) + " - " + getString(R.string.app_name),
-                            LoadingActivity.class, 0, null);
+                    Logging.log("Failed loading aria2 environment.", ex);
                     return;
                 }
 
@@ -348,7 +347,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void showErrorDialog(@NonNull final Throwable ex) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
                 .setNeutralButton(R.string.contactMe, (dialog, which) -> Logging.sendEmail(LoadingActivity.this, ex))
@@ -446,7 +445,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
             }
 
             if (Utils.hasWebView(this)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
                 builder.setTitle(R.string.useWebView)
                         .setMessage(R.string.useWebView_message)
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> launchWebView())

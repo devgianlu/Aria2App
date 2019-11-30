@@ -6,6 +6,14 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
+    <ImageButton
+        android:id="@+id/sheetToolbar_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/baseline_clear_24"
+        android:tint="@color/white"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,25 +25,25 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/baseline_folder_24"
-            android:tint="@color/bright_foreground_dark" />
+            android:tint="@color/white" />
 
         <TextView
             android:id="@+id/dirSheet_percentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-8dp"
-            android:textColor="@color/bright_foreground_dark"
+            android:textColor="@color/white"
             android:textSize="30sp" />
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/dirSheet_title"
+        android:id="@+id/sheetToolbar_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="3"
-        android:textColor="@color/bright_foreground_dark"
+        android:textColor="@color/white"
         android:textSize="20sp" />
 
 </LinearLayout>
