@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.NetIO.Aria2.DownloadWithUpdate;
+import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
 
@@ -180,7 +180,8 @@ public class CustomDownloadInfo extends FlowLayout {
         public void setText(String text) {
             SuperTextView textView = (SuperTextView) getChildAt(1);
             if (textView == null) {
-                textView = new SuperTextView(getContext(), text);
+                textView = SuperTextView.text(getContext(), text);
+                textView.setTextColor(Color.WHITE);
                 textView.setPaddingRelative(0, 0, dp16 / 2, 0);
                 addView(textView);
                 return;

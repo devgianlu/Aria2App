@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorAppDark">#3d3c3b</color>
+    <color name="colorAppBright">#ff5722</color>
+    <color name="colorAppBrightVariant">#cc451b</color>
+
+    <!-- Theme colors -->
     <color name="colorPrimary">#3d3c3b</color>
-    <color name="colorPrimaryDark">#282726</color>
+    <color name="colorPrimaryVariant">#282726</color>
+    <color name="colorOnPrimary">#ffffff</color>
 
-    <color name="colorAccent_pressed">#cc451b</color>
-    <color name="colorAccent">#ff5722</color>
-    <color name="colorAccent_light">#ff784e</color>
-    <color name="colorAccent_translucent">#40ff5722</color>
+    <color name="colorSecondary">#ff5722</color>
+    <color name="colorSecondaryVariant">#cc451b</color>
+    <color name="colorOnSecondary">#ffffff</color>
 
+    <!-- Variant colors -->
     <color name="colorSearch">#795548</color>
-    <color name="colorSearch_pressed">#4e342e</color>
+    <color name="colorSearchVariant">#4e342e</color>
     <color name="colorTorrent">#66bb6a</color>
-    <color name="colorTorrent_pressed">#2e7d32</color>
+    <color name="colorTorrentVariant">#2e7d32</color>
     <color name="colorMetalink">#5e35b1</color>
-    <color name="colorMetalink_pressed">#311b92</color>
-    <color name="colorURI">#666666</color>
-    <color name="colorURI_pressed">#323232</color>
+    <color name="colorMetalinkVariant">#311b92</color>
+    <color name="colorUri">#666666</color>
+    <color name="colorUriVariant">#323232</color>
     <color name="colorBatch">#FDD835</color>
-    <color name="colorBatch_pressed">#F9A825</color>
+    <color name="colorBatchVariant">#F9A825</color>
     <color name="colorWebView">#2196f3</color>
-    <color name="colorWebView_pressed">#0c7cd5</color>
+    <color name="colorWebViewPressed">#0c7cd5</color>
 
     <color name="downloadColor">#ffc107</color>
     <color name="uploadColor">#009688</color>

@@ -245,10 +245,11 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/announceList"
+                            android:textColor="?colorOnSurface"
                             android:textStyle="bold" />
 
                         <ImageButton
@@ -273,7 +274,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.gianlu.aria2app.Adapters.BitfieldVisualizer
+            <com.gianlu.aria2app.adapters.BitfieldVisualizer
                 android:id="@+id/infoFragment_bitfield"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

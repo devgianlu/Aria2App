@@ -7,9 +7,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingEnd="24dp"
         android:paddingStart="24dp"
-        android:paddingTop="24dp">
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp">
 
         <ProgressBar
             android:id="@+id/aboutAria2Dialog_loading"
@@ -37,7 +37,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
     </FrameLayout>
 
     <LinearLayout
@@ -49,18 +48,16 @@
 
         <Button
             android:id="@+id/aboutAria2Dialog_saveSession"
-            style="?android:borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/saveSession" />
 
         <Button
             android:id="@+id/aboutAria2Dialog_ok"
-            style="?android:borderlessButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@android:string/ok" />
-
     </LinearLayout>
-
 </LinearLayout>

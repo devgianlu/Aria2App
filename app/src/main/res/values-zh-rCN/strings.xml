@@ -50,7 +50,6 @@
     <string name="announceList">Tracker列表</string>
     <string name="port">端口</string>
     <string name="endpoint">端点</string>
-    <string name="authenticationMethod">身份验证方法</string>
     <string name="token">令牌</string>
     <string name="authentication">验证</string>
     <string name="pickFromFile">从文件中选择</string>
@@ -99,7 +98,6 @@
     <string name="status">状态</string>
     <string name="totalLengthLabel">总长度</string>
     <string name="progress">进度</string>
-    <string name="connectionMethod">连接方法</string>
     <string name="addMetalink">添加元链接</string>
     <string name="addTorrent">添加种子文件</string>
     <string name="fatalExceptionMessage">出现致命异常！</string>
@@ -110,7 +108,6 @@
     <string name="endpointEmpty">端点字段为空！</string>
     <string name="invalidCertificate">证书无效！</string>
     <string name="invalidCompleteAddress">不能用这些设置创建地址！</string>
-    <string name="usernameAndPassword">用户名和密码</string>
     <string name="emptyToken">令牌字段为空！</string>
     <string name="emptyPassword">密码字段为空！</string>
     <string name="emptyUsername">用户名字段为空！</string>
@@ -158,21 +155,15 @@
     <string name="certDisclaimer">如果您的服务器已被此系统信任（通常是您安装了证书或证书由受信任的来源签名），则不需要证书</string>
     <string name="test">测试</string>
     <string name="test_help">按下测试按钮，Aria2App将检查您的配置并帮助您诊断网络问题。要获得进一步的帮助，请通过altomanigianluca@gmail.com与我联系。</string>
-    <string name="peerDetails">Peer详情</string>
-    <string name="peerDetails_desc">点击该项目以显示有关Peer的详细信息。</string>
-    <string name="serverDetails">服务器详情</string>
-    <string name="serverDetails_desc">点击该项目以显示有关服务器的详细信息。</string>
-    <string name="search_desc">按名称或GID筛选下载</string>
-    <string name="filters_desc">按状态筛选下载</string>
-    <string name="moreDetails">更多详细信息</string>
+    <string name="tutorial_peerDetails">点击该项目以显示有关Peer的详细信息。</string>
+    <string name="tutorial_serverDetails">点击该项目以显示有关服务器的详细信息。</string>
+    <string name="tutorial_search">按名称或GID筛选下载</string>
+    <string name="tutorial_filters">按状态筛选下载</string>
     <string name="completedLengthLabel">完成长度</string>
-    <string name="evenMoreDetails">全部详细信息</string>
-    <string name="evenMoreDetails_desc">点击“更多”按钮来显示所有详细信息。</string>
-    <string name="moreDetails_desc">点击卡片显示更多详细信息</string>
-    <string name="fileDetails">文件详情</string>
-    <string name="fileDetails_desc">点按文件以显示详细信息，或选择下载此文件</string>
-    <string name="folderDetails">文件夹详情</string>
-    <string name="folderDetails_desc">长按文件夹名称以显示详细信息，或选择下载此文件夹</string>
+    <string name="tutorial_evenMoreDetails">点击“更多”按钮来显示所有详细信息。</string>
+    <string name="tutorial_moreDetails">点击卡片显示更多详细信息</string>
+    <string name="tutorial_fileDetails">点按文件以显示详细信息，或选择下载此文件</string>
+    <string name="tutorial_folderDetails">长按文件夹名称以显示详细信息，或选择下载此文件夹</string>
     <string name="filename">文件名：</string>
     <string name="filename_help" tools:ignore="TypographyDashes">下载文件的文件名。可留空让Aria2自行生成。 本信息将替换--out参数的内容.</string>
     <string name="sessionSaved">会话已正确保存。</string>
@@ -316,8 +307,6 @@
     <string name="noDownloads_addOne">没有下载任务。请点击屏幕右下角的加号图标添加下载任务。</string>
     <string name="noDownloads_changeFilters">没有可显示的下载任务。请尝试更改筛选条件。</string>
     <string name="filtersShowingOnly">仅显示%s (%d)</string>
-    <string name="cannotDeleteBin">无法删除二进制文件！请清除本应用的数据。</string>
-    <string name="changeBinVersion_message">您确定您要更改二进制文件版本？</string>
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
@@ -355,5 +344,4 @@
     <string name="failedExportingProfiles">导出配置文件失败！</string>
     <string name="profilesImportedSuccessfully">成功导入配置文件。</string>
     <string name="profilesExportedSuccessfully">配置文件已成功导出到%s。</string>
-    <string name="changeBinVersion">更改二进制文件版本</string>
 </resources>

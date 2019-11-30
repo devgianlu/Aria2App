@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="BigTabLayout">
+    <style name="BigTabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
         <item name="tabMode">fixed</item>
     </style>
 </resources>

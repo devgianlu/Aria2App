@@ -103,7 +103,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <com.gianlu.aria2app.Options.OptionsView
+        <com.gianlu.aria2app.options.OptionsView
             android:id="@+id/optionsFragment_options"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

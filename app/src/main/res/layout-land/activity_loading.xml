@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:indeterminateTint="@color/colorAccent" />
+                android:indeterminateTint="@color/colorSecondary" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -72,8 +72,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="@string/pickProfile"
                 android:textAlignment="center"
                 android:textColor="@color/white" />
@@ -94,8 +94,9 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/addProfile"
                 android:src="@drawable/baseline_add_circle_24"
-                android:tint="@color/bright_foreground_dark" />
+                android:tint="@color/white" />
         </LinearLayout>
 
         <View

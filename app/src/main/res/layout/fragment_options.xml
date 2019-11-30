@@ -82,7 +82,7 @@
             android:text="@string/startPaused" />
     </LinearLayout>
 
-    <com.gianlu.aria2app.Options.OptionsView
+    <com.gianlu.aria2app.options.OptionsView
         android:id="@+id/optionsFragment_options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
