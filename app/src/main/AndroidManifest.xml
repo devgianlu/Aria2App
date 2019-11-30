@@ -851,6 +851,11 @@
             android:theme="@style/AppTheme.FullBlackNight"
             android:windowSoftInputMode="stateHidden" />
 
+        <!-- In-App downloader custom options activity -->
+        <activity
+            android:name="com.gianlu.aria2lib.ui.ConfigEditorActivity"
+            android:theme="@style/AppTheme.FullBlackNight" />
+
         <!-- DirectDownload activity -->
         <activity
             android:name=".activities.DirectDownloadActivity"
