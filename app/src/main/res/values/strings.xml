@@ -42,7 +42,6 @@
     <string name="failedExportingProfiles">Failed exporting profiles file!</string>
     <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
     <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
-    <string name="changeBinVersion">Change bin version</string>
     <string name="userPasswd">User - passwd</string>
 
     <!-- General -->
@@ -96,7 +95,6 @@
     <string name="announceList">Announce list</string>
     <string name="port">Port</string>
     <string name="endpoint">Endpoint</string>
-    <string name="authenticationMethod">Authentication method</string>
     <string name="token">Token</string>
     <string name="authentication">Authentication</string>
     <string name="pickFromFile">Pick from file</string>
@@ -145,7 +143,6 @@
     <string name="status">Status</string>
     <string name="totalLengthLabel">Total length</string>
     <string name="progress">Progress</string>
-    <string name="connectionMethod">Connection method</string>
     <string name="addMetalink">Add Metalink</string>
     <string name="addTorrent">Add Torrent</string>
     <string name="fatalExceptionMessage">A fatal exception has been thrown!</string>
@@ -158,7 +155,6 @@
     <string name="endpointEmpty">The endpoint field is empty!</string>
     <string name="invalidCertificate">Invalid certificate!</string>
     <string name="invalidCompleteAddress">An address cannot be created with these settings!</string>
-    <string name="usernameAndPassword">Username and password</string>
     <string name="emptyToken">The token field is empty!</string>
     <string name="emptyPassword">The password field is empty!</string>
     <string name="emptyUsername">The username field is empty!</string>
@@ -351,6 +347,4 @@
     <string name="noDownloads_addOne">There are no downloads! You can add one by tapping the plus icon in the bottom right corner.</string>
     <string name="noDownloads_changeFilters">There are no downloads to display! Try changing your filters.</string>
     <string name="filtersShowingOnly">Showing only %s (%d)</string>
-    <string name="cannotDeleteBin">Can\'t delete the bin file! Please clear application data.</string>
-    <string name="changeBinVersion_message">Are you sure you want to change the bin version?</string>
 </resources>

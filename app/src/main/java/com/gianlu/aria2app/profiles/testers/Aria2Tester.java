@@ -26,7 +26,7 @@ class Aria2Tester extends BaseTester<Boolean> {
             publishMessage("Your token or username and password may be wrong", Level.ERROR);
     }
 
-    @Nullable
+    @NonNull
     private <O> Object runRequest(@NonNull AbstractClient.AriaRequestWithResult<O> request, @NonNull Aria2Helper helper) {
         final AtomicReference<Object> lock = new AtomicReference<>(null);
         helper.request(request, new AbstractClient.OnResult<O>() {

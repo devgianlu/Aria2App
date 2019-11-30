@@ -134,7 +134,7 @@ public class ProfilesManager {
     }
 
     public boolean hasProfiles() {
-        return getProfileIds().length > 0 || true; // In-App Downloader is always available
+        return true; // In-App Downloader is always available
     }
 
     public boolean hasNotificationProfiles(@NonNull Context context) {

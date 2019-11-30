@@ -40,16 +40,16 @@ import javax.security.auth.x500.X500Principal;
 
 public class CertificateInputView extends LinearLayout {
     public static final int CODE_PICK_CERT = 13;
-    private LinearLayout detailsContainer;
-    private CheckBox hostnameVerifier;
-    private SuperTextView detailsVersion;
-    private SuperTextView detailsSerialNumber;
-    private SuperTextView detailsSigAlgName;
-    private SuperTextView detailsSigAlgOid;
-    private SuperTextView detailsIssuerName;
-    private SuperTextView detailsIssuerAns;
-    private SuperTextView detailsSubjectAns;
-    private SuperTextView detailsSubjectName;
+    private final LinearLayout detailsContainer;
+    private final CheckBox hostnameVerifier;
+    private final SuperTextView detailsVersion;
+    private final SuperTextView detailsSerialNumber;
+    private final SuperTextView detailsSigAlgName;
+    private final SuperTextView detailsSigAlgOid;
+    private final SuperTextView detailsIssuerName;
+    private final SuperTextView detailsIssuerAns;
+    private final SuperTextView detailsSubjectAns;
+    private final SuperTextView detailsSubjectName;
     private X509Certificate lastLoadedCertificate;
     private ActivityProvider activityProvider;
 

@@ -2,10 +2,14 @@ package com.gianlu.aria2app.api.aria2;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.ClientInterface;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONException;
@@ -19,10 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 
 public class Download {
     public final String gid;
@@ -158,14 +158,14 @@ public class Download {
         return client.get();
     }
 
-    private <R> void clientBatch(AbstractClient.BatchSandbox<R> sandbox, AbstractClient.OnResult<R> listener) {
+    private <Result> void clientBatch(AbstractClient.BatchSandbox<Result> sandbox, AbstractClient.OnResult<Result> listener) {
         ClientInterface client = client();
         if (client == null)
             listener.onException(new IllegalStateException("Client has been garbage collected."));
         else client.batch(sandbox, listener);
     }
 
-    private <R> void clientSend(@NonNull AbstractClient.AriaRequestWithResult<R> request, AbstractClient.OnResult<R> listener) {
+    private <Result> void clientSend(@NonNull AbstractClient.AriaRequestWithResult<Result> request, AbstractClient.OnResult<Result> listener) {
         ClientInterface client = client();
         if (client == null)
             listener.onException(new IllegalStateException("Client has been garbage collected."));

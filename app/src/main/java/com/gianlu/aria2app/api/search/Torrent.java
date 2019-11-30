@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.api.search;
 
+import com.gianlu.commonutils.CommonUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +18,7 @@ public class Torrent {
         engineId = obj.getString("engine");
         title = obj.getString("title");
         magnet = obj.getString("magnet");
-        torrentFileUrl = obj.optString("torrent", null);
+        torrentFileUrl = CommonUtils.optString(obj, "torrent");
         size = obj.getLong("size");
         seeders = obj.getInt("seeders");
         leeches = obj.getInt("leeches");

@@ -10,8 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
-import com.gianlu.aria2app.api.StatusCodeException;
 import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.api.StatusCodeException;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.lifecycle.LifecycleAwareHandler;
 import com.gianlu.commonutils.lifecycle.LifecycleAwareRunnable;
@@ -106,7 +106,7 @@ public final class SearchApi {
                     for (int i = 0; i < missingEnginesArray.length(); i++)
                         missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
 
-                    String newToken = obj.optString("token", null);
+                    String newToken = CommonUtils.optString(obj, "token");
                     post(() -> listener.onResult(results, missingEngines, newToken));
                 } catch (IOException | StatusCodeException | JSONException ex) {
                     post(() -> listener.onException(ex));

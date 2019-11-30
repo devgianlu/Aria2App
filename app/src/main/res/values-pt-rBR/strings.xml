@@ -46,11 +46,10 @@
     <string name="peers">Pares</string>
     <string name="servers">Servidores</string>
     <string name="addProfile">Adicionar perfil</string>
-    <string name="home">Inicio</string>
+    <string name="home">Início</string>
     <string name="announceList">Anunciar lista</string>
     <string name="port">Porta</string>
     <string name="endpoint">Ponto final</string>
-    <string name="authenticationMethod">Método de autenticação</string>
     <string name="token">Símbolo</string>
     <string name="authentication">Autenticação</string>
     <string name="pickFromFile">Escolha do arquivo</string>
@@ -99,7 +98,6 @@
     <string name="status">Estado</string>
     <string name="totalLengthLabel">Tamanho total</string>
     <string name="progress">Progresso</string>
-    <string name="connectionMethod">Método de conexão</string>
     <string name="addMetalink">Adicionar Metalink</string>
     <string name="addTorrent">Adicionar Torrent</string>
     <string name="fatalExceptionMessage">Uma exceção fatal foi lançada!</string>
@@ -110,7 +108,6 @@
     <string name="endpointEmpty">O campo do terminal está vazio!</string>
     <string name="invalidCertificate">Certificado inválido!</string>
     <string name="invalidCompleteAddress">Um endereço não pode ser criado com essas configurações!</string>
-    <string name="usernameAndPassword">Usuário e senha</string>
     <string name="emptyToken">O campo do token está vazio!</string>
     <string name="emptyPassword">O campo da senha está vazio!</string>
     <string name="emptyUsername">O campo de nome de usuário está vazio!</string>
@@ -310,8 +307,7 @@
     <string name="noDownloads_addOne">Não há downloads! Você pode adicionar um tocando no ícone de adição no canto inferior direito.</string>
     <string name="noDownloads_changeFilters">Não há downloads para exibir! Tente alterar seus filtros.</string>
     <string name="filtersShowingOnly">Mostrando apenas %s (%d)</string>
-    <string name="cannotDeleteBin">Não é possível excluir o arquivo bin! Limpe os dados do aplicativo.</string>
-    <string name="changeBinVersion_message">Tem certeza de que deseja alterar a versão do depósito?</string>
+
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">Ocultar metadados vinculados</string>
@@ -349,5 +345,4 @@
     <string name="failedExportingProfiles">Falha ao exportar arquivo de perfis!</string>
     <string name="profilesImportedSuccessfully">Perfis importados com sucesso.</string>
     <string name="profilesExportedSuccessfully">Perfis exportados com sucesso para %s.</string>
-    <string name="changeBinVersion">Alterar versão da posição</string>
 </resources>

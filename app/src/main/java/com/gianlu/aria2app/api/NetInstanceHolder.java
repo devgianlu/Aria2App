@@ -14,7 +14,7 @@ import com.gianlu.commonutils.logging.Logging;
 import java.util.Objects;
 
 public final class NetInstanceHolder {
-    private static NetInstanceHolder instance = new NetInstanceHolder();
+    private static final NetInstanceHolder instance = new NetInstanceHolder();
     private final Reference reference = new Reference();
     private AbstractClient current;
 

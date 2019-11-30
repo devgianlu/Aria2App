@@ -50,7 +50,6 @@
     <string name="announceList">Tracker 列表</string>
     <string name="port">Port</string>
     <string name="endpoint">Endpoint</string>
-    <string name="authenticationMethod">身份驗證方法</string>
     <string name="token">Token</string>
     <string name="authentication">驗證</string>
     <string name="pickFromFile">從檔案中選擇</string>
@@ -99,7 +98,6 @@
     <string name="status">狀態</string>
     <string name="totalLengthLabel">總大小</string>
     <string name="progress">進度</string>
-    <string name="connectionMethod">連接方法</string>
     <string name="addMetalink">新增 Metalink</string>
     <string name="addTorrent">新增種子檔案</string>
     <string name="fatalExceptionMessage">出現致命異常!</string>
@@ -110,7 +108,6 @@
     <string name="endpointEmpty">Endpoint 為空!</string>
     <string name="invalidCertificate">證書無效!</string>
     <string name="invalidCompleteAddress">這些設定無法新增網址!</string>
-    <string name="usernameAndPassword">帳號和密碼</string>
     <string name="emptyToken">Token 為空!</string>
     <string name="emptyPassword">密碼為空!</string>
     <string name="emptyUsername">帳號為空!</string>
@@ -310,8 +307,6 @@
     <string name="noDownloads_addOne">There are no downloads! You can add one by tapping the plus icon in the bottom right corner.</string>
     <string name="noDownloads_changeFilters">There are no downloads to display! Try changing your filters.</string>
     <string name="filtersShowingOnly">Showing only %s (%d)</string>
-    <string name="cannotDeleteBin">Can\'t delete the bin file! Please clear application data.</string>
-    <string name="changeBinVersion_message">Are you sure you want to change the bin version?</string>
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隱藏連結 Metadata</string>
@@ -349,5 +344,4 @@
     <string name="failedExportingProfiles">Failed exporting profiles file!</string>
     <string name="profilesImportedSuccessfully">Imported profiles successfully.</string>
     <string name="profilesExportedSuccessfully">Exported profiles successfully to %s.</string>
-    <string name="changeBinVersion">Change bin version</string>
 </resources>

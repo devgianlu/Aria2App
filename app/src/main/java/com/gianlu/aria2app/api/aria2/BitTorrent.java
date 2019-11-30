@@ -3,6 +3,8 @@ package com.gianlu.aria2app.api.aria2;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.commonutils.CommonUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,19 +18,19 @@ public class BitTorrent {
     public final long creationDate;
     public final String name;
 
-    private BitTorrent(@NonNull JSONObject obj) {
-        comment = obj.optString("comment", null);
+    private BitTorrent(@NonNull JSONObject obj) throws JSONException {
+        comment = CommonUtils.optString(obj, "comment");
         creationDate = obj.optInt("creationDate", -1);
         mode = Mode.parse(obj.optString("mode"));
         announceList = new ArrayList<>();
 
         if (obj.has("announceList")) {
-            JSONArray array = obj.optJSONArray("announceList");
+            JSONArray array = obj.getJSONArray("announceList");
             for (int i = 0; i < array.length(); i++)
-                announceList.add(obj.optJSONArray("announceList").optJSONArray(i).optString(0));
+                announceList.add(array.optJSONArray(i).optString(0));
         }
 
-        if (obj.has("info")) name = obj.optJSONObject("info").optString("name");
+        if (obj.has("info")) name = CommonUtils.optString(obj.getJSONObject("info"), "name");
         else name = null;
     }
 

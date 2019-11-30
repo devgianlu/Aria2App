@@ -103,7 +103,7 @@ public class HttpClient extends AbstractClient {
             ResponseBody body = resp.body();
             if (body != null) {
                 String json = body.string();
-                if (json == null || json.isEmpty()) {
+                if (json.isEmpty()) {
                     throw new IOException("Empty response");
                 } else {
                     JSONObject obj = new JSONObject(json);

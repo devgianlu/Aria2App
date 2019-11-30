@@ -1,12 +1,14 @@
 package com.gianlu.aria2app.api.geolocalization;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.gianlu.commonutils.CommonUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class IPDetails {
     public final String countryCode;
@@ -29,7 +31,7 @@ public class IPDetails {
 
     @Nullable
     private static String parseStupidNull(@NonNull JSONObject obj, @NonNull String key) {
-        String str = obj.optString(key, null);
+        String str = CommonUtils.optString(obj, key);
         if (Objects.equals(str, "null")) return null;
         else return str;
     }

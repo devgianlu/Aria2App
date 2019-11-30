@@ -7,8 +7,8 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.OnRefresh;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.commonutils.dialogs.FragmentWithDialog;
 
 public abstract class UpdaterFragment<P> extends FragmentWithDialog implements Receiver<P>, ReceiverOwner {
@@ -16,6 +16,12 @@ public abstract class UpdaterFragment<P> extends FragmentWithDialog implements R
     private PayloadProvider<P> provider;
     private Wants<P> wants;
     private UpdaterFramework framework;
+
+    @NonNull
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 
     @Override
     public final void onLoad(@NonNull P payload) {

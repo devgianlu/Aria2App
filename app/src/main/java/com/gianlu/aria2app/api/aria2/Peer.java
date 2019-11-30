@@ -3,6 +3,7 @@ package com.gianlu.aria2app.api.aria2;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.api.PeerIdParser;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.Filterable;
 import com.gianlu.commonutils.adapters.NotFilterable;
 import com.gianlu.commonutils.logging.Logging;
@@ -24,10 +25,10 @@ public class Peer implements Filterable<NotFilterable> {
     private final String peerId;
 
     public Peer(JSONObject obj) {
-        peerId = obj.optString("peerId", null);
-        ip = obj.optString("ip", null);
+        peerId = CommonUtils.optString(obj, "peerId");
+        ip = CommonUtils.optString(obj, "ip");
         port = obj.optInt("port", -1);
-        bitfield = obj.optString("bitfield", null);
+        bitfield = CommonUtils.optString(obj, "bitfield");
         amChoking = obj.optBoolean("amChoking", false);
         peerChoking = obj.optBoolean("peerChoking", false);
         downloadSpeed = obj.optInt("downloadSpeed", 0);

@@ -7,6 +7,7 @@ import androidx.annotation.WorkerThread;
 
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.profiles.MultiProfile;
+import com.gianlu.commonutils.CommonUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,6 +102,7 @@ public class WebSocketClient extends AbstractClient {
         requests.put(id, internal);
         webSocket.get().send(request.toString());
 
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (internal) {
             internal.wait(5000);
         }
@@ -152,7 +154,7 @@ public class WebSocketClient extends AbstractClient {
             try {
                 JSONObject response = new JSONObject(text);
 
-                String method = response.optString("method", null);
+                String method = CommonUtils.optString(response, "method");
                 if (method != null && method.startsWith("aria2.on")) return;
 
                 InternalResponse internal = requests.get(Long.parseLong(response.getString("id")));

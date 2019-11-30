@@ -8,6 +8,7 @@ import androidx.annotation.StyleRes;
 
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.ClientInterface;
+import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.Filterable;
 import com.gianlu.commonutils.logging.Logging;
 
@@ -149,7 +150,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
             super(obj);
 
             // Optional
-            bitfield = obj.optString("bitfield", null);
+            bitfield = CommonUtils.optString(obj, "bitfield");
             verifiedLength = obj.optLong("verifiedLength", 0);
             verifyIntegrityPending = obj.optBoolean("verifyIntegrityPending", false);
 
@@ -209,9 +210,9 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
             files = new AriaFiles(obj.getJSONArray("files"));
 
             // Optional
-            followedBy = obj.optString("followedBy", null);
-            following = obj.optString("following", null);
-            belongsTo = obj.optString("belongsTo", null);
+            followedBy = CommonUtils.optString(obj, "followedBy");
+            following = CommonUtils.optString(obj, "following");
+            belongsTo = CommonUtils.optString(obj, "belongsTo");
 
 
             if (isTorrent()) numSeeders = obj.getInt("numSeeders");
@@ -219,7 +220,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
 
             if (obj.has("errorCode")) {
                 errorCode = obj.getInt("errorCode");
-                errorMessage = obj.optString("errorMessage", null);
+                errorMessage = CommonUtils.optString(obj, "errorMessage");
             } else {
                 errorCode = -1;
                 errorMessage = null;

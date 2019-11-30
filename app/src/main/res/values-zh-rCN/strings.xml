@@ -50,7 +50,6 @@
     <string name="announceList">Tracker列表</string>
     <string name="port">端口</string>
     <string name="endpoint">端点</string>
-    <string name="authenticationMethod">身份验证方法</string>
     <string name="token">令牌</string>
     <string name="authentication">验证</string>
     <string name="pickFromFile">从文件中选择</string>
@@ -99,7 +98,6 @@
     <string name="status">状态</string>
     <string name="totalLengthLabel">总长度</string>
     <string name="progress">进度</string>
-    <string name="connectionMethod">连接方法</string>
     <string name="addMetalink">添加元链接</string>
     <string name="addTorrent">添加种子文件</string>
     <string name="fatalExceptionMessage">出现致命异常！</string>
@@ -110,7 +108,6 @@
     <string name="endpointEmpty">端点字段为空！</string>
     <string name="invalidCertificate">证书无效！</string>
     <string name="invalidCompleteAddress">不能用这些设置创建地址！</string>
-    <string name="usernameAndPassword">用户名和密码</string>
     <string name="emptyToken">令牌字段为空！</string>
     <string name="emptyPassword">密码字段为空！</string>
     <string name="emptyUsername">用户名字段为空！</string>
@@ -310,8 +307,6 @@
     <string name="noDownloads_addOne">没有下载任务。请点击屏幕右下角的加号图标添加下载任务。</string>
     <string name="noDownloads_changeFilters">没有可显示的下载任务。请尝试更改筛选条件。</string>
     <string name="filtersShowingOnly">仅显示%s (%d)</string>
-    <string name="cannotDeleteBin">无法删除二进制文件！请清除本应用的数据。</string>
-    <string name="changeBinVersion_message">您确定您要更改二进制文件版本？</string>
     <!-- Prefs -->
     <!-- - General -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
@@ -349,5 +344,4 @@
     <string name="failedExportingProfiles">导出配置文件失败！</string>
     <string name="profilesImportedSuccessfully">成功导入配置文件。</string>
     <string name="profilesExportedSuccessfully">配置文件已成功导出到%s。</string>
-    <string name="changeBinVersion">更改二进制文件版本</string>
 </resources>

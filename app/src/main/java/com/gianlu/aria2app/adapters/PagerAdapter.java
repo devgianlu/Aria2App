@@ -14,13 +14,13 @@ public class PagerAdapter<F extends Fragment> extends FragmentPagerAdapter {
     private final List<F> fragments;
 
     public PagerAdapter(FragmentManager fm, List<F> fragments) {
-        super(fm);
+        super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fragments = fragments;
     }
 
     @SafeVarargs
     public PagerAdapter(FragmentManager fm, F... fragments) {
-        super(fm);
+        super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.fragments = Arrays.asList(fragments);
     }
 

@@ -33,12 +33,12 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.gianlu.aria2app.LoadingActivity;
-import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.ThisApplication;
+import com.gianlu.aria2app.api.NetUtils;
+import com.gianlu.aria2app.profiles.MultiProfile;
+import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.logging.Logging;
@@ -374,7 +374,7 @@ public class NotificationService extends Service {
 
     private void notifyException(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
         Logging.log(ex);
-        notifyError(profile, getString(R.string.notificationException, profile.getPrimaryText(this)), ex.getMessage());
+        notifyError(profile, getString(R.string.notificationException, profile.getPrimaryText(this)), ex.getMessage() == null ? "" : ex.getMessage());
     }
 
     private void recreateWebsockets(int networkType) {

@@ -10,14 +10,14 @@ import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2app.activities.editprofile.AuthenticationFragment;
 import com.gianlu.aria2app.activities.editprofile.ConnectionFragment;
 import com.gianlu.aria2app.activities.editprofile.DirectDownloadFragment;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.CertUtils;
 import com.gianlu.aria2app.api.NetUtils;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2PK;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.drawer.BaseDrawerProfile;
@@ -430,12 +430,12 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         public DirectDownload(JSONObject obj) throws JSONException {
             address = obj.getString("addr");
             auth = obj.getBoolean("auth");
-            username = obj.optString("username", null);
-            password = obj.optString("password", null);
+            username = CommonUtils.optString(obj, "username");
+            password = CommonUtils.optString(obj, "password");
             hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
             serverSsl = obj.optBoolean("serverSsl", false);
 
-            String base64 = obj.optString("certificate", null);
+            String base64 = CommonUtils.optString(obj, "certificate");
             if (base64 == null) certificate = null;
             else certificate = CertUtils.decodeCertificate(base64);
         }
@@ -537,9 +537,9 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             else
                 authMethod = AbstractClient.AuthMethod.valueOf(obj.optString("authMethod", "NONE"));
 
-            serverUsername = obj.optString("serverUsername", null);
-            serverPassword = obj.optString("serverPassword", null);
-            serverToken = obj.optString("serverToken", null);
+            serverUsername = CommonUtils.optString(obj, "serverUsername");
+            serverPassword = CommonUtils.optString(obj, "serverPassword");
+            serverToken = CommonUtils.optString(obj, "serverToken");
             serverSsl = obj.optBoolean("serverSsl", false);
 
             serverAddr = obj.getString("serverAddr");
@@ -564,7 +564,7 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             }
 
             if (obj.isNull("certificatePath")) {
-                String base64 = obj.optString("certificate", null);
+                String base64 = CommonUtils.optString(obj, "certificate");
                 if (base64 == null) certificate = null;
                 else certificate = CertUtils.decodeCertificate(base64);
             } else {

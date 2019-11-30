@@ -184,6 +184,8 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                     case REQUEST_TORRENT:
                     case REQUEST_METALINK:
                         AddDownloadBundle bundle = (AddDownloadBundle) data.getSerializableExtra("bundle");
+                        if (bundle == null) return;
+
                         int pos = data.getIntExtra("pos", -1);
                         if (pos == -1) adapter.addItem(bundle);
                         else adapter.itemChanged(pos, bundle);
