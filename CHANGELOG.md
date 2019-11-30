@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.0] - 30-11-2019
+### Changed
+- Request legacy storage permissions (fix In-App Downloader permission denied)
+- Updated Material theme
+- Minor bug fixes
+
+
 ## [5.5.1] - 29-11-2019
 ### Changed
 - Fixed In-App Downloader not working on some devices
