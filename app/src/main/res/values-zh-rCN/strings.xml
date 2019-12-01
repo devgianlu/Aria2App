@@ -8,8 +8,8 @@
     <string name="tutorial_filters">按状态筛选下载</string>
     <string name="tutorial_fileDetails">点按文件以显示详细信息，或选择下载此文件</string>
     <string name="tutorial_folderDetails">长按文件夹名称以显示详细信息，或选择下载此文件夹</string>
-    <string name="tutorial_serverDetails">点击服务器显示详细信息</string>
-    <string name="tutorial_peerDetails">点击peer以显示有关详情</string>
+    <string name="tutorial_serverDetails">点击服务器显示相关详细信息</string>
+    <string name="tutorial_peerDetails">点击一个peer以显示有关详情</string>
     <!-- Prefs -->
     <string name="prefs_hideMetadata">隐藏链接元数据</string>
     <string name="prefs_hideMetadata_summary">隐藏后续会启动另一个下载的元数据。</string>
