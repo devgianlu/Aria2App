@@ -110,3 +110,5 @@ task printVersionName {
         println android.defaultConfig.versionName
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
