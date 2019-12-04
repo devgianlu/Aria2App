@@ -13,9 +13,9 @@ import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.gianlu.aria2app.NetIO.Downloader.FetchHelper;
-import com.gianlu.aria2app.ProfilesManager.ProfilesManager;
-import com.gianlu.aria2app.Services.NotificationService;
+import com.gianlu.aria2app.downloader.FetchHelper;
+import com.gianlu.aria2app.profiles.ProfilesManager;
+import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.preferences.BasePreferenceActivity;
 import com.gianlu.commonutils.preferences.BasePreferenceFragment;

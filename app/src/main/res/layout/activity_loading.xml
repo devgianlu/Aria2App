@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorAppDark"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingBottom="64dp">
@@ -21,7 +21,8 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher"
+            tools:ignore="ContentDescription" />
 
         <LinearLayout
             android:id="@+id/loading_connecting"
@@ -35,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:indeterminateTint="@color/colorAccent" />
+                android:indeterminateTint="@color/colorSecondary" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -43,7 +44,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/connecting"
                 android:textAlignment="center"
-                android:textColor="@color/bright_foreground_dark" />
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/loading_cancel"
@@ -74,7 +75,7 @@
                 android:paddingEnd="16dp"
                 android:text="@string/pickProfile"
                 android:textAlignment="center"
-                android:textColor=" @color/bright_foreground_dark" />
+                android:textColor="@color/white" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/loading_pickerList"
@@ -94,8 +95,9 @@
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/addProfile"
                 android:src="@drawable/baseline_add_circle_24"
-                android:tint="@color/bright_foreground_dark" />
+                android:tint="@color/white" />
         </LinearLayout>
 
         <View
@@ -114,7 +116,7 @@
 
         <Button
             android:id="@+id/loading_settings"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -122,7 +124,7 @@
 
         <Button
             android:id="@+id/loading_seeError"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/seeError"

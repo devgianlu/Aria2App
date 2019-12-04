@@ -2,58 +2,95 @@
 
     <style name="AppTheme" parent="BaseAppTheme" />
 
+    <style name="AppTheme.FullBlackNight" parent="AppTheme" />
+
     <!-- Force white -->
     <style name="ForceWhite">
-        <item name="android:tint">@color/bright_foreground_dark</item>
-        <item name="android:textColorPrimary">@color/bright_foreground_dark</item>
-        <item name="android:textColorSecondary">@color/dim_foreground_dark</item>
+        <item name="android:tint">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
+
+    <!-- Edit profile TextInputField -->
+    <style name="DarkTextInputLayout.OutlinedBox.Dense" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/text_field_stroke_on_dark</item>
+        <item name="endIconTint">@color/white</item>
+        <item name="errorTextColor">@color/red</item>
+        <item name="helperTextTextColor">@color/white</item>
+        <item name="hintTextColor">@color/colorSecondary</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <!-- Edit profile CheckBox -->
+    <style name="DarkCheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox" />
 
     <!-- App theme variants -->
-    <style name="AppTheme.NoActionBar.URI" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorAccentRef">@color/colorAccent</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    <style name="AppTheme.NoActionBar.Uri" parent="AppTheme.NoActionBar" />
+
+    <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorTorrent</item>
+        <item name="colorPrimaryVariant">@color/colorTorrentVariant</item>
+        <item name="colorSecondary">@color/colorTorrent</item>
+        <item name="colorSecondaryVariant">@color/colorTorrentVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorTorrentVariant</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.Torrent" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorTorrent_pressed</item>
-        <item name="colorAccentRef">@color/colorTorrent_pressed</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="windowActionModeOverlay">true</item>
+    <style name="AppTheme.NoActionBar.Metalink" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorMetalink</item>
+        <item name="colorPrimaryVariant">@color/colorMetalinkVariant</item>
+        <item name="colorSecondary">@color/colorMetalink</item>
+        <item name="colorSecondaryVariant">@color/colorMetalinkVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorMetalinkVariant</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.Metalink" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorAccent">@color/colorMetalink_pressed</item>
-        <item name="colorAccentRef">@color/colorMetalink_pressed</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+    <style name="AppTheme.NoActionBar.WebView" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorWebView</item>
+        <item name="colorPrimaryVariant">@color/colorWebViewPressed</item>
+        <item name="colorSecondary">@color/colorWebView</item>
+        <item name="colorSecondaryVariant">@color/colorWebViewPressed</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorWebViewPressed</item>
     </style>
 
-    <style name="AppTheme.Batch" parent="AppTheme">
-        <item name="colorAccent">@color/colorBatch_pressed</item>
-        <item name="colorAccentRef">@color/colorBatch_pressed</item>
+    <style name="AppTheme.Batch" parent="AppTheme.Batch.Default" />
+
+    <style name="AppTheme.Batch.Default" parent="AppTheme">
+        <item name="colorPrimary">@color/colorBatch</item>
+        <item name="colorPrimaryVariant">@color/colorBatchVariant</item>
+        <item name="colorSecondary">@color/colorBatch</item>
+        <item name="colorSecondaryVariant">@color/colorBatchVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorBatchVariant</item>
+    </style>
+
+    <style name="AppTheme.Search" parent="AppTheme.Search.Default" />
+
+    <style name="AppTheme.Search.Default" parent="AppTheme">
+        <item name="colorPrimary">@color/colorSearch</item>
+        <item name="colorPrimaryVariant">@color/colorSearchVariant</item>
+        <item name="colorSecondary">@color/colorSearch</item>
+        <item name="colorSecondaryVariant">@color/colorSearchVariant</item>
+        <item name="colorOnPrimary">#fff</item>
+        <item name="colorOnSecondary">#fff</item>
+        <item name="android:statusBarColor">@color/colorSearchVariant</item>
     </style>
 
     <!-- Fab label style -->
     <style name="FabLabel">
         <item name="android:background">@drawable/fab_label_layout</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">?colorSurface</item>
     </style>
 
-    <!-- ?? -->
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
-
     <!-- Big layout tabbing -->
-    <style name="BigTabLayout">
+    <style name="BigTabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
         <item name="tabMode">scrollable</item>
     </style>
 
