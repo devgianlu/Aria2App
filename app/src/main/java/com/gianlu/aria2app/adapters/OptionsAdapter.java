@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,8 +18,10 @@ import com.gianlu.aria2app.options.OptionsManager;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
+import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.preferences.Prefs;
+import com.gianlu.commonutils.ui.Toaster;
 
 import org.json.JSONException;
 
@@ -127,7 +130,13 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             if (newIndex != -1) notifyItemMoved(oldIndex, newIndex);
         });
 
-        holder.info.setOnClickListener(v -> v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name))));
+        holder.info.setOnClickListener(v -> {
+            try {
+                v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name)));
+            } catch (ActivityNotFoundException ex) {
+                DialogUtils.showToast(v.getContext(), Toaster.build().message(R.string.missingWebBrowser).ex(ex));
+            }
+       });
     }
 
     @Override
