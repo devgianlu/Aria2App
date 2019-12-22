@@ -141,6 +141,12 @@ public class WebViewActivity extends ActivityWithDialog {
         settings.setJavaScriptEnabled(true);
         settings.setUserAgentString(settings.getUserAgentString() + " " + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR);
 
+        settings.setAllowFileAccess(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setAppCacheEnabled(true);
+        settings.setAppCachePath(getCacheDir().getAbsolutePath());
+
         client = new OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build();
         web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             synchronized (interceptedRequests) {
