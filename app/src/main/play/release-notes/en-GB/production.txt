@@ -1,4 +1,4 @@
 ### Changed
-- Request legacy storage permissions (fix In-App Downloader permission denied)
-- Updated Material theme
-- Minor bug fixes
+- Migrated to Firebase (Google Play users only)
+- Fixed some crashes
+- Improved WebView stability by enabling more features

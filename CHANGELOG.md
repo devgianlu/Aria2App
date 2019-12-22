@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.6.1] - 22-12-2019
+### Changed
+- Migrated to Firebase (Google Play users only)
+- Fixed some crashes
+- Improved WebView stability by enabling more features
+
+
 ## [5.6.0] - 30-11-2019
 ### Changed
 - Request legacy storage permissions (fix In-App Downloader permission denied)
