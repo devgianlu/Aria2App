@@ -58,8 +58,8 @@ public class BitfieldVisualizer extends View {
         border.setStyle(Paint.Style.STROKE);
     }
 
-    public static int knownPieces(@NonNull String hex, int num) {
-        if (hex.length() == 0) return 0;
+    public static int knownPieces(String hex, int num) {
+        if (hex == null || hex.length() == 0) return 0;
 
         num = (int) Math.ceil(num / 4f);
 
@@ -154,7 +154,7 @@ public class BitfieldVisualizer extends View {
         update(update.bitfield, update.numPieces);
     }
 
-    public void update(@NonNull String bitfield, int numPieces) {
+    public void update(String bitfield, int numPieces) {
         if (Objects.equals(this.bitfield, bitfield)) return;
 
         this.bitfield = bitfield;

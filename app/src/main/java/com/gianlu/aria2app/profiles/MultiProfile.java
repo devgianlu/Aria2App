@@ -333,22 +333,27 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             return tmpList.toArray(new String[0]);
         }
 
+        @NonNull
         public static ConnectivityCondition newWiFiCondition(String[] ssids, boolean isDefault) {
             return new ConnectivityCondition(Type.WIFI, isDefault, ssids);
         }
 
+        @NonNull
         public static ConnectivityCondition newMobileCondition(boolean isDefault) {
             return new ConnectivityCondition(Type.MOBILE, isDefault, null);
         }
 
+        @NonNull
         public static ConnectivityCondition newBluetoothCondition(boolean isDefault) {
             return new ConnectivityCondition(Type.BLUETOOTH, isDefault, null);
         }
 
+        @NonNull
         public static ConnectivityCondition newEthernetCondition(boolean isDefault) {
             return new ConnectivityCondition(Type.ETHERNET, isDefault, null);
         }
 
+        @NonNull
         public static ConnectivityCondition newUniqueCondition() {
             return new ConnectivityCondition(Type.ALWAYS, true, null);
         }
@@ -555,10 +560,8 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             connectionMethod = ConnectionMethod.valueOf(obj.optString("connectionMethod", ConnectionMethod.HTTP.name()));
 
             if (obj.isNull("connectivityCondition")) {
-                if (condition == null)
-                    connectivityCondition = ConnectivityCondition.newUniqueCondition();
-                else
-                    connectivityCondition = condition;
+                if (condition != null) connectivityCondition = condition;
+                else connectivityCondition = ConnectivityCondition.newUniqueCondition();
             } else {
                 connectivityCondition = new ConnectivityCondition(obj.getJSONObject("connectivityCondition"));
             }

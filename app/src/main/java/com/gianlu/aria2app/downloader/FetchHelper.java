@@ -10,14 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
+import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaDirectory;
 import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
-import com.gianlu.aria2app.api.AriaRequests;
-import com.gianlu.aria2app.api.NetUtils;
-import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.commonutils.preferences.Prefs;
@@ -291,7 +291,13 @@ public class FetchHelper {
 
     private void startInternal(@NonNull Request request, @NonNull StartListener listener) {
         if (!fetch.isClosed())
-            fetch.enqueue(request, result -> listener.onSuccess(), result -> listener.onFailed(result.getThrowable()));
+            fetch.enqueue(request, result -> listener.onSuccess(), result -> {
+                Throwable t = result.getThrowable();
+                if (t == null)
+                    listener.onFailed(new IllegalStateException("Exception not specified!"));
+                else
+                    listener.onFailed(t);
+            });
     }
 
     private void startInternal(@NonNull List<Request> requests, @NonNull StartListener listener) {
