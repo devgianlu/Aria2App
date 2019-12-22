@@ -79,7 +79,7 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
         });
 
         screen = findViewById(R.id.inAppAria2conf_screen);
-        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, false);
+        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, null, false);
 
         screen.lockPreferences(lastState);
     }

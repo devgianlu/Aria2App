@@ -1,2 +1,4 @@
 ### Changed
-- Fixed In-App Downloader not working on some devices
+- Request legacy storage permissions (fix In-App Downloader permission denied)
+- Updated Material theme
+- Minor bug fixes
