@@ -1,4 +1,6 @@
-### Changed
-- Migrated to Firebase (Google Play users only)
-- Fixed some crashes
-- Improved WebView stability by enabling more features
+### Fixed
+- Fixed payments being refunded automatically
+- Fixed minor synchronization issue in WebSocketClient
+
+## Changed
+- Updated Material library
