@@ -9,11 +9,11 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.inappdownloader.Aria2ConfigProvider;
 import com.gianlu.aria2app.api.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.api.ErrorHandler;
 import com.gianlu.aria2app.api.NetInstanceHolder;
 import com.gianlu.aria2app.api.search.SearchApi;
+import com.gianlu.aria2app.inappdownloader.Aria2ConfigProvider;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
@@ -73,7 +73,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onCreate() {
         super.onCreate();
         SearchApi.get().cacheSearchEngines();
-        MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
+        MaterialPreferences.setStorageModule(new PrefsStorageModule.Factory());
 
         ErrorHandler.setup(Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000, this);
 
