@@ -1,6 +1,2 @@
 ### Fixed
-- Fixed payments being refunded automatically
-- Fixed minor synchronization issue in WebSocketClient
-
-## Changed
-- Updated Material library
+- Fixed crash reporting and analytics (Google Play only)
