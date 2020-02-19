@@ -23,13 +23,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gianlu.aria2app.activities.EditProfileActivity;
-import com.gianlu.aria2app.inappdownloader.InAppAria2ConfActivity;
-import com.gianlu.aria2app.main.MainActivity;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.HttpClient;
 import com.gianlu.aria2app.api.NetInstanceHolder;
 import com.gianlu.aria2app.api.OnConnect;
 import com.gianlu.aria2app.api.WebSocketClient;
+import com.gianlu.aria2app.inappdownloader.InAppAria2ConfActivity;
+import com.gianlu.aria2app.main.MainActivity;
 import com.gianlu.aria2app.profiles.CustomProfilesAdapter;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
@@ -444,7 +444,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 return false;
             }
 
-            if (Utils.hasWebView(this)) {
+            if (!Prefs.getBoolean(PK.A2_SKIP_WEBVIEW_DIALOG) && Utils.hasWebView(this)) {
                 AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
                 builder.setTitle(R.string.useWebView)
                         .setMessage(R.string.useWebView_message)

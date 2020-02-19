@@ -132,6 +132,15 @@ public class PreferenceActivity extends BasePreferenceActivity {
             bestTrackers.setIcon(R.drawable.baseline_track_changes_24);
             addPreference(bestTrackers);
 
+            MaterialCheckboxPreference skipWebViewDialog = new MaterialCheckboxPreference.Builder(context)
+                    .key(PK.A2_SKIP_WEBVIEW_DIALOG.key())
+                    .defaultValue(PK.A2_SKIP_WEBVIEW_DIALOG.fallback())
+                    .build();
+            skipWebViewDialog.setTitle(R.string.prefs_skipWebViewDialog);
+            skipWebViewDialog.setSummary(R.string.prefs_skipWebViewDialog_summary);
+            // skipWebViewDialog.setIcon(R.drawable.baseline_track_changes_24);
+            addPreference(skipWebViewDialog);
+
             if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
                 MaterialStandardPreference webviewShortcut = new MaterialStandardPreference(context);
                 webviewShortcut.setTitle(R.string.addWebViewShortcutToHomePage);
