@@ -34,7 +34,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typography.FontsManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -202,7 +201,6 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
             int colorAccent = ContextCompat.getColor(getContext(), update.getColorVariant());
             chart.setNoDataTextColor(colorAccent);
             bitfield.setColor(colorAccent);
-            FontsManager.set(FontsManager.ROBOTO_LIGHT, progress, downloadSpeed, uploadLength, remainingTime);
 
             pause.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.PAUSE, InfoFragment.this));
             start.setOnClickListener(new Aria2Helper.DownloadActionClick(download, Aria2Helper.WhatAction.RESUME, InfoFragment.this));

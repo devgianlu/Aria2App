@@ -27,7 +27,6 @@ import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -62,7 +61,6 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
         fileType.setFilename(payload.file.getName());
 
         percentage = parent.findViewById(R.id.fileSheet_percentage);
-        FontsManager.set(FontsManager.ROBOTO_MEDIUM, percentage);
     }
 
     @Override

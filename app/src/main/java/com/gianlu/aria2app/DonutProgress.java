@@ -48,7 +48,7 @@ public class DonutProgress extends View {
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics()));
-        textPaint.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Light.ttf"));
+        textPaint.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "font/roboto_light.ttf"));
         textPaint.setAntiAlias(true);
 
         transparentPaint = new Paint();

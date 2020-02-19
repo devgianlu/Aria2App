@@ -24,7 +24,6 @@ import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -49,7 +48,6 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
         parent.setTitle(payload.dir.name);
 
         percentage = parent.findViewById(R.id.dirSheet_percentage);
-        FontsManager.set(FontsManager.ROBOTO_MEDIUM, percentage);
     }
 
     public void update(@NonNull DownloadWithUpdate download, @NonNull AriaFiles files) {

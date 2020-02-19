@@ -33,6 +33,7 @@
         <TextView
             android:id="@+id/fileSheet_percentage"
             android:layout_width="wrap_content"
+            android:fontFamily="@font/roboto_medium"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="30sp" />
