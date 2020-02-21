@@ -343,5 +343,5 @@
     <string name="noDownloads_changeFilters">没有可显示的下载任务。请尝试更改筛选条件。</string>
     <string name="filtersShowingOnly">仅显示%s (%d)</string>
     <string name="prefs_skipWebViewDialog">跳过WebView对话框</string>
-    <string name="prefs_skipWebViewDialog_summary">分享链接时，是否跳过打开 WebView对话框</string>
+    <string name="prefs_skipWebViewDialog_summary">分享链接时，是否跳过打开WebView对话框</string>
 </resources>
