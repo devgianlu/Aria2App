@@ -134,7 +134,7 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
 
         URI uri = (URI) getArguments().getSerializable("uri");
         if (uri != null) {
-            showAddUriDialog(-1, uri.toASCIIString());
+            adapter.addUri(uri.toASCIIString());
             return;
         } else {
             ClipboardManager manager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
