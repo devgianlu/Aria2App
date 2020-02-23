@@ -1,2 +1,5 @@
-### Fixed
-- Fixed crash reporting and analytics (Google Play only)
+### Added
+- Added preference to skip WebView dialog
+
+### Changed
+- Do not show confirmation dialog when sharing link
