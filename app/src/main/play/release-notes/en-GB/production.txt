@@ -1,5 +1,2 @@
-### Added
-- Added preference to skip WebView dialog
-
-### Changed
-- Do not show confirmation dialog when sharing link
+### Fixed
+- Fixed crash at startup due to invalid font
