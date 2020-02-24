@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -16,6 +15,8 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.gianlu.commonutils.typography.FontsManager;
 
 import java.util.Locale;
 import java.util.Random;
@@ -48,7 +49,7 @@ public class DonutProgress extends View {
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics()));
-        textPaint.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "font/roboto_light.ttf"));
+        FontsManager.set(getContext(), textPaint, R.font.roboto_light);
         textPaint.setAntiAlias(true);
 
         transparentPaint = new Paint();
