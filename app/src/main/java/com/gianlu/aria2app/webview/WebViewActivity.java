@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -60,8 +61,8 @@ public class WebViewActivity extends ActivityWithDialog {
         if ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "PROPPATCH".equals(method) || "REPORT".equals(method))
             return null;
 
-        String url = req.getUrl().toString();
-        if (!url.startsWith("http://") && !url.startsWith("https://"))
+        HttpUrl url = HttpUrl.parse(req.getUrl().toString());
+        if (url == null)
             return null;
 
         Request.Builder builder = new Request.Builder().url(url);
@@ -70,7 +71,7 @@ public class WebViewActivity extends ActivityWithDialog {
         for (Map.Entry<String, String> entry : req.getRequestHeaders().entrySet())
             builder.addHeader(entry.getKey(), entry.getValue());
 
-        String cookies = CookieManager.getInstance().getCookie(url);
+        String cookies = CookieManager.getInstance().getCookie(url.toString());
         if (cookies != null && !cookies.isEmpty()) builder.addHeader("Cookie", cookies);
 
         return builder.build();
