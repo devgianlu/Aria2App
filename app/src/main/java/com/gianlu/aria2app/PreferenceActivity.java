@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -168,6 +169,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
     public static class ProfilesFragment extends BasePreferenceFragment {
         private static final int IMPORT_PROFILES_CODE = 7;
+        private static final String TAG = ProfilesFragment.class.getSimpleName();
 
         @Override
         protected void buildPreferences(@NonNull Context context) {
@@ -184,7 +186,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                 try {
                     startActivityForResult(Intent.createChooser(intent, "Select a file"), IMPORT_PROFILES_CODE);
                 } catch (ActivityNotFoundException ex) {
-                    showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
+                    showToast(Toaster.build().message(R.string.noFilemanager));
                 }
             });
 
@@ -207,7 +209,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
                 showToast(Toaster.build().message(R.string.profilesExportedSuccessfully, file.getAbsolutePath()));
             } catch (JSONException | IOException ex) {
-                showToast(Toaster.build().message(R.string.failedExportingProfiles).ex(ex));
+                Log.e(TAG, "Failed exporting profiles.", ex);
+                showToast(Toaster.build().message(R.string.failedExportingProfiles));
             }
         }
 
@@ -227,7 +230,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
                 showToast(Toaster.build().message(R.string.profilesImportedSuccessfully));
             } catch (JSONException | IOException ex) {
-                showToast(Toaster.build().message(R.string.failedImportingProfiles).ex(ex));
+                Log.e(TAG, "Failed importing profiles.", ex);
+                showToast(Toaster.build().message(R.string.failedImportingProfiles));
             }
         }
 
@@ -293,7 +297,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                     startActivityForResult(intent, DOWNLOAD_PATH_CODE);
                 } catch (ActivityNotFoundException ex) {
-                    showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
+                    showToast(Toaster.build().message(R.string.noFilemanager));
                 }
             });
             addPreference(downloadPath);

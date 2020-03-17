@@ -1,13 +1,11 @@
 package com.gianlu.aria2app.api;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.commonutils.logging.Logging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,28 +38,21 @@ public class HttpClient extends AbstractClient {
     }
 
     @UiThread
-    private HttpClient(@NonNull MultiProfile.UserProfile profile, @Nullable OnConnect connectionListener, boolean close) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
+    private HttpClient(@NonNull MultiProfile.UserProfile profile, @NonNull OnConnect connectionListener, boolean close) throws GeneralSecurityException, IOException, NetUtils.InvalidUrlException {
         this(profile);
 
         executorService.submit(() -> {
             try (Socket socket = new Socket()) {
                 final long initializedAt = System.currentTimeMillis();
                 socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
-                if (connectionListener != null) {
-                    handler.post(() -> {
-                        if (connectionListener.onConnected(HttpClient.this))
-                            connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
-                    });
-                }
+                handler.post(() -> {
+                    if (connectionListener.onConnected(HttpClient.this))
+                        connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);
+                });
 
                 if (close) close();
             } catch (IOException ex) {
-                if (connectionListener != null) {
-                    handler.post(() -> connectionListener.onFailedConnecting(profile, ex));
-                } else {
-                    Logging.log(ex);
-                }
-
+                handler.post(() -> connectionListener.onFailedConnecting(profile, ex));
                 close();
             }
         });

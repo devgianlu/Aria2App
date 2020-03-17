@@ -4,7 +4,6 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
-import com.gianlu.commonutils.logging.Logging;
 import com.tonyodev.fetch2.Download;
 import com.tonyodev.fetch2.Status;
 
@@ -52,7 +51,6 @@ public class FetchDownloadWrapper {
         try {
             return URLDecoder.decode(download.getUrl(), "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            Logging.log(ex);
             return download.getUrl();
         }
     }
@@ -68,7 +66,6 @@ public class FetchDownloadWrapper {
         try {
             return URLDecoder.decode(name, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            Logging.log(ex);
             return name;
         }
     }

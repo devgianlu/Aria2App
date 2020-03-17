@@ -3,6 +3,7 @@ package com.gianlu.aria2app.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -30,11 +31,11 @@ import com.gianlu.aria2app.api.updater.UpdaterActivity;
 import com.gianlu.aria2app.api.updater.UpdaterFragment;
 import com.gianlu.aria2app.api.updater.Wants;
 import com.gianlu.aria2app.options.OptionsDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.tabs.TabLayout;
 
 public class MoreAboutDownloadActivity extends UpdaterActivity {
+    private static final String TAG = MoreAboutDownloadActivity.class.getSimpleName();
     private PagerAdapter<UpdaterFragment<?>> adapter;
     private ViewPager pager;
     private Download.Status currentStatus = null;
@@ -75,7 +76,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
         String title = getIntent().getStringExtra("title");
         if (gid == null || theme == 0 || title == null) {
             super.onCreate(savedInstanceState);
-            Toaster.with(this).message(R.string.failedLoading).ex(new IllegalArgumentException("gid = " + gid + ", theme = " + theme + ", title = " + title)).show();
+            Toaster.with(this).message(R.string.failedLoading).show();
             onBackPressed();
             return;
         }
@@ -106,7 +107,8 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
             @Override
             public boolean onCouldntLoad(@NonNull Exception ex) {
-                Toaster.with(MoreAboutDownloadActivity.this).message(R.string.failedLoading).ex(ex).show();
+                Log.e(TAG, "Failed loading info.", ex);
+                Toaster.with(MoreAboutDownloadActivity.this).message(R.string.failedLoading).show();
                 onBackPressed();
                 return false;
             }
@@ -221,8 +223,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
         try {
             super.onBackPressed();
-        } catch (NullPointerException | IllegalStateException ex) {
-            Logging.log(ex);
+        } catch (NullPointerException | IllegalStateException ignored) {
         }
     }
 }

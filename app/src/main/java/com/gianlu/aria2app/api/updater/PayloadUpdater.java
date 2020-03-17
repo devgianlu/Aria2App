@@ -7,10 +7,9 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.ErrorHandler;
 import com.gianlu.aria2app.PK;
-import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.aria2app.api.ErrorHandler;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.commonutils.preferences.Prefs;
 
 public abstract class PayloadUpdater<P> implements Runnable {
@@ -56,7 +55,6 @@ public abstract class PayloadUpdater<P> implements Runnable {
             try {
                 Thread.sleep(updateInterval);
             } catch (InterruptedException ex) {
-                Logging.log(ex);
                 shouldStop = true;
             }
         }

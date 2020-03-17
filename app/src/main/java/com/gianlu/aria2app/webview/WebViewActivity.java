@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,6 @@ import com.gianlu.aria2app.activities.AddUriActivity;
 import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -50,6 +50,7 @@ import okhttp3.ResponseBody;
 
 public class WebViewActivity extends ActivityWithDialog {
     private static final int ADD_URI_REQUEST_CODE = 3;
+    private static final String TAG = WebViewActivity.class.getSimpleName();
     private final List<InterceptedRequest> interceptedRequests = new ArrayList<>();
     private OkHttpClient client;
     private WebView web;
@@ -176,7 +177,7 @@ public class WebViewActivity extends ActivityWithDialog {
 
                     return buildResponse(resp);
                 } catch (IOException ex) {
-                    Logging.log(ex);
+                    Log.e(TAG, "Failed request.", ex);
                     return null;
                 }
             }

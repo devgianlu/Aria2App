@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +19,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.gianlu.aria2app.adapters.OptionsAdapter;
-import com.gianlu.aria2app.api.AbstractClient;
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
-import com.gianlu.aria2app.api.aria2.Option;
-import com.gianlu.aria2app.api.aria2.OptionsMap;
-import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.adapters.OptionsAdapter;
+import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
+import com.gianlu.aria2app.api.aria2.Option;
+import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.permissions.AskPermission;
@@ -90,6 +91,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         return dialog;
     }
 
+    private static final String TAG = OptionsDialog.class.getSimpleName();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -131,7 +134,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         try {
             helper = Aria2Helper.instantiate(requireContext());
         } catch (Aria2Helper.InitializingException ex) {
-            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
+            Log.e(TAG, "Failed initialising.", ex);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading));
             dismissAllowingStateLoss();
             return null;
         }
@@ -155,7 +159,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             if (global) req = AriaRequests.changeGlobalOptions(map);
             else req = AriaRequests.changeDownloadOptions(gid, map);
         } catch (JSONException ex) {
-            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions).ex(ex));
+            Log.e(TAG, "Failed parsing JSON.", ex);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions));
             return;
         }
 
@@ -175,7 +180,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             @Override
             public void onException(@NonNull Exception ex) {
                 pd.dismiss();
-                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions).ex(ex));
+                Log.e(TAG, "Failed changing options.", ex);
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedChangingOptions));
             }
         });
     }
@@ -204,7 +210,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
             out.write(builder.toString().getBytes());
             out.flush();
         } catch (IOException ex) {
-            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedExportingOptions).ex(ex));
+            Log.e(TAG, "Failed exporting options.", ex);
+            DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedExportingOptions));
             return;
         }
 
@@ -223,7 +230,7 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
 
             @Override
             public void permissionDenied(@NonNull String permission) {
-                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.writePermissionDenied).error(true));
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.writePermissionDenied));
             }
 
             @Override
@@ -254,7 +261,8 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
     public void onException(@NonNull Exception ex) {
         if (!isAdded()) return;
 
-        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
+        Log.e(TAG, "Failed loading options.", ex);
+        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading));
         dismissAllowingStateLoss();
     }
 

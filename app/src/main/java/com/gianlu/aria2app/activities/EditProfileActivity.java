@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +45,6 @@ import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -64,6 +64,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
     private final List<ConditionWithState> conditions = new ArrayList<>();
     private ProfileFragmentsAdapter pagerAdapter;
     private MultiProfile editProfile;
+    private static final String TAG = EditProfileActivity.class.getSimpleName();
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
     private ViewPager pager;
@@ -127,7 +128,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             try {
                 editProfile = ProfilesManager.get(this).retrieveProfile(editId);
             } catch (IOException | JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting profile: " + editId, ex);
                 editProfile = null;
             }
         }
@@ -208,7 +209,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
                 if (cs == null) throw new IllegalStateException();
                 cs.setState(saved);
             } catch (IllegalStateException ex) {
-                Logging.log("Failed saving state.", ex);
+                Log.e(TAG, "Failed saving state.", ex);
             }
         }
     }
@@ -423,7 +424,8 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
         } catch (InvalidFieldException ex) {
             handleInvalidFieldException(ex);
         } catch (JSONException | IOException | IllegalStateException ex) {
-            Toaster.with(this).message(R.string.cannotSaveProfile).ex(ex).show();
+            Log.e(TAG, "Failed saving profile.", ex);
+            Toaster.with(this).message(R.string.cannotSaveProfile).show();
         }
 
         AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_PROFILE);

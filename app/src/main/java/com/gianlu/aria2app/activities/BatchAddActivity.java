@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -62,34 +63,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         }
     }
 
-    private void done() {
-        List<AddDownloadBundle> bundles = adapter.getBundles();
-        if (bundles.isEmpty()) return;
-
-        Bundle analytics = new Bundle();
-        analytics.putInt("bundles", bundles.size());
-        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_BATCH, analytics);
-
-        try {
-            showProgress(R.string.gathering_information);
-            Aria2Helper.instantiate(this).addDownloads(bundles, new AbstractClient.OnResult<List<String>>() {
-                @Override
-                public void onResult(@NonNull List<String> result) {
-                    dismissDialog();
-                    Toaster.with(BatchAddActivity.this).message(R.string.downloadsAddedBatch).extra(result).show();
-                    if (!isDestroyed()) onBackPressed();
-                }
-
-                @Override
-                public void onException(@NonNull Exception ex) {
-                    dismissDialog();
-                    Toaster.with(BatchAddActivity.this).message(R.string.failedAddingDownloads).ex(ex).show();
-                }
-            });
-        } catch (Aria2Helper.InitializingException ex) {
-            Toaster.with(this).message(R.string.failedAddingDownload).ex(ex).show();
-        }
-    }
+    private static final String TAG = BatchAddActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +98,37 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
         rmv.loadListData(adapter, false);
     }
 
+    private void done() {
+        List<AddDownloadBundle> bundles = adapter.getBundles();
+        if (bundles.isEmpty()) return;
+
+        Bundle analytics = new Bundle();
+        analytics.putInt("bundles", bundles.size());
+        AnalyticsApplication.sendAnalytics(Utils.ACTION_NEW_BATCH, analytics);
+
+        try {
+            showProgress(R.string.gathering_information);
+            Aria2Helper.instantiate(this).addDownloads(bundles, new AbstractClient.OnResult<List<String>>() {
+                @Override
+                public void onResult(@NonNull List<String> result) {
+                    dismissDialog();
+                    Toaster.with(BatchAddActivity.this).message(R.string.downloadsAddedBatch).extra(result).show();
+                    if (!isDestroyed()) onBackPressed();
+                }
+
+                @Override
+                public void onException(@NonNull Exception ex) {
+                    dismissDialog();
+                    Log.e(TAG, "Failed adding downloads.", ex);
+                    Toaster.with(BatchAddActivity.this).message(R.string.failedAddingDownloads).show();
+                }
+            });
+        } catch (Aria2Helper.InitializingException ex) {
+            Log.e(TAG, "Failed initializing.", ex);
+            Toaster.with(this).message(R.string.failedAddingDownload).show();
+        }
+    }
+
     private void openDocument(@NonNull final String mime, @NonNull final String text, final int requestCode) {
         AskPermission.ask(this, Manifest.permission.READ_EXTERNAL_STORAGE, new AskPermission.Listener() {
             @Override
@@ -137,7 +142,7 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
 
             @Override
             public void permissionDenied(@NonNull String permission) {
-                Toaster.with(BatchAddActivity.this).message(R.string.readPermissionDenied).error(true).show();
+                Toaster.with(BatchAddActivity.this).message(R.string.readPermissionDenied).show();
             }
 
             @Override
@@ -194,7 +199,8 @@ public class BatchAddActivity extends ActivityWithDialog implements AddDownloadB
                         super.onActivityResult(requestCode, resultCode, data);
                 }
             } catch (AddDownloadBundle.CannotReadException ex) {
-                Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
+                Log.e(TAG, "Cannot read file.", ex);
+                Toaster.with(this).message(R.string.invalidFile).show();
             }
         }
     }

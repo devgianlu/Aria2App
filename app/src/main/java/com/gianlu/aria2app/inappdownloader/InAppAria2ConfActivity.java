@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -18,14 +19,15 @@ import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.internal.Message;
 import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen;
+import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen.LogEntry;
 import com.gianlu.commonutils.FileUtils;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 
 import java.util.List;
 
 public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2Ui.Listener {
     private static final int STORAGE_ACCESS_CODE = 3;
+    private static final String TAG = InAppAria2ConfActivity.class.getSimpleName();
     private Aria2ConfigurationScreen screen;
     private ToggleButton toggle;
 
@@ -98,34 +100,34 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
         ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
-    private void addLog(@NonNull Logging.LogLine line) {
-        if (screen != null) screen.appendLogLine(line);
+    private void addLog(@NonNull LogEntry entry) {
+        if (screen != null) screen.appendLogEntry(entry);
     }
 
     @Override
     public void onUpdateLogs(@NonNull List<Aria2Ui.LogMessage> list) {
         for (Aria2Ui.LogMessage msg : list) {
-            Logging.LogLine line = createLogLine(msg);
-            if (line != null) addLog(line);
+            LogEntry entry = createLogEntry(msg);
+            if (entry != null) addLog(entry);
         }
     }
 
     @Nullable
-    private Logging.LogLine createLogLine(@NonNull Aria2Ui.LogMessage msg) {
+    private LogEntry createLogEntry(@NonNull Aria2Ui.LogMessage msg) {
         switch (msg.type) {
             case PROCESS_TERMINATED:
-                return new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logTerminated, msg.i));
+                return new LogEntry(LogEntry.Type.INFO, getString(R.string.logTerminated, msg.i));
             case PROCESS_STARTED:
-                return new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logStarted, msg.o));
+                return new LogEntry(LogEntry.Type.INFO, getString(R.string.logStarted, msg.o));
             case PROCESS_WARN:
                 if (msg.o != null)
-                    return new Logging.LogLine(Logging.LogLine.Type.WARNING, (String) msg.o);
+                    return new LogEntry(LogEntry.Type.WARNING, (String) msg.o);
             case PROCESS_ERROR:
                 if (msg.o != null)
-                    return new Logging.LogLine(Logging.LogLine.Type.ERROR, (String) msg.o);
+                    return new LogEntry(LogEntry.Type.ERROR, (String) msg.o);
             case PROCESS_INFO:
                 if (msg.o != null)
-                    return new Logging.LogLine(Logging.LogLine.Type.INFO, (String) msg.o);
+                    return new LogEntry(LogEntry.Type.INFO, (String) msg.o);
             case MONITOR_FAILED:
             case MONITOR_UPDATE:
                 return null;
@@ -137,14 +139,14 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
     @Override
     public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
         if (msg.type == Message.Type.MONITOR_FAILED) {
-            Logging.log("Monitor failed!", (Throwable) msg.o);
+            Log.e(TAG, "Monitor failed!", (Throwable) msg.o);
             return;
         }
 
         if (msg.type == Message.Type.MONITOR_UPDATE) return;
 
-        Logging.LogLine line = createLogLine(msg);
-        if (line != null) addLog(line);
+        LogEntry entry = createLogEntry(msg);
+        if (entry != null) addLog(entry);
     }
 
     @Override

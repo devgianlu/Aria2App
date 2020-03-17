@@ -197,7 +197,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             context.startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(context, "com.gianlu.aria2app", download.getFile()))
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (ActivityNotFoundException | IllegalArgumentException ex) {
-            Toaster.with(context).message(R.string.failedOpeningDownload).ex(ex).show();
+            Toaster.with(context).message(R.string.failedOpeningDownload).show();
         }
     }
 

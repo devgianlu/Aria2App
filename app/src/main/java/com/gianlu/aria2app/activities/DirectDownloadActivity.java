@@ -1,15 +1,15 @@
 package com.gianlu.aria2app.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.adapters.DirectDownloadsAdapter;
 import com.gianlu.aria2app.downloader.FetchHelper;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.gianlu.commonutils.ui.Toaster;
 import com.tonyodev.fetch2.Download;
@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DirectDownloadActivity extends ActivityWithDialog implements FetchHelper.FetchEventListener {
+    private static final String TAG = DirectDownloadActivity.class.getSimpleName();
     private RecyclerMessageView rmv;
     private FetchHelper helper;
     private DirectDownloadsAdapter adapter;
@@ -47,7 +48,7 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
         } catch (FetchHelper.DirectDownloadNotEnabledException ex) {
             rmv.showInfo(R.string.noDirectDownloads);
         } catch (FetchHelper.InitializationException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed initializing Fetch.", ex);
             rmv.showError(R.string.failedLoading_reason, ex.getMessage());
         }
     }
@@ -147,7 +148,8 @@ public class DirectDownloadActivity extends ActivityWithDialog implements FetchH
 
         @Override
         public void onFailed(@NonNull Throwable ex) {
-            Toaster.with(DirectDownloadActivity.this).message(R.string.failedDownloadingFile).ex(ex).show();
+            Log.w(TAG, "Failed restarting download.", ex);
+            Toaster.with(DirectDownloadActivity.this).message(R.string.failedDownloadingFile).show();
         }
     }
 }

@@ -2,6 +2,7 @@ package com.gianlu.aria2app.activities.moreabout.info;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,6 @@ import com.gianlu.aria2app.api.updater.UpdaterFragment;
 import com.gianlu.aria2app.api.updater.Wants;
 import com.gianlu.aria2app.main.HideSecondSpace;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.github.mikephil.charting.charts.LineChart;
@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements OnBackPressed, Aria2Helper.DownloadActionClick.Listener {
+    private static final String TAG = InfoFragment.class.getSimpleName();
     private final CountryFlags flags = CountryFlags.get();
     private final GeoIP geoIP = GeoIP.get();
     private ViewHolder holder;
@@ -92,7 +93,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
     public boolean onCouldntLoad(@NonNull Exception ex) {
         holder.loading.setVisibility(View.GONE);
         message.error(R.string.failedLoading);
-        Logging.log(ex);
+        Log.e(TAG, "Failed loading info.", ex);
         return false;
     }
 
@@ -236,8 +237,7 @@ public class InfoFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> 
                             public void onException(@NonNull Exception ex) {
                             }
                         });
-                    } catch (URISyntaxException ex) {
-                        Logging.log(ex);
+                    } catch (URISyntaxException ignored) {
                     }
                 }
             }

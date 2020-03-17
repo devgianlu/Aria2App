@@ -4,13 +4,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.ThisApplication;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONArray;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfilesManager {
+    private static final String TAG = ProfilesManager.class.getSimpleName();
     private static ProfilesManager instance;
     private final File profilesPath;
     private final WifiManager wifiManager;
@@ -98,10 +99,11 @@ public class ProfilesManager {
     public MultiProfile getLastProfile() {
         String id = Prefs.getString(PK.LAST_USED_PROFILE, null);
         if (id == null || !profileExists(id)) return null;
+
         try {
             return retrieveProfile(id);
         } catch (IOException | JSONException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed getting profile: " + id, ex);
             return null;
         }
     }
@@ -147,7 +149,7 @@ public class ProfilesManager {
                 if (retrieveProfile(id).notificationsEnabled)
                     return true;
             } catch (IOException | JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting profile: " + id, ex);
             }
         }
 
@@ -167,7 +169,7 @@ public class ProfilesManager {
             if (id.contains("+")) {
                 id = id.replace('+', '-');
                 if (!file.renameTo(new File(file.getParentFile(), id + ".profile")))
-                    Logging.log("Failed renaming profile: " + id, true);
+                    Log.e(TAG, "Failed renaming profile: " + id);
             }
 
             ids[i] = id;
@@ -207,7 +209,7 @@ public class ProfilesManager {
                     profiles.add(profile);
                 }
             } catch (IOException | JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting profile: " + id, ex);
             }
         }
 
@@ -218,7 +220,7 @@ public class ProfilesManager {
             try {
                 save(inApp);
             } catch (IOException | JSONException | IllegalStateException ex) {
-                Logging.log("Failed saving in-app downloader profile.", ex);
+                Log.e(TAG, "Failed saving in-app downloader profile.", ex);
             }
         }
 

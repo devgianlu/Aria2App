@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,23 +20,22 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.adapters.SearchResultsAdapter;
-import com.gianlu.aria2app.main.MainActivity;
 import com.gianlu.aria2app.api.AbstractClient;
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.AriaRequests;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.search.MissingSearchEngine;
 import com.gianlu.aria2app.api.search.SearchApi;
 import com.gianlu.aria2app.api.search.SearchEngine;
 import com.gianlu.aria2app.api.search.SearchResult;
 import com.gianlu.aria2app.api.search.Torrent;
-import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.main.MainActivity;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.preferences.Prefs;
@@ -52,6 +52,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.OnSearch, SearchResultsAdapter.Listener, MenuItem.OnActionExpandListener {
+    private static final String TAG = SearchActivity.class.getSimpleName();
     private RecyclerMessageView rmv;
     private LinearLayout message;
     private String query = null;
@@ -79,7 +80,6 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
             } catch (ActivityNotFoundException ex) {
-                Logging.log(ex);
                 messageMore.setVisibility(View.GONE);
             }
         });
@@ -185,7 +185,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     public void onException(@NonNull Exception ex) {
         message.setVisibility(View.GONE);
         rmv.showError(R.string.searchEngine_offline);
-        Logging.log(ex);
+        Log.e(TAG, "Failed search.", ex);
     }
 
     @Override
@@ -202,7 +202,8 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                 @Override
                 public void onException(@NonNull Exception ex) {
                     dismissDialog();
-                    Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
+                    Log.e(TAG, "Failed getting engines list.", ex);
+                    Toaster.with(SearchActivity.this).message(R.string.failedLoading).show();
                 }
             });
             return true;
@@ -224,7 +225,8 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
             @Override
             public void onException(@NonNull Exception ex) {
                 dismissDialog();
-                Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
+                Log.e(TAG, "Failed getting torrent info.", ex);
+                Toaster.with(SearchActivity.this).message(R.string.failedLoading).show();
             }
         });
     }
@@ -297,11 +299,13 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
                             @Override
                             public void onException(@NonNull Exception ex) {
-                                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                                Log.e(TAG, "Failed adding URI.", ex);
+                                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).show();
                             }
                         });
             } catch (Aria2Helper.InitializingException | JSONException ex) {
-                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                Log.e(TAG, "Failed initializing/parsing.", ex);
+                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).show();
                 return;
             }
 

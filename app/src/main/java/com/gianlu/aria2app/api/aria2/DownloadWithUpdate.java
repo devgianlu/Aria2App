@@ -10,7 +10,6 @@ import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.ClientInterface;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.Filterable;
-import com.gianlu.commonutils.logging.Logging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -276,8 +275,7 @@ public class DownloadWithUpdate extends Download implements Filterable<Download.
                     if (urls.isEmpty()) urls = file.uris.findByStatus(AriaFile.Status.WAITING);
                     if (!urls.isEmpty()) name = urls.get(0);
                 }
-            } catch (Exception ex) {
-                Logging.log(ex);
+            } catch (Exception ignored) {
             }
 
             name = name.trim();

@@ -2,6 +2,7 @@ package com.gianlu.aria2app.activities.adddownload;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ import com.gianlu.aria2app.options.OptionsUtils;
 import com.gianlu.aria2app.options.OptionsView;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.dialogs.FragmentWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.preferences.Prefs;
 
@@ -40,6 +40,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class OptionsFragment extends FragmentWithDialog implements OptionsAdapter.Listener {
+    private static final String TAG = OptionsFragment.class.getSimpleName();
     private EditText position;
     private EditText filename;
     private Switch pause;
@@ -171,7 +172,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
 
             @Override
             public void onFailed(@NonNull Exception ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting best trackers.", ex);
             }
         });
     }
@@ -206,7 +207,6 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
         try {
             return Integer.parseInt(position.getText().toString());
         } catch (Exception ex) {
-            Logging.log(ex);
             return null;
         }
     }

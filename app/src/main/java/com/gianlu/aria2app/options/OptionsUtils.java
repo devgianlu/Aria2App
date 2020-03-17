@@ -1,6 +1,7 @@
 package com.gianlu.aria2app.options;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -15,7 +16,6 @@ import com.gianlu.aria2app.adapters.OptionsAdapter;
 import com.gianlu.aria2app.api.TrackersListFetch;
 import com.gianlu.aria2app.api.aria2.Option;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class OptionsUtils {
+
+    private static final String TAG = OptionsUtils.class.getSimpleName();
 
     @NonNull
     public static AlertDialog.Builder getEditOptionDialog(@NonNull Context context, final Option option, final OptionsAdapter adapter) {
@@ -79,11 +81,10 @@ public final class OptionsUtils {
 
                         @Override
                         public void onFailed(@NonNull Exception ex) {
-                            Logging.log(ex);
+                            Log.e(TAG, "Failed getting best trackers.", ex);
                         }
                     }));
         }
-
 
         return builder;
     }

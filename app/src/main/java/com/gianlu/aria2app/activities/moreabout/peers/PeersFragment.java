@@ -2,6 +2,7 @@ package com.gianlu.aria2app.activities.moreabout.peers;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +21,6 @@ import com.gianlu.aria2app.api.aria2.Peers;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.Wants;
 import com.gianlu.aria2app.tutorial.PeersServersTutorial;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 
 public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet, Peers> implements PeersAdapter.Listener {
@@ -135,10 +135,12 @@ public class PeersFragment extends PeersServersFragment<PeersAdapter, PeerSheet,
         }
     }
 
+    private static final String TAG = PeersFragment.class.getSimpleName();
+
     @Override
     public void onCouldntLoadChecked(@NonNull Exception ex) {
         rmv.showError(R.string.failedLoading_reason, ex.getMessage());
-        Logging.log(ex);
+        Log.e(TAG, "Failed loading info.", ex);
     }
 
     @Override

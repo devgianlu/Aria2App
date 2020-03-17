@@ -21,7 +21,6 @@ import com.gianlu.aria2app.api.NetUtils;
 import com.gianlu.aria2lib.Aria2PK;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.drawer.BaseDrawerProfile;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 
 import org.jetbrains.annotations.NotNull;
@@ -675,7 +674,6 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
             try {
                 return getFullServerAddress();
             } catch (NetUtils.InvalidUrlException ex) {
-                Logging.log(ex);
                 return "";
             }
         }

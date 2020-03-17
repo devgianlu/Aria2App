@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -41,7 +42,7 @@ import com.gianlu.aria2lib.internal.Message;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.drawer.DrawerManager;
-import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.logs.LogsHelper;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.ui.Toaster;
@@ -63,6 +64,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     public static final String SHORTCUT_SEARCH = "com.gianlu.aria2app.SEARCH";
     public static final String SHORTCUT_WEB_VIEW = "com.gianlu.aria2app.WEB_VIEW";
     public static final String SHORTCUT_BATCH_ADD = "com.gianlu.aria2app.BATCH_ADD";
+    private static final String TAG = LoadingActivity.class.getSimpleName();
     private Intent goTo;
     private LinearLayout connecting;
     private LinearLayout picker;
@@ -170,7 +172,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 tryConnecting(manager.retrieveProfile(profileId));
                 return;
             } catch (IOException | JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting profile.", ex);
             }
         }
 
@@ -218,7 +220,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 try {
                     app.loadAria2ServiceEnv();
                 } catch (BadEnvironmentException ex) {
-                    Logging.log("Failed loading aria2 environment.", ex);
+                    Log.e(TAG, "Failed loading aria2 environment.", ex);
                     return;
                 }
 
@@ -350,7 +352,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.failedConnecting)
                 .setPositiveButton(android.R.string.ok, null)
-                .setNeutralButton(R.string.contactMe, (dialog, which) -> Logging.sendEmail(LoadingActivity.this, ex))
+                .setNeutralButton(R.string.contactMe, (dialog, which) -> LogsHelper.sendEmail(LoadingActivity.this, ex))
                 .setMessage(ex.toString());
 
         showDialog(builder);
@@ -470,7 +472,7 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
                 tryConnecting(aria2AndroidProfile.getParent());
             } else {
                 aria2AndroidProfile = null;
-                Toaster.with(this).message(R.string.failedStartingAria2Android).error(false).show();
+                Toaster.with(this).message(R.string.failedStartingAria2Android).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -478,11 +480,11 @@ public class LoadingActivity extends ActivityWithDialog implements OnConnect, Dr
     }
 
     private void failedConnecting(@NonNull Throwable ex) {
-        Toaster.with(this).message(R.string.failedConnecting).ex(ex).show();
+        Toaster.with(this).message(R.string.failedConnecting).show();
         displayPicker(hasShareData());
         seeError.setVisibility(View.VISIBLE);
         seeError.setOnClickListener(v -> showErrorDialog(ex));
-        Logging.log(ex);
+        Log.e(TAG, "Failed connecting.", ex);
     }
 
     @Override

@@ -898,12 +898,6 @@
             android:configChanges="uiMode"
             android:theme="@style/AppTheme.FullBlackNight" />
 
-        <!-- Logs activity -->
-        <activity
-            android:name="com.gianlu.commonutils.logging.LogsActivity"
-            android:configChanges="uiMode"
-            android:theme="@style/AppTheme.FullBlackNight" />
-
         <!-- Search Torrent activity -->
         <activity
             android:name=".activities.SearchActivity"
@@ -939,17 +933,5 @@
                 <action android:name="android.service.chooser.ChooserTargetService" />
             </intent-filter>
         </service>
-
-        <!-- Logs provider -->
-        <provider
-            android:name="com.gianlu.commonutils.logging.LogsProvider"
-            android:authorities="com.gianlu.aria2app.logs"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/logs_paths" />
-        </provider>
     </application>
-
 </manifest>

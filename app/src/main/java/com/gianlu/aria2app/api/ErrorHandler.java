@@ -1,9 +1,9 @@
 package com.gianlu.aria2app.api;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.gianlu.commonutils.logging.Logging;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,6 +44,8 @@ public final class ErrorHandler {
         locked = false;
     }
 
+    private static final String TAG = ErrorHandler.class.getSimpleName();
+
     public void notifyException(Throwable ex, boolean fatal) {
         if (locked) return;
         errorCount.incrementAndGet();
@@ -58,7 +60,7 @@ public final class ErrorHandler {
             if (handler != null) handler.onException(ex);
         }
 
-        Logging.log(ex);
+        Log.e(TAG, "Exception encountered, fatal: " + fatal, ex);
     }
 
     public interface Listener {

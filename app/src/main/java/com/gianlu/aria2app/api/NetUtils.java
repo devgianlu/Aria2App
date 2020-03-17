@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.commonutils.logging.Logging;
 
 import org.json.JSONObject;
 
@@ -42,8 +41,7 @@ public final class NetUtils {
                     .build();
 
             return true;
-        } catch (Exception ex) {
-            Logging.log(ex);
+        } catch (Exception ignored) {
             return false;
         }
     }

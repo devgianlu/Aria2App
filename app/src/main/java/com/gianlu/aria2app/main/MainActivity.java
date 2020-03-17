@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -80,7 +81,7 @@ import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.drawer.BaseDrawerItem;
 import com.gianlu.commonutils.drawer.DrawerManager;
-import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.logs.LogsHelper;
 import com.gianlu.commonutils.misc.MessageView;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.gianlu.commonutils.permissions.AskPermission;
@@ -111,6 +112,7 @@ import java.util.Set;
 public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener, Aria2Ui.Listener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
+    private static final String TAG = MainActivity.class.getSimpleName();
     private DrawerManager<MultiProfile, DrawerItem> drawerManager;
     private FloatingActionsMenu fabMenu;
     private DownloadCardsAdapter adapter;
@@ -182,7 +184,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         try {
             mimeType = AddBase64Bundle.extractMimeType(this, uri);
         } catch (AddDownloadBundle.CannotReadException ex) {
-            Toaster.with(this).message(R.string.invalidFile).ex(ex).show();
+            Log.e(TAG, "Cannot read file.", ex);
+            Toaster.with(this).message(R.string.invalidFile).show();
             return;
         }
 
@@ -191,7 +194,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         } else if (Objects.equals(mimeType, "application/metalink4+xml") || Objects.equals(mimeType, "application/metalink+xml")) {
             AddMetalinkActivity.startAndAdd(this, uri);
         } else {
-            Toaster.with(this).message(R.string.invalidFile).ex(new Exception("File type not supported: " + mimeType)).show();
+            Log.w(TAG, "File type not supported: " + mimeType);
+            Toaster.with(this).message(R.string.invalidFile).show();
         }
     }
 
@@ -214,7 +218,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 startActivity(new Intent(this, PreferenceActivity.class));
                 return false;
             case SUPPORT:
-                Logging.sendEmail(this, null);
+                LogsHelper.sendEmail(this, null);
                 return true;
             case ABOUT_ARIA2:
                 AboutAria2Dialog.get().show(getSupportFragmentManager(), null);
@@ -281,7 +285,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public boolean onCouldntLoad(@NonNull Exception ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed loading info.", ex);
 
                 if (recyclerViewLayout != null)
                     recyclerViewLayout.showError(R.string.failedLoadingDownloads);
@@ -337,7 +341,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             currentProfile = profilesManager.getCurrent();
             helper = Aria2Helper.instantiate(this);
         } catch (ProfilesManager.NoCurrentProfileException | Aria2Helper.InitializingException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed initialising.", ex);
             NetInstanceHolder.close();
             profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
@@ -423,7 +427,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
                         @Override
                         public void permissionDenied(@NonNull String permission) {
-                            Toaster.with(MainActivity.this).message(R.string.readPermissionDenied).error(true).show();
+                            Toaster.with(MainActivity.this).message(R.string.readPermissionDenied).show();
                         }
 
                         @Override
@@ -477,21 +481,20 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                             String skipVersion = profilesManager.getCurrent().shouldSkipVersionCheck(MainActivity.this);
                             if (!Objects.equals(skipVersion, latestVersion) && !Objects.equals(result.version, latestVersion))
                                 showOutdatedDialog(latestVersion, result.version);
-                        } catch (ProfilesManager.NoCurrentProfileException ex) {
-                            Logging.log(ex);
+                        } catch (ProfilesManager.NoCurrentProfileException ignored) {
                         }
                     }
 
                     @Override
                     public void onException(@NonNull @NotNull Exception ex) {
-                        Logging.log(ex);
+                        Log.e(TAG, "Cannot get aria2 version.", ex);
                     }
                 });
             }
 
             @Override
             public void onException(@NonNull Exception ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Cannot get latest aria2 version.", ex);
             }
         });
     }
@@ -509,7 +512,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         try {
             uri = new URI(shareData.toString());
         } catch (URISyntaxException ex) {
-            Toaster.with(this).message(R.string.invalidFile).ex(new Exception("Cannot identify shared file/url: " + shareData, ex)).show();
+            Log.e(TAG, "Invalid URL: " + shareData, ex);
+            Toaster.with(this).message(R.string.invalidFile).show();
             return;
         }
 
@@ -531,8 +535,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
                 .setNeutralButton(R.string.skipThisVersion, (dialogInterface, i) -> {
                     try {
                         profilesManager.getCurrent().skipVersionCheck(MainActivity.this, latest);
-                    } catch (ProfilesManager.NoCurrentProfileException ex) {
-                        Logging.log(ex);
+                    } catch (ProfilesManager.NoCurrentProfileException ignored) {
                     }
                 })
                 .setPositiveButton(android.R.string.ok, null);
@@ -566,7 +569,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
         try {
             if (profilesManager != null) profilesManager.reloadCurrentProfile();
         } catch (IOException | JSONException | ProfilesManager.NoCurrentProfileException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed reloading profile.", ex);
             NetInstanceHolder.close();
             profilesManager.unsetLastProfile();
             LoadingActivity.startActivity(this, ex);
@@ -732,7 +735,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onException(@NonNull @NotNull Exception ex) {
-                Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
+                Log.e(TAG, "Failed pausing all.", ex);
+                Toaster.with(MainActivity.this).message(R.string.failedAction).show();
             }
         });
     }
@@ -746,7 +750,8 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
 
             @Override
             public void onException(@NonNull @NotNull Exception ex) {
-                Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
+                Log.e(TAG, "Failed unpausing all.", ex);
+                Toaster.with(MainActivity.this).message(R.string.failedAction).show();
             }
         });
     }
@@ -759,8 +764,9 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             }
 
             @Override
-            public void onException(@NonNull @NotNull Exception ex) {
-                Toaster.with(MainActivity.this).message(R.string.failedAction).ex(ex).show();
+            public void onException(@NonNull Exception ex) {
+                Log.e(TAG, "Failed purging download results.", ex);
+                Toaster.with(MainActivity.this).message(R.string.failedAction).show();
             }
         });
     }

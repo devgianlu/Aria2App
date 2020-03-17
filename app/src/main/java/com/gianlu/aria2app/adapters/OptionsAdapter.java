@@ -12,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.aria2.Option;
 import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.options.OptionsManager;
-import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
@@ -134,7 +134,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             try {
                 v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://aria2.github.io/manual/en/html/aria2c.html#cmdoption-" + option.name)));
             } catch (ActivityNotFoundException ex) {
-                DialogUtils.showToast(v.getContext(), Toaster.build().message(R.string.missingWebBrowser).ex(ex));
+                DialogUtils.showToast(v.getContext(), Toaster.build().message(R.string.missingWebBrowser));
             }
        });
     }

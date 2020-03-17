@@ -2,9 +2,11 @@ package com.gianlu.aria2app.activities.moreabout.servers;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.activities.moreabout.PeersServersFragment;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaException;
@@ -12,12 +14,12 @@ import com.gianlu.aria2app.api.aria2.Server;
 import com.gianlu.aria2app.api.aria2.SparseServersWithFiles;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.Wants;
-import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.tutorial.PeersServersTutorial;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.tutorial.BaseTutorial;
 
 public class ServersFragment extends PeersServersFragment<ServersAdapter, ServerSheet, SparseServersWithFiles> implements ServersAdapter.Listener {
+
+    private static final String TAG = ServersFragment.class.getSimpleName();
 
     @NonNull
     public static ServersFragment getInstance(Context context, String gid) {
@@ -87,7 +89,7 @@ public class ServersFragment extends PeersServersFragment<ServersAdapter, Server
     @Override
     public void onCouldntLoadChecked(@NonNull Exception ex) {
         rmv.showError(R.string.failedLoading_reason, ex.getMessage());
-        Logging.log(ex);
+        Log.e(TAG, "Failed loading info.", ex);
     }
 
     @NonNull

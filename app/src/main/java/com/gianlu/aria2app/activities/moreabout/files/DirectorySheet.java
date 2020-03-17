@@ -2,6 +2,7 @@ package com.gianlu.aria2app.activities.moreabout.files;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -22,7 +23,6 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.dialogs.DialogUtils;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.Locale;
 
 public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupPayload, DirectorySheet.UpdatePayload> {
+    private static final String TAG = DirectorySheet.class.getSimpleName();
     private SuperTextView length;
     private CheckBox selected;
     private SuperTextView completedLength;
@@ -106,7 +107,8 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                     if (!isAdded()) return;
 
                     dismissAllowingStateLoss();
-                    DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
+                    Log.e(TAG, "Failed changing selection.", ex);
+                    DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection));
                 }
             }));
         } else {
@@ -130,7 +132,7 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
                 return true;
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "No profile found.", ex);
             return false;
         }
     }

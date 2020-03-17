@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +16,6 @@ import com.gianlu.aria2app.api.StatusCodeException;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.lifecycle.LifecycleAwareHandler;
 import com.gianlu.commonutils.lifecycle.LifecycleAwareRunnable;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.preferences.json.JsonStoring;
 
@@ -42,6 +42,7 @@ public final class SearchApi {
     public static final int RESULTS_PER_REQUEST = 20;
     private static final int TIMEOUT = 15;
     private static final HttpUrl BASE_URL = HttpUrl.parse("https://tse-api.gianlu.xyz/");
+    private static final String TAG = SearchApi.class.getSimpleName();
     private static SearchApi instance;
     private final OkHttpClient client;
     private final ExecutorService executorService;
@@ -189,7 +190,7 @@ public final class SearchApi {
             try {
                 listSearchEnginesSync();
             } catch (IOException | StatusCodeException | JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting engines.", ex);
             }
         });
     }

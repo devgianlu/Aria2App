@@ -11,7 +11,6 @@ import com.gianlu.aria2app.api.HttpClient;
 import com.gianlu.aria2app.api.OnConnect;
 import com.gianlu.aria2app.api.WebSocketClient;
 import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.commonutils.logging.Logging;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -75,8 +74,7 @@ public class NetTester extends BaseTester<AbstractClient> {
         synchronized (lock) {
             try {
                 lock.wait(5000);
-            } catch (InterruptedException ex) {
-                Logging.log(ex);
+            } catch (InterruptedException ignored) {
             }
 
             AbstractClient client = lock.get();

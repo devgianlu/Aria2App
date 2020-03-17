@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,21 +49,7 @@ public class Base64Fragment extends FragmentWithDialog {
         return getInstance(context, bundle instanceof AddTorrentBundle, bundle.fileUri());
     }
 
-    private void showFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-
-        try {
-            startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
-        } catch (android.content.ActivityNotFoundException ex) {
-            showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
-            return;
-        }
-
-        name = null;
-        path.setText(null);
-    }
+    private static final String TAG = Base64Fragment.class.getSimpleName();
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -74,6 +61,22 @@ public class Base64Fragment extends FragmentWithDialog {
         }
     }
 
+    private void showFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_SELECT_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            showToast(Toaster.build().message(R.string.noFilemanager));
+            return;
+        }
+
+        name = null;
+        path.setText(null);
+    }
+
     private void setFilename(@NonNull Uri uri) {
         fileUri = uri;
 
@@ -82,7 +85,8 @@ public class Base64Fragment extends FragmentWithDialog {
         try {
             name = AddBase64Bundle.extractFilename(getContext(), uri);
         } catch (AddBase64Bundle.CannotReadException ex) {
-            showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
+            Log.e(TAG, "Cannot read file.", ex);
+            showToast(Toaster.build().message(R.string.invalidFile));
             return;
         }
 
@@ -113,7 +117,7 @@ public class Base64Fragment extends FragmentWithDialog {
 
                 @Override
                 public void permissionDenied(@NonNull String permission) {
-                    showToast(Toaster.build().message(R.string.readPermissionDenied).error(true));
+                    showToast(Toaster.build().message(R.string.readPermissionDenied));
                 }
 
                 @Override
@@ -148,7 +152,8 @@ public class Base64Fragment extends FragmentWithDialog {
         try {
             return AddBase64Bundle.readBase64(getContext(), fileUri);
         } catch (AddBase64Bundle.CannotReadException ex) {
-            showToast(Toaster.build().message(R.string.invalidFile).ex(ex));
+            Log.e(TAG, "Cannot read file.", ex);
+            showToast(Toaster.build().message(R.string.invalidFile));
             return null;
         }
     }
