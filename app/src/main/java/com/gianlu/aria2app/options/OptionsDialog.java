@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OptionsDialog extends DialogFragment implements AbstractClient.OnResult<OptionsMap>, OptionsAdapter.Listener {
+    private static final String TAG = OptionsDialog.class.getSimpleName();
     private ProgressBar loading;
     private OptionsView optionsView;
     private Button export;
@@ -90,8 +91,6 @@ public class OptionsDialog extends DialogFragment implements AbstractClient.OnRe
         });
         return dialog;
     }
-
-    private static final String TAG = OptionsDialog.class.getSimpleName();
 
     @Nullable
     @Override

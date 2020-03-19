@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -20,20 +21,28 @@ import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.internal.Message;
 import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen;
 import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen.LogEntry;
+import com.gianlu.aria2lib.ui.ImportExportUtils;
 import com.gianlu.commonutils.FileUtils;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
+import com.gianlu.commonutils.ui.Toaster;
 
+import org.json.JSONException;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2Ui.Listener {
-    private static final int STORAGE_ACCESS_CODE = 3;
+    private static final int RC_STORAGE_ACCESS_CODE = 3;
     private static final String TAG = InAppAria2ConfActivity.class.getSimpleName();
+    private static final int RC_IMPORT_CONFIG = 4;
     private Aria2ConfigurationScreen screen;
     private ToggleButton toggle;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == STORAGE_ACCESS_CODE) {
+        if (requestCode == RC_STORAGE_ACCESS_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
                 if (uri != null) {
@@ -42,16 +51,42 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
                             data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
                 }
             }
+        } else if (requestCode == RC_IMPORT_CONFIG) {
+            if (resultCode == Activity.RESULT_OK && data.getData() != null) {
+                try {
+                    InputStream in = getContentResolver().openInputStream(data.getData());
+                    if (in != null) {
+                        try {
+                            ImportExportUtils.importConfigFromStream(in);
+                            Toaster.with(this).message(R.string.importedConfig).show();
+                        } catch (IOException | JSONException | OutOfMemoryError ex) {
+                            Toaster.with(this).message(R.string.cannotImport).show();
+                        }
+                    }
+                } catch (FileNotFoundException ex) {
+                    Toaster.with(this).message(R.string.fileNotFound).show();
+                }
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.in_app_downloader, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.inappAria2conf_importExport:
+                ImportExportUtils.showDialog(this, RC_IMPORT_CONFIG);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -81,7 +116,7 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
         });
 
         screen = findViewById(R.id.inAppAria2conf_screen);
-        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, null, false);
+        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, RC_STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, null, false);
 
         screen.lockPreferences(lastState);
     }
