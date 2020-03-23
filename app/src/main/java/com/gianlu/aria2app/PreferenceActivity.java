@@ -115,15 +115,6 @@ public class PreferenceActivity extends BasePreferenceActivity {
             customDownloadInfo.setIcon(R.drawable.baseline_info_outline_24);
             addPreference(customDownloadInfo);
 
-            MaterialCheckboxPreference versionCheck = new MaterialCheckboxPreference.Builder(context)
-                    .key(PK.A2_CHECK_VERSION.key())
-                    .defaultValue(PK.A2_CHECK_VERSION.fallback())
-                    .build();
-            versionCheck.setTitle(R.string.prefs_versionCheck);
-            versionCheck.setSummary(R.string.prefs_versionCheck_summary);
-            versionCheck.setIcon(R.drawable.baseline_verified_user_24);
-            addPreference(versionCheck);
-
             MaterialCheckboxPreference bestTrackers = new MaterialCheckboxPreference.Builder(context)
                     .key(PK.A2_ADD_BEST_TRACKERS.key())
                     .defaultValue(PK.A2_ADD_BEST_TRACKERS.fallback())
