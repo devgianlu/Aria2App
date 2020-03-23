@@ -15,6 +15,7 @@ import com.gianlu.aria2app.api.ErrorHandler;
 import com.gianlu.aria2app.api.NetInstanceHolder;
 import com.gianlu.aria2app.api.search.SearchApi;
 import com.gianlu.aria2app.inappdownloader.Aria2ConfigProvider;
+import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
@@ -50,7 +51,8 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     public boolean shouldCheckVersion() {
         try {
-            return !checkedVersionFor.contains(ProfilesManager.get(this).getCurrent().id);
+            MultiProfile profile = ProfilesManager.get(this).getCurrent();
+            return !profile.isInAppDownloader() && !checkedVersionFor.contains(profile.id);
         } catch (ProfilesManager.NoCurrentProfileException ignored) {
             return true;
         }
