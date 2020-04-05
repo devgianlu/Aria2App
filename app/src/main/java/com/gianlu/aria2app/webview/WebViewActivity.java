@@ -160,6 +160,8 @@ public class WebViewActivity extends ActivityWithDialog {
                     }
                 }
             }
+
+            interceptedDownload(InterceptedRequest.from(url, userAgent, contentDisposition));
         });
 
         web.setWebViewClient(new WebViewClient() {

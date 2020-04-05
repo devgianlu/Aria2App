@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +28,16 @@ public final class InterceptedRequest implements Serializable {
         this.url = url;
         this.headers = headers;
         this.prior = prior;
+    }
+
+    @NonNull
+    public static InterceptedRequest from(@NonNull String url, @NonNull String userAgent, @NonNull String contentDisposition) {
+        HashMap<String, String> headers = new HashMap<>(1);
+        headers.put("User-Agent", userAgent);
+
+        InterceptedRequest req = new InterceptedRequest(url, headers, new ArrayList<>(0));
+        req.contentDisposition(contentDisposition);
+        return req;
     }
 
     @NonNull
@@ -79,6 +91,10 @@ public final class InterceptedRequest implements Serializable {
 
     @Nullable
     public String filename() {
-        return filename;
+        try {
+            return URLDecoder.decode(filename, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            return null;
+        }
     }
 }
