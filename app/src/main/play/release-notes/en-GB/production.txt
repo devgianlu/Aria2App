@@ -1,2 +1,9 @@
+### Added
+- Added ability to export/import session and conf file
+
 ### Fixed
-- Fixed crash at startup due to invalid font
+- Fixed WebView URL parse issue
+
+### Changed
+- Using Android logging now!
+- Do not check aria2 version for In-App Downloader
