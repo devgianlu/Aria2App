@@ -95,7 +95,7 @@ dependencies {
     implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
     implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
@@ -103,6 +103,9 @@ dependencies {
     implementation 'com.github.devgianlu:Android--Library-Country-Flags:6fc6059f91'
 
     implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0-alpha01'
+
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
 }
 
 task printVersionName {
