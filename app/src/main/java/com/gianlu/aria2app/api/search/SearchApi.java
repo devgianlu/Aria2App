@@ -108,7 +108,7 @@ public final class SearchApi {
                         missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
 
                     String newToken = CommonUtils.optString(obj, "token");
-                    post(() -> listener.onResult(results, missingEngines, newToken));
+                    post(() -> listener.onResult(query, results, missingEngines, newToken));
                 } catch (IOException | StatusCodeException | JSONException ex) {
                     post(() -> listener.onException(ex));
                 }
@@ -197,7 +197,7 @@ public final class SearchApi {
 
     @UiThread
     public interface OnSearch {
-        void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
+        void onResult(@Nullable String query, @NonNull List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
 
         void onException(@NonNull Exception ex);
     }

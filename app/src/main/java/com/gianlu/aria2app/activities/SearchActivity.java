@@ -43,8 +43,10 @@ import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -75,10 +77,10 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         rmv.linearLayoutManager(RecyclerView.VERTICAL, false);
         rmv.dividerDecoration(RecyclerView.VERTICAL);
 
-        final Button messageMore = findViewById(R.id.search_messageMore);
+        Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(view -> {
             try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://swaggerhub.com/apis/devgianlu/torrent-search-engine")));
             } catch (ActivityNotFoundException ex) {
                 messageMore.setVisibility(View.GONE);
             }
@@ -87,7 +89,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         searchApi = SearchApi.get();
     }
 
-    private void showEnginesDialog(final List<SearchEngine> engines) {
+    private void showEnginesDialog(@NotNull List<SearchEngine> engines) {
         CharSequence[] enginesNames = new CharSequence[engines.size()];
 
         for (int i = 0; i < engines.size(); i++) {
@@ -99,7 +101,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         Set<String> checkedEnginesSet = Prefs.getSet(PK.A2_SEARCH_ENGINES, null);
 
         if (checkedEnginesSet == null) {
-            for (int i = 0; i < checkedEngines.length; i++) checkedEngines[i] = true;
+            Arrays.fill(checkedEngines, true);
         } else {
             for (String checkedEngine : checkedEnginesSet)
                 for (int i = 0; i < engines.size(); i++)
@@ -146,7 +148,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     }
 
     @Override
-    public boolean onQueryTextSubmit(final String query) {
+    public boolean onQueryTextSubmit(@NotNull String query) {
         message.setVisibility(View.GONE);
         rmv.startLoading();
         this.query = query;
@@ -169,12 +171,14 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         rmv.hideList();
         rmv.hideMessage();
         searchView.setQuery(null, false);
-        this.query = null;
         return false;
     }
 
     @Override
-    public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
+    public void onResult(@Nullable String query, @NotNull List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
+        if (!Objects.equals(this.query, query))
+            return;
+
         message.setVisibility(View.GONE);
 
         rmv.loadListData(new SearchResultsAdapter(this, results, nextPageToken, this));
@@ -189,7 +193,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         if (item.getItemId() == R.id.search_engines) {
             showProgress(R.string.gathering_information);
             searchApi.listSearchEngines(this, new SearchApi.OnResult<List<SearchEngine>>() {
@@ -248,7 +252,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         showDialog(builder);
     }
 
-    private void showTorrentDialog(final Torrent torrent) {
+    private void showTorrentDialog(@NotNull Torrent torrent) {
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_torrent, null, false);
         SuperTextView engine = layout.findViewById(R.id.torrentDialog_engine);
         SuperTextView size = layout.findViewById(R.id.torrentDialog_size);
