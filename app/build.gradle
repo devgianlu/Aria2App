@@ -3,7 +3,7 @@ plugins {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def isTravis = System.getenv("CI") == "true"
 android {
