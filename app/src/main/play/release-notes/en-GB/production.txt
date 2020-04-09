@@ -1,9 +1,6 @@
-### Added
-- Added ability to export/import session and conf file
-
 ### Fixed
-- Fixed WebView URL parse issue
+- Fixed file name not being decoded when using WebView
+- Fixed search displaying wrong results
 
 ### Changed
-- Using Android logging now!
-- Do not check aria2 version for In-App Downloader
+- WebView should intercept more requests
