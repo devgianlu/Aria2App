@@ -92,7 +92,7 @@ public final class InterceptedRequest implements Serializable {
     @Nullable
     public String filename() {
         try {
-            return URLDecoder.decode(filename, "UTF-8");
+            return filename == null ? null : URLDecoder.decode(filename, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
             return null;
         }

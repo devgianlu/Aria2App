@@ -129,7 +129,9 @@ public class UrisFragment extends FragmentWithDialog implements UrisAdapter.List
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (getContext() == null || getArguments() == null || !getArguments().getBoolean("compulsory", false))
+        if (getContext() == null || getArguments() == null
+                || !requireArguments().getBoolean("compulsory", false)
+                || requireArguments().containsKey("edit"))
             return;
 
         URI uri = (URI) getArguments().getSerializable("uri");
