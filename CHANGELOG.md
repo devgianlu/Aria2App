@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.7.2] - 10-04-2020
+### Fixed
+- Fixed crash when intercepting URL with WebView
+- Fixed add URI dialog appearing when intercepting with WebView
+
+
 ## [5.7.1] - 09-04-2020
 ### Fixed
 - Fixed file name not being decoded when using WebView
@@ -11,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - WebView should intercept more requests
+
 
 ## [5.7.0] - 05-04-2020
 ### Added
