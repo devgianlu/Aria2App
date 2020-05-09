@@ -12,9 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -61,10 +61,10 @@ import java.util.Objects;
 import static com.gianlu.aria2app.activities.editprofile.InvalidFieldException.Where;
 
 public class EditProfileActivity extends ActivityWithDialog implements TestFragment.OnGetProfile {
+    private static final String TAG = EditProfileActivity.class.getSimpleName();
     private final List<ConditionWithState> conditions = new ArrayList<>();
     private ProfileFragmentsAdapter pagerAdapter;
     private MultiProfile editProfile;
-    private static final String TAG = EditProfileActivity.class.getSimpleName();
     private TextInputLayout profileName;
     private CheckBox enableNotifs;
     private ViewPager pager;
@@ -252,7 +252,7 @@ public class EditProfileActivity extends ActivityWithDialog implements TestFragm
             return;
         }
 
-        LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_new_condition, null, false);
+        ScrollView layout = (ScrollView) getLayoutInflater().inflate(R.layout.dialog_new_condition, null, false);
 
         TextInputLayout ssid = layout.findViewById(R.id.editProfile_ssid);
         CommonUtils.clearErrorOnEdit(ssid);

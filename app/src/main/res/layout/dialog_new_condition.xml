@@ -1,77 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="24dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:autoLink="web"
-        android:text="@string/profile_help"
-        android:textAlignment="center" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/connectivityCondition" />
-
-    <RadioGroup
-        android:id="@+id/editProfile_connectivityCondition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
-
-        <RadioButton
-            android:id="@+id/editProfile_connectivityCondition_always"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/always" />
-
-        <RadioButton
-            android:id="@+id/editProfile_connectivityCondition_wifi"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/wifi" />
-
-        <RadioButton
-            android:id="@+id/editProfile_connectivityCondition_mobile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/mobile" />
-
-        <RadioButton
-            android:id="@+id/editProfile_connectivityCondition_ethernet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ethernet" />
-
-        <RadioButton
-            android:id="@+id/editProfile_connectivityCondition_bluetooth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/bluetooth" />
-    </RadioGroup>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editProfile_ssid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/ssid"
-        android:visibility="gone">
-
-        <MultiAutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1" />
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ssids_help"
+            android:layout_marginBottom="16dp"
+            android:autoLink="web"
+            android:text="@string/profile_help"
             android:textAlignment="center" />
-    </com.google.android.material.textfield.TextInputLayout>
-</LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connectivityCondition" />
+
+        <RadioGroup
+            android:id="@+id/editProfile_connectivityCondition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/editProfile_connectivityCondition_always"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/always" />
+
+            <RadioButton
+                android:id="@+id/editProfile_connectivityCondition_wifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wifi" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editProfile_ssid"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/ssid"
+                android:visibility="gone">
+
+                <MultiAutoCompleteTextView
+                    style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:text="@string/ssids_help"
+                    android:textAlignment="center" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RadioButton
+                android:id="@+id/editProfile_connectivityCondition_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mobile" />
+
+            <RadioButton
+                android:id="@+id/editProfile_connectivityCondition_ethernet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ethernet" />
+
+            <RadioButton
+                android:id="@+id/editProfile_connectivityCondition_bluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bluetooth" />
+        </RadioGroup>
+    </LinearLayout>
+</ScrollView>
