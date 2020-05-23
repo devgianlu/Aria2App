@@ -1,8 +1,6 @@
-### Fixed
-- Fixed file name not being decoded when using WebView
-- Fixed search displaying wrong results
-- Fixed crash when intercepting URL with WebView
-- Fixed add URI dialog appearing when intercepting with WebView
+### Added
+- Added desktop mode in WebView
 
-### Changed
-- WebView should intercept more requests
+### Fixed
+- Fixed conditions dialog not scrolling
+- Fixed duplicate WiFis names
