@@ -344,4 +344,5 @@
     <string name="filtersShowingOnly">Mostrando apenas %s (%d)</string>
     <string name="prefs_skipWebViewDialog">Skip WebView dialog</string>
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
+    <string name="desktopMode">Desktop mode</string>
 </resources>
