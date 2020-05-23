@@ -141,13 +141,13 @@ public class WebViewActivity extends ActivityWithDialog {
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setUserAgentString(settings.getUserAgentString() + " " + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR);
-
         settings.setAllowFileAccess(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setAppCacheEnabled(true);
         settings.setAppCachePath(getCacheDir().getAbsolutePath());
+
+        toggleDesktopMode(false);
 
         client = new OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build();
         web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
@@ -177,9 +177,11 @@ public class WebViewActivity extends ActivityWithDialog {
                         interceptedRequests.add(InterceptedRequest.from(resp));
                     }
 
+                    Log.d(TAG, String.format("WebView request: %s %s => %d", req.method(), req.url(), resp.code()));
+
                     return buildResponse(resp);
                 } catch (IOException ex) {
-                    Log.e(TAG, "Failed request.", ex);
+                    Log.e(TAG, String.format("Failed WebView request request: %s %s", req.method(), req.url()), ex);
                     return null;
                 }
             }
@@ -203,6 +205,21 @@ public class WebViewActivity extends ActivityWithDialog {
             web.loadUrl(Prefs.getString(PK.WEBVIEW_HOMEPAGE, null));
         else
             showGoToDialog(true);
+    }
+
+    private void toggleDesktopMode(boolean enabled) {
+        WebSettings settings = web.getSettings();
+
+        settings.setLoadWithOverviewMode(enabled);
+        settings.setUseWideViewPort(enabled);
+
+        settings.setSupportZoom(enabled);
+        settings.setBuiltInZoomControls(enabled);
+        settings.setDisplayZoomControls(!enabled);
+
+        String userAgent = enabled ? "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0" : WebSettings.getDefaultUserAgent(this);
+        userAgent += " Aria2App/" + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR;
+        settings.setUserAgentString(userAgent);
     }
 
     @Override
@@ -229,6 +246,12 @@ public class WebViewActivity extends ActivityWithDialog {
             return true;
         } else if (item.getItemId() == android.R.id.home) {
             customBackPressed();
+            return true;
+        } else if (item.getItemId() == R.id.webView_toggleDesktop) {
+            toggleDesktopMode(!item.isChecked());
+            web.reload();
+
+            item.setChecked(!item.isChecked());
             return true;
         }
 
