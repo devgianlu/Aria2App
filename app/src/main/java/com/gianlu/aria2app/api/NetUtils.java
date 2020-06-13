@@ -29,7 +29,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public final class NetUtils {
-    public static final int HTTP_TIMEOUT = 5; // sec
+    public static final int HTTP_TIMEOUT = 30; // sec
 
     public static boolean isUrlValid(String address, int port, String endpoint, boolean encryption) {
         try {
