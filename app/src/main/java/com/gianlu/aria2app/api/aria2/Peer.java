@@ -9,6 +9,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.Filterable;
 import com.gianlu.commonutils.adapters.NotFilterable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Comparator;
@@ -26,7 +27,7 @@ public class Peer implements Filterable<NotFilterable> {
     public final String bitfield;
     private final String peerId;
 
-    public Peer(JSONObject obj) {
+    public Peer(JSONObject obj) throws JSONException {
         peerId = CommonUtils.optString(obj, "peerId");
         ip = CommonUtils.optString(obj, "ip");
         port = obj.optInt("port", -1);

@@ -30,7 +30,7 @@ public class IPDetails {
     }
 
     @Nullable
-    private static String parseStupidNull(@NonNull JSONObject obj, @NonNull String key) {
+    private static String parseStupidNull(@NonNull JSONObject obj, @NonNull String key) throws JSONException {
         String str = CommonUtils.optString(obj, key);
         if (Objects.equals(str, "null")) return null;
         else return str;
