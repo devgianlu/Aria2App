@@ -14,8 +14,8 @@
     <string name="prefs_hideMetadata_summary">隐藏后续会启动另一个下载的元数据。</string>
     <string name="prefs_updateRate">刷新频率</string>
     <string name="prefs_updateRate_summary">用户界面刷新频率，以秒为单位。</string>
-    <string name="prefs_networkTimeout">Network timeout</string>
-    <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
+    <string name="prefs_networkTimeout">网络超时</string>
+    <string name="prefs_networkTimeout_summary">如果您的网络有很高的延迟，请增加此值(秒)以避免错误。</string>
     <string name="prefs_downloadDisplayInfo">下载显示信息</string>
     <string name="prefs_downloadDisplayInfo_summary">自定义下载卡中显示的信息。</string>
     <string name="prefs_versionCheck">在启动时检查aria2版本</string>
