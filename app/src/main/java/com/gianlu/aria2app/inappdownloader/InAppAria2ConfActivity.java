@@ -188,5 +188,6 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
     public void updateUi(boolean on) {
         toggle.setChecked(on);
         screen.lockPreferences(on);
+        screen.refreshNics();
     }
 }
