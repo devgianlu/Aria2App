@@ -3,7 +3,9 @@ package com.gianlu.aria2app.api;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.profiles.MultiProfile;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONObject;
 
@@ -29,8 +31,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public final class NetUtils {
-    public static final int HTTP_TIMEOUT = 5; // sec
-
     public static boolean isUrlValid(String address, int port, String endpoint, boolean encryption) {
         try {
             new HttpUrl.Builder()
@@ -69,10 +69,12 @@ public final class NetUtils {
 
     @NonNull
     public static OkHttpClient buildClient(@NonNull MultiProfile.UserProfile profile) throws GeneralSecurityException, IOException {
+        int timeout = Prefs.getInt(PK.A2_NETWORK_TIMEOUT);
+
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS)
-                .writeTimeout(HTTP_TIMEOUT, TimeUnit.SECONDS);
+        builder.connectTimeout(timeout, TimeUnit.SECONDS)
+                .readTimeout(timeout, TimeUnit.SECONDS)
+                .writeTimeout(timeout, TimeUnit.SECONDS);
 
         if (profile.certificate != null)
             setSslSocketFactory(builder, profile.certificate);

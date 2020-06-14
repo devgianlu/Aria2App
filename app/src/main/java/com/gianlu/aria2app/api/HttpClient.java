@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.annotation.WorkerThread;
 
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.profiles.MultiProfile;
+import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +46,7 @@ public class HttpClient extends AbstractClient {
         executorService.submit(() -> {
             try (Socket socket = new Socket()) {
                 final long initializedAt = System.currentTimeMillis();
-                socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(NetUtils.HTTP_TIMEOUT));
+                socket.connect(new InetSocketAddress(profile.serverAddr, profile.serverPort), (int) TimeUnit.SECONDS.toMillis(Prefs.getInt(PK.A2_NETWORK_TIMEOUT)));
                 handler.post(() -> {
                     if (connectionListener.onConnected(HttpClient.this))
                         connectionListener.onPingTested(HttpClient.this, System.currentTimeMillis() - initializedAt);

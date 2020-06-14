@@ -14,6 +14,8 @@
     <string name="prefs_hideMetadata_summary">Hide metadata that started another download.</string>
     <string name="prefs_updateRate">Update rate</string>
     <string name="prefs_updateRate_summary">UI update rate in seconds.</string>
+    <string name="prefs_networkTimeout">Network timeout</string>
+    <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
     <string name="prefs_downloadDisplayInfo">Download display info</string>
     <string name="prefs_downloadDisplayInfo_summary">Customize the info shown in the download card.</string>
     <string name="prefs_versionCheck">Check aria2 version at startup</string>

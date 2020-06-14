@@ -27,6 +27,7 @@ public final class PK extends CommonPK {
     public static final Prefs.KeyWithDefault<Integer> A2_UPDATE_INTERVAL = new Prefs.KeyWithDefault<>("a2_updateRate", 1);
     public static final Prefs.KeyWithDefault<Boolean> A2_HIDE_METADATA = new Prefs.KeyWithDefault<>("a2_hideMetadata", false);
     public static final Prefs.Key A2_QUICK_OPTIONS_MIXED = new Prefs.Key("a2_quickOptionsMixed");
+    public static final Prefs.KeyWithDefault<Integer> A2_NETWORK_TIMEOUT = new Prefs.KeyWithDefault<>("a2_networkTimeout", 5);
     public static final Prefs.KeyWithDefault<Boolean> A2_CHECK_VERSION = new Prefs.KeyWithDefault<>("a2_runVersionCheckAtStartup", true);
     public static final Prefs.KeyWithDefault<String> A2_MAIN_SORTING = new Prefs.KeyWithDefault<>("a2_mainSorting", DownloadCardsAdapter.SortBy.STATUS.name());
     public static final Prefs.KeyWithDefault<Set<String>> A2_SELECTED_NOTIFS_TYPE = new Prefs.KeyWithDefault<>("a2_selectedNotifications", new HashSet<>(Arrays.asList(NotificationService.EventType.prefsValues())));

@@ -103,6 +103,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
             updateRate.setIcon(R.drawable.baseline_update_24);
             addPreference(updateRate);
 
+            MaterialSeekBarPreference networkTimeout = new MaterialSeekBarPreference.Builder(context)
+                    .minValue(1).maxValue(60).showValue(true)
+                    .key(PK.A2_NETWORK_TIMEOUT.key())
+                    .defaultValue(PK.A2_NETWORK_TIMEOUT.fallback())
+                    .build();
+            networkTimeout.setTitle(R.string.prefs_networkTimeout);
+            networkTimeout.setSummary(R.string.prefs_networkTimeout_summary);
+            networkTimeout.setIcon(R.drawable.baseline_network_check_24);
+            addPreference(networkTimeout);
+
             MaterialMultiChoicePreference customDownloadInfo = new MaterialMultiChoicePreference.Builder(context)
                     .entryValues(CustomDownloadInfo.Info.stringValues())
                     .entries(CustomDownloadInfo.Info.formalValues(context))
