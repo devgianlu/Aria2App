@@ -14,6 +14,8 @@
     <string name="prefs_hideMetadata_summary">다른 다운로드 시작한 메타 데이터는 숨기기</string>
     <string name="prefs_updateRate">업데이트 속도</string>
     <string name="prefs_updateRate_summary">초당 UI 업데이트 회수</string>
+    <string name="prefs_networkTimeout">Network timeout</string>
+    <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
     <string name="prefs_downloadDisplayInfo">디스플레이 정보 다운로드하기</string>
     <string name="prefs_downloadDisplayInfo_summary">다운로드 카드의 정보를 개인화하기</string>
     <string name="prefs_versionCheck">시작 시 aria2의 버전을 확인하기</string>
