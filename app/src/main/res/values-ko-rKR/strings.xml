@@ -276,10 +276,10 @@
     <string name="ssids_help">You can provide a list of comma separated SSIDs.</string>
     <string name="pauseAll">모두 일시 중지</string>
     <string name="unpauseAll">모두 다시 시작</string>
-    <string name="purgeDownloadResult">Purge download results</string>
-    <string name="pausedAll">Paused all downloads.</string>
-    <string name="resumedAll">Resumed all downloads.</string>
-    <string name="purgedDownloadResult">Purged all download results.</string>
+    <string name="purgeDownloadResult">다운로드 결과 제거</string>
+    <string name="pausedAll">모든 다운로드 일시 중지됨.</string>
+    <string name="resumedAll">모든 다운로드 다시 시작됨.</string>
+    <string name="purgedDownloadResult">모든 다운로드 제거됨.</string>
     <string name="skipThisVersion">이 버전 건너뛰기</string>
     <string name="selectDirForDownload">Select all files in directory for download</string>
     <string name="pickProfile_someAction">Choose a profile to complete the action:</string>
@@ -292,9 +292,9 @@
     <string name="exportedOptions">Options exported successfully to %s</string>
     <string name="noActivity">활동 없음</string>
     <string name="multipleOptions_help">This option can be specified multiple times on the command line. The equivalent here is to have them on different lines.</string>
-    <string name="couldStreamVideo">Stream video</string>
+    <string name="couldStreamVideo">동영상 스트림</string>
     <string name="couldStreamVideo_message">One of your application could stream this video. Would you like to watch it now or just download it?</string>
-    <string name="stream">Stream</string>
+    <string name="stream">스트림</string>
     <string name="select">선택</string>
     <string name="deselect">선택 취소</string>
     <string name="selectAll">모두 선택</string>
