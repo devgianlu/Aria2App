@@ -14,6 +14,8 @@
     <string name="prefs_hideMetadata_summary">隱藏後續會啟動另一個下載的 Metadata。</string>
     <string name="prefs_updateRate">更新頻率</string>
     <string name="prefs_updateRate_summary">界面更新頻率，以秒為單位。</string>
+    <string name="prefs_networkTimeout">Network timeout</string>
+    <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
     <string name="prefs_downloadDisplayInfo">下載顯示訊息</string>
     <string name="prefs_downloadDisplayInfo_summary">自定下載面板中顯示的訊息。</string>
     <string name="prefs_versionCheck">在啟動時檢查 aria2 版本</string>
@@ -344,4 +346,5 @@
     <string name="filtersShowingOnly">Showing only %s (%d)</string>
     <string name="prefs_skipWebViewDialog">Skip WebView dialog</string>
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
+    <string name="desktopMode">Desktop mode</string>
 </resources>

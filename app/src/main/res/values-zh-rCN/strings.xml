@@ -14,6 +14,8 @@
     <string name="prefs_hideMetadata_summary">隐藏后续会启动另一个下载的元数据。</string>
     <string name="prefs_updateRate">刷新频率</string>
     <string name="prefs_updateRate_summary">用户界面刷新频率，以秒为单位。</string>
+    <string name="prefs_networkTimeout">网络超时</string>
+    <string name="prefs_networkTimeout_summary">如果您的网络有很高的延迟，请增加此值(秒)以避免错误。</string>
     <string name="prefs_downloadDisplayInfo">下载显示信息</string>
     <string name="prefs_downloadDisplayInfo_summary">自定义下载卡中显示的信息。</string>
     <string name="prefs_versionCheck">在启动时检查aria2版本</string>
@@ -344,4 +346,5 @@
     <string name="filtersShowingOnly">仅显示%s (%d)</string>
     <string name="prefs_skipWebViewDialog">跳过WebView对话框</string>
     <string name="prefs_skipWebViewDialog_summary">分享链接时，是否跳过打开WebView对话框</string>
+    <string name="desktopMode">桌面模式</string>
 </resources>
