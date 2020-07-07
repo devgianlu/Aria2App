@@ -1,6 +1,6 @@
 ### Added
-- Added desktop mode in WebView
+- Added list of interfaces for InAppDownloader
+- Configure connection timeout
 
-### Fixed
-- Fixed conditions dialog not scrolling
-- Fixed duplicate WiFis names
+### Changed
+- Load CA certificates instead of disabling check (for InAppDownloader)
