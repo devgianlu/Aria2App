@@ -156,9 +156,9 @@
     <string name="emptyToken">The token field is empty!</string>
     <string name="emptyPassword">The password field is empty!</string>
     <string name="emptyUsername">The username field is empty!</string>
-    <string name="invalidAddress">Invalid address!</string>
+    <string name="invalidAddress">잘못된 주소입니다!</string>
     <string name="pickProfile">Choose a profile or create a new one. Press and hold to edit.</string>
-    <string name="failedLoading">Failed loading!</string>
+    <string name="failedLoading">로드 실패!</string>
     <string name="currentUri"><![CDATA[<b>지금 URI:</b>]]> %s</string>
     <string name="uri"><![CDATA[<b>URI:</b>]]> %s</string>
     <string name="selectForDownload">다운로드하는 파일을 선택하십시오</string>
@@ -251,7 +251,7 @@
     <string name="missingEngines">Missing engines</string>
     <string name="searchEngines">검색 엔진</string>
     <string name="noEnginesSelected">Select at least one search engine!</string>
-    <string name="pending">Pending</string>
+    <string name="pending">대기 중</string>
     <string name="noFiles">There are no files to display. This might occur when the download is added with \"pause=true\"</string>
     <string name="failed">실패함</string>
     <string name="running">실행 중</string>
@@ -265,7 +265,7 @@
     <string name="certificateDetails">인증서 정보</string>
     <string name="serialNumber"><![CDATA[<b>Serial number:</b>]]> %s</string>
     <string name="subject">제목</string>
-    <string name="issuer">Issuer</string>
+    <string name="issuer">발급자</string>
     <string name="signatureAlgorithm">Signature algorithm</string>
     <string name="name">이름: %s</string>
     <string name="oid">OID: %s</string>
@@ -286,7 +286,7 @@
     <string name="notificationException">Notification service for %s failed!</string>
     <string name="notificationUnsupportedConnMethod">Unsupported connection method for %s!</string>
     <string name="notificationUnsupportedConnMethod_details">Cannot start notification service for this profile. Please switch to WebSockets if you want to enable notifications.</string>
-    <string name="export">Export</string>
+    <string name="export">내보내기</string>
     <string name="exportOptionsGrantWrite">In order to export the options you must grant the write permission and retry.</string>
     <string name="failedExportingOptions">Failed exporting the options!</string>
     <string name="exportedOptions">Options exported successfully to %s</string>
@@ -301,20 +301,20 @@
     <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
     <string name="writePermissionDenied">You denied the write permission!</string>
     <string name="readPermissionDenied">You denied the read permission!</string>
-    <string name="batchAdd">Batch add</string>
+    <string name="batchAdd">일괄 추가</string>
     <string name="torrents">토렌트</string>
-    <string name="metalinks">Metalinks</string>
-    <string name="addSingle">Add single</string>
+    <string name="metalinks">메타링크들</string>
+    <string name="addSingle">단일 추가</string>
     <string name="noBatchAdd">There are no batch operations. Add some with the buttons below.</string>
     <string name="downloadsAddedBatch">All downloads added.</string>
     <string name="failedAddingDownloads">Failed adding some downloads.</string>
-    <string name="torrentFiles">Torrent files</string>
+    <string name="torrentFiles">토렌트 파일</string>
     <string name="metalinkFiles">Metalink files</string>
-    <string name="urisFile">Uris file</string>
+    <string name="urisFile">URI 파일</string>
     <string name="urisFile_help">To know more about URI files, visit this page: https://github.com/devgianlu/Aria2App/wiki/What\'s-an-URI-file</string>
     <string name="cancelled">취소됨</string>
     <string name="failedStartingAria2Android">Failed starting Aria2Android!</string>
-    <string name="prefs_ddUseExternal">Use external downloader</string>
+    <string name="prefs_ddUseExternal">외부 다운로더 사용하기</string>
     <string name="prefs_ddUseExternal_summary">Send the download to the system or another app.</string>
     <string name="cannotDownloadDirWithExternal">디렉터리를 다운로드 할 수 없습니다</string>
     <string name="cannotDownloadDirWithExternal_message">You can\'t download a directory using an external downloader. Do you want to start the download with the integrated downloader?</string>
