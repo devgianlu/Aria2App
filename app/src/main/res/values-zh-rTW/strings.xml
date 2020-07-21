@@ -326,7 +326,7 @@
     <string name="visit">Visit</string>
     <string name="goTo">Go to</string>
     <string name="prefs_addBestTrackers">Add best trackers to new downloads</string>
-    <string name="prefs_addBestTrackers_summary">Add best trackers from ngosang/trackerslist to new downloads automatically</string>
+    <string name="prefs_addBestTrackers_summary">Add best trackers from XIU2/TrackersListCollection to new downloads automatically</string>
     <string name="addBestTrackers">Add best trackers</string>
     <string name="health"><![CDATA[<b>Health:</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">Service is up and running.</string>

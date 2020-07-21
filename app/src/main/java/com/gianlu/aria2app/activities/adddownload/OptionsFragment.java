@@ -34,6 +34,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -147,7 +148,7 @@ public class OptionsFragment extends FragmentWithDialog implements OptionsAdapte
     private void addBestTrackers() {
         TrackersListFetch.get().getTrackers(TrackersListFetch.Type.BEST, getActivity(), new TrackersListFetch.Listener() {
             @Override
-            public void onDone(@NonNull List<String> trackers) {
+            public void onDone(@NonNull Collection<String> trackers) {
                 Option btTracker = null;
                 for (Option option : adapter.getOptions()) {
                     if (Objects.equals(option.name, "bt-tracker")) {

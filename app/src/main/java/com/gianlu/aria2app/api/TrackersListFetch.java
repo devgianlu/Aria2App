@@ -17,8 +17,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,7 +30,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 public class TrackersListFetch {
-    private static final String BASE_URL = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_%s.txt";
+    private static final String BASE_URL = "https://trackerslist.com/%s.txt";
     private static TrackersListFetch instance;
     private final OkHttpClient client;
     private final LifecycleAwareHandler handler;
@@ -69,7 +69,7 @@ public class TrackersListFetch {
                     if (body == null)
                         throw new IOException("Body is empty!");
 
-                    List<String> trackers = new ArrayList<>();
+                    Set<String> trackers = new HashSet<>();
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(body.byteStream()))) {
                         String line;
                         while ((line = reader.readLine()) != null && !line.isEmpty())
@@ -88,8 +88,7 @@ public class TrackersListFetch {
     }
 
     public enum Type {
-        ALL("all"), ALL_HTTP("all_http"), ALL_HTTPS("all_https"), ALL_IP("all_ip"),
-        ALL_UDP("all_udp"), ALL_WS("all_ws"), BEST("best"), BEST_IP("best_ip");
+        ALL("all"), HTTP("http"), BEST("best");
 
         private final String id;
 
@@ -104,7 +103,7 @@ public class TrackersListFetch {
     }
 
     public interface Listener {
-        void onDone(@NonNull List<String> trackers);
+        void onDone(@NonNull Collection<String> trackers);
 
         void onFailed(@NonNull Exception ex);
     }
