@@ -57,9 +57,9 @@
     <string name="total_length"><![CDATA[<b>Taille totale :</b>]]> %s</string>
     <string name="uploaded_length"><![CDATA[<b>Données téléversées :</b>]]> %s</string>
     <string name="pieces"><![CDATA[<b>Pièces :</b>]]> %d</string>
-    <string name="pieces_length"><![CDATA[<b>Taille d\'une pièce :</b>]]> %s</string>
+    <string name="pieces_length"><![CDATA[<b>Taille d'une pièce :</b>]]> %s</string>
     <string name="connections"><![CDATA[<b>Connections:</b>]]> %d</string>
-    <string name="verifyIntegrityPending"><![CDATA[<b>Vérification d\'intégrité en attente :</b>]]> %s</string>
+    <string name="verifyIntegrityPending"><![CDATA[<b>Vérification d'intégrité en attente :</b>]]> %s</string>
     <string name="verifiedLength"><![CDATA[<b>Données vérifiées :</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID :</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>Dossier de destination :</b>]]> %s</string>
@@ -326,7 +326,7 @@
     <string name="visit">Visiter</string>
     <string name="goTo">Aller à</string>
     <string name="prefs_addBestTrackers">Ajouter de meilleurs traquers aux nouveaux téléchargements</string>
-    <string name="prefs_addBestTrackers_summary">Ajouter automatiquement de meilleurs traquers depuis ngosang/trackerslist aux nouveaux téléchargements</string>
+    <string name="prefs_addBestTrackers_summary">Add best trackers from XIU2/TrackersListCollection to new downloads automatically</string>
     <string name="addBestTrackers">Ajouter de meilleurs traquers</string>
     <string name="health"><![CDATA[<b>Santé :</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">Le service est démarré et fonctionnel.</string>
