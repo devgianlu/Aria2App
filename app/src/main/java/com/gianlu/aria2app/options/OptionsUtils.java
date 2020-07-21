@@ -20,8 +20,8 @@ import com.gianlu.commonutils.misc.SuperTextView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -67,7 +67,7 @@ public final class OptionsUtils {
             builder.setNeutralButton(R.string.addBestTrackers, (dialog, which) ->
                     TrackersListFetch.get().getTrackers(TrackersListFetch.Type.BEST, null, new TrackersListFetch.Listener() {
                         @Override
-                        public void onDone(@NonNull List<String> trackers) {
+                        public void onDone(@NonNull Collection<String> trackers) {
                             Set<String> set = new HashSet<>(trackers);
                             String oldStr = edit.getText().toString();
                             if (!oldStr.isEmpty()) {

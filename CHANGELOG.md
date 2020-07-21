@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.8.0] - 07-07-2020
+### Added 
+- Added list of interfaces for InAppDownloader
+- Configure connection timeout
+
+### Changed 
+- Load CA certificates instead of disabling check (for InAppDownloader)
+
+
 ## [5.7.3] - 23-05-2020
 ### Added
 - Added desktop mode in WebView
