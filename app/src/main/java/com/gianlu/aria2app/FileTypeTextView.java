@@ -38,7 +38,7 @@ public class FileTypeTextView extends View {
         setWillNotDraw(false);
 
         textPaint = new TextPaint();
-        FontsManager.set(context, textPaint, FontsManager.ROBOTO_BLACK);
+        FontsManager.set(context, textPaint, R.font.roboto_black);
         textPaint.setAntiAlias(true);
 
         mDefaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());

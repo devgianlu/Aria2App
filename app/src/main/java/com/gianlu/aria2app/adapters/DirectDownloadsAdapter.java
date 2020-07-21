@@ -17,11 +17,10 @@ import androidx.annotation.UiThread;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.downloader.FetchDownloadWrapper;
 import com.gianlu.aria2app.downloader.FetchHelper;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.tonyodev.fetch2.Download;
 
@@ -198,7 +197,7 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             context.startActivity(new Intent(Intent.ACTION_VIEW, FileProvider.getUriForFile(context, "com.gianlu.aria2app", download.getFile()))
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION));
         } catch (ActivityNotFoundException | IllegalArgumentException ex) {
-            Toaster.with(context).message(R.string.failedOpeningDownload).ex(ex).show();
+            Toaster.with(context).message(R.string.failedOpeningDownload).show();
         }
     }
 
@@ -268,7 +267,6 @@ public class DirectDownloadsAdapter extends RecyclerView.Adapter<DirectDownloads
             super(inflater.inflate(R.layout.item_direct_download, parent, false));
 
             status = itemView.findViewById(R.id.directDownloadItem_status);
-            FontsManager.set(FontsManager.ROBOTO_BOLD, status);
             title = itemView.findViewById(R.id.directDownloadItem_title);
             uri = itemView.findViewById(R.id.directDownloadItem_uri);
             progress = itemView.findViewById(R.id.directDownloadItem_progress);

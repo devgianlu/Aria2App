@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,6 @@ import com.gianlu.aria2app.activities.AddUriActivity;
 import com.gianlu.aria2app.activities.adddownload.AddUriBundle;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -49,6 +50,7 @@ import okhttp3.ResponseBody;
 
 public class WebViewActivity extends ActivityWithDialog {
     private static final int ADD_URI_REQUEST_CODE = 3;
+    private static final String TAG = WebViewActivity.class.getSimpleName();
     private final List<InterceptedRequest> interceptedRequests = new ArrayList<>();
     private OkHttpClient client;
     private WebView web;
@@ -60,8 +62,8 @@ public class WebViewActivity extends ActivityWithDialog {
         if ("POST".equals(method) || "PUT".equals(method) || "PATCH".equals(method) || "PROPPATCH".equals(method) || "REPORT".equals(method))
             return null;
 
-        String url = req.getUrl().toString();
-        if (!url.startsWith("http://") && !url.startsWith("https://"))
+        HttpUrl url = HttpUrl.parse(req.getUrl().toString());
+        if (url == null)
             return null;
 
         Request.Builder builder = new Request.Builder().url(url);
@@ -70,7 +72,7 @@ public class WebViewActivity extends ActivityWithDialog {
         for (Map.Entry<String, String> entry : req.getRequestHeaders().entrySet())
             builder.addHeader(entry.getKey(), entry.getValue());
 
-        String cookies = CookieManager.getInstance().getCookie(url);
+        String cookies = CookieManager.getInstance().getCookie(url.toString());
         if (cookies != null && !cookies.isEmpty()) builder.addHeader("Cookie", cookies);
 
         return builder.build();
@@ -139,7 +141,13 @@ public class WebViewActivity extends ActivityWithDialog {
 
         WebSettings settings = web.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setUserAgentString(settings.getUserAgentString() + " " + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR);
+        settings.setAllowFileAccess(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setAppCacheEnabled(true);
+        settings.setAppCachePath(getCacheDir().getAbsolutePath());
+
+        toggleDesktopMode(false);
 
         client = new OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build();
         web.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
@@ -152,6 +160,8 @@ public class WebViewActivity extends ActivityWithDialog {
                     }
                 }
             }
+
+            interceptedDownload(InterceptedRequest.from(url, userAgent, contentDisposition));
         });
 
         web.setWebViewClient(new WebViewClient() {
@@ -167,9 +177,11 @@ public class WebViewActivity extends ActivityWithDialog {
                         interceptedRequests.add(InterceptedRequest.from(resp));
                     }
 
+                    Log.d(TAG, String.format("WebView request: %s %s => %d", req.method(), req.url(), resp.code()));
+
                     return buildResponse(resp);
                 } catch (IOException ex) {
-                    Logging.log(ex);
+                    Log.e(TAG, String.format("Failed WebView request request: %s %s", req.method(), req.url()), ex);
                     return null;
                 }
             }
@@ -193,6 +205,21 @@ public class WebViewActivity extends ActivityWithDialog {
             web.loadUrl(Prefs.getString(PK.WEBVIEW_HOMEPAGE, null));
         else
             showGoToDialog(true);
+    }
+
+    private void toggleDesktopMode(boolean enabled) {
+        WebSettings settings = web.getSettings();
+
+        settings.setLoadWithOverviewMode(enabled);
+        settings.setUseWideViewPort(enabled);
+
+        settings.setSupportZoom(enabled);
+        settings.setBuiltInZoomControls(enabled);
+        settings.setDisplayZoomControls(!enabled);
+
+        String userAgent = enabled ? "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.4) Gecko/20100101 Firefox/4.0" : WebSettings.getDefaultUserAgent(this);
+        userAgent += " Aria2App/" + BuildConfig.VERSION_NAME + "-" + BuildConfig.FLAVOR;
+        settings.setUserAgentString(userAgent);
     }
 
     @Override
@@ -219,6 +246,12 @@ public class WebViewActivity extends ActivityWithDialog {
             return true;
         } else if (item.getItemId() == android.R.id.home) {
             customBackPressed();
+            return true;
+        } else if (item.getItemId() == R.id.webView_toggleDesktop) {
+            toggleDesktopMode(!item.isChecked());
+            web.reload();
+
+            item.setChecked(!item.isChecked());
             return true;
         }
 

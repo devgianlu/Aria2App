@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -18,20 +20,29 @@ import com.gianlu.aria2app.ThisApplication;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.internal.Message;
 import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen;
+import com.gianlu.aria2lib.ui.Aria2ConfigurationScreen.LogEntry;
+import com.gianlu.aria2lib.ui.ImportExportUtils;
 import com.gianlu.commonutils.FileUtils;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
+import com.gianlu.commonutils.ui.Toaster;
 
+import org.json.JSONException;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2Ui.Listener {
-    private static final int STORAGE_ACCESS_CODE = 3;
+    private static final int RC_STORAGE_ACCESS_CODE = 3;
+    private static final String TAG = InAppAria2ConfActivity.class.getSimpleName();
+    private static final int RC_IMPORT_CONFIG = 4;
     private Aria2ConfigurationScreen screen;
     private ToggleButton toggle;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == STORAGE_ACCESS_CODE) {
+        if (requestCode == RC_STORAGE_ACCESS_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
                 if (uri != null) {
@@ -40,16 +51,42 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
                             data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
                 }
             }
+        } else if (requestCode == RC_IMPORT_CONFIG) {
+            if (resultCode == Activity.RESULT_OK && data.getData() != null) {
+                try {
+                    InputStream in = getContentResolver().openInputStream(data.getData());
+                    if (in != null) {
+                        try {
+                            ImportExportUtils.importConfigFromStream(in);
+                            Toaster.with(this).message(R.string.importedConfig).show();
+                        } catch (IOException | JSONException | OutOfMemoryError ex) {
+                            Toaster.with(this).message(R.string.cannotImport).show();
+                        }
+                    }
+                } catch (FileNotFoundException ex) {
+                    Toaster.with(this).message(R.string.fileNotFound).show();
+                }
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.in_app_downloader, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.inappAria2conf_importExport:
+                ImportExportUtils.showDialog(this, RC_IMPORT_CONFIG);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -79,7 +116,7 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
         });
 
         screen = findViewById(R.id.inAppAria2conf_screen);
-        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, null, false);
+        screen.setup(new Aria2ConfigurationScreen.OutputPathSelector(this, RC_STORAGE_ACCESS_CODE), PK.IN_APP_DOWNLOADER_AT_BOOT, null, false);
 
         screen.lockPreferences(lastState);
     }
@@ -98,34 +135,34 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
         ((ThisApplication) getApplication()).removeAria2UiListener(this);
     }
 
-    private void addLog(@NonNull Logging.LogLine line) {
-        if (screen != null) screen.appendLogLine(line);
+    private void addLog(@NonNull LogEntry entry) {
+        if (screen != null) screen.appendLogEntry(entry);
     }
 
     @Override
     public void onUpdateLogs(@NonNull List<Aria2Ui.LogMessage> list) {
         for (Aria2Ui.LogMessage msg : list) {
-            Logging.LogLine line = createLogLine(msg);
-            if (line != null) addLog(line);
+            LogEntry entry = createLogEntry(msg);
+            if (entry != null) addLog(entry);
         }
     }
 
     @Nullable
-    private Logging.LogLine createLogLine(@NonNull Aria2Ui.LogMessage msg) {
+    private LogEntry createLogEntry(@NonNull Aria2Ui.LogMessage msg) {
         switch (msg.type) {
             case PROCESS_TERMINATED:
-                return new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logTerminated, msg.i));
+                return new LogEntry(LogEntry.Type.INFO, getString(R.string.logTerminated, msg.i));
             case PROCESS_STARTED:
-                return new Logging.LogLine(Logging.LogLine.Type.INFO, getString(R.string.logStarted, msg.o));
+                return new LogEntry(LogEntry.Type.INFO, getString(R.string.logStarted, msg.o));
             case PROCESS_WARN:
                 if (msg.o != null)
-                    return new Logging.LogLine(Logging.LogLine.Type.WARNING, (String) msg.o);
+                    return new LogEntry(LogEntry.Type.WARNING, (String) msg.o);
             case PROCESS_ERROR:
                 if (msg.o != null)
-                    return new Logging.LogLine(Logging.LogLine.Type.ERROR, (String) msg.o);
+                    return new LogEntry(LogEntry.Type.ERROR, (String) msg.o);
             case PROCESS_INFO:
                 if (msg.o != null)
-                    return new Logging.LogLine(Logging.LogLine.Type.INFO, (String) msg.o);
+                    return new LogEntry(LogEntry.Type.INFO, (String) msg.o);
             case MONITOR_FAILED:
             case MONITOR_UPDATE:
                 return null;
@@ -137,19 +174,20 @@ public class InAppAria2ConfActivity extends ActivityWithDialog implements Aria2U
     @Override
     public void onMessage(@NonNull Aria2Ui.LogMessage msg) {
         if (msg.type == Message.Type.MONITOR_FAILED) {
-            Logging.log("Monitor failed!", (Throwable) msg.o);
+            Log.e(TAG, "Monitor failed!", (Throwable) msg.o);
             return;
         }
 
         if (msg.type == Message.Type.MONITOR_UPDATE) return;
 
-        Logging.LogLine line = createLogLine(msg);
-        if (line != null) addLog(line);
+        LogEntry entry = createLogEntry(msg);
+        if (entry != null) addLog(entry);
     }
 
     @Override
     public void updateUi(boolean on) {
         toggle.setChecked(on);
         screen.lockPreferences(on);
+        screen.refreshNics();
     }
 }

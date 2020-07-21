@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -102,6 +103,16 @@ public class PreferenceActivity extends BasePreferenceActivity {
             updateRate.setIcon(R.drawable.baseline_update_24);
             addPreference(updateRate);
 
+            MaterialSeekBarPreference networkTimeout = new MaterialSeekBarPreference.Builder(context)
+                    .minValue(1).maxValue(60).showValue(true)
+                    .key(PK.A2_NETWORK_TIMEOUT.key())
+                    .defaultValue(PK.A2_NETWORK_TIMEOUT.fallback())
+                    .build();
+            networkTimeout.setTitle(R.string.prefs_networkTimeout);
+            networkTimeout.setSummary(R.string.prefs_networkTimeout_summary);
+            networkTimeout.setIcon(R.drawable.baseline_network_check_24);
+            addPreference(networkTimeout);
+
             MaterialMultiChoicePreference customDownloadInfo = new MaterialMultiChoicePreference.Builder(context)
                     .entryValues(CustomDownloadInfo.Info.stringValues())
                     .entries(CustomDownloadInfo.Info.formalValues(context))
@@ -132,6 +143,15 @@ public class PreferenceActivity extends BasePreferenceActivity {
             bestTrackers.setIcon(R.drawable.baseline_track_changes_24);
             addPreference(bestTrackers);
 
+            MaterialCheckboxPreference skipWebViewDialog = new MaterialCheckboxPreference.Builder(context)
+                    .key(PK.A2_SKIP_WEBVIEW_DIALOG.key())
+                    .defaultValue(PK.A2_SKIP_WEBVIEW_DIALOG.fallback())
+                    .build();
+            skipWebViewDialog.setTitle(R.string.prefs_skipWebViewDialog);
+            skipWebViewDialog.setSummary(R.string.prefs_skipWebViewDialog_summary);
+            // skipWebViewDialog.setIcon(R.drawable.baseline_track_changes_24);
+            addPreference(skipWebViewDialog);
+
             if (ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
                 MaterialStandardPreference webviewShortcut = new MaterialStandardPreference(context);
                 webviewShortcut.setTitle(R.string.addWebViewShortcutToHomePage);
@@ -159,6 +179,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
     public static class ProfilesFragment extends BasePreferenceFragment {
         private static final int IMPORT_PROFILES_CODE = 7;
+        private static final String TAG = ProfilesFragment.class.getSimpleName();
 
         @Override
         protected void buildPreferences(@NonNull Context context) {
@@ -175,7 +196,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                 try {
                     startActivityForResult(Intent.createChooser(intent, "Select a file"), IMPORT_PROFILES_CODE);
                 } catch (ActivityNotFoundException ex) {
-                    showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
+                    showToast(Toaster.build().message(R.string.noFilemanager));
                 }
             });
 
@@ -198,7 +219,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
                 showToast(Toaster.build().message(R.string.profilesExportedSuccessfully, file.getAbsolutePath()));
             } catch (JSONException | IOException ex) {
-                showToast(Toaster.build().message(R.string.failedExportingProfiles).ex(ex));
+                Log.e(TAG, "Failed exporting profiles.", ex);
+                showToast(Toaster.build().message(R.string.failedExportingProfiles));
             }
         }
 
@@ -218,7 +240,8 @@ public class PreferenceActivity extends BasePreferenceActivity {
 
                 showToast(Toaster.build().message(R.string.profilesImportedSuccessfully));
             } catch (JSONException | IOException ex) {
-                showToast(Toaster.build().message(R.string.failedImportingProfiles).ex(ex));
+                Log.e(TAG, "Failed importing profiles.", ex);
+                showToast(Toaster.build().message(R.string.failedImportingProfiles));
             }
         }
 
@@ -284,7 +307,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                     startActivityForResult(intent, DOWNLOAD_PATH_CODE);
                 } catch (ActivityNotFoundException ex) {
-                    showToast(Toaster.build().message(R.string.noFilemanager).ex(ex));
+                    showToast(Toaster.build().message(R.string.noFilemanager));
                 }
             });
             addPreference(downloadPath);

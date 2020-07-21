@@ -2,6 +2,7 @@ package com.gianlu.aria2app.main;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.AbstractClient;
+import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.VersionAndSession;
-import com.gianlu.aria2app.api.AriaRequests;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.ui.Toaster;
 
 public class AboutAria2Dialog extends DialogFragment implements AbstractClient.OnResult<VersionAndSession> {
+    private static final String TAG = AboutAria2Dialog.class.getSimpleName();
     private Aria2Helper helper;
     private SuperTextView version;
     private SuperTextView features;
@@ -56,7 +58,8 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
         try {
             helper = Aria2Helper.instantiate(requireContext());
         } catch (Aria2Helper.InitializingException ex) {
-            DialogUtils.showToast(requireContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
+            Log.e(TAG, "Failed initialising.", ex);
+            DialogUtils.showToast(requireContext(), Toaster.build().message(R.string.failedLoading));
             dismissAllowingStateLoss();
             return null;
         }
@@ -72,7 +75,8 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
 
             @Override
             public void onException(@NonNull Exception ex) {
-                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedSavingSession).ex(ex));
+                Log.e(TAG, "Failed saving session.", ex);
+                DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedSavingSession));
             }
         }));
 
@@ -96,7 +100,8 @@ public class AboutAria2Dialog extends DialogFragment implements AbstractClient.O
     public void onException(@NonNull Exception ex) {
         if (!isAdded()) return;
 
-        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading).ex(ex));
+        Log.e(TAG, "Failed loading info.", ex);
+        DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedLoading));
         dismissAllowingStateLoss();
     }
 }

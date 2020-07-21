@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -23,7 +24,6 @@ import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.api.CertUtils;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.ui.Toaster;
@@ -40,6 +40,7 @@ import javax.security.auth.x500.X500Principal;
 
 public class CertificateInputView extends LinearLayout {
     public static final int CODE_PICK_CERT = 13;
+    private static final String TAG = CertificateInputView.class.getSimpleName();
     private final LinearLayout detailsContainer;
     private final CheckBox hostnameVerifier;
     private final SuperTextView detailsVersion;
@@ -126,15 +127,14 @@ public class CertificateInputView extends LinearLayout {
                         ((Fragment) activityProvider).startActivityForResult(
                                 Intent.createChooser(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*")
                                         .addCategory(Intent.CATEGORY_OPENABLE), "Select the certificate"), CODE_PICK_CERT);
-                    } catch (ActivityNotFoundException ex) {
-                        Logging.log(ex);
+                    } catch (ActivityNotFoundException ignored) {
                     }
                 }
             }
 
             @Override
             public void permissionDenied(@NonNull String permission) {
-                Toaster.with(activity).message(R.string.readPermissionDenied).error(true).show();
+                Toaster.with(activity).message(R.string.readPermissionDenied).show();
             }
 
             @Override
@@ -169,7 +169,7 @@ public class CertificateInputView extends LinearLayout {
             }
         } catch (CertificateParsingException ex) {
             detailsIssuerAns.setVisibility(View.GONE);
-            Logging.log(ex);
+            Log.e(TAG, "Failed parsing certificate.", ex);
         }
 
         detailsSubjectName.setHtml(R.string.name, certificate.getSubjectX500Principal().getName(X500Principal.RFC1779));
@@ -185,7 +185,7 @@ public class CertificateInputView extends LinearLayout {
             }
         } catch (CertificateParsingException ex) {
             detailsSubjectAns.setVisibility(View.GONE);
-            Logging.log(ex);
+            Log.e(TAG, "Failed parsing certificate.", ex);
         }
     }
 
@@ -205,11 +205,12 @@ public class CertificateInputView extends LinearLayout {
             if (in != null) {
                 certificate = CertUtils.loadCertificateFromStream(in);
             } else {
-                Toaster.with(context).message(R.string.invalidCertificate).error(true).show();
+                Toaster.with(context).message(R.string.invalidCertificate).show();
                 return;
             }
         } catch (FileNotFoundException | CertificateException ex) {
-            Toaster.with(context).message(R.string.invalidCertificate).ex(ex).show();
+            Log.e(TAG, "Failed reading certificate.", ex);
+            Toaster.with(context).message(R.string.invalidCertificate).show();
             return;
         }
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +16,6 @@ import com.gianlu.aria2app.api.StatusCodeException;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.lifecycle.LifecycleAwareHandler;
 import com.gianlu.commonutils.lifecycle.LifecycleAwareRunnable;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.preferences.json.JsonStoring;
 
@@ -42,6 +42,7 @@ public final class SearchApi {
     public static final int RESULTS_PER_REQUEST = 20;
     private static final int TIMEOUT = 15;
     private static final HttpUrl BASE_URL = HttpUrl.parse("https://tse-api.gianlu.xyz/");
+    private static final String TAG = SearchApi.class.getSimpleName();
     private static SearchApi instance;
     private final OkHttpClient client;
     private final ExecutorService executorService;
@@ -107,7 +108,7 @@ public final class SearchApi {
                         missingEngines.add(new MissingSearchEngine(SearchApi.this, missingEnginesArray.getJSONObject(i)));
 
                     String newToken = CommonUtils.optString(obj, "token");
-                    post(() -> listener.onResult(results, missingEngines, newToken));
+                    post(() -> listener.onResult(query, results, missingEngines, newToken));
                 } catch (IOException | StatusCodeException | JSONException ex) {
                     post(() -> listener.onException(ex));
                 }
@@ -189,14 +190,14 @@ public final class SearchApi {
             try {
                 listSearchEnginesSync();
             } catch (IOException | StatusCodeException | JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed getting engines.", ex);
             }
         });
     }
 
     @UiThread
     public interface OnSearch {
-        void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
+        void onResult(@Nullable String query, @NonNull List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken);
 
         void onException(@NonNull Exception ex);
     }

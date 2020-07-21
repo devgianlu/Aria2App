@@ -11,7 +11,6 @@ import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaException;
 import com.gianlu.aria2app.api.aria2.VersionInfo;
 import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.commonutils.logging.Logging;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -50,8 +49,7 @@ class Aria2Tester extends BaseTester<Boolean> {
         synchronized (lock) {
             try {
                 lock.wait(5000);
-            } catch (InterruptedException ex) {
-                Logging.log(ex);
+            } catch (InterruptedException ignored) {
             }
 
             return lock.get();

@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,23 +20,22 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.adapters.SearchResultsAdapter;
-import com.gianlu.aria2app.main.MainActivity;
 import com.gianlu.aria2app.api.AbstractClient;
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.AriaRequests;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.search.MissingSearchEngine;
 import com.gianlu.aria2app.api.search.SearchApi;
 import com.gianlu.aria2app.api.search.SearchEngine;
 import com.gianlu.aria2app.api.search.SearchResult;
 import com.gianlu.aria2app.api.search.Torrent;
-import com.gianlu.aria2app.PK;
-import com.gianlu.aria2app.R;
-import com.gianlu.aria2app.Utils;
+import com.gianlu.aria2app.main.MainActivity;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.preferences.Prefs;
@@ -43,8 +43,10 @@ import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +54,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class SearchActivity extends ActivityWithDialog implements SearchView.OnQueryTextListener, SearchView.OnCloseListener, SearchApi.OnSearch, SearchResultsAdapter.Listener, MenuItem.OnActionExpandListener {
+    private static final String TAG = SearchActivity.class.getSimpleName();
     private RecyclerMessageView rmv;
     private LinearLayout message;
     private String query = null;
@@ -74,12 +77,11 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         rmv.linearLayoutManager(RecyclerView.VERTICAL, false);
         rmv.dividerDecoration(RecyclerView.VERTICAL);
 
-        final Button messageMore = findViewById(R.id.search_messageMore);
+        Button messageMore = findViewById(R.id.search_messageMore);
         messageMore.setOnClickListener(view -> {
             try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://gianlu.xyz/projects/TorrentSearchEngine")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://swaggerhub.com/apis/devgianlu/torrent-search-engine")));
             } catch (ActivityNotFoundException ex) {
-                Logging.log(ex);
                 messageMore.setVisibility(View.GONE);
             }
         });
@@ -87,7 +89,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         searchApi = SearchApi.get();
     }
 
-    private void showEnginesDialog(final List<SearchEngine> engines) {
+    private void showEnginesDialog(@NotNull List<SearchEngine> engines) {
         CharSequence[] enginesNames = new CharSequence[engines.size()];
 
         for (int i = 0; i < engines.size(); i++) {
@@ -99,7 +101,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         Set<String> checkedEnginesSet = Prefs.getSet(PK.A2_SEARCH_ENGINES, null);
 
         if (checkedEnginesSet == null) {
-            for (int i = 0; i < checkedEngines.length; i++) checkedEngines[i] = true;
+            Arrays.fill(checkedEngines, true);
         } else {
             for (String checkedEngine : checkedEnginesSet)
                 for (int i = 0; i < engines.size(); i++)
@@ -146,7 +148,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     }
 
     @Override
-    public boolean onQueryTextSubmit(final String query) {
+    public boolean onQueryTextSubmit(@NotNull String query) {
         message.setVisibility(View.GONE);
         rmv.startLoading();
         this.query = query;
@@ -169,12 +171,14 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         rmv.hideList();
         rmv.hideMessage();
         searchView.setQuery(null, false);
-        this.query = null;
         return false;
     }
 
     @Override
-    public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
+    public void onResult(@Nullable String query, @NotNull List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
+        if (!Objects.equals(this.query, query))
+            return;
+
         message.setVisibility(View.GONE);
 
         rmv.loadListData(new SearchResultsAdapter(this, results, nextPageToken, this));
@@ -185,11 +189,11 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
     public void onException(@NonNull Exception ex) {
         message.setVisibility(View.GONE);
         rmv.showError(R.string.searchEngine_offline);
-        Logging.log(ex);
+        Log.e(TAG, "Failed search.", ex);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         if (item.getItemId() == R.id.search_engines) {
             showProgress(R.string.gathering_information);
             searchApi.listSearchEngines(this, new SearchApi.OnResult<List<SearchEngine>>() {
@@ -202,7 +206,8 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
                 @Override
                 public void onException(@NonNull Exception ex) {
                     dismissDialog();
-                    Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
+                    Log.e(TAG, "Failed getting engines list.", ex);
+                    Toaster.with(SearchActivity.this).message(R.string.failedLoading).show();
                 }
             });
             return true;
@@ -224,7 +229,8 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
             @Override
             public void onException(@NonNull Exception ex) {
                 dismissDialog();
-                Toaster.with(SearchActivity.this).message(R.string.failedLoading).ex(ex).show();
+                Log.e(TAG, "Failed getting torrent info.", ex);
+                Toaster.with(SearchActivity.this).message(R.string.failedLoading).show();
             }
         });
     }
@@ -246,7 +252,7 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
         showDialog(builder);
     }
 
-    private void showTorrentDialog(final Torrent torrent) {
+    private void showTorrentDialog(@NotNull Torrent torrent) {
         LinearLayout layout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_torrent, null, false);
         SuperTextView engine = layout.findViewById(R.id.torrentDialog_engine);
         SuperTextView size = layout.findViewById(R.id.torrentDialog_size);
@@ -297,11 +303,13 @@ public class SearchActivity extends ActivityWithDialog implements SearchView.OnQ
 
                             @Override
                             public void onException(@NonNull Exception ex) {
-                                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                                Log.e(TAG, "Failed adding URI.", ex);
+                                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).show();
                             }
                         });
             } catch (Aria2Helper.InitializingException | JSONException ex) {
-                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                Log.e(TAG, "Failed initializing/parsing.", ex);
+                Toaster.with(SearchActivity.this).message(R.string.failedAddingDownload).show();
                 return;
             }
 

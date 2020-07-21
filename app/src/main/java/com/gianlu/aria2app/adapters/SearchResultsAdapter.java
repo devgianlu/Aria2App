@@ -10,11 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.api.search.MissingSearchEngine;
 import com.gianlu.aria2app.api.search.SearchApi;
 import com.gianlu.aria2app.api.search.SearchEngine;
 import com.gianlu.aria2app.api.search.SearchResult;
-import com.gianlu.aria2app.R;
 import com.gianlu.commonutils.misc.InfiniteRecyclerView;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class SearchResultsAdapter extends InfiniteRecyclerView.InfiniteAdapter<S
         } else {
             searchApi.search(token, SearchApi.RESULTS_PER_REQUEST, null, new SearchApi.OnSearch() {
                 @Override
-                public void onResult(List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
+                public void onResult(@Nullable String query, @NonNull List<SearchResult> results, List<MissingSearchEngine> missingEngines, @Nullable String nextPageToken) {
                     token = nextPageToken;
                     provider.onMoreContent(results);
 

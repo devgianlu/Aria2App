@@ -23,6 +23,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +42,6 @@ import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 
 import org.json.JSONArray;
@@ -73,6 +73,7 @@ public class NotificationService extends Service {
     private static final String ACTION_START = NotificationService.class.getName() + ".START";
     private static final String ACTION_STOP = NotificationService.class.getName() + ".STOP";
     private static final String SERVICE_NAME = "aria2app notification service";
+    private static final String TAG = NotificationService.class.getSimpleName();
     private final Map<String, Integer> errorNotifications = new HashMap<>();
     private final HandlerThread serviceThread = new HandlerThread(SERVICE_NAME);
     private final Map<String, Mode> gidToMode = new HashMap<>();
@@ -103,7 +104,7 @@ public class NotificationService extends Service {
         try {
             messenger.send(Message.obtain(null, NotificationService.MESSENGER_GET_MODE, new MessengerPayload(gid, null)));
         } catch (RemoteException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed sending message.", ex);
         }
     }
 
@@ -117,11 +118,11 @@ public class NotificationService extends Service {
                     ContextCompat.startForegroundService(context, new Intent(context, NotificationService.class)
                             .setAction(ACTION_START).putExtra("startedFrom", startedFrom));
                 } catch (SecurityException ex) {
-                    Logging.log("Cannot start notification service.", ex);
+                    Log.e(TAG, "Cannot start notification service.", ex);
                 }
             });
         } else {
-            Logging.log("Tried to start notification service, but there are no candidates.", false);
+            Log.d(TAG, "Tried to start notification service, but there are no candidates.");
         }
     }
 
@@ -177,7 +178,7 @@ public class NotificationService extends Service {
                         createMessengerIfNeeded();
                         messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS, ConnectivityManager.TYPE_DUMMY, 0));
                     } catch (RemoteException ex) {
-                        Logging.log("Failed recreating websockets on service thread!", ex);
+                        Log.e(TAG, "Failed recreating websockets on service thread!", ex);
                         recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                     }
 
@@ -199,7 +200,7 @@ public class NotificationService extends Service {
                             createMessengerIfNeeded();
                             messenger.send(Message.obtain(null, MESSENGER_RECREATE_WEBSOCKETS, ConnectivityManager.TYPE_DUMMY, 0));
                         } catch (RemoteException ex) {
-                            Logging.log("Failed recreating websockets on service thread!", ex);
+                            Log.e(TAG, "Failed recreating websockets on service thread!", ex);
                             recreateWebsockets(ConnectivityManager.TYPE_DUMMY);
                         }
                     }
@@ -373,7 +374,7 @@ public class NotificationService extends Service {
     }
 
     private void notifyException(@NonNull MultiProfile.UserProfile profile, @NonNull Throwable ex) {
-        Logging.log(ex);
+        Log.e(TAG, "Exception for " + profile, ex);
         notifyError(profile, getString(R.string.notificationException, profile.getPrimaryText(this)), ex.getMessage() == null ? "" : ex.getMessage());
     }
 
@@ -574,7 +575,7 @@ public class NotificationService extends Service {
             try {
                 messenger.send(Message.obtain(null, MESSENGER_SET_MODE, payload));
             } catch (RemoteException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed sending message.", ex);
             }
 
             context.unbindService(this);
@@ -691,7 +692,7 @@ public class NotificationService extends Service {
                     }
                 }
             } catch (JSONException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed parsing events.", ex);
             }
         }
 

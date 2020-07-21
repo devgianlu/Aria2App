@@ -1,21 +1,21 @@
 plugins {
-    id 'com.github.triplet.play' version '2.3.0'
+    id 'com.github.triplet.play' version '2.6.2'
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def isTravis = System.getenv("CI") == "true"
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.gianlu.aria2app"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 199
-        versionName "5.6.0"
+        versionCode 209
+        versionName "5.7.3"
     }
 
     if (isTravis) {
@@ -95,7 +95,7 @@ dependencies {
     implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
     implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
 
-    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.6.0'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
@@ -103,6 +103,9 @@ dependencies {
     implementation 'com.github.devgianlu:Android--Library-Country-Flags:6fc6059f91'
 
     implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0-alpha01'
+
+    implementation 'com.google.android.material:material:1.3.0-alpha01'
 }
 
 task printVersionName {

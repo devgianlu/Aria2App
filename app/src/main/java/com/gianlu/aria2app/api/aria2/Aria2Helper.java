@@ -2,21 +2,21 @@ package com.gianlu.aria2app.api.aria2;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.gianlu.aria2app.PK;
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
 import com.gianlu.aria2app.api.AbstractClient;
 import com.gianlu.aria2app.api.AriaRequests;
 import com.gianlu.aria2app.api.ClientInterface;
 import com.gianlu.aria2app.api.NetInstanceHolder;
-import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.profiles.ProfilesManager;
-import com.gianlu.aria2app.R;
 import com.gianlu.aria2lib.Aria2PK;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.preferences.json.JsonStoring;
 import com.gianlu.commonutils.ui.Toaster;
@@ -32,6 +32,7 @@ import java.util.List;
 
 public class Aria2Helper {
     private static final AbstractClient.BatchSandbox<VersionAndSession> VERSION_AND_SESSION_BATCH_SANDBOX = client -> new VersionAndSession(client.sendSync(AriaRequests.getVersion()), client.sendSync(AriaRequests.getSessionInfo()));
+    private static final String TAG = Aria2Helper.class.getSimpleName();
     private final ClientInterface client;
     private final AbstractClient.BatchSandbox<DownloadsAndGlobalStats> DOWNLOADS_AND_GLOBAL_STATS_BATCH_SANDBOX = client -> {
         List<DownloadWithUpdate> all = new ArrayList<>();
@@ -74,7 +75,7 @@ public class Aria2Helper {
 
             JsonStoring.intoPrefs().putJsonObject(Aria2PK.CUSTOM_OPTIONS, options);
         } catch (JSONException ex) {
-            Logging.log("Failed saving In-App downloader options.", ex);
+            Log.e(TAG, "Failed saving In-App downloader options.", ex);
         }
     }
 
@@ -193,7 +194,7 @@ public class Aria2Helper {
                 case STOP: // Not called here
                 case REMOVE: // Not called here
                 default:
-                    toaster.message(R.string.failedAction).error(true);
+                    toaster.message(R.string.failedAction);
                     break;
             }
 
@@ -213,7 +214,7 @@ public class Aria2Helper {
                     toaster.message(R.string.downloadResultRemoved);
                     break;
                 default:
-                    toaster.message(R.string.failedAction).error(true);
+                    toaster.message(R.string.failedAction);
                     break;
             }
 
@@ -222,7 +223,8 @@ public class Aria2Helper {
 
         @Override
         public void onException(@NonNull Exception ex) {
-            listener.showToast(Toaster.build().message(R.string.failedAction).ex(ex));
+            Log.e(TAG, "Failed performing action.", ex);
+            listener.showToast(Toaster.build().message(R.string.failedAction));
         }
 
         public interface Listener {

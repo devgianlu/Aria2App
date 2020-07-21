@@ -9,11 +9,13 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.jetbrains.annotations.Contract;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
     private final List<WifiConfiguration> wifis;
@@ -22,9 +24,27 @@ public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
 
     public WifisAdapter(Context context, @Nullable List<WifiConfiguration> wifis) {
         super(context, android.R.layout.simple_list_item_1);
-        if (wifis == null) originalWifis = new ArrayList<>();
-        else originalWifis = wifis;
+
+        if (wifis != null) {
+            originalWifis = new ArrayList<>(wifis.size());
+            for (WifiConfiguration conf : wifis) {
+                if (!containsSsid(originalWifis, conf.SSID))
+                    originalWifis.add(conf);
+            }
+        } else {
+            originalWifis = new ArrayList<>();
+        }
+
         this.wifis = new ArrayList<>(originalWifis);
+    }
+
+    @Contract(pure = true)
+    private static boolean containsSsid(@NonNull List<WifiConfiguration> list, @NonNull String ssid) {
+        for (WifiConfiguration conf : list)
+            if (ssid.equals(conf.SSID))
+                return true;
+
+        return false;
     }
 
     @Override
@@ -62,7 +82,6 @@ public class WifisAdapter extends ArrayAdapter<String> implements Filterable {
     private class CustomFilter extends Filter {
 
         @Override
-        @SuppressWarnings("ConstantConditions")
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
 

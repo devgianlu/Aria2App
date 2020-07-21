@@ -1,7 +1,5 @@
 Thanks to Aria2App you can handle as many aria2 servers as you want!
 
-Do you want Aria2Android to be part of Aria2App? Vote: https://github.com/devgianlu/Aria2App/issues/27
-
 IMPORTANT: Aria2App uses the JSONRPC interface! See here for more: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
 
 Some of the features are:

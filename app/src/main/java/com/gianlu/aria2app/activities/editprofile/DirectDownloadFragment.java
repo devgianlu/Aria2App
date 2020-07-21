@@ -17,8 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.ui.Toaster;
@@ -151,7 +151,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
 
                     @Override
                     public void permissionDenied(@NonNull String permission) {
-                        showToast(Toaster.build().message(R.string.writePermissionDenied).error(true));
+                        showToast(Toaster.build().message(R.string.writePermissionDenied));
                     }
 
                     @Override

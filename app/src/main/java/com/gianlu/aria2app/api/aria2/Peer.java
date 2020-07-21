@@ -1,19 +1,22 @@
 package com.gianlu.aria2app.api.aria2;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.api.PeerIdParser;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.adapters.Filterable;
 import com.gianlu.commonutils.adapters.NotFilterable;
-import com.gianlu.commonutils.logging.Logging;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Comparator;
 import java.util.Objects;
 
 public class Peer implements Filterable<NotFilterable> {
+    private static final String TAG = Peer.class.getSimpleName();
     public final boolean amChoking;
     public final boolean peerChoking;
     public final int downloadSpeed;
@@ -24,7 +27,7 @@ public class Peer implements Filterable<NotFilterable> {
     public final String bitfield;
     private final String peerId;
 
-    public Peer(JSONObject obj) {
+    public Peer(JSONObject obj) throws JSONException {
         peerId = CommonUtils.optString(obj, "peerId");
         ip = CommonUtils.optString(obj, "ip");
         port = obj.optInt("port", -1);
@@ -41,7 +44,7 @@ public class Peer implements Filterable<NotFilterable> {
         try {
             return PeerIdParser.parse(peerId);
         } catch (Exception ex) {
-            Logging.log("Failed parsing peer id: " + peerId, ex);
+            Log.w(TAG, "Failed parsing peer id: " + peerId, ex);
             return null;
         }
     }

@@ -2,16 +2,17 @@ package com.gianlu.aria2app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.gianlu.aria2app.R;
 import com.gianlu.aria2app.activities.adddownload.AddDownloadBundle;
 import com.gianlu.aria2app.api.AbstractClient;
-import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.AriaRequests;
-import com.gianlu.aria2app.R;
+import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.commonutils.dialogs.ActivityWithDialog;
 import com.gianlu.commonutils.ui.Toaster;
 
@@ -35,6 +36,8 @@ public abstract class AddDownloadActivity extends ActivityWithDialog {
 
     @Nullable
     public abstract AddDownloadBundle createBundle();
+
+    private static final String TAG = AddDownloadActivity.class.getSimpleName();
 
     protected final void done() {
         AddDownloadBundle bundle = createBundle();
@@ -61,11 +64,13 @@ public abstract class AddDownloadActivity extends ActivityWithDialog {
                     @Override
                     public void onException(@NonNull Exception ex) {
                         dismissDialog();
-                        Toaster.with(AddDownloadActivity.this).message(R.string.failedAddingDownload).ex(ex).show();
+                        Log.e(TAG, "Failed adding download.", ex);
+                        Toaster.with(AddDownloadActivity.this).message(R.string.failedAddingDownload).show();
                     }
                 });
             } catch (Aria2Helper.InitializingException | JSONException ex) {
-                Toaster.with(this).message(R.string.failedAddingDownload).ex(ex).show();
+                Log.e(TAG, "Failed initializing/parsing.", ex);
+                Toaster.with(this).message(R.string.failedAddingDownload).show();
             }
         }
     }

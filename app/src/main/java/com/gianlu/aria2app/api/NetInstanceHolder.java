@@ -2,6 +2,7 @@ package com.gianlu.aria2app.api;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -9,12 +10,12 @@ import com.gianlu.aria2app.LoadingActivity;
 import com.gianlu.aria2app.downloader.FetchHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
-import com.gianlu.commonutils.logging.Logging;
 
 import java.util.Objects;
 
 public final class NetInstanceHolder {
     private static final NetInstanceHolder instance = new NetInstanceHolder();
+    private static final String TAG = NetInstanceHolder.class.getSimpleName();
     private final Reference reference = new Reference();
     private AbstractClient current;
 
@@ -32,7 +33,7 @@ public final class NetInstanceHolder {
                 close();
                 instantiate(user);
             } catch (AbstractClient.InitializationException ex) {
-                Logging.log(ex);
+                Log.e(TAG, "Failed initializing.", ex);
                 NetInstanceHolder.close();
                 ProfilesManager.get(context).unsetLastProfile();
                 LoadingActivity.startActivity(context, ex);

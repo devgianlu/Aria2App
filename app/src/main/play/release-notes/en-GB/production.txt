@@ -1,4 +1,6 @@
-### Changed
-- Request legacy storage permissions (fix In-App Downloader permission denied)
-- Updated Material theme
-- Minor bug fixes
+### Added
+- Added desktop mode in WebView
+
+### Fixed
+- Fixed conditions dialog not scrolling
+- Fixed duplicate WiFis names

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +46,6 @@ import com.gianlu.aria2app.tutorial.FilesTutorial;
 import com.gianlu.aria2app.tutorial.FoldersTutorial;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
 import com.gianlu.commonutils.dialogs.DialogUtils;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.BreadcrumbsView;
 import com.gianlu.commonutils.misc.RecyclerMessageView;
 import com.gianlu.commonutils.preferences.Prefs;
@@ -65,6 +65,7 @@ import java.util.List;
 import okhttp3.HttpUrl;
 
 public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
+    private static final String TAG = FilesFragment.class.getSimpleName();
     private FilesAdapter adapter;
     private FileSheet fileSheet;
     private DirectorySheet dirSheet;
@@ -127,7 +128,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             helper = FetchHelper.get(context);
         } catch (FetchHelper.DirectDownloadNotEnabledException ignored) {
         } catch (FetchHelper.InitializationException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed initializing Fetch.", ex);
             showToast(Toaster.build().message(R.string.failedLoading_reason, ex.getMessage()));
         }
     }
@@ -225,7 +226,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
             @Override
             public void onException(@NonNull @NotNull Exception ex) {
-                showToast(Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
+                Log.e(TAG, "Failed changing selection", ex);
+                showToast(Toaster.build().message(R.string.failedFileChangeSelection));
             }
         });
     }
@@ -273,10 +275,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
 
             @Override
             public void onFailed(@NonNull Throwable ex) {
-                DialogUtils.showToast(getContext(),
-                        Toaster.build()
-                                .message(single ? R.string.failedAddingDownload : R.string.failedAddingDownloads)
-                                .ex(ex));
+                Log.e(TAG, "Failed starting download.", ex);
+                DialogUtils.showToast(getContext(), Toaster.build().message(single ? R.string.failedAddingDownload : R.string.failedAddingDownloads));
             }
         };
 
@@ -323,7 +323,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             @Override
             public void onException(@NonNull Exception ex) {
                 dismissDialog();
-                showToast(Toaster.build().message(R.string.failedDownloadingFile).ex(ex));
+                Log.e(TAG, "Failed getting global options.", ex);
+                showToast(Toaster.build().message(R.string.failedDownloadingFile));
             }
         });
     }
@@ -417,7 +418,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     @Override
     public boolean onCouldntLoad(@NonNull Exception ex) {
         rmv.showError(R.string.failedLoading);
-        Logging.log(ex);
+        Log.e(TAG, "Failed load info.", ex);
         return false;
     }
 

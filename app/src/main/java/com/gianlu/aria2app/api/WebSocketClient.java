@@ -105,12 +105,12 @@ public class WebSocketClient extends AbstractClient {
         //noinspection SynchronizationOnLocalVariableOrMethodParameter
         synchronized (internal) {
             internal.wait(5000);
+
+            requests.remove(id);
+
+            if (internal.obj != null) return internal.obj;
+            else throw internal.ex;
         }
-
-        requests.remove(id);
-
-        if (internal.obj != null) return internal.obj;
-        else throw internal.ex;
     }
 
     @Override
@@ -124,8 +124,8 @@ public class WebSocketClient extends AbstractClient {
     }
 
     private static class InternalResponse {
-        private JSONObject obj;
-        private Exception ex;
+        private volatile JSONObject obj;
+        private volatile Exception ex;
 
         InternalResponse() {
             this.obj = null;

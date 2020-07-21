@@ -5,21 +5,22 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.gianlu.aria2app.inappdownloader.Aria2ConfigProvider;
 import com.gianlu.aria2app.api.ConnectivityChangedReceiver;
 import com.gianlu.aria2app.api.ErrorHandler;
 import com.gianlu.aria2app.api.NetInstanceHolder;
 import com.gianlu.aria2app.api.search.SearchApi;
+import com.gianlu.aria2app.inappdownloader.Aria2ConfigProvider;
+import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.aria2lib.Aria2Ui;
 import com.gianlu.aria2lib.BadEnvironmentException;
 import com.gianlu.commonutils.analytics.AnalyticsApplication;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.preferences.CommonPK;
 import com.gianlu.commonutils.preferences.Prefs;
 import com.gianlu.commonutils.preferences.PrefsStorageModule;
@@ -35,6 +36,7 @@ import java.util.Set;
 public final class ThisApplication extends AnalyticsApplication implements ErrorHandler.Listener {
     public static final boolean DEBUG_UPDATER = false;
     public static final boolean DEBUG_NOTIFICATION = false;
+    private static final String TAG = ThisApplication.class.getSimpleName();
     private final Set<String> checkedVersionFor = new HashSet<>();
     private final SharedPreferences.OnSharedPreferenceChangeListener toggleNotificationServiceListener = (sharedPreferences, key) -> {
         if (key.equals(PK.A2_ENABLE_NOTIFS.key())) {
@@ -49,9 +51,9 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     public boolean shouldCheckVersion() {
         try {
-            return !checkedVersionFor.contains(ProfilesManager.get(this).getCurrent().id);
-        } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.log(ex);
+            MultiProfile profile = ProfilesManager.get(this).getCurrent();
+            return !profile.isInAppDownloader() && !checkedVersionFor.contains(profile.id);
+        } catch (ProfilesManager.NoCurrentProfileException ignored) {
             return true;
         }
     }
@@ -59,8 +61,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void checkedVersion() {
         try {
             checkedVersionFor.add(ProfilesManager.get(this).getCurrent().id);
-        } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.log(ex);
+        } catch (ProfilesManager.NoCurrentProfileException ignored) {
         }
     }
 
@@ -73,7 +74,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     public void onCreate() {
         super.onCreate();
         SearchApi.get().cacheSearchEngines();
-        MaterialPreferences.instance().setStorageModule(new PrefsStorageModule.Factory());
+        MaterialPreferences.setStorageModule(new PrefsStorageModule.Factory());
 
         ErrorHandler.setup(Prefs.getInt(PK.A2_UPDATE_INTERVAL) * 1000, this);
 
@@ -98,7 +99,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
             aria2service = new Aria2UiDispatcher(this);
             loadAria2ServiceEnv();
         } catch (BadEnvironmentException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed loading aria2 env.", ex);
         }
     }
 
@@ -132,10 +133,9 @@ public final class ThisApplication extends AnalyticsApplication implements Error
     @Override
     public void onFatal(@NonNull Throwable ex) {
         NetInstanceHolder.close();
-        Toaster.with(this).message(R.string.fatalExceptionMessage).ex(ex).show();
+        Toaster.with(this).message(R.string.fatalExceptionMessage).show();
         LoadingActivity.startActivity(this, ex);
-
-        Logging.log(ex);
+        Log.wtf(TAG, ex);
     }
 
     @Override
@@ -146,7 +146,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
 
     @Override
     public void onException(@NonNull Throwable ex) {
-        Logging.log(ex);
+        Log.e(TAG, "Uncaught exception.", ex);
     }
 
     public void addAria2UiListener(@NonNull Aria2Ui.Listener listener) {
@@ -194,7 +194,7 @@ public final class ThisApplication extends AnalyticsApplication implements Error
         try {
             return aria2service.ui.version();
         } catch (IOException | BadEnvironmentException ex) {
-            Logging.log("Failed retrieving version!", ex);
+            Log.e(TAG, "Failed retrieving version!", ex);
             return null;
         }
     }

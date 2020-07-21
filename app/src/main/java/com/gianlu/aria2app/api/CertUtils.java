@@ -1,12 +1,12 @@
 package com.gianlu.aria2app.api;
 
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.gianlu.aria2app.Utils;
-import com.gianlu.commonutils.logging.Logging;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -21,13 +21,15 @@ import java.util.Collection;
 import java.util.List;
 
 public final class CertUtils {
+    private static final String TAG = CertUtils.class.getSimpleName();
+
     @Nullable
     public static X509Certificate decodeCertificate(@NonNull String base64) {
         try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
             return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(base64, Base64.NO_WRAP)));
         } catch (CertificateException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed decoding certificate.", ex);
             return null;
         }
     }
@@ -43,7 +45,7 @@ public final class CertUtils {
         try {
             return Base64.encodeToString(certificate.getEncoded(), Base64.NO_WRAP);
         } catch (CertificateEncodingException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed encoding certificate.", ex);
             return null;
         }
     }
@@ -59,7 +61,7 @@ public final class CertUtils {
         try {
             return loadCertificateFromStream(new FileInputStream(path));
         } catch (FileNotFoundException | CertificateException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "Failed loading certificate.", ex);
             return null;
         }
     }

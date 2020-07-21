@@ -3,6 +3,7 @@ package com.gianlu.aria2app.activities.moreabout.files;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -25,9 +26,7 @@ import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
 import com.gianlu.commonutils.dialogs.DialogUtils;
-import com.gianlu.commonutils.logging.Logging;
 import com.gianlu.commonutils.misc.SuperTextView;
-import com.gianlu.commonutils.typography.FontsManager;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -39,6 +38,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
     private SuperTextView length;
     private SuperTextView completedLength;
     private CheckBox selected;
+    private static final String TAG = FileSheet.class.getSimpleName();
 
     @NonNull
     public static FileSheet get() {
@@ -62,7 +62,6 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
         fileType.setFilename(payload.file.getName());
 
         percentage = parent.findViewById(R.id.fileSheet_percentage);
-        FontsManager.set(FontsManager.ROBOTO_MEDIUM, percentage);
     }
 
     @Override
@@ -119,7 +118,8 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                     if (!isAdded() || getContext() == null) return;
 
                     dismissAllowingStateLoss();
-                    DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection).ex(ex));
+                    Log.e(TAG, "Failed changing selection.", ex);
+                    DialogUtils.showToast(getContext(), Toaster.build().message(R.string.failedFileChangeSelection));
                 }
             }));
         } else {
@@ -147,7 +147,7 @@ public class FileSheet extends ThemedModalBottomSheet<FileSheet.SetupPayload, Ar
                 return true;
             }
         } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Logging.log(ex);
+            Log.e(TAG, "No profile found.", ex);
             return false;
         }
     }
