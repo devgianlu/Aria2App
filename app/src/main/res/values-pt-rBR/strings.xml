@@ -14,8 +14,8 @@
     <string name="prefs_hideMetadata_summary">Ocultar metadados que iniciaram outro download.</string>
     <string name="prefs_updateRate">Taxa de atualização</string>
     <string name="prefs_updateRate_summary">Taxa de atualização da interface do usuário em segundos.</string>
-    <string name="prefs_networkTimeout">Network timeout</string>
-    <string name="prefs_networkTimeout_summary">If your network has a very high latency, increase this value (in seconds) to avoid errors.</string>
+    <string name="prefs_networkTimeout">Tempo Limite de Rede</string>
+    <string name="prefs_networkTimeout_summary">Se sua rede tiver uma latência muito alta, aumente este valor (em segundos) para evitar erros.</string>
     <string name="prefs_downloadDisplayInfo">Baixar informações de exibição</string>
     <string name="prefs_downloadDisplayInfo_summary">Personalize as informações mostradas no cartão de download.</string>
     <string name="prefs_versionCheck">Verifique a versão do aria2 na inicialização</string>
@@ -326,7 +326,7 @@
     <string name="visit">Visita</string>
     <string name="goTo">Vamos para</string>
     <string name="prefs_addBestTrackers">Adicione os melhores rastreadores a novos downloads</string>
-    <string name="prefs_addBestTrackers_summary">Add best trackers from XIU2/TrackersListCollection to new downloads automatically</string>
+    <string name="prefs_addBestTrackers_summary">Adicione os melhores rastreadores do XIU2/TrackersListCollection aos novos downloads automaticamente</string>
     <string name="addBestTrackers">Adicione os melhores rastreadores</string>
     <string name="health"><![CDATA[<b>Integridade:</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">O serviço está em funcionamento.</string>
