@@ -326,7 +326,7 @@
     <string name="visit">访问</string>
     <string name="goTo">转到</string>
     <string name="prefs_addBestTrackers">自动添加最佳tracker列表</string>
-    <string name="prefs_addBestTrackers_summary">自动添加来自XIU2/TrackersListCollection的最佳tracker服务器到新下载</string>
+    <string name="prefs_addBestTrackers_summary">把从XIU2/TrackersListCollection获取到的最佳tracker列表自动添加到新增的下载任务</string>
     <string name="addBestTrackers">添加最佳tracker列表</string>
     <string name="health"><![CDATA[<b>健康度:</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">服务已启动并正在运行。</string>
