@@ -38,7 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:indeterminateTint="@color/colorSecondary" />
+                android:indeterminateTint="@color/colorSecondary"
+                android:indeterminateTintMode="src_in" />
 
             <TextView
                 android:layout_width="match_parent"
