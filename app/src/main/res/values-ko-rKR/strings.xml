@@ -153,9 +153,9 @@
     <string name="endpointEmpty">Endpoint 필드는 비었습니다!</string>
     <string name="invalidCertificate">유효하지 않은 인증서!</string>
     <string name="invalidCompleteAddress">An address cannot be created with these settings!</string>
-    <string name="emptyToken">The token field is empty!</string>
-    <string name="emptyPassword">The password field is empty!</string>
-    <string name="emptyUsername">The username field is empty!</string>
+    <string name="emptyToken">토큰 필드는 비었습니다!</string>
+    <string name="emptyPassword">빌미번호 필드는 비었습니다!</string>
+    <string name="emptyUsername">사용자 이름 필드는 비었습니다!</string>
     <string name="invalidAddress">잘못된 주소입니다!</string>
     <string name="pickProfile">Choose a profile or create a new one. Press and hold to edit.</string>
     <string name="failedLoading">로드 실패!</string>
