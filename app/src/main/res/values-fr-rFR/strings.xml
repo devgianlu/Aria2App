@@ -57,9 +57,9 @@
     <string name="total_length"><![CDATA[<b>Taille totale :</b>]]> %s</string>
     <string name="uploaded_length"><![CDATA[<b>Données téléversées :</b>]]> %s</string>
     <string name="pieces"><![CDATA[<b>Pièces :</b>]]> %d</string>
-    <string name="pieces_length"><![CDATA[<b>Taille d\'une pièce :</b>]]> %s</string>
-    <string name="connections"><![CDATA[<b>Connections:</b>]]> %d</string>
-    <string name="verifyIntegrityPending"><![CDATA[<b>Vérification d\'intégrité en attente :</b>]]> %s</string>
+    <string name="pieces_length"><![CDATA[<b>Taille d'une pièce :</b>]]> %s</string>
+    <string name="connections"><![CDATA[<b>Connexions :</b>]]> %d</string>
+    <string name="verifyIntegrityPending"><![CDATA[<b>Vérification d'intégrité en attente :</b>]]> %s</string>
     <string name="verifiedLength"><![CDATA[<b>Données vérifiées :</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID :</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>Dossier de destination :</b>]]> %s</string>
@@ -86,7 +86,7 @@
     <string name="info">Infos</string>
     <string name="files">Fichier</string>
     <string name="profileName">Nom du profil</string>
-    <string name="profile_help">If you don\'t know to setup a profile properly check this guide on my website: https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
+    <string name="profile_help">Si vous ne savez pas comment configurer un profil correctement, consultez ce guide sur mon site web : https://github.com/devgianlu/Aria2App/wiki/Create-a-profile</string>
     <string name="address">Adresse</string>
     <string name="peers">Pairs</string>
     <string name="servers">Serveurs</string>
@@ -171,7 +171,7 @@
     <string name="queuePosition_help">Laisser vide pour ajouter un téléchargement à la fin de la fil d\'attente.</string>
     <string name="uris_disclaimer">Il est impératif d\'ajouter uniquement des liens HTTP/FTP/SFTP/BitTorrent qui pointent vers la même ressource. Si vous mélangez des liens désignant des ressources différents, le téléchargement échouera ou sera corrompu sans message du serveur aria2.</string>
     <string name="noUris">Il n\'y a pas d\'URL.</string>
-    <string name="torrentUris_disclaimer">Uris are used for Web-seeding. For single file torrents, the URI can be a complete URI pointing to the resource; if URI ends with /, name in torrent file is added. For multi-file torrents, name and path in torrent are added to form a URI for each file.</string>
+    <string name="torrentUris_disclaimer">Les Uris sont utilisées pour le webseeding. Pour les torrents d\'un seul fichier, l\'URI peut être une URI complète pointant vers la ressource; si l\'URI se termine par /, le nom dans le fichier torrent est ajouté. Pour les torrents multi-fichiers, le nom et le chemin dans le torrent sont ajoutés pour former un URI pour chaque fichier.</string>
     <string name="file">Fichier</string>
     <string name="pickTorrent_help">Sélectionner un fichier torrent. Le MIME type supporté est <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
     <string name="pickMetalink_help">Séléctionner un fichier métalien. Les MIME types supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
@@ -185,7 +185,7 @@
     <string name="mobile">Mobile</string>
     <string name="ethernet">Ethernet</string>
     <string name="bluetooth">Bluetooth</string>
-    <string name="wifi">Wifi</string>
+    <string name="wifi">Wi-Fi</string>
     <string name="always">Toujours</string>
     <string name="connectivityCondition">Condition de connectivité</string>
     <string name="create">Créer</string>
@@ -298,7 +298,7 @@
     <string name="select">Sélectionner</string>
     <string name="deselect">Désélectionner</string>
     <string name="selectAll">Sélectionner tout</string>
-    <string name="secondSpace_selectDownload">Tap more on a download to bring up additional information.</string>
+    <string name="secondSpace_selectDownload">Appuyez sur un téléchargement pour afficher des informations supplémentaires.</string>
     <string name="writePermissionDenied">Vous avez refusé la permission d\'écriture !</string>
     <string name="readPermissionDenied">Vous avez refusé la permission de lecture !</string>
     <string name="batchAdd">Ajouter un batch</string>
@@ -326,13 +326,13 @@
     <string name="visit">Visiter</string>
     <string name="goTo">Aller à</string>
     <string name="prefs_addBestTrackers">Ajouter de meilleurs traquers aux nouveaux téléchargements</string>
-    <string name="prefs_addBestTrackers_summary">Add best trackers from XIU2/TrackersListCollection to new downloads automatically</string>
+    <string name="prefs_addBestTrackers_summary">Ajouter automatiquement de meilleurs trackers de XIU2/TrackersListCollection aux nouveaux téléchargements</string>
     <string name="addBestTrackers">Ajouter de meilleurs traquers</string>
     <string name="health"><![CDATA[<b>Santé :</b>]]> %.2f%% (%d/%d)</string>
     <string name="inAppDownloader_serviceStarted">Le service est démarré et fonctionnel.</string>
     <string name="inAppDownloader_serviceNotStarted">Le service n\'a pas été démarré.</string>
     <string name="inAppDownloader_serviceNotConfigured">Le service n\'a pas été configuré.</string>
-    <string name="inAppDownloader_configuration">In-App downloader configuration</string>
+    <string name="inAppDownloader_configuration">Configuration du serveur de téléchargement intégré</string>
     <string name="oldAria2AppNoInApp">Cette fonctionnalité n\'est plus supporté</string>
     <string name="oldAria2AppNoInApp_message">Une mise a jour récente a rendu possible d\'intégrer toutes les fonctionnalités d\'Aria2Android à Aria2App. Mettez à jour l\'application pour l\'utiliser.</string>
     <string name="cannotStartInAppWithoutWritePermission">Aria2App in-app downloader a besoin d\'accèder aux données de votre appareil pour sauvegarder les fichiers.</string>
@@ -343,7 +343,7 @@
     <string name="startPaused">Mettre en pause les téléchargement quand ajouté</string>
     <string name="noDownloads_addOne">Il n\'y a pas de téléchargement ! Vous pouvez en ajouter un en appuyant sur le bouton plus en haut à droite.</string>
     <string name="noDownloads_changeFilters">Il n\'y a pas de téléchargement à afficher ! Essayer de changer vos filtres.</string>
-    <string name="filtersShowingOnly">Showing only %s (%d)</string>
+    <string name="filtersShowingOnly">Affiche uniquement les %s (%d)</string>
     <string name="prefs_skipWebViewDialog">Passer la fenêtre pour WebView</string>
     <string name="prefs_skipWebViewDialog_summary">Passer la fenêtre WebView au partage d\'un lien</string>
     <string name="desktopMode">Mode bureau</string>
