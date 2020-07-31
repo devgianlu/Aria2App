@@ -57,9 +57,9 @@
     <string name="total_length"><![CDATA[<b>Taille totale :</b>]]> %s</string>
     <string name="uploaded_length"><![CDATA[<b>Données téléversées :</b>]]> %s</string>
     <string name="pieces"><![CDATA[<b>Pièces :</b>]]> %d</string>
-    <string name="pieces_length"><![CDATA[<b>Taille d'une pièce :</b>]]> %s</string>
+    <string name="pieces_length"><![CDATA[<b>Taille d\'une pièce :</b>]]> %s</string>
     <string name="connections"><![CDATA[<b>Connexions :</b>]]> %d</string>
-    <string name="verifyIntegrityPending"><![CDATA[<b>Vérification d'intégrité en attente :</b>]]> %s</string>
+    <string name="verifyIntegrityPending"><![CDATA[<b>Vérification d\'intégrité en attente :</b>]]> %s</string>
     <string name="verifiedLength"><![CDATA[<b>Données vérifiées :</b>]]> %s</string>
     <string name="gid"><![CDATA[<b>GID :</b>]]> %s</string>
     <string name="directory"><![CDATA[<b>Dossier de destination :</b>]]> %s</string>
