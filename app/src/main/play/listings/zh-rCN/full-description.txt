@@ -1,25 +1,26 @@
-Thanks to Aria2App you can handle as many aria2 servers as you want!
+有了Aria2App，你想处理多少aria2 服务器就可以处理多少！
 
-IMPORTANT: Aria2App uses the JSONRPC interface! See here for more: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
+重要：Aria2App 使用JSONRPC 接口！ 更多信息请见此处：
+https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
 
-Some of the features are:
-- Handle more servers simultaneously
-- Add HTTP(s), (s)FTP, BitTorrent, Metalink downloads
-- Add Torrents with the integrated search engine
-- Start downloads by clicking on links on the browser
-- Handle downloads (pause, resume, stop)
-- Find basic and in-depth information
-- View statistics about peers and server of your downloads
-- Display the information about every file in download
-- Download files from the server to your device through DirectDownload
-- Change a single download or aria2 general options
-- Receive live notifications of your downloads or your selected downloads
-And even more
+一些特性：
+- 同时处理更多服务器
+- 添加 HTTP(s)、(s)FTP、BitTorrent、 Metalink 下载
+- 通过集成搜索引擎添加 Torrent
+- 点击浏览器链接启动下载
+- 处理下载(暂停、恢复、停止)
+- 寻找基本和深入的信息
+- 查看下载项的peers和服务器的统计数据
+- 显示下载中每个文件的信息
+- 通过 DirectDownload 把文件从服务器下载到您的设备
+- 更改单个下载或aria2 一般选项
+- 接收您的下载或选定下载的实时通知
+更多
 
-Aria2App is developed to run on the latest aria2 version so keep your build updated to avoid problems and various bugs.
+Aria2App是为运行最新的aria2版本而开发的，因此请随时更新构建以避免出现问题和各种bug。
 
-This project is open source at https://github.com/devgianlu/Aria2App
+项目源代码位于 https://github.com/devgianlu/Aria2App
 ---------------------------------------
 
-aria2 is developed by Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
-BitTorrent is a registered trademark by BitTorrent Inc.
+aria2由Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t)开发。
+BitTorrent 是 BitTorrent 公司注册的商标。
