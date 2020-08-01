@@ -1,3 +1,5 @@
 files:
   - source: /app/src/main/res/values/strings.xml
     translation: /app/src/main/res/values-%android_code%/strings.xml
+  - source: /app/src/main/play/listings/en-GB/**-description.txt
+    translation: /app/src/main/play/listings/%android_code%/%original_file_name%
