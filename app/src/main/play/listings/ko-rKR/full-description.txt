@@ -1,0 +1,25 @@
+Thanks to Aria2App you can handle as many aria2 servers as you want!
+
+IMPORTANT: Aria2App uses the JSONRPC interface! See here for more: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
+
+Some of the features are:
+- Handle more servers simultaneously
+- Add HTTP(s), (s)FTP, BitTorrent, Metalink downloads
+- Add Torrents with the integrated search engine
+- Start downloads by clicking on links on the browser
+- Handle downloads (pause, resume, stop)
+- Find basic and in-depth information
+- View statistics about peers and server of your downloads
+- Display the information about every file in download
+- Download files from the server to your device through DirectDownload
+- Change a single download or aria2 general options
+- Receive live notifications of your downloads or your selected downloads
+And even more
+
+Aria2App is developed to run on the latest aria2 version so keep your build updated to avoid problems and various bugs.
+
+This project is open source at https://github.com/devgianlu/Aria2App
+---------------------------------------
+
+aria2 is developed by Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
+BitTorrent is a registered trademark by BitTorrent Inc.
