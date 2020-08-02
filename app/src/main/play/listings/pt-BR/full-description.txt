@@ -1,0 +1,25 @@
+Graças ao Aria2App você pode lidar com quantos servidores aria2 você quiser!
+
+IMPORTANTE: Aria2App usa a interface JSONRPC! Veja aqui o seguinte: https://aria2.github.io/manual/en/html/aria2c.html#rpc-interface
+
+Alguns dos recursos são:
+- Operar mais servidores simultaneamente
+- Adicionar HTTP(s), (s)FTP, BitTorrent, Metalink downloads
+- Adicionar Torrents com o motor de busca integrado
+- Inicie os downloads, clicando em links no navegador
+- Manipular downloads (pausar, retomar, parar)
+- Encontre informações básicas e aprofundadas
+- Exibir estatísticas sobre os pares e o servidor dos seus downloads
+- Exibir as informações sobre cada arquivo no download
+- Baixar arquivos do servidor para o seu dispositivo através do DirectDownload
+- Alterar as opções gerais de um único download ou do aria2
+- Receba notificações ao vivo dos seus downloads ou dos downloads selecionados
+E ainda mais
+
+Aria2App foi desenvolvido para rodar na versão mais recente do aria2, então mantenha sua compilação atualizada para evitar problemas e vários erros.
+
+Este projeto é de código aberto em https://github.com/devgianlu/Aria2App
+---------------------------------------
+
+aria2 é desenvolvido por Tatsuhiro Tsujikawa (https://github.com/tatsuhiro-t).
+BitTorrent é uma marca registrada pela BitTorrent Inc.
