@@ -832,7 +832,7 @@
         <!-- WebView activity -->
         <activity
             android:name=".webview.WebViewActivity"
-            android:configChanges="uiMode"
+            android:configChanges="uiMode|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar.WebView" />
 
         <!-- Edit profile activity -->
