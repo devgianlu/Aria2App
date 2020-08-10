@@ -1,1 +1,1 @@
-Aria2App vous permet de gérer vos téléchargements de serveurs aria2 où que vous soyez !
+Aria2App allows you to handle your downloads on aria2 wherever you are!
