@@ -1,1 +1,1 @@
-O Aria2App permite que você gerencie seus downloads no aria2 onde quer que você esteja!
+Aria2App allows you to handle your downloads on aria2 wherever you are!
