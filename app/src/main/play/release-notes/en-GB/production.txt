@@ -1,6 +1,6 @@
-### Added
-- Added list of interfaces for InAppDownloader
-- Configure connection timeout
+### Fixed
+- Fixed loading progress bar color
+- Fixed WebView reloading when changing orientation
 
 ### Changed
-- Load CA certificates instead of disabling check (for InAppDownloader)
+- Changes best trackers source

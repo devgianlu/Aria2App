@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.8.1] - 10-08-2020
+### Fixed 
+- Fixed loading progress bar color
+- Fixed WebView reloading when changing orientation
+
+### Changed 
+- Changes best trackers source
+
+
 ## [5.8.0] - 07-07-2020
 ### Added 
 - Added list of interfaces for InAppDownloader
