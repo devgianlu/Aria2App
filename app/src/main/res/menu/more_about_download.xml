@@ -12,4 +12,9 @@
         android:id="@+id/moreAboutDownload_options"
         android:title="@string/downloadOptions"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/moreAboutDownload_copyMagnet"
+        android:title="@string/copyMagnetLink"
+        app:showAsAction="never" />
 </menu>

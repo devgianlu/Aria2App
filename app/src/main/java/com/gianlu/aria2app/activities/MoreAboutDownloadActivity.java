@@ -1,5 +1,7 @@
 package com.gianlu.aria2app.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,14 +36,16 @@ import com.gianlu.aria2app.options.OptionsDialog;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.tabs.TabLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 public class MoreAboutDownloadActivity extends UpdaterActivity {
     private static final String TAG = MoreAboutDownloadActivity.class.getSimpleName();
     private PagerAdapter<UpdaterFragment<?>> adapter;
     private ViewPager pager;
-    private Download.Status currentStatus = null;
     private Download.Status lastStatus = null;
+    private String infoHash = null;
 
-    public static void start(Context context, @NonNull DownloadWithUpdate download) {
+    public static void start(@NotNull Context context, @NonNull DownloadWithUpdate download) {
         context.startActivity(new Intent(context, MoreAboutDownloadActivity.class)
                 .putExtra("theme", download.update().getThemeResource())
                 .putExtra("title", download.update().getName())
@@ -55,10 +59,10 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(@NotNull Menu menu) {
         MenuItem options = menu.findItem(R.id.moreAboutDownload_options);
         MenuItem quick = menu.findItem(R.id.moreAboutDownload_quickOptions);
-        if (currentStatus == Download.Status.ERROR || currentStatus == Download.Status.COMPLETE || currentStatus == Download.Status.REMOVED) {
+        if (lastStatus == Download.Status.ERROR || lastStatus == Download.Status.COMPLETE || lastStatus == Download.Status.REMOVED) {
             options.setVisible(false);
             quick.setVisible(false);
         } else {
@@ -66,6 +70,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
             quick.setVisible(true);
         }
 
+        menu.findItem(R.id.moreAboutDownload_copyMagnet).setVisible(infoHash != null);
         return true;
     }
 
@@ -95,7 +100,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
             @Override
             public void onLoad(@NonNull DownloadWithUpdate.BigUpdate payload) {
-                if (currentStatus == null) currentStatus = payload.status;
+                if (lastStatus == null) lastStatus = payload.status;
                 setTitle(payload.getName());
 
                 adapter = new PagerAdapter<>(getSupportFragmentManager(),
@@ -103,6 +108,9 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
                         payload.isTorrent() ? PeersFragment.getInstance(MoreAboutDownloadActivity.this, gid) : ServersFragment.getInstance(MoreAboutDownloadActivity.this, gid),
                         FilesFragment.getInstance(MoreAboutDownloadActivity.this, gid));
                 pager.setAdapter(adapter);
+
+                infoHash = payload.infoHash;
+                invalidateOptionsMenu();
             }
 
             @Override
@@ -186,7 +194,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
@@ -202,6 +210,13 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
             case R.id.moreAboutDownload_quickOptions:
                 showDialog(OptionsDialog.getDownload(gid, true));
                 return true;
+            case R.id.moreAboutDownload_copyMagnet:
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard != null && infoHash != null) {
+                    clipboard.setPrimaryClip(ClipData.newPlainText("magnet", "magnet:?xt=urn:btih:" + infoHash));
+                    showToast(Toaster.build().message(R.string.copiedToClipboard));
+                }
+                return true;
             default:
                 return false;
         }
@@ -209,7 +224,7 @@ public class MoreAboutDownloadActivity extends UpdaterActivity {
 
     private boolean canGoBack(int code) {
         if (adapter != null) {
-            UpdaterFragment fragment = adapter.getFragments().get(pager.getCurrentItem());
+            UpdaterFragment<?> fragment = adapter.getFragments().get(pager.getCurrentItem());
             if (fragment instanceof OnBackPressed)
                 return ((OnBackPressed) fragment).canGoBack(code);
         }
