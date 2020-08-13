@@ -347,5 +347,5 @@
     <string name="prefs_skipWebViewDialog">跳过WebView对话框</string>
     <string name="prefs_skipWebViewDialog_summary">分享链接时，是否跳过打开WebView对话框</string>
     <string name="desktopMode">桌面模式</string>
-    <string name="copyMagnetLink">Copy Magnet link</string>
+    <string name="copyMagnetLink">复制磁力链接</string>
 </resources>
