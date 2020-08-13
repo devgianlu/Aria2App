@@ -347,4 +347,5 @@
     <string name="prefs_skipWebViewDialog">Passer la fenêtre pour WebView</string>
     <string name="prefs_skipWebViewDialog_summary">Passer la fenêtre WebView au partage d\'un lien</string>
     <string name="desktopMode">Mode bureau</string>
+    <string name="copyMagnetLink">Copy Magnet link</string>
 </resources>
