@@ -347,4 +347,5 @@
     <string name="prefs_skipWebViewDialog">Pular diálogo do WebView</string>
     <string name="prefs_skipWebViewDialog_summary">Ignore a caixa de diálogo WebView quando compartilhar um link</string>
     <string name="desktopMode">Modo desktop</string>
+    <string name="copyMagnetLink">Copy Magnet link</string>
 </resources>
