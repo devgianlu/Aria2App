@@ -1,5 +1,6 @@
 package com.gianlu.aria2app.activities.moreabout.files;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.Log;
@@ -17,8 +18,7 @@ import com.gianlu.aria2app.api.aria2.AriaDirectory;
 import com.gianlu.aria2app.api.aria2.AriaFiles;
 import com.gianlu.aria2app.api.aria2.Download;
 import com.gianlu.aria2app.api.aria2.DownloadWithUpdate;
-import com.gianlu.aria2app.profiles.MultiProfile;
-import com.gianlu.aria2app.profiles.ProfilesManager;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.bottomsheet.ModalBottomSheetHeaderView;
 import com.gianlu.commonutils.bottomsheet.ThemedModalBottomSheet;
@@ -26,6 +26,8 @@ import com.gianlu.commonutils.dialogs.DialogUtils;
 import com.gianlu.commonutils.misc.SuperTextView;
 import com.gianlu.commonutils.ui.Toaster;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
@@ -36,10 +38,30 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     private SuperTextView completedLength;
     private TextView percentage;
     private AriaDirectory currentDir;
+    private DirectDownloadHelper helper;
 
     @NonNull
     public static DirectorySheet get() {
         return new DirectorySheet();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        try {
+            helper = DirectDownloadHelper.get(context);
+        } catch (DirectDownloadHelper.DirectDownloadNotEnabledException ex) {
+            Log.d(TAG, "DirectDownload not enabled for this profile.", ex);
+        } catch (DirectDownloadHelper.InitializationException ex) {
+            Log.e(TAG, "Failed initializing DirectDownload helper.", ex);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        helper = null;
     }
 
     @Override
@@ -120,24 +142,18 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
 
     @Override
     protected boolean onCustomizeAction(@NonNull FloatingActionButton action, @NonNull final SetupPayload payload) {
-        try {
-            final MultiProfile profile = ProfilesManager.get(requireContext()).getCurrent();
-            if (payload.download.update().isMetadata() || profile.getProfile(getContext()).directDownload == null) {
-                return false;
-            } else {
-                action.setImageResource(R.drawable.baseline_download_24);
-                CommonUtils.setBackgroundColor(action, payload.download.update().getColorVariant());
-                action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
-                action.setOnClickListener(v -> payload.listener.onDownloadDirectory(profile, currentDir));
-                return true;
-            }
-        } catch (ProfilesManager.NoCurrentProfileException ex) {
-            Log.e(TAG, "No profile found.", ex);
+        if (payload.download.update().isMetadata() || helper == null) {
             return false;
+        } else {
+            action.setImageResource(R.drawable.baseline_download_24);
+            CommonUtils.setBackgroundColor(action, payload.download.update().getColorVariant());
+            action.setSupportImageTintList(ColorStateList.valueOf(Color.WHITE));
+            action.setOnClickListener(v -> payload.listener.onDownloadDirectory(currentDir));
+            return true;
         }
     }
 
-    private void update(AriaDirectory dir) {
+    private void update(@NotNull AriaDirectory dir) {
         percentage.setText(String.format(Locale.getDefault(), "%d%%", (int) dir.getProgress()));
         length.setHtml(R.string.total_length, CommonUtils.dimensionFormatter(dir.length(), false));
         completedLength.setHtml(R.string.completed_length, CommonUtils.dimensionFormatter(dir.completedLength(), false));
@@ -164,15 +180,15 @@ public class DirectorySheet extends ThemedModalBottomSheet<DirectorySheet.SetupP
     }
 
     public interface Listener {
-        void onDownloadDirectory(@NonNull MultiProfile profile, @NonNull AriaDirectory dir);
+        void onDownloadDirectory(@NonNull AriaDirectory dir);
     }
 
     protected static class SetupPayload {
         private final DownloadWithUpdate download;
         private final AriaDirectory dir;
-        private final DirectorySheet.Listener listener;
+        private final Listener listener;
 
-        SetupPayload(@NonNull DownloadWithUpdate download, @NonNull AriaDirectory dir, @NonNull DirectorySheet.Listener listener) {
+        SetupPayload(@NonNull DownloadWithUpdate download, @NonNull AriaDirectory dir, @NonNull Listener listener) {
             this.download = download;
             this.dir = dir;
             this.listener = listener;

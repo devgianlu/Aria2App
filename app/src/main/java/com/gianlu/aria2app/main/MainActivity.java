@@ -66,7 +66,7 @@ import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.Receiver;
 import com.gianlu.aria2app.api.updater.UpdaterActivity;
 import com.gianlu.aria2app.api.updater.Wants;
-import com.gianlu.aria2app.downloader.FetchHelper;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.aria2app.inappdownloader.InAppAria2ConfActivity;
 import com.gianlu.aria2app.options.OptionsDialog;
 import com.gianlu.aria2app.profiles.CustomProfilesAdapter;
@@ -109,7 +109,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, FetchHelper.FetchDownloadCountListener, Aria2Ui.Listener {
+public class MainActivity extends UpdaterActivity implements FloatingActionsMenu.OnFloatingActionsMenuUpdateListener, TutorialManager.Listener, HideSecondSpace, DrawerManager.ProfilesDrawerListener<MultiProfile>, DownloadCardsAdapter.Listener, SearchView.OnQueryTextListener, SearchView.OnCloseListener, MenuItem.OnActionExpandListener, OnRefresh, DrawerManager.MenuDrawerListener<DrawerItem>, Aria2Ui.Listener, DirectDownloadHelper.UpdateDownloadCountListener {
     private static final int REQUEST_READ_CODE = 12;
     private final static Wants<DownloadsAndGlobalStats> MAIN_WANTS = Wants.downloadsAndStats();
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -576,8 +576,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
             return;
         }
 
-        FetchHelper.updateDownloadCount(this, this);
-
+        DirectDownloadHelper.updateDownloadCount(this, this);
         ((ThisApplication) getApplication()).addAria2UiListener(this);
     }
 
@@ -921,7 +920,7 @@ public class MainActivity extends UpdaterActivity implements FloatingActionsMenu
     }
 
     @Override
-    public void onFetchDownloadCount(int count) {
+    public void onDdDownloadCount(int count) {
         if (drawerManager != null) drawerManager.updateBadge(DrawerItem.DIRECT_DOWNLOAD, count);
     }
 

@@ -130,21 +130,6 @@ public final class NetUtils {
         return builder.build();
     }
 
-    @NonNull
-    public static Request createDirectDownloadRequest(@NonNull MultiProfile.DirectDownload dd) throws InvalidUrlException {
-        HttpUrl baseUrl = dd.getUrl();
-        if (baseUrl == null)
-            throw new InvalidUrlException("DirectDownload url is invalid.");
-
-        Request.Builder builder = new Request.Builder()
-                .get().url(baseUrl);
-
-        if (dd.auth)
-            builder.header("Authorization", dd.getAuthorizationHeader());
-
-        return builder.build();
-    }
-
     public static class InvalidUrlException extends Exception {
         InvalidUrlException(String message) {
             super(message);

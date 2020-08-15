@@ -86,7 +86,7 @@ public class CertificateInputView extends LinearLayout {
     }
 
     @NonNull
-    public static Bundle stateFromDirectDownload(@NonNull MultiProfile.DirectDownload dd) {
+    public static Bundle stateFromDirectDownload(@NonNull MultiProfile.DirectDownload.Web dd) {
         if (!dd.serverSsl) throw new IllegalArgumentException();
 
         Bundle bundle = new Bundle();

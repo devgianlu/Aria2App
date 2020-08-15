@@ -7,7 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.gianlu.aria2app.LoadingActivity;
-import com.gianlu.aria2app.downloader.FetchHelper;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 
@@ -27,7 +27,7 @@ public final class NetInstanceHolder {
 
         MultiProfile.UserProfile user = instance.current.profile.getParent().getProfile(networkType, wifiManager);
         if (!Objects.equals(instance.current.profile.connectivityCondition, user.connectivityCondition)) {
-            FetchHelper.invalidate();
+            DirectDownloadHelper.invalidate();
 
             try {
                 close();

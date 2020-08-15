@@ -14,7 +14,7 @@ import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.gianlu.aria2app.downloader.FetchHelper;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.aria2app.profiles.ProfilesManager;
 import com.gianlu.aria2app.services.NotificationService;
 import com.gianlu.commonutils.CommonUtils;
@@ -337,8 +337,7 @@ public class PreferenceActivity extends BasePreferenceActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-
-            FetchHelper.invalidate();
+            DirectDownloadHelper.invalidate();
         }
 
         @Override

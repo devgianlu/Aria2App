@@ -22,6 +22,7 @@ import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.commonutils.CommonUtils;
 import com.gianlu.commonutils.permissions.AskPermission;
 import com.gianlu.commonutils.ui.Toaster;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.net.URL;
@@ -33,13 +34,18 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     private ScrollView layout;
     private CheckBox enableDirectDownload;
     private LinearLayout container;
-    private TextInputLayout address;
-    private CheckBox auth;
-    private LinearLayout authContainer;
-    private TextInputLayout username;
-    private TextInputLayout password;
-    private CheckBox encryption;
-    private CertificateInputView certificate;
+    private MaterialButtonToggleGroup typePick;
+    private LinearLayout webContainer;
+    private LinearLayout ftpContainer;
+    private LinearLayout smbContainer;
+
+    private TextInputLayout webAddress;
+    private CheckBox webAuth;
+    private LinearLayout webAuthContainer;
+    private TextInputLayout webUsername;
+    private TextInputLayout webPassword;
+    private CheckBox webEncryption;
+    private CertificateInputView webCertificate;
 
     @NonNull
     public static DirectDownloadFragment getInstance(@NonNull Context context) {
@@ -51,90 +57,185 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
         return fragment;
     }
 
+    private static int radioIdFromType(@NonNull MultiProfile.DirectDownload.Type type) {
+        switch (type) {
+            default:
+            case WEB:
+                return R.id.editProfile_ddType_web;
+            case FTP:
+                return R.id.editProfile_ddType_ftp;
+            case SMB:
+                return R.id.editProfile_ddType_samba;
+        }
+    }
+
+    //region Validation
+
     @NonNull
     public static Bundle stateFromProfile(@NonNull MultiProfile.UserProfile profile) {
-        MultiProfile.DirectDownload dd = profile.directDownload;
-
         Bundle bundle = new Bundle();
-        bundle.putBoolean("enabled", dd != null);
-        if (dd != null) {
-            bundle.putString("address", dd.address);
-            bundle.putBoolean("auth", dd.auth);
-            bundle.putString("username", dd.username);
-            bundle.putString("password", dd.password);
-            bundle.putBoolean("encryption", dd.serverSsl);
-            if (dd.serverSsl)
-                bundle.putBundle("certificate", CertificateInputView.stateFromDirectDownload(dd));
+        bundle.putBoolean("enabled", profile.directDownload != null);
+        if (profile.directDownload != null) {
+            bundle.putInt("type", radioIdFromType(profile.directDownload.type));
+            switch (profile.directDownload.type) {
+                case WEB:
+                    MultiProfile.DirectDownload.Web web = profile.directDownload.web;
+                    Bundle webBundle = new Bundle();
+                    webBundle.putString("address", web.address);
+                    webBundle.putBoolean("auth", web.auth);
+                    webBundle.putString("username", web.username);
+                    webBundle.putString("password", web.password);
+                    webBundle.putBoolean("encryption", web.serverSsl);
+                    if (web.serverSsl)
+                        webBundle.putBundle("certificate", CertificateInputView.stateFromDirectDownload(web));
+                    bundle.putBundle("web", webBundle);
+                    break;
+                case FTP:
+                    // TODO
+                    break;
+                case SMB:
+                    // TODO
+                    break;
+            }
         }
 
         return bundle;
     }
 
     @NonNull
+    private static MultiProfile.DirectDownload.Web validateWebState(@NonNull Bundle webBundle) throws InvalidFieldException {
+        String address = webBundle.getString("address", null);
+        try {
+            new URL(address);
+        } catch (Exception ex) {
+            throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddWeb_address, R.string.invalidAddress);
+        }
+
+        String username = null;
+        String password = null;
+        boolean auth = webBundle.getBoolean("auth", false);
+        if (auth) {
+            username = webBundle.getString("username", null);
+            if (username == null || (username = username.trim()).isEmpty())
+                throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddWeb_username, R.string.emptyUsername);
+
+            password = webBundle.getString("password", null);
+            if (password == null || (password = password.trim()).isEmpty())
+                throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_ddWeb_password, R.string.emptyPassword);
+        }
+
+        boolean encryption = webBundle.getBoolean("encryption", false);
+
+        boolean hostnameVerifier = false;
+        X509Certificate certificate = null;
+        Bundle certBundle = webBundle.getBundle("certificate");
+        if (certBundle != null) {
+            hostnameVerifier = certBundle.getBoolean("hostnameVerifier", false);
+            certificate = (X509Certificate) certBundle.getSerializable("certificate");
+        }
+
+        return new MultiProfile.DirectDownload.Web(address, auth, username, password, encryption, certificate, hostnameVerifier);
+    }
+
+    @NonNull
+    private static MultiProfile.DirectDownload.Ftp validateFtpState(@NonNull Bundle ftpBundle) {
+        return null; // TODO
+    }
+
+    @NonNull
+    private static MultiProfile.DirectDownload.Smb validateSmbState(@NonNull Bundle smbBundle) {
+        return null; // TODO
+    }
+
+    @NonNull
     public static Fields validateStateAndCreateFields(@NonNull Bundle bundle) throws InvalidFieldException {
         MultiProfile.DirectDownload dd = null;
         if (bundle.getBoolean("enabled", false)) {
-            String address = bundle.getString("address", null);
-            try {
-                new URL(address);
-            } catch (Exception ex) {
-                throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_dd_address, R.string.invalidAddress);
+            switch (bundle.getInt("type", R.id.editProfile_ddType_web)) {
+                case R.id.editProfile_ddType_web:
+                    Bundle webBundle = bundle.getBundle("web");
+                    if (webBundle != null)
+                        dd = new MultiProfile.DirectDownload(null, validateWebState(webBundle), null);
+                    break;
+                case R.id.editProfile_ddType_ftp:
+                    Bundle ftpBundle = bundle.getBundle("ftp");
+                    if (ftpBundle != null)
+                        dd = new MultiProfile.DirectDownload(validateFtpState(ftpBundle), null, null);
+                    break;
+                case R.id.editProfile_ddType_samba:
+                    Bundle smbBundle = bundle.getBundle("smb");
+                    if (smbBundle != null)
+                        dd = new MultiProfile.DirectDownload(null, null, validateSmbState(smbBundle));
+                    break;
             }
-
-            String username = null;
-            String password = null;
-            boolean auth = bundle.getBoolean("auth", false);
-            if (auth) {
-                username = bundle.getString("username", null);
-                if (username == null || (username = username.trim()).isEmpty())
-                    throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_dd_username, R.string.emptyUsername);
-
-                password = bundle.getString("password", null);
-                if (password == null || (password = password.trim()).isEmpty())
-                    throw new InvalidFieldException(Where.DIRECT_DOWNLOAD, R.id.editProfile_dd_password, R.string.emptyPassword);
-            }
-
-            boolean encryption = bundle.getBoolean("encryption", false);
-
-            boolean hostnameVerifier = false;
-            X509Certificate certificate = null;
-            Bundle certBundle = bundle.getBundle("certificate");
-            if (certBundle != null) {
-                hostnameVerifier = certBundle.getBoolean("hostnameVerifier", false);
-                certificate = (X509Certificate) certBundle.getSerializable("certificate");
-            }
-
-            dd = new MultiProfile.DirectDownload(address, auth, username, password, encryption, certificate, hostnameVerifier);
         }
 
         return new Fields(dd);
     }
 
+    //endregion
+
+    //region State
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putBoolean("enabled", enableDirectDownload.isChecked());
-        outState.putString("address", CommonUtils.getText(address));
-        outState.putBoolean("auth", auth.isChecked());
-        outState.putString("username", CommonUtils.getText(username));
-        outState.putString("password", CommonUtils.getText(password));
-        outState.putBoolean("encryption", encryption.isChecked());
+        outState.putInt("type", typePick.getCheckedButtonId());
 
-        if (encryption.isChecked()) outState.putBundle("certificate", certificate.saveState());
-        else outState.remove("certificate");
+        switch (typePick.getCheckedButtonId()) {
+            case R.id.editProfile_ddType_web:
+                Bundle webBundle = new Bundle();
+                webBundle.putString("address", CommonUtils.getText(webAddress));
+                webBundle.putBoolean("auth", webAuth.isChecked());
+                webBundle.putString("username", CommonUtils.getText(webUsername));
+                webBundle.putString("password", CommonUtils.getText(webPassword));
+                webBundle.putBoolean("encryption", webEncryption.isChecked());
+                if (webEncryption.isChecked())
+                    webBundle.putBundle("certificate", webCertificate.saveState());
+                else
+                    webBundle.remove("certificate");
+
+                outState.putBundle("web", webBundle);
+                outState.remove("ftp");
+                outState.remove("smb");
+                break;
+            case R.id.editProfile_ddType_ftp:
+                // TODO
+                break;
+            case R.id.editProfile_ddType_samba:
+                // TODO
+                break;
+        }
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle bundle) {
         enableDirectDownload.setChecked(bundle.getBoolean("enabled", false));
+        typePick.check(bundle.getInt("type", R.id.editProfile_ddType_web));
 
-        CommonUtils.setText(address, bundle.getString("address"));
-        auth.setChecked(bundle.getBoolean("auth", false));
-        CommonUtils.setText(username, bundle.getString("username"));
-        CommonUtils.setText(password, bundle.getString("password"));
+        Bundle webBundle = bundle.getBundle("web");
+        if (webBundle != null) {
+            CommonUtils.setText(webAddress, webBundle.getString("address"));
+            webAuth.setChecked(webBundle.getBoolean("auth", false));
+            CommonUtils.setText(webUsername, webBundle.getString("username"));
+            CommonUtils.setText(webPassword, webBundle.getString("password"));
 
-        encryption.setChecked(bundle.getBoolean("encryption", false));
-        certificate.restore(bundle.getBundle("certificate"), encryption.isChecked());
+            webEncryption.setChecked(webBundle.getBoolean("encryption", false));
+            webCertificate.restore(webBundle.getBundle("certificate"), webEncryption.isChecked());
+        }
+
+        Bundle ftpBundle = bundle.getBundle("ftp");
+        if (ftpBundle != null) {
+            // TODO
+        }
+
+        Bundle smbBundle = bundle.getBundle("smb");
+        if (smbBundle != null) {
+            // TODO
+        }
     }
+
+    //endregion
 
     @Nullable
     @Override
@@ -162,22 +263,60 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
                 });
             }
         });
+
         container = layout.findViewById(R.id.editProfile_dd_container);
-        address = layout.findViewById(R.id.editProfile_dd_address);
-        CommonUtils.clearErrorOnEdit(address);
-        auth = layout.findViewById(R.id.editProfile_dd_auth);
-        auth.setOnCheckedChangeListener((buttonView, isChecked) -> authContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE));
-        authContainer = layout.findViewById(R.id.editProfile_dd_authContainer);
-        username = layout.findViewById(R.id.editProfile_dd_username);
-        CommonUtils.clearErrorOnEdit(username);
-        password = layout.findViewById(R.id.editProfile_dd_password);
-        CommonUtils.clearErrorOnEdit(password);
+        typePick = layout.findViewById(R.id.editProfile_dd_type);
+        typePick.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked) return;
+            switch (checkedId) {
+                default:
+                case R.id.editProfile_ddType_web:
+                    webContainer.setVisibility(View.VISIBLE);
+                    ftpContainer.setVisibility(View.GONE);
+                    smbContainer.setVisibility(View.GONE);
+                    break;
+                case R.id.editProfile_ddType_ftp:
+                    webContainer.setVisibility(View.GONE);
+                    ftpContainer.setVisibility(View.VISIBLE);
+                    smbContainer.setVisibility(View.GONE);
+                    break;
+                case R.id.editProfile_ddType_samba:
+                    webContainer.setVisibility(View.GONE);
+                    ftpContainer.setVisibility(View.GONE);
+                    smbContainer.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
 
-        encryption = layout.findViewById(R.id.editProfile_dd_encryption);
-        encryption.setOnCheckedChangeListener((buttonView, isChecked) -> certificate.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+        webContainer = layout.findViewById(R.id.editProfile_ddWeb_container);
+        ftpContainer = layout.findViewById(R.id.editProfile_ddFtp_container);
+        smbContainer = layout.findViewById(R.id.editProfile_ddSamba_container);
 
-        certificate = layout.findViewById(R.id.editProfile_dd_certificate);
-        certificate.attachActivity(this);
+        //region Web
+        webAddress = webContainer.findViewById(R.id.editProfile_ddWeb_address);
+        CommonUtils.clearErrorOnEdit(webAddress);
+        webAuth = webContainer.findViewById(R.id.editProfile_ddWeb_auth);
+        webAuth.setOnCheckedChangeListener((buttonView, isChecked) -> webAuthContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+        webAuthContainer = webContainer.findViewById(R.id.editProfile_ddWeb_authContainer);
+        webUsername = webContainer.findViewById(R.id.editProfile_ddWeb_username);
+        CommonUtils.clearErrorOnEdit(webUsername);
+        webPassword = webContainer.findViewById(R.id.editProfile_ddWeb_password);
+        CommonUtils.clearErrorOnEdit(webPassword);
+
+        webEncryption = webContainer.findViewById(R.id.editProfile_ddWeb_encryption);
+        webEncryption.setOnCheckedChangeListener((buttonView, isChecked) -> webCertificate.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+
+        webCertificate = webContainer.findViewById(R.id.editProfile_ddWeb_certificate);
+        webCertificate.attachActivity(this);
+        //endregion
+
+        //region FTP
+        // TODO
+        //endregion
+
+        //region Samba
+        // TODO
+        //endregion
 
         return layout;
     }
@@ -185,7 +324,7 @@ public class DirectDownloadFragment extends FieldErrorFragmentWithState implemen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CertificateInputView.CODE_PICK_CERT && resultCode == Activity.RESULT_OK && isAdded())
-            certificate.loadCertificateUri(data.getData());
+            webCertificate.loadCertificateUri(data.getData()); // FIXME
     }
 
     @Override

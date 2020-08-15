@@ -113,7 +113,7 @@
     <string name="uploadSpeed">Upload speed</string>
     <string name="none">None</string>
     <string name="enableDirectDownload">Enable DirectDownload</string>
-    <string name="directDownload_help">DirectDownload provide the possibility to directly download files from the aria2 server to your device with a single tap! You just need an appropriate webserver configuration: the address must be pointing to a directory listing of the aria2 download directory. This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
+    <string name="directDownload_help">DirectDownload provides the ability to download files from your aria2 server to your device with a single tap! This will require the permission to write to the external storage. You can follow this guide to set it up: https://github.com/devgianlu/Aria2App/wiki/Setup-DirectDownload</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="more">More</string>
@@ -353,4 +353,7 @@
     <string name="prefs_skipWebViewDialog_summary">Whether to skip the WebView dialog when sharing a link</string>
     <string name="desktopMode">Desktop mode</string>
     <string name="copyMagnetLink">Copy Magnet link</string>
+    <string name="samba">Samba</string>
+    <string name="ftp">FTP</string>
+    <string name="webServer">Web server</string>
 </resources>

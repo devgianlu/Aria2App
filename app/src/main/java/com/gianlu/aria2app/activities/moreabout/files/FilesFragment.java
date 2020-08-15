@@ -2,9 +2,7 @@ package com.gianlu.aria2app.activities.moreabout.files;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Browser;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,8 +37,7 @@ import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.api.updater.PayloadProvider;
 import com.gianlu.aria2app.api.updater.UpdaterFragment;
 import com.gianlu.aria2app.api.updater.Wants;
-import com.gianlu.aria2app.downloader.FetchHelper;
-import com.gianlu.aria2app.profiles.MultiProfile;
+import com.gianlu.aria2app.downloader.DirectDownloadHelper;
 import com.gianlu.aria2app.tutorial.Discovery;
 import com.gianlu.aria2app.tutorial.FilesTutorial;
 import com.gianlu.aria2app.tutorial.FoldersTutorial;
@@ -62,8 +59,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import okhttp3.HttpUrl;
-
 public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate> implements TutorialManager.Listener, FilesAdapter.Listener, OnBackPressed, FileSheet.Listener, DirectorySheet.Listener, BreadcrumbsView.Listener {
     private static final String TAG = FilesFragment.class.getSimpleName();
     private FilesAdapter adapter;
@@ -74,7 +69,7 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
     private ActionMode actionMode = null;
     private DownloadWithUpdate download;
     private TutorialManager tutorialManager;
-    private FetchHelper helper;
+    private DirectDownloadHelper helper;
 
     @NonNull
     public static FilesFragment getInstance(Context context, String gid) {
@@ -125,10 +120,10 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         super.onAttach(context);
 
         try {
-            helper = FetchHelper.get(context);
-        } catch (FetchHelper.DirectDownloadNotEnabledException ignored) {
-        } catch (FetchHelper.InitializationException ex) {
-            Log.e(TAG, "Failed initializing Fetch.", ex);
+            helper = DirectDownloadHelper.get(context);
+        } catch (DirectDownloadHelper.DirectDownloadNotEnabledException ignored) {
+        } catch (DirectDownloadHelper.InitializationException ex) {
+            Log.e(TAG, "Failed initializing DirectDownload helper.", ex);
             showToast(Toaster.build().message(R.string.failedLoading_reason, ex.getMessage()));
         }
     }
@@ -261,11 +256,11 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         tutorialManager.tryShowingTutorials(getActivity());
     }
 
-    private void startDownloadInternal(@NonNull MultiProfile profile, @Nullable AriaFile file, @Nullable AriaDirectory dir) {
+    private void startDownloadInternal(@Nullable AriaFile file, @Nullable AriaDirectory dir) {
         if (helper == null) return;
 
         boolean single = file != null;
-        FetchHelper.StartListener listener = new FetchHelper.StartListener() {
+        DirectDownloadHelper.StartListener listener = new DirectDownloadHelper.StartListener() {
             @Override
             public void onSuccess() {
                 Snackbar.make(rmv, R.string.downloadAdded, Snackbar.LENGTH_LONG)
@@ -280,12 +275,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             }
         };
 
-        if (file != null) helper.start(requireContext(), profile, file, listener);
-        else if (dir != null) helper.start(requireContext(), profile, dir, listener);
+        if (file != null) helper.start(requireContext(), file, listener);
+        else if (dir != null) helper.start(requireContext(), dir, listener);
     }
 
     @Override
-    public void onDownloadFile(@NonNull MultiProfile profile, @NonNull AriaFile file, boolean share) {
+    public void onDownloadFile(@NonNull AriaFile file, boolean share) {
         if (fileSheet != null) {
             fileSheet.dismiss();
             fileSheet = null;
@@ -299,8 +294,8 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                 dismissDialog();
 
                 String mime = file.getMimeType();
-                if (mime != null && Utils.isStreamable(mime) && getContext() != null) {
-                    Intent intent = Utils.getStreamIntent(profile.getProfile(getContext()), result, file);
+                if (mime != null && getContext() != null && helper.canStream(mime)) {
+                    Intent intent = helper.getStreamIntent(result, file);
                     if (intent != null && Utils.canHandleIntent(requireContext(), intent)) {
                         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());
                         builder.setTitle(R.string.couldStreamVideo)
@@ -310,14 +305,14 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
                                     startActivity(intent);
                                     AnalyticsApplication.sendAnalytics(Utils.ACTION_PLAY_VIDEO);
                                 })
-                                .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(profile, result, file, share));
+                                .setNegativeButton(R.string.download, (dialog, which) -> shouldDownload(result, file, share));
 
                         showDialog(builder);
                         return;
                     }
                 }
 
-                shouldDownload(profile, result, file, share);
+                shouldDownload(result, file, share);
             }
 
             @Override
@@ -329,31 +324,19 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
         });
     }
 
-    private void shouldDownload(@NonNull MultiProfile profile, @NonNull OptionsMap global, @NonNull AriaFile file, boolean share) {
+    private void shouldDownload(@NonNull OptionsMap global, @NonNull AriaFile file, boolean share) {
         AnalyticsApplication.sendAnalytics(Utils.ACTION_DOWNLOAD_FILE);
 
         if (Prefs.getBoolean(PK.DD_USE_EXTERNAL) || share) {
-            MultiProfile.DirectDownload dd = profile.getProfile(getContext()).directDownload;
-            HttpUrl base;
-            if (dd == null || (base = dd.getUrl()) == null) return;
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(file.getDownloadUrl(global, base).toString()));
-
-            if (dd.auth) {
-                Bundle headers = new Bundle();
-                headers.putString("Authorization", dd.getAuthorizationHeader());
-                intent.putExtra(Browser.EXTRA_HEADERS, headers);
-            }
-
-            startActivity(intent);
+            Intent intent = helper.getStreamIntent(global, file);
+            if (intent != null) startActivity(intent);
         } else {
-            startDownloadInternal(profile, file, null);
+            startDownloadInternal(file, null);
         }
     }
 
     @Override
-    public void onDownloadDirectory(@NonNull MultiProfile profile, @NonNull AriaDirectory dir) {
+    public void onDownloadDirectory(@NonNull AriaDirectory dir) {
         if (dirSheet != null) {
             dirSheet.dismiss();
             dirSheet = null;
@@ -366,12 +349,12 @@ public class FilesFragment extends UpdaterFragment<DownloadWithUpdate.BigUpdate>
             AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext());
             builder.setTitle(R.string.cannotDownloadDirWithExternal)
                     .setMessage(R.string.cannotDownloadDirWithExternal_message)
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> startDownloadInternal(profile, null, dir))
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> startDownloadInternal(null, dir))
                     .setNegativeButton(android.R.string.no, null);
 
             showDialog(builder);
         } else {
-            startDownloadInternal(profile, null, dir);
+            startDownloadInternal(null, dir);
         }
     }
 
