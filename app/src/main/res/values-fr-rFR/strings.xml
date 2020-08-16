@@ -174,7 +174,7 @@
     <string name="torrentUris_disclaimer">Les Uris sont utilisées pour le webseeding. Pour les torrents d\'un seul fichier, l\'URI peut être une URI complète pointant vers la ressource; si l\'URI se termine par /, le nom dans le fichier torrent est ajouté. Pour les torrents multi-fichiers, le nom et le chemin dans le torrent sont ajoutés pour former un URI pour chaque fichier.</string>
     <string name="file">Fichier</string>
     <string name="pickTorrent_help">Sélectionner un fichier torrent. Le MIME type supporté est <![CDATA[<b>application/x-bittorrent</b>]]>.</string>
-    <string name="pickMetalink_help">Séléctionner un fichier métalien. Les MIME types supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
+    <string name="pickMetalink_help">Sélectionnez un fichier métalien. Les types MIME supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
     <string name="outdated_aria2">Version aria2 obsolète</string>
     <string name="outdated_aria2_message">La version du serveur aria2 est obsolète. Aria2App est programmée pour fonctionner avec la dernière version d\'aria2. C\'est pourquoi vous devriez le mettre à jour. Vous pouvez désactiver ce messages dans les préférences. \n\nVersion actuelle : %1$s \nDernière version: %2$s</string>
     <string name="selectFile_help">Le fichier peut être sélectionné ou désélectionné des téléchargements seulement pour les torrents multi-fichiers.</string>
@@ -305,7 +305,7 @@
     <string name="torrents">Torrents</string>
     <string name="metalinks">Metaliens</string>
     <string name="addSingle">Ajouter un seul</string>
-    <string name="noBatchAdd">Il n\'y a pas d\'opération de batch. Ajouter en avec le bouton ci-dessous.</string>
+    <string name="noBatchAdd">Il n\'y a pas d\'opération de batch. Ajoutez-en avec les boutons ci-dessous.</string>
     <string name="downloadsAddedBatch">Tous les téléchargements ont été ajoutés.</string>
     <string name="failedAddingDownloads">L\'ajout de certains téléchargements a échoué.</string>
     <string name="torrentFiles">Fichiers torrent</string>
@@ -325,7 +325,7 @@
     <string name="webView">WebView</string>
     <string name="visit">Visiter</string>
     <string name="goTo">Aller à</string>
-    <string name="prefs_addBestTrackers">Ajouter de meilleurs traquers aux nouveaux téléchargements</string>
+    <string name="prefs_addBestTrackers">Ajouter de meilleurs traqueurs aux nouveaux téléchargements</string>
     <string name="prefs_addBestTrackers_summary">Ajouter automatiquement de meilleurs trackers de XIU2/TrackersListCollection aux nouveaux téléchargements</string>
     <string name="addBestTrackers">Ajouter de meilleurs traquers</string>
     <string name="health"><![CDATA[<b>Santé :</b>]]> %.2f%% (%d/%d)</string>
