@@ -177,7 +177,7 @@
     <string name="pickMetalink_help">Séléctionner un fichier métalien. Les MIME types supportés sont <![CDATA[<b>application/metalink4+xml</b>]]> et <![CDATA[<b>application/metalink+xml</b>]]>.</string>
     <string name="outdated_aria2">Version aria2 obsolète</string>
     <string name="outdated_aria2_message">La version du serveur aria2 est obsolète. Aria2App est programmée pour fonctionner avec la dernière version d\'aria2. C\'est pourquoi vous devriez le mettre à jour. Vous pouvez désactiver ce messages dans les préférences. \n\nVersion actuelle : %1$s \nDernière version: %2$s</string>
-    <string name="selectFile_help">Le fichier peut être sélectionné ou désélectionné des téléchargement seulement pour les torrents multi-fichier.</string>
+    <string name="selectFile_help">Le fichier peut être sélectionné ou désélectionné des téléchargements seulement pour les torrents multi-fichiers.</string>
     <string name="nameLabel">Nom</string>
     <string name="searchDownloads">Rechercher des téléchargements</string>
     <string name="failedLoadingDownloads">Échec de chargement des téléchargements !</string>
