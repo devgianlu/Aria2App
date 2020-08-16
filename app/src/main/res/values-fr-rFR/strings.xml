@@ -168,7 +168,7 @@
     <string name="set">Définir</string>
     <string name="noUris_help">Il n\'y a pas d\'URL. Merci d\'en ajouter au moins une en cliquant sur le bouton ci-dessous.</string>
     <string name="editUri">Modifier l\'URL</string>
-    <string name="queuePosition_help">Laisser vide pour ajouter un téléchargement à la fin de la fil d\'attente.</string>
+    <string name="queuePosition_help">Laisser vide pour ajouter un téléchargement à la fin de la file d\'attente.</string>
     <string name="uris_disclaimer">Il est impératif d\'ajouter uniquement des liens HTTP/FTP/SFTP/BitTorrent qui pointent vers la même ressource. Si vous mélangez des liens désignant des ressources différentes, le téléchargement échouera ou sera corrompu sans message du serveur aria2.</string>
     <string name="noUris">Il n\'y a pas d\'URL.</string>
     <string name="torrentUris_disclaimer">Les Uris sont utilisées pour le webseeding. Pour les torrents d\'un seul fichier, l\'URI peut être une URI complète pointant vers la ressource; si l\'URI se termine par /, le nom dans le fichier torrent est ajouté. Pour les torrents multi-fichiers, le nom et le chemin dans le torrent sont ajoutés pour former un URI pour chaque fichier.</string>
@@ -340,7 +340,7 @@
     <string name="addWebViewShortcutToHomePage_summary">Ajouter un raccourcis vers la WebView sur votre page d\'accueil.</string>
     <string name="setAsDefault">Définir pat défaut</string>
     <string name="webViewUrlHint">Entrez une URL à visiter…</string>
-    <string name="startPaused">Mettre en pause les téléchargement quand ajouté</string>
+    <string name="startPaused">Mettre en pause les téléchargements quand ajouté</string>
     <string name="noDownloads_addOne">Il n\'y a pas de téléchargement ! Vous pouvez en ajouter un en appuyant sur le bouton plus en haut à droite.</string>
     <string name="noDownloads_changeFilters">Il n\'y a pas de téléchargement à afficher ! Essayer de changer vos filtres.</string>
     <string name="filtersShowingOnly">Affiche uniquement les %s (%d)</string>
