@@ -30,14 +30,11 @@ import com.tonyodev.fetch2okhttp.OkHttpDownloader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Pattern;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -53,10 +50,7 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
         this.dd = dd;
 
         OkHttpClient.Builder client = new OkHttpClient.Builder();
-        if (!dd.hostnameVerifier) {
-            client.hostnameVerifier((s, sslSession) -> true);
-        }
-
+        if (!dd.hostnameVerifier) client.hostnameVerifier((s, sslSession) -> true);
         if (dd.certificate != null) NetUtils.setSslSocketFactory(client, dd.certificate);
         if (dd.auth) client.addInterceptor(new BasicAuthInterceptor(dd.username, dd.password));
 
@@ -73,20 +67,7 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
 
     @NonNull
     private static Request createFetchRequest(HttpUrl base, OptionsMap global, DocumentFile ddDir, @NotNull AriaFile file) throws PreparationException {
-        String mime = file.getMimeType();
-        String fileName = file.getName();
-        if (mime == null) {
-            mime = "";
-        } else {
-            int index = fileName.lastIndexOf('.');
-            if (index != -1) fileName = fileName.substring(0, index);
-        }
-
-        DocumentFile parent = createAllDirs(ddDir, file.getRelativePath(global));
-        DocumentFile dest = parent.createFile(mime, fileName);
-        if (dest == null)
-            throw new PreparationException("Couldn't create file inside directory: " + parent);
-
+        DocumentFile dest = createDestFile(global, ddDir, file);
         return createFetchRequest(file.getDownloadUrl(global, base), dest.getUri());
     }
 
@@ -95,70 +76,6 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
         Request request = new Request(url.toString(), dest);
         request.setEnqueueAction(EnqueueAction.UPDATE_ACCORDINGLY);
         return request;
-    }
-
-    //region Prepare local storage
-
-    @NonNull
-    private static DocumentFile getAndValidateDownloadPath(@NonNull Context context) throws PreparationException {
-        String uriStr = Prefs.getString(PK.DD_DOWNLOAD_PATH);
-        Uri uri = Uri.parse(uriStr);
-        if (Objects.equals(uri.getScheme(), "content")) {
-            DocumentFile doc;
-            try {
-                doc = DocumentFile.fromTreeUri(context, uri);
-            } catch (RuntimeException ex) {
-                throw new PreparationException(ex);
-            }
-
-            if (doc == null)
-                throw new PreparationException("Invalid uri path: " + uriStr);
-
-            if (!doc.exists())
-                throw new PreparationException("Uri path doesn't exists: " + uriStr);
-
-            if (!doc.canWrite())
-                throw new PreparationException("Cannot write to uri path: " + uriStr);
-
-            return doc;
-        } else {
-            if (Objects.equals(uri.getScheme(), "file") && uri.getPath() != null)
-                uriStr = uri.getPath();
-
-            File path = new File(uriStr);
-            if (!path.exists() && !path.mkdirs())
-                throw new PreparationException("Path doesn't exists and can't be created: " + path);
-
-            if (!path.canWrite())
-                throw new PreparationException("Cannot write to path: " + path);
-
-            DocumentFile doc = DocumentFile.fromFile(path);
-            Prefs.putString(PK.DD_DOWNLOAD_PATH, doc.getUri().toString());
-            return doc;
-        }
-    }
-
-    @NonNull
-    private static DocumentFile createAllDirs(@NonNull DocumentFile parent, @NonNull String filePath) throws PreparationException {
-        String[] split = filePath.split(Pattern.quote(File.separator));
-        for (int i = 0; i < split.length - 1; i++) { // Skip last segment
-            DocumentFile doc = parent.findFile(split[i]);
-            if (doc == null || !doc.isDirectory()) {
-                parent = parent.createDirectory(split[i]);
-                if (parent == null)
-                    throw new PreparationException("Couldn't create directory: " + split[i]);
-            } else {
-                parent = doc;
-            }
-        }
-
-        return parent;
-    }
-
-    //endregion
-
-    private void callFailed(StartListener listener, Throwable ex) {
-        handler.post(() -> listener.onFailed(ex));
     }
 
     //region Download
@@ -249,14 +166,16 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
     //region Internal start
 
     private void startInternal(@NonNull Request request, @NonNull StartListener listener) {
-        if (!fetch.isClosed())
-            fetch.enqueue(request, result -> listener.onSuccess(), result -> {
-                Throwable t = result.getThrowable();
-                if (t == null)
-                    listener.onFailed(new IllegalStateException("Exception not specified!"));
-                else
-                    listener.onFailed(t);
-            });
+        if (fetch.isClosed())
+            return;
+
+        fetch.enqueue(request, result -> listener.onSuccess(), result -> {
+            Throwable t = result.getThrowable();
+            if (t == null)
+                listener.onFailed(new IllegalStateException("Exception not specified!"));
+            else
+                listener.onFailed(t);
+        });
     }
 
     private void startInternal(@NonNull List<Request> requests, @NonNull StartListener listener) {
@@ -305,21 +224,25 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
 
     @Override
     public void onAdded(@NotNull Download download) {
-        forEachListener(listener -> listener.onAdded(DdDownload.wrap(download)));
+        DdDownload wrap = DdDownload.wrap(download);
+        forEachListener(listener -> listener.onAdded(wrap));
     }
 
     private void onUpdate(@NonNull Download download) {
-        forEachListener(listener -> listener.onUpdated(DdDownload.wrap(download)));
+        DdDownload wrap = DdDownload.wrap(download);
+        forEachListener(listener -> listener.onUpdated(wrap));
     }
 
     @Override
     public void onProgress(@NotNull Download download, long eta, long speed) {
-        forEachListener(listener -> listener.onProgress(DdDownload.wrap(download), eta, speed));
+        DdDownload wrap = DdDownload.wrap(download);
+        forEachListener(listener -> listener.onProgress(wrap, eta, speed));
     }
 
     @Override
     public void onRemoved(@NotNull Download download) {
-        forEachListener(listener -> listener.onRemoved(DdDownload.wrap(download)));
+        DdDownload wrap = DdDownload.wrap(download);
+        forEachListener(listener -> listener.onRemoved(wrap));
     }
 
     @Override
@@ -373,6 +296,11 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
 
     //endregion
 
+    @Override
+    public void close() {
+        fetch.close();
+    }
+
     private static class BasicAuthInterceptor implements Interceptor {
         private final String username;
         private final String password;
@@ -389,16 +317,6 @@ public final class FetchHelper extends DirectDownloadHelper implements FetchList
             return chain.proceed(request.newBuilder()
                     .addHeader("Authorization", "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP))
                     .build());
-        }
-    }
-
-    private static class PreparationException extends Exception {
-        private PreparationException(String msg) {
-            super(msg);
-        }
-
-        private PreparationException(Throwable ex) {
-            super(ex);
         }
     }
 }

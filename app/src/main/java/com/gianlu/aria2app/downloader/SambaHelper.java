@@ -9,9 +9,14 @@ import com.gianlu.aria2app.api.aria2.AriaDirectory;
 import com.gianlu.aria2app.api.aria2.AriaFile;
 import com.gianlu.aria2app.profiles.MultiProfile;
 
+import java.io.IOException;
+
 public final class SambaHelper extends DirectDownloadHelper { // TODO
+    private final MultiProfile.DirectDownload.Smb dd;
+
     SambaHelper(@NonNull Context context, @NonNull MultiProfile.UserProfile profile, @NonNull MultiProfile.DirectDownload.Smb dd) throws Aria2Helper.InitializingException {
         super(context, profile);
+        this.dd = dd;
     }
 
     @Override
@@ -46,6 +51,11 @@ public final class SambaHelper extends DirectDownloadHelper { // TODO
 
     @Override
     public void reloadListener(@NonNull Listener listener) {
+
+    }
+
+    @Override
+    public void close() throws IOException {
 
     }
 }

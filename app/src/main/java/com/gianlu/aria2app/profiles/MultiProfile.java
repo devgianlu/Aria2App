@@ -515,14 +515,40 @@ public class MultiProfile implements BaseDrawerProfile, Serializable {
         }
 
         public static class Ftp {
+            public final String hostname;
+            public final int port;
+            public final String username;
+            public final String password;
+            public final String path;
+            public final boolean hostnameVerifier;
+            public final X509Certificate certificate;
+            public final boolean serverSsl;
 
-            Ftp(@NonNull JSONObject obj) {
+            Ftp(@NonNull JSONObject obj) throws JSONException {
+                hostname = obj.getString("hostname");
+                port = obj.getInt("port");
+                username = obj.getString("username");
+                password = obj.getString("password");
+                path = obj.getString("path");
+                hostnameVerifier = obj.optBoolean("hostnameVerifier", false);
+                serverSsl = obj.optBoolean("serverSsl", false);
 
+                String base64 = CommonUtils.optString(obj, "certificate");
+                if (base64 == null) certificate = null;
+                else certificate = CertUtils.decodeCertificate(base64);
             }
 
             @NonNull
-            public JSONObject toJson() {
-                return null; // TODO
+            public JSONObject toJson() throws JSONException {
+                JSONObject obj = new JSONObject();
+                obj.put("hostname", hostname).put("port", port).put("serverSsl", serverSsl)
+                        .put("username", username).put("password", password).put("path", path)
+                        .put("hostnameVerifier", hostnameVerifier);
+
+                if (certificate != null && serverSsl)
+                    obj.put("certificate", CertUtils.encodeCertificate(certificate));
+
+                return obj;
             }
         }
 

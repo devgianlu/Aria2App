@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Browser;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.core.util.Consumer;
+import androidx.documentfile.provider.DocumentFile;
 
+import com.gianlu.aria2app.PK;
 import com.gianlu.aria2app.Utils;
 import com.gianlu.aria2app.api.aria2.Aria2Helper;
 import com.gianlu.aria2app.api.aria2.AriaDirectory;
@@ -21,15 +24,23 @@ import com.gianlu.aria2app.api.aria2.OptionsMap;
 import com.gianlu.aria2app.profiles.MultiProfile;
 import com.gianlu.aria2app.profiles.MultiProfile.DirectDownload;
 import com.gianlu.aria2app.profiles.ProfilesManager;
+import com.gianlu.commonutils.preferences.Prefs;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 import okhttp3.HttpUrl;
 
-public abstract class DirectDownloadHelper {
+public abstract class DirectDownloadHelper implements Closeable {
+    private static final String TAG = DirectDownloadHelper.class.getSimpleName();
     private static DirectDownloadHelper instance;
     protected final Handler handler;
     protected final Aria2Helper aria2;
@@ -93,22 +104,18 @@ public abstract class DirectDownloadHelper {
 
                 @Override
                 public void onAdded(@NonNull DdDownload download) {
-
                 }
 
                 @Override
                 public void onUpdated(@NonNull DdDownload download) {
-
                 }
 
                 @Override
                 public void onProgress(@NonNull DdDownload download, long eta, long speed) {
-
                 }
 
                 @Override
                 public void onRemoved(@NonNull DdDownload download) {
-
                 }
             });
         } catch (InitializationException ignored) {
@@ -116,8 +123,93 @@ public abstract class DirectDownloadHelper {
     }
 
     public static void invalidate() {
-        // TODO
+        try {
+            instance.close();
+        } catch (IOException ex) {
+            Log.e(TAG, "Failed closing DirectDownload helper instance.", ex);
+        } finally {
+            instance = null;
+        }
     }
+
+    //region Prepare local storage
+
+    @NonNull
+    protected static DocumentFile getAndValidateDownloadPath(@NonNull Context context) throws PreparationException {
+        String uriStr = Prefs.getString(PK.DD_DOWNLOAD_PATH);
+        Uri uri = Uri.parse(uriStr);
+        if (Objects.equals(uri.getScheme(), "content")) {
+            DocumentFile doc;
+            try {
+                doc = DocumentFile.fromTreeUri(context, uri);
+            } catch (RuntimeException ex) {
+                throw new FetchHelper.PreparationException(ex);
+            }
+
+            if (doc == null)
+                throw new FetchHelper.PreparationException("Invalid uri path: " + uriStr);
+
+            if (!doc.exists())
+                throw new FetchHelper.PreparationException("Uri path doesn't exists: " + uriStr);
+
+            if (!doc.canWrite())
+                throw new FetchHelper.PreparationException("Cannot write to uri path: " + uriStr);
+
+            return doc;
+        } else {
+            if (Objects.equals(uri.getScheme(), "file") && uri.getPath() != null)
+                uriStr = uri.getPath();
+
+            File path = new File(uriStr);
+            if (!path.exists() && !path.mkdirs())
+                throw new FetchHelper.PreparationException("Path doesn't exists and can't be created: " + path);
+
+            if (!path.canWrite())
+                throw new FetchHelper.PreparationException("Cannot write to path: " + path);
+
+            DocumentFile doc = DocumentFile.fromFile(path);
+            Prefs.putString(PK.DD_DOWNLOAD_PATH, doc.getUri().toString());
+            return doc;
+        }
+    }
+
+    @NonNull
+    protected static DocumentFile createAllDirs(@NonNull DocumentFile parent, @NonNull String filePath) throws PreparationException {
+        String[] split = filePath.split(Pattern.quote(File.separator));
+        for (int i = 0; i < split.length - 1; i++) { // Skip last segment
+            DocumentFile doc = parent.findFile(split[i]);
+            if (doc == null || !doc.isDirectory()) {
+                parent = parent.createDirectory(split[i]);
+                if (parent == null)
+                    throw new FetchHelper.PreparationException("Couldn't create directory: " + split[i]);
+            } else {
+                parent = doc;
+            }
+        }
+
+        return parent;
+    }
+
+    @NonNull
+    protected static DocumentFile createDestFile(@NotNull OptionsMap global, @NotNull DocumentFile ddDir, @NotNull AriaFile file) throws PreparationException {
+        String mime = file.getMimeType();
+        String fileName = file.getName();
+        if (mime == null) {
+            mime = "";
+        } else {
+            int index = fileName.lastIndexOf('.');
+            if (index != -1) fileName = fileName.substring(0, index);
+        }
+
+        DocumentFile parent = createAllDirs(ddDir, file.getRelativePath(global));
+        DocumentFile dest = parent.createFile(mime, fileName);
+        if (dest == null)
+            throw new PreparationException("Couldn't create file inside directory: " + parent);
+
+        return dest;
+    }
+
+    //endregion
 
     public boolean canStream(@NonNull String mime) {
         if (!Utils.isStreamable(mime))
@@ -149,6 +241,10 @@ public abstract class DirectDownloadHelper {
     }
 
     public abstract void start(@NonNull Context context, @NonNull AriaFile file, @NonNull StartListener listener);
+
+    protected void callFailed(StartListener listener, Throwable ex) {
+        handler.post(() -> listener.onFailed(ex));
+    }
 
     //region Download actions
 
@@ -208,6 +304,13 @@ public abstract class DirectDownloadHelper {
 
         void onUpdated(@NonNull DdDownload download);
 
+        /**
+         * Notifies that the download has progressed.
+         *
+         * @param download The download object
+         * @param eta      Remaining time in milliseconds
+         * @param speed    Download speed in bytes per second
+         */
         void onProgress(@NonNull DdDownload download, long eta, long speed);
 
         void onRemoved(@NonNull DdDownload download);
@@ -229,6 +332,16 @@ public abstract class DirectDownloadHelper {
 
         InitializationException(Throwable cause) {
             super(cause);
+        }
+    }
+
+    public static class PreparationException extends Exception {
+        PreparationException(String msg) {
+            super(msg);
+        }
+
+        PreparationException(Throwable ex) {
+            super(ex);
         }
     }
 }
